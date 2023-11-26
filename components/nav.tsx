@@ -26,21 +26,21 @@ import { getSiteFromPostId } from "@/lib/actions";
 import Image from "next/image";
 
 export default function Nav({ children }: { children: ReactNode }) {
-  const segments = useSelectedLayoutSegments();
+  const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
 
   const [siteId, setSiteId] = useState<string | null>();
 
   useEffect(() => {
-    if (segments[0] === "post" && id) {
+    if (urlSegments[0] === "post" && id) {
       getSiteFromPostId(id).then((id) => {
         setSiteId(id);
       });
     }
-  }, [segments, id]);
+  }, [urlSegments, id]);
 
   const tabs = useMemo(() => {
-    if (segments[0] === "site" && id) {
+    if (urlSegments[0] === "site" && id) {
       return [
         {
           name: "Back to All Sites",
@@ -50,23 +50,23 @@ export default function Nav({ children }: { children: ReactNode }) {
         {
           name: "Posts",
           href: `/site/${id}`,
-          isActive: segments.length === 2,
+          isActive: urlSegments.length === 2,
           icon: <Newspaper width={18} />,
         },
         {
           name: "Analytics",
           href: `/site/${id}/analytics`,
-          isActive: segments.includes("analytics"),
+          isActive: urlSegments.includes("analytics"),
           icon: <BarChart3 width={18} />,
         },
         {
           name: "Settings",
           href: `/site/${id}/settings`,
-          isActive: segments.includes("settings"),
+          isActive: urlSegments.includes("settings"),
           icon: <Settings width={18} />,
         },
       ];
-    } else if (segments[0] === "post" && id) {
+    } else if (urlSegments[0] === "post" && id) {
       return [
         {
           name: "Back to All Posts",
@@ -76,13 +76,13 @@ export default function Nav({ children }: { children: ReactNode }) {
         {
           name: "Editor",
           href: `/post/${id}`,
-          isActive: segments.length === 2,
+          isActive: urlSegments.length === 2,
           icon: <Edit3 width={18} />,
         },
         {
           name: "Settings",
           href: `/post/${id}/settings`,
-          isActive: segments.includes("settings"),
+          isActive: urlSegments.includes("settings"),
           icon: <Settings width={18} />,
         },
       ];
@@ -91,29 +91,29 @@ export default function Nav({ children }: { children: ReactNode }) {
       {
         name: "Home",
         href: "/",
-        isActive: segments.length === 0,
+        isActive: urlSegments.length === 0,
         icon: <LayoutDashboard width={18} />,
       },
       {
         name: "Tiers and Services",
         href: "/tiers",
-        isActive: segments[0] === "tiers",
+        isActive: urlSegments[0] === "tiers",
         icon: <KanbanSquare width={18} />,
       },
       {
         name: "Your Site",
         href: "/sites",
-        isActive: segments[0] === "sites",
+        isActive: urlSegments[0] === "sites",
         icon: <Globe width={18} />,
       },
       {
         name: "Settings",
         href: "/settings",
-        isActive: segments[0] === "settings",
+        isActive: urlSegments[0] === "settings",
         icon: <Settings width={18} />,
       },
     ];
-  }, [segments, id, siteId]);
+  }, [urlSegments, id, siteId]);
 
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -129,7 +129,7 @@ export default function Nav({ children }: { children: ReactNode }) {
       <button
         className={`fixed z-20 ${
           // left align for Editor, right align for other pages
-          segments[0] === "post" && segments.length === 2 && !showSidebar
+          urlSegments[0] === "post" && urlSegments.length === 2 && !showSidebar
             ? "left-5 top-5"
             : "right-5 top-7"
         } sm:hidden`}
