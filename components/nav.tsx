@@ -9,6 +9,7 @@ import {
   Layout,
   LayoutDashboard,
   Megaphone,
+  KanbanSquare,
   Menu,
   Newspaper,
   Settings,
@@ -88,13 +89,19 @@ export default function Nav({ children }: { children: ReactNode }) {
     }
     return [
       {
-        name: "Overview",
+        name: "Home",
         href: "/",
         isActive: segments.length === 0,
         icon: <LayoutDashboard width={18} />,
       },
       {
-        name: "Sites",
+        name: "Tiers and Services",
+        href: "/tiers",
+        isActive: segments[0] === "tiers",
+        icon: <KanbanSquare width={18} />,
+      },
+      {
+        name: "Your Site",
         href: "/sites",
         isActive: segments[0] === "sites",
         icon: <Globe width={18} />,
