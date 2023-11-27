@@ -13,6 +13,7 @@ import {
   Newspaper,
   Settings,
   Github,
+  BarChart4,
 } from "lucide-react";
 import {
   useParams,
@@ -105,6 +106,18 @@ export default function Nav({ children }: { children: ReactNode }) {
         icon: <KanbanSquare width={18} />,
       },
       {
+        name: "Analytics",
+        href: "/analytics",
+        isActive: urlSegments[0] === "analytics",
+        icon: <BarChart4 width={18} />,
+      },
+      {
+        name: "Settings",
+        href: "/settings",
+        isActive: urlSegments[0] === "settings",
+        icon: <Settings width={18} />,
+      },
+      {
         name: "Channels",
         href: "",
         isDivider: true,
@@ -120,12 +133,6 @@ export default function Nav({ children }: { children: ReactNode }) {
         href: "/github",
         isActive: urlSegments[0] === "github",
         icon: <Github width={18} />,
-      },
-      {
-        name: "Settings",
-        href: "/settings",
-        isActive: urlSegments[0] === "settings",
-        icon: <Settings width={18} />,
       },
     ];
   }, [urlSegments, id, siteId]);
@@ -159,7 +166,6 @@ export default function Nav({ children }: { children: ReactNode }) {
       >
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
-           
               <div className="text-md font-medium">
                 Gitwallet
               </div>
@@ -167,7 +173,7 @@ export default function Nav({ children }: { children: ReactNode }) {
           <div className="grid gap-0.5">
             {tabs.map(({ name, href, isActive, icon }) => (
               href === "" ? (
-                  <span className="text-xs font-small uppercase mt-4">{name}</span>
+                  <span key={name} className="text-xs font-small uppercase mt-4">{name}</span>
                 ) : (
                 <Link
                   key={name}
