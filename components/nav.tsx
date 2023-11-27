@@ -164,19 +164,22 @@ export default function Nav({ children }: { children: ReactNode }) {
                 Gitwallet
               </div>
           </div>
-          <div className="grid gap-1">
+          <div className="grid gap-0.5">
             {tabs.map(({ name, href, isActive, icon }) => (
-            
-              <Link
-                key={name}
-                href={href}
-                className={`flex items-center space-x-3 ${
-                  isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
-                } rounded-lg px-2 py-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
-              >
-                {icon}
-                <span className="text-sm font-medium">{name}</span>
-              </Link>
+              href === "" ? (
+                  <span className="text-xs font-small uppercase mt-4">{name}</span>
+                ) : (
+                <Link
+                  key={name}
+                  href={href}
+                  className={`flex items-center space-x-3 ${
+                    isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
+                  } rounded-lg px-1 py-0.5 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                >
+                  {icon}
+                  <span className="text-sm font-medium">{name}</span>
+                </Link>
+              )
             ))}
           </div>
         </div>
