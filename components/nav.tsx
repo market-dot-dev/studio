@@ -6,14 +6,12 @@ import {
   BarChart3,
   Edit3,
   Globe,
-  Layout,
   LayoutDashboard,
-  Megaphone,
   KanbanSquare,
   Menu,
+  Users,
   Newspaper,
   Settings,
-  FileCode,
   Github,
 } from "lucide-react";
 import {
@@ -95,16 +93,33 @@ export default function Nav({ children }: { children: ReactNode }) {
         icon: <LayoutDashboard width={18} />,
       },
       {
+        name: "Customers",
+        href: "/customers",
+        isActive: urlSegments[0] === "customers",
+        icon: <Users width={18} />,
+      },
+      {
         name: "Tiers and Services",
         href: "/tiers",
         isActive: urlSegments[0] === "tiers",
         icon: <KanbanSquare width={18} />,
       },
       {
+        name: "Channels",
+        href: "",
+        isDivider: true,
+      },
+      {
         name: "Your Site",
         href: "/sites",
         isActive: urlSegments[0] === "sites",
         icon: <Globe width={18} />,
+      },
+      {
+        name: "Github",
+        href: "/github",
+        isActive: urlSegments[0] === "github",
+        icon: <Github width={18} />,
       },
       {
         name: "Settings",
@@ -151,6 +166,7 @@ export default function Nav({ children }: { children: ReactNode }) {
           </div>
           <div className="grid gap-1">
             {tabs.map(({ name, href, isActive, icon }) => (
+            
               <Link
                 key={name}
                 href={href}
