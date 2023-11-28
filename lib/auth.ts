@@ -2,9 +2,10 @@ import { getServerSession, type NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
+import { PrismaClient } from "@prisma/client";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
-
+const prismaClient = new PrismaClient();
 export const authOptions: NextAuthOptions = {
   providers: [
     GitHubProvider({
@@ -59,6 +60,27 @@ export const authOptions: NextAuthOptions = {
         username: token?.user?.username || token?.user?.gh_username,
       };
       return session;
+    },
+  },
+  events: {
+    createUser: async ({user}: {user: any}) => {
+      console.log('creating user')
+      if (!user) {
+        return;
+      }
+      // You can use this information to perform additional actions in your database
+      await prismaClient.site.create({
+        data: {
+          name: 'Support Website',
+          description: 'Support Website Description',
+          subdomain: user.gh_username ?? user.id,
+          user: {
+            connect: {
+              id: user.id,
+            },
+          },
+        },
+      });
     },
   },
 };

@@ -21,46 +21,46 @@ const nanoid = customAlphabet(
   7,
 ); // 7-character random string
 
-export const createSite = async (formData: FormData) => {
-  const session = await getSession();
-  if (!session?.user.id) {
-    return {
-      error: "Not authenticated",
-    };
-  }
-  const name = formData.get("name") as string;
-  const description = formData.get("description") as string;
-  const subdomain = formData.get("subdomain") as string;
+// export const createSite = async (formData: FormData) => {
+//   const session = await getSession();
+//   if (!session?.user.id) {
+//     return {
+//       error: "Not authenticated",
+//     };
+//   }
+//   const name = formData.get("name") as string;
+//   const description = formData.get("description") as string;
+//   const subdomain = formData.get("subdomain") as string;
 
-  try {
-    const response = await prisma.site.create({
-      data: {
-        name,
-        description,
-        subdomain,
-        user: {
-          connect: {
-            id: session.user.id,
-          },
-        },
-      },
-    });
-    await revalidateTag(
-      `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
-    );
-    return response;
-  } catch (error: any) {
-    if (error.code === "P2002") {
-      return {
-        error: `This subdomain is already taken`,
-      };
-    } else {
-      return {
-        error: error.message,
-      };
-    }
-  }
-};
+//   try {
+//     const response = await prisma.site.create({
+//       data: {
+//         name,
+//         description,
+//         subdomain,
+//         user: {
+//           connect: {
+//             id: session.user.id,
+//           },
+//         },
+//       },
+//     });
+//     await revalidateTag(
+//       `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+//     );
+//     return response;
+//   } catch (error: any) {
+//     if (error.code === "P2002") {
+//       return {
+//         error: `This subdomain is already taken`,
+//       };
+//     } else {
+//       return {
+//         error: error.message,
+//       };
+//     }
+//   }
+// };
 
 export const updateSite = withSiteAuth(
   async (formData: FormData, site: Site, key: string) => {
@@ -202,25 +202,7 @@ export const updateSite = withSiteAuth(
   },
 );
 
-export const deleteSite = withSiteAuth(async (_: FormData, site: Site) => {
-  try {
-    const response = await prisma.site.delete({
-      where: {
-        id: site.id,
-      },
-    });
-    await revalidateTag(
-      `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
-    );
-    response.customDomain &&
-      (await revalidateTag(`${site.customDomain}-metadata`));
-    return response;
-  } catch (error: any) {
-    return {
-      error: error.message,
-    };
-  }
-});
+
 
 export const getSiteFromPostId = async (postId: string) => {
   const post = await prisma.post.findUnique({
@@ -233,6 +215,15 @@ export const getSiteFromPostId = async (postId: string) => {
   });
   return post?.siteId;
 };
+
+export const getOnlySiteFromUserId = async (userId: string) => {
+  const site = await prisma.site.findFirst({
+    where: {
+      userId,
+    },
+  });
+  return site;
+}
 
 export const createPost = withSiteAuth(async (_: FormData, site: Site) => {
   const session = await getSession();

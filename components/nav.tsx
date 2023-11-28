@@ -21,8 +21,11 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { getSiteFromPostId } from "@/lib/actions";
+import { getOnlySiteFromUserId } from "@/lib/actions";
 import Image from "next/image";
+
+import { useSession } from 'next-auth/react'
+
 
 const externalLinks = [
   {
@@ -65,23 +68,34 @@ const externalLinks = [
 export default function Nav({ children }: { children: ReactNode }) {
   const segments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
-
+  const { data: session, status } = useSession();
   const [siteId, setSiteId] = useState<string | null>();
 
+  const user = session?.user as any;
+
+  // useEffect(() => {
+  //   if (segments[0] === "post" && id) {
+  //     getSiteFromPostId(id).then((id) => {
+  //       setSiteId(id);
+  //     });
+  //   }
+  // }, [segments, id]);
+
   useEffect(() => {
-    if (segments[0] === "post" && id) {
-      getSiteFromPostId(id).then((id) => {
-        setSiteId(id);
+    if (user?.id)
+      getOnlySiteFromUserId(user.id).then((site) => {
+        if( site?.id ) {
+          setSiteId(site.id);
+        }
       });
-    }
-  }, [segments, id]);
+  }, [user])
 
   const tabs = useMemo(() => {
     if (segments[0] === "site" && id) {
       return [
         {
-          name: "Back to All Sites",
-          href: "/sites",
+          name: "Back to Dashboard",
+          href: "/",
           icon: <ArrowLeft width={18} />,
         },
         {
@@ -132,9 +146,9 @@ export default function Nav({ children }: { children: ReactNode }) {
         icon: <LayoutDashboard width={18} />,
       },
       {
-        name: "Sites",
-        href: "/sites",
-        isActive: segments[0] === "sites",
+        name: "Support Site",
+        href: `/site/${siteId}`,
+        isActive: segments[0] === "site",
         icon: <Globe width={18} />,
       },
       {

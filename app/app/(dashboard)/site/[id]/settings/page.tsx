@@ -1,7 +1,7 @@
 import prisma from "@/lib/prisma";
 import Form from "@/components/form";
 import { updateSite } from "@/lib/actions";
-import DeleteSiteForm from "@/components/form/delete-site-form";
+
 
 export default async function SiteSettingsIndex({
   params,
@@ -43,7 +43,6 @@ export default async function SiteSettingsIndex({
         handleSubmit={updateSite}
       />
 
-      <DeleteSiteForm siteName={data?.name!} />
     </div>
   );
 }
