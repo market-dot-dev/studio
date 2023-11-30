@@ -14,6 +14,7 @@ import {
   Settings,
   Github,
   BarChart4,
+  Code2,
 } from "lucide-react";
 import {
   useParams,
@@ -127,6 +128,12 @@ export default function Nav({ children }: { children: ReactNode }) {
         href: "/sites",
         isActive: urlSegments[0] === "sites",
         icon: <Globe width={18} />,
+      },
+      {
+        name: "Embeds",
+        href: "/embeds",
+        isActive: urlSegments[0] === "embeds",
+        icon: <Code2 width={18} />,
       },
       {
         name: "Github",
