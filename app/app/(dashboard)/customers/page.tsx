@@ -7,6 +7,12 @@ export default function CustomersList({ params }: { params: { id: string } }) {
               All Customers
             </h1>
           </div>
+
+
+        <div className="flex flex-col space-y-2">
+          <h2>Your active and past customers</h2>
+        </div>
+
         </div>
       </div>
     );
