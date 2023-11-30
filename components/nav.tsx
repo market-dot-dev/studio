@@ -101,9 +101,9 @@ export default function Nav({ children }: { children: ReactNode }) {
         icon: <Users width={18} />,
       },
       {
-        name: "Tiers and Services",
-        href: "/tiers",
-        isActive: urlSegments[0] === "tiers",
+        name: "Services",
+        href: "/services",
+        isActive: urlSegments[0] === "services",
         icon: <KanbanSquare width={18} />,
       },
       {
