@@ -12,10 +12,7 @@ export default function HomePage() {
         className="w-48"
       />
       <h1 className="text-white">
-        Edit this page on{" "}
-        <InlineSnippet className="ml-2 bg-blue-900 text-blue-100">
-          app/home/page.tsx
-        </InlineSnippet>
+        Gitwallet (Alpha)
       </h1>
     </div>
   );
