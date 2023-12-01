@@ -131,13 +131,13 @@ export default function Nav({ children }: { children: ReactNode }) {
       },
       {
         name: "Embeds",
-        href: "/embeds",
+        href: "/channels/embeds",
         isActive: urlSegments[0] === "embeds",
         icon: <Code2 width={18} />,
       },
       {
         name: "Github",
-        href: "/github",
+        href: "/channels/github",
         isActive: urlSegments[0] === "github",
         icon: <Github width={18} />,
       },
