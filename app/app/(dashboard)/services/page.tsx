@@ -9,7 +9,7 @@ export default function Tiers({ params }: { params: { id: string } }) {
         </div>
 
         <div className="flex flex-col space-y-2">
-          <h2>Manage your support tiers and services. We've added a few to get you started.</h2>
+          <h2>Manage your support tiers and services. We&apos;ve added a few to get you started.</h2>
         </div>
 
       </div>

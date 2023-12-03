@@ -67,7 +67,7 @@ export default function TemplateEditor({siteId, content: initialContent} : {site
                 theme="vs-dark"
                 value={content}
                 onChange={(value) => setContent(value ?? '')}
-                options={{ language: 'javascript', jsx: true }}
+                options={{ language: 'javascript' }}
                 onMount={handleEditorDidMount}
             />
         </>
