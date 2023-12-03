@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import Posts from "@/components/posts";
 import CreatePostButton from "@/components/create-post-button";
-
+import TemplateEditor from "@/components/template-editor";
 export default async function SitePosts({
   params,
 }: {
@@ -17,7 +17,13 @@ export default async function SitePosts({
     where: {
       id: decodeURIComponent(params.id),
     },
+    include: {
+      pages: {
+        take: 1, // Retrieve only the first page
+      },
+    },
   });
+  
 
   if (!data || data.userId !== session.user.id) {
     notFound();
@@ -29,9 +35,9 @@ export default async function SitePosts({
     <>
       <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
         <div className="flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
-          <h1 className="w-60 truncate font-cal text-xl font-bold dark:text-white sm:w-auto sm:text-3xl">
+          {/* <h1 className="w-60 truncate font-cal text-xl font-bold dark:text-white sm:w-auto sm:text-3xl">
             All Posts for {data.name}
-          </h1>
+          </h1> */}
           <a
             href={
               process.env.NEXT_PUBLIC_VERCEL_ENV
@@ -45,9 +51,11 @@ export default async function SitePosts({
             {url} ↗
           </a>
         </div>
-        <CreatePostButton />
+        {/* <CreatePostButton /> */}
       </div>
-      <Posts siteId={decodeURIComponent(params.id)} />
+      <TemplateEditor siteId={params.id} content={data.pages.length ? data.pages[0].content : ''} />
+      
+      {/* <Posts siteId={decodeURIComponent(params.id)} /> */}
     </>
   );
 }

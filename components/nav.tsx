@@ -99,7 +99,7 @@ export default function Nav({ children }: { children: ReactNode }) {
           icon: <ArrowLeft width={18} />,
         },
         {
-          name: "Posts",
+          name: "Site Content",
           href: `/site/${id}`,
           isActive: segments.length === 2,
           icon: <Newspaper width={18} />,
@@ -145,12 +145,13 @@ export default function Nav({ children }: { children: ReactNode }) {
         isActive: segments.length === 0,
         icon: <LayoutDashboard width={18} />,
       },
-      {
+      ...(siteId ? 
+      [{
         name: "Support Site",
         href: `/site/${siteId}`,
         isActive: segments[0] === "site",
         icon: <Globe width={18} />,
-      },
+      }] : []),
       {
         name: "Settings",
         href: "/settings",

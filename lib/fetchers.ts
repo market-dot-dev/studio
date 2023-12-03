@@ -12,7 +12,12 @@ export async function getSiteData(domain: string) {
     async () => {
       return prisma.site.findUnique({
         where: subdomain ? { subdomain } : { customDomain: domain },
-        include: { user: true },
+        include: { 
+          user: true,
+          pages: {
+            take: 1, // Retrieve only the first page
+          }
+        }
       });
     },
     [`${domain}-metadata`],

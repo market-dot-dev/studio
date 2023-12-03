@@ -106,9 +106,21 @@ model Site {
   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId        String?
   posts         Post[]
+  pages         Page[]
 
   @@index([userId])
 }
+
+model Page {
+  id         String   @id @default(cuid())
+  title      String?
+  content    String   @db.Text // Store JSX syntax here
+  siteId     String
+  site       Site?     @relation(fields: [siteId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
 
 model Example {
   id            Int     @id @default(autoincrement())

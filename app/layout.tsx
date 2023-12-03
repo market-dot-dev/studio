@@ -4,6 +4,8 @@ import { Analytics } from "@vercel/analytics/react";
 import { Providers } from "./providers";
 import { Metadata } from "next";
 import { cn } from "@/lib/utils";
+import '@radix-ui/themes/styles.css';
+
 
 const title =
   "Platforms Starter Kit – The all-in-one starter kit for building multi-tenant applications.";
