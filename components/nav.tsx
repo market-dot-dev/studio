@@ -34,14 +34,6 @@ export default function Nav({ children }: { children: ReactNode }) {
 
   const user = session?.user as any;
 
-  // useEffect(() => {
-  //   if (segments[0] === "post" && id) {
-  //     getSiteFromPostId(id).then((id) => {
-  //       setSiteId(id);
-  //     });
-  //   }
-  // }, [segments, id]);
-
   useEffect(() => {
     if (user?.id)
       getOnlySiteFromUserId(user.id).then((site) => {
@@ -106,13 +98,6 @@ export default function Nav({ children }: { children: ReactNode }) {
         isActive: urlSegments.length === 0,
         icon: <LayoutDashboard width={18} />,
       },
-      ...(siteId ? 
-      [{
-        name: "Support Site",
-        href: `/site/${siteId}`,
-        isActive: urlSegments[0] === "site",
-        icon: <Globe width={18} />,
-      }] : []),
       {
         name: "Customers",
         href: "/customers",
@@ -142,12 +127,13 @@ export default function Nav({ children }: { children: ReactNode }) {
         href: "",
         isDivider: true,
       },
-      {
+      ...(siteId ? 
+      [{
         name: "Your Site",
-        href: "/sites",
-        isActive: urlSegments[0] === "sites",
+        href: `/site/${siteId}`,
+        isActive: urlSegments[0] === "site",
         icon: <Globe width={18} />,
-      },
+      }] : []),
       {
         name: "Embeds",
         href: "/channels/embeds",

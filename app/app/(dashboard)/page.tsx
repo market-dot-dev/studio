@@ -6,7 +6,7 @@ import Link from "next/link";
 import PlaceholderCard from "@/components/placeholder-card";
 
 
-export default function Overview() {
+export default async function Overview() {
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
