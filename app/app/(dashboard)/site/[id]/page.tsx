@@ -1,9 +1,11 @@
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import Posts from "@/components/posts";
-import CreatePostButton from "@/components/create-post-button";
-import TemplateEditor from "@/components/template-editor";
+
+// import CreatePostButton from "@/components/create-post-button";
+import CreatePageButton from "@/components/create-page-button";
+
+import Pages from "@/components/pages";
 export default async function SitePosts({
   params,
 }: {
@@ -18,13 +20,11 @@ export default async function SitePosts({
       id: decodeURIComponent(params.id),
     },
     include: {
-      pages: {
-        take: 1, // Retrieve only the first page
-      },
+      pages: true
     },
   });
   
-
+  
   if (!data || data.userId !== session.user.id) {
     notFound();
   }
@@ -51,11 +51,11 @@ export default async function SitePosts({
             {url} ↗
           </a>
         </div>
-        {/* <CreatePostButton /> */}
-      </div>
-      <TemplateEditor siteId={params.id} content={data.pages.length ? data.pages[0].content : ''} />
       
-      {/* <Posts siteId={decodeURIComponent(params.id)} /> */}
+      </div>
+      <CreatePageButton />
+      <Pages pages={data.pages} subdomain={data.subdomain} homepageId={data.homepageId ?? null} />
+      
     </>
   );
 }
