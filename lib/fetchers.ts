@@ -10,15 +10,36 @@ export async function getSiteData(domain: string) {
 
   return await unstable_cache(
     async () => {
-      return prisma.site.findUnique({
+      const site = await prisma.site.findUnique({
         where: subdomain ? { subdomain } : { customDomain: domain },
         include: { 
           user: true,
-          pages: {
-            take: 1, // Retrieve only the first page
-          }
+          // pages: {
+          //   take: 1, // Retrieve only the first page
+          // }
         }
       });
+      if (!site) {
+        return null; // or handle the case where the site doesn't exist
+      }
+    
+      // Now, get the homepage using the homepageId
+      let homepage = null;
+      if (site.homepageId) {
+        homepage = await prisma.page.findUnique({
+          where: { id: site.homepageId }
+        });
+      } else {
+        homepage = await prisma.page.findFirst({
+          where: {
+            siteId: site.id,
+          },
+        });
+      }
+      return {
+        ...site,
+        homepage: homepage,
+      };
     },
     [`${domain}-metadata`],
     {
@@ -26,6 +47,47 @@ export async function getSiteData(domain: string) {
       tags: [`${domain}-metadata`],
     },
   )();
+}
+
+export async function getSitePage(domain: string, slug: string | undefined) {
+  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
+    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
+    : null;
+
+    return await unstable_cache(
+      async () => {
+        // First, get the site
+        const site = await prisma.site.findUnique({
+          where: subdomain ? { subdomain } : { customDomain: domain },
+          include: { user: true }
+        });
+
+        if (!site) {
+          return null; // or handle the case where the site doesn't exist
+        }
+
+        // Now, get the specific page by slug
+        const page = await prisma.page.findFirst({
+          where: { 
+            siteId: site.id,
+            slug: slug
+          }
+        });
+
+        return {
+          ...site,
+          page: page,
+        };
+        
+      },
+      [`${domain}-metadata`],
+      {
+        revalidate: 900,
+        tags: [`${domain}-metadata`],
+      },
+    )();
+  
+
 }
 
 export async function getPostsForSite(domain: string) {

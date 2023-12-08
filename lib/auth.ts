@@ -64,12 +64,23 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     createUser: async ({user}: {user: any}) => {
-      console.log('creating user')
+      // console.log('creating user')
       if (!user) {
         return;
       }
+      const pageData = {
+        title: "Welcome",
+        slug: 'index',
+        content: "<h1>Welcome to our homepage</h1>",
+        user: {
+          connect: {
+            id: user.id,
+          }
+        }
+        // other page fields...
+      };
       // You can use this information to perform additional actions in your database
-      await prismaClient.site.create({
+      const site = await prismaClient.site.create({
         data: {
           name: 'Support Website',
           description: 'Support Website Description',
@@ -79,7 +90,25 @@ export const authOptions: NextAuthOptions = {
               id: user.id,
             },
           },
+          pages: {
+            create: [pageData]
+          }
         },
+        include: {
+          pages: true // Include the pages in the result
+        }
+      });
+
+      const homepageId = site.pages[0].id;
+
+      // Update the site to set the homepageId
+      await prisma.site.update({
+        where: {
+          id: site.id
+        },
+        data: {
+          homepageId: homepageId
+        }
       });
     },
   },

@@ -202,8 +202,6 @@ export const updateSite = withSiteAuth(
   },
 );
 
-
-
 export const getSiteFromPostId = async (postId: string) => {
   const post = await prisma.post.findUnique({
     where: {
@@ -224,6 +222,92 @@ export const getOnlySiteFromUserId = async (userId: string) => {
   });
   return site;
 }
+
+export const createPage = withSiteAuth(async (_: FormData, site: Site) => {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+  const response = await prisma.page.create({
+    data: {
+      siteId: site.id,
+      userId: session.user.id,
+    },
+  });
+
+  // await revalidateTag(
+  //   `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+  // );
+  // site.customDomain && (await revalidateTag(`${site.customDomain}-posts`));
+
+  return response;
+});
+
+// creating a separate function for this because we're not using FormData
+export const updatePage = async (data: Post, willBeHome: boolean, isHome: boolean) => {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+  const page = await prisma.page.findUnique({
+    where: {
+      id: data.id,
+    },
+    include: {
+      site: true,
+    },
+  });
+  if (!page || page.userId !== session.user.id) {
+    return {
+      error: "Page not found",
+    };
+  }
+  try {
+    const response = await prisma.page.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        title: data.title,
+        slug: data.slug,
+        content: data.content,
+      },
+    });
+
+    if(willBeHome && !isHome) {
+      await prisma.site.update({
+        where: {
+          id: page.siteId
+        },
+        data: {
+          homepageId: data.id
+        }
+      })
+    }
+
+    // await revalidateTag(
+    //   `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+    // );
+    // await revalidateTag(
+    //   `${post.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-${post.slug}`,
+    // );
+
+    // // if the site has a custom domain, we need to revalidate those tags too
+    // post.site?.customDomain &&
+    //   (await revalidateTag(`${post.site?.customDomain}-posts`),
+    //   await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
+
+    return response;
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};
 
 export const createPost = withSiteAuth(async (_: FormData, site: Site) => {
   const session = await getSession();
