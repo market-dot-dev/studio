@@ -1,15 +1,23 @@
 import tiers from './support-tiers';
 import PageHeading from '@/components/common/page-heading';
-
+import PrimaryButton from '@/components/common/primary-button';
 export default function Tiers() {
+
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
-      <PageHeading title="Your Active Tiers" />
+    <div className="flex max-w flex-col space-y-12 p-8">
+      <div className="flex justify-between w-full">
+          <div className="flex flex-row">
+            <PageHeading title="Your Active Tiers" />
+          </div>
+          <div className="flex flex-row">
+              <PrimaryButton label="New Tier" href="/services/tiers/new" />
+          </div>
+      </div>
 
       <div className="flex flex-col space-y-6">
-        <section className="bg-white dark:bg-gray-900">
+        <section>
           <div className="mx-auto max-w-screen-xl lg:py-4">
-            <div className="space-y-8 lg:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
+            <div className="space-y-8 md:grid lg:grid-cols-3 sm:gap-6 xl:gap-10 lg:space-y-0">
               {tiers.map((tier, index) => (
                 <div key={index} className="flex flex-col p-6 mx-auto max-w-lg text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
                   <h3 className="mb-2 text-2xl font-semibold">{tier.name}</h3>
@@ -26,8 +34,7 @@ export default function Tiers() {
                       </li>
                     ))}
                   </ul>
-                  
-                  <button type="button" disabled className="px-3  py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800  disabled:bg-gray-300 disabled:cursor-not-allowed">Get Started</button>
+                  <button type="button" disabled className="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800  disabled:bg-gray-300 disabled:cursor-not-allowed">Get Started</button>
                 </div>
               ))}
             </div>
