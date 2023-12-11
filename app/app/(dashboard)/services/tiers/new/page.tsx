@@ -5,6 +5,7 @@ import PageHeading from '@/components/common/page-heading';
 export default function NewTier() {
   const [tierName, setTierName] = useState('');
   const [tierTagline, setTierTagline] = useState('');
+  const [tierDescription, setTierDescription] = useState('');
 
   const handleSubmit = async () => {
     try {
@@ -17,6 +18,7 @@ export default function NewTier() {
         body: JSON.stringify({
           tierName,
           tierTagline,
+          tierDescription,
         }),
       });
 
@@ -71,6 +73,8 @@ export default function NewTier() {
               rows={4}
               className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
               placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
+              value={tierDescription}
+              onChange={(e) => setTierDescription(e.target.value)}
             ></textarea>
           </div>
 

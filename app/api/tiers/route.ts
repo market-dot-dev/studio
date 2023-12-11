@@ -8,14 +8,18 @@ export async function GET() {
 
 // Create a Tier
 export async function POST(req: Request) {
-    const { name, description } = await req.body.json();
+    const { tierName, tierDescription, tierTagline } = await req.json();
 
     const tier = await prisma.tier.create({
         data: {
-            name,
-            description,
-        },
+            userId: "clpwlg6j90000l5086ubsbv1c",
+            name: tierName,
+            description: tierDescription,
+            tagline: tierTagline
+        }
     });
 
-    return NextResponse.json({ response: tier });
+    console.log("Tier created: ", tier)
+
+    return NextResponse.json({ testing: 'ok' });
 }

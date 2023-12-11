@@ -140,10 +140,10 @@ model Example {
 model Tier {
   id          String   @id @default(cuid())
   name        String
-  description String?  @db.Text
-  userId      String   // Foreign key to User model
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  description String?
+  tagline     String?
+  userId      String
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
