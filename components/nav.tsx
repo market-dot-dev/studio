@@ -22,26 +22,26 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { getOnlySiteFromUserId } from "@/lib/actions";
-import Image from "next/image";
-import { useSession } from 'next-auth/react'
+// import { getOnlySiteFromUserId } from "@/lib/actions";
+// import Image from "next/image";
+// import { useSession } from 'next-auth/react'
 
-export default function Nav({ children }: { children: ReactNode }) {
+export default function Nav({ children, siteId }: { children: ReactNode, siteId: string | null }) {
   const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
-  const { data: session, status } = useSession();
-  const [siteId, setSiteId] = useState<string | null>();
+  // const { data: session, status } = useSession();
+  // const [siteId, setSiteId] = useState<string | null>();
 
-  const user = session?.user as any;
+  // const user = session?.user as any;
 
-  useEffect(() => {
-    if (user?.id)
-      getOnlySiteFromUserId(user.id).then((site) => {
-        if( site?.id ) {
-          setSiteId(site.id);
-        }
-      });
-  }, [user])
+  // useEffect(() => {
+  //   if (user?.id)
+  //     getOnlySiteFromUserId(user.id).then((site) => {
+  //       if( site?.id ) {
+  //         setSiteId(site.id);
+  //       }
+  //     });
+  // }, [user])
 
   const tabs = useMemo(() => {
     if (urlSegments[0] === "site" && id) {
@@ -70,7 +70,35 @@ export default function Nav({ children }: { children: ReactNode }) {
           icon: <Settings width={18} />,
         },
       ];
-    } else if (urlSegments[0] === "post" && id) {
+    } 
+    else if(urlSegments[0] === "page" && siteId) {
+      return [
+        {
+          name: "Back to Site",
+          href: `/site/${siteId}`,
+          icon: <ArrowLeft width={18} />,
+        },
+        // {
+        //   name: "Site Content",
+        //   href: `/site/${id}`,
+        //   isActive: urlSegments.length === 2,
+        //   icon: <Newspaper width={18} />,
+        // },
+        {
+          name: "Analytics",
+          href: `/site/${siteId}/analytics`,
+          isActive: urlSegments.includes("analytics"),
+          icon: <BarChart3 width={18} />,
+        },
+        {
+          name: "Settings",
+          href: `/site/${siteId}/settings`,
+          isActive: urlSegments.includes("settings"),
+          icon: <Settings width={18} />,
+        },
+      ];
+    }
+    else if (urlSegments[0] === "post" && id) {
       return [
         {
           name: "Back to All Posts",

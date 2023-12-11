@@ -31,7 +31,16 @@ type DynamicComponentProps = {
   };
   
   // For recursively rendering elements
-  const renderElement = (element: Element, index : number): JSX.Element => {
+  const renderElement = (element: Element | Element[], index : number): JSX.Element => {
+    
+    // in case there are multiple root elements, wrap them in a fragment
+    if(Array.isArray(element)) {
+      
+      return (<>
+        {element.map((child, index) => renderElement(child as Element, index))}
+      </>)
+    } 
+
     if(!element?.tagName) return <></>;
     const tag = element.tagName.toLowerCase() as keyof JSX.IntrinsicElements;
     
@@ -52,7 +61,6 @@ type DynamicComponentProps = {
     if (element.children.length > 0) {
       return (
         <DynamicComponent tag={tag} className={className} key={index}>
-          
           {Array.from(element.children).map((child, index) => renderElement(child as Element, index as number))}
         </DynamicComponent>
       );
