@@ -1,6 +1,6 @@
 import tiers from './support-tiers';
 import PageHeading from '@/components/common/page-heading';
-import PrimaryButton from '@/components/common/primary-button';
+import PrimaryLinkButton from '@/components/common/primary-button';
 export default function Tiers() {
 
   return (
@@ -10,7 +10,7 @@ export default function Tiers() {
             <PageHeading title="Your Active Tiers" />
           </div>
           <div className="flex flex-row">
-              <PrimaryButton label="New Tier" href="/services/tiers/new" />
+              <PrimaryLinkButton label="New Tier" href="/services/tiers/new" />
           </div>
       </div>
 

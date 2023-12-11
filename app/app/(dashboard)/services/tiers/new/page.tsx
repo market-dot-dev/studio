@@ -6,6 +6,32 @@ export default function NewTier() {
   const [tierName, setTierName] = useState('');
   const [tierTagline, setTierTagline] = useState('');
 
+  const handleSubmit = async () => {
+    try {
+      // Make an API call to your backend server to save the form data
+      const response = await fetch('/api/tiers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          tierName,
+          tierTagline,
+        }),
+      });
+
+      if (response.ok) {
+        // Handle success
+        console.log('Form data saved successfully');
+      } else {
+        // Handle error
+        console.error('Failed to save form data');
+      }
+    } catch (error) {
+      console.error('An error occurred while saving form data', error);
+    }
+  };
+
   return (
     <div className="flex max-w-screen-xl flex-col p-8">
       <PageHeading title="New Tier" />
@@ -47,6 +73,14 @@ export default function NewTier() {
               placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
             ></textarea>
           </div>
+
+          <button 
+            type="button" 
+            className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
+            onClick={handleSubmit}
+          >
+                Save
+            </button>
         </div>
 
         {/* Preview Section */}
