@@ -185,8 +185,17 @@ export default function NewTier() {
           Add Pricing Packages
           Tier Status
           Current Customers
-          Turn this into Edit Tier Page too
 
+          */}
+
+          {/* MODELS TO CREATE:
+          
+          Tier
+          TierVersion
+          TierFeature
+          PricingPackage
+          Customer
+          
           */}
 
           <button 
