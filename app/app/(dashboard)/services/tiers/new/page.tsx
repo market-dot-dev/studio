@@ -2,12 +2,20 @@
 import { useState } from 'react';
 import PageHeading from '@/components/common/page-heading';
 import PrimaryLinkButton from '@/components/common/primary-button';
+import { Divider, Card, Accordion, AccordionBody, AccordionHeader, AccordionList } from '@tremor/react';
+import activeTierFeatures from './activeTierFeatures';
+import pastTierFeatures from './pastTierFeatures';
 
 export default function NewTier() {
   const [tierName, setTierName] = useState('');
   const [tierTagline, setTierTagline] = useState('');
   const [tierDescription, setTierDescription] = useState('');
   const [tierPrice, setTierPrice] = useState('');
+
+  // Tier Version States
+  const [isCurrentVersion, setIsCurrentVersion] = useState(false);
+
+
 
   const handleSubmit = async () => {
     try {
@@ -81,102 +89,170 @@ export default function NewTier() {
           </div>
 
           <div className="mb-4">
-            <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Price</label>
-            <input
-              id="tierPrice"
-              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-              placeholder=""
-              required
-              value={tierPrice}
-              onChange={(e) => setTierPrice(e.target.value)}
-            />
+            <Divider>
+              Tier Versions
+            </Divider>
           </div>
 
-          <div className="mb-4">
-            <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Features</label>
-            <div className="flex flex-col space-y-2">
-              <div className="flex flex-row items-center space-x-2">
-                <div className="flex flex-row items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="feature1"
-                    name="feature1"
-                    value="feature_response_time"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                  />
-                  <label
-                    htmlFor="feature1"
-                    className="block mb-0.5 text-md font-medium text-gray-900"
-                  >
-                    6 Hour Response Time
-                  </label>
-                </div>
-              </div>
+          <Card>
 
-              <div className="flex flex-row items-center space-x-2">
-                <div className="flex flex-row items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="feature2"
-                    name="feature2"
-                    value="feature_prioritized_bugs"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                  />
-                  <label
-                    htmlFor="feature2"
-                    className="block mb-0.5 text-md font-medium text-gray-900"
-                  >
-                    Prioritized Bug Fixes
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex flex-row items-center space-x-2">
-                <div className="flex flex-row items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="feature3"
-                    name="feature3"
-                    value="feature_dedicated_channel"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                  />
-                  <label
-                    htmlFor="feature3"
-                    className="block mb-0.5 text-md font-medium text-gray-900"
-                  >
-                    Dedicated Channel
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex flex-row items-center space-x-2">
-                <div className="flex flex-row items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="feature4"
-                    name="feature4"
-                    value="feature_live_support"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
-                  />
-                  <label
-                    htmlFor="feature4"
-                    className="block mb-0.5 text-md font-medium text-gray-900"
-                  >
-                    Live Support Calls 
-                  </label>
-                </div>
-              </div>
-
-              <div className="flex flex-row items-center space-x-2">
-                <input type="checkbox" id="feature4" name="feature4" value="feature4"                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
- />
-                <input 
-                className="bg-gray-50 border border-gray-300 text-gray-900 text-xs rounded-md focus:ring-blue-500 focus:border-blue-500 block p-1"
-              placeholder="Add Your Own" />
-              </div>
+            <div className="mb-4">
+              Current Version
             </div>
-            
-          </div>
+
+            <div className="mb-4">
+              <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Price</label>
+              <input
+                id="tierPrice"
+                className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                placeholder=""
+                required
+                value={tierPrice}
+                onChange={(e) => setTierPrice(e.target.value)}
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Features</label>
+              <div className="flex flex-col space-y-2">
+                {activeTierFeatures.map((feature) => (
+                  <div key={feature.id} className="flex flex-row items-center space-x-2">
+                    <div className="flex flex-row items-center space-x-2">
+                      <input
+                        type="checkbox"
+                        id={feature.id}
+                        name={feature.id}
+                        value={feature.value}
+                        checked={feature.checked}
+                        disabled={feature.disabled}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                      />
+                      <label
+                        htmlFor={feature.id}
+                        className="block mb-0.5 text-md font-medium text-gray-900"
+                      >
+                        {feature.name}
+                      </label>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+
+            </div>
+
+          </Card>
+
+
+
+          <AccordionList className="max-w-md mx-auto">
+            <Accordion>
+              <AccordionHeader>Version 2</AccordionHeader>
+              <AccordionBody>
+
+                <div>
+
+                  <div className="mb-4">
+                    There are 24 customers on this Tier version. This version was discontinued on July 24, 2023. </div>
+
+                  <div className="mb-4">
+                    <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Price</label>
+                    <input
+                      id="tierPrice"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                      placeholder=""
+                      disabled
+                      required
+                      value="100"
+                      onChange={(e) => setTierPrice(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Features</label>
+                    <div className="flex flex-col space-y-2">
+                      {pastTierFeatures.map((feature) => (
+                        <div key={feature.id} className="flex flex-row items-center space-x-2">
+                          <div className="flex flex-row items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={feature.id}
+                              name={feature.id}
+                              value={feature.value}
+                              checked={feature.checked}
+                              disabled={feature.disabled}
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                            />
+                            <label
+                              htmlFor={feature.id}
+                              className="block mb-0.5 text-md font-medium text-gray-900"
+                            >
+                              {feature.name}
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+
+              </AccordionBody>
+            </Accordion>
+            <Accordion>
+              <AccordionHeader>Version 1</AccordionHeader>
+              <AccordionBody>
+
+                <div>
+
+                  <div className="mb-4">
+                    There are 24 customers on this Tier version. This version was discontinued on July 24, 2023. </div>
+
+                  <div className="mb-4">
+                    <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Price</label>
+                    <input
+                      id="tierPrice"
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                      placeholder=""
+                      disabled
+                      required
+                      value={tierPrice}
+                      onChange={(e) => setTierPrice(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Features</label>
+                    <div className="flex flex-col space-y-2">
+                      {activeTierFeatures.map((feature) => (
+                        <div key={feature.id} className="flex flex-row items-center space-x-2">
+                          <div className="flex flex-row items-center space-x-2">
+                            <input
+                              type="checkbox"
+                              id={feature.id}
+                              name={feature.id}
+                              value={feature.value}
+                              checked={feature.checked}
+                              disabled={feature.disabled}
+                              className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+                            />
+                            <label
+                              htmlFor={feature.id}
+                              className="block mb-0.5 text-md font-medium text-gray-900"
+                            >
+                              {feature.name}
+                            </label>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                </div>
+
+              </AccordionBody>
+            </Accordion>
+          </AccordionList>
 
           {/* To DO: 
           
@@ -198,62 +274,62 @@ export default function NewTier() {
           
           */}
 
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
             onClick={handleSubmit}
           >
-                Save
-            </button>
+            Save
+          </button>
         </div>
 
         {/* Preview Section */}
 
-          <div className="md:w-[300px] text-center" >
-              <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
-              <div className="bg-white border-2 border-gray-300 shadow p-4 rounded-lg">
-                <div className="text-center">
-                    <h2 className={`text-lg font-bold ${tierName ? 'text-gray-800' : 'text-gray-300'}`}>{tierName || "Premium"}</h2>
-                    <p className={`text-base my-4 ${tierTagline ? 'text-gray-600' : 'text-gray-300'}`}>{tierTagline || "Great for startups!"}</p>
-                    {/* <h3 className="text-base text-gray-500">{tierTagline}</h3> */}
-                </div>
+        <div className="md:w-[300px] text-center" >
+          <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
+          <div className="bg-white border-2 border-gray-300 shadow p-4 rounded-lg">
+            <div className="text-center">
+              <h2 className={`text-lg font-bold ${tierName ? 'text-gray-800' : 'text-gray-300'}`}>{tierName || "Premium"}</h2>
+              <p className={`text-base my-4 ${tierTagline ? 'text-gray-600' : 'text-gray-300'}`}>{tierTagline || "Great for startups!"}</p>
+              {/* <h3 className="text-base text-gray-500">{tierTagline}</h3> */}
+            </div>
 
-                <div>
-                  <ul className="text-center">
-                    <li className="flex items-center space-x-3">
-                      <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-                      <span className="text-sm">Feature 1</span>
-                    </li>
+            <div>
+              <ul className="text-center">
+                <li className="flex items-center space-x-3">
+                  <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                  <span className="text-sm">Feature 1</span>
+                </li>
 
-                    <li className="flex items-center space-x-3">
-                      <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-                      <span className="text-sm">Feature 2</span>
-                      </li>
+                <li className="flex items-center space-x-3">
+                  <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                  <span className="text-sm">Feature 2</span>
+                </li>
 
-                    <li className="flex items-center space-x-3">
-                      <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-                      <span className="text-sm">Feature 3</span>
-                      </li>
+                <li className="flex items-center space-x-3">
+                  <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                  <span className="text-sm">Feature 3</span>
+                </li>
 
-                    <li className="flex items-center space-x-3">
-                      <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-                      <span className="text-sm">Feature 4</span>
-                      </li>
-                    </ul>
+                <li className="flex items-center space-x-3">
+                  <svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                  <span className="text-sm">Feature 4</span>
+                </li>
+              </ul>
 
-                    <div className="flex justify-center items-baseline my-4">
-                      <span className="mr-2 text-3xl font-extrabold">${tierPrice}</span>
-                      <span className="text t-gray-500 dark:text-gray-400">/ month</span>
-                    </div>
-
-                    <PrimaryLinkButton 
-                      label={tierName ? "Get Started with "+ tierName : "Get Started"}
-                    href="" />
-                </div>
+              <div className="flex justify-center items-baseline my-4">
+                <span className="mr-2 text-3xl font-extrabold">${tierPrice}</span>
+                <span className="text t-gray-500 dark:text-gray-400">/ month</span>
               </div>
 
+              <PrimaryLinkButton
+                label={tierName ? "Get Started with " + tierName : "Get Started"}
+                href="" />
+            </div>
           </div>
-          
+
+        </div>
+
       </div>
     </div>
   );
