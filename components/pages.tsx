@@ -12,6 +12,7 @@ export default function Pages({pages, homepageId, subdomain} : { pages : any, ho
 					<Table.ColumnHeaderCell>Page name</Table.ColumnHeaderCell>
 					<Table.ColumnHeaderCell>View</Table.ColumnHeaderCell>
 					<Table.ColumnHeaderCell>Is Home</Table.ColumnHeaderCell>
+					
 					<Table.ColumnHeaderCell></Table.ColumnHeaderCell>
 				</Table.Row>
 			</Table.Header>
@@ -19,18 +20,26 @@ export default function Pages({pages, homepageId, subdomain} : { pages : any, ho
 				{pages.map((page : any) => (
 					<Table.Row key={page.id} >
 						<Table.Cell>{page.title}</Table.Cell>
-						<Table.Cell><a
-							href={
-							process.env.NEXT_PUBLIC_VERCEL_ENV
-								? `https://${url}` + (page.id === homepageId ? '' : `/${page.slug}`)
-								: `http://${subdomain}.localhost:3000` + (page.id === homepageId ? '' : `/${page.slug}`)
-							}
-							target="_blank"
-							rel="noreferrer"
-							className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
-						>
-							{url + (page.id === homepageId ? '' : `/${page.slug}`)} ↗
-						</a></Table.Cell>
+						<Table.Cell>
+							{ page.draft ? (
+								<span className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700">
+									Draft
+								</span>
+							) : (
+								<a
+									href={
+									process.env.NEXT_PUBLIC_VERCEL_ENV
+										? `https://${url}` + (page.id === homepageId ? '' : `/${page.slug}`)
+										: `http://${subdomain}.localhost:3000` + (page.id === homepageId ? '' : `/${page.slug}`)
+									}
+									target="_blank"
+									rel="noreferrer"
+									className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
+								>
+									{url + (page.id === homepageId ? '' : `/${page.slug}`)} ↗
+								</a>
+							)}
+							</Table.Cell>
 						<Table.Cell>{page.id === homepageId ? <CheckIcon /> : null}</Table.Cell>
 						<Table.Cell><Link href={`/page/${page.id}`}>Edit</Link></Table.Cell>
 					</Table.Row>

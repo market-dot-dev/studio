@@ -16,6 +16,7 @@ export default async function PagePage({ params }: { params: { id: string } }) {
     include: {
       site: {
         select: {
+          id: true,
           subdomain: true,
           homepageId: true
         },
@@ -23,13 +24,12 @@ export default async function PagePage({ params }: { params: { id: string } }) {
     },
   });
 
-  console.log('page', data);
 
     if (!data || data.userId !== session.user.id) {
     notFound();
   }
   
   return (
-    <PageEditor siteId={params.id} page={data} isHome={ data.site?.homepageId === data.id} />
+    <PageEditor siteId={data?.site?.id ?? ''} page={data} subdomain={data?.site?.subdomain ?? null} homepageId={ data.site?.homepageId || null} />
   )
 }

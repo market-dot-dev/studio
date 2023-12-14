@@ -116,7 +116,7 @@ model Page {
   siteId    String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  slug      String?  @default(cuid())
+  slug      String?
   userId    String?
   draft     Boolean  @default(true)
   site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
@@ -140,10 +140,9 @@ model Example {
 model Tier {
   id          String   @id @default(cuid())
   name        String
-  description String?  @db.Text
-  userId      String   // Foreign key to User model
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
+  description String?
+  userId      String
   createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  updatedAt   DateTime
+  User        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

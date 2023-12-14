@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Post, Site } from "@prisma/client";
+import { Post, Page, Site } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { withPostAuth, withSiteAuth } from "./auth";
 import { getSession } from "@/lib/auth";
@@ -246,7 +246,7 @@ export const createPage = withSiteAuth(async (_: FormData, site: Site) => {
 });
 
 // creating a separate function for this because we're not using FormData
-export const updatePage = async (data: Post, willBeHome: boolean, isHome: boolean) => {
+export const updatePage = async (data: Page, willBeHome: boolean, isHome: boolean) => {
   const session = await getSession();
   if (!session?.user.id) {
     return {
@@ -274,6 +274,7 @@ export const updatePage = async (data: Post, willBeHome: boolean, isHome: boolea
       data: {
         title: data.title,
         slug: data.slug,
+        draft: data.draft,
         content: data.content,
       },
     });
@@ -301,6 +302,52 @@ export const updatePage = async (data: Post, willBeHome: boolean, isHome: boolea
     //   (await revalidateTag(`${post.site?.customDomain}-posts`),
     //   await revalidateTag(`${post.site?.customDomain}-${post.slug}`));
 
+    return response;
+  } catch (error: any) {
+    return {
+      error: error.message,
+    };
+  }
+};
+
+export const deletePage = async ( page: Page) => {
+  try {
+    const session = await getSession();
+    if (!session?.user.id) {
+      return {
+        error: "Not authenticated",
+      };
+    }
+    const existing = await prisma.page.findUnique({
+      where: {
+        id: page.id,
+      },
+      include: {
+        site: true,
+      },
+    });
+
+    if (!existing || existing.userId !== session.user.id) {
+      return {
+        error: "Page not found",
+      };
+    }
+
+    if(existing?.site?.homepageId && existing.site.homepageId === existing.id) {
+      return {
+        error: "Cannot delete a homepage",
+      };
+    }
+
+    const response = await prisma.page.delete({
+      where: {
+        id: page.id,
+      },
+      select: {
+        siteId: true,
+      },
+    });
+    
     return response;
   } catch (error: any) {
     return {
