@@ -5,10 +5,12 @@ import { Flex, Box, Text, TextField, Checkbox } from "@radix-ui/themes";
 import { Button, Alert } from 'flowbite-react';
 import { EyeOpenIcon, CodeIcon, CheckIcon } from "@radix-ui/react-icons";
 import { useCallback, useEffect, useState } from "react";
-import { updatePage } from "@/lib/actions";
+import { updatePage, deletePage } from "@/lib/actions";
 import componentsMap from "./site";
 import renderElement from "./site/page-renderer";
 import { set } from "date-fns";
+import { useRouter } from 'next/navigation'
+import { is } from "date-fns/locale";
 
 
 function TimedAlert({message, timeout = 0, color = 'info', refresh} : {message: string, timeout?: number, color?: string, refresh: boolean}) {
@@ -36,15 +38,19 @@ function TimedAlert({message, timeout = 0, color = 'info', refresh} : {message: 
     )
 }
 
-export default function PageEditor({siteId, page, isHome } : {siteId: string, page: any, isHome: boolean}) : JSX.Element {
+export default function PageEditor({siteId, page, homepageId, subdomain } : {siteId: string, page: any, homepageId: string | null, subdomain: string | null}) : JSX.Element {
     
     // const [content, setContent] = useState(page.content ?? '');
+    const isHome = page.id === homepageId;
 
     const [data, setData] = useState<any>(page);
+
+    const [slugVirgin, setSlugVirgin] = useState<boolean>(true);
 
     const [editorRef, setEditorRef] = useState<any>(null);
 
     const [inProgress, setInprogress] = useState<boolean>(false);
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
 
     const [status, setStatus] = useState<any>({message: '', type: 'info'});
 
@@ -60,6 +66,8 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
     const [titleError, setTitleError] = useState<string | null>(null);
     const [slugError, setSlugError] = useState<string | null>(null);
 
+    const router = useRouter();
+
     function handleEditorDidMount(editor : any, monaco : any) {
         setEditorRef(editor);
     }
@@ -74,6 +82,18 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
        
     }, [editorRef]);
 
+
+    useEffect(() => {
+        
+        if(!slugVirgin) return;
+        if(!data.title) return;
+        if(data.slug) return;
+
+        const slug = data.title.toLowerCase().replace(/ /g, '-').replace(/[^a-z0-9-]/g, '');
+        setData({...data, slug});
+
+    }, [data.title])
+
     useEffect(() => {
       
         if(!page.content) setIsPreview(false);
@@ -85,8 +105,8 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
             try {
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(data.content, 'text/html');
-                const rootElement = doc.body.firstChild;
-                setPreviewElement(rootElement);
+                const rootElement = doc.body.children;
+                setPreviewElement(Array.from(rootElement));
             } catch (error) {
                 console.log(error);
             }
@@ -132,7 +152,7 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
             
             setStatus({message: 'The page was succesfully saved', timeout: 3000});
         } catch (error) {
-            setStatus({message: 'An error occured while saving the page', type: 'error', timeout: 3000});
+            setStatus({message: 'An error occured while saving the page', color: 'error', timeout: 3000});
         } finally {   
             setForceStatusRefresh(!forceStatusRefresh);
         }
@@ -141,12 +161,65 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
         setInprogress(false);
     };
 
+    const doDeletePage = async () => {
+        if(inProgress) return;
+        setIsDeleting(true);
+        try {
+            const result = await deletePage( page ) as any;
+            
+            if(result.error) {
+                setStatus({message: result.error, color: 'red', timeout: 3000});
+            } else {
+                setStatus({message: 'The page was succesfully deleted', timeout: 3000});
+                router.push(`/site/${siteId}`);
+            }
+        } catch (error) {
+            setStatus({message: 'An error occured while deleting the page', color: 'red', timeout: 3000});
+        } finally {
+            setForceStatusRefresh(!forceStatusRefresh);
+        }
+        setIsDeleting(false);
+    }
+
     const saveButton = (<Button 
         disabled={inProgress}
         isProcessing={inProgress}
         onClick={saveContent}
         >Save</Button>)
 
+    const deleteButton =(<Button
+        disabled={inProgress || isDeleting}
+        isProcessing={isDeleting}
+        color="red"
+        onClick={doDeletePage}
+        >Delete</Button>)
+    
+    let previewLink = null;
+    if(subdomain) {
+        const url = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+        previewLink = (
+            <>
+                { page.draft ? (
+                    <span className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700">
+                        Draft
+                    </span>
+                ) : (
+                    <a
+                        href={
+                        process.env.NEXT_PUBLIC_VERCEL_ENV
+                            ? `https://${url}` + (page.id === homepageId ? '' : `/${page.slug}`)
+                            : `http://${subdomain}.localhost:3000` + (page.id === homepageId ? '' : `/${page.slug}`)
+                        }
+                        target="_blank"
+                        rel="noreferrer"
+                        className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
+                    >
+                        {url + (page.id === homepageId ? '' : `/${page.slug}`)} ↗
+                    </a>
+                )}
+            </>
+        )
+    }
     
     return (
         <>
@@ -154,7 +227,9 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
             
             { isPreview ?
                 <>
-                    <Flex justify="end">
+                    <Flex justify="between">
+                        <Box>{previewLink}</Box>
+                        <Box>{deleteButton}</Box>
                         <Box>
                             <Button.Group outline>
                                 <Button onClick={() => setIsPreview(false)}>
@@ -171,8 +246,9 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
                 </>
             : 
             <>
-                <Flex justify="end">
-                    
+                <Flex justify="between">
+                    <Box>{previewLink}</Box>
+                    <Box>{deleteButton}</Box>
                     <Box>
                         <Button.Group outline>
                             
@@ -210,6 +286,7 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
                                     defaultValue={data?.slug || ""}
                                     onChange={(e) => {
                                         setSlugError(null);
+                                        setSlugVirgin(false);
                                         setData({ ...data, slug: e.target.value })
                                     }}
                                     // Additional TextField props as needed
@@ -221,10 +298,19 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
                     <Box style={{ maxWidth: 300 }}>
                         <Text as="label" size="2">
                             <Flex gap="2" align="center">
+                                <input type="checkbox" checked={data.draft} onChange={(e) => {
+                                    setData({ ...data, draft: e.target.checked })
+                                }} /> Draft.
+                            </Flex>
+                        </Text>
+                    </Box>
+                    <Box style={{ maxWidth: 300 }}>
+                        <Text as="label" size="2">
+                            <Flex gap="2" align="center">
                                 { isCurrentlyHome ? <CheckIcon /> : 
                                 <input type="checkbox" checked={willBeHome} onChange={(e) => {
                                     setWillBeHome(e.target.checked)
-                                }} /> } Is homepage.
+                                }} /> } Set as homepage.
                             </Flex>
                         </Text>
                     </Box>
@@ -238,12 +324,11 @@ export default function PageEditor({siteId, page, isHome } : {siteId: string, pa
                     </Button.Group>
                 <Editor
                     height="90vh" // By default, it does not have a size
-                    defaultLanguage="javascript"
-                    defaultValue="// some comment"
+                    defaultLanguage="html"
+                    defaultValue=""
                     theme="vs-dark"
                     value={data.content}
                     onChange={(value) => setData((data : any) => ({ ...data, content: value}))}
-                    options={{ language: 'javascript' }}
                     onMount={handleEditorDidMount}
                 />
             </>
