@@ -9,17 +9,18 @@ export default function Pages({pages, homepageId, subdomain} : { pages : any, ho
 		<Table.Root>
 			<Table.Header>
 				<Table.Row>
-					<Table.ColumnHeaderCell>Page name</Table.ColumnHeaderCell>
-					<Table.ColumnHeaderCell>View</Table.ColumnHeaderCell>
-					<Table.ColumnHeaderCell>Is Home</Table.ColumnHeaderCell>
-					
+					<Table.ColumnHeaderCell>Title</Table.ColumnHeaderCell>
+					<Table.ColumnHeaderCell>Path</Table.ColumnHeaderCell>
+					<Table.ColumnHeaderCell>Status</Table.ColumnHeaderCell>
 					<Table.ColumnHeaderCell></Table.ColumnHeaderCell>
 				</Table.Row>
 			</Table.Header>
 			<Table.Body>
 				{pages.map((page : any) => (
+					page.id != homepageId ? (
 					<Table.Row key={page.id} >
 						<Table.Cell>{page.title}</Table.Cell>
+						<Table.Cell>/{page.slug}</Table.Cell>
 						<Table.Cell>
 							{ page.draft ? (
 								<span className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700">
@@ -40,9 +41,10 @@ export default function Pages({pages, homepageId, subdomain} : { pages : any, ho
 								</a>
 							)}
 							</Table.Cell>
-						<Table.Cell>{page.id === homepageId ? <CheckIcon /> : null}</Table.Cell>
+						{/* <Table.Cell>{page.id === homepageId ? <CheckIcon /> : null}</Table.Cell> */}
 						<Table.Cell><Link href={`/page/${page.id}`}>Edit</Link></Table.Cell>
 					</Table.Row>
+					) : null
 				))}
 			</Table.Body>
 
