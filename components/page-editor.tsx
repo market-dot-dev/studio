@@ -3,6 +3,7 @@
 import Editor from "@monaco-editor/react";
 import { Flex, Box, Text, TextField, Checkbox } from "@radix-ui/themes";
 import { Button, Alert } from 'flowbite-react';
+import { TextInput } from "@tremor/react";
 import { EyeOpenIcon, CodeIcon, CheckIcon } from "@radix-ui/react-icons";
 import { useCallback, useEffect, useState } from "react";
 import { updatePage, deletePage } from "@/lib/actions";
@@ -11,6 +12,9 @@ import renderElement from "./site/page-renderer";
 import { set } from "date-fns";
 import { useRouter } from 'next/navigation'
 import { is } from "date-fns/locale";
+
+import { Grid, Col, Card } from "@tremor/react";
+import DashboardCard from "./common/dashboard-card";
 
 
 function TimedAlert({message, timeout = 0, color = 'info', refresh} : {message: string, timeout?: number, color?: string, refresh: boolean}) {
@@ -223,8 +227,29 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
     
     return (
         <>
-            { status.message ? <TimedAlert {...status} refresh={forceStatusRefresh} /> : null }
+            <Grid numItems={12} className="gap-2">
+                <Col numColSpanMd={10}>
+                    <DashboardCard>
+                        <Text>Title1</Text>
+                    </DashboardCard>
+                </Col>
+
+                <Col numColSpanMd={2}>
+                    <DashboardCard>
+                        <Text>Page</Text>
+                        <Box>
+                            {deleteButton}
+                        </Box>
+
+                        
+                    </DashboardCard>
+                </Col>
+            </Grid>
+
             
+
+            { status.message ? <TimedAlert {...status} refresh={forceStatusRefresh} /> : null }
+
             { isPreview ?
                 <>
                     <Flex justify="between">

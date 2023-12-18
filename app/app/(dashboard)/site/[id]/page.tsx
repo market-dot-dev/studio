@@ -58,7 +58,6 @@ export default async function SitePosts({
           <div className="flex-column">
             <div>
               Title: {homepage?.title ?? "No Home Page Set"}
-
             </div>
 
             <div>
