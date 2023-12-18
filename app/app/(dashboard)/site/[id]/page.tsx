@@ -10,6 +10,8 @@ import CreatePageButton from "@/components/create-page-button";
 import Pages from "@/components/pages";
 import PageHeading from "@/components/common/page-heading";
 import PrimaryButton from "@/components/common/primary-button";
+import ExternalLink from "@/components/common/external-link";
+
 export default async function SitePosts({
   params,
 }: {
@@ -36,22 +38,6 @@ export default async function SitePosts({
   const url = `${siteData.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   const homepage = siteData.pages.find((page) => page.id === siteData.homepageId);
 
-  const linkToPreview = <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
-    <div className="flex flex-col items-center space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
-      <a
-        href={process.env.NEXT_PUBLIC_VERCEL_ENV
-          ? `https://${url}`
-          : `http://${siteData.subdomain}.localhost:3000`}
-        target="_blank"
-        rel="noreferrer"
-        className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
-      >
-        {url} ↗
-      </a>
-    </div>
-  </div>;
-
-
   return (
     <>
       <div className="flex justify-between w-full">
@@ -59,7 +45,7 @@ export default async function SitePosts({
           <PageHeading title="Site Content" />
         </div>
         <div className="flex flex-row">
-          {linkToPreview}
+          <ExternalLink subdomain={siteData.subdomain ?? ''} url={url} />
         </div>
       </div>
       
@@ -84,7 +70,12 @@ export default async function SitePosts({
             </div>
 
             <div>
-              {linkToPreview}
+              Path: 
+            {homepage?.slug}
+            </div>
+
+            <div>
+            <ExternalLink subdomain={siteData.subdomain ?? ''}  url={url} />
             </div>
 
           </div>
