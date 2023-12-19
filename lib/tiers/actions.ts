@@ -15,7 +15,7 @@ export const createTier = async ({ name, tagline, description, features }: { nam
 	}
 
 	// Map each feature text line to a TierFeature create operation
-	const featuresData = features.map(feature => ({
+	const featuresData = features.filter(feature => !feature.disconnect).map(feature => ({
 		where: { id: feature.id || "0" }, // If id is null, use an impossible value
 		create: { content: feature.content, userId: session.user.id }
 	}));
@@ -50,56 +50,51 @@ export const createTier = async ({ name, tagline, description, features }: { nam
 
 export const updateTier = async ({ id, versionId, name, tagline, description, features }: { id: string, versionId: string, name: string, tagline: string | undefined, description: string | undefined, features: any[] }) => {
     const session = await getSession();
+
     if (!session?.user.id) {
         return { error: "Not authenticated" };
     }
 
-    return await prisma.$transaction(async (prisma) => {
-        // Update Tier
-        const updatedTier = await prisma.tier.update({
-            where: { id },
-            data: {
-                name,
-                ...(tagline ? { tagline } : {}),
-                ...(description ? { description } : {}),
-                // versions: {
-                //     update: {
-                //         where: { id: versionId },
-                //         data: {
-                //             features: {
-				// 				// Disconnect all existing features from this version
-				// 				set: [],
-				// 			}
-                //         }
-                //     }
-                // }
-            },
-        });
+    const featuresToDisconnect = features.filter(feature => feature.disconnect);
+    const newFeatures = features.filter(feature => !feature.id && !feature.disconnect);
+    const toUpdateFeatures = features.filter(feature => feature.id && !feature.disconnect);
 
-        // Update or create features
-        for (const feature of features) {
-            if (feature.id) {
-                // Update existing feature
-                await prisma.tierFeature.update({
-                    where: { id: feature.id },
-                    data: { content: feature.content },
-                });
-            } else {
-                // Create new feature and connect it to the version
-                await prisma.tierFeature.create({
-                    data: {
-                        content: feature.content,
-                        userId: session.user.id,
-                        versions: {
-                            connect: { id: versionId },
-                        },
-                    },
-                });
-            }
-        }
-
-        return updatedTier;
+    const updateFeaturesData = toUpdateFeatures.map(feature => {
+        return {
+            where: { id: feature.id },
+            data: { content: feature.content },
+        };
     });
+
+    // Update Tier
+    const updatedTier = await prisma.tier.update({
+        where: { id },
+        data: {
+            name,
+            ...(tagline ? { tagline } : {}),
+            ...(description ? { description } : {}),
+            versions: {
+                update: {
+                    where: { id: versionId },
+                    data: {
+                        features: {
+                            // Disconnect features marked for disconnection
+                            disconnect: featuresToDisconnect.map(feature => ({ id: feature.id })),
+                            // Connect or create features
+                            connectOrCreate: newFeatures.map(feature => ({
+                                where: { id: feature.id || "0" }, // If id is null, use an impossible value
+                                create: { content: feature.content, userId: session.user.id },
+                            })),
+                            updateMany: updateFeaturesData,
+                        }
+                    }
+                }
+            }
+        },
+    });
+
+    return updatedTier;
+    
 };
 
 

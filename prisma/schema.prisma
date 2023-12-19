@@ -9,21 +9,22 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
   username      String?
   gh_username   String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   accounts      Account[]
   pages         Page[]
   posts         Post[]
   sessions      Session[]
   sites         Site[]
   tiers         Tier[]
+  TierFeature   TierFeature[]
 }
 
 model Account {
@@ -138,12 +139,37 @@ model Example {
 }
 
 model Tier {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
   description String?
-  tagline     String?
   userId      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  tagline     String?
+  published   Boolean       @default(false)
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions    TierVersion[]
+}
+
+model TierVersion {
+  id        String        @id @default(cuid())
+  tierId    String // Foreign key to reference Tier
+  tier      Tier          @relation(fields: [tierId], references: [id])
+  features  TierFeature[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([tierId])
+}
+
+model TierFeature {
+  id        String        @id @default(cuid())
+  content    String
+  userId    String // Foreign key to reference User
+  user      User          @relation(fields: [userId], references: [id])
+  versions  TierVersion[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([userId])
 }

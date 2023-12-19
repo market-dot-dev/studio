@@ -3,8 +3,8 @@ import { useState } from 'react';
 import PageHeading from '@/components/common/page-heading';
 import PrimaryLinkButton from '@/components/common/primary-button';
 import { Divider, Card, Accordion, AccordionBody, AccordionHeader, AccordionList } from '@tremor/react';
-import activeTierFeatures from './activeTierFeatures';
-import pastTierFeatures from './pastTierFeatures';
+import activeTierFeatures from '../new/activeTierFeatures';
+import pastTierFeatures from '../new/pastTierFeatures';
 
 export default function NewTier() {
   const [tierName, setTierName] = useState('');

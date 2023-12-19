@@ -22,6 +22,15 @@ export async function getTiersForUser() {
             tagline: true,
             description: true,
             createdAt: true,
+            versions: {
+              orderBy: {
+                createdAt: 'desc' // Order by creation date in descending order
+              },
+              take: 1, // Take only the latest version
+              include: {
+                features: true, // Include the features of the latest version
+              },
+            }
           },
           orderBy: [
             {
