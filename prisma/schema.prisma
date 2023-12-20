@@ -146,6 +146,7 @@ model Tier {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime
   tagline     String?
+  published   Boolean       @default(false)
   User        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   TierVersion TierVersion[]
 }
