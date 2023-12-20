@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function PrimaryButton({ label, href }: { label: string, href: string }) {
+export default function PrimaryLinkButton({ label, href }: { label: string, href: string }) {
 
     return (
         <Link href={href}>

@@ -1,17 +1,18 @@
 import PageHeading from '@/components/common/page-heading';
+import EditTier from '@/components/tiers/edit-tier';
+import { getTier } from '@/lib/tiers/fetchers';
 
-export default function EditTier() {
+export default async function EditTierPage({params} : {params: { id: string }}) {
+
+  const result = await getTier(params.id) as any;
+
+  const tier = result.errors ? null : result as any;
+  
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+    <div className="flex max-w-screen-xl flex-col p-8">
       <PageHeading title="Edit Tier" />
+      { tier ? <EditTier tier={tier} /> : null }
 
-      <div className="flex flex-col space-y-6">
-        <section className="bg-white dark:bg-gray-900">
-          <div className="mx-auto max-w-screen-xl">
-            Edit Tier
-          </div>
-        </section>
-      </div>
     </div>
-  );
+  )
 }
