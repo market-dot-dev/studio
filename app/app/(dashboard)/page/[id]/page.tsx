@@ -35,7 +35,7 @@ export default async function PagePage({ params }: { params: { id: string } }) {
     <>
      <div className="flex justify-between w-full">
         <div className="flex flex-row">
-          <PageHeading title="Edit Page" />
+          <PageHeading title={'Edit Page' + (data?.title? ": " + data.title : "")} />
         </div>
         <div className="flex flex-row">
         </div>
