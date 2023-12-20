@@ -1,10 +1,9 @@
 'use client'
 
 import Editor from "@monaco-editor/react";
-import { Flex, Box, Text, TextField, Checkbox } from "@radix-ui/themes";
-import { Alert } from 'flowbite-react';
+import { Box, Text, TextField, Checkbox } from "@radix-ui/themes";
 import { Button, Bold, TextInput } from "@tremor/react";
-import { EyeOpenIcon, CodeIcon, CheckIcon } from "@radix-ui/react-icons";
+import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { useCallback, useEffect, useState } from "react";
 import { updatePage, deletePage } from "@/lib/actions";
 import componentsMap from "./site";
@@ -13,20 +12,21 @@ import { set } from "date-fns";
 import { useRouter } from 'next/navigation'
 import { is } from "date-fns/locale";
 
-import { Grid, Col, Badge } from "@tremor/react";
+
+import {  Flex, Grid, Col, Badge, Callout } from "@tremor/react";
 import DashboardCard from "./common/dashboard-card";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 
 function TimedAlert({message, timeout = 0, color = 'info', refresh} : {message: string, timeout?: number, color?: string, refresh: boolean}) {
     
-    const [show, setShow] = useState<boolean>(true);
+    const [showAlert, setShowAlert] = useState<boolean>(true);
 
     useEffect(() => {
-        setShow(true);
+        setShowAlert(true);
         if( timeout === 0 ) return;
 
         const timer = setTimeout(() => {
-            setShow(false);
+            setShowAlert(false);
         }, timeout);
 
         return () => clearTimeout(timer);
@@ -35,9 +35,17 @@ function TimedAlert({message, timeout = 0, color = 'info', refresh} : {message: 
 
     return (
         <>
-            {show ? <Alert color={color} onDismiss={() => setShow(false)}>
-                <span>{message}</span>
-            </Alert> : null}
+            {showAlert ? 
+            <>
+            <Callout
+            title={message}
+            icon={InfoCircledIcon}
+          >
+          </Callout>
+            </>
+            
+            : 
+            null }
         </>
     )
 }
@@ -61,7 +69,6 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
     const [isPreview, setIsPreview] = useState<boolean>(true);
 
     const [previewElement, setPreviewElement] = useState<any>(null);
-
     const [forceStatusRefresh, setForceStatusRefresh] = useState<boolean>(false);
 
     const [willBeHome, setWillBeHome] = useState<boolean>(isHome);
@@ -201,21 +208,25 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
         onClick={doDeletePage}
         >Delete</Button>)
 
-    const unpublishButton = (<Button
-        className="w-full"
-        size="xs"
-        disabled={inProgress || isDeleting}
-        loading={isDeleting}
-        onClick={() => {
-            setData({...data, draft: true});
-            saveContent();
-        }}
-        >Unpublish</Button>)
+    const unpublishButton = (
+        <Button
+            className="w-full"
+            size="xs"
+            disabled={inProgress || isDeleting}
+            onClick={() => {
+                setData({...data, draft: !data.draft});
+                saveContent();
+            }}
+        >
+            {data.draft ? 'Publish' : 'Unpublish'}
+        </Button>
+    );
     
     let previewLink = null;
     if(subdomain) {
         const url = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
         previewLink = (
+            <Flex>
             <a
                 href={
                 process.env.NEXT_PUBLIC_VERCEL_ENV
@@ -224,23 +235,24 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
                 }
                 target="_blank"
                 rel="noreferrer"
-                className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
+                className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200"
             >
                 {url + (page.id === homepageId ? '' : `/${page.slug}`)} ↗
             </a>
+            </Flex>
         )
     }
 
     const PREVIEW_INDEX = 0;
     const CODE_INDEX = 1;
+    const lastUpdateDate = new Date(data.updatedAt).toLocaleString('en-US', { month: 'long', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true });
     
     return (
         <>
             <Grid numItems={12} className="gap-2">
                 <Col numColSpanMd={9}>
-                    { status.message ? <TimedAlert {...status} refresh={forceStatusRefresh} /> : null }
 
-                <Grid numItems={12} className="gap-2 mb-2">
+                <Grid numItems={12} className="gap-2 mb-4">
                     <Col numColSpanMd={8}>
                         <Bold>Page Title</Bold>
                         <TextInput
@@ -257,7 +269,12 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
                     </Col>
 
                     <Col numColSpanMd={4}>
-                    <Bold>URL</Bold>
+                        
+                        <Flex>
+                            <Bold>URL</Bold>          
+                        </Flex>
+
+                        <Flex>
                         <TextInput
                             placeholder="Path"
                             error={slugError? true : false}
@@ -269,18 +286,29 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
                                 setData({ ...data, slug: e.target.value })
                             }}
                         >
-                        </TextInput>
+                            </TextInput>
+                        </Flex>
                     </Col>
 
 
                 </Grid>
-                    <Bold>Page Content</Bold>
+
+                <Flex className="mb-2" justifyContent="between">
+                    <Box>
+                        <Bold>Page Content</Bold>
+                    </Box>
+                    <Box>
+                        {previewLink}
+                    </Box>
+                </Flex>
+
 
                     <DashboardCard>
+                        
                     <TabGroup defaultIndex={PREVIEW_INDEX} onIndexChange={(index) => setIsPreview(index === PREVIEW_INDEX)}>
-                        <TabList variant="solid">
-                            <Tab icon={EyeOpenIcon}>Preview</Tab>
-                            <Tab icon={CodeIcon}>Code</Tab>
+                        <TabList variant="solid" className="font-bold">
+                            <Tab className={isPreview? "bg-white" : ""} icon={EyeOpenIcon}>Preview</Tab>
+                            <Tab className={isPreview? "" : "bg-white"} icon={CodeIcon}>Code</Tab>
                         </TabList>
                         <TabPanels>
                         <TabPanel>
@@ -313,31 +341,29 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
                 </Col>
 
                 <Col numColSpanMd={3}>
-                    <DashboardCard>                        
-                            {data.draft ?
-                                <Badge color="gray" size="xs">Draft</Badge> :
-								<Badge color="green" size="xs">Live</Badge>}
-                        
-                        <Box>{previewLink}</Box>   
-                    </DashboardCard>
-                    
                     <DashboardCard>
                         <Box>
-                        <input type="checkbox" checked={data.draft} onChange={(e) => {
-                                    setData({ ...data, draft: e.target.checked })
-                                }} /> Set as Draft
-                        </Box>
+                            <Text>This page is currently</Text>                                     
+                            {data.draft ?
+                                <> in <Badge color="gray" size="xs">Draft</Badge> </> :
+								<> <Badge color="green" size="xs">Live</Badge> </>}
+                                and was last updated on {lastUpdateDate}.
+                            </Box>
                     </DashboardCard>
+                    
+                    { status.message ? <TimedAlert {...status} refresh={forceStatusRefresh} /> : null }
+
                     <DashboardCard>
                         <Box mb="2">
                         {saveButton}
                         </Box>
                         <Box mb="2">
-                            {deleteButton}
-                        </Box>
-                        <Box>
                             {unpublishButton}
                         </Box>
+                        <Box mb="2">
+                            {deleteButton}
+                        </Box>
+
                     </DashboardCard>
                 </Col>
             </Grid>
