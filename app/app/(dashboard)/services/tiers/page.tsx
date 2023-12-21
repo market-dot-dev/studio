@@ -1,13 +1,14 @@
 // import tiers from './support-tiers';
 import PageHeading from '@/components/common/page-heading';
 import PrimaryButton from '@/components/common/primary-button';
-import { getTiersForUser } from '@/lib/tiers/fetchers';
+import { getTiersForAdmin } from '@/lib/tiers/fetchers';
 
 import { Grid, Col } from '@tremor/react';
+
 import Link from 'next/link';
 export default async function Tiers() {
 
-  const result = await getTiersForUser() as any;
+  const result = await getTiersForAdmin() as any;
 
   const tiers = result.errors ? [] : result as any[];
 

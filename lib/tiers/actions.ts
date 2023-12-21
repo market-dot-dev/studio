@@ -6,9 +6,10 @@ import { Tier, TierFeature, TierVersion } from "@prisma/client";
 // import { withPostAuth, withSiteAuth } from "../auth";
 import { getSession } from "@/lib/auth";
 
-export const createTier = async ({ name, tagline, description, features }: { name: string, tagline: string | undefined, description: string | undefined, features: any[] }) => {
+export const createTier = async ({ name, tagline, description, features, published }: { name: string, tagline: string | undefined, description: string | undefined, features: any[], published: boolean }) => {
 	const session = await getSession();
-	if (!session?.user.id) {
+	
+    if (!session?.user.id) {
 		return {
 			error: "Not authenticated",
 		};
@@ -25,6 +26,7 @@ export const createTier = async ({ name, tagline, description, features }: { nam
 			name: name,
 			...(tagline ? { tagline } : {}),
 			...(description ? { description } : {}),
+            published,
 			userId: session.user.id,
 			versions: {
 				create: {
@@ -48,7 +50,7 @@ export const createTier = async ({ name, tagline, description, features }: { nam
 
 
 
-export const updateTier = async ({ id, versionId, name, tagline, description, features }: { id: string, versionId: string, name: string, tagline: string | undefined, description: string | undefined, features: any[] }) => {
+export const updateTier = async ({ id, versionId, name, tagline, description, features, published }: { id: string, versionId: string, name: string, tagline: string | undefined, description: string | undefined, features: any[], published: boolean }) => {
     const session = await getSession();
 
     if (!session?.user.id) {
@@ -73,6 +75,7 @@ export const updateTier = async ({ id, versionId, name, tagline, description, fe
             name,
             ...(tagline ? { tagline } : {}),
             ...(description ? { description } : {}),
+            published,
             versions: {
                 update: {
                     where: { id: versionId },
@@ -96,5 +99,3 @@ export const updateTier = async ({ id, versionId, name, tagline, description, fe
     return updatedTier;
     
 };
-
-

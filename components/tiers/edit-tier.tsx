@@ -4,10 +4,10 @@ import { updateTier } from '@/lib/tiers/actions';
 
 export default function EditTier({tier} : {tier: any}) {
     
-    const handleSubmit = async ({name, tagline, description, features} : any) => {
+    const handleSubmit = async ({name, tagline, description, features, published} : any) => {
   
           try {
-              const result = await updateTier({id: tier.id, versionId: tier.versions[0].id, name, tagline, description, features });
+              const result = await updateTier({id: tier.id, versionId: tier.versions[0].id, name, tagline, description, features, published });
               console.log('result', result);
               // setStatus({message: 'The tier was succesfully saved', timeout: 3000});
           } catch (error) {

@@ -24,20 +24,18 @@ type DynamicComponentProps = {
     "wbr"
   ];
   
-  
   const DynamicComponent: React.FC<DynamicComponentProps> = ({ tag, className, children }) => {
     const Tag = tag;
     return <Tag className={className}>{children}</Tag>;
   };
   
   // For recursively rendering elements
-  const renderElement = (element: Element | Element[], index : number): JSX.Element => {
+  const renderElement = (element: Element | Element[], index : number, site : any = null, page : any = null): JSX.Element => {
     
     // in case there are multiple root elements, wrap them in a fragment
     if(Array.isArray(element)) {
-      
       return (<>
-        {element.map((child, index) => renderElement(child as Element, index))}
+        {element.map((child, index) => renderElement(child as Element, index, site, page))}
       </>)
     } 
 
@@ -46,10 +44,13 @@ type DynamicComponentProps = {
     
     // Check if the element is a custom component
     if (tag in componentsMap) {
-      const CustomComponent = componentsMap[tag]['element'];
-      return <CustomComponent key={index} />;
+      const CustomComponent = site && page ? componentsMap[tag]['element'] : componentsMap[tag]['preview'] ?? componentsMap[tag]['element'];
+      const props = {
+        ...( site? {site} : {}),
+        ...( page? {page} : {}),
+      }
+      return <CustomComponent key={'component'+index} {...props} />;
     }
-  
   
     const className = element.className;
   
@@ -61,7 +62,7 @@ type DynamicComponentProps = {
     if (element.children.length > 0) {
       return (
         <DynamicComponent tag={tag} className={className} key={index}>
-          {Array.from(element.children).map((child, index) => renderElement(child as Element, index as number))}
+          {Array.from(element.children).map((child, index) => renderElement(child as Element, index as number, site, page))}
         </DynamicComponent>
       );
     } else {

@@ -3,10 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
-import { PrismaClient } from "@prisma/client";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
-const prismaClient = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
 	providers: [
@@ -100,7 +98,7 @@ export const authOptions: NextAuthOptions = {
 	//       // other page fields...
 	//     };
 	//     // You can use this information to perform additional actions in your database
-	//     const site = await prismaClient.site.create({
+	//     const site = await prisma.site.create({
 	//       data: {
 	//         name: 'Support Website',
 	//         description: 'Support Website Description',

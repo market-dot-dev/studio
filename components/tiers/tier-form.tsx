@@ -8,6 +8,7 @@ import FeaturesEditor from './features-editor';
 export default function TierForm({tier, label = 'Update', handleSubmit} : {tier: any, label : string, handleSubmit : any}) {
 	
 	const [name, setName] = useState(tier?.name ?? '');
+	const [published, setPublished] = useState(tier?.published ?? false);
 	const [tagline, setTagline] = useState(tier?.tagline ?? '');
 	const [description, setDescription] = useState(tier?.description ?? '');
 	const [features, setFeatures] = useState(tier?.versions?.[0]?.features ?? []);
@@ -29,7 +30,7 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 		if (!validateForm()) return;
 		setIsSaving(true);
 		try {
-			await handleSubmit({ name, tagline, description, features });
+			await handleSubmit({ name, tagline, description, features, published });
 		}
 		catch (error) {
 			console.log(error);
@@ -84,7 +85,17 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 							onChange={(e) => setDescription(e.target.value)}
 						></textarea>
 					</div>
-					
+
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
+							<Flex className='gap-2' justifyContent='start'>
+								<input type="checkbox" checked={published} onChange={(e) => {
+									setPublished(e.target.checked)
+								}} /> 
+								<span>Published</span>
+							</Flex>
+						</label>
+					</div>
 
 					<Card>
 						<Flex flexDirection="col" alignItems="start" className="gap-4">
@@ -123,9 +134,9 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 						<div>
 						<ul className="text-center">
 							{features.map((feature : any, index : number) => (
-								<li className="flex items-center space-x-3">
-								<svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-								<span className="text-sm">{feature.content}</span>
+								<li className="flex items-center space-x-3" key={index}>
+									<svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+									<span className="text-sm">{feature.content}</span>
 								</li>
 							))}
 						</ul>

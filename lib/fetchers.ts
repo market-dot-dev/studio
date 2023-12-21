@@ -59,24 +59,31 @@ export async function getSitePage(domain: string, slug: string | undefined) {
         // First, get the site
         const site = await prisma.site.findUnique({
           where: subdomain ? { subdomain } : { customDomain: domain },
-          include: { user: true }
-        });
-
-        if (!site) {
-          return null; // or handle the case where the site doesn't exist
-        }
-
-        // Now, get the specific page by slug
-        const page = await prisma.page.findFirst({
-          where: { 
-            siteId: site.id,
-            slug: slug
+          include: { 
+            user: true,
+            pages: {
+              where: {
+                slug: slug
+              },
+              take: 1
+            }
           }
         });
 
+        // if (!site) {
+        //   return null; // or handle the case where the site doesn't exist
+        // }
+
+        // Now, get the specific page by slug
+        // const page = await prisma.page.findFirst({
+        //   where: { 
+        //     siteId: site.id,
+        //     slug: slug
+        //   }
+        // });
+
         return {
-          ...site,
-          page: page,
+          ...site
         };
         
       },

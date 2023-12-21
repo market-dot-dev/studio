@@ -197,6 +197,7 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
     let previewLink = null;
     if(subdomain) {
         const url = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+        
         previewLink = (
             <>
                 { page.draft ? (

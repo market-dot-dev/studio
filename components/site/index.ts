@@ -1,21 +1,32 @@
-import TestComponent from "./test-component";
-import BoldHeadline from "./bold-headline";
-import AnotherComponent from "./another-component";
+import { Tiers, TiersPreview } from "./tiers/";
+import { UserInfo, UserInfoPreview } from "./user-info";
+import { Subscriptions, SubscriptionsPreview } from "./subscriptions/";
+import { Menu, MenuPreview } from "./menu/";
+
 const componentsMap = {
-    testcomponent: {
-        name: 'Test Component',
-        tag: 'TestComponent',
-        element: TestComponent
+    tiers: {
+        name: 'Tiers',
+        tag: 'Tiers',
+        element: Tiers,
+        preview: TiersPreview
     },
-    boldheadline: {
-        name: 'Bold Headline',
-        tag: 'BoldHeadline',
-        element: BoldHeadline
+    userinfo: {
+        name: 'User Info',
+        tag: 'UserInfo',
+        element: UserInfo,
+        preview: UserInfoPreview
     },
-    anothercomponent: {
-        name: 'Another Component',
-        tag: 'AnotherComponent',
-        element: AnotherComponent
+    subscriptions: {
+        name: 'Subscriptions',
+        tag: 'Subscriptions',
+        element: Subscriptions,
+        preview: SubscriptionsPreview
+    },
+    menu: {
+        name: 'Menu',
+        tag: 'Menu',
+        element: Menu,
+        preview: MenuPreview
     }
 
 } as any;
