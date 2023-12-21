@@ -2,7 +2,8 @@
 
 import Editor from "@monaco-editor/react";
 import { Flex, Box, Text, TextField, Checkbox } from "@radix-ui/themes";
-import { Button, Alert } from 'flowbite-react';
+import { Alert } from 'flowbite-react';
+import { Button, Bold, TextInput } from "@tremor/react";
 import { EyeOpenIcon, CodeIcon, CheckIcon } from "@radix-ui/react-icons";
 import { useCallback, useEffect, useState } from "react";
 import { updatePage, deletePage } from "@/lib/actions";
@@ -12,6 +13,9 @@ import { set } from "date-fns";
 import { useRouter } from 'next/navigation'
 import { is } from "date-fns/locale";
 
+import { Grid, Col, Badge } from "@tremor/react";
+import DashboardCard from "./common/dashboard-card";
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 
 function TimedAlert({message, timeout = 0, color = 'info', refresh} : {message: string, timeout?: number, color?: string, refresh: boolean}) {
     
@@ -182,158 +186,162 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
     }
 
     const saveButton = (<Button 
+        size="xs"
+        className="w-full"
         disabled={inProgress}
-        isProcessing={inProgress}
+        loading={inProgress}
         onClick={saveContent}
         >Save</Button>)
 
     const deleteButton =(<Button
+        className="w-full"
+        size="xs"
         disabled={inProgress || isDeleting}
-        isProcessing={isDeleting}
-        color="red"
+        loading={isDeleting}
         onClick={doDeletePage}
         >Delete</Button>)
+
+    const unpublishButton = (<Button
+        className="w-full"
+        size="xs"
+        disabled={inProgress || isDeleting}
+        loading={isDeleting}
+        onClick={() => {
+            setData({...data, draft: true});
+            saveContent();
+        }}
+        >Unpublish</Button>)
     
     let previewLink = null;
     if(subdomain) {
         const url = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
         
         previewLink = (
-            <>
-                { page.draft ? (
-                    <span className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700">
-                        Draft
-                    </span>
-                ) : (
-                    <a
-                        href={
-                        process.env.NEXT_PUBLIC_VERCEL_ENV
-                            ? `https://${url}` + (page.id === homepageId ? '' : `/${page.slug}`)
-                            : `http://${subdomain}.localhost:3000` + (page.id === homepageId ? '' : `/${page.slug}`)
-                        }
-                        target="_blank"
-                        rel="noreferrer"
-                        className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
-                    >
-                        {url + (page.id === homepageId ? '' : `/${page.slug}`)} ↗
-                    </a>
-                )}
-            </>
+            <a
+                href={
+                process.env.NEXT_PUBLIC_VERCEL_ENV
+                    ? `https://${url}` + (page.id === homepageId ? '' : `/${page.slug}`)
+                    : `http://${subdomain}.localhost:3000` + (page.id === homepageId ? '' : `/${page.slug}`)
+                }
+                target="_blank"
+                rel="noreferrer"
+                className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"
+            >
+                {url + (page.id === homepageId ? '' : `/${page.slug}`)} ↗
+            </a>
         )
     }
+
+    const PREVIEW_INDEX = 0;
+    const CODE_INDEX = 1;
     
     return (
         <>
-            { status.message ? <TimedAlert {...status} refresh={forceStatusRefresh} /> : null }
-            
-            { isPreview ?
-                <>
-                    <Flex justify="between">
-                        <Box>{previewLink}</Box>
-                        <Box>{deleteButton}</Box>
+            <Grid numItems={12} className="gap-2">
+                <Col numColSpanMd={9}>
+                    { status.message ? <TimedAlert {...status} refresh={forceStatusRefresh} /> : null }
+
+                <Grid numItems={12} className="gap-2 mb-2">
+                    <Col numColSpanMd={8}>
+                        <Bold>Page Title</Bold>
+                        <TextInput
+                            placeholder="Title"
+                            error={titleError? true : false}
+                            errorMessage={titleError ? titleError : ""}
+                            defaultValue={data?.title || ""}
+                            onChange={(e) => {
+                                setTitleError(null);
+                                setData({ ...data, title: e.target.value })
+                            }}
+                        >
+                        </TextInput>
+                    </Col>
+
+                    <Col numColSpanMd={4}>
+                    <Bold>URL</Bold>
+                        <TextInput
+                            placeholder="Path"
+                            error={slugError? true : false}
+                            errorMessage={slugError ? slugError : ""}
+                            defaultValue={data?.slug || ""}
+                            onChange={(e) => {
+                                setSlugError(null);
+                                setSlugVirgin(false);
+                                setData({ ...data, slug: e.target.value })
+                            }}
+                        >
+                        </TextInput>
+                    </Col>
+
+
+                </Grid>
+                    <Bold>Page Content</Bold>
+
+                    <DashboardCard>
+                    <TabGroup defaultIndex={PREVIEW_INDEX} onIndexChange={(index) => setIsPreview(index === PREVIEW_INDEX)}>
+                        <TabList variant="solid">
+                            <Tab icon={EyeOpenIcon}>Preview</Tab>
+                            <Tab icon={CodeIcon}>Code</Tab>
+                        </TabList>
+                        <TabPanels>
+                        <TabPanel>
+                            {previewElement ? renderElement(previewElement as Element, 0) : null}
+                        </TabPanel>
+                        <TabPanel>
+                            Custom Components:
+                                { Object.values(componentsMap).map((component: any, index: number) => {
+                                    return (
+                                        <Button key={index} size="xs" color="gray" onClick={() => insertAtCursor(`<${component.tag}></${component.tag}>`)}>{component.name}</Button>
+                                    )
+                                })}
+                            <Editor
+                                height="90vh" // By default, it does not have a size
+                                defaultLanguage="html"
+                                defaultValue=""
+                                theme="vs-dark"
+                                value={data.content}
+                                onChange={(value) => setData((data : any) => ({ ...data, content: value}))}
+                                onMount={handleEditorDidMount}
+                                options={{
+                                    minimap: {
+                                      enabled: false,
+                                    },
+                                  }} />
+                        </TabPanel>
+                        </TabPanels>
+                    </TabGroup>
+                    </DashboardCard>
+                </Col>
+
+                <Col numColSpanMd={3}>
+                    <DashboardCard>                        
+                            {data.draft ?
+                                <Badge color="gray" size="xs">Draft</Badge> :
+								<Badge color="green" size="xs">Live</Badge>}
+                        
+                        <Box>{previewLink}</Box>   
+                    </DashboardCard>
+                    
+                    <DashboardCard>
                         <Box>
-                            <Button.Group outline>
-                                <Button onClick={() => setIsPreview(false)}>
-                                    <Flex gap="2" align='center'>
-                                        <Text>Edit</Text>
-                                        <CodeIcon />
-                                    </Flex>
-                                </Button>
-                                {saveButton}
-                            </Button.Group>
-                        </Box>
-                    </Flex>
-                    {previewElement ? renderElement(previewElement as Element, 0) : null}
-                </>
-            : 
-            <>
-                <Flex justify="between">
-                    <Box>{previewLink}</Box>
-                    <Box>{deleteButton}</Box>
-                    <Box>
-                        <Button.Group outline>
-                            
-                            <Button onClick={() => setIsPreview(true)} disabled={!data.content} >
-                                <Flex gap="2" align='center'>
-                                    <Text>Preview</Text>
-                                    <EyeOpenIcon />
-                                </Flex>
-                            </Button>
-                                
-                            {saveButton}
-                        </Button.Group>
-                    </Box>
-                </Flex>
-                <Flex direction="column" gap="2">
-                    <input
-                        type="text"
-                        placeholder="Title"
-                        defaultValue={data?.title || ""}
-                        autoFocus
-                        onChange={(e) => {
-                            setTitleError(null);
-                            setData({ ...data, title: e.target.value })
-                        }}
-                        className="dark:placeholder-text-600 border-none px-0 font-cal text-3xl placeholder:text-stone-400 focus:outline-none focus:ring-0 dark:bg-black dark:text-white"
-                        />
-                    {titleError && <Text color="red" size="1">{titleError}</Text>}
-                </Flex>
-                <Flex justify='between' gap="6" align="center">
-                    <Box grow="1">
-                        <Flex direction="column" gap="2">
-                            <TextField.Root>
-                                <TextField.Input 
-                                    placeholder="Page slug" 
-                                    defaultValue={data?.slug || ""}
-                                    onChange={(e) => {
-                                        setSlugError(null);
-                                        setSlugVirgin(false);
-                                        setData({ ...data, slug: e.target.value })
-                                    }}
-                                    // Additional TextField props as needed
-                                />
-                            </TextField.Root>
-                            {slugError && <Text color="red" size="1">{slugError}</Text>}
-                        </Flex>
-                    </Box>
-                    <Box style={{ maxWidth: 300 }}>
-                        <Text as="label" size="2">
-                            <Flex gap="2" align="center">
-                                <input type="checkbox" checked={data.draft} onChange={(e) => {
+                        <input type="checkbox" checked={data.draft} onChange={(e) => {
                                     setData({ ...data, draft: e.target.checked })
-                                }} /> Draft.
-                            </Flex>
-                        </Text>
-                    </Box>
-                    <Box style={{ maxWidth: 300 }}>
-                        <Text as="label" size="2">
-                            <Flex gap="2" align="center">
-                                { isCurrentlyHome ? <CheckIcon /> : 
-                                <input type="checkbox" checked={willBeHome} onChange={(e) => {
-                                    setWillBeHome(e.target.checked)
-                                }} /> } Set as homepage.
-                            </Flex>
-                        </Text>
-                    </Box>
-                </Flex>
-                <Button.Group>
-                        { Object.values(componentsMap).map((component: any, index: number) => {
-                            return (
-                                <Button key={index} size="xs" color="gray" onClick={() => insertAtCursor(`<${component.tag}></${component.tag}>`)}>{component.name}</Button>
-                            )
-                        })}
-                    </Button.Group>
-                <Editor
-                    height="90vh" // By default, it does not have a size
-                    defaultLanguage="html"
-                    defaultValue=""
-                    theme="vs-dark"
-                    value={data.content}
-                    onChange={(value) => setData((data : any) => ({ ...data, content: value}))}
-                    onMount={handleEditorDidMount}
-                />
-            </>
-            }
+                                }} /> Set as Draft
+                        </Box>
+                    </DashboardCard>
+                    <DashboardCard>
+                        <Box mb="2">
+                        {saveButton}
+                        </Box>
+                        <Box mb="2">
+                            {deleteButton}
+                        </Box>
+                        <Box>
+                            {unpublishButton}
+                        </Box>
+                    </DashboardCard>
+                </Col>
+            </Grid>
         </>
     )
 }
