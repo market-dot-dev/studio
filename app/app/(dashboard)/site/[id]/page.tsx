@@ -10,7 +10,7 @@ import CreatePageButton from "@/components/create-page-button";
 import Pages from "@/components/pages";
 import PageHeading from "@/components/common/page-heading";
 import PrimaryButton from "@/components/common/primary-button";
-import ExternalLink from "@/components/common/external-link";
+import ExternalLink, { ExternalLinkChip } from "@/components/common/external-link";
 
 export default async function SitePosts({
   params,
@@ -77,6 +77,13 @@ export default async function SitePosts({
             <ExternalLink subdomain={siteData.subdomain ?? ''}  url={url} />
             </div>
 
+            <div>
+              Internal Preview:
+              <ExternalLinkChip href={`/${url}/index`}>
+                localhost
+              </ExternalLinkChip>
+            </div>
+
           </div>
           <div className="flex flex-row">
             <PrimaryButton label="Edit" href={`/page/${siteData.homepageId}`} />
@@ -94,7 +101,6 @@ export default async function SitePosts({
       </div>
 
       <Pages pages={siteData.pages} subdomain={siteData.subdomain} homepageId={siteData.homepageId ?? null} />
-
     </>
   );
 }

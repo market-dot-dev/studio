@@ -1,6 +1,8 @@
 import Image from "next/image";
 import LoginButton from "./login-button";
+import DevLoginButton from "./dev-login-button";
 import { Suspense } from "react";
+import { getSession } from "@/lib/auth";
 
 export default function LoginPage() {
   return (
@@ -20,12 +22,30 @@ export default function LoginPage() {
       </p>
 
       <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
+        <pre>
+          Session
+
+          {JSON.stringify(getSession(), null, 2)}
+        </pre>
+      </div>
+
+      <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
         <Suspense
           fallback={
             <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
           }
         >
           <LoginButton />
+        </Suspense>
+      </div>
+
+      <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
+        <Suspense
+          fallback={
+            <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
+          }
+        >
+          <DevLoginButton />
         </Suspense>
       </div>
     </div>
