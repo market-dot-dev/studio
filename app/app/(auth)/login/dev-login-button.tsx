@@ -23,7 +23,8 @@ export default function DevLoginButton() {
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // Use signIn with credentials and the provided username and password
+
+    // Use signIn with the provided gh username and password
     const res = await signIn("credentials", {
       redirect: false,
       gh_username: username,
@@ -35,7 +36,7 @@ export default function DevLoginButton() {
       setLoading(false);
     } else {
       // Redirect or handle successful login
-      window.location.href = res?.url || '/';
+      window.location.href = '/';
     }
   };
 
@@ -80,7 +81,7 @@ export default function DevLoginButton() {
             : "bg-white hover:bg-stone-50 active:bg-stone-100 dark:bg-black dark:hover:border-white dark:hover:bg-black"
         }`}
       >
-        {loading ? <LoadingDots color="#A8A29E" /> : "Sign in with Dev Backdoor"}
+        {loading ? <LoadingDots color="#A8A29E" /> : "Sign in with Local Auth"}
       </button>
     </form>
   );

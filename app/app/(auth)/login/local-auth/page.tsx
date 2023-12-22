@@ -1,6 +1,8 @@
 import Image from "next/image";
-import LoginButton from "./login-button";
+import LoginButton from "../login-button";
+import DevLoginButton from "../dev-login-button";
 import { Suspense } from "react";
+import { getSession } from "@/lib/auth";
 
 export default function LoginPage() {
   return (
@@ -25,7 +27,7 @@ export default function LoginPage() {
             <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
           }
         >
-          <LoginButton />
+          <DevLoginButton />
         </Suspense>
       </div>
     </div>

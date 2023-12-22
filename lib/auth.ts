@@ -26,7 +26,7 @@ async function upsertUser(userDetails: UserDetails) {
 
   if (existingUser) {
     // If the user exists, conditionally update their information
-    return await prisma.user.update({
+    const user = await prisma.user.update({
       where: { id: existingUser.id }, // Use the unique identifier for updates
       data: {
         // Update only if the existing record has these fields blank
@@ -37,9 +37,11 @@ async function upsertUser(userDetails: UserDetails) {
         updatedAt: new Date(), // Update the 'updatedAt' field to the current time
       },
     });
+
+    return user;
   } else {
     // If the user doesn't exist, create a new one with the provided details
-    return await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         id, // This should be a unique identifier, ensure you generate or provide this
         gh_username,
@@ -52,11 +54,14 @@ async function upsertUser(userDetails: UserDetails) {
         updatedAt: new Date(), // Set to the current time
       },
     });
+
+    await createSite(user);
+
+    return user;
   }
 }
 
 const createSite = async (user: any) => {
-  console.log("===== creating site");
   const pageData = {
     title: "Welcome",
     slug: 'index',
@@ -121,22 +126,16 @@ export const authOptions: NextAuthOptions = {
         name: "Credentials",
         credentials: {
           gh_username: { label: "GitHub Username", type: "text", placeholder: "Enter your GitHub username" },
-          password: { label: "Password", type: "password", placeholder: "Enter the development backdoor password" },
+          password: { label: "Password", type: "password", placeholder: "Enter the override password" },
         },
         async authorize(credentials, req) {
-          // Ensure credentials and the backdoor password exist
-          console.log("============ ", credentials, process.env.DEV_BACKDOOR_PASSWORD);
-          console.log("============ ", VERCEL_DEPLOYMENT ? 'vercel_deployment=true' : 'vercel_deployment=false');
           if (
             credentials &&
             credentials.gh_username &&
             credentials.password &&
-            process.env.DEV_BACKDOOR_PASSWORD &&
-            credentials.password === process.env.DEV_BACKDOOR_PASSWORD
+            process.env.DEV_OVERRIDE_PASSWORD &&
+            credentials.password === process.env.DEV_OVERRIDE_PASSWORD
           ) {
-            // If the password is correct, proceed with authentication
-            console.log("============ SUCCESS");
-      
             // Prepare minimal user details for upserting
             const userDetails = {
               id: `dev-${credentials.gh_username}`,  // Unique ID constructed using the GitHub username
@@ -146,13 +145,11 @@ export const authOptions: NextAuthOptions = {
               image: "",  // No default image, it will be set based on existing data or remain empty
             };
       
-            // Call upsertUser and await its completion
             const user = await upsertUser(userDetails);
       
             return user;
           }
       
-          console.log("============ FAIL");
           // If verification fails or credentials are missing, return null
           return null;
         },
@@ -200,12 +197,8 @@ export const authOptions: NextAuthOptions = {
   },
   events: {
     signIn: async ({user}: {user: any}) => {
-      console.log('========== signing in', user)
-      return await createSite(user);
     },
     createUser: async ({user}: {user: any}) => {
-      console.log('========== creating user')
-
       if (!user) {
         return;
       }

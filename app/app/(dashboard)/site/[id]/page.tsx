@@ -74,14 +74,11 @@ export default async function SitePosts({
             </div>
 
             <div>
-            <ExternalLink subdomain={siteData.subdomain ?? ''}  url={url} />
-            </div>
-
-            <div>
-              Internal Preview:
+              Preview:
               <ExternalLinkChip href={`/${url}/index`}>
                 localhost
               </ExternalLinkChip>
+              <ExternalLink subdomain={siteData.subdomain ?? ''}  url={url} />
             </div>
 
           </div>

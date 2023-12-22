@@ -169,9 +169,6 @@ CREATE TABLE "_TierFeatureToTierVersion" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_gh_username_key" ON "User"("gh_username");
-
--- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
 
 -- CreateIndex
