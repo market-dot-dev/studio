@@ -1,4 +1,3 @@
-import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth_customer";
 import prisma from "@/lib/prisma";
 

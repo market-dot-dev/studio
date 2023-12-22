@@ -6,7 +6,7 @@ import { Button, Bold, TextInput } from "@tremor/react";
 import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import { useCallback, useEffect, useState } from "react";
 import { updatePage, deletePage } from "@/lib/actions";
-import componentsMap from "./site";
+import componentsMap from "./site/insertables";
 import renderElement from "./site/page-renderer";
 import { set } from "date-fns";
 import { useRouter } from 'next/navigation'
@@ -50,7 +50,7 @@ function TimedAlert({message, timeout = 0, color = 'info', refresh} : {message: 
     )
 }
 
-export default function PageEditor({siteId, page, homepageId, subdomain } : {siteId: string, page: any, homepageId: string | null, subdomain: string | null}) : JSX.Element {
+export default function PageEditor({site, page, homepageId, subdomain } : {site: any, page: any, homepageId: string | null, subdomain: string | null}) : JSX.Element {
     
     // const [content, setContent] = useState(page.content ?? '');
     const isHome = page.id === homepageId;
@@ -182,7 +182,7 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
                 setStatus({message: result.error, color: 'red', timeout: 3000});
             } else {
                 setStatus({message: 'The page was succesfully deleted', timeout: 3000});
-                router.push(`/site/${siteId}`);
+                router.push(`/site/${site.id}`);
             }
         } catch (error) {
             setStatus({message: 'An error occured while deleting the page', color: 'red', timeout: 3000});
@@ -313,7 +313,7 @@ export default function PageEditor({siteId, page, homepageId, subdomain } : {sit
                         </TabList>
                         <TabPanels>
                         <TabPanel>
-                            {previewElement ? renderElement(previewElement as Element, 0) : null}
+                            {previewElement ? renderElement(previewElement as Element, 0, site, page, true) : null}
                         </TabPanel>
                         <TabPanel>
                             Custom Components:

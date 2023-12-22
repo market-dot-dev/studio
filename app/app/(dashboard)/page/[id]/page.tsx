@@ -42,7 +42,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       </div>
 
 
-    <PageEditor siteId={data?.site?.id ?? ''} page={data} subdomain={data?.site?.subdomain ?? null} homepageId={ data.site?.homepageId || null} />
+    <PageEditor site={data?.site} page={data} subdomain={data?.site?.subdomain ?? null} homepageId={ data.site?.homepageId || null} />
     </>
   )
 }
