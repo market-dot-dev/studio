@@ -207,7 +207,7 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
               <div className="text-md font-medium">
-                Gitwallet
+                <img src="/logo.png" className="h-8" />
               </div>
           </div>
           <div className="grid gap-0.5">
