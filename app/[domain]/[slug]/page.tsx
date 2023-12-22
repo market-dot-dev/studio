@@ -18,10 +18,13 @@ export default async function SitePage({
     notFound();
   }
   
-  const dom = new JSDOM(data.pages?.[0]?.content ?? '' )
-  const rootElement = dom.window.document.body.firstChild;
+  const body = data.pages?.[0]?.content ?? '';
+
+  const dom = new JSDOM(body)
+  const rootElement = dom.window.document.body;
   const {pages, ...site} = data;
-  const reactElement = renderElement(rootElement as Element, 0, site, pages?.[0]);
+  const elements: Element[] = Array.from(rootElement.children);
+  const reactElement = renderElement(elements, 0, site, pages?.[0]);
   
   return (
     <>
