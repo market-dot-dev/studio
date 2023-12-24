@@ -11,6 +11,7 @@ import {
   Menu,
   Users,
   Newspaper,
+  Building2,
   Settings,
   Github,
   BarChart4,
@@ -169,10 +170,10 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
         icon: <Code2 width={18} />,
       },
       {
-        name: "Github",
-        href: "/channels/github",
-        isActive: urlSegments[0] === "github",
-        icon: <Github width={18} />,
+        name: "Enterprise",
+        href: "/channels/enterprise",
+        isActive: urlSegments[0] === "enterprise",
+        icon: <Building2 width={18} />,
       },
     ];
   }, [urlSegments, id, siteId]);
@@ -202,10 +203,10 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
       <div
         className={`transform ${
           showSidebar ? "w-full translate-x-0" : "-translate-x-full"
-        } fixed z-10 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-4 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
+        } fixed z-10 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-4 transition-all xsm:w-60 sm:translate-x-0`}
       >
         <div className="grid gap-2">
-          <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
+          <div className="flex items-center space-x-2 rounded-lg py-1.5">
               <div className="text-md font-medium">
                 <img src="/logo.png" className="h-8" />
               </div>
