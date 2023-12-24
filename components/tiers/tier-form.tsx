@@ -146,10 +146,7 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 							<span className="text t-gray-500 dark:text-gray-400">/ month</span>
 						</div>
 
-						{/* <PrimaryLinkButton
-							label={name ? "Get Started with " + name : "Get Started"}
-							href="" /> */}
-							<Button>{name ? "Get Started with " + name : "Get Started"}</Button>
+						<Button>{name ? "Get Started with " + name : "Get Started"}</Button>
 						</div>
 					</div>
 

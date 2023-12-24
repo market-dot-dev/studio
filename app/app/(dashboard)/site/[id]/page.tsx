@@ -9,7 +9,7 @@ import CreatePageButton from "@/components/create-page-button";
 
 import Pages from "@/components/pages";
 import PageHeading from "@/components/common/page-heading";
-import PrimaryButton from "@/components/common/primary-button";
+import PrimaryButton from "@/components/common/link-button";
 import ExternalLink from "@/components/common/external-link";
 
 export default async function SitePosts({
