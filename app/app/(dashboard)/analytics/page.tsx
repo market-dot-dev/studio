@@ -9,11 +9,7 @@ export default function AnalyticsPage({ params }: { params: { id: string } }) {
             Analytics
           </h1>
         </div>
-
-        <div className="flex flex-col space-y-2">
-          <h2>Site and customer analytics</h2>
-        </div>
-
+        
         <div className="flex flex-col space-y-6">
           <OverviewStats />
         </div>
