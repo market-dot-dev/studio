@@ -140,9 +140,9 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
         icon: <KanbanSquare width={18} />,
       },
       {
-        name: "Analytics",
-        href: "/analytics",
-        isActive: urlSegments[0] === "analytics",
+        name: "Reports",
+        href: "/Reports",
+        isActive: urlSegments[0] === "reports",
         icon: <BarChart4 width={18} />,
       },
       {
