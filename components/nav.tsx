@@ -141,7 +141,7 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
       },
       {
         name: "Reports",
-        href: "/Reports",
+        href: "/reports",
         isActive: urlSegments[0] === "reports",
         icon: <BarChart4 width={18} />,
       },
