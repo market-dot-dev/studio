@@ -1,4 +1,4 @@
-import OverviewStats from "@/components/overview-stats";
+import AllCharts from "@/components/overview-stats";
 
 export default function ReportsPage({ params }: { params: { id: string } }) {
   return (
@@ -11,9 +11,8 @@ export default function ReportsPage({ params }: { params: { id: string } }) {
         </div>
         
         <div className="flex flex-col space-y-6">
-          <OverviewStats />
+          <AllCharts />
         </div>
-
       </div>
     </div>
   );

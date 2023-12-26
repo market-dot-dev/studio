@@ -1,10 +1,7 @@
-import { Suspense } from "react";
-import Sites from "@/components/sites";
-import OverviewStats from "@/components/overview-stats";
-import Posts from "@/components/posts";
-import Link from "next/link";
-import PlaceholderCard from "@/components/placeholder-card";
-
+import MonthlyRevenueBarChart from "@/components/analytics/monthly-revenue-barchart";
+import DashboardCard from "@/components/common/dashboard-card";
+import CustomersListPreview from "@/components/dashboard/customer-list-preview";
+import { Bold } from "@tremor/react";
 
 export default async function Overview() {
   return (
@@ -13,40 +10,13 @@ export default async function Overview() {
         <h1 className="font-cal text-3xl font-bold dark:text-white">
           Overview
         </h1>
-        <OverviewStats />
+        <MonthlyRevenueBarChart />
       </div>
 
-      <div className="flex flex-col space-y-6">
-       
-        <Suspense
-          fallback={
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {Array.from({ length: 4 }).map((_, i) => (
-                <PlaceholderCard key={i} />
-              ))}
-            </div>
-          }
-        >
-          <Sites limit={4} />
-        </Suspense>
-      </div>
-
-      <div className="flex flex-col space-y-6">
-        <h1 className="font-cal text-3xl font-bold dark:text-white">
-          Recent Posts
-        </h1>
-        <Suspense
-          fallback={
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <PlaceholderCard key={i} />
-              ))}
-            </div>
-          }
-        >
-          <Posts limit={8} />
-        </Suspense>
-      </div>
+      <DashboardCard>
+        <Bold>New Customers</Bold>
+        <CustomersListPreview />
+      </DashboardCard>
     </div>
   );
 }

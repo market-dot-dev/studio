@@ -5,9 +5,9 @@ import { Metric, Text, AreaChart, BadgeDelta, Flex, BarChart } from "@tremor/rea
 import { useMemo } from "react";
 import DashboardCard from "./common/dashboard-card";
 
-export default function OverviewStats() {
+export default function AllCharts() {
   const data = useMemo(() => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",  "Nov", "Dec"];
     return [
       ...months.map((month) => ({
         Month: `${month} 23`,
