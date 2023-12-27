@@ -10,8 +10,7 @@ type TestimonialProps = {
 // A simple component to display each testimonial with a logo
 const Testimonial: React.FC<TestimonialProps> = ({ ecosystem, logoSrc }) => (
   <div className="flex items-center space-x-4">
-    <Image src={logoSrc} alt={`${ecosystem} logo`} width={50} height={50} />
-    <p>{`Gitwallet is a game-changer for maintainers within the ${ecosystem} ecosystem.`}</p>
+    <p>{`Used by the leading ${ecosystem} maintainers.`}</p>
   </div>
 );
 
@@ -46,7 +45,7 @@ export default function HomePage() {
             <li>Manage customers, payments, and contracts all in one space.</li>
           </ul>
         </section>
-        
+
         <section className="mb-8">
           <h3 className="text-2xl font-semibold mb-4">Testimonials</h3>
           {/* Iterate over testimonials */}
