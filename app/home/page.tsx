@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { NextPage } from 'next';
+import SimpleEmailInputForm from "@/components/common/simple-email-input";
 
 // Define a type for the testimonial props, including the logo
 type TestimonialProps = {
@@ -18,20 +19,35 @@ const Testimonial: React.FC<TestimonialProps> = ({ ecosystem, logoSrc }) => (
 export default function HomePage() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
-      
-    {/* Left Column */}
-    <div className="fixed top-0 left-0 w-1/2 h-full bg-blue-600 text-white flex flex-col justify-center p-8">
-        <div>
-          <h1 className="text-4xl font-bold mb-4">Gitwallet</h1>
-          <p className="mb-6">The perfect Git companion for secure and efficient version control.</p>
-          <button className="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-4 rounded">
-            Get Started
-          </button>
+
+      {/* Left Column */}
+      <div className="fixed top-0 left-0 w-full sm:w-1/2 h-full bg-slate-800 text-white flex flex-col justify-center p-8">
+        <div className="overflow-y-auto">
+          <div>
+            <h1 className="text-4xl font-bold mb-4">Gitwallet</h1>
+            <p className="mb-6">The business builder for open source.</p>
+            <button className="bg-slate-500 hover:bg-slate-300 text-white font-bold py-2 px-4 rounded">
+              Get Started
+            </button>
+            <SimpleEmailInputForm placeholder="Enter Your Email">
+            </SimpleEmailInputForm>
+
+
+            <form className="relative isolate mt-8 flex items-center pr-1">
+              <label className="sr-only">Email address</label>
+              <input required type="email" placeholder="Email address" className="peer w-0 flex-auto bg-transparent px-4 py-2.5 text-base text-white placeholder:text-gray-500 focus:outline-none sm:text-[0.8125rem]/6" name="email" />
+                <button className="group relative isolate flex-none rounded-md py-1.5 text-[0.8125rem]/6 font-semibold text-white pl-2.5 pr-[calc(9/16*1rem)]" type="submit">
+                  <span className="absolute inset-0 rounded-md bg-gradient-to-b from-white/80 to-white opacity-10 transition-opacity group-hover:opacity-15"></span>
+                  <span className="absolute inset-0 rounded-md opacity-7.5 shadow-[inset_0_1px_1px_white] transition-opacity group-hover:opacity-10"></span>Get updates
+                  <span aria-hidden="true">→</span></button><div className="absolute inset-0 -z-10 rounded-lg transition peer-focus:ring-4 peer-focus:ring-sky-300/15"></div>
+                  <div className="absolute inset-0 -z-10 rounded-lg bg-white/2.5 ring-1 ring-white/15 transition peer-focus:ring-sky-300"></div>
+              </form>
+          </div>
         </div>
       </div>
 
-    {/* Right Column */}
-      <div className="w-full md:w-1/2 ml-auto bg-white overflow-y-auto p-8">
+      {/* Right Column */}
+      <div className="w-full sm:w-1/2 ml-auto bg-white overflow-y-auto p-8">
         <section className="mb-8">
           <h2 className="text-3xl font-semibold mb-4">Gitwallet</h2>
           <p>Gitwallet is a toolkit for open source maintainers to commercialize their services for their repos and ecosystems.</p>
@@ -57,6 +73,6 @@ export default function HomePage() {
         </section>
       </div>
 
-  </div>
+    </div>
   );
 }
