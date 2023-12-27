@@ -1,6 +1,6 @@
 // import tiers from './support-tiers';
 import PageHeading from '@/components/common/page-heading';
-import PrimaryButton from '@/components/common/primary-button';
+import PrimaryButton from '@/components/common/link-button';
 import { getTiersForAdmin } from '@/lib/tiers/fetchers';
 
 import { Grid, Col } from '@tremor/react';
