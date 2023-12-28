@@ -305,7 +305,11 @@ export default function PageEditor({
       size="xs"
       disabled={inProgress || isDeleting}
       loading={isDeleting}
-      onClick={doDeletePage}
+      onClick={() => {
+        if (window.confirm("Are you sure you want to delete this page?")) {
+          doDeletePage();
+        }
+      }}
     >
       Delete
     </Button>
