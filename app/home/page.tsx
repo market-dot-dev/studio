@@ -49,7 +49,7 @@ export default function HomePage() {
       <div className="w-full sm:w-1/2 ml-auto bg-slate-100 text-slate-800 overflow-y-auto p-16">
         <section className="mb-8">
           {renderSectionHeading("Purpose built for OSS.")}
-          <p className="mb-4">Gitwallet is a toolkit for open source maintainers to commercialize their services for their repos and ecosystems. We're helping leading maintainers create robust support offerings, sell across channels, and grow their business.</p>
+          <p className="mb-4">Gitwallet is a toolkit for open source maintainers to commercialize their services for their repos and ecosystems. We help leading maintainers create robust support offerings, sell across channels, and grow their business.</p>
         </section>
 
         <section className="mb-8">
@@ -101,8 +101,8 @@ export default function HomePage() {
         <section className="mb-8">
           {renderSectionHeading("A Note from the founders")}
           {/* Iterate over testimonials */}
-          <p className="mb-4">We're building Gitwallet to help open source maintainers build sustainable businesses. We're excited to work with you to shape the future of open source.</p>
-          <p className="mb-4">- <b>Sam Bhagwat</b>, CEO</p>
+          <p className="mb-4">We're building Gitwallet to help open source maintainers build sustainable businesses. We want to work with you to shape the future of open source.</p>
+          <p className="mb-4">- <b>Tarun and the Gitwallet team</b></p>
         </section>
 
         <section className="mb-8">
@@ -114,7 +114,7 @@ export default function HomePage() {
         <section className="mb-8">
           {renderSectionHeading("Why We're Building This")}
           {/* Iterate over testimonials */}
-          <p className="mb-4">"wtf where has this been all my life" - Jordan Harband</p>
+          <p className="mb-4">wtf where has this been all my life - Jordan Harband</p>
         </section>
 
 
