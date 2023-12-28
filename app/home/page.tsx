@@ -1,7 +1,6 @@
 import Image from "next/image";
 import type { NextPage } from 'next';
 import SimpleEmailInputForm from "@/components/common/simple-email-input";
-import FormButton from "@/components/common/form-button";
 import { Card, Col, Grid } from "@tremor/react";
 import DashboardCard from "@/components/common/dashboard-card";
 import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
@@ -34,12 +33,11 @@ export default function HomePage() {
       <div className="fixed top-0 left-0 w-full sm:w-1/2 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 md:p-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
         <div className="overflow-y-auto">
           <div className="p-5">
-            <img src="/logo-white.png" width="150px" className="mb-6" />
+            <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
             <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for<br />open source maintainers.</h1>
             <p className="text-xl font-extralight leading-6 mb-6">Gitwallet is a toolkit to <b>build, sell and manage</b> robust support offerings for your repos and ecosystems.</p>
-            <div className="flex inline-flex gap-2 p-1 border-solid border-slate-700 hover:border-slate-200 border-2 rounded-xl">
-              <SimpleEmailInputForm placeholder="Enter Your Email" />
-              <FormButton label="Get Updates →" size="md" />
+            <div>
+              <SimpleEmailInputForm email={{}} placeholder="Enter Your Email"  />
             </div>
           </div>
         </div>
@@ -101,7 +99,7 @@ export default function HomePage() {
         <section className="mb-8">
           {renderSectionHeading("A Note from the founders")}
           {/* Iterate over testimonials */}
-          <p className="mb-4">We're building Gitwallet to help open source maintainers build sustainable businesses. We want to work with you to shape the future of open source.</p>
+          <p className="mb-4">We built Gitwallet to help open source maintainers build sustainable businesses. We want to work with you to shape the future of open source.</p>
           <p className="mb-4">- <b>Tarun and the Gitwallet team</b></p>
         </section>
 

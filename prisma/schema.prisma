@@ -187,3 +187,9 @@ model Subscription {
 
   @@unique([userId, tierVersionId])
 }
+
+model WaitlistUser {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  createdAt   DateTime  @default(now())
+}
