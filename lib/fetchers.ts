@@ -54,47 +54,23 @@ export async function getSitePage(domain: string, slug: string | undefined) {
     ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
     : null;
 
-    return await unstable_cache(
-      async () => {
-        // First, get the site
-        const site = await prisma.site.findUnique({
-          where: subdomain ? { subdomain } : { customDomain: domain },
-          include: { 
-            user: true,
-            pages: {
-              where: {
-                slug: slug
-              },
-              take: 1
-            }
-          }
-        });
+    const site = await prisma.site.findUnique({
+      where: subdomain ? { subdomain } : { customDomain: domain },
+      include: { 
+        user: true,
+        pages: {
+          where: {
+            slug: slug,
+            draft: false,
+          },
+          take: 1
+        }
+      }
+    });
 
-        // if (!site) {
-        //   return null; // or handle the case where the site doesn't exist
-        // }
-
-        // Now, get the specific page by slug
-        // const page = await prisma.page.findFirst({
-        //   where: { 
-        //     siteId: site.id,
-        //     slug: slug
-        //   }
-        // });
-
-        return {
-          ...site
-        };
-        
-      },
-      [`${domain}-metadata`],
-      {
-        revalidate: 900,
-        tags: [`${domain}-metadata`],
-      },
-    )();
-  
-
+    return {
+      ...site
+    };
 }
 
 export async function getPostsForSite(domain: string) {

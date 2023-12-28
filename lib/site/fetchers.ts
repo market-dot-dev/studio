@@ -1,13 +1,20 @@
 import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
 
-export async function getSiteNav(siteId: string) {
+// gets the pages of the site for either the site Id or the user Id
+export async function getSiteNav(siteId: any = null, userId: any = null) {
+    
+    if (!siteId && !userId) {
+        return {
+            error: "No siteId or userId provided",
+        };
+    }
+
     return await unstable_cache(
         async () => {
             return prisma.page.findMany({
                 where: {
-                    siteId,
+                    ...(siteId ? { siteId } : { userId }),
                     draft: false
                 },
                 select: {
@@ -17,10 +24,10 @@ export async function getSiteNav(siteId: string) {
                 }
             });
         },
-        [`${siteId}-nav`],
+        [`${siteId ?? userId}-nav`],
         {
         revalidate: 900,
-        tags: [`${siteId}-nav`],
+        tags: [`${siteId ?? userId}-nav`],
         },
     )();
 }

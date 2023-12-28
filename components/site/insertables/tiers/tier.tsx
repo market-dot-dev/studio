@@ -1,6 +1,6 @@
 'use client'
 
-import { Flex, Button } from "@tremor/react";
+import { Button } from "@tremor/react";
 import { useState } from "react";
 
 export default function Tier({tier}: { tier : any}) : JSX.Element {

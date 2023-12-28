@@ -1,4 +1,4 @@
-import componentsMap from '@/components/site';
+import componentsMap from '@/components/site/insertables';
 
 type DynamicComponentProps = {
     tag: keyof JSX.IntrinsicElements;
@@ -30,12 +30,12 @@ type DynamicComponentProps = {
   };
   
   // For recursively rendering elements
-  const renderElement = (element: Element | Element[], index : number, site : any = null, page : any = null): JSX.Element => {
+  const renderElement = (element: Element | Element[], index : number, site : any = null, page : any = null, isPreview : boolean = false): JSX.Element => {
     
     // in case there are multiple root elements, wrap them in a fragment
     if(Array.isArray(element)) {
       return (<>
-        {element.map((child, index) => renderElement(child as Element, index, site, page))}
+        {element.map((child, index) => renderElement(child as Element, index, site, page, isPreview))}
       </>)
     } 
 
@@ -44,7 +44,7 @@ type DynamicComponentProps = {
     
     // Check if the element is a custom component
     if (tag in componentsMap) {
-      const CustomComponent = site && page ? componentsMap[tag]['element'] : componentsMap[tag]['preview'] ?? componentsMap[tag]['element'];
+      const CustomComponent = isPreview && componentsMap[tag]['preview'] ? componentsMap[tag]['preview'] : componentsMap[tag]['element']
       const props = {
         ...( site? {site} : {}),
         ...( page? {page} : {}),
@@ -62,7 +62,7 @@ type DynamicComponentProps = {
     if (element.children.length > 0) {
       return (
         <DynamicComponent tag={tag} className={className} key={index}>
-          {Array.from(element.children).map((child, index) => renderElement(child as Element, index as number, site, page))}
+          {Array.from(element.children).map((child, index) => renderElement(child as Element, index as number, site, page, isPreview))}
         </DynamicComponent>
       );
     } else {
