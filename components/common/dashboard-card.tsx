@@ -1,10 +1,10 @@
 import { Card } from "@tremor/react"
-import { ReactNode } from "react"
 
-export default function DashboardCard({ children }: { children?: ReactNode }) {
+export default function DashboardCard(props: any) {
+    const { children } = props;
 
     return (
-        <Card className="p-2 mb-2">
+        <Card className={props.className + " p-2" ?? ""}>
             {children}
         </Card>
     )
