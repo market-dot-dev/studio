@@ -30,7 +30,7 @@ export default function HomePage() {
     <div className="flex flex-col md:flex-row min-h-screen">
 
       {/* Left Column */}
-      <div className="fixed top-0 left-0 w-full sm:w-1/2 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 md:p-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
+      <div className="sm:fixed top-0 left-0 w-full sm:w-1/2 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 md:p-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
         <div className="overflow-y-auto">
           <div className="p-5">
             <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
