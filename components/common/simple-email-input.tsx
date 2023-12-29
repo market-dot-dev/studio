@@ -3,6 +3,7 @@ import { TextInput, Button } from "@tremor/react";
 import { addUserToWaitlist } from "@/lib/waitlist/actions";
 import { useState } from "react";
 import Link from "next/link";
+import { set } from "date-fns";
 
 
 export default function SimpleEmailInputForm(props: any) {
@@ -15,20 +16,28 @@ export default function SimpleEmailInputForm(props: any) {
 
     const validateForm = () => {
         if (!email) {
-            setErrors({ ...errors, name: 'Please enter an email' });
+            setErrors({ ...errors, name: 'Please enter an email.' });
             return false;
         }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            setErrors({ ...errors, name: 'Please enter a valid email.' });
+            return false;
+        }
+        
         return true;
     }
     
     const onSubmit = async () => {
         if (!validateForm()) return;
+        setErrors({});
         setIsSaving(true);
         try {
             await handleSubmit({ email });
         }
         catch (error) {
-            console.log(error);
+            console.log("There was an error Saving: "+error);
         }
         setIsSaving(false);
     }
@@ -42,6 +51,8 @@ export default function SimpleEmailInputForm(props: any) {
     
         } catch (error) {
             console.log(error);
+            setIsSaved(false);
+            setErrors({ ...errors, name: 'There was an error saving your email. You may have already signed up.' });
         }
     };    
 
@@ -52,6 +63,8 @@ export default function SimpleEmailInputForm(props: any) {
             <p><b>Want to get involved?</b> <Link href="https://form.typeform.com/to/D8fpSsxs" target="_blank" className="underline underline-offset-2">Join our design partnership</Link> to get early access and help shape Gitwallet with other maintainers.</p>
             
         </div>;
+
+    const errorMessage = <div className="mt-2 ms-2 text-sm text-red-300">{errors.name}</div>;
 
     return (
         <>
@@ -64,6 +77,7 @@ export default function SimpleEmailInputForm(props: any) {
         
         <div>
             {isSaved && successMessage}
+            {errors.name && errorMessage}
         </div>
         </>
 
