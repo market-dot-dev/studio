@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import type { NextPage } from 'next';
 import SimpleEmailInputForm from "@/components/common/simple-email-input";
 import { Card, Col, Grid } from "@tremor/react";
@@ -12,10 +13,12 @@ type TestimonialProps = {
   logoSrc: string;
 };
 
+const logoPath = "/";
 // A simple component to display each testimonial with a logo
-const Testimonial: React.FC<TestimonialProps> = ({ ecosystem, logoSrc }) => (
-  <div className="flex items-center space-x-4">
-    <p>{`Used by the leading ${ecosystem} maintainers.`}</p>
+const EcosystemLogo: React.FC<TestimonialProps> = ({ ecosystem, logoSrc }) => (
+  <div className="flex flex-col items-center gap-4">
+    {/* <p className="text-xs">{ecosystem}</p> */}
+    <Image alt={ecosystem} src={logoPath + logoSrc} width={80} height={50} />
   </div>
 );
 
@@ -51,7 +54,7 @@ export default function HomePage() {
         </section>
 
         <section className="mb-8">
-          {renderSectionHeading("How we help maintainers:")}
+          {renderSectionHeading("How We Can Help:")}
 
           <Grid numItems={1} numItemsSm={3} className="text-sm text-slate-50 w-4/5 gap-4">
             <Col>
@@ -77,49 +80,39 @@ export default function HomePage() {
 
             <Col numColSpanSm={3}>
               <DashboardCard className="bg-slate-200 text-slate-800">
-                <h2 className="font-bold mb-2">Help us Shape Gitwallet</h2>
-                <p className="font-light">If you would like to shape our product with us, join our design partnership program with leading maintainers across ecosystems.</p>
+                <h2 className="font-bold mb-2">Manage Your Open Source Relationships</h2>
+                <p className="font-light">If you are a software organization using open source and want to try it for your team, let us know!</p>
               </DashboardCard>
             </Col>
           </Grid>
         </section>
 
         <section className="mb-8">
-          {renderSectionHeading("Building with the best.")}
+          <p className="mb-8">We are working with maintainers across ecosystems to build Gitwallet. If you want to get involved, <Link href="https://form.typeform.com/to/D8fpSsxs" target="_blank" className="underline underline-offset-2">join our design partnership</Link> to get early access and help shape Gitwallet with other maintainers.</p>
+
           {/* Iterate over testimonials */}
-          <Testimonial ecosystem="Ruby" logoSrc="/logos/ruby.png" />
-          <Testimonial ecosystem="Python" logoSrc="/logos/python.png" />
-          <Testimonial ecosystem="PHP" logoSrc="/logos/php.png" />
-          <Testimonial ecosystem="JavaScript" logoSrc="/logos/javascript.png" />
+          <div className="flex flex-row gap-4">
+            <EcosystemLogo ecosystem="JavaScript" logoSrc="js.png"  />
+            <EcosystemLogo ecosystem="Rails" logoSrc="rails.png"  />
+            <EcosystemLogo ecosystem="Python" logoSrc="python.png"  />
+            <EcosystemLogo ecosystem="PHP" logoSrc="php.png"  />
+            <EcosystemLogo ecosystem="GoLang" logoSrc="go.png"  />
+          </div>
           {/* Add more testimonials with corresponding logos as needed */}
         </section>
 
-
-
-        <section className="mb-8">
-          {renderSectionHeading("A Note from the founders")}
-          {/* Iterate over testimonials */}
-          <p className="mb-4">We built Gitwallet to help open source maintainers build sustainable businesses. We want to work with you to shape the future of open source.</p>
-          <p className="mb-4">- <b>Tarun and the Gitwallet team</b></p>
-        </section>
-
-        <section className="mb-8">
-          {renderSectionHeading("For Companies That Use Open Source")}
-          {/* Iterate over testimonials */}
-          <p className="mb-4">If you use open source.</p>
-        </section>
-
-        <section className="mb-8">
-          {renderSectionHeading("Why We're Building This")}
-          {/* Iterate over testimonials */}
-          <p className="mb-4">wtf where has this been all my life - Jordan Harband</p>
+        <section className="w-4/5 mb-8">
+          <DashboardCard className="text-sm">
+          <h2 className="font-bold mb-2">A Note from the Founders</h2>
+          <p className="mb-2">We've spent out careers building communities on the Internet. We've enabled creators to make millions, and have helped uncover new revenue streams. We were shocked when we discovered that the creator economy forgot about the original creators on the Internet - open source developers. We're building Gitwallet as a business toolkit for open source maintainers. We're just getting started.</p>
+          <p className="">- <b>Tarun and the Gitwallet team</b></p>
+          </DashboardCard>
         </section>
 
 
         <section className="mb-8">
           {renderSectionHeading("Frequently Asked Questions")}
-          {/* Iterate over testimonials */}
-          <AccordionList className="max-w-md mx-auto">
+          <AccordionList className="max-w">
             <Accordion>
               <AccordionHeader>What does this mean for my open source license?</AccordionHeader>
               <AccordionBody>
