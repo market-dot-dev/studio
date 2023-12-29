@@ -1,11 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { NextPage } from 'next';
 import SimpleEmailInputForm from "@/components/common/simple-email-input";
-import { Card, Col, Grid } from "@tremor/react";
+import { Col, Grid } from "@tremor/react";
 import DashboardCard from "@/components/common/dashboard-card";
 import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
-
 
 // Define a type for the testimonial props, including the logo
 type TestimonialProps = {
@@ -104,7 +102,7 @@ export default function HomePage() {
         <section className="w-4/5 mb-8">
           <DashboardCard className="text-sm">
           <h2 className="font-bold mb-2">A Note from the Founders</h2>
-          <p className="mb-2">We've spent out careers building communities on the Internet. We've enabled creators to make millions, and have helped uncover new revenue streams. We were shocked when we discovered that the creator economy forgot about the original creators on the Internet - open source developers. We're building Gitwallet as a business toolkit for open source maintainers. We're just getting started.</p>
+          <p className="mb-2">We&apos;ve spent out careers building communities on the Internet. We&apos;ve enabled creators to make millions, and have helped uncover new revenue streams. We were shocked when we discovered that the creator economy forgot about the original creators on the Internet - open source developers. We&apos;re building Gitwallet as a business toolkit for open source maintainers. We&apos;re just getting started.</p>
           <p className="">- <b>Tarun and the Gitwallet team</b></p>
           </DashboardCard>
         </section>
