@@ -16,12 +16,14 @@ export default function SimpleEmailInputForm(props: any) {
 
     const validateForm = () => {
         if (!email) {
+            setIsSaved(false);
             setErrors({ ...errors, name: 'Please enter an email.' });
             return false;
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
+            setIsSaved(false);
             setErrors({ ...errors, name: 'Please enter a valid email.' });
             return false;
         }
