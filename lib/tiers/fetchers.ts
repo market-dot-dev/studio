@@ -2,6 +2,7 @@ import { unstable_cache } from "next/cache";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 
+// this pulls published tiers to display on the front end site for customers to subscribe to
 export async function getTiersForUser( userId: string) {
   return await unstable_cache(
     async () => {
@@ -41,6 +42,7 @@ export async function getTiersForUser( userId: string) {
   )();
 }
 
+// this pulls all tiers for the admin to manage
 export async function getTiersForAdmin() {
   const session = await getSession();
   if (!session?.user.id) {

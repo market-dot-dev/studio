@@ -6,7 +6,7 @@ export default function EmbedChannel({ params }: { params: { id: string } }) {
             <h1 className="font-cal text-3xl font-bold dark:text-white">
               Embeds
             </h1>
-            
+              
           </div>
           <div className="flex flex-col space-y-2">
             <h2>Embed services onto another webpage.</h2>
