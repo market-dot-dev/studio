@@ -144,7 +144,7 @@ export default function HomePage() {
 
           <section className="w-5/6 mb-8">
             <Divider>Founders Note</Divider>
-            <p className="text-center text-sm mb-2">We are building Gitwallet with a simple goal: to make it easier for open source maintainers to build strong businesses on the foundation of their OSS work. We often joke that "the creator economy" forgot about the original online creators - the OSS developers that built the Internet. We want to help fill that gap. We hope Gitwallet becomes a toolkit for developers around the world to turn into entrepreneurs.</p>
+            <p className="text-center text-sm mb-2">We are building Gitwallet with a simple goal: to make it easier for open source maintainers to build strong businesses on the foundation of their OSS work. We often joke that &quot;the creator economy&quot; forgot about the original online creators - the OSS developers that built the Internet. We want to help fill that gap. We hope Gitwallet becomes a toolkit for developers around the world to turn into entrepreneurs.</p>
             <p className="text-center text-sm">- <b><Link href="https://www.github.com/tarunsachdeva" target="_blank" className="">Tarun</Link> & the Gitwallet team</b></p>
             <Divider />
         </section>
