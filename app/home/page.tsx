@@ -59,7 +59,7 @@ export default function HomePage() {
     <div className="flex flex-col md:flex-row min-h-screen">
 
       {/* Left Column */}
-      <div className="sm:fixed top-0 left-0 w-full sm:w-1/2 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 md:p-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
+      <div className="md:fixed top-0 left-0 w-full md:w-1/2 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 lg:py-32 xl:px-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
         <div className="overflow-y-auto">
           <div className="p-5">
             <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
@@ -73,7 +73,7 @@ export default function HomePage() {
       </div>
 
       {/* Right Column */}
-      <div className="w-full sm:w-1/2 ml-auto bg-slate-100 text-slate-800 overflow-y-auto p-16">
+      <div className="w-full md:w-1/2 ml-auto bg-slate-100 text-slate-800 overflow-y-auto p-16">
         <section className="mb-8 w-5/6">
           {renderSectionHeading("Purpose built for Maintainers")}
           <p className="mb-4">Gitwallet is a toolkit for open source maintainers to commercialize their services for their repos and ecosystems. We help leading maintainers create robust support offerings, sell across channels, and grow their business.</p>
@@ -82,7 +82,7 @@ export default function HomePage() {
         <section className="mb-8">
           {renderSectionHeading("A Complete Toolkit")}
 
-          <Grid numItems={1} numItemsSm={3} className="text-sm text-slate-50 w-5/6 gap-4">
+          <Grid numItems={1} numItemsLg={3} className="text-sm text-slate-50 w-5/6 gap-4">
             <Col>
               <DashboardCard className="h-40 bg-emerald-600 hover:shadow-lg hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-t hover:from-emerald-600 hover:to-emerald-800">
                 <h2 className="font-bold mb-2">Setup Support Tiers</h2>
@@ -104,7 +104,7 @@ export default function HomePage() {
               </DashboardCard>
             </Col>
 
-            <Col numColSpan={3}>
+            <Col numColSpan={1} numColSpanLg={3}>
               <DashboardCard>
                 <div className="text-slate-800">
                   <Badge size="xs" className="me-2 mb-1.5">For Software Teams</Badge>
