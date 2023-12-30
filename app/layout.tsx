@@ -10,7 +10,7 @@ import '@radix-ui/themes/styles.css';
 const title =
   "Gitwallet";
 const description =
-  "Gitwallet: Create & manage robust support tiers for your repos and ecosystems.";
+  "Gitwallet: The business builder made for open source maintainers.";
 const image = "https://gitwallet.co/thumbnail.png";
 
 export const metadata: Metadata = {
