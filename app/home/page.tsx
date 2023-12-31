@@ -29,11 +29,11 @@ const frequentlyAskedQuestions: FAQItem[] = [
   },
   {
     question: "Who is building Gitwallet?",
-    answer: "Gitwallet is being built by Lab0324, a product studio based in Toronto, with developers and designers around the world. We are also working closely with maintainers across ecosystems."
+    answer: "Gitwallet is being built by Lab0324, a product studio based in Toronto, with developers and designers around the world. We are also working closely with maintainers across ecosystems. If you want to get in touch, feel free to DM <a href=\"https://www.x.com/tarunsachdeva\" target=\"_blank\"><u>the founder</u></a>!"
   },
   {
     question: "How can I learn more and participate?",
-    answer: "Join our <a href=\"" + surveyLink + "\" target=\"_blank\"><u>design partnership</u></a> to get early access and help shape Gitwallet with other maintainers."
+    answer: "First - thank you for your interest! The best way to participate is join our <a href=\"" + surveyLink + "\" target=\"_blank\"><u>design partnership</u></a> to get early access and help shape Gitwallet with other maintainers."
   }
 ];
 
@@ -61,9 +61,9 @@ export default function HomePage() {
       {/* Left Column */}
       <div className="md:fixed top-0 left-0 w-full md:w-1/2 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 lg:py-32 xl:px-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
         <div className="overflow-y-auto">
-          <div className="p-5">
+          <div className="w-7/8 lg:w-5/6">
             <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
-            <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for<br />open source maintainers.</h1>
+            <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for open source maintainers.</h1>
             <p className="text-xl font-extralight leading-6 mb-6">Gitwallet is a toolkit to <b>build, sell and manage</b> robust support offerings for your repos and ecosystems.</p>
             <div>
               <SimpleEmailInputForm email={{}} placeholder="Enter Your Email" />
