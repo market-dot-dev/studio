@@ -1,13 +1,25 @@
+'use client'
+
 import PageHeading from '@/components/common/page-heading';
-import NewTier from '@/components/tiers/new-tier';
+import Tier, { newTier } from '@/app/models/Tier';
+import TierForm from '@/components/tiers/tier-form';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
-export default function EditTierPage({params} : {params: { id: string }}) {
+const attrs = newTier();
 
+export default function NewTierPage() {
+  const router = useRouter();
+  const [tier, setTier] = useState<Partial<Tier>>(attrs);
+
+  const handleSubmit = async (tier: Tier) => {
+    console.log('saved successfully');
+  };
 
   return (
     <div className="flex max-w-screen-xl flex-col p-8">
       <PageHeading title="New Tier" />
-      <NewTier />
+      <TierForm tier={tier} handleSubmit={handleSubmit} />
     </div>
   )
 }
