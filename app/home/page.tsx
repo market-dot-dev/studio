@@ -73,8 +73,8 @@ export default function HomePage() {
       </div>
 
       {/* Right Column */}
-      <div className="w-full md:w-1/2 ml-auto bg-slate-100 text-slate-800 overflow-y-auto p-16">
-        <section className="mb-8 w-5/6">
+      <div className="w-full md:w-1/2 ml-auto bg-slate-100 text-slate-800 overflow-y-auto p-8 md:p-16">
+        <section className="mb-8 w-7/8 lg:w-5/6">
           {renderSectionHeading("Purpose built for Maintainers")}
           <p className="mb-4">Gitwallet is a toolkit for open source maintainers to commercialize their services for their repos and ecosystems. We help leading maintainers create robust support offerings, sell across channels, and grow their business.</p>
         </section>
@@ -82,25 +82,25 @@ export default function HomePage() {
         <section className="mb-8">
           {renderSectionHeading("A Complete Toolkit")}
 
-          <Grid numItems={1} numItemsLg={3} className="text-sm text-slate-50 w-5/6 gap-4">
+          <Grid numItems={1} numItemsLg={3} className="text-sm text-slate-50 w-7/8 lg:w-5/6 gap-4">
             <Col>
-              <DashboardCard className="h-40 bg-emerald-600 hover:shadow-lg hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-t hover:from-emerald-600 hover:to-emerald-800">
+              <DashboardCard className="bg-emerald-600 hover:shadow-lg hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-t hover:from-emerald-600 hover:to-emerald-800">
                 <h2 className="font-bold mb-2">Setup Support Tiers</h2>
-                <p className="font-light">Quickly build robust support offerings that work for you and the companies that use your OSS.</p>
+                <p className="font-light mb-8">Quickly build robust support offerings that work for you and your customers.</p>
               </DashboardCard>
             </Col>
 
             <Col>
-              <DashboardCard className="h-40 bg-emerald-700 hover:shadow-lg hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-b hover:from-emerald-600 hover:to-emerald-700">
+              <DashboardCard className="bg-emerald-700 hover:shadow-lg hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-b hover:from-emerald-600 hover:to-emerald-700">
                 <h2 className="font-bold mb-2">Sell Across Channels</h2>
-                <p className="font-light">Setup a hosted site, customizable embeds, and direct sales to market and sell your services.</p>
+                <p className="font-light mb-8">Setup a hosted site, customizable embeds, and direct sales to market and sell your services.</p>
               </DashboardCard>
             </Col>
 
             <Col>
-              <DashboardCard className="h-40 bg-emerald-800 hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-b hover:from-emerald-700 hover:to-emerald-600">
+              <DashboardCard className="bg-emerald-800 hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-b hover:from-emerald-700 hover:to-emerald-600">
                 <h2 className="font-bold mb-2">Manage Your Business</h2>
-                <p className="font-light">All your reports, customers, payments and contract information in one place.</p>
+                <p className="font-light mb-8">All your reports, customers, payments and contract information in one place.</p>
               </DashboardCard>
             </Col>
 
@@ -115,7 +115,7 @@ export default function HomePage() {
           </Grid>
         </section>
 
-        <section className="mb-8 w-5/6">
+        <section className="mb-8  w-7/8 lg:w-5/6">
           {renderSectionHeading("Get Involved")}
           <p className="mb-8">We are working with maintainers across ecosystems to build Gitwallet. If you want to get involved, <Link href={surveyLink} target="_blank" className="underline underline-offset-2">join our design partnership</Link> to get early access and help shape the early product.</p>
 
@@ -133,10 +133,10 @@ export default function HomePage() {
         <section className="mb-8">
           {renderSectionHeading("Frequently Asked Questions")}
 
-          <AccordionList className="w-5/6">
+          <AccordionList className="w-7/8 lg:w-5/6">
             {frequentlyAskedQuestions.map((item, index) => (
               <Accordion key={index}>
-                <AccordionHeader className="py-2">{item.question}</AccordionHeader>
+                <AccordionHeader className="py-2 text-start">{item.question}</AccordionHeader>
                 <AccordionBody dangerouslySetInnerHTML={{ __html: item.answer }}></AccordionBody>
               </Accordion>
             ))}
@@ -144,7 +144,7 @@ export default function HomePage() {
 
         </section>
 
-{/* 
+        {/* 
           <section className="w-5/6 mb-8">
             <Divider>Founders Note</Divider>
             <p className="text-center text-sm mb-2">We are building Gitwallet with a simple goal: to make it easier for open source maintainers to build strong businesses on the foundation of their OSS work. We often joke that &quot;the creator economy&quot; forgot about the original online creators - the OSS developers that built the Internet. We want to help fill that gap. We hope Gitwallet becomes a toolkit for developers around the world to turn into entrepreneurs.</p>
