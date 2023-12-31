@@ -70,11 +70,13 @@ export default function SimpleEmailInputForm(props: any) {
 
     return (
         <>
-        <div className="flex inline-flex gap-2 p-1 border-solid border-slate-700 hover:border-slate-200 border-2 rounded-xl">
+        <div className="md:flex md:inline-flex gap-2 p-1 items-center">
             <TextInput placeholder={props.placeholder ?? ""} onChange={(e) => setEmail(e.target.value)} />
-            <Button size="md" onClick={onSubmit}>
-                {buttonLabel}
-            </Button>
+            <div className="text-center">
+                <Button className="mt-1 md:mt-0" color="slate" size="md" onClick={onSubmit}>
+                    {buttonLabel}
+                </Button>
+            </div>
         </div>
         
         <div>
