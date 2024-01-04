@@ -70,9 +70,9 @@ export default async function middleware(req: NextRequest) {
     const session = await getToken({ req });
 
     // Redirect to login if not logged in and not already on login page
-    if (!session && !path.startsWith("/login")) {
-      return NextResponse.redirect(new URL(`/login${path}`, req.url));
-    }
+    // if (!session && !path.startsWith("/login")) {
+    //   return NextResponse.redirect(new URL(`/login${path}`, req.url));
+    // }
 
     // Redirect to home if logged in and on login page
     if (session && path.startsWith("/login")) {

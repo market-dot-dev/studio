@@ -6,6 +6,7 @@ type DynamicComponentProps = {
     children?: React.ReactNode;
   };
   
+  const ignoreElements = ["html", "head", "body", "script", "style", "title", "meta", "link", "noscript", "svg", "path"];
   
   const voidElements = [
     "area", 
@@ -31,7 +32,7 @@ type DynamicComponentProps = {
   
   // For recursively rendering elements
   const renderElement = (element: Element | Element[], index : number, site : any = null, page : any = null, isPreview : boolean = false): JSX.Element => {
-    
+
     // in case there are multiple root elements, wrap them in a fragment
     if(Array.isArray(element)) {
       return (<>
@@ -41,19 +42,36 @@ type DynamicComponentProps = {
 
     if(!element?.tagName) return <></>;
     const tag = element.tagName.toLowerCase() as keyof JSX.IntrinsicElements;
+
+    // ignore some elements
+    if(ignoreElements.indexOf(tag) !== -1) return <></>;
     
     // Check if the element is a custom component
+    
     if (tag in componentsMap) {
       const CustomComponent = isPreview && componentsMap[tag]['preview'] ? componentsMap[tag]['preview'] : componentsMap[tag]['element']
-      const props = {
+      
+      const props = componentsMap[tag]['ui'] ? 
+          element.getAttributeNames().reduce((props : any, attr) => {
+            props[attr] = element.getAttribute(attr);
+            return props;
+          }
+        , {})
+       : {
         ...( site? {site} : {}),
         ...( page? {page} : {}),
       }
-      return <CustomComponent key={'component'+index} {...props} />;
+      
+      // const children = Array.from(element.children).map((child, index) => renderElement(child as Element, index, site, page, isPreview))
+      const children = Array.from(element.childNodes).map((child, index) => {
+        if(child.nodeName.startsWith('#text')) return child.textContent
+        return renderElement(child as Element, index, site, page, isPreview)
+      });
+      return <CustomComponent key={'component'+index} {...props}>{children}</CustomComponent>;
     }
   
     const className = element.className;
-  
+
     // Check if the element is a void element
     if (voidElements.indexOf(tag) !== -1) {
       return <DynamicComponent tag={tag} className={className} key={index} />;
@@ -62,7 +80,7 @@ type DynamicComponentProps = {
     if (element.children.length > 0) {
       return (
         <DynamicComponent tag={tag} className={className} key={index}>
-          {Array.from(element.children).map((child, index) => renderElement(child as Element, index as number, site, page, isPreview))}
+          { Array.from(element.childNodes).map((child, index) => child.nodeName.startsWith('#text') ? child.textContent : renderElement(child as Element, index as number, site, page, isPreview)) }
         </DynamicComponent>
       );
     } else {
