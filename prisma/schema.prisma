@@ -24,6 +24,7 @@ model User {
   sessions      Session[]
   sites         Site[]
   tiers         Tier[]
+  repos         Repo[]
   TierFeature   TierFeature[]
   Subscription  Subscription[]
 }
@@ -192,4 +193,13 @@ model WaitlistUser {
   id          String    @id @default(cuid())
   email       String    @unique
   createdAt   DateTime  @default(now())
+}
+
+model Repo {
+  id          String    @id @default(cuid())
+  name        String
+  url         String?
+  createdAt   DateTime  @default(now())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

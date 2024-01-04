@@ -4,7 +4,6 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { Provider } from "next-auth/providers";
-import { PrismaClient } from "@prisma/client";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
@@ -14,6 +13,63 @@ interface UserDetails {
   name: string;
   email: string;
   image: string;
+}
+
+// return a refreshed acccess token of github
+async function getAccessToken(userId : string) : Promise<string | null> {
+  try {
+    // Retrieve the current refresh token from the database
+    const currentAccount = await prisma.account.findFirst({
+      where: { userId: userId, provider: 'github' },
+    });
+    
+    // if access token and not expired
+    if( currentAccount?.access_token && currentAccount?.expires_at && Date.now() < currentAccount?.expires_at * 1000 ) {
+      return currentAccount.access_token;
+    }
+
+    if (!currentAccount?.refresh_token) {
+      throw new Error("No refresh token available");
+    }
+
+    // get updated tokens using refresh token
+    const url = `https://github.com/login/oauth/access_token`;
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        refresh_token: currentAccount.refresh_token,
+        client_id: process.env.AUTH_GITHUB_ID,
+        client_secret: process.env.AUTH_GITHUB_SECRET,
+        grant_type: 'refresh_token'
+      }),
+    });
+
+    const refreshedTokens = await response.json();
+    
+    if (!response.ok) {
+      throw refreshedTokens;
+    }
+
+    // Update the refresh token in the database
+    await prisma.account.update({
+      where: { id: currentAccount.id },
+      data: {
+        access_token: refreshedTokens.access_token,
+        expires_at: Math.round(Date.now() / 1000) + refreshedTokens.expires_in,
+        refresh_token: refreshedTokens.refresh_token
+      },
+    });
+
+    return refreshedTokens.access_token;
+
+  } catch (error) {
+    console.error('RefreshAccessTokenError', error);
+    return null;
+  }
 }
 
 async function upsertUser(userDetails: UserDetails) {
@@ -178,20 +234,50 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, account } : any) => {
+      // Store the refresh token in the database when the user logs in
+      if (account && user) {
+        await prisma.account.upsert({
+          where: {
+            provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId },
+          },
+          // this create might not even be required, assuming that the nextauth has already created the account, but just in case
+          create: {
+            userId: user.id,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            type: 'oauth',
+
+            // just ensuring that the account object has the following values
+            expires_at: account.expires_at,
+            refresh_token: account.refresh_token,
+            refresh_token_expires_in: account.refresh_token_expires_in,
+            
+          },
+          // the default nextauth implementation does not add the following values to the account object, so updating here
+          update: {
+            expires_at: account.expires_at,
+            refresh_token: account.refresh_token,
+            refresh_token_expires_in: account.refresh_token_expires_in
+          },
+        });
+      } 
+      
       if (user) {
         token.user = user;
       }
+
+      
       return token;
     },
-    session: async ({ session, token }) => {
+    session: async ({ session, token } : any) => {
+
       session.user = {
         ...session.user,
-        // @ts-expect-error
         id: token.sub,
-        // @ts-expect-error
         username: token?.user?.username || token?.user?.gh_username,
       };
+      
       return session;
     },
   },
