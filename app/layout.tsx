@@ -10,13 +10,13 @@ import '@radix-ui/themes/styles.css';
 const title =
   "Gitwallet";
 const description =
-  "Gitwallet: Create & manage robust support tiers for your repos and ecosystems.";
-const image = "https://vercel.pub/thumbnail.png";
+  "Gitwallet: The business builder made for open source maintainers.";
+const image = "https://gitwallet.co/thumbnail.png";
 
 export const metadata: Metadata = {
   title,
   description,
-  icons: ["https://vercel.pub/favicon.ico"],
+  icons: ["https://gitwallet.co/favicon.ico"],
   openGraph: {
     title,
     description,
@@ -27,9 +27,9 @@ export const metadata: Metadata = {
     title,
     description,
     images: [image],
-    creator: "@vercel",
+    creator: "@gitwallet",
   },
-  metadataBase: new URL("https://vercel.pub"),
+  metadataBase: new URL("https://gitwallet.co"),
 };
 
 export default function RootLayout({

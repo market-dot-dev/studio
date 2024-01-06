@@ -33,7 +33,7 @@ export default function CTA() {
       </button>
       <div className="text-center lg:text-left">
         <p className="font-title text-lg text-black dark:text-white sm:text-2xl">
-          Platforms Starter Kit Demo
+          Gitwallet
         </p>
         <p
           className={`${
