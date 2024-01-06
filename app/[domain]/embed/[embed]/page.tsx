@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 
 
 
-export default async function EmbedServe({params}: {params: {domain: string, embed: string}}) {
+export default async function EmbedServe({params, searchParams}: {params: {domain: string, embed: string}, searchParams: any}) {
     
     if(!embedables[params.embed] || !params.domain) {
         notFound()
@@ -16,7 +16,7 @@ export default async function EmbedServe({params}: {params: {domain: string, emb
     
     return (
         <>
-            <Component site={site} />
+            <Component site={site} searchParams={searchParams} />
         </>
     )
 }

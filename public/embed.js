@@ -5,12 +5,19 @@
     const protocol = currentScript.getAttribute('src').split("://")?.[0] ?? 'https';
     
     const server = protocol + "://" + currentScript.getAttribute('data-domain');
-    
+    // convert a settings object to a query string
+
+    function settingsToQueryString(jsonSettings) {
+        const settings = JSON.parse(jsonSettings);
+        return Object.keys(settings).map(key => `${key}=${settings[key]}`).join('&');
+    }
+
     // Function to create and insert the iframe
     function createIframe() {
         var iframe = document.createElement('iframe');
         const widget = currentScript.getAttribute('data-widget');
-        iframe.src = `${server}/embed/${widget}`; // URL of your iframe content
+        const jsonSettings = currentScript.getAttribute('data-settings');
+        iframe.src = `${server}/embed/${widget}/?${settingsToQueryString(jsonSettings)}` ; // URL of your iframe content
         iframe.style.width = '100%';
         iframe.style.border = 'none';
         iframe.style.overflow = 'hidden';

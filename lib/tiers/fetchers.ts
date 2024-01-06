@@ -90,21 +90,14 @@ export async function getTiersForAdmin() {
  
 }
 
-export async function getTier( id: string) {
-
-    const session = await getSession();
-    if (!session?.user.id) {
-      return {
-        error: "Not authenticated",
-      };
-    }
+export async function getTierOfUser( userId: string, id: string) {
 
     return await unstable_cache(
       async () => {
         return prisma.tier.findUnique({
           where: {
             id,
-            userId: session.user.id,
+            userId,
           },
           select: {
             id: true,
@@ -125,14 +118,26 @@ export async function getTier( id: string) {
           },
         });
       },
-      [`${session.user.id}-tier-${id}`],
+      [`${userId}-tier-${id}`],
       {
         revalidate: 900,
-        tags: [`${session.user.id}-tier-${id}`],
+        tags: [`${userId}-tier-${id}`],
       },
     )();
     
 }
+
+export async function getTier( id: string) {
+  const session = await getSession();
+  if (!session?.user.id) {
+    return {
+      error: "Not authenticated",
+    };
+  }
+
+  return getTierOfUser(session.user.id, id);
+}
+
 // get subscriptions of the logged in customer from a specific user/site
 export async function getSubscriptions( sellerId: string) {
   

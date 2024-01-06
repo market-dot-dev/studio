@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from '@tremor/react'
+import { Button, Flex } from '@tremor/react'
 export default function CodeSnippet({ code } : { code: string}) {
   const [copied, setCopied] = useState(false);
 
@@ -14,13 +14,15 @@ export default function CodeSnippet({ code } : { code: string}) {
   };
 
   return (
-    <div>
-      <pre className="language-html">
-        <code className="language-html">{code}</code>
+    <Flex flexDirection="col" alignItems="start" className="gap-4" >
+      <pre>
+        <div className="text-sm inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg p-4 pl-6" style={{whiteSpace: 'normal'}}>
+          {code}
+        </div>
       </pre>
       <Button onClick={() => copyToClipboard(code)}>
         {copied ? 'Copied!' : 'Copy to Clipboard'}
       </Button>
-    </div>
+    </Flex>
   );
 }

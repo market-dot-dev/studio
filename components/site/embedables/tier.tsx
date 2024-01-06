@@ -1,11 +1,13 @@
 'use client'
 
 import { Button } from "@tremor/react";
-import { useState } from "react";
+const protocol = process.env.NEXT_PUBLIC_VERCEL_ENV ? 'https' : 'http';
 
-export default function Tier({tier}: { tier : any}) : JSX.Element {
-
+export default function Tier({tier, subdomain, path}: { tier : any, subdomain: string, path : string | undefined}) : JSX.Element {
     
+    
+    const url = `${protocol}://${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${path ?? ''}`;
+
     return (
         
         <div className="text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
@@ -23,7 +25,9 @@ export default function Tier({tier}: { tier : any}) : JSX.Element {
                 </li>
                 ))}
             </ul>
-            <Button>Get Started</Button>
+            <a href={url} target="_blank" className="block w-full">
+                <Button>Get Started</Button>
+            </a>
         </div>
             
     )
