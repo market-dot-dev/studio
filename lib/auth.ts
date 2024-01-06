@@ -16,7 +16,7 @@ interface UserDetails {
 }
 
 // return a refreshed acccess token of github
-async function getAccessToken(userId : string) : Promise<string | null> {
+export async function getAccessToken(userId : string) : Promise<string | null> {
   try {
     // Retrieve the current refresh token from the database
     const currentAccount = await prisma.account.findFirst({
