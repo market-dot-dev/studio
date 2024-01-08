@@ -1,11 +1,10 @@
 "use server";
 
 import Stripe from 'stripe';
-import StripeCheckoutForm from '@/components/common/stripe-form';
 import Product from '../models/Product';
 import UserService from './UserService';
 import TierService from './TierService';
-import { FC } from 'react';
+import { createSubscription as createLocalSubscription } from '@/app/services/SubscriptionService';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
@@ -84,18 +83,50 @@ class StripeService {
     const deletedProduct = await stripe.products.del(stripeProductId);
   }
 
-  static async createCustomer(email: string) {
-    const customer = await stripe.customers.create({
-      email: email,
-      /*
-      payment_method: paymentMethodId,
+  static async createCustomer(email: string, paymentMethodId?: string) {
+    if(!email) {
+      throw new Error('Email is required to create a customer.');
+    }
+
+    let customer: Stripe.Customer;
+
+    if(paymentMethodId) {
+       customer = await stripe.customers.create({
+        email: email,
+        payment_method: paymentMethodId,
+        invoice_settings: {
+          default_payment_method: paymentMethodId,
+        },
+      });
+    } else {
+      customer = await stripe.customers.create({
+        email: email,
+      });
+    }   
+
+    return customer;
+  }
+
+  static async attachPaymentMethod(paymentMethodId: string) {
+    const user = await UserService.getCurrentUser();
+
+    if(!user || !user.stripeCustomerId) {
+      throw new Error('User not found or does not have a Stripe customer ID.');
+    }
+    
+    await stripe.paymentMethods.attach(paymentMethodId, { customer: user.stripeCustomerId });
+
+    await stripe.customers.update(user.stripeCustomerId, {
       invoice_settings: {
         default_payment_method: paymentMethodId,
       },
-      */
     });
 
-    return customer;
+    UserService.updateUser(user.id, { stripePaymentMethodId: paymentMethodId });
+  }
+
+  static async detachPaymentMethod(paymentMethodId: string) {
+    await stripe.paymentMethods.detach(paymentMethodId);
   }
 
   static async destroyCustomer(customerId: string) {
@@ -111,91 +142,90 @@ class StripeService {
 
     return subscription;
   }
-};
 
-/*
-export async function StripeServerComponent() {
-  const clientSecret = await getIntent(1000);
-  const returnUrl = `http://${process.env.HOSTNAME}/success`;
+  static async updateSubscription(subscriptionId: string, priceId: string) {
+    const subscription = await stripe.subscriptions.update(subscriptionId, {
+      items: [{ price: priceId }],
+      expand: ['latest_invoice.payment_intent'],
+    });
 
-  if (!clientSecret) {
-    throw new Error('Failed to load the client secret.');
+    return subscription;
   }
 
-  return <StripeCheckoutForm clientSecret={clientSecret} returnUrl={returnUrl} />;
-}
-*/
+  static async destroySubscription(subscriptionId: string) {
+    await stripe.subscriptions.cancel(subscriptionId);
+  }
+};
 
-interface StripeServerComponentProps {
+interface StripeCheckoutComponentProps {
   tierId: string;
 }
 
-export const StripeServerComponent: FC<StripeServerComponentProps> = async ({ tierId }) => {
-  // This assumes you have a way to identify the logged-in user and the tier they want to subscribe to
-  const userId = await UserService.getCurrentUserId();
-  const tier = await TierService.findTier(tierId);
+export const onClickSubscribe = async (userId: string, tierId: string) => {
+  let status = 'pending';
+  let error = null;
+  let subscription = null;
 
-  if (!tier) {
-    throw new Error('Tier not found.');
-  }
-
-  if (!userId) {
-    throw new Error('Not logged in.');
-  }
-
-  // Retrieve or create a Stripe customer for the user
-  const user = await UserService.findUser(userId);
-  let stripeCustomerId = user?.stripeCustomerId;
-
-  if (!user) {
-    throw new Error('User not found');
-  }
-
-  if (!stripeCustomerId) {
-    await UserService.createStripeCustomer(user);
-    const updatedUser = await UserService.findUser(userId);
-    stripeCustomerId = updatedUser?.stripeCustomerId!;
-  }
-
-  // Create the Stripe subscription
-  const subscription = await stripe.subscriptions.create({
-    customer: stripeCustomerId,
-    items: [{ price: tier.stripePriceId! }],
-    payment_behavior: 'default_incomplete', // requires a payment method
-    expand: ['latest_invoice.payment_intent'], // expands the returned object to include the payment intent
-  });
-
-  if (!subscription) {
-    throw new Error('Error creating subscription.');
-  }
-
-  const invoice = subscription.latest_invoice as Stripe.Invoice;
-  
-
-  if(invoice.status === 'paid') {
-    return <>Subscribed successfully.</>;
-  } else if(invoice.payment_intent) {
-    const paymentIntent = invoice.payment_intent as Stripe.PaymentIntent;
-
-    const clientSecret = paymentIntent.client_secret;
-    const returnUrl = `http://${process.env.HOSTNAME}/success`;
-
-    if (!clientSecret) {
-      throw new Error('Failed to load the client secret.');
+  //try {
+    const tier = await TierService.findTier(tierId);
+    if (!tier) {
+      throw new Error('Tier not found.');
     }
 
-    // Return the Stripe Checkout Form with the clientSecret and returnUrl
-    return <StripeCheckoutForm clientSecret={clientSecret} returnUrl={returnUrl} />;
-  } else {
-    console.log("=================== invoice:", invoice);
-    console.log("=================== subscription:", subscription);
-    return <>
-      <h1>Something weird happened</h1>
-    </>;    
-  }
+    if (!userId) {
+      throw new Error('Not logged in.');
+    }
+
+    const user = await UserService.findUser(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    let stripeCustomerId = user.stripeCustomerId;
+    
+    if (!stripeCustomerId) {
+      await UserService.createStripeCustomer(user);
+      const updatedUser = await UserService.findUser(userId);
+      stripeCustomerId = updatedUser?.stripeCustomerId!;
+    }
+
+    console.log("===== purchasing ", {
+      customer: stripeCustomerId,
+      items: [{ price: tier.stripePriceId! }],
+      payment_behavior: 'error_if_incomplete',
+      expand: ['latest_invoice.payment_intent'],
+    });
+
+    subscription = await stripe.subscriptions.create({
+      customer: stripeCustomerId,
+      items: [{ price: tier.stripePriceId! }],
+      payment_behavior: 'error_if_incomplete',
+      expand: ['latest_invoice.payment_intent'],
+    });
+
+    if (!subscription) {
+      throw new Error('Error creating subscription.');
+    }
+
+    const invoice = subscription.latest_invoice as Stripe.Invoice;
+
+    if (invoice.status === 'paid') {
+      await createLocalSubscription(userId, tierId);
+      status = 'success';
+    } else if (invoice.payment_intent) {
+      throw new Error('Subscription attempt returned a payment intent, which should never happen.');
+    } else {
+      status = 'error';
+      error = 'Unknown error occurred';
+    }
+  //} catch (e: any) {
+  //  status = 'error';
+  //  error = e.message;
+  //}
+
+  return { status, error /*, subscription*/ };
 };
 
-
-export const { getIntent, validatePayment, createPrice, destroyPrice } = StripeService
+export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod } = StripeService
 
 export default StripeService;

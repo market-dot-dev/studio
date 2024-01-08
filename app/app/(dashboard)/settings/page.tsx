@@ -8,6 +8,7 @@ import { TextInput } from "@tremor/react";
 import UserService from "@/app/services/UserService";
 import UserProductWidget from "./UserProductWidget";
 import UserCustomerWidget from "./UserCustomerWidget";
+import UserPaymentMethodWidget from "./UserPaymentMethodWidget";
 
 export default async function SettingsPage() {
   const session = await getSession();
@@ -54,6 +55,7 @@ export default async function SettingsPage() {
         />
         <UserProductWidget user={user} />
         <UserCustomerWidget user={user} />
+        <UserPaymentMethodWidget user={user} />
       </div>
     </div>
   );
