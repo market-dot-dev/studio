@@ -103,8 +103,6 @@ export default function CustomersList({ params }: { params: { id: string } }) {
           <PageHeading title="All Customers" />
         </div>
         <div className="flex flex-row gap-1">
-          <LinkButton href="/customers/new" label="Import" variant="secondary" />
-          <LinkButton href="/customers/new" label="Export" variant="secondary" />
           <LinkButton href="/customers/new" label="New Customer" />
         </div>
       </div>
