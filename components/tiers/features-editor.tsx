@@ -72,7 +72,6 @@ export default function FeaturesEditor({features, setFeatures}: any) : JSX.Eleme
     return (
         <>        
                 <Flex flexDirection="col" alignItems="start" className="gap-1">
-                    <Bold>Features</Bold>
                     <Flex className="gap-4">
                         <TextInput value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Enter feature text"/>
                         <Button onClick={addFeature}>Add</Button>

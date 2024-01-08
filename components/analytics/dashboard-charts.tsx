@@ -96,9 +96,7 @@ export default function DashboardCharts() {
 
   return (
     <>
-      <div className="flex max-w-screen-xl flex-col space-y-5 px-8">
-
- 
+      <div className="flex max-w-screen-xl flex-col mt-4 space-y-4 px-6">
         <div className="grid gap-6 sm:grid-cols-2">
           <DashboardCard>
             <Text>Customers</Text>
@@ -155,8 +153,8 @@ export default function DashboardCharts() {
         </div>
 
         <div className="grid justify-items-end">
-          <Button size="xs" variant="primary">
-            View All Reports
+          <Button size="xs" className="h-6" variant="secondary">
+            All Reports →
           </Button>
         </div>
       </div>

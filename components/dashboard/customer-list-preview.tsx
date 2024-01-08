@@ -59,7 +59,7 @@ const customersList = [
 
 export default function CustomersListPreview() {
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12">
+    <div className="flex max-w-screen-xl flex-col space-y-4">
       <DashboardCard>
         <Bold>New Customers</Bold>
 
@@ -107,6 +107,11 @@ export default function CustomersListPreview() {
           </TableBody>
         </Table>
       </DashboardCard>
+      <div className="grid justify-items-end">
+      <Button size="xs" className="h-6" variant="secondary">
+            All Customers →
+          </Button>
+        </div>
     </div>
   );
 }
