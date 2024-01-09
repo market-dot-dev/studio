@@ -12,7 +12,7 @@ import {
   Badge,
 } from "@tremor/react";
 import DashboardCard from "@/components/common/dashboard-card";
-import LinkButton from "@/components/common/link-button";
+import { MoreHorizontal } from "lucide-react";
 
 const customersList = [
   {
@@ -94,11 +94,11 @@ export default function CustomersListPreview() {
                   <TableCell className="p-2 m-0 text-right">{item.nextRenewal}</TableCell>
                   <TableCell className="p-2 m-0 text-right">
                     <div className="flex flex-row gap-1 justify-end">
-                      <Button size="xs" variant="primary" color="green">
+                      <Button size="xs" className="h-8" variant="primary">
                         View
                       </Button>
-                      <Button size="xs" variant="primary">
-                        Decline
+                      <Button size="xs" className="h-8" variant="secondary">
+                        <MoreHorizontal />
                       </Button>
                     </div>
                   </TableCell>
