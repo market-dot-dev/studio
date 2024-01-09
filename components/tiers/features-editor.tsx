@@ -49,7 +49,6 @@ function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
                         { isEditing ? <FaCheck height="14" width="14" /> : <FaEdit height="14" width="14" /> }
                     </IconButton>
                     <Switch checked={!feature.disconnect} onChange={() => toggleConnect(index)} />
-                    
                 </Flex>
             </div>
         </ListItem>
@@ -73,7 +72,7 @@ export default function FeaturesEditor({features, setFeatures}: any) : JSX.Eleme
         <>        
                 <Flex flexDirection="col" alignItems="start" className="gap-1">
                     <Flex className="gap-4">
-                        <TextInput value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Enter feature text"/>
+                        <TextInput value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Custom Tier Feature (e.g. EST Timezone Support)"/>
                         <Button onClick={addFeature}>Add</Button>
                     </Flex>
                 </Flex>
