@@ -185,9 +185,8 @@ export default function TierForm({ tier, label = 'Save Tier', handleSubmit }: { 
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Features</label>
 						<Grid numItems={4} className="gap-2 mb-4">
 							{featuresData.map((feature, index) => (
-								<div className="flex gap-2 mb-4">
-									{/* <Card key={index} className='w-1/4'> */}
-									<Card key={index}>
+								<div className="flex gap-2 mb-4" key={index}>
+									<Card>
 										<div className="grid justify-items-center text-center">
 											{feature.icon}
 											<Bold>{feature.title}</Bold>
