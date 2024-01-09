@@ -61,7 +61,6 @@ type DynamicComponentProps = {
         ...( site? {site} : {}),
         ...( page? {page} : {}),
       }
-      
       // const children = Array.from(element.children).map((child, index) => renderElement(child as Element, index, site, page, isPreview))
       const children = Array.from(element.childNodes).map((child, index) => {
         if(child.nodeName.startsWith('#text')) return child.textContent

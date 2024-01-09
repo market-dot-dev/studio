@@ -7,17 +7,23 @@ import MenuClient from "./menu/menu-client";
 import UserInfoServer from "./userinfo/user-info-server";
 import UserInfoClient from "./userinfo/user-info-client";
 
+import SiteName from "./site-name/site-name";
+
 // import { Subscriptions, SubscriptionsPreview } from "./subscriptions";
 import { SubscriptionsServer } from "./subscriptions/subscriptions-server";
 import { SubscriptionsClient } from "./subscriptions/subscriptions-client";
 
+import Section from "./section/section";
+
 import { 
-    Flex, Box, Grid, Container, Section,
+    Flex, Box, Grid, Container, Card, Avatar,
     Text, Heading, Blockquote, Code, Em, Kbd, Link, Quote
- } from '@radix-ui/themes'
+} from '@radix-ui/themes'
 
+import SiteDescription from "./site-description/site-description";
+import SiteOwner from "./site-owner/site-owner";
 
-const componentsMap = {
+export const siteComponents = {
     tiers: {
         name: 'Tiers',
         tag: 'Tiers',
@@ -42,7 +48,24 @@ const componentsMap = {
         element: MenuServer,
         preview: MenuClient
     },
+    sitename: {
+        name: 'Site Name',
+        tag: 'SiteName',
+        element: SiteName
+    },
+    sitedescription: {
+        name: 'Site Description',
+        tag: 'SiteDescription',
+        element: SiteDescription
+    },
+    siteowner: {
+        name: 'Site Owner',
+        tag: 'SiteOwner',
+        element: SiteOwner
+    },
+} as any;
 
+export const layoutComponents = {
     flex: {
         name: 'Flex',
         tag: 'Flex',
@@ -73,6 +96,21 @@ const componentsMap = {
         element: Section,
         ui: true 
     },
+    card: {
+        name: 'Card',
+        tag: 'Card',
+        element: Card,
+        ui: true 
+    },
+    avatar: {
+        name: 'Avatar',
+        tag: 'Avatar',
+        element: Avatar,
+        ui: true 
+    }
+} as any;
+
+export const textComponents = {
     text: {
         name: 'Text',
         tag: 'Text',
@@ -122,7 +160,10 @@ const componentsMap = {
         ui: true 
     }
 
-
 } as any;
 
-export default componentsMap;
+export default {
+    ...siteComponents,
+    ...layoutComponents,
+    ...textComponents
+} as any;

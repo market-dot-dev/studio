@@ -19,8 +19,16 @@ export default async function Page({ params }: { params: { id: string } }) {
 			site: {
 				select: {
 					id: true,
+					name: true,
+					description: true,
 					subdomain: true,
-					homepageId: true
+					homepageId: true,
+					user: {
+						select: {
+							name: true,
+							image: true
+						}
+					}
 				},
 			},
 		},

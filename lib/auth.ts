@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { Provider } from "next-auth/providers";
+import { siteName, siteDescription, homepageTitle, homepageTemplate} from "./constants/site-template";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
@@ -119,9 +120,9 @@ async function upsertUser(userDetails: UserDetails) {
 
 const createSite = async (user: any) => {
   const pageData = {
-    title: "Welcome",
+    title: homepageTitle,
     slug: 'index',
-    content: "<h1>Welcome to our homepage</h1>",
+    content: homepageTemplate,
     user: {
       connect: {
         id: user.id,
@@ -132,8 +133,8 @@ const createSite = async (user: any) => {
   // You can use this information to perform additional actions in your database
   const site = await prisma.site.create({
     data: {
-      name: 'Support Website',
-      description: 'Support Website Description',
+      name: siteName,
+      description: siteDescription,
       subdomain: user.gh_username ?? user.id,
       user: {
         connect: {
