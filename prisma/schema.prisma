@@ -9,24 +9,25 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  name          String?
-  username      String?
-  gh_username   String?        @unique
-  email         String?        @unique
-  emailVerified DateTime?
-  image         String?
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  accounts      Account[]
-  pages         Page[]
-  posts         Post[]
-  sessions      Session[]
-  sites         Site[]
-  tiers         Tier[]
-  repos         Repo[]
-  TierFeature   TierFeature[]
-  Subscription  Subscription[]
+  id               String         @id @default(cuid())
+  name             String?
+  username         String?
+  gh_username      String?        @unique
+  email            String?        @unique
+  stripeProductId  String?        @unique
+  stripeCustomerId String?        @unique
+  emailVerified    DateTime?
+  image            String?
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  accounts         Account[]
+  pages            Page[]
+  posts            Post[]
+  sessions         Session[]
+  sites            Site[]
+  tiers            Tier[]
+  TierFeature      TierFeature[]
+  Subscription     Subscription[]
 }
 
 model Account {
@@ -141,26 +142,42 @@ model Example {
 }
 
 model Tier {
-  id          String        @id @default(cuid())
+  id            String  @id @default(cuid())
+  userId        String
+  stripePriceId String?
+
   name        String
   description String?
-  userId      String
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
   tagline     String?
-  published   Boolean       @default(false)
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  versions    TierVersion[]
+
+  published Boolean @default(false)
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  price        Int
+  revision     Int
+  versions     TierVersion[]
+  features     TierFeature[]
+  Subscription Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId, stripePriceId])
 }
 
 model TierVersion {
-  id           String         @id @default(cuid())
-  tierId       String
-  createdAt    DateTime       @default(now())
-  updatedAt    DateTime       @updatedAt
+  id            String  @id @default(cuid())
+  tierId        String
+  revision      Int
+  price         Int
+  stripePriceId String?
+
   tier         Tier           @relation(fields: [tierId], references: [id])
   features     TierFeature[]  @relation("TierFeatureToTierVersion")
   Subscription Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([tierId])
 }
@@ -169,22 +186,24 @@ model TierFeature {
   id        String        @id @default(cuid())
   content   String
   userId    String
+  Tier      Tier?         @relation(fields: [tierId], references: [id])
+  tierId    String?
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
   user      User          @relation(fields: [userId], references: [id])
   versions  TierVersion[] @relation("TierFeatureToTierVersion")
-
-  @@index([userId])
 }
 
 model Subscription {
   id            String   @id @default(cuid())
   userId        String // Foreign key to reference User
+  tierId        String?
   tierVersionId String // Foreign key to reference TierVersion
   createdAt     DateTime @default(now())
 
   user        User        @relation(fields: [userId], references: [id])
   tierVersion TierVersion @relation(fields: [tierVersionId], references: [id])
+  Tier        Tier?       @relation(fields: [tierId], references: [id])
 
   @@unique([userId, tierVersionId])
 }
