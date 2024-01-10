@@ -1,14 +1,26 @@
-import { ReactNode } from "react";
+"use server";
+
 import Form from "@/components/form";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { editUser } from "@/lib/actions";
+import { TextInput } from "@tremor/react";
+import UserService from "@/app/services/UserService";
+import UserProductWidget from "./UserProductWidget";
+import UserCustomerWidget from "./UserCustomerWidget";
 
 export default async function SettingsPage() {
   const session = await getSession();
   if (!session) {
     redirect("/login");
   }
+
+  const user = await UserService.findUser(session.user.id!);
+
+  if (!user) {
+    redirect("/login");
+  }
+
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
@@ -40,6 +52,8 @@ export default async function SettingsPage() {
           }}
           handleSubmit={editUser}
         />
+        <UserProductWidget user={user} />
+        <UserCustomerWidget user={user} />
       </div>
     </div>
   );

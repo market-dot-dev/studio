@@ -1,25 +1,37 @@
 "use client";
-import { useState } from 'react';
-import { Flex, Text, Button, TextInput, Card, Title, Bold } from "@tremor/react"
-import FeaturesEditor from './features-editor';
 
+import { ChangeEvent, useState } from 'react';
+import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput } from "@tremor/react"
+import Tier from '@/app/models/Tier';
+import { createTier, updateTier } from '@/app/services/TierService';
+import TierPriceWidget from './TierPriceWidget';
 
+interface TierFormProps {
+	tier: Partial<Tier>;
+	handleSubmit: (tier: Tier) => void;
+}
 
-export default function TierForm({tier, label = 'Update', handleSubmit} : {tier: any, label : string, handleSubmit : any}) {
+export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps) {
+	const [tier, setTier] = useState<Tier>(tierObj as Tier);
+
+	const newRecord = !tier.id;
+
+	const label = newRecord ? 'Create' : 'Update';
 	
-	const [name, setName] = useState(tier?.name ?? '');
-	const [published, setPublished] = useState(tier?.published ?? false);
-	const [tagline, setTagline] = useState(tier?.tagline ?? '');
-	const [description, setDescription] = useState(tier?.description ?? '');
-	const [features, setFeatures] = useState(tier?.versions?.[0]?.features ?? []);
-	const [price, setPrice] = useState('99');
-	
+	//const [features, setFeatures] = useState(tier.features ?? []);
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
 
+	const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    const updatedTier = { ...tier, [name]: value } as Tier;
+    setTier(updatedTier);
+  };
 
 	const validateForm = () => {
-		if (!name) {
+		if (!tier.name) {
 			setErrors({ ...errors, name: 'Please enter a name for the tier' });
 			return false;
 		}
@@ -29,18 +41,19 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 	const onSubmit = async () => {
 		if (!validateForm()) return;
 		setIsSaving(true);
+
 		try {
-			await handleSubmit({ name, tagline, description, features, published });
-		}
-		catch (error) {
+			await newRecord ? createTier(tier) : updateTier(tier.id as string, tier);
+		} catch (error) {
 			console.log(error);
+		} finally	{
+			setIsSaving(false);
+			handleSubmit(tier as Tier);
 		}
-		setIsSaving(false);
 	}
 
 	return (
 		<>
-
 			{/* Grid layout for responsiveness */}
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 				{/* Form Fields Section */}
@@ -52,11 +65,9 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							placeholder="Premium"
 							required
-							value={name}
-							onChange={(e) => {
-								setErrors({ ...errors, name: null });
-								setName(e.target.value)
-							}}
+							name="name"
+							value={tier.name}
+							onChange={handleInputChange}
 							
 						/>
 						{errors['name'] ? <Text color="red" >{errors['name']}</Text> : null}
@@ -69,8 +80,9 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							placeholder="Great for startups and smaller companies."
 							required
-							value={tagline}
-							onChange={(e) => setTagline(e.target.value)}
+							name="tagline"
+							value={tier.tagline || ''}
+							onChange={handleInputChange}
 						/>
 					</div>
 
@@ -81,40 +93,49 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 							rows={4}
 							className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
 							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
-							value={description}
-							onChange={(e) => setDescription(e.target.value)}
+							name="description"
+							value={tier.description || ''}
+							onChange={handleInputChange}
 						></textarea>
 					</div>
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
 							<Flex className='gap-2' justifyContent='start'>
-								<input type="checkbox" checked={published} onChange={(e) => {
-									setPublished(e.target.checked)
+								<input type="checkbox" checked={tier.published} onChange={(e) => {
+									setTier({ ...tier, published: e.target.checked } as Tier);
 								}} /> 
 								<span>Published</span>
 							</Flex>
 						</label>
 					</div>
 
+					{/* Current version */}
 					<Card>
 						<Flex flexDirection="col" alignItems="start" className="gap-4">
 							<Title>Current Version</Title>
 							
 							<Flex flexDirection="col" alignItems="start" className="gap-1">
 								<Bold>Price</Bold>
-								<TextInput value={price} placeholder="Enter price" onChange={(e) => setPrice(e.target.value)}/>
+								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange}/>
+							</Flex>
+
+							<Flex flexDirection="col" alignItems="start" className="gap-1">
+								<Bold>Stripe Price Id</Bold>
+								<TextInput value={tier.stripePriceId || ''} name="stripePriceId" placeholder="Stripe Price Id" onChange={handleInputChange}/>
 							</Flex>
 							
-							<FeaturesEditor features={features} setFeatures={setFeatures}  />
+							{/* <FeaturesEditor features={tier.features} setFeatures={setFeatures}  /> */}
 						</Flex>
 					</Card>
 
+					<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } />
+
+					<br/>
 
 					<Button
 						disabled={isSaving}
 						loading={isSaving}
-						// className="text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-4 focus:ring-gray-300 font-medium rounded-lg text-sm px-4 py-1.5 dark:bg-gray-800 dark:hover:bg-gray-700 dark:focus:ring-gray-700 dark:border-gray-700"
 						onClick={onSubmit}
 					>
 						{label}
@@ -126,12 +147,13 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
 					<div className="bg-white border-2 border-gray-300 shadow p-4 rounded-lg">
 						<div className="text-center">
-						<h2 className={`text-lg font-bold ${name ? 'text-gray-800' : 'text-gray-300'}`}>{name || "Premium"}</h2>
-						<p className={`text-base my-4 ${tagline ? 'text-gray-600' : 'text-gray-300'}`}>{tagline || "Great for startups!"}</p>
-						{/* <h3 className="text-base text-gray-500">{tierTagline}</h3> */}
+						<h2 className={`text-lg font-bold ${tier.name ? 'text-gray-800' : 'text-gray-300'}`}>{tier.name || "Premium"}</h2>
+						<p className={`text-base my-4 ${tier.tagline ? 'text-gray-600' : 'text-gray-300'}`}>{tier.tagline || "Great for startups!"}</p>
 						</div>
 
+						
 						<div>
+							{/*
 							<ul className="text-center">
 								{features.map((feature : any, index : number) => (
 									<li className="flex items-center space-x-3" key={index}>
@@ -140,18 +162,16 @@ export default function TierForm({tier, label = 'Update', handleSubmit} : {tier:
 									</li>
 								))}
 							</ul>
+								*/}
 
 							<div className="flex justify-center items-baseline my-4">
-								<span className="mr-2 text-3xl font-extrabold">${price}</span>
+								<span className="mr-2 text-3xl font-extrabold">${tier.price}</span>
 								<span className="text t-gray-500 dark:text-gray-400">/ month</span>
 							</div>
 
-							{/* <PrimaryLinkButton
-								label={name ? "Get Started with " + name : "Get Started"}
-								href="" /> */}
-								<Button>{name ? "Get Started with " + name : "Get Started"}</Button>
-							</div>
+							<Button>{tier.name ? "Get Started with " + tier.name : "Get Started"}</Button>
 						</div>
+					</div>
 				</div>
 			</div>
 		</>
