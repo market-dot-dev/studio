@@ -1,8 +1,10 @@
 import Image from "next/image";
-import LoginButton from "./login-button";
+import GithubLoginButton, { LoginButton } from "./login-button";
 import { Suspense } from "react";
 
 export default function LoginPage() {
+  const localAuthAvailable = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
+
   return (
     <div className="mx-5 border border-stone-200 py-10 dark:border-stone-700 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
       <Image
@@ -25,8 +27,16 @@ export default function LoginPage() {
             <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
           }
         >
-          <LoginButton />
+          <GithubLoginButton />
         </Suspense>
+        { localAuthAvailable &&
+          <Suspense>
+            <LoginButton href={'/login/local-auth'} isLoading={false} >
+              <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
+                Log in with Local Auth
+              </p>
+            </LoginButton>
+          </Suspense> }
       </div>
     </div>
   );
