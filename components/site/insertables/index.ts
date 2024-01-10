@@ -10,8 +10,8 @@ import UserInfoClient from "./userinfo/user-info-client";
 import SiteName from "./site-name/site-name";
 
 // import { Subscriptions, SubscriptionsPreview } from "./subscriptions";
-import { SubscriptionsServer } from "./subscriptions/subscriptions-server";
-import { SubscriptionsClient } from "./subscriptions/subscriptions-client";
+// import { SubscriptionsServer } from "./subscriptions/subscriptions-server";
+// import { SubscriptionsClient } from "./subscriptions/subscriptions-client";
 
 import Section from "./section/section";
 
@@ -36,12 +36,12 @@ export const siteComponents = {
         element: UserInfoServer,
         preview: UserInfoClient
     },
-    subscriptions: {
-        name: 'Subscriptions',
-        tag: 'Subscriptions',
-        element: SubscriptionsServer,
-        preview: SubscriptionsClient
-    },
+    // subscriptions: {
+    //     name: 'Subscriptions',
+    //     tag: 'Subscriptions',
+    //     element: SubscriptionsServer,
+    //     preview: SubscriptionsClient
+    // },
     menu: {
         name: 'Menu',
         tag: 'Menu',
