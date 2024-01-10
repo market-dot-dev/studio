@@ -1,3 +1,4 @@
+import SubscriptionService from "@/app/services/SubscriptionService";
 import { getSession } from "@/lib/auth_customer";
 import prisma from "@/lib/prisma";
 
@@ -24,12 +25,7 @@ export async function POST(req: Request, res: Response) {
         return new Response(JSON.stringify({ error: "Tier not found" }), { status: 404 });
     }
 
-    const response = await prisma.subscription.create({
-        data: {
-            userId: session.user.id,
-            tierVersionId: latestTierVersion.id,
-        }
-    });
+    const response = SubscriptionService.createSubscription(session.user.id, latestTierVersion.id);
     
     return new Response(JSON.stringify(response), { status: 200 });
 }

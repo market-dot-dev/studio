@@ -6,6 +6,7 @@ import { Tier, TierFeature, TierVersion } from "@prisma/client";
 // import { withPostAuth, withSiteAuth } from "../auth";
 import { getSession } from "@/lib/auth";
 
+/*
 export const createTier = async ({ name, tagline, description, features, published }: { name: string, tagline: string | undefined, description: string | undefined, features: any[], published: boolean }) => {
 	const session = await getSession();
 	
@@ -47,7 +48,7 @@ export const createTier = async ({ name, tagline, description, features, publish
 
 	return response;
 };
-
+*/
 
 
 export const updateTier = async ({ id, versionId, name, tagline, description, features, published }: { id: string, versionId: string, name: string, tagline: string | undefined, description: string | undefined, features: any[], published: boolean }) => {
