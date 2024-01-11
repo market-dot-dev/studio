@@ -4,7 +4,7 @@ import Form from "@/components/form";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { editUser } from "@/lib/actions";
-import { TextInput } from "@tremor/react";
+import { Card, Flex, Text, TextInput, Button } from "@tremor/react";
 import UserService from "@/app/services/UserService";
 import UserProductWidget from "./UserProductWidget";
 import UserCustomerWidget from "./UserCustomerWidget";
@@ -28,6 +28,18 @@ export default async function SettingsPage() {
         <h1 className="font-cal text-3xl font-bold dark:text-white">
           Settings
         </h1>
+        <Card className="p-10">
+          <Flex flexDirection="col" alignItems="start" className="gap-4">
+            <h2 className="font-cal text-xl dark:text-white">Repos</h2>
+            <Text>
+              Repositories you have access to.
+            </Text>
+            <Flex className="max-w-lg gap-4">
+              <TextInput placeholder="Repo name" />
+              <Button>Add</Button>
+            </Flex>
+          </Flex>
+        </Card>
         <Form
           title="Name"
           description="Your name on this app."

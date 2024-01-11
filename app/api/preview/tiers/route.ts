@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth";
-import { getTiersForUser } from "@/lib/tiers/fetchers";
+import TierService from "@/app/services/TierService";
 
 // Get published tiers of the current admin
 export async function GET(req: Request, res: Response) {
@@ -11,7 +11,7 @@ export async function GET(req: Request, res: Response) {
     }
 
     try {
-        const tiers = await getTiersForUser(session.user.id);
+        const tiers = await TierService.getTiersForUser(session.user.id);
         return new Response(JSON.stringify(tiers), { status: 200 });
     } catch (error : any) {
         return new Response(JSON.stringify({ error: error.message }), { status: 500 });
