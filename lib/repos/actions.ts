@@ -1,7 +1,9 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { getSession, getAccessToken } from "@/lib/auth";
+import { getSession } from "@/lib/auth";
+import SessionService from "@/app/services/SessionService";
+
 
 export const addRepo = async ({ name }: { name: string}) => {
 
@@ -12,7 +14,7 @@ export const addRepo = async ({ name }: { name: string}) => {
     }
 
     // get github access token from user
-    const accessToken = await getAccessToken(session.user.id);
+    const accessToken = await SessionService.getAccessToken(session.user.id);
 
     // verify if the user has admin access to the repo
     const response = await fetch(`https://api.github.com/repos/${name}/collaborators/${session.user.username}`, {
