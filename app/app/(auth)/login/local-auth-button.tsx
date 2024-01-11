@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import LoadingDots from "@/components/icons/loading-dots";
 
-export default function DevLoginButton() {
+export default function LocalAuthButton() {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -14,7 +14,6 @@ export default function DevLoginButton() {
   // Get error message added by next/auth in URL.
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");
-  const localAuthAvailable = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
 
   useEffect(() => {
     const errorMessage = Array.isArray(error) ? error.pop() : error;

@@ -1,5 +1,5 @@
 import Image from "next/image";
-import DevLoginButton from "../dev-login-button";
+import DevLoginButton from "../local-auth-button";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
