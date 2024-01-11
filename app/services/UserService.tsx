@@ -52,7 +52,7 @@ class UserService {
       throw new Error('User does not have an email address.');
     }
 
-    const customer = await StripeService.createCustomer(user.email);
+    const customer = await StripeService.createCustomer(user.email, user.stripePaymentMethodId || undefined);
     
     await prisma?.user.update({
       where: { id: user.id },
@@ -71,4 +71,4 @@ export const createStripeCustomerById = async (userId: string) => {
 }
 
 export default UserService;
-export const { createStripeCustomer } = UserService;
+export const { createStripeCustomer, getCurrentUserId } = UserService;

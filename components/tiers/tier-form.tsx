@@ -5,6 +5,7 @@ import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput } from "@
 import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import TierPriceWidget from './TierPriceWidget';
+import { useRouter } from 'next/navigation';
 
 interface TierFormProps {
 	tier: Partial<Tier>;
@@ -12,6 +13,7 @@ interface TierFormProps {
 }
 
 export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps) {
+	const router = useRouter();
 	const [tier, setTier] = useState<Tier>(tierObj as Tier);
 
 	const newRecord = !tier.id;
@@ -169,7 +171,9 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 								<span className="text t-gray-500 dark:text-gray-400">/ month</span>
 							</div>
 
-							<Button>{tier.name ? "Get Started with " + tier.name : "Get Started"}</Button>
+							<Button
+								onClick={() => router.push(`/checkout/${tier.id}`)}
+							>{tier.name ? "Get Started with " + tier.name : "Get Started"}</Button>
 						</div>
 					</div>
 				</div>

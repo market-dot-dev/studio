@@ -14,7 +14,15 @@ export async function getSiteData(domain: string) {
       const site = await prisma.site.findUnique({
         where: subdomain ? { subdomain } : { customDomain: domain },
         include: { 
-          user: true,
+          user: {
+            select: {
+              name: true,
+              image: true
+            }
+          },
+          // pages: {
+          //   take: 1, // Retrieve only the first page
+          // }
         }
       });
       

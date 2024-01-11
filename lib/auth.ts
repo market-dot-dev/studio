@@ -4,7 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { Provider } from "next-auth/providers";
-import { PrismaClient } from "@prisma/client";
+import { siteName, siteDescription, homepageTitle, homepageTemplate} from "./constants/site-template";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
@@ -63,9 +63,9 @@ async function upsertUser(userDetails: UserDetails) {
 
 const createSite = async (user: any) => {
   const pageData = {
-    title: "Welcome",
+    title: homepageTitle,
     slug: 'index',
-    content: "<h1>Welcome to our homepage</h1>",
+    content: homepageTemplate,
     user: {
       connect: {
         id: user.id,
@@ -76,8 +76,8 @@ const createSite = async (user: any) => {
   // You can use this information to perform additional actions in your database
   const site = await prisma.site.create({
     data: {
-      name: 'Support Website',
-      description: 'Support Website Description',
+      name: siteName,
+      description: siteDescription,
       subdomain: user.gh_username ?? user.id,
       user: {
         connect: {
@@ -178,20 +178,50 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
+    jwt: async ({ token, user, account } : any) => {
+      // Store the refresh token in the database when the user logs in
+      if (account && user) {
+        await prisma.account.upsert({
+          where: {
+            provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId },
+          },
+          // this create might not even be required, assuming that the nextauth has already created the account, but just in case
+          create: {
+            userId: user.id,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            type: 'oauth',
+
+            // just ensuring that the account object has the following values
+            expires_at: account.expires_at,
+            refresh_token: account.refresh_token,
+            refresh_token_expires_in: account.refresh_token_expires_in,
+            
+          },
+          // the default nextauth implementation does not add the following values to the account object, so updating here
+          update: {
+            expires_at: account.expires_at,
+            refresh_token: account.refresh_token,
+            refresh_token_expires_in: account.refresh_token_expires_in
+          },
+        });
+      } 
+      
       if (user) {
         token.user = user;
       }
+
+      
       return token;
     },
-    session: async ({ session, token }) => {
+    session: async ({ session, token } : any) => {
+
       session.user = {
         ...session.user,
-        // @ts-expect-error
         id: token.sub,
-        // @ts-expect-error
         username: token?.user?.username || token?.user?.gh_username,
       };
+      
       return session;
     },
   },

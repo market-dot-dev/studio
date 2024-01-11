@@ -5,6 +5,7 @@ import { getSession } from "@/lib/auth";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
+import { unstable_cache } from "next/cache";
 
 class TierService {
   static async createStripePrice(tier: Tier) {
@@ -149,6 +150,75 @@ class TierService {
     console.log(`New version ${tier.revision} created for tier ${tier.id}`);
     TierService.createStripePrice(tier);
   }
+
+  // this pulls published tiers to display on the front end site for customers to subscribe to
+  static async getTiersForUser( userId: string) {
+    return prisma.tier.findMany({
+      where: {
+        userId,
+        published: true
+      },
+      select: {
+        id: true,
+        name: true,
+        tagline: true,
+        description: true,
+        createdAt: true,
+        versions: {
+          orderBy: {
+            createdAt: 'desc' // Order by creation date in descending order
+          },
+          take: 1, // Take only the latest version
+          include: {
+            features: true, // Include the features of the latest version
+          },
+        }
+      },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
+    }); 
+  }
+
+  // this pulls all tiers for the admin to manage
+  static async getTiersForAdmin() {
+    const session = await getSession();
+    if (!session?.user.id) {
+      return {
+        error: "Not authenticated",
+      };
+    }
+    return prisma.tier.findMany({
+      where: {
+        userId: session.user.id
+      },
+      select: {
+        id: true,
+        name: true,
+        tagline: true,
+        description: true,
+        createdAt: true,
+        versions: {
+          orderBy: {
+            createdAt: 'desc' // Order by creation date in descending order
+          },
+          take: 1, // Take only the latest version
+          include: {
+            features: true, // Include the features of the latest version
+          },
+        }
+      },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
+    });
+    
+  }
+
 };
 
 export const createStripePriceById = async (id: string) => {

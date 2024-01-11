@@ -3,9 +3,9 @@
 import React, { useCallback, useEffect, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Box, Text, TextField, Checkbox } from "@radix-ui/themes";
-import { Button, Bold, TextInput } from "@tremor/react";
+import { Button, Bold, TextInput, Card } from "@tremor/react";
 import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import componentsMap from "./site/insertables";
+import {siteComponents, layoutComponents, textComponents} from "./site/insertables";
 import renderElement from "./site/page-renderer";
 import { useRouter } from "next/navigation";
 
@@ -116,6 +116,31 @@ const DraftSelectBox = ({
     </SelectBox>
   );
 };
+
+function ComponentsBlock({components, insertAtCursor} : any ) : JSX.Element {
+  return (
+    <Grid numItems={2} className="gap-2 w-full">
+      {Object.values(components).map(
+        (component: any, index: number) => {
+          return (
+            <Col key={index}>
+                <div
+                  className="cursor-pointer bg-gray-200 hover:bg-gray-600 hover:text-white hover:font-bold p-2 rounded-md h-full text-xs align-middle text-center py-4"
+                  onClick={() =>
+                    insertAtCursor(
+                      `<${component.tag}></${component.tag}>`,
+                    )
+                  }
+                >
+                  {component.name}
+                </div>
+            </Col>
+          );
+        },
+      )}
+    </Grid>
+  )
+} 
 
 export default function PageEditor({
   site,
@@ -482,41 +507,42 @@ export default function PageEditor({
                     : null}
                 </TabPanel>
                 <TabPanel>
-                  Custom Components:
-                  {Object.values(componentsMap).map(
-                    (component: any, index: number) => {
-                      return (
-                        <Button
-                          key={index}
-                          size="xs"
-                          color="gray"
-                          onClick={() =>
-                            insertAtCursor(
-                              `<${component.tag}></${component.tag}>`,
-                            )
-                          }
-                        >
-                          {component.name}
-                        </Button>
-                      );
-                    },
-                  )}
-                  <Editor
-                    height="90vh" // By default, it does not have a size
-                    defaultLanguage="html"
-                    defaultValue=""
-                    theme="vs-dark"
-                    value={data.content}
-                    onChange={(value) =>
-                      setData((data: any) => ({ ...data, content: value }))
-                    }
-                    onMount={handleEditorDidMount}
-                    options={{
-                      minimap: {
-                        enabled: false,
-                      },
-                    }}
-                  />
+                  <Grid numItems={4} className="gap-4">
+                    <Col numColSpan={1}>
+                      <Flex flexDirection="col" className="gap-4">
+                        <Flex flexDirection="col" className="gap-2">
+                          <Bold>Layout Components</Bold>
+                          <ComponentsBlock components={layoutComponents} insertAtCursor={insertAtCursor} />
+                        </Flex>
+                        <Flex flexDirection="col" className="gap-2">
+                          <Bold>Dynamic Components</Bold>
+                          <ComponentsBlock components={siteComponents} insertAtCursor={insertAtCursor} />
+                        </Flex>
+                        <Flex flexDirection="col" className="gap-2">
+                          <Bold>Text Components</Bold>
+                          <ComponentsBlock components={textComponents} insertAtCursor={insertAtCursor} />
+                        </Flex>
+                      </Flex>
+                    </Col>
+                    <Col numColSpan={3}>
+                      <Editor
+                        height="90vh" // By default, it does not have a size
+                        defaultLanguage="html"
+                        defaultValue=""
+                        theme="vs-dark"
+                        value={data.content}
+                        onChange={(value) =>
+                          setData((data: any) => ({ ...data, content: value }))
+                        }
+                        onMount={handleEditorDidMount}
+                        options={{
+                          minimap: {
+                            enabled: false,
+                          },
+                        }}
+                      />
+                    </Col>
+                  </Grid>
                 </TabPanel>
               </TabPanels>
             </TabGroup>

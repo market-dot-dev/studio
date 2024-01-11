@@ -1,10 +1,13 @@
 import Image from "next/image";
-import LoginButton from "../login-button";
 import DevLoginButton from "../dev-login-button";
 import { Suspense } from "react";
-import { getSession } from "@/lib/auth";
+import { notFound } from "next/navigation";
 
 export default function LoginPage() {
+  if(process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
+    notFound();
+  }
+
   return (
     <div className="mx-5 border border-stone-200 py-10 dark:border-stone-700 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
       <Image
@@ -18,7 +21,7 @@ export default function LoginPage() {
         Gitwallet
       </h1>
       <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
-      Create & manage robust support tiers for your repos and ecosystems.<br />
+        Log in with local auth credentials<br />
       </p>
 
       <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
