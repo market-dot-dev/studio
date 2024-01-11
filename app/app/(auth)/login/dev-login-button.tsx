@@ -14,6 +14,7 @@ export default function DevLoginButton() {
   // Get error message added by next/auth in URL.
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");
+  const localAuthAvailable = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
 
   useEffect(() => {
     const errorMessage = Array.isArray(error) ? error.pop() : error;
@@ -52,7 +53,7 @@ export default function DevLoginButton() {
           type="text"
           required
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          placeholder="Enter your GitHub username"
+          placeholder="Enter any GitHub username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -67,7 +68,7 @@ export default function DevLoginButton() {
           type="password"
           required
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          placeholder="Enter the development backdoor password"
+          placeholder="Enter the local auth password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />

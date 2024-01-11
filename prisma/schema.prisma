@@ -9,25 +9,26 @@ datasource db {
 }
 
 model User {
-  id               String         @id @default(cuid())
-  name             String?
-  username         String?
-  gh_username      String?        @unique
-  email            String?        @unique
-  stripeProductId  String?        @unique
-  stripeCustomerId String?        @unique
-  emailVerified    DateTime?
-  image            String?
-  createdAt        DateTime       @default(now())
-  updatedAt        DateTime       @updatedAt
-  accounts         Account[]
-  pages            Page[]
-  posts            Post[]
-  sessions         Session[]
-  sites            Site[]
-  tiers            Tier[]
-  TierFeature      TierFeature[]
-  Subscription     Subscription[]
+  id                    String         @id @default(cuid())
+  name                  String?
+  username              String?
+  gh_username           String?        @unique
+  email                 String?        @unique
+  stripeProductId       String?        @unique
+  stripeCustomerId      String?        @unique
+  stripePaymentMethodId String?        @unique
+  emailVerified         DateTime?
+  image                 String?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  accounts              Account[]
+  pages                 Page[]
+  posts                 Post[]
+  sessions              Session[]
+  sites                 Site[]
+  tiers                 Tier[]
+  TierFeature           TierFeature[]
+  Subscription          Subscription[]
   repos            Repo[]
 }
 
@@ -196,17 +197,18 @@ model TierFeature {
 }
 
 model Subscription {
-  id            String   @id @default(cuid())
-  userId        String // Foreign key to reference User
-  tierId        String?
-  tierVersionId String // Foreign key to reference TierVersion
-  createdAt     DateTime @default(now())
+  id                   String   @id @default(cuid())
+  userId               String // Foreign key to reference User
+  tierId               String?
+  stripeSubscriptionId String   @unique
+  tierVersionId        String? // Foreign key to reference TierVersion
+  createdAt            DateTime @default(now())
 
-  user        User        @relation(fields: [userId], references: [id])
-  tierVersion TierVersion @relation(fields: [tierVersionId], references: [id])
-  Tier        Tier?       @relation(fields: [tierId], references: [id])
+  user        User         @relation(fields: [userId], references: [id])
+  tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
+  Tier        Tier?        @relation(fields: [tierId], references: [id])
 
-  @@unique([userId, tierVersionId])
+  @@unique([userId, tierId])
 }
 
 model WaitlistUser {

@@ -7,6 +7,18 @@ Gitwallet: A toolkit for maintainers to build, sell and manage support tiers.
 - Run `pnpm dev`
 - Go To http://app.localhost:3000
 
+## Deploying
+
+1. merge to `main`
+1. CD will automatically run migrations (even destructive ones! for now)
+
+## Preview branches
+
+NB preview builds use their own db, so it does not affect prod
+
+1. Push any build to a branch that builds successfully
+1. CD will automatically deploy a [preview build](https://vercel.com/lab0324/gitwallet-web/deployments?environment=preview)
+
 ## Local Development
 
 Local Development Setup for Prisma with PostgreSQL
