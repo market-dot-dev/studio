@@ -3,10 +3,10 @@
 import { Button } from "@tremor/react";
 const protocol = process.env.NEXT_PUBLIC_VERCEL_ENV ? 'https' : 'http';
 
-export default function Tier({tier, subdomain, path}: { tier : any, subdomain: string, path : string | undefined}) : JSX.Element {
+export default function Tier({tier, subdomain}: { tier : any, subdomain: string }) : JSX.Element {
     
     
-    const url = `${protocol}://${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${path ?? ''}`;
+    const url = `${protocol}://${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
     return (
         

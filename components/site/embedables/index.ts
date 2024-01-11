@@ -2,9 +2,9 @@ import TiersServer from "./tiers/teirs-server";
 import TiersClient from "./tiers/tiers-client";
 import TiersEmbedSettings from "./tiers/tiers-embed-settings";
 
-import TierServer from "./single-tier/tier-server";
-import TierClient from "./single-tier/tier-client";
-import TierEmbedSettings from "./single-tier/tier-embed-settings";
+// import TierServer from "./single-tier/tier-server";
+// import TierClient from "./single-tier/tier-client";
+// import TierEmbedSettings from "./single-tier/tier-embed-settings";
 
 const embedables =  {
     tiers: {
@@ -13,12 +13,12 @@ const embedables =  {
         preview: TiersClient,
         settings: TiersEmbedSettings
     },
-    tier: {
-        name: 'Single Tier',
-        element: TierServer,
-        preview: TierClient,
-        settings: TierEmbedSettings
-    }
+    // tier: {
+    //     name: 'Single Tier',
+    //     element: TierServer,
+    //     preview: TierClient,
+    //     settings: TierEmbedSettings
+    // }
 
 } as any;
 

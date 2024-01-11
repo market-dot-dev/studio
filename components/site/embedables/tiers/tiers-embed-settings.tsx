@@ -1,7 +1,6 @@
 import { Text, Flex, TextInput, NumberInput } from "@tremor/react";
 
 export type TiersEmbedSettingsProps = {
-  path: string | undefined,
   cols: number | undefined
 }
 
@@ -9,16 +8,10 @@ export default function TiersEmbedSettings({settings, setSettings} : { settings:
   return (
     <Flex flexDirection="col" alignItems="start" className="gap-6">
       <Flex flexDirection="col" alignItems="start" className="gap-1">
-        <Text>Link back path</Text>
-        <TextInput placeholder="/" value={settings.path ?? ''} onChange={(e) => {
-          setSettings((prev: any) => ({...prev, path: e.target.value}))
-        }}/>
-      </Flex>
-      <Flex flexDirection="col" alignItems="start" className="gap-1">
         <Text>Columns</Text>
         <NumberInput
           placeholder="3" 
-          value={settings.cols ?? ''} 
+          value={settings.cols ?? '3'} 
           onChange={(e) => {
             setSettings((prev: any) => ({...prev, cols: e.target.value}))
           }}
