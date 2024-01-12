@@ -5,6 +5,8 @@ import Product from '../models/Product';
 import UserService from './UserService';
 import TierService from './TierService';
 import { createSubscription as createLocalSubscription } from '@/app/services/SubscriptionService';
+import { User } from '@prisma/client';
+import prisma from "@/lib/prisma";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
@@ -126,7 +128,21 @@ class StripeService {
   }
 
   static async detachPaymentMethod(paymentMethodId: string) {
+    const user: User = await prisma.user.findUniqueOrThrow({ where: { stripePaymentMethodId: paymentMethodId } });
+
+    if(!user || !user.stripePaymentMethodId || !user.stripeCustomerId) {
+      throw new Error('User not found or does not have a Stripe customer ID.');
+    }
+    
     await stripe.paymentMethods.detach(paymentMethodId);
+
+    await stripe.customers.update(user.stripeCustomerId, {
+      invoice_settings: {
+        default_payment_method: undefined,
+      },
+    });
+
+    UserService.updateUser(user.id, { stripePaymentMethodId: null });
   }
 
   static async destroyCustomer(customerId: string) {
@@ -226,6 +242,6 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
   return { status, error /*, subscription*/ };
 };
 
-export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod } = StripeService
+export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod } = StripeService
 
 export default StripeService;
