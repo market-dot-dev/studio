@@ -19,6 +19,7 @@ model User {
   stripePaymentMethodId String?        @unique
   emailVerified         DateTime?
   image                 String?
+  roleId                String
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
   accounts              Account[]
