@@ -215,11 +215,12 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session: async ({ session, token } : any) => {
-
+      
       session.user = {
         ...session.user,
         id: token.sub,
         username: token?.user?.username || token?.user?.gh_username,
+        ...(!token?.user?.onBoarded ? {onBoarding: true} : {})
       };
       
       return session;
@@ -246,6 +247,7 @@ export function getSession() {
       username: string;
       email: string;
       image: string;
+      onBoarding?: boolean;
     };
   } | null>;
 }

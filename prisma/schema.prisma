@@ -30,6 +30,7 @@ model User {
   TierFeature           TierFeature[]
   Subscription          Subscription[]
   repos            Repo[]
+  onBoarded             Boolean        @default(false)
 }
 
 model Account {
@@ -224,4 +225,15 @@ model Repo {
   createdAt   DateTime  @default(now())
   userId      String
   user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Onboarding {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  setupTiers       Boolean   @default(false)
+  setupPayment     Boolean   @default(false)
+  setupSite        Boolean   @default(false)
 }
