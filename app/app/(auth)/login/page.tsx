@@ -1,5 +1,6 @@
 import Image from "next/image";
-import GithubLoginButton, { LoginButton } from "./login-button";
+import GithubLoginButton from "./github-login-button";
+import LoginButton from "@/components/common/login-button";
 import { Suspense } from "react";
 
 export default function LoginPage() {
