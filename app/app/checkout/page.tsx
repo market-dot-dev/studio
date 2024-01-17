@@ -1,6 +1,11 @@
+"use client";
 import Image from "next/image";
 import { Col, Grid, Badge, Card, Divider, TextInput, Switch, Button } from "@tremor/react";
 import { Accordion, AccordionBody, AccordionHeader } from "@tremor/react";
+import { useState } from "react";
+import { Select } from '@tremor/react';
+
+
 
 
 // Define a type for the testimonial props, including the logo
@@ -15,6 +20,9 @@ const checkoutMaintainer = "Joe Maintainer";
 const checkoutProject = "Nokogiri";
 const projectDescription = "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
 const checkoutTier = "Premium";
+const customerName = "Joe Customer";
+const customerCompany = "Acme Corp";
+const customerEmail = "joe@acme.com";
 
 const renderSectionHeading = (text: string) => {
   return (
@@ -22,8 +30,47 @@ const renderSectionHeading = (text: string) => {
   );
 };
 
-
 export default function Checkout() {
+
+  enum PageStates {
+    Unregistered,
+    RegisteredLoggedIn,
+    RegisteredLoggedOut,
+    FirstPurchaseSuccess,
+    nthPurchaseSuccess,
+    PaymentFailed
+  }
+
+  const pageStateButtons = [
+    { label: "Logged Out", state: PageStates.Unregistered },
+    { label: "Registered, Logged In", state: PageStates.RegisteredLoggedIn },
+    { label: "Registered, Logged Out", state: PageStates.RegisteredLoggedOut },
+    { label: "Payment Failed", state: PageStates.PaymentFailed },
+    { label: "First Purchase Success", state: PageStates.FirstPurchaseSuccess },
+    { label: "nth Purchase Success", state: PageStates.nthPurchaseSuccess },
+  ];
+
+  const [pageState, setPageState] = useState<PageStates>(PageStates.Unregistered);
+
+  const pageStateSelector = <div className="fixed bottom-0 right-0 flex flex-row justify-center p-8 xl:px-32">
+    <Accordion className="my-2">
+      <AccordionHeader className="my-0 py-1">Page States</AccordionHeader>
+      <AccordionBody>
+        <div className="text-sm font-light leading-6 mb-4">
+          <div className="text-sm font-light leading-6 mb-4">
+            <div className="flex flex-col items-center gap-2">
+              <label className="text-sm font-light leading-6 mb-4">Current State: {PageStates[pageState]}</label>
+              {pageStateButtons.map((button) => (
+                  <Button key={button.state} className="" onClick={() => setPageState(button.state)}>
+                    {button.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </div>
+      </AccordionBody>
+    </Accordion>
+  </div>;
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -66,34 +113,47 @@ export default function Checkout() {
           <div className="flex flex-row items-center gap-2">
             <label className="text-sm font-light leading-6 mb-4">Nokogiri uses the <a href="#" className="underline">Standard Gitwallet MSA</a>.</label>
           </div>
-
         </section>
 
 
 
         <section className="mb-8 w-7/8 lg:w-5/6">
-          <Divider>Register</Divider>
+          {
+            pageState === PageStates.Unregistered &&
+            <>
+              <Divider>Register</Divider>
 
-          {/* {renderSectionHeading("Purpose built for Maintainers")} */}
-          <Card>
-              <div className="items-center mb-4">
-                <TextInput placeholder="Name" />
-              </div>
-            <div className="items-center mb-4">
-              <TextInput placeholder="Work Email" />
-            </div>
-            <div className="items-center">
-              <TextInput placeholder="Company" />
-            </div>
+              <Card>
+                <div className="items-center mb-4">
+                  <TextInput placeholder="Name" />
+                </div>
+                <div className="items-center mb-4">
+                  <TextInput placeholder="Work Email" />
+                </div>
+                <div className="items-center">
+                  <TextInput placeholder="Company" />
+                </div>
 
-          </Card>
+              </Card>
+            </>
+          }
+          {
+            pageState === PageStates.RegisteredLoggedIn &&
+            <>
+              <Card>
+                <div className="items-center text-sm">
+                  You are logged in as <b>{customerEmail}</b>.
+                </div>
+              </Card>
+            </>
+          }
         </section>
 
 
         <section className="mb-8 w-7/8 lg:w-5/6">
           <Divider>Credit Card Information</Divider>
           <Card>
-  
+
             <div className="mb-4">
               <TextInput placeholder="Credit Card Number" className="mb-4" />
 
@@ -116,6 +176,7 @@ export default function Checkout() {
 
       </div>
 
+      {pageStateSelector}
     </div>
   );
 }
