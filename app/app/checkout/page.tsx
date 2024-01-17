@@ -33,44 +33,33 @@ const renderSectionHeading = (text: string) => {
 export default function Checkout() {
 
   enum PageStates {
-    Unregistered,
-    RegisteredLoggedIn,
-    RegisteredLoggedOut,
-    FirstPurchaseSuccess,
-    nthPurchaseSuccess,
-    PaymentFailed
+    Unregistered = "Logged Out",
+    Login = "Login Screen",
+    MagicLinkInput = "Magic Link Input",
+    RegisteredLoggedIn = "Registered, Logged In",
+    FirstPurchaseSuccess = "First Purchase Success",
+    nthPurchaseSuccess = "nth Purchase Success",
+    PaymentFailed = "Payment Failed",
   }
-
-  const pageStateButtons = [
-    { label: "Logged Out", state: PageStates.Unregistered },
-    { label: "Registered, Logged In", state: PageStates.RegisteredLoggedIn },
-    { label: "Registered, Logged Out", state: PageStates.RegisteredLoggedOut },
-    { label: "Payment Failed", state: PageStates.PaymentFailed },
-    { label: "First Purchase Success", state: PageStates.FirstPurchaseSuccess },
-    { label: "nth Purchase Success", state: PageStates.nthPurchaseSuccess },
-  ];
 
   const [pageState, setPageState] = useState<PageStates>(PageStates.Unregistered);
 
-  const pageStateSelector = <div className="fixed bottom-0 right-0 flex flex-row justify-center p-8 xl:px-32">
-    <Accordion className="my-2">
-      <AccordionHeader className="my-0 py-1">Page States</AccordionHeader>
-      <AccordionBody>
-        <div className="text-sm font-light leading-6 mb-4">
-          <div className="text-sm font-light leading-6 mb-4">
-            <div className="flex flex-col items-center gap-2">
-              <label className="text-sm font-light leading-6 mb-4">Current State: {PageStates[pageState]}</label>
-              {pageStateButtons.map((button) => (
-                  <Button key={button.state} className="" onClick={() => setPageState(button.state)}>
-                    {button.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
+  const pageStateSelector =
+    <div className="fixed bottom-0 left-0 flex flex-row justify-center p-8 xl:px-32">
+      <Accordion className="my-2">
+        <AccordionHeader className="my-0 py-1">Page States</AccordionHeader>
+        <AccordionBody>
+          <div className="flex flex-col gap-2 text-sm font-light leading-6 mb-4">
+            <label className="text-sm font-light">Current State: <br />{pageState}</label>
+            {Object.values(PageStates).map(state => (
+              <Button key={state} onClick={() => setPageState(state as PageStates)}>
+                {state}
+              </Button>
+            ))}
           </div>
-      </AccordionBody>
-    </Accordion>
-  </div>;
+        </AccordionBody>
+      </Accordion>
+    </div>;
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -117,12 +106,14 @@ export default function Checkout() {
 
 
 
-        <section className="mb-8 w-7/8 lg:w-5/6">
+        <section className="mb-8 w-7/8 lg:w-5/6 text-sm">
           {
             pageState === PageStates.Unregistered &&
             <>
-              <Divider>Register</Divider>
-
+              <Divider>Signup</Divider>
+              <div className="text-sm mb-2">
+                Already a Gitwallet user? <a href="#" className="underline">Log in</a>
+              </div>
               <Card>
                 <div className="items-center mb-4">
                   <TextInput placeholder="Name" />
@@ -133,8 +124,44 @@ export default function Checkout() {
                 <div className="items-center">
                   <TextInput placeholder="Company" />
                 </div>
-
               </Card>
+
+            </>
+          }
+          {
+            pageState === PageStates.Login &&
+            <>
+              <Divider>Login</Divider>
+              <Card>
+                <label className="block text-sm text-slate-400 text-center mb-1">Enter your email to receive a magic link.</label>
+                <div className="flex flex-row gap-4 w-full">
+                  <div className="items-center w-full">
+                    <TextInput placeholder="Work Email" />
+                  </div>
+                  <div className="items-center">
+                    <Button>Get Link</Button>
+                  </div>
+                </div>
+              </Card>
+
+            </>
+          }
+          {
+            pageState === PageStates.MagicLinkInput &&
+            <>
+              <Divider>Login</Divider>
+              <Card>
+                <label className="block text-sm text-slate-400 text-center mb-1">We emailed a 6 Digit code to {customerEmail}</label>
+                <div className="flex flex-row gap-4 w-full">
+                  <div className="w-full">
+                    <TextInput placeholder="Enter 6 Digit Code" />
+                  </div>
+                  <div className="items-center">
+                    <Button>Login</Button>
+                  </div>
+                </div>
+              </Card>
+
             </>
           }
           {
@@ -142,9 +169,10 @@ export default function Checkout() {
             <>
               <Card>
                 <div className="items-center text-sm">
-                  You are logged in as <b>{customerEmail}</b>.
+                  You are logged in as {customerEmail}. <a href="#" className="underline">Log out</a>
                 </div>
               </Card>
+
             </>
           }
         </section>
