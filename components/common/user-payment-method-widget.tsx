@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Card, Button } from '@tremor/react';
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
-import { getCurrentUser } from '@/app/services/UserService';
-import { User } from '@prisma/client';
 import useCurrentSession from '@/app/contexts/current-user-context';
 
 interface UserPaymentMethodWidgetProps {

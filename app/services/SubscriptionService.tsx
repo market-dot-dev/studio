@@ -1,7 +1,6 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import Product from "@/app/models/Product";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
 
@@ -24,6 +23,19 @@ class SubscriptionService {
     });
 
     return subscription;
+  }
+
+  static async findSubscriptions(): Promise<Subscription[]> {
+    const userId = await UserService.getCurrentUserId();
+    if(!userId) return [];
+
+    const subscriptions = await prisma.subscription.findMany({
+      where: {
+        userId: userId,
+      }
+    });
+
+    return subscriptions;
   }
 
   // Create a subscription for a user
@@ -88,5 +100,5 @@ class SubscriptionService {
   }
 };
 
-export const { createSubscription, destroySubscription, findSubscription, updateSubscription, canSubscribe } = SubscriptionService;
+export const { createSubscription, destroySubscription, findSubscription, updateSubscription, canSubscribe, isSubscribed } = SubscriptionService;
 export default SubscriptionService;

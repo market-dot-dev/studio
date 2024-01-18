@@ -54,14 +54,13 @@ export const CurrentSessionProvider: React.FC<PropsWithChildren> = ({
 
   const refreshCurrentSession = async () => fetchCurrentUser();
 
-  /*
   const restoreSession = async () => {
+    refreshCurrentSession();
   };
 
   useEffect(() => {
     void restoreSession();
   }, []);
-  */
 
   return (
     <CurrentSessionContext.Provider
