@@ -107,7 +107,7 @@ model Site {
   message404    String?  @default("Blimey! You've found a page that doesn't exist.")
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  userId        String?
+  userId        String
   homepageId    String?
   pages         Page[]
   posts         Post[]
