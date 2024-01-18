@@ -13,9 +13,11 @@ import {
 } from "@tremor/react";
 import { Accordion, AccordionBody, AccordionHeader } from "@tremor/react";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
-import UserRegistrationForm from "@/components/common/user-customer-registration-form";
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { User } from "@prisma/client";
+import useCurrentSession, { CurrentSessionProvider } from "@/app/contexts/current-user-context";
+import UserService from "@/app/services/UserService";
+import RegistrationService from "@/app/services/registration-service";
 
 const logoPath = "/";
 // A simple component to display each testimonial with a logo
@@ -32,18 +34,42 @@ const renderSectionHeading = (text: string) => {
   return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
 };
 
-type SetTriggerSubmitType = (submitFunction: () => Promise<boolean>) => void;
-
 const RegistrationSection = () => {
-  const [userId, setUserId] = useState<string | undefined | null>();
+  const [loading, setLoading] = useState(false);
+  const [submittingPaymentMethod, setSubmittingPaymentMethod] = useState(false);
+  const [userAttributes, setUserAttributes] = useState<Partial<User>>({});
   const [error, setError] = useState<string | null>();
-  const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (submitting && error) {
-      setSubmitting(false);
+  const { currentSession, refreshCurrentSession } = useCurrentSession();
+  const { user } = currentSession;
+
+  const onSubmit = async () => {
+    setLoading(true);
+    setError(null);
+
+    if(!user) {
+      RegistrationService.registerAndSignInCustomer(userAttributes).then(() => {
+        refreshCurrentSession();
+      //}).catch((error) => {
+      //  setError(error.message);
+      }).finally(() => {
+        setLoading(false);
+      });
     }
-  }, [JSON.stringify(userId), submitting, `${error}`]);
+
+    if(user) {
+      setSubmittingPaymentMethod(true);
+      setLoading(false);
+    }
+  }
+
+  const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    const updatedUser = { ...userAttributes, [name]: value } as User;
+    setUserAttributes(updatedUser);
+  };
 
   return (
     <>
@@ -51,12 +77,30 @@ const RegistrationSection = () => {
         <Divider>Register</Divider>
         { error && <div className="mb-4 text-red-500">{error}</div> }
         <Card>
-          <UserRegistrationForm
-            userId={userId}
-            setUserId={setUserId}
-            setError={setError}
-            submitting={submitting}
-          />
+        { user && <>
+          <p>You're logged in as {user.email}</p>
+        </> }
+        { !user && <>
+          <div className="items-center mb-4">
+            <TextInput 
+              name="name"
+              onChange={handleInputChange}
+              placeholder="Name" 
+            />
+          </div>
+          <div className="items-center mb-4">
+            <TextInput 
+              name="email"
+              onChange={handleInputChange}
+              placeholder="Work Email" />
+          </div>
+          <div className="items-center">
+            <TextInput 
+              name="company"
+              onChange={handleInputChange}
+              placeholder="Company" />
+          </div>
+        </> }
         </Card>
       </section>
 
@@ -65,17 +109,15 @@ const RegistrationSection = () => {
         <Card>
           <div className="mb-4">
             <UserPaymentMethodWidget
-              submitting={submitting}
-              userId={userId}
+              loading={submittingPaymentMethod}
               setError={setError}
-              setSubmitting={setSubmitting}
             />
           </div>
         </Card>
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Button onClick={() => setSubmitting(true)} className="w-full">
+        <Button onClick={onSubmit} className="w-full">
           Checkout
         </Button>
         <label className="my-2 block text-center text-sm text-slate-400">
@@ -146,7 +188,9 @@ export default function Checkout() {
           </div>
         </section>
 
-        <RegistrationSection />
+        <CurrentSessionProvider>
+          <RegistrationSection />
+        </CurrentSessionProvider>
       </div>
     </div>
   );
