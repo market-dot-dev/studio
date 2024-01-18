@@ -30,7 +30,7 @@ model User {
   TierFeature           TierFeature[]
   Subscription          Subscription[]
   repos            Repo[]
-  onBoarded             Boolean        @default(false)
+  onboarding            String?
 }
 
 model Account {

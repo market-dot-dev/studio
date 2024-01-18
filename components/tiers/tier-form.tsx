@@ -46,6 +46,9 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 
 		try {
 			await newRecord ? createTier(tier) : updateTier(tier.id as string, tier);
+			// emit a custom event signaling that the tier has been saved
+			window.dispatchEvent(new Event('tier-saved'));
+
 		} catch (error) {
 			console.log(error);
 		} finally	{

@@ -5,6 +5,8 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { Provider } from "next-auth/providers";
 import { siteName, siteDescription, homepageTitle, homepageTemplate} from "./constants/site-template";
+import OnboardingService from "@/app/services/onboarding/OnboardingService";
+import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
@@ -51,7 +53,7 @@ async function upsertUser(userDetails: UserDetails) {
         username: gh_username, // Assuming you want to store the GitHub username here
         emailVerified: null, // Set this to the current time if the email is verified at creation
         createdAt: new Date(), // Set to the current time
-        updatedAt: new Date(), // Set to the current time
+        updatedAt: new Date() // Set to the current time
       },
     });
 
@@ -179,8 +181,15 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     jwt: async ({ token, user, account } : any) => {
+
+      const userData = user ? {...user} : null;
+
       // Store the refresh token in the database when the user logs in
       if (account && user) {
+        // at this point, the user item in table does not have the onboarding data set. So, we can attach the default one to the first token being generated on signup.
+        if (!user.onboarding) {
+          userData.onboarding = JSON.stringify( defaultOnboardingState );
+        }
         await prisma.account.upsert({
           where: {
             provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId },
@@ -196,31 +205,31 @@ export const authOptions: NextAuthOptions = {
             expires_at: account.expires_at,
             refresh_token: account.refresh_token,
             refresh_token_expires_in: account.refresh_token_expires_in,
-            
           },
           // the default nextauth implementation does not add the following values to the account object, so updating here
           update: {
             expires_at: account.expires_at,
             refresh_token: account.refresh_token,
-            refresh_token_expires_in: account.refresh_token_expires_in
+            refresh_token_expires_in: account.refresh_token_expires_in,
           },
         });
       } 
-      
-      if (user) {
-        token.user = user;
-      }
 
+      
+      if (userData) {
+        token.user = userData;
+      }
       
       return token;
     },
     session: async ({ session, token } : any) => {
-      
       session.user = {
         ...session.user,
         id: token.sub,
         username: token?.user?.username || token?.user?.gh_username,
-        ...(!token?.user?.onBoarded ? {onBoarding: true} : {})
+        
+        // an empty token.user?.onboarding will signal that the user's onboarding isnt complete yet
+        ...(token.user?.onboarding?.length ? { onboarding: true } : {}),
       };
       
       return session;
@@ -234,6 +243,15 @@ export const authOptions: NextAuthOptions = {
         return;
       }
 
+      // Add onboarding status to a new user
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          onboarding: JSON.stringify( defaultOnboardingState ),
+        },
+      });
+      
+      // create the default site of the user
       return await createSite(user);
     },
   },
@@ -247,7 +265,7 @@ export function getSession() {
       username: string;
       email: string;
       image: string;
-      onBoarding?: boolean;
+      onboarding?: string;
     };
   } | null>;
 }
