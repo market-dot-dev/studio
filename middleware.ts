@@ -48,7 +48,10 @@ export default async function middleware(req: NextRequest) {
   if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
     
     const session = await getToken({ req });
-    const isLoginPath = path === "/login" || path === "/login/local-auth";
+    const isLoginPath = path === "/login" ||
+      path === "/login/local-auth" ||
+      /\/checkout\/[A-Za-z0-9]+/.test(path);
+
 
     if (!session && !isLoginPath) {
       return NextResponse.redirect(new URL("/login", req.url));
