@@ -3,62 +3,44 @@
 import { useEffect, useState } from 'react';
 import { Card, Button } from '@tremor/react';
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
-import { getStripePaymentMethodIdById, getCurrentUser } from '@/app/services/UserService';
+import { getCurrentUser } from '@/app/services/UserService';
 import { User } from '@prisma/client';
+import useCurrentSession from '@/app/contexts/current-user-context';
 
 interface UserPaymentMethodWidgetProps {
-  userId: string | null | undefined;
-  submitting?: boolean;
+  loading?: boolean;
   setError?: (error: string | null) => void;
-  setSubmitting?: (submitting: boolean) => void;
+  setLoading?: (submitting: boolean) => void;
 }
 
-const UserPaymentMethodWidget = ({ userId, submitting, setSubmitting, setError }: UserPaymentMethodWidgetProps) => {
+const UserPaymentMethodWidget = ({ loading, setLoading, setError }: UserPaymentMethodWidgetProps) => {
   const setErrorOrNoop = setError ? setError : (error: string | null) => {};
-  const setSubmittingOrNoop = setSubmitting ? setSubmitting : (submitting: boolean) => {};
-  const [stripePaymentMethodId, setStripePaymentMethodId] = useState<string | null>(null);
+  const setLoadingOrNoop = setLoading ? setLoading : (submitting: boolean) => {};
 
-  const [user, setUser] = useState<User | null | undefined>(null);
-
-  useEffect(() => {
-    if(userId && !user) {
-      getCurrentUser().then(setUser);
-    }
-  }, [userId, JSON.stringify(user)]);
-
-  console.log(user);
+  const { currentSession, refreshCurrentSession } = useCurrentSession();
+  const user = currentSession.user;
 
   const {
     CardElementComponent,
     stripeCustomerId,
     handleSubmit,
     handleDetach
-  } = useStripePaymentCollector({ userId, setError: setErrorOrNoop, stripePaymentMethodId, setStripePaymentMethodId, setSubmitting: setSubmittingOrNoop });
+  } = useStripePaymentCollector({ user, setError: setErrorOrNoop, setSubmitting: setLoadingOrNoop });
 
   useEffect(() => {
-    if (userId && !stripePaymentMethodId) {
-      getStripePaymentMethodIdById(userId)
-        .then(setStripePaymentMethodId)
-        .catch((error) => {
-          setError && setError(error.message);
-        });
+    if (loading && user?.id && !user?.stripePaymentMethodId) {
+      handleSubmit().then(refreshCurrentSession);
     }
-  }, [userId, setError, stripePaymentMethodId]);
-
-  useEffect(() => {
-    if (submitting && userId && !stripePaymentMethodId) {
-      handleSubmit();
-    }
-  }, [submitting, userId, stripePaymentMethodId, handleSubmit]);
+  }, [loading, user, handleSubmit]);
 
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        {stripePaymentMethodId ? (
+        {user?.stripePaymentMethodId ? (
           <>
             Payment method already saved
             <br />
-            <Button type="button" onClick={handleDetach}>
+            <Button type="button" onClick={() => handleDetach().then(refreshCurrentSession)}>
               Remove
             </Button>
           </>
@@ -67,7 +49,7 @@ const UserPaymentMethodWidget = ({ userId, submitting, setSubmitting, setError }
             <br />
             <CardElementComponent />
             <br />
-            {(submitting === null || submitting === undefined) && (
+            {(loading === null || loading === undefined) && (
               <Button type="submit" disabled={!stripeCustomerId}>
                 Save
               </Button>

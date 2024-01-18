@@ -68,7 +68,7 @@ export default async function SettingsPage() {
         />
         <UserProductWidget user={user} />
         <UserCustomerWidget user={user} />
-        <UserPaymentMethodWidget userId={user.id} />
+        { /* <UserPaymentMethodWidget userId={user.id} /> */ }
       </div>
     </div>
   );

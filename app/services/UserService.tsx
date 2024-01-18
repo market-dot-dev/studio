@@ -91,4 +91,4 @@ export const getStripePaymentMethodIdById = async (userId: string) => {
 }
 
 export default UserService;
-export const { createStripeCustomer, getCurrentUserId, getCurrentUser } = UserService;
+export const { createStripeCustomer, getCurrentUserId, getCurrentUser, findCurrentUser } = UserService;

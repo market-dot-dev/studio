@@ -1,6 +1,7 @@
 import { User } from "@prisma/client"
 import prisma from "@/lib/prisma"
 import { siteName, siteDescription, homepageTitle, homepageTemplate} from "@/lib/constants/site-template";
+import UserService, { findCurrentUser } from "./UserService";
 
 interface UserDetails {
   id: string;
@@ -20,6 +21,11 @@ class RegistrationService {
         roleId: 'customer',
       },
     });
+  }
+
+  static async registerAndSignInCustomer(userAttributes: Partial<User> ) { 
+    // FIXME
+    return findCurrentUser();
   }
 
   static async upsertUser(userDetails: UserDetails) {
