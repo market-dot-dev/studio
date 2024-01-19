@@ -35,13 +35,13 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError }: UserPaymentM
     <form onSubmit={handleSubmit}>
       <Card>
         {user?.stripePaymentMethodId ? (
-          <>
+          <div className="flex flex-row">
             Payment method already saved
             <br />
             <Button type="button" onClick={() => handleDetach().then(refreshCurrentSession)}>
               Remove
             </Button>
-          </>
+          </div>
         ) : (
           <>
             <br />

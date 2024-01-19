@@ -119,8 +119,8 @@ const RegistrationCheckoutSection = ({ tierId }: { tierId: string; }) => {
   useEffect(() => {
     if (purchaseIntent && user && user.stripePaymentMethodId) {
       onClickSubscribe(user.id, tierId).then(() => {
-        // go to homepage
         setPurchaseIntent(false);
+        window.location.href = "/subscriptions";
       });
     }
   }, [purchaseIntent, user?.id, user?.stripePaymentMethodId]);
