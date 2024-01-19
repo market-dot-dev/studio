@@ -77,7 +77,7 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
           {/* accept terms of service */}
           <div className="flex flex-row items-center gap-2">
             <label className="mb-4 text-sm font-light leading-6">
-              Nokogiri uses the{" "}
+              {checkoutProject} uses the{" "}
               <a href="#" className="underline">
                 Standard Gitwallet MSA
               </a>

@@ -100,5 +100,5 @@ class SubscriptionService {
   }
 };
 
-export const { createSubscription, destroySubscription, findSubscription, updateSubscription, canSubscribe, isSubscribed } = SubscriptionService;
+export const { createSubscription, destroySubscription, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed } = SubscriptionService;
 export default SubscriptionService;

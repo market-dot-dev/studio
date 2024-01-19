@@ -12,7 +12,10 @@ const CancelSubscriptionButton = ({ subscription }: { subscription: Subscription
   return (
     <Button onClick={async () => {
       setLoading(true);
-      destroySubscription(subscription.id).finally(() => setLoading(false));
+      destroySubscription(subscription.id).finally(() => {
+        setLoading(false)
+        window.location.reload();
+      });
     }} >
       {loading ? <LoadingDots color="#A8A29E" /> : "Cancel Subscription"}
     </Button>
