@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { Provider } from "next-auth/providers";
 import { siteName, siteDescription, homepageTitle, homepageTemplate} from "./constants/site-template";
+import EmailService from "@/app/services/EmailService";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
@@ -233,7 +234,10 @@ export const authOptions: NextAuthOptions = {
         return;
       }
 
-      return await createSite(user);
+      await createSite(user);
+
+      // send welcome email
+      await EmailService.sendNewUserSignUpEmail(user);
     },
   },
 };

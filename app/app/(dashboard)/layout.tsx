@@ -7,6 +7,7 @@ import { getOnlySiteFromUserId } from "@/lib/actions";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
+  
   if (!session) {
     redirect("/login");
   }
