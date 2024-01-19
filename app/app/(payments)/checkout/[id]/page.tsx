@@ -8,8 +8,7 @@ import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 
 const checkoutCurrency = "USD";
-const projectDescriptionDefault =
-  "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
+const projectDescriptionDefault = "Default project description.";
 
 const renderSectionHeading = (text: string) => {
   return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
@@ -87,7 +86,7 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
         </section>
 
         <CurrentSessionProvider>
-          <RegistrationSection tierId={id} />
+          { tier && <RegistrationSection tier={tier} /> }
         </CurrentSessionProvider>
       </div>
     </div>

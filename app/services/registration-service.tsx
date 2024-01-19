@@ -2,6 +2,7 @@ import { User } from "@prisma/client"
 import prisma from "@/lib/prisma"
 import { siteName, siteDescription, homepageTitle, homepageTemplate} from "@/lib/constants/site-template";
 import UserService, { findCurrentUser } from "./UserService";
+import { signIn } from "next-auth/react";
 
 interface UserDetails {
   id: string;
@@ -25,7 +26,13 @@ class RegistrationService {
 
   static async registerAndSignInCustomer(userAttributes: Partial<User> ) { 
     // FIXME
-    return findCurrentUser();
+    // return findCurrentUser();
+
+    const res = await signIn("credentials", {
+      redirect: false,
+      gh_username: userAttributes.name,
+      password: userAttributes.email,
+    });
   }
 
   static async upsertUser(userDetails: UserDetails) {

@@ -10,6 +10,11 @@ import prisma from "@/lib/prisma";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
+export type StripeCard = {
+  brand: string;
+  last4: string;
+}
+
 class StripeService {
   static async getIntent(price: number) {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -127,6 +132,18 @@ class StripeService {
     UserService.updateUser(user.id, { stripePaymentMethodId: paymentMethodId });
   }
 
+  static async getPaymentMethod(paymentMethodId: string): Promise<StripeCard> {
+    const paymentMethod = await stripe.paymentMethods.retrieve(paymentMethodId);
+    
+    // Check if the retrieved payment method is of type 'card'
+    if (paymentMethod.type !== 'card' || !paymentMethod.card) {
+      throw new Error('Invalid payment method type or card details not available.');
+    }
+
+    const { brand, last4 } = paymentMethod.card;
+    return { brand, last4 };
+  }
+
   static async detachPaymentMethod(paymentMethodId: string) {
     const user: User = await prisma.user.findUniqueOrThrow({ where: { stripePaymentMethodId: paymentMethodId } });
 
@@ -242,6 +259,6 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
   return { status, error /*, subscription*/ };
 };
 
-export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod } = StripeService
+export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod } = StripeService
 
 export default StripeService;

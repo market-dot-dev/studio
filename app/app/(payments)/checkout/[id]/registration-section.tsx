@@ -19,8 +19,8 @@ import RegistrationService from "@/app/services/registration-service";
 import { onClickSubscribe } from '@/app/services/StripeService';
 import { findSubscription, isSubscribed } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
+import Tier from "@/app/models/Tier";
 
-const checkoutPrice = "10";
 const checkoutCurrency = "USD";
   "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
 
@@ -37,7 +37,6 @@ interface RegistrationFormProps {
 }
 
 const RegistrationForm = ({ user, userAttributes, setUserAttributes }: RegistrationFormProps) => {
-
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -77,7 +76,9 @@ const RegistrationForm = ({ user, userAttributes, setUserAttributes }: Registrat
   </>;
 }
 
-const RegistrationCheckoutSection = ({ tierId }: { tierId: string; }) => {
+
+const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
+  const tierId = tier?.id;
   const [loading, setLoading] = useState(false);
   const [submittingPaymentMethod, setSubmittingPaymentMethod] = useState(false);
   const [purchaseIntent, setPurchaseIntent] = useState(false);
@@ -104,6 +105,7 @@ const RegistrationCheckoutSection = ({ tierId }: { tierId: string; }) => {
       await RegistrationService.registerAndSignInCustomer(userAttributes).then(() => {
         refreshCurrentSession();
       }).catch((error) => {
+        console.log(error);
         setError(error.message);
       }).finally(() => {
         setLoading(false);
@@ -153,7 +155,7 @@ const RegistrationCheckoutSection = ({ tierId }: { tierId: string; }) => {
           {purchaseIntent ? <LoadingDots color="#A8A29E" /> : "Checkout"}
         </Button>
         <label className="my-2 block text-center text-sm text-slate-400">
-          Your card will be charged {checkoutCurrency + " " + checkoutPrice}
+          Your card will be charged {checkoutCurrency + " " + tier?.price}
         </label>
       </section>
     </>
