@@ -21,7 +21,7 @@ model User {
   projectDescription    String?
   emailVerified         DateTime?
   image                 String?
-  roleId                String
+  roleId                String         @default("customer")
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
   accounts              Account[]
