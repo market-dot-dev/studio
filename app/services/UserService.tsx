@@ -70,5 +70,25 @@ export const createStripeCustomerById = async (userId: string) => {
   await UserService.createStripeCustomer(user);
 }
 
+export const getStripeCustomerById = async (userId: string) => {
+  const user = await UserService.findUser(userId);
+
+  if(!user) {
+    throw new Error('User not found.');
+  }
+
+  return user.stripeCustomerId;
+}
+
+export const getStripePaymentMethodIdById = async (userId: string) => {
+  const user = await UserService.findUser(userId);
+
+  if(!user) {
+    throw new Error('User not found.');
+  }
+
+  return user.stripePaymentMethodId;
+}
+
 export default UserService;
-export const { createStripeCustomer, getCurrentUserId } = UserService;
+export const { createStripeCustomer, getCurrentUserId, getCurrentUser, findCurrentUser, findUser } = UserService;

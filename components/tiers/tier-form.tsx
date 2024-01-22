@@ -45,12 +45,13 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 		setIsSaving(true);
 
 		try {
-			await newRecord ? createTier(tier) : updateTier(tier.id as string, tier);
+			const savedTier = newRecord ? await createTier(tier) : await updateTier(tier.id as string, tier);
+			handleSubmit(savedTier);
 		} catch (error) {
 			console.log(error);
 		} finally	{
 			setIsSaving(false);
-			handleSubmit(tier as Tier);
+			
 		}
 	}
 
@@ -131,10 +132,6 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 						</Flex>
 					</Card>
 
-					<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } />
-
-					<br/>
-
 					<Button
 						disabled={isSaving}
 						loading={isSaving}
@@ -142,6 +139,13 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					>
 						{label}
 					</Button>
+
+					<br />
+					{ tier?.id && <>
+						<Card>
+							<h2>Stripe price object</h2>
+							<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } />
+						</Card> </> }
 				</div>
 
 				{/* Preview Section */}

@@ -5,7 +5,6 @@ import { getSession } from "@/lib/auth";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
-import { unstable_cache } from "next/cache";
 
 class TierService {
   static async createStripePrice(tier: Tier) {
@@ -62,7 +61,7 @@ class TierService {
     }) as any;
 
     tierAttributes.price = parseFloat(`${tierAttributes.price}`);
-    tierAttributes.userId = userId || '1';
+    tierAttributes.userId = userId;
 
     const tier = await prisma.tier.create({
       data: tierAttributes as Tier,

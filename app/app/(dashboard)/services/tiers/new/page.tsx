@@ -3,17 +3,15 @@
 import PageHeading from '@/components/common/page-heading';
 import Tier, { newTier } from '@/app/models/Tier';
 import TierForm from '@/components/tiers/tier-form';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const attrs = newTier();
 
 export default function NewTierPage() {
-  const router = useRouter();
   const [tier, setTier] = useState<Partial<Tier>>(attrs);
 
   const handleSubmit = async (tier: Tier) => {
-    console.log('saved successfully');
+    window.location.href = `/services/tiers/${tier.id}`;
   };
 
   return (
