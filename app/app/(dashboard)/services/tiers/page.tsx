@@ -1,15 +1,12 @@
-// import tiers from './support-tiers';
 import PageHeading from '@/components/common/page-heading';
 import PrimaryButton from '@/components/common/link-button';
-import { getTiersForAdmin } from '@/lib/tiers/fetchers';
-
+import TierService from '@/app/services/TierService';
 import { Grid, Col } from '@tremor/react';
 
 import Link from 'next/link';
+
 export default async function Tiers() {
-
-  const result = await getTiersForAdmin() as any;
-
+  const result = await TierService.getTiersForAdmin() as any;
   const tiers = result.errors ? [] : result as any[];
 
   return (
@@ -19,7 +16,7 @@ export default async function Tiers() {
             <PageHeading title="Your Active Tiers" />
           </div>
           <div className="flex flex-row">
-              <PrimaryButton label="New Tier" href="/services/tiers/new" />
+            <PrimaryButton label="New Tier" href="/services/tiers/new" />
           </div>
       </div>
 
@@ -44,7 +41,7 @@ export default async function Tiers() {
                     ))}
                   </ul>
 
-                  <button type="button" disabled className="px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800  disabled:bg-gray-300 disabled:cursor-not-allowed">Get Started</button>
+                  <PrimaryButton href={`/checkout/${tier.id}`} label="Get Started" />
                   
                   <Link href={`tiers/${tier.id}`}>Edit</Link>
                 </Col>

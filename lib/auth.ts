@@ -4,107 +4,12 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { Provider } from "next-auth/providers";
-import { PrismaClient } from "@prisma/client";
+import EmailService from "@/app/services/EmailService";
+import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
+import RegistrationService from "@/app/services/registration-service";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
-
-interface UserDetails {
-  id: string;
-  gh_username: string;
-  name: string;
-  email: string;
-  image: string;
-}
-
-async function upsertUser(userDetails: UserDetails) {
-  const { id, gh_username, name, email, image } = userDetails;
-
-  // Check if a user exists with the given GitHub username
-  const existingUser = await prisma.user.findUnique({
-    where: { gh_username }, // Assuming gh_username is unique
-  });
-
-  if (existingUser) {
-    // If the user exists, conditionally update their information
-    const user = await prisma.user.update({
-      where: { id: existingUser.id }, // Use the unique identifier for updates
-      data: {
-        // Update only if the existing record has these fields blank
-        name: existingUser.name ? existingUser.name : name,
-        email: existingUser.email ? existingUser.email : email,
-        image: existingUser.image ? existingUser.image : image,
-        username: existingUser.username ? existingUser.username : gh_username,
-        updatedAt: new Date(), // Update the 'updatedAt' field to the current time
-      },
-    });
-
-    return user;
-  } else {
-    // If the user doesn't exist, create a new one with the provided details
-    const user = await prisma.user.create({
-      data: {
-        id, // This should be a unique identifier, ensure you generate or provide this
-        gh_username,
-        name,
-        email,
-        image,
-        username: gh_username, // Assuming you want to store the GitHub username here
-        emailVerified: null, // Set this to the current time if the email is verified at creation
-        createdAt: new Date(), // Set to the current time
-        updatedAt: new Date(), // Set to the current time
-      },
-    });
-
-    await createSite(user);
-
-    return user;
-  }
-}
-
-const createSite = async (user: any) => {
-  const pageData = {
-    title: "Welcome",
-    slug: 'index',
-    content: "<h1>Welcome to our homepage</h1>",
-    user: {
-      connect: {
-        id: user.id,
-      }
-    }
-    // other page fields...
-  };
-  // You can use this information to perform additional actions in your database
-  const site = await prisma.site.create({
-    data: {
-      name: 'Support Website',
-      description: 'Support Website Description',
-      subdomain: user.gh_username ?? user.id,
-      user: {
-        connect: {
-          id: user.id,
-        },
-      },
-      pages: {
-        create: [pageData]
-      }
-    },
-    include: {
-      pages: true // Include the pages in the result
-    }
-  });
-
-  const homepageId = site.pages[0].id;
-
-  // Update the site to set the homepageId
-  await prisma.site.update({
-    where: {
-      id: site.id
-    },
-    data: {
-      homepageId: homepageId
-    }
-  });
-}
+const isDevelopment = process.env.NODE_ENV === "development";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -121,7 +26,7 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
-    process.env.NODE_ENV === "development" &&
+    isDevelopment &&
       CredentialsProvider({
         name: "Credentials",
         credentials: {
@@ -143,9 +48,10 @@ export const authOptions: NextAuthOptions = {
               name: "",  // No default name, it will be set based on existing data or remain empty
               email: "",  // No default email, it will be set based on existing data or remain empty
               image: "",  // No default image, it will be set based on existing data or remain empty
+              roleId: "admin",
             };
       
-            const user = await upsertUser(userDetails);
+            const user = await RegistrationService.upsertUser(userDetails);
       
             return user;
           }
@@ -178,20 +84,58 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt: async ({ token, user }) => {
-      if (user) {
-        token.user = user;
+    jwt: async ({ token, user, account } : any) => {
+
+      const userData = user ? {...user} : null;
+
+      // Store the refresh token in the database when the user logs in
+      if (account && user) {
+        // at this point, the user item in table does not have the onboarding data set. So, we can attach the default one to the first token being generated on signup.
+        if (!user.onboarding) {
+          userData.onboarding = JSON.stringify( defaultOnboardingState );
+        }
+        await prisma.account.upsert({
+          where: {
+            provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId },
+          },
+          // this create might not even be required, assuming that the nextauth has already created the account, but just in case
+          create: {
+            userId: user.id,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            type: 'oauth',
+
+            // just ensuring that the account object has the following values
+            expires_at: account.expires_at,
+            refresh_token: account.refresh_token,
+            refresh_token_expires_in: account.refresh_token_expires_in,
+          },
+          // the default nextauth implementation does not add the following values to the account object, so updating here
+          update: {
+            expires_at: account.expires_at,
+            refresh_token: account.refresh_token,
+            refresh_token_expires_in: account.refresh_token_expires_in,
+          },
+        });
+      } 
+
+      
+      if (userData) {
+        token.user = userData;
       }
+      
       return token;
     },
-    session: async ({ session, token }) => {
+    session: async ({ session, token } : any) => {
       session.user = {
         ...session.user,
-        // @ts-expect-error
         id: token.sub,
-        // @ts-expect-error
         username: token?.user?.username || token?.user?.gh_username,
+        
+        // an empty token.user?.onboarding will signal that the user's onboarding isnt complete yet
+        ...(token.user?.onboarding?.length ? { onboarding: true } : {}),
       };
+      
       return session;
     },
   },
@@ -203,7 +147,16 @@ export const authOptions: NextAuthOptions = {
         return;
       }
 
-      return await createSite(user);
+      // Add onboarding status to a new user
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          onboarding: JSON.stringify( defaultOnboardingState ),
+        },
+      });
+
+      await RegistrationService.createSite(user);
+      await EmailService.sendNewUserSignUpEmail(user);
     },
   },
 };
@@ -216,6 +169,7 @@ export function getSession() {
       username: string;
       email: string;
       image: string;
+      onboarding?: string;
     };
   } | null>;
 }

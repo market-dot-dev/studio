@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import LoadingDots from "@/components/icons/loading-dots";
 
-export default function DevLoginButton() {
+export default function LocalAuthButton() {
   const [loading, setLoading] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -52,7 +52,7 @@ export default function DevLoginButton() {
           type="text"
           required
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          placeholder="Enter your GitHub username"
+          placeholder="Enter any GitHub username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
@@ -67,7 +67,7 @@ export default function DevLoginButton() {
           type="password"
           required
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          placeholder="Enter the development backdoor password"
+          placeholder="Enter the local auth password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />

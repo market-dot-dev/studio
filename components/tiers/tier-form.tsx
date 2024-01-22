@@ -1,35 +1,41 @@
 "use client";
-import { useState } from 'react';
-import { Flex, Text, Button, TextInput, Card, Title, Bold, Badge, Textarea, Switch, Divider, Grid, Icon } from "@tremor/react"
-import FeaturesEditor from './features-editor';
-import { Accordion, AccordionBody, AccordionHeader, AccordionList } from "@tremor/react";
+
+import { ChangeEvent, useState } from 'react';
+import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput } from "@tremor/react"
+import Tier from '@/app/models/Tier';
+import { createTier, updateTier } from '@/app/services/TierService';
+import TierPriceWidget from './TierPriceWidget';
+import { useRouter } from 'next/navigation';
 import { MessagesSquare, Radio, ListTodo, Timer } from 'lucide-react';
-import DashboardCard from '../common/dashboard-card';
-import { TextArea } from '@radix-ui/themes';
 
-export default function TierForm({ tier, label = 'Save Tier', handleSubmit }: { tier: any, label: string, handleSubmit: any }) {
 
-	const [name, setName] = useState(tier?.name ?? '');
-	const [published, setPublished] = useState(tier?.published ?? false);
-	const [tagline, setTagline] = useState(tier?.tagline ?? '');
-	const [description, setDescription] = useState(tier?.description ?? '');
-	const [features, setFeatures] = useState(tier?.versions?.[0]?.features ?? []);
-	const [price, setPrice] = useState('99');
-	const [offerFreeTrial, setOfferFreeTrial] = useState(false);
-	const [freeTrialLength, setFreeTrialLength] = useState('30');
+interface TierFormProps {
+	tier: Partial<Tier>;
+	handleSubmit: (tier: Tier) => void;
+}
 
+export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps) {
+	const router = useRouter();
+	const [tier, setTier] = useState<Tier>(tierObj as Tier);
+
+	const newRecord = !tier.id;
+
+	const label = newRecord ? 'Create' : 'Update';
+	
+	//const [features, setFeatures] = useState(tier.features ?? []);
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
 
-	const defaultFreeTrial = '30';
-
-	const handleSwitchChange = (value: boolean) => {
-		setPublished(value);
-	};
-
+	const handleInputChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    const updatedTier = { ...tier, [name]: value } as Tier;
+    setTier(updatedTier);
+  };
 
 	const validateForm = () => {
-		if (!name) {
+		if (!tier.name) {
 			setErrors({ ...errors, name: 'Please enter a name for the tier' });
 			return false;
 		}
@@ -39,13 +45,18 @@ export default function TierForm({ tier, label = 'Save Tier', handleSubmit }: { 
 	const onSubmit = async () => {
 		if (!validateForm()) return;
 		setIsSaving(true);
+
 		try {
-			await handleSubmit({ name, tagline, description, features, published });
-		}
-		catch (error) {
+			const savedTier = newRecord ? await createTier(tier) : await updateTier(tier.id as string, tier);
+			// emit a custom event signaling that the tier has been saved
+			window.dispatchEvent(new Event('tier-saved'));
+			handleSubmit(savedTier);
+		} catch (error) {
 			console.log(error);
+		} finally	{
+			setIsSaving(false);
+			
 		}
-		setIsSaving(false);
 	}
 
 	const featuresData = [
@@ -81,200 +92,129 @@ export default function TierForm({ tier, label = 'Save Tier', handleSubmit }: { 
 
 	return (
 		<>
-
 			{/* Grid layout for responsiveness */}
 			<div className="flex gap-4">
 				{/* Form Fields Section */}
-				<div className="w-3/5 space-y-4 mt-6">
+				<div className="md:col-span-2 space-y-6">
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Name</label>
+						<input
+							id="tierName"
+							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							placeholder="Premium"
+							required
+							name="name"
+							value={tier.name}
+							onChange={handleInputChange}
+							
+						/>
+						{errors['name'] ? <Text color="red" >{errors['name']}</Text> : null}
+					</div>
+
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Tagline</label>
+						<input
+							id="tierTagline"
+							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							placeholder="Great for startups and smaller companies."
+							required
+							name="tagline"
+							value={tier.tagline || ''}
+							onChange={handleInputChange}
+						/>
+					</div>
+
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Description</label>
+						<textarea
+							id="tierDescription"
+							rows={4}
+							className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
+							name="description"
+							value={tier.description || ''}
+							onChange={handleInputChange}
+						></textarea>
+					</div>
+
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
+							<Flex className='gap-2' justifyContent='start'>
+								<input type="checkbox" checked={tier.published} onChange={(e) => {
+									setTier({ ...tier, published: e.target.checked } as Tier);
+								}} /> 
+								<span>Published</span>
+							</Flex>
+						</label>
+					</div>
+
+					{/* Current version */}
 					<Card>
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Name</label>
-							<TextInput
-								id="tierName"
-								placeholder="Premium"
-								required
-								value={name}
-								onChange={(e) => {
-									setErrors({ ...errors, name: null });
-									setName(e.target.value)
-								}}
-							/>
-							{errors['name'] ? <Text color="red" >{errors['name']}</Text> : null}
-						</div>
+						<Flex flexDirection="col" alignItems="start" className="gap-4">
+							<Title>Current Version</Title>
+							
+							<Flex flexDirection="col" alignItems="start" className="gap-1">
+								<Bold>Price</Bold>
+								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange}/>
+							</Flex>
 
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Tagline</label>
-							<TextInput
-								id="tierTagline"
-								placeholder="Great for startups and smaller companies."
-								required
-								value={tagline}
-								onChange={(e) => setTagline(e.target.value)}
-							/>
-						</div>
-
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Description</label>
-							<Textarea
-								id="tierDescription"
-								rows={4}
-								placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
-								value={description}
-								onChange={(e) => setDescription(e.target.value)}
-							/>
-						</div>
-
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Current Status</label>
-							<div className='flex'>
-								<Switch checked={published} onChange={handleSwitchChange} />
-								<Text>
-
-								</Text>
-								<label htmlFor="switch" className="text-sm text-gray-500 ms-2">
-									This tier is <span className="font-medium text-gray-700">{published ? 'available for sale.' : 'in draft, and not available for sale.'}</span>
-								</label>
-							</div>
-						</div>
+							<Flex flexDirection="col" alignItems="start" className="gap-1">
+								<Bold>Stripe Price Id</Bold>
+								<TextInput value={tier.stripePriceId || ''} name="stripePriceId" placeholder="Stripe Price Id" onChange={handleInputChange}/>
+							</Flex>
+							
+							{/* <FeaturesEditor features={tier.features} setFeatures={setFeatures}  /> */}
+						</Flex>
 					</Card>
 
-					<Card>
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price</label>
-							<div className="flex flex-row gap-4">
-								<div className="items-center w-1/2">
-									<TextInput value={price} placeholder="Enter monthly price" onChange={(e) => setPrice(e.target.value)} />
-								</div>
-								<div className="items-center w-1/2 text-xs text-slate-400">
-									Customers will be charged <b>{price} US Dollars</b> monthly. To change your selling currency, visit <a href="/settings" className="underline">settings</a>.
-								</div>
-							</div>
-						</div>
+					<Button
+						disabled={isSaving}
+						loading={isSaving}
+						onClick={onSubmit}
+					>
+						{label}
+					</Button>
 
-						<div className="mb-4">
-							{/* <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Period</label> */}
-							<div className="grid grid-cols-1 gap-2">
-								<div className="flex items-center w-1/2">
-									<Switch checked={offerFreeTrial} onChange={() => setOfferFreeTrial(!offerFreeTrial)} />
-									<label htmlFor="offerFreeTrial" className="text-sm mx-4">
-										{offerFreeTrial ? 'Offer a free trial' : 'No free trial offered'}
-									</label>
-								</div>
-								<div>
-									{offerFreeTrial ? (
-										<>
-											<label className="text-sm font-medium text-gray-900">Trial Length (Days)</label>
-											<div className="flex flex-row gap-4">
-												<div className="items-center w-1/2">
-													<TextInput value={freeTrialLength} placeholder="Enter free trial length" onChange={(e) => setFreeTrialLength(e.target.value)} />
-												</div>
-
-												<div className="items-center w-1/2 text-xs text-slate-400">
-													Customers will be provided a <b>{freeTrialLength} day</b> free trial. At the end of this trial, they will be charged.
-												</div>
-											</div>
-										</>
-									) : ""}
-								</div>
-							</div>
-						</div>
-					</Card>
-
-
-					<Card>
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Features</label>
-						<Grid numItems={4} className="gap-2 mb-4">
-							{featuresData.map((feature, index) => (
-								<div className="flex gap-2 mb-4" key={index}>
-									<Card>
-										<div className="grid justify-items-center text-center">
-											{feature.icon}
-											<Bold>{feature.title}</Bold>
-											<Text>{feature.description}</Text>
-											{feature.badge && <Badge>{feature.badge}</Badge>}
-										</div>
-									</Card>
-									{/* <TextArea rows={2} className='w-3/4' placeholder={"Enter details for " + feature.title.toLowerCase()} /> */}
-								</div>
-							))}
-						</Grid>
-
-						<label className="block mb-0.5 text-sm font-medium text-gray-900">Custom Features</label>
-
-						<FeaturesEditor features={features} setFeatures={setFeatures} />
-					</Card>
-
-					<Divider>Past Versions</Divider>
-
-					<AccordionList className="max-w-full">
-						<Accordion>
-							<AccordionHeader>
-								$99 (Created on Sept 30 2023)
-								<Badge className="ml-2">3 Active Customers</Badge>
-							</AccordionHeader>
-							<AccordionBody>
-								A previous version of Premium was offered at $99 and you have 3 customers active on this tier.
-							</AccordionBody>
-						</Accordion>
-						<Accordion>
-							<AccordionHeader>$79 (Created on August 30 2023)
-								<Badge className="ml-2">1 Active Customers</Badge>
-							</AccordionHeader>
-							<AccordionBody>
-								A previous version of Premium was offered at $79 and you have 1 customers active on this tier.
-							</AccordionBody>
-						</Accordion>
-					</AccordionList>
-
+					<br />
+					{ tier?.id && <>
+						<Card>
+							<h2>Stripe price object</h2>
+							<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } />
+						</Card> </> }
 				</div>
 
 				{/* Preview Section */}
-				<div className="text-center">
-					<div className="w-[300px] fixed">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Preview</label>
-						<div className="bg-white border-2 border-gray-200 shadow p-4 rounded-lg mb-4">
-							<div className="text-center">
-								<h2 className={`text-lg font-bold ${name ? 'text-gray-800' : 'text-gray-300'}`}>{name || "Premium"}</h2>
-								<p className={`text-base my-4 ${tagline ? 'text-gray-600' : 'text-gray-300'}`}>{tagline || "Great for startups!"}</p>
-								{/* <h3 className="text-base text-gray-500">{tierTagline}</h3> */}
-							</div>
-
-							<div>
-								<ul className="text-center mx-4">
-									{features.map((feature: any, index: number) => (
-										<li className="flex items-center space-x-3" key={index}>
-											<svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-											<span className="text-sm">{feature.content}</span>
-										</li>
-									))}
-								</ul>
-
-								<div className="flex justify-center items-baseline my-4">
-									<span className="mr-2 text-3xl font-extrabold">${price}</span>
-									<span className="text t-gray-500 dark:text-gray-400">/ month</span>
-								</div>
-
-								<div className="flex my-4">
-									{offerFreeTrial ? (
-										<Button variant="primary" disabled className="w-full">Start Free Trial</Button>
-									) : (
-										<Button variant="primary" disabled className="w-full">Buy Now for ${price}</Button>
-									)}
-								</div>
-							</div>
+				<div className="md:w-[300px] text-center" >
+					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
+					<div className="bg-white border-2 border-gray-300 shadow p-4 rounded-lg">
+						<div className="text-center">
+						<h2 className={`text-lg font-bold ${tier.name ? 'text-gray-800' : 'text-gray-300'}`}>{tier.name || "Premium"}</h2>
+						<p className={`text-base my-4 ${tier.tagline ? 'text-gray-600' : 'text-gray-300'}`}>{tier.tagline || "Great for startups!"}</p>
 						</div>
 
-						<Button
-							disabled={isSaving}
-							loading={isSaving}
-							className="w-full"
-							onClick={onSubmit}
-						>
-							{/* {label} */}
-							Save Tier
-						</Button>
-					</div>
+						
+						<div>
+							{/*
+							<ul className="text-center">
+								{features.map((feature : any, index : number) => (
+									<li className="flex items-center space-x-3" key={index}>
+										<svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+										<span className="text-sm">{feature.content}</span>
+									</li>
+								))}
+							</ul>
+								*/}
 
+							<div className="flex justify-center items-baseline my-4">
+								<span className="mr-2 text-3xl font-extrabold">${tier.price}</span>
+								<span className="text t-gray-500 dark:text-gray-400">/ month</span>
+							</div>
+
+							<Button
+								onClick={() => router.push(`/checkout/${tier.id}`)}
+							>{tier.name ? "Get Started with " + tier.name : "Get Started"}</Button>
+						</div>
+					</div>
 				</div>
 			</div>
 		</>

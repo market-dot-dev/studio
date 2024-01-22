@@ -4,21 +4,28 @@ import { serialize } from "next-mdx-remote/serialize";
 import { replaceExamples, replaceTweets } from "@/lib/remark-plugins";
 
 export async function getSiteData(domain: string) {
+  
   const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
     ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
     : null;
-
+  
   return await unstable_cache(
     async () => {
       const site = await prisma.site.findUnique({
         where: subdomain ? { subdomain } : { customDomain: domain },
         include: { 
-          user: true,
+          user: {
+            select: {
+              name: true,
+              image: true
+            }
+          },
           // pages: {
           //   take: 1, // Retrieve only the first page
           // }
         }
       });
+      
       if (!site) {
         return null; // or handle the case where the site doesn't exist
       }

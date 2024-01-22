@@ -1,18 +1,15 @@
+import { findTier } from '@/app/services/TierService';
+import TierFormWrapper from './TierFormWrapper';
 import PageHeading from '@/components/common/page-heading';
-import EditTier from '@/components/tiers/edit-tier';
-import { getTier } from '@/lib/tiers/fetchers';
 
 export default async function EditTierPage({params} : {params: { id: string }}) {
-
-  const result = await getTier(params.id) as any;
-
-  const tier = result.errors ? null : result as any;
+  const tier = await findTier(params.id);
+  if(!tier) return null;
   
   return (
     <div className="flex max-w-screen-xl flex-col p-8">
-      <PageHeading title="Edit Tier" />
-      { tier ? <EditTier tier={tier} /> : null }
-
+    <PageHeading title="Edit Tier" />
+      <TierFormWrapper tier={tier} />
     </div>
-  )
+  );
 }

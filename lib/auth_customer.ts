@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
 				const user = await prisma.user.findUnique({
 				  where: { email: credentials.email },
 				}) || await prisma.user.create({
-				  data: { email: credentials.email },
+				  data: { email: credentials.email, roleId: 'customer' },
 				});
 
 				if (user) {
