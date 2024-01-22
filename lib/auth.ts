@@ -4,6 +4,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { Provider } from "next-auth/providers";
+import EmailService from "@/app/services/EmailService";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import RegistrationService from "@/app/services/registration-service";
 
@@ -145,6 +146,7 @@ export const authOptions: NextAuthOptions = {
       if (!user) {
         return;
       }
+
       // Add onboarding status to a new user
       await prisma.user.update({
         where: { id: user.id },
@@ -152,7 +154,9 @@ export const authOptions: NextAuthOptions = {
           onboarding: JSON.stringify( defaultOnboardingState ),
         },
       });
-      return await RegistrationService.createSite(user);
+
+      await RegistrationService.createSite(user);
+      await EmailService.sendNewUserSignUpEmail(user);
     },
   },
 };

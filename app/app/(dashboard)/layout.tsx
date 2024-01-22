@@ -11,6 +11,7 @@ import { DasboardProvider } from "@/components/dashboard/dashboard-context";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
+  
   if (!session) {
     redirect("/login");
   }
