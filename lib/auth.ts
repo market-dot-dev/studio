@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
               id: `dev-${credentials.gh_username}`,  // Unique ID constructed using the GitHub username
               gh_username: credentials.gh_username,  // GitHub username from the provided credentials
               name: "",  // No default name, it will be set based on existing data or remain empty
-              email: "",  // No default email, it will be set based on existing data or remain empty
+              email: `${credentials.gh_username}@gh.gitwallet.co`,  // No default email, it will be set based on existing data or remain empty
               image: "",  // No default image, it will be set based on existing data or remain empty
               roleId: "admin",
             };
