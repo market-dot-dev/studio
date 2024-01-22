@@ -4,6 +4,10 @@ import Profile from "@/components/profile";
 import Nav from "@/components/nav";
 import { redirect } from "next/navigation";
 import { getOnlySiteFromUserId } from "@/lib/actions";
+import { Flex } from "@tremor/react";
+import OnboardingGuide from "@/components/onboarding/onboarding-guide";
+import { DasboardProvider } from "@/components/dashboard/dashboard-context";
+
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
@@ -12,15 +16,26 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     redirect("/login");
   }
   const site = await getOnlySiteFromUserId(session.user.id);
-  
+
   return (
-    <div>
-      <Nav siteId={site?.id ?? null}>
-        <Suspense fallback={<div>Loading...</div>}>
-          <Profile />
-        </Suspense>
-      </Nav>
-      <div className="min-h-screen dark:bg-black sm:pl-60">{children}</div>
-    </div>
+    <DasboardProvider siteId={site?.id ?? null}>
+      <div>
+        <Nav siteId={site?.id ?? null}>
+          <Suspense fallback={<div>Loading...</div>}>
+            <Profile />
+          </Suspense>
+        </Nav>
+        <div className="min-h-screen dark:bg-black sm:pl-60">
+          <Flex alignItems="stretch" className="w-full">
+            <div className="w-full grow">
+              {children}
+            </div>
+            
+                <OnboardingGuide/>
+            
+          </Flex>
+        </div>
+      </div>
+    </DasboardProvider>
   );
 }

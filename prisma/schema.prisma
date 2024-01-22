@@ -32,7 +32,8 @@ model User {
   tiers                 Tier[]
   TierFeature           TierFeature[]
   Subscription          Subscription[]
-  repos                 Repo[]
+  repos            Repo[]
+  onboarding            String?
 }
 
 model Account {

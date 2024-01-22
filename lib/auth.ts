@@ -5,6 +5,7 @@ import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 import { Provider } from "next-auth/providers";
 import EmailService from "@/app/services/EmailService";
+import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import RegistrationService from "@/app/services/registration-service";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
@@ -84,8 +85,15 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     jwt: async ({ token, user, account } : any) => {
+
+      const userData = user ? {...user} : null;
+
       // Store the refresh token in the database when the user logs in
       if (account && user) {
+        // at this point, the user item in table does not have the onboarding data set. So, we can attach the default one to the first token being generated on signup.
+        if (!user.onboarding) {
+          userData.onboarding = JSON.stringify( defaultOnboardingState );
+        }
         await prisma.account.upsert({
           where: {
             provider_providerAccountId: { provider: account.provider, providerAccountId: account.providerAccountId },
@@ -101,30 +109,31 @@ export const authOptions: NextAuthOptions = {
             expires_at: account.expires_at,
             refresh_token: account.refresh_token,
             refresh_token_expires_in: account.refresh_token_expires_in,
-            
           },
           // the default nextauth implementation does not add the following values to the account object, so updating here
           update: {
             expires_at: account.expires_at,
             refresh_token: account.refresh_token,
-            refresh_token_expires_in: account.refresh_token_expires_in
+            refresh_token_expires_in: account.refresh_token_expires_in,
           },
         });
       } 
-      
-      if (user) {
-        token.user = user;
-      }
 
+      
+      if (userData) {
+        token.user = userData;
+      }
       
       return token;
     },
     session: async ({ session, token } : any) => {
-
       session.user = {
         ...session.user,
         id: token.sub,
         username: token?.user?.username || token?.user?.gh_username,
+        
+        // an empty token.user?.onboarding will signal that the user's onboarding isnt complete yet
+        ...(token.user?.onboarding?.length ? { onboarding: true } : {}),
       };
       
       return session;
@@ -138,9 +147,16 @@ export const authOptions: NextAuthOptions = {
         return;
       }
 
-      const res = await RegistrationService.createSite(user);
+      // Add onboarding status to a new user
+      await prisma.user.update({
+        where: { id: user.id },
+        data: {
+          onboarding: JSON.stringify( defaultOnboardingState ),
+        },
+      });
+
+      await RegistrationService.createSite(user);
       await EmailService.sendNewUserSignUpEmail(user);
-      return res;
     },
   },
 };
@@ -153,6 +169,7 @@ export function getSession() {
       username: string;
       email: string;
       image: string;
+      onboarding?: string;
     };
   } | null>;
 }
