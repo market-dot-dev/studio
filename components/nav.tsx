@@ -22,26 +22,10 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-// import { getOnlySiteFromUserId } from "@/lib/actions";
-// import Image from "next/image";
-// import { useSession } from 'next-auth/react'
 
-export default function Nav({ children, siteId }: { children: ReactNode, siteId: string | null }) {
+export default function Nav({ children, siteId, roleId }: { children: ReactNode, siteId: string | null, roleId: string | null }) {
   const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
-  // const { data: session, status } = useSession();
-  // const [siteId, setSiteId] = useState<string | null>();
-
-  // const user = session?.user as any;
-
-  // useEffect(() => {
-  //   if (user?.id)
-  //     getOnlySiteFromUserId(user.id).then((site) => {
-  //       if( site?.id ) {
-  //         setSiteId(site.id);
-  //       }
-  //     });
-  // }, [user])
 
   const tabs = useMemo(() => {
     if (urlSegments[0] === "site" && id) {
@@ -78,12 +62,6 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
           href: `/site/${siteId}`,
           icon: <ArrowLeft width={18} />,
         },
-        // {
-        //   name: "Site Content",
-        //   href: `/site/${id}`,
-        //   isActive: urlSegments.length === 2,
-        //   icon: <Newspaper width={18} />,
-        // },
         {
           name: "Analytics",
           href: `/site/${siteId}/analytics`,
@@ -174,8 +152,13 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
         isActive: urlSegments[0] === "github",
         icon: <Github width={18} />,
       },
+      {
+        name: `Role: ${roleId}`,
+        href: "",
+        isDivider: true,
+      },
     ];
-  }, [urlSegments, id, siteId]);
+  }, [urlSegments, id, siteId, roleId]);
 
   const [showSidebar, setShowSidebar] = useState(false);
 
