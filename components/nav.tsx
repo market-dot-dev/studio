@@ -8,6 +8,7 @@ import {
   Globe,
   LayoutDashboard,
   KanbanSquare,
+  Binary,
   Menu,
   Users,
   Newspaper,
@@ -59,13 +60,7 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
           icon: <Newspaper width={18} />,
         },
         {
-          name: "Analytics",
-          href: `/site/${id}/analytics`,
-          isActive: urlSegments.includes("analytics"),
-          icon: <BarChart3 width={18} />,
-        },
-        {
-          name: "Settings",
+          name: "Site Settings",
           href: `/site/${id}/settings`,
           isActive: urlSegments.includes("settings"),
           icon: <Settings width={18} />,
@@ -78,18 +73,6 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
           name: "Back to Site",
           href: `/site/${siteId}`,
           icon: <ArrowLeft width={18} />,
-        },
-        // {
-        //   name: "Site Content",
-        //   href: `/site/${id}`,
-        //   isActive: urlSegments.length === 2,
-        //   icon: <Newspaper width={18} />,
-        // },
-        {
-          name: "Analytics",
-          href: `/site/${siteId}/analytics`,
-          isActive: urlSegments.includes("analytics"),
-          icon: <BarChart3 width={18} />,
         },
         {
           name: "Settings",
@@ -128,16 +111,22 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
         icon: <LayoutDashboard width={18} />,
       },
       {
+        name: "Project Details",
+        href: "/project",
+        isActive: urlSegments.length === 0,
+        icon: <Binary width={18} />,
+      },
+      {
+        name: "Packages",
+        href: "/services/tiers",
+        isActive: urlSegments[0] === "services",
+        icon: <KanbanSquare width={18} />,
+      },
+      {
         name: "Customers",
         href: "/customers",
         isActive: urlSegments[0] === "customers",
         icon: <Users width={18} />,
-      },
-      {
-        name: "Services",
-        href: "/services/tiers",
-        isActive: urlSegments[0] === "services",
-        icon: <KanbanSquare width={18} />,
       },
       {
         name: "Reports",
