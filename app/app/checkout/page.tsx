@@ -3,9 +3,10 @@ import Image from "next/image";
 import { Col, Grid, Badge, Card, Divider, TextInput, Switch, Button } from "@tremor/react";
 import { Accordion, AccordionBody, AccordionHeader } from "@tremor/react";
 import { useState } from "react";
-import { Select } from '@tremor/react';
 
-
+// PAGE STATE SELECTOR: IMPORT THE RIGHT PAGE STATE, AND SELECTOR COMPONENT
+import { CheckoutPageStates } from "@/components/internal-use/PageStates";
+import PageStateSelector from "@/components/internal-use/page-state-selector";
 
 
 // Define a type for the testimonial props, including the logo
@@ -32,34 +33,8 @@ const renderSectionHeading = (text: string) => {
 
 export default function Checkout() {
 
-  enum PageStates {
-    Unregistered = "Logged Out",
-    Login = "Login Screen",
-    MagicLinkInput = "Magic Link Input",
-    RegisteredLoggedIn = "Registered, Logged In",
-    FirstPurchaseSuccess = "First Purchase Success",
-    nthPurchaseSuccess = "nth Purchase Success",
-    PaymentFailed = "Payment Failed",
-  }
-
-  const [pageState, setPageState] = useState<PageStates>(PageStates.Unregistered);
-
-  const pageStateSelector =
-    <div className="fixed bottom-0 left-0 flex flex-row justify-center p-8 xl:px-32">
-      <Accordion className="my-2">
-        <AccordionHeader className="my-0 py-1">Page States</AccordionHeader>
-        <AccordionBody>
-          <div className="flex flex-col gap-2 text-sm font-light leading-6 mb-4">
-            <label className="text-sm font-light">Current State: <br />{pageState}</label>
-            {Object.values(PageStates).map(state => (
-              <Button key={state} onClick={() => setPageState(state as PageStates)}>
-                {state}
-              </Button>
-            ))}
-          </div>
-        </AccordionBody>
-      </Accordion>
-    </div>;
+  // PAGE STATE SELECTOR: SET THE DEFAULT STATE HERE
+  const [pageState, setPageState] = useState(CheckoutPageStates.Unregistered);
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -108,7 +83,7 @@ export default function Checkout() {
 
         <section className="mb-8 w-7/8 lg:w-5/6 text-sm">
           {
-            pageState === PageStates.Unregistered &&
+            pageState === CheckoutPageStates.Unregistered &&
             <>
               <Divider>Signup</Divider>
               <div className="text-sm mb-2">
@@ -129,7 +104,7 @@ export default function Checkout() {
             </>
           }
           {
-            pageState === PageStates.Login &&
+            pageState === CheckoutPageStates.Login &&
             <>
               <Divider>Login</Divider>
               <Card>
@@ -147,7 +122,7 @@ export default function Checkout() {
             </>
           }
           {
-            pageState === PageStates.MagicLinkInput &&
+            pageState === CheckoutPageStates.MagicLinkInput &&
             <>
               <Divider>Login</Divider>
               <Card>
@@ -165,7 +140,7 @@ export default function Checkout() {
             </>
           }
           {
-            pageState === PageStates.RegisteredLoggedIn &&
+            pageState === CheckoutPageStates.RegisteredLoggedIn &&
             <>
               <Card>
                 <div className="items-center text-sm">
@@ -204,7 +179,12 @@ export default function Checkout() {
 
       </div>
 
-      {pageStateSelector}
+      {/* PAGE STATE SELECTOR COMPONENT */}
+      <PageStateSelector 
+        pageState={pageState}
+         setPageState={setPageState}
+         statesEnum={CheckoutPageStates}
+        />
     </div>
   );
 }
