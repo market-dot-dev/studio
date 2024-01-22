@@ -61,7 +61,7 @@ class TierService {
     }) as any;
 
     tierAttributes.price = parseFloat(`${tierAttributes.price}`);
-    tierAttributes.userId = userId || '1';
+    tierAttributes.userId = userId;
 
     const tier = await prisma.tier.create({
       data: tierAttributes as Tier,

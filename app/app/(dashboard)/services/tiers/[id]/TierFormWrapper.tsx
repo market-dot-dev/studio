@@ -5,11 +5,7 @@ import Tier from '@/app/models/Tier';
 
 export default async function TierFormWrapper({ tier } : { tier: Tier }) {
   const handleSubmit = async (tier: Tier) => {
-    try {
-      console.log('saved successfully');
-    } catch (error) {
-      console.log('error saving tier', error);
-    }
+    window.location.href = `/services/tiers/${tier.id}`;
   };
 
   if(!(tier && tier.id)) return null;

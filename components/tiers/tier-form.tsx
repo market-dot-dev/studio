@@ -45,15 +45,15 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 		setIsSaving(true);
 
 		try {
-			await newRecord ? createTier(tier) : updateTier(tier.id as string, tier);
+			const savedTier = newRecord ? await createTier(tier) : await updateTier(tier.id as string, tier);
 			// emit a custom event signaling that the tier has been saved
 			window.dispatchEvent(new Event('tier-saved'));
-
+			handleSubmit(savedTier);
 		} catch (error) {
 			console.log(error);
 		} finally	{
 			setIsSaving(false);
-			handleSubmit(tier as Tier);
+			
 		}
 	}
 
