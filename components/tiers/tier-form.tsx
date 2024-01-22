@@ -134,10 +134,6 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 						</Flex>
 					</Card>
 
-					<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } />
-
-					<br/>
-
 					<Button
 						disabled={isSaving}
 						loading={isSaving}
@@ -145,6 +141,13 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					>
 						{label}
 					</Button>
+
+					<br />
+					{ tier?.id && <>
+						<Card>
+							<h2>Stripe price object</h2>
+							<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } />
+						</Card> </> }
 				</div>
 
 				{/* Preview Section */}

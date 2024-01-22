@@ -8,10 +8,11 @@ import { Card, Flex, Text, TextInput, Button } from "@tremor/react";
 import UserService from "@/app/services/UserService";
 import UserProductWidget from "./UserProductWidget";
 import UserCustomerWidget from "./UserCustomerWidget";
-import UserPaymentMethodWidget from "./UserPaymentMethodWidget";
+import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 
 export default async function SettingsPage() {
   const session = await getSession();
+
   if (!session) {
     redirect("/login");
   }
@@ -65,9 +66,33 @@ export default async function SettingsPage() {
           }}
           handleSubmit={editUser}
         />
+        <Form
+          title="Project Name"
+          description="The project you're offering support for."
+          helpText="Please enter your project name."
+          inputAttrs={{
+            name: "projectName",
+            type: "text",
+            defaultValue: user.projectName || "",
+            placeholder: "Nokogiri",
+          }}
+          handleSubmit={editUser}
+        />
+        <Form
+          title="Project Description"
+          description="Describe your project."
+          helpText="Enter a description for your project."
+          inputAttrs={{
+            name: "projectDescription",
+            type: "text",
+            defaultValue: user.projectDescription || "",
+            placeholder: "It slices! It dices! It makes julienne fries!",
+          }}
+          handleSubmit={editUser}
+        />
         <UserProductWidget user={user} />
         <UserCustomerWidget user={user} />
-        <UserPaymentMethodWidget user={user} />
+        { /* <UserPaymentMethodWidget userId={user.id} /> */ }
       </div>
     </div>
   );
