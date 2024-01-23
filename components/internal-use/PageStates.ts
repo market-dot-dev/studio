@@ -9,7 +9,7 @@ export enum CheckoutPageStates {
 }
 
 export enum OfferingPageStates {
-  SupportOptionsHidden = "Support Options Not Shown",
-  AllSupportOptionsShown = "Support Options Shown",
-  ServiceOfferingSelected = "Support Details Selected",
+  SupportOptionsHidden = "Option 1: Support Options Not Shown",
+  AllSupportOptionsShown = "Option 2a: Support Options Shown",
+  ServiceOfferingSelected = "Option 2b: Support Details Selected",
 }

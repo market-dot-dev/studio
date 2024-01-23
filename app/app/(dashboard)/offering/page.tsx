@@ -192,7 +192,7 @@ export default async function ProjectPage() {
 
                 <div className="flex flex-col pt-1">
                   {featuresData.map((feature, index) => (
-                    <Card className={feature.selected ? "border-2 border-slate-800 p-2 mb-2" : "p-2 mb-2"} key={index}>
+                    <Card className={feature.selected ? "p-2 mb-2" : "p-2 mb-2"} key={index}>
                       <div className="flex flex-row justify-items-center text-center gap-2">
                         {feature.icon}
                         <Bold>{feature.title}</Bold>
@@ -201,7 +201,6 @@ export default async function ProjectPage() {
                   ))}
                 </div>
               </Col>
-
 
               {/* COLUMN 2: SERVICE OFFERING FULFILLMENT TYPES */}
               <Col numColSpan={2}>
