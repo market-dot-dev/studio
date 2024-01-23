@@ -1,12 +1,21 @@
 "use client";
 
 import { ChangeEvent, useState } from 'react';
-import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput } from "@tremor/react"
+import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput, Switch, Badge } from "@tremor/react"
 import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import TierPriceWidget from './TierPriceWidget';
 import { useRouter } from 'next/navigation';
 import { MessagesSquare, Radio, ListTodo, Timer } from 'lucide-react';
+import { Checkbox } from '@radix-ui/themes';
+import {
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeaderCell,
+	TableRow,
+  } from "@tremor/react";
 
 
 interface TierFormProps {
@@ -14,25 +23,25 @@ interface TierFormProps {
 	handleSubmit: (tier: Tier) => void;
 }
 
-export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps) {
+export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps) {
 	const router = useRouter();
 	const [tier, setTier] = useState<Tier>(tierObj as Tier);
 
 	const newRecord = !tier.id;
 
 	const label = newRecord ? 'Create' : 'Update';
-	
+
 	//const [features, setFeatures] = useState(tier.features ?? []);
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
 
 	const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    const updatedTier = { ...tier, [name]: value } as Tier;
-    setTier(updatedTier);
-  };
+		e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+	) => {
+		const { name, value } = e.target;
+		const updatedTier = { ...tier, [name]: value } as Tier;
+		setTier(updatedTier);
+	};
 
 	const validateForm = () => {
 		if (!tier.name) {
@@ -53,42 +62,45 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 			handleSubmit(savedTier);
 		} catch (error) {
 			console.log(error);
-		} finally	{
+		} finally {
 			setIsSaving(false);
-			
+
 		}
 	}
 
-	const featuresData = [
+	const offeringFeatures = [
 		{
-			icon: <MessagesSquare size={32} />,
-			title: "Direct Contact",
-			description: "Offer direct support to customers",
-			badge: "Required",
-			selected: true,
+			title: "Hosted Discord",
+			description: "Hosted Discord server for your customers. This is great for certain projects where you get a lot of common customer questions. Discord also helps you setup a channel per customer.",
+			tiers: ['Premium', 'Diamond', 'Enterprise']
 		},
 		{
-			icon: <Radio size={32} />,
-			title: "Live Support",
-			description: "Offer live support to your customers",
-			badge: "Optional",
-			selected: false,
+			title: "Slack Connect",
+			description: "Join company Slack channels to support customer. This is great for certain projects where you get a lot of common customer questions. Slack also helps you setup a channel per customer.",
+			tiers: ['Premium', 'Diamond', 'Enterprise']
 		},
 		{
-			icon: <ListTodo size={32} />,
-			title: "Issue Tracking",
-			description: "Offer prioritized issue resolution",
-			badge: "Optional",
-			selected: false,
+			title: "Live Zoom Calls",
+			description: "Your customers can reach you via email. This is great for certain projects where you get a lot of common customer questions. Email also helps you setup a channel per customer.",
+			tiers: ['Diamond', 'Enterprise']
 		},
 		{
-			icon: <Timer size={32} />,
-			title: "Response Time",
-			description: "Offer response time guarantees to customers",
-			badge: "Optional",
-			selected: false,
+			title: "Pair Programming Sessions",
+			description: "Your customers can reach you via Telegram. This is great for certain projects where you get a lot of common customer questions. Telegram also helps you setup a channel per customer.",
+			tiers: ['Diamond', 'Enterprise']
+		},
+		{
+			title: "Prioritized Bug Fixes",
+			description: "Join company Slack channels to support customers. This is great for certain projects where you get a lot of common customer questions. Slack also helps you setup a channel per customer.",
+			tiers: ['Diamond', 'Enterprise']
+		},
+		{
+			title: "6 Hour Response Time Guarantee",
+			description: "Hosted Discord server for your customers. This is great for certain projects where you get a lot of common customer questions. Discord also helps you setup a channel per customer.",
+			tiers: ['Enterprise']
 		},
 	];
+
 
 	return (
 		<>
@@ -106,7 +118,7 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 							name="name"
 							value={tier.name}
 							onChange={handleInputChange}
-							
+
 						/>
 						{errors['name'] ? <Text color="red" >{errors['name']}</Text> : null}
 					</div>
@@ -138,31 +150,115 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					</div>
 
 					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
-							<Flex className='gap-2' justifyContent='start'>
-								<input type="checkbox" checked={tier.published} onChange={(e) => {
-									setTier({ ...tier, published: e.target.checked } as Tier);
-								}} /> 
-								<span>Published</span>
-							</Flex>
-						</label>
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Current Status: {tier.published ? "Published" : "Draft"}</label>
+						<div className='flex'>
+							{/* <Switch checked={tier.published} onChange={(e) => {
+										setTier({ ...tier, published: e.target.checked } as Tier);
+									}
+								} /> */}
+							<input type="checkbox" className='rounded-md h-5 w-5' checked={tier.published} onChange={(e) => {
+								setTier({ ...tier, published: e.target.checked } as Tier);
+							}} />
+							<Text>
+
+							</Text>
+							<label htmlFor="switch" className="text-sm text-gray-500 ms-2">
+								Make this tier <span className="font-medium text-gray-700">{tier.published ? 'available for sale.' : 'available for sale'}</span>
+							</label>
+						</div>
 					</div>
 
 					{/* Current version */}
 					<Card>
+
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price</label>
+							<div className="flex flex-row gap-4">
+								<div className="items-center w-1/2">
+									<TextInput value={tier.price} placeholder="Enter monthly price" onChange={handleInputChange} />
+								</div>
+								<div className="items-center w-1/2 text-xs text-slate-400">
+									Customers will be charged <b>{tier.price} US Dollars</b> monthly. To change your selling currency, visit <a href="/settings" className="underline">settings</a>.
+								</div>
+							</div>
+						</div>
+
+						<div className="mb-4">
+							{/* <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Period</label> */}
+							<div className="grid grid-cols-1 gap-2">
+								<div className="flex items-center w-1/2">
+									<Switch defaultChecked={true} />
+									<label htmlFor="offerFreeTrial" className="text-sm mx-4">
+										Offer a free trial
+									</label>
+								</div>
+								<div>
+									<label className="text-sm font-medium text-gray-900">Trial Length (Days)</label>
+									<div className="flex flex-row gap-4">
+										<div className="items-center w-1/2">
+											<TextInput placeholder="Enter free trial length" />
+										</div>
+
+										<div className="items-center w-1/2 text-xs text-slate-400">
+											Customers will be provided a <b>25 day</b> free trial. At the end of this trial, they will be charged.
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+					</Card>
+
+					<Card>
+
+					<div className="flex flex-col">
+					<Table className="mt-5">
+      <TableHead>
+        <TableRow>
+          <TableHeaderCell>Feature</TableHeaderCell>
+          <TableHeaderCell>Premium</TableHeaderCell>
+          <TableHeaderCell>Diamond</TableHeaderCell>
+          <TableHeaderCell>Enterprise</TableHeaderCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+	  {offeringFeatures.map((feature, index) => (
+          <TableRow key={feature.title}>
+            <TableCell>{feature.title}</TableCell>
+            <TableCell>
+              {feature.tiers.includes('Premium') ? <Switch checked /> : <Switch />}
+            </TableCell>
+            <TableCell>
+				{feature.tiers.includes('Diamond') ? <Switch checked /> : <Switch />}
+            </TableCell>
+            <TableCell>
+			{feature.tiers.includes('Enterprise') ? <Switch checked /> : <Switch />}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+
+							
+					</div>
+
+					</Card>
+					<Card className='border-2 border-slate-800 bg-slate-50'>
+						<Badge size="xs" className="me-2 mb-1.5">FOR DEBUGGING PURPOSES ONLY</Badge>
 						<Flex flexDirection="col" alignItems="start" className="gap-4">
 							<Title>Current Version</Title>
-							
+
 							<Flex flexDirection="col" alignItems="start" className="gap-1">
 								<Bold>Price</Bold>
-								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange}/>
+								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange} />
 							</Flex>
 
 							<Flex flexDirection="col" alignItems="start" className="gap-1">
 								<Bold>Stripe Price Id</Bold>
-								<TextInput value={tier.stripePriceId || ''} name="stripePriceId" placeholder="Stripe Price Id" onChange={handleInputChange}/>
+								<TextInput value={tier.stripePriceId || ''} name="stripePriceId" placeholder="Stripe Price Id" onChange={handleInputChange} />
 							</Flex>
-							
+
 							{/* <FeaturesEditor features={tier.features} setFeatures={setFeatures}  /> */}
 						</Flex>
 					</Card>
@@ -176,11 +272,11 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					</Button>
 
 					<br />
-					{ tier?.id && <>
+					{tier?.id && <>
 						<Card>
 							<h2>Stripe price object</h2>
-							<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } />
-						</Card> </> }
+							<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || ''} />
+						</Card> </>}
 				</div>
 
 				{/* Preview Section */}
@@ -188,11 +284,11 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
 					<div className="bg-white border-2 border-gray-300 shadow p-4 rounded-lg">
 						<div className="text-center">
-						<h2 className={`text-lg font-bold ${tier.name ? 'text-gray-800' : 'text-gray-300'}`}>{tier.name || "Premium"}</h2>
-						<p className={`text-base my-4 ${tier.tagline ? 'text-gray-600' : 'text-gray-300'}`}>{tier.tagline || "Great for startups!"}</p>
+							<h2 className={`text-lg font-bold ${tier.name ? 'text-gray-800' : 'text-gray-300'}`}>{tier.name || "Premium"}</h2>
+							<p className={`text-base my-4 ${tier.tagline ? 'text-gray-600' : 'text-gray-300'}`}>{tier.tagline || "Great for startups!"}</p>
 						</div>
 
-						
+
 						<div>
 							{/*
 							<ul className="text-center">
