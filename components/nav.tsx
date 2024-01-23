@@ -111,8 +111,8 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
         icon: <LayoutDashboard width={18} />,
       },
       {
-        name: "Project Details",
-        href: "/project",
+        name: "Offerings",
+        href: "/offering",
         isActive: urlSegments.length === 0,
         icon: <Binary width={18} />,
       },
