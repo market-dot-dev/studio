@@ -5,7 +5,8 @@ import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { editUser } from "@/lib/actions";
 import { Accordion, AccordionBody, AccordionHeader, AccordionList } from "@tremor/react";
-import { Card, Flex, Text, TextInput, Button } from "@tremor/react";
+import { Card, Flex, Text, TextInput, Button, Grid, Bold } from "@tremor/react";
+import { Github } from "lucide-react";
 import UserService from "@/app/services/UserService";
 import UserProductWidget from "./UserProductWidget";
 import UserCustomerWidget from "./UserCustomerWidget";
@@ -30,6 +31,37 @@ export default async function SettingsPage() {
         <h1 className="font-cal text-3xl font-bold dark:text-white">
           Settings
         </h1>
+
+        <Card className="max-w w-full mx-auto">
+          <Bold>Your Github Repository</Bold>
+          <Text className="mb-4">These are the Github repositories for which you are currently a maintainer.</Text>
+          <Grid numItems={2} className="gap-2 mb-4">
+            <Card className="p-2 mb-2">
+              <div className="flex flex-row justify-items-center text-center">
+                <Github size={32} />
+                <Bold>ESLint</Bold>
+              </div>
+            </Card>
+            <Card className="p-2 mb-2">
+              <div className="flex flex-row justify-items-center text-center">
+                <Github size={32} />
+                <Bold>ES6</Bold>
+              </div>
+            </Card>
+            <Card className="p-2 mb-2">
+              <div className="flex flex-row justify-items-center text-center">
+                <Github size={32} />
+                <Bold>Repo 3</Bold>
+              </div>
+            </Card>
+            <Card className="p-2 mb-2">
+              <div className="flex flex-row justify-items-center text-center">
+                <Github size={32} />
+                <Bold>Repo 4</Bold>
+              </div>
+            </Card>
+          </Grid>
+        </Card>
 
         <AccordionList className="max-w-md w-full mx-auto">
           <Accordion>
