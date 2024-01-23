@@ -6,8 +6,7 @@ import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import TierPriceWidget from './TierPriceWidget';
 import { useRouter } from 'next/navigation';
-import { MessagesSquare, Radio, ListTodo, Timer } from 'lucide-react';
-import { Checkbox } from '@radix-ui/themes';
+import { Divider } from '@tremor/react'
 import {
 	Table,
 	TableBody,
@@ -15,7 +14,8 @@ import {
 	TableHead,
 	TableHeaderCell,
 	TableRow,
-  } from "@tremor/react";
+} from "@tremor/react";
+import { Accordion, AccordionBody, AccordionHeader, AccordionList } from "@tremor/react";
 
 
 interface TierFormProps {
@@ -211,39 +211,61 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 					</Card>
 
 					<Card>
+						<div className="flex flex-col">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Features Available in {tier.name}</label>
 
-					<div className="flex flex-col">
-					<Table className="mt-5">
-      <TableHead>
-        <TableRow>
-          <TableHeaderCell>Feature</TableHeaderCell>
-          <TableHeaderCell>Premium</TableHeaderCell>
-          <TableHeaderCell>Diamond</TableHeaderCell>
-          <TableHeaderCell>Enterprise</TableHeaderCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-	  {offeringFeatures.map((feature, index) => (
-          <TableRow key={feature.title}>
-            <TableCell>{feature.title}</TableCell>
-            <TableCell>
-              {feature.tiers.includes('Premium') ? <Switch checked /> : <Switch />}
-            </TableCell>
-            <TableCell>
-				{feature.tiers.includes('Diamond') ? <Switch checked /> : <Switch />}
-            </TableCell>
-            <TableCell>
-			{feature.tiers.includes('Enterprise') ? <Switch checked /> : <Switch />}
-            </TableCell>
-          </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-
-							
-					</div>
-
+							<Table className="mt-5">
+								<TableHead>
+									<TableRow>
+										<TableHeaderCell>Feature</TableHeaderCell>
+										<TableHeaderCell>{tier.name}</TableHeaderCell>
+										<TableHeaderCell className='bg-slate-50'>Diamond</TableHeaderCell>
+										<TableHeaderCell className='bg-slate-50'>Enterprise</TableHeaderCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{offeringFeatures.map((feature, index) => (
+										<TableRow key={feature.title}>
+											<TableCell>{feature.title}</TableCell>
+											<TableCell>
+												{feature.tiers.includes('Premium') ? <Switch defaultChecked /> : <Switch />}
+											</TableCell>
+											<TableCell className='bg-slate-50'>
+												{feature.tiers.includes('Diamond') ? <Switch checked /> : <Switch />}
+											</TableCell>
+											<TableCell className='bg-slate-50'>
+												{feature.tiers.includes('Enterprise') ? <Switch checked /> : <Switch />}
+											</TableCell>
+										</TableRow>
+									))}
+								</TableBody>
+							</Table>
+						</div>
 					</Card>
+
+					<Divider>Past Versions</Divider>
+
+					<AccordionList className="max-w-full">
+						<Accordion>
+							<AccordionHeader>
+								$99 (Created on Sept 30 2023)
+								<Badge className="ml-2">3 Active Customers</Badge>
+							</AccordionHeader>
+							<AccordionBody>
+								A previous version of Premium was offered at $99 and you have 3 customers active on this tier.
+							</AccordionBody>
+						</Accordion>
+						<Accordion>
+							<AccordionHeader>$79 (Created on August 30 2023)
+								<Badge className="ml-2">1 Active Customers</Badge>
+							</AccordionHeader>
+							<AccordionBody>
+								A previous version of Premium was offered at $79 and you have 1 customers active on this tier.
+							</AccordionBody>
+						</Accordion>
+					</AccordionList>
+
+
 					<Card className='border-2 border-slate-800 bg-slate-50'>
 						<Badge size="xs" className="me-2 mb-1.5">FOR DEBUGGING PURPOSES ONLY</Badge>
 						<Flex flexDirection="col" alignItems="start" className="gap-4">
@@ -261,22 +283,24 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 
 							{/* <FeaturesEditor features={tier.features} setFeatures={setFeatures}  /> */}
 						</Flex>
-					</Card>
 
 					<Button
 						disabled={isSaving}
 						loading={isSaving}
 						onClick={onSubmit}
+						className='my-4'
 					>
 						{label}
 					</Button>
 
 					<br />
 					{tier?.id && <>
-						<Card>
+						<Card className='space-y-2'>
 							<h2>Stripe price object</h2>
 							<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || ''} />
 						</Card> </>}
+						</Card>
+
 				</div>
 
 				{/* Preview Section */}
