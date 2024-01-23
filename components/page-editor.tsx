@@ -326,10 +326,11 @@ export default function PageEditor({
 
   const deleteButton = (
     <Button
-      className="w-full"
+      className="w-full bg-red-500 hover:bg-red-600 border-red-600"
       size="xs"
       disabled={inProgress || isDeleting}
       loading={isDeleting}
+      
       onClick={() => {
         if (window.confirm("Are you sure you want to delete this page?")) {
           doDeletePage();
@@ -481,7 +482,46 @@ export default function PageEditor({
             </Box>
           </Flex>
 
+        </Col>
+
+        <Col numColSpanMd={3}>
           <DashboardCard>
+            <Box>
+              <Text>This page is currently</Text>
+              {data.draft ? (
+                <>
+                  {" "}
+                  in{" "}
+                  <Badge color="gray" size="xs">
+                    Draft
+                  </Badge>{" "}
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <Badge color="green" size="xs">
+                    Live
+                  </Badge>{" "}
+                </>
+              )}
+              and was last updated on {lastUpdateDate}.
+            </Box>
+          </DashboardCard>
+
+          {status.message ? (
+            <TimedAlert {...status} refresh={forceStatusRefresh} />
+          ) : null}
+
+          <DashboardCard>
+            <Box mb="2">{saveButton}</Box>
+            <Flex className='gap-2'>
+              <Box mb="2" className='grow'>{makeHomepageButton}</Box>
+              <Box mb="2">{deleteButton}</Box>
+            </Flex>
+          </DashboardCard>
+        </Col>
+        <Col numColSpanMd={12}>
+        <DashboardCard>
             <TabGroup
               defaultIndex={PREVIEW_INDEX}
               onIndexChange={(index) => setIsPreview(index === PREVIEW_INDEX)}
@@ -546,41 +586,6 @@ export default function PageEditor({
                 </TabPanel>
               </TabPanels>
             </TabGroup>
-          </DashboardCard>
-        </Col>
-
-        <Col numColSpanMd={3}>
-          <DashboardCard>
-            <Box>
-              <Text>This page is currently</Text>
-              {data.draft ? (
-                <>
-                  {" "}
-                  in{" "}
-                  <Badge color="gray" size="xs">
-                    Draft
-                  </Badge>{" "}
-                </>
-              ) : (
-                <>
-                  {" "}
-                  <Badge color="green" size="xs">
-                    Live
-                  </Badge>{" "}
-                </>
-              )}
-              and was last updated on {lastUpdateDate}.
-            </Box>
-          </DashboardCard>
-
-          {status.message ? (
-            <TimedAlert {...status} refresh={forceStatusRefresh} />
-          ) : null}
-
-          <DashboardCard>
-            <Box mb="2">{saveButton}</Box>
-            <Box mb="2">{makeHomepageButton}</Box>
-            <Box mb="2">{deleteButton}</Box>
           </DashboardCard>
         </Col>
       </Grid>

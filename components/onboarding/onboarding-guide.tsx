@@ -16,29 +16,20 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
     const [open, setOpen] = useState(step === currentStep);
     const [isSaving, setIsSaving] = useState(false);
 
-    // this function is called when the tier is saved, by means of a tier-saved event
-    const saveTierCompleted = useCallback(() => {
-        setIsSaving(true);
-        setCompletedSteps((prev: any) => {
-            return {
-                ...prev,
-                [onboardingSteps.setupTiers]: true
-            }
-        })
-    }, [setCompletedSteps]);
     
-    useEffect(() => {
-        // listen for tier-saved event
-        if( currentStep === onboardingSteps.setupTiers ) {
-            window.addEventListener('tier-saved', saveTierCompleted);
-        }
+    
+    // useEffect(() => {
+    //     // listen for tier-saved event
+    //     if( currentStep === onboardingSteps.setupTiers ) {
+    //         window.addEventListener('tier-saved', saveTierCompleted);
+    //     }
 
-        return () => {
-            if( currentStep === onboardingSteps.setupTiers ) {
-                window.removeEventListener('tier-saved', saveTierCompleted);
-            }
-        }
-    }, [currentStep]);
+    //     return () => {
+    //         if( currentStep === onboardingSteps.setupTiers ) {
+    //             window.removeEventListener('tier-saved', saveTierCompleted);
+    //         }
+    //     }
+    // }, [currentStep]);
 
     // on checkbox click
     const handleCheckboxChange = useCallback((e: any) => {
@@ -107,6 +98,19 @@ export default function OnboardingGuide({dashboard} : {dashboard?: boolean  }) :
     const [isDismissed, setIsDismissed] = useState(false);
 
     const siteId = useSiteId();
+
+    // this function is called when the tier is saved, so that the onboarding guide can be updated
+    const setupTiersCompleted = useCallback(() => {
+
+        setCompletedSteps((prev: any) => {
+            return {
+                ...prev,
+                [onboardingSteps.setupTiers]: true
+            }
+        })
+        // write the updated state to db
+        saveOnboardingState(completedSteps)
+    }, [setCompletedSteps]);
     
     useEffect(() => {
         // refer to the db everytime you navigate to a new page
@@ -123,6 +127,15 @@ export default function OnboardingGuide({dashboard} : {dashboard?: boolean  }) :
         } else if(pathName.startsWith('/settings')) {
             setCurrentStep(onboardingSteps.setupPayment);
         }
+
+        // if a tier exists, then the user has completed the first step
+        if( pathName.startsWith('/services/tiers/') && ! pathName.endsWith('/new') ) {
+            if( ! completedSteps?.[onboardingSteps.setupTiers] ) {
+                setupTiersCompleted();
+            }
+        }
+
+    
     }, [pathName])
 
     const dismissGuide = useCallback(() => {
