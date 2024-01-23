@@ -184,6 +184,7 @@ export default function Checkout() {
         pageState={pageState}
          setPageState={setPageState}
          statesEnum={CheckoutPageStates}
+         position="left"
         />
     </div>
   );
