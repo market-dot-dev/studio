@@ -4,6 +4,7 @@ type Role = 'anonymous' | 'customer' | 'maintainer' | 'admin';
 
 class RoleService {
   static anonymousPaths = [
+    /^\/$/,
     /^\/login$/,
     /^\/login\/local-auth$/,
     /\/checkout\/[A-Za-z0-9]+/,
