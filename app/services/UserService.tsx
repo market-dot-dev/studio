@@ -1,9 +1,12 @@
 "use server";
 
+import Stripe from 'stripe';
 import { User } from '@prisma/client';
 import prisma from "@/lib/prisma";
 import { getSession } from '@/lib/auth';
 import StripeService from './StripeService';
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 class UserService {
   static async getCurrentUserId() {

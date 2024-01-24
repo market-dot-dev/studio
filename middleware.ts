@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { withAuth } from "next-auth/middleware";
 import { getToken } from "next-auth/jwt";
-import RoleService from "./app/services/role-service";
 
 export const config = {
   matcher: [
@@ -15,25 +13,9 @@ export const config = {
   ],
 };
 
-export default withAuth(
-  async function middleware(req) {
-    // First, handle the authentication part
-    //console.log(req.nextauth.token);
-
-    // Then, call your custom middleware logic
-    return await customMiddleware(req);
-  },
-  {
-    callbacks: {
-      authorized: async ({ token, req }) => {
-        return await RoleService.canViewPath(req.nextUrl.pathname, (token as any)?.user?.roleId);
-      }
-    },
-  }
-);
-
-async function customMiddleware(req: NextRequest) {
+export default async function middleware(req: NextRequest) {
   const url = req.nextUrl;
+
 
   // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
   let hostname = req.headers
@@ -64,10 +46,12 @@ async function customMiddleware(req: NextRequest) {
 
   // rewrites for app pages
   if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
+    
     const session = await getToken({ req });
     const isLoginPath = path === "/login" ||
       path === "/login/local-auth" ||
       /\/checkout\/[A-Za-z0-9]+/.test(path);
+
 
     if (!session && !isLoginPath) {
       return NextResponse.redirect(new URL("/login", req.url));
