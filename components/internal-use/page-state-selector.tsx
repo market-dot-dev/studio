@@ -13,7 +13,7 @@ export default function PageStateSelector<T>({ pageState, setPageState, statesEn
 
     return (
         <div className={`fixed bottom-0 ${position === 'left' ? 'left-0' : 'right-0'} flex flex-row justify-center p-8`}>
-            <Accordion className="my-2 border-4 border-green-400">
+            <Accordion className="my-2 border-4 border-green-400 z-index-1000">
                 <AccordionHeader className="my-0 py-1">Page States</AccordionHeader>
                 <AccordionBody>
                     <div className="flex flex-col gap-2 text-sm font-light leading-6 mb-4">

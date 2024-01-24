@@ -1,3 +1,8 @@
+export enum NavigationPageStates {
+  CustomerNav = "Customer Navigation",
+  MaintainerNav = "Maintainer Navigation",
+}
+
 export enum CheckoutPageStates {
   Unregistered = "Logged Out",
   Login = "Login Screen",
