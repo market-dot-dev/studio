@@ -1,6 +1,5 @@
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import EmailProvider from "next-auth/providers/email";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 
@@ -8,18 +7,12 @@ const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 
 export const authOptions: NextAuthOptions = {
 	providers: [
-		// EmailProvider({
-		// 	server: process.env.EMAIL_SERVER ?? '',
-		// 	from: process.env.EMAIL_FROM ?? '',
-		// }),
 		CredentialsProvider({
 			name: 'Credentials',
 			credentials: {
 				email: { label: "Email", type: "text", placeholder: "john.doe@example.com" },
 			},
 			authorize: async (credentials) => {
-
-				// console.log('credentials', credentials)
 
 				if (!credentials || !credentials.email) {
 					return null;
@@ -80,56 +73,6 @@ export const authOptions: NextAuthOptions = {
 			return session;
 		},
 	},
-	// events: {
-	//   createUser: async ({user}: {user: any}) => {
-	//     // console.log('creating user')
-	//     if (!user) {
-	//       return;
-	//     }
-	//     const pageData = {
-	//       title: "Welcome",
-	//       slug: 'index',
-	//       content: "<h1>Welcome to our homepage</h1>",
-	//       user: {
-	//         connect: {
-	//           id: user.id,
-	//         }
-	//       }
-	//       // other page fields...
-	//     };
-	//     // You can use this information to perform additional actions in your database
-	//     const site = await prisma.site.create({
-	//       data: {
-	//         name: 'Support Website',
-	//         description: 'Support Website Description',
-	//         subdomain: user.gh_username ?? user.id,
-	//         user: {
-	//           connect: {
-	//             id: user.id,
-	//           },
-	//         },
-	//         pages: {
-	//           create: [pageData]
-	//         }
-	//       },
-	//       include: {
-	//         pages: true // Include the pages in the result
-	//       }
-	//     });
-
-	//     const homepageId = site.pages[0].id;
-
-	//     // Update the site to set the homepageId
-	//     await prisma.site.update({
-	//       where: {
-	//         id: site.id
-	//       },
-	//       data: {
-	//         homepageId: homepageId
-	//       }
-	//     });
-	//   },
-	// },
 };
 
 export function getSession() {

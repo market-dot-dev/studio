@@ -46,7 +46,7 @@ export const authOptions: NextAuthOptions = {
               id: `dev-${credentials.gh_username}`,  // Unique ID constructed using the GitHub username
               gh_username: credentials.gh_username,  // GitHub username from the provided credentials
               name: "",  // No default name, it will be set based on existing data or remain empty
-              email: "",  // No default email, it will be set based on existing data or remain empty
+              email: `${credentials.gh_username}@gh.gitwallet.co`,  // No default email, it will be set based on existing data or remain empty
               image: "",  // No default image, it will be set based on existing data or remain empty
               roleId: "admin",
             };
@@ -118,7 +118,6 @@ export const authOptions: NextAuthOptions = {
           },
         });
       } 
-
       
       if (userData) {
         token.user = userData;
@@ -131,6 +130,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: token.sub,
         username: token?.user?.username || token?.user?.gh_username,
+        roleId: token?.user?.roleId || 'anonymous',
         
         // an empty token.user?.onboarding will signal that the user's onboarding isnt complete yet
         ...(token.user?.onboarding?.length ? { onboarding: true } : {}),
@@ -170,6 +170,7 @@ export function getSession() {
       email: string;
       image: string;
       onboarding?: string;
+      roleId: string;
     };
   } | null>;
 }
