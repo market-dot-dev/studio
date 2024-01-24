@@ -1,12 +1,12 @@
 'use client';
 
-import { Accordion, AccordionHeader, AccordionBody, Text, Flex, Bold, Button } from "@tremor/react";
+import { Accordion, AccordionHeader, AccordionBody, Text, Flex, Bold, Button, Card, Badge, Title } from "@tremor/react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { FaArrowLeft, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
-import { onboardingSteps, type OnboardingStepsType } from "@/app/services/onboarding/onboarding-steps";
+import { onboardingSteps, type OnboardingStepsType, defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { useSiteId } from "../dashboard/dashboard-context";
 
 
@@ -96,6 +96,7 @@ export default function OnboardingGuide({dashboard} : {dashboard?: boolean  }) :
     const [completedSteps, setCompletedSteps] = useState(null);
     const [isDismissing, setIsDismissing] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
+    
 
     const siteId = useSiteId();
 
@@ -115,6 +116,11 @@ export default function OnboardingGuide({dashboard} : {dashboard?: boolean  }) :
     useEffect(() => {
 
         if( pathName === '/' && !dashboard ) {
+            return;
+        }
+
+        // the state is already loaded
+        if( completedSteps !== null ) {
             return;
         }
 
@@ -154,11 +160,38 @@ export default function OnboardingGuide({dashboard} : {dashboard?: boolean  }) :
     }, [setIsDismissing]);
 
     
+    if( (completedSteps === null || isDismissed) && (pathName === '/' && dashboard)) {
+        return (
+            <div className="p-4 w-1/2">
+                <Card className='border-2 border-slate-800 bg-slate-50'>
+                    <Badge size="xs" className="me-2 mb-1.5">FOR DEBUGGING PURPOSES ONLY</Badge>
+                    <Title>Restore Onboarding Guide</Title>
+                    <Button onClick={() => {
+                        saveOnboardingState(defaultOnboardingState).then(() => {
+                            const newState = { ...defaultOnboardingState };
+                            setCompletedSteps((prev : any) => {
+                                return {
+                                    ...prev,
+                                    ...newState
+                                }
+                            });
+                            setIsDismissed(false);
+                        })
+                    }}>Restore</Button>
+                </Card>
+            </div>
+        );
+    }
+    
+
     if(completedSteps === null || isDismissed || (pathName === '/' && !dashboard)) {
         return (
             <></>
         );
     }
+
+    
+    
 
     return (
         <div className="p-4 w-1/2">
