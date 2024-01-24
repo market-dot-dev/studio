@@ -113,6 +113,11 @@ export default function OnboardingGuide({dashboard} : {dashboard?: boolean  }) :
     }, [setCompletedSteps]);
     
     useEffect(() => {
+
+        if( pathName === '/' && !dashboard ) {
+            return;
+        }
+
         // refer to the db everytime you navigate to a new page
         fetch('/api/onboarding').then(res => res.json()).then(data => {
             if(data && data.length) {
@@ -137,6 +142,8 @@ export default function OnboardingGuide({dashboard} : {dashboard?: boolean  }) :
 
     
     }, [pathName])
+
+    
 
     const dismissGuide = useCallback(() => {
         setIsDismissing(true);
