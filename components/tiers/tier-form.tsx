@@ -175,7 +175,9 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price</label>
 							<div className="flex flex-row gap-4">
 								<div className="items-center w-1/2">
-									<TextInput value={tier.price} placeholder="Enter monthly price" onChange={handleInputChange} />
+									{/* STUBBING OUT PRICE FOR NOW */}
+									{/* <TextInput value={tier.price} placeholder="Enter monthly price" onChange={handleInputChange} /> */}
+									<TextInput placeholder="Enter monthly price" onChange={handleInputChange} />
 								</div>
 								<div className="items-center w-1/2 text-xs text-slate-400">
 									Customers will be charged <b>{tier.price} US Dollars</b> monthly. To change your selling currency, visit <a href="/settings" className="underline">settings</a>.
