@@ -32,10 +32,14 @@ class RoleService {
 
   static async canViewPath(path: string, roleId: Role = 'anonymous') {
     if (roleId === 'anonymous') {
-      return RoleService.anonymousPaths.some(regex => regex.test(path));
+      const result = RoleService.anonymousPaths.some(regex => regex.test(path));
+      console.debug("==== canViewPath anonymous", path, result ? 'allowed' : 'blocked');
+      return result;
     } else {
       const blockedPaths = RoleService.prohibitedPathSpecs[roleId] || [];
-      return !RoleService.isPathBlockedForRole(path, blockedPaths);
+      const result = !RoleService.isPathBlockedForRole(path, blockedPaths);
+      console.debug(`==== canViewPath ${roleId}`, path, result, result ? 'allowed' : 'blocked');
+      return result;
     }
   }
 }
