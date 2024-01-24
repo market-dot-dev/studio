@@ -304,6 +304,7 @@ export default async function ProjectPage() {
 
       {/* PAGE STATE SELECTOR COMPONENT */}
       <PageStateSelector
+        pageName="Offering Page"
         pageState={pageState}
         setPageState={setPageState}
         statesEnum={OfferingPageStates}

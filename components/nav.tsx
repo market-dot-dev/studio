@@ -342,7 +342,8 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
 
             {/* PAGE STATE SELECTOR COMPONENT */}
       <PageStateSelector 
-        pageState={pageState}
+          pageName="Navigation"
+         pageState={pageState}
          setPageState={setPageState}
          statesEnum={NavigationPageStates}
          position="right"

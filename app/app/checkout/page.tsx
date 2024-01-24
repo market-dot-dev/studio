@@ -181,6 +181,7 @@ export default function Checkout() {
 
       {/* PAGE STATE SELECTOR COMPONENT */}
       <PageStateSelector 
+          pageName="Checkout"
         pageState={pageState}
          setPageState={setPageState}
          statesEnum={CheckoutPageStates}

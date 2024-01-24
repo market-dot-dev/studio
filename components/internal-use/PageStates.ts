@@ -1,6 +1,6 @@
 export enum NavigationPageStates {
-  CustomerNav = "Customer Navigation",
   MaintainerNav = "Maintainer Navigation",
+  CustomerNav = "Customer Navigation",
 }
 
 export enum CheckoutPageStates {
