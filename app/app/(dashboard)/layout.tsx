@@ -20,7 +20,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   return (
     <DasboardProvider siteId={site?.id ?? null}>
       <div>
-        <Nav siteId={site?.id ?? null}>
+        <Nav siteId={site?.id ?? null} roleId={session.user?.roleId || 'anonymous'}>
           <Suspense fallback={<div>Loading...</div>}>
             <Profile />
           </Suspense>

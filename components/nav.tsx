@@ -24,10 +24,6 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-// import { getOnlySiteFromUserId } from "@/lib/actions";
-// import Image from "next/image";
-// import { useSession } from 'next-auth/react'
-
 
 // PAGE STATE SELECTOR: IMPORT THE RIGHT PAGE STATE, AND SELECTOR COMPONENT
 import { NavigationPageStates } from "@/components/internal-use/PageStates";
@@ -35,27 +31,13 @@ import PageStateSelector from "@/components/internal-use/page-state-selector";
 import { GearIcon } from "@radix-ui/react-icons";
 
 
+export default function Nav({ children, siteId, roleId }: { children: ReactNode, siteId: string | null, roleId: string | null }) {
+  const urlSegments = useSelectedLayoutSegments();
+  const { id } = useParams() as { id?: string };
 
-export default function Nav({ children, siteId }: { children: ReactNode, siteId: string | null }) {
   // PAGE STATE SELECTOR: SET THE DEFAULT STATE HERE
   const [pageState, setPageState] = useState(NavigationPageStates.MaintainerNav);
 
-
-  const urlSegments = useSelectedLayoutSegments();
-  const { id } = useParams() as { id?: string };
-  // const { data: session, status } = useSession();
-  // const [siteId, setSiteId] = useState<string | null>();
-
-  // const user = session?.user as any;
-
-  // useEffect(() => {
-  //   if (user?.id)
-  //     getOnlySiteFromUserId(user.id).then((site) => {
-  //       if( site?.id ) {
-  //         setSiteId(site.id);
-  //       }
-  //     });
-  // }, [user])
 
   const tabs = useMemo(() => {
     // CUSTOMER NAV
@@ -139,7 +121,7 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
             icon: <Settings width={18} />,
           },
         ];
-      }
+      } else 
       return [
         {
           name: "Home",
@@ -186,9 +168,8 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
         [{
           name: "Your Site",
           href: `/site/${siteId}`,
-          isActive: urlSegments[0] === "site",
           icon: <Globe width={18} />,
-        }] : []),
+        },
         {
           name: "Embeds",
           href: "/channels/embeds",
@@ -201,9 +182,97 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
           isActive: urlSegments[0] === "enterprise",
           icon: <Building2 width={18} />,
         },
+      ] : []),
+        {
+          name: `Role: ${roleId}`,
+          href: "",
+          isDivider: true,
+        },
       ];
     }
-  }, [urlSegments, id, siteId]);
+    else if (urlSegments[0] === "post" && id) {
+      return [
+        {
+          name: "Back to All Posts",
+          href: siteId ? `/site/${siteId}` : "/sites",
+          icon: <ArrowLeft width={18} />,
+        },
+        {
+          name: "Editor",
+          href: `/post/${id}`,
+          isActive: urlSegments.length === 2,
+          icon: <Edit3 width={18} />,
+        },
+        {
+          name: "Settings",
+          href: `/post/${id}/settings`,
+          isActive: urlSegments.includes("settings"),
+          icon: <Settings width={18} />,
+        },
+      ];
+    }
+    return [
+      {
+        name: "Home",
+        href: "/",
+        isActive: urlSegments.length === 0,
+        icon: <LayoutDashboard width={18} />,
+      },
+      {
+        name: "Customers",
+        href: "/customers",
+        isActive: urlSegments[0] === "customers",
+        icon: <Users width={18} />,
+      },
+      {
+        name: "Services",
+        href: "/services/tiers",
+        isActive: urlSegments[0] === "services",
+        icon: <KanbanSquare width={18} />,
+      },
+      {
+        name: "Analytics",
+        href: "/analytics",
+        isActive: urlSegments[0] === "analytics",
+        icon: <BarChart4 width={18} />,
+      },
+      {
+        name: "Settings",
+        href: "/settings",
+        isActive: urlSegments[0] === "settings",
+        icon: <Settings width={18} />,
+      },
+      {
+        name: "Channels",
+        href: "",
+        isDivider: true,
+      },
+      ...(siteId ? 
+      [{
+        name: "Your Site",
+        href: `/site/${siteId}`,
+        isActive: urlSegments[0] === "site",
+        icon: <Globe width={18} />,
+      }] : []),
+      {
+        name: "Embeds",
+        href: "/channels/embeds",
+        isActive: urlSegments[0] === "embeds",
+        icon: <Code2 width={18} />,
+      },
+      {
+        name: "Github",
+        href: "/channels/github",
+        isActive: urlSegments[0] === "github",
+        icon: <Github width={18} />,
+      },
+      {
+        name: `Role: ${roleId}`,
+        href: "",
+        isDivider: true,
+      },
+    ];
+  }, [urlSegments, id, siteId, roleId]);
 
   const [showSidebar, setShowSidebar] = useState(false);
 
