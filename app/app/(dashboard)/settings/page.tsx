@@ -19,8 +19,6 @@ import {
 } from "@tremor/react";
 
 
-
-
 export default async function SettingsPage() {
   const session = await getSession();
 
@@ -169,6 +167,19 @@ export default async function SettingsPage() {
               </div>
             </TabPanel>
 
+            {/* Payment Settings */}
+            <TabPanel>
+              <div className="w-full mt-10">
+                <Card className='border-2 border-slate-800 bg-slate-50'>
+                  <Badge size="xs" className="me-2 mb-1.5">FOR DEBUGGING PURPOSES ONLY</Badge>
+                  <Flex flexDirection="col" alignItems="start" className="gap-4">
+                    <UserProductWidget user={user} />
+                    <UserCustomerWidget user={user} />
+                  </Flex>
+                </Card>
+              </div>
+            </TabPanel>
+
             {/* Contract Settings */}
             <TabPanel>
               <div className="w-full mt-10">
@@ -181,16 +192,11 @@ export default async function SettingsPage() {
                 </Flex>
               </div>
             </TabPanel>
+
+
           </TabPanels>
         </TabGroup>
 
-        <Card className='border-2 border-slate-800 bg-slate-50'>
-          <Badge size="xs" className="me-2 mb-1.5">FOR DEBUGGING PURPOSES ONLY</Badge>
-          <Flex flexDirection="col" alignItems="start" className="gap-4">
-            <UserProductWidget user={user} />
-            <UserCustomerWidget user={user} />
-          </Flex>
-        </Card>
         { /* <UserPaymentMethodWidget userId={user.id} /> */}
       </div>
     </div>
