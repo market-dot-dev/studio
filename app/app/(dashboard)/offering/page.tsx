@@ -160,7 +160,7 @@ export default async function ProjectPage() {
             <>
               {/* COLUMN 1: SERVICE OFFERING CATEGORIES */}
               <Col numColSpan={1}>
-                <div className="text-lg font-bold mb-2">Support Categories</div>
+                <div className="text-lg font-bold mb-2">Categories</div>
 
                 <div className="flex flex-col">
                   {featuresData.map((feature, index) => (
@@ -188,7 +188,7 @@ export default async function ProjectPage() {
             <>
               {/* COLUMN 1: SERVICE OFFERING CATEGORIES */}
               <Col numColSpan={1}>
-                <div className="text-lg font-bold mb-2">Support Categories</div>
+                <div className="text-lg font-bold mb-2">Categories</div>
 
                 <div className="flex flex-col pt-1">
                   {featuresData.map((feature, index) => (
@@ -204,7 +204,7 @@ export default async function ProjectPage() {
 
               {/* COLUMN 2: SERVICE OFFERING FULFILLMENT TYPES */}
               <Col numColSpan={2}>
-                <div className="text-lg font-bold mb-2">Fulfillment Options</div>
+                <div className="text-lg font-bold mb-2">Options</div>
                 <div className="flex flex-col h-4/5">
                   {directContactDetails && (
                     <div className="flex flex-col overflow-auto px-1 pt-1">
@@ -240,7 +240,7 @@ export default async function ProjectPage() {
             <>
               {/* COLUMN 1: SERVICE OFFERING CATEGORIES */}
               <Col numColSpan={1}>
-                <div className="text-lg font-bold mb-2">Support Categories</div>
+                <div className="text-lg font-bold mb-2">Categories</div>
 
                 <div className="flex flex-col pt-1">
                   {featuresData.map((feature, index) => (
@@ -257,7 +257,7 @@ export default async function ProjectPage() {
 
               {/* COLUMN 2: SERVICE OFFERING FULFILLMENT TYPES */}
               <Col numColSpan={2}>
-                <div className="text-lg font-bold mb-2">Fulfillment Options</div>
+                <div className="text-lg font-bold mb-2">Options</div>
                 <div className="flex flex-col h-4/5">
                   {directContactDetails && (
                     <div className="flex flex-col overflow-auto px-1 pt-1">
