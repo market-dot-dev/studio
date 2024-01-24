@@ -37,7 +37,7 @@ export default function CustomerStack({ params }: { params: { id: string } }) {
 
     return (
         <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
-            Customer Settings
+            Customer Settings: name, email, company name, etc. 
         </div>
     );
 }

@@ -32,6 +32,7 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 // PAGE STATE SELECTOR: IMPORT THE RIGHT PAGE STATE, AND SELECTOR COMPONENT
 import { NavigationPageStates } from "@/components/internal-use/PageStates";
 import PageStateSelector from "@/components/internal-use/page-state-selector";
+import { GearIcon } from "@radix-ui/react-icons";
 
 
 
@@ -58,7 +59,7 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
 
   const tabs = useMemo(() => {
     // CUSTOMER NAV
-    if (pageState === NavigationPageStates.CustomerNav || urlSegments[0] === "c") {
+    if (pageState === NavigationPageStates.CustomerNav) {
       return [
         {
           name: "Home",
@@ -73,10 +74,10 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
           icon: <Binary width={18} />,
         },
         {
-          name: "Your Stack",
-          href: "/c/stack",
+          name: "Settings",
+          href: "/c/settings",
           isActive: urlSegments.length === 0,
-          icon: <KanbanSquare width={18} />,
+          icon: <GearIcon width={18} />,
         },
       ];
     } else if (pageState === NavigationPageStates.MaintainerNav)
@@ -235,9 +236,9 @@ export default function Nav({ children, siteId }: { children: ReactNode, siteId:
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg py-1.5">
               <div className="text-md font-medium">
-              ${ pageState === NavigationPageStates.CustomerNav ?  
+              { pageState === NavigationPageStates.CustomerNav ?  
+                <img src="/logo-white.png" className="h-8" /> : 
                 <img src="/wordmark.png" className="h-8" />
-                : <img src="/wordmark-white.png" className="h-8" />
               }
               </div>
           </div>
