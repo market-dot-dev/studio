@@ -51,15 +51,15 @@ export default async function PlanSettings() {
   return (
     <>
       <div className="w-full mt-10">
-        <Card className='border-2 border-slate-800 bg-slate-50'>
-          To our early users: Thank you for your support. We're offering you a free plan for your first 3 months of using Gitwallet.
+        <Card className="border-2 border-slate-800 bg-slate-50">
+          To our early users: Thank you for your support. We are offering you a free plan for your first 3 months of using Gitwallet.
         </Card>
       </div>
 
       <div className="flex flex-col justify-center items-center w-full my-10">
         <div className="grid md:grid-cols-3 gap-4">
-          {plans.map(plan => (
-            <Card className={plan.active ? "border-4 border-green-400" : ""}>
+          {plans.map((plan, index) => (
+            <Card key={index} className={plan.active ? "border-4 border-green-400" : ""}>
               <div key={plan.title} className=
                 {plan.active ?
                   // "border-2 border-blue-500 max-w-sm rounded overflow-hidden shadow-lg" : 
