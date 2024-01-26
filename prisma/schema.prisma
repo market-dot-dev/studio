@@ -32,8 +32,8 @@ model User {
   sessions              Session[]
   sites                 Site[]
   tiers                 Tier[]
-  TierFeature           TierFeature[]
-  Subscription          Subscription[]
+  features              Feature[]
+  subscriptions         Subscription[]
   repos                 Repo[]
   onboarding            String?
   company               String?
@@ -162,11 +162,11 @@ model Tier {
   published Boolean @default(false)
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  price        Int
-  revision     Int
-  versions     TierVersion[]
-  features     TierFeature[]
-  Subscription Subscription[]
+  price         Int
+  revision      Int
+  versions      TierVersion[]
+  features      Feature[]      @relation("FeatureToTier")
+  subscriptions Subscription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -181,26 +181,14 @@ model TierVersion {
   price         Int
   stripePriceId String?
 
-  tier         Tier           @relation(fields: [tierId], references: [id])
-  features     TierFeature[]  @relation("TierFeatureToTierVersion")
-  Subscription Subscription[]
+  tier          Tier           @relation(fields: [tierId], references: [id])
+  features      Feature[]      @relation("FeatureToTierVersion")
+  subscriptions Subscription[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([tierId])
-}
-
-model TierFeature {
-  id        String        @id @default(cuid())
-  content   String
-  userId    String
-  Tier      Tier?         @relation(fields: [tierId], references: [id])
-  tierId    String?
-  createdAt DateTime      @default(now())
-  updatedAt DateTime      @updatedAt
-  user      User          @relation(fields: [userId], references: [id])
-  versions  TierVersion[] @relation("TierFeatureToTierVersion")
 }
 
 model Subscription {
@@ -213,7 +201,7 @@ model Subscription {
 
   user        User         @relation(fields: [userId], references: [id])
   tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
-  Tier        Tier?        @relation(fields: [tierId], references: [id])
+  tier        Tier?        @relation(fields: [tierId], references: [id])
 
   @@unique([userId, tierId])
 }
@@ -231,4 +219,29 @@ model Repo {
   createdAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Service {
+  id          String    @id
+  name        String
+  category    String
+  requiresUri Boolean
+  features    Feature[]
+}
+
+model Feature {
+  id           String        @id @default(cuid())
+  userId       String
+  name         String?
+  uri          String?
+  description  String?
+  tiers        Tier[]        @relation("FeatureToTier")
+  tierVersions TierVersion[] @relation("FeatureToTierVersion")
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  user         User          @relation(fields: [userId], references: [id])
+  service      Service?      @relation(fields: [serviceId], references: [id])
+  serviceId    String?
+
+  @@index([userId])
 }

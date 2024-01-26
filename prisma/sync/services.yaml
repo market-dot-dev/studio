@@ -1,0 +1,35 @@
+services:
+  - id: "discord"
+    name: "Discord"
+    category: "chat"
+    requiresUri: true
+
+  - id: "slack"
+    name: "Slack"
+    category: "chat"
+    requiresUri: true
+
+  - id: "email"
+    name: "Email"
+    category: "email"
+    requiresUri: false
+
+  - id: "telegram"
+    name: "Telegram"
+    category: "chat"
+    requiresUri: true
+
+  - id: "phone"
+    name: "Phone"
+    category: "voice"
+    requiresUri: false
+
+  - id: "zendesk"
+    name: "Zendesk"
+    category: "ticketing"
+    requiresUri: true
+
+  - id: "sla"
+    name: "Response SLA"
+    category: "sla"
+    requiresUri: false

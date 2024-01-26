@@ -5,6 +5,9 @@ import { getSession } from "@/lib/auth";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
+import { Feature } from "@prisma/client";
+
+export type TierWithFeatures = Tier & { features?: Feature[] };
 
 class TierService {
   static async createStripePrice(tier: Tier) {
@@ -114,8 +117,7 @@ class TierService {
         },
       });
 
-      // Check if the price has changed
-      if (tierData.price && tierData.price !== currentTier.price) {
+      if(TierService.shouldCreateNewVersion(currentTier, tierData)) {
         // Create a new TierVersion record with the pre-update price and stripePriceId
         await prisma.tierVersion.create({
           data: {
@@ -145,9 +147,39 @@ class TierService {
     return result;
   }
 
+  static shouldCreateNewVersion = (tier: Tier, tierData: Partial<Tier>) => {
+    return (
+      tierData.price &&
+      tierData.price !== tier.price &&
+      tierData.published === true
+    );
+  }
+
   static async onNewVersion(tier: Tier) {
     console.log(`New version ${tier.revision} created for tier ${tier.id}`);
     TierService.createStripePrice(tier);
+  }
+
+  static async findByUserId( userId: string) {
+    return prisma.tier.findMany({
+      where: {
+        userId,
+      },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
+    }); 
+  }
+
+  static async findByUserIdWithFeatures(userId: string): Promise<TierWithFeatures[]> {
+    return prisma.tier.findMany({
+      where: { userId },
+      include: {
+        features: true,
+      },
+    });
   }
 
   // this pulls published tiers to display on the front end site for customers to subscribe to
