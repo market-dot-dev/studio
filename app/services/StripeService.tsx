@@ -188,6 +188,60 @@ class StripeService {
   static async destroySubscription(subscriptionId: string) {
     await stripe.subscriptions.cancel(subscriptionId);
   }
+
+  static async generateStripeCSRF(userId: string) {
+    return `${userId}-${Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}`;
+  }
+
+  static async getOAuthLink(userId: string) {
+    const user = await UserService.findUser(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+  
+    const state = user.stripeCSRF || await StripeService.generateStripeCSRF(userId);
+
+    if(!user.stripeCSRF) {
+      await UserService.updateUser(userId, { stripeCSRF: state }); // Save the state in your database for later verification
+    }
+  
+    const oauthLink = `https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.STRIPE_CLIENT_ID}&scope=read_write&state=${state}&redirect_uri=${process.env.NEXTAUTH_URL}${process.env.STRIPE_REDIRECT_PATH}`;
+  
+    return oauthLink;
+  }
+
+  static async handleOAuthResponse(code: string, state: string) {
+    // Verify the state parameter
+    const user = await prisma.user.findUnique({ where: { stripeCSRF: state } });
+    
+    if (!user) {
+      throw new Error('Invalid state parameter');
+    }
+  
+    const response = await stripe.oauth.token({
+      grant_type: 'authorization_code',
+      code,
+    });
+  
+    const connectedAccountId = response.stripe_user_id;
+    await UserService.updateUser(user.id, { stripeAccountId: connectedAccountId, stripeCSRF: null });
+  
+    return connectedAccountId;
+  }
+
+  static async disconnectStripeAccount(userId: string) {
+    const user = await UserService.findUser(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if(!user.stripeAccountId) {
+      throw new Error('User does not have a connected Stripe account');
+    }
+
+    await UserService.updateUser(userId, { stripeAccountId: null });
+  
+  }
 };
 
 interface StripeCheckoutComponentProps {
@@ -259,6 +313,7 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
   return { status, error /*, subscription*/ };
 };
 
-export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod } = StripeService
+
+export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod, disconnectStripeAccount } = StripeService
 
 export default StripeService;

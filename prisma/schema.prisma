@@ -17,6 +17,8 @@ model User {
   stripeProductId       String?        @unique
   stripeCustomerId      String?        @unique
   stripePaymentMethodId String?        @unique
+  stripeAccountId       String?        @unique
+  stripeCSRF            String?        @unique
   projectName           String?
   projectDescription    String?
   emailVerified         DateTime?
@@ -32,7 +34,7 @@ model User {
   tiers                 Tier[]
   TierFeature           TierFeature[]
   Subscription          Subscription[]
-  repos            Repo[]
+  repos                 Repo[]
   onboarding            String?
 }
 
