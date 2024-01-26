@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useState } from 'react';
-import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput, Switch, Badge } from "@tremor/react"
+import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput, Switch, Badge, Grid } from "@tremor/react"
 import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import TierPriceWidget from './TierPriceWidget';
@@ -16,7 +16,8 @@ import {
 	TableRow,
 } from "@tremor/react";
 import { Accordion, AccordionBody, AccordionHeader, AccordionList } from "@tremor/react";
-
+import { CheckSquare2, Clock, PenLine } from 'lucide-react';
+import TierVersionHistory from './tier-version-history';
 
 interface TierFormProps {
 	tier: Partial<Tier>;
@@ -101,6 +102,59 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 		},
 	];
 
+	const oldVersion1 = [
+		[{
+			title: "Hosted Discord",
+			description: "Hosted Discord server for your customers. This is great for certain projects where you get a lot of common customer questions. Discord also helps you setup a channel per customer.",
+			tiers: ['Premium', 'Diamond', 'Enterprise']
+		},
+		{
+			title: "Slack Connect",
+			description: "Join company Slack channels to support customer. This is great for certain projects where you get a lot of common customer questions. Slack also helps you setup a channel per customer.",
+			tiers: ['Premium', 'Diamond', 'Enterprise']
+		},
+		{
+			title: "Live Zoom Calls",
+			description: "Your customers can reach you via email. This is great for certain projects where you get a lot of common customer questions. Email also helps you setup a channel per customer.",
+			tiers: ['Diamond', 'Enterprise']
+		},
+		{
+			title: "Pair Programming Sessions",
+			description: "Your customers can reach you via Telegram. This is great for certain projects where you get a lot of common customer questions. Telegram also helps you setup a channel per customer.",
+			tiers: ['Diamond', 'Enterprise']
+		},
+		{
+			title: "Prioritized Bug Fixes",
+			description: "Join company Slack channels to support customers. This is great for certain projects where you get a lot of common customer questions. Slack also helps you setup a channel per customer.",
+			tiers: ['Diamond', 'Enterprise']
+		}],
+		{
+			customers: 2,
+			price: 99
+		}
+	];
+
+	const oldVersion2 = [
+		[{
+			title: "Hosted Discord",
+			description: "Hosted Discord server for your customers. This is great for certain projects where you get a lot of common customer questions. Discord also helps you setup a channel per customer.",
+			tiers: ['Premium', 'Diamond', 'Enterprise']
+		},
+		{
+			title: "Slack Connect",
+			description: "Join company Slack channels to support customer. This is great for certain projects where you get a lot of common customer questions. Slack also helps you setup a channel per customer.",
+			tiers: ['Premium', 'Diamond', 'Enterprise']
+		},
+		{
+			title: "Live Zoom Calls",
+			description: "Your customers can reach you via email. This is great for certain projects where you get a lot of common customer questions. Email also helps you setup a channel per customer.",
+			tiers: ['Diamond', 'Enterprise']
+		}],
+		{
+			customers: 15,
+			price: 79
+		}
+	];
 
 	return (
 		<>
@@ -214,7 +268,7 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 
 					<Card>
 						<div className="flex flex-col">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Features Available in {tier.name}</label>
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Features Available in {tier.name}</label>
 
 							<Table className="mt-5">
 								<TableHead>
@@ -248,23 +302,8 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 					<Divider>Past Versions</Divider>
 
 					<AccordionList className="max-w-full">
-						<Accordion>
-							<AccordionHeader>
-								$99 (Created on Sept 30 2023)
-								<Badge className="ml-2">3 Active Customers</Badge>
-							</AccordionHeader>
-							<AccordionBody>
-								A previous version of Premium was offered at $99 and you have 3 customers active on this tier.
-							</AccordionBody>
-						</Accordion>
-						<Accordion>
-							<AccordionHeader>$79 (Created on August 30 2023)
-								<Badge className="ml-2">1 Active Customers</Badge>
-							</AccordionHeader>
-							<AccordionBody>
-								A previous version of Premium was offered at $79 and you have 1 customers active on this tier.
-							</AccordionBody>
-						</Accordion>
+						<TierVersionHistory data={oldVersion1} />
+						<TierVersionHistory data={oldVersion2} />
 					</AccordionList>
 
 
@@ -286,29 +325,29 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 							{/* <FeaturesEditor features={tier.features} setFeatures={setFeatures}  /> */}
 						</Flex>
 
-					<Button
-						disabled={isSaving}
-						loading={isSaving}
-						onClick={onSubmit}
-						className='my-4'
-					>
-						{label}
-					</Button>
+						<Button
+							disabled={isSaving}
+							loading={isSaving}
+							onClick={onSubmit}
+							className='my-4'
+						>
+							{label}
+						</Button>
 
-					<br />
-					{tier?.id && <>
-						<Card className='space-y-2'>
-							<h2>Stripe price object</h2>
-							<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || ''} />
-						</Card> </>}
-						</Card>
+						<br />
+						{tier?.id && <>
+							<Card className='space-y-2'>
+								<h2>Stripe price object</h2>
+								<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || ''} />
+							</Card> </>}
+					</Card>
 
 				</div>
 
 				{/* Preview Section */}
 				<div className="md:w-[300px] text-center" >
 					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
-					<div className="bg-white border-2 border-gray-300 shadow p-4 rounded-lg">
+					<div className="bg-white border-2 border-gray-300 shadow p-4 rounded-lg  sticky top-10">
 						<div className="text-center">
 							<h2 className={`text-lg font-bold ${tier.name ? 'text-gray-800' : 'text-gray-300'}`}>{tier.name || "Premium"}</h2>
 							<p className={`text-base my-4 ${tier.tagline ? 'text-gray-600' : 'text-gray-300'}`}>{tier.tagline || "Great for startups!"}</p>
@@ -316,17 +355,6 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 
 
 						<div>
-							{/*
-							<ul className="text-center">
-								{features.map((feature : any, index : number) => (
-									<li className="flex items-center space-x-3" key={index}>
-										<svg className="flex-shrink-0 w-5 h-5 text-green-500 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
-										<span className="text-sm">{feature.content}</span>
-									</li>
-								))}
-							</ul>
-								*/}
-
 							<div className="flex justify-center items-baseline my-4">
 								<span className="mr-2 text-3xl font-extrabold">${tier.price}</span>
 								<span className="text t-gray-500 dark:text-gray-400">/ month</span>
