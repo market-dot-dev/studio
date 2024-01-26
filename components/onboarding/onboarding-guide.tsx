@@ -9,7 +9,8 @@ import { saveState as saveOnboardingState } from "@/app/services/onboarding/Onbo
 import { onboardingSteps, type OnboardingStepsType, defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { useSiteId } from "../dashboard/dashboard-context";
 
-
+const isDevelopment = process.env.NODE_ENV === "development";
+console.log('is dev', isDevelopment)
 
 function TodoItem({ title, children, step, currentStep, pathName, completedSteps, setCompletedSteps} : any) : JSX.Element {
     
@@ -160,7 +161,7 @@ export default function OnboardingGuide({dashboard} : {dashboard?: boolean  }) :
     }, [setIsDismissing]);
 
     
-    if( (completedSteps === null || isDismissed) && (pathName === '/' && dashboard)) {
+    if( isDevelopment && (completedSteps === null || isDismissed) && (pathName === '/' && dashboard)) {
         return (
             <div className="p-4 w-1/2">
                 <Card className='border-2 border-slate-800 bg-slate-50'>
