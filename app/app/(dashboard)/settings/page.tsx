@@ -14,6 +14,7 @@ import {
 // Import your settings components
 import GeneralSettings from "./settings-tabs/general-settings";
 import ProjectSettings from "./settings-tabs/project-settings";
+import DomainSettings from "./settings-tabs/domain-settings";
 import RepositorySettings from "./settings-tabs/repository-settings";
 import PaymentSettings from "./settings-tabs/payment-settings";
 import ContractSettings from "./settings-tabs/contract-settings";
@@ -23,6 +24,7 @@ import PlanSettings from "./settings-tabs/plan-settings";
 enum SettingsTabs {
   General = "General",
   Project = "Project",
+  Domains = "Domains",
   Repositories = "Repositories",
   Payments = "Payments",
   Contracts = "Contracts",
@@ -33,6 +35,7 @@ enum SettingsTabs {
 const tabComponents = {
   [SettingsTabs.General]: GeneralSettings,
   [SettingsTabs.Project]: ProjectSettings,
+  [SettingsTabs.Domains]: DomainSettings,
   [SettingsTabs.Repositories]: RepositorySettings,
   [SettingsTabs.Payments]: PaymentSettings,
   [SettingsTabs.Contracts]: ContractSettings,
