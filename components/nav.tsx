@@ -17,6 +17,10 @@ import {
   Github,
   BarChart4,
   Code2,
+  Box,
+  Receipt,
+  ReceiptIcon,
+  Package,
 } from "lucide-react";
 import {
   useParams,
@@ -50,10 +54,10 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
           icon: <LayoutDashboard width={18} />,
         },
         {
-          name: "Your Subscriptions",
+          name: "Your Packages",
           href: "/c/subscriptions",
           isActive: urlSegments.length === 0,
-          icon: <Binary width={18} />,
+          icon: <Package width={18} />,
         },
         {
           name: "Settings",
@@ -132,8 +136,8 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         {
           name: "Offerings",
           href: "/offering",
-          isActive: urlSegments.length === 0,
-          icon: <Binary width={18} />,
+          isActive: urlSegments[0] === "offering",
+          icon: <Box width={18} />,
         },
         {
           name: "Packages",
@@ -183,11 +187,11 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
           icon: <Building2 width={18} />,
         },
       ] : []),
-        {
-          name: `Role: ${roleId}`,
-          href: "",
-          isDivider: true,
-        },
+        // {
+        //   name: `Role: ${roleId}`,
+        //   href: "",
+        //   isDivider: true,
+        // },
       ];
     }
     else if (urlSegments[0] === "post" && id) {
@@ -320,9 +324,9 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
                   key={name}
                   href={href}
                   className={`flex items-center space-x-3
-                  ${ pageState === NavigationPageStates.CustomerNav ? "text-white" : "text-stone-800"} 
+                  ${ pageState === NavigationPageStates.CustomerNav ? "text-white hover:bg-stone-600 active:bg-stone-700" : "text-stone-800 hover:bg-stone-200 active:bg-stone-300"} 
                   ${ isActive ? "bg-stone-200 text-stone-800" : "" } 
-                    rounded-lg px-1 py-0.5 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300`}
+                    rounded-lg px-1 py-0.5 transition-all duration-150 ease-in-out`}
                 >
                   {icon}
                   <span className="text-sm font-medium">{name}</span>
