@@ -2,6 +2,7 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import { Bold, Card, Badge, Grid } from "@tremor/react";
+import Image from "next/image";
 
 
 // import CreatePostButton from "@/components/create-post-button";
@@ -48,44 +49,51 @@ export default async function SitePosts({
           <ExternalLink subdomain={siteData.subdomain ?? ''} url={url} />
         </div>
       </div>
-      
+
       <Bold>
         Your Home Page
       </Bold>
 
       <Card>
-        <div className="flex justify-between w-full">
-          <div className="flex-column">
-            <div>
-              Title: {homepage?.title ?? "No Home Page Set"}
-            </div>
+        <Grid numItems={2}>
+          <div>
+            <Image src="/placeholder.png" alt="Placeholder" width={250} height={200} className="rounded-lg" />
+          </div>
 
-            <div>
-              Status: 
-            {homepage?.draft ? 
-								<Badge color="gray" size="xs">Draft</Badge> :
-								<Badge color="green" size="xs">Live</Badge>
+          <div className="flex justify-between w-full">
+            <div className="flex-column">
+              <div>
+                Title: {homepage?.title ?? "No Home Page Set"}
+              </div>
+
+              <div>
+                Status:
+                {homepage?.draft ?
+                  <Badge color="gray" size="xs">Draft</Badge> :
+                  <Badge color="green" size="xs">Live</Badge>
                 }
-            </div>
+              </div>
 
-            <div>
-              Path: 
-            {homepage?.slug}
-            </div>
+              <div>
+                Path:
+                {homepage?.slug}
+              </div>
 
-            <div>
-              Preview:
-              <ExternalLinkChip href={`/${url}/index`}>
-                localhost
-              </ExternalLinkChip>
-              <ExternalLink subdomain={siteData.subdomain ?? ''}  url={url} />
-            </div>
+              <div>
+                Preview:
+                <ExternalLinkChip href={`/${url}/index`}>
+                  localhost
+                </ExternalLinkChip>
+                <ExternalLink subdomain={siteData.subdomain ?? ''} url={url} />
+              </div>
 
+            </div>
+            <div className="flex flex-row">
+              <PrimaryButton label="Edit" href={`/page/${siteData.homepageId}`} />
+            </div>
           </div>
-          <div className="flex flex-row">
-            <PrimaryButton label="Edit" href={`/page/${siteData.homepageId}`} />
-          </div>
-        </div>
+        </Grid>
+
       </Card>
 
       <div className="flex justify-between w-full">
