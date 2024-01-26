@@ -12,6 +12,7 @@ import {
 import DashboardCard from "@/components/common/dashboard-card";
 import LinkButton from "@/components/common/link-button";
 
+
 const customersList = [
   {
     id: "ID-1",
@@ -141,9 +142,7 @@ export default function CustomersList({ params }: { params: { id: string } }) {
                   <TableCell className="p-2 m-0 text-right">{item.location}</TableCell>
                   <TableCell className="p-2 m-0 text-right">
                     <div className="flex flex-row gap-1 justify-end">
-                      <Button size="xs" variant="primary">
-                        View
-                      </Button>
+                      <LinkButton label="View" href="/customers/123" variant="primary" />
                     </div>
                   </TableCell>
                 </TableRow>
@@ -151,6 +150,8 @@ export default function CustomersList({ params }: { params: { id: string } }) {
           </TableBody>
         </Table>
       </DashboardCard>
+
+      
     </div>
   );
 }
