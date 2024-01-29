@@ -36,6 +36,7 @@ model User {
   Subscription          Subscription[]
   repos                 Repo[]
   onboarding            String?
+  company               String?
 }
 
 model Account {

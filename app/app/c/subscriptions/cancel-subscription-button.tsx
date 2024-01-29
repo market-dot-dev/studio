@@ -10,7 +10,7 @@ const CancelSubscriptionButton = ({ subscription }: { subscription: Subscription
   const [loading, setLoading] = useState(false);
 
   return (
-    <Button onClick={async () => {
+    <Button size="xs" onClick={async () => {
       setLoading(true);
       destroySubscription(subscription.id).finally(() => {
         setLoading(false)

@@ -5,6 +5,8 @@ import { Subscription } from "@prisma/client";
 import { Card } from "@tremor/react";
 import CancelSubscriptionButton from "./cancel-subscription-button";
 import SubscriptionService from "@/app/services/SubscriptionService";
+import LinkButton from "@/components/common/link-button";
+import { Github } from "lucide-react";
 
 const SubscriptionCard = async ({ subscription }: { subscription: Subscription }) => {
   if(!subscription || !subscription.tierId) return null;
@@ -17,9 +19,21 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
 
   return (<Card>
     <div className="flex flex-col space-y-2">
+      <div className="flex flex-row justify-between">
+        <div className="flex flex-row space-x-2 items-center">
+          <Github size={32} /> <b>widgetbot</b>
+        </div>
+      </div>
+
       <h2>{maintainer.name} : {tier.name}</h2>
+      {maintainer.gh_username && <p>Maintainer: {maintainer.gh_username}</p>}
+      <p>{tier.description}</p>
+      <p>${tier.price} / month</p>
       <p>{subscription.tierVersionId}</p>
-      <CancelSubscriptionButton subscription={subscription} />
+      <div className="flex flex-row space-x-2">
+      <LinkButton label="Details" href="/c/subscriptions/123" />
+        <CancelSubscriptionButton subscription={subscription} />
+      </div>
     </div>
   </Card>)
 }
