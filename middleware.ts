@@ -77,11 +77,11 @@ async function customMiddleware(req: NextRequest) {
     }
 
     // if customer, then redirect to customer dashboard
-    // if( session?.user?.roleId === 'customer' ) {
-    //   return NextResponse.rewrite(
-    //     new URL(`/app/c${path === "/" ? "" : path}`, req.url),
-    //   );
-    // } 
+    if( session?.user?.roleId === 'customer' ) {
+      return NextResponse.rewrite(
+        new URL(`/app/c${path === "/" ? "" : path}`, req.url),
+      );
+    } 
 
     return NextResponse.rewrite(
       new URL(`/app${path === "/" ? "" : path}`, req.url),
