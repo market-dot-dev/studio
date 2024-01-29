@@ -219,7 +219,7 @@ class TierService {
   }
 
   static async getCustomersOfUserTiers() {
-    // Get the current user's session
+    
     const session = await getSession();
     if (!session?.user.id) {
       throw new Error("User not authenticated");
@@ -228,7 +228,7 @@ class TierService {
     // Retrieve all customers subscribed to the tiers owned by the logged-in user
     const customers = await prisma.user.findMany({
       where: {
-        // Filter for users who are subscribed to tiers owned by the logged-in user
+        
         Subscription: {
           some: {
             Tier: {
@@ -241,7 +241,7 @@ class TierService {
         id: true,
         name: true,
         email: true,
-        // Other user fields you might need
+        
         Subscription: {
           where: {
             Tier: {
@@ -249,12 +249,12 @@ class TierService {
             },
           },
           select: {
-            id: true,
+            createdAt: true, 
+            tierVersionId: true, 
             Tier: {
               select: {
                 id: true,
                 name: true,
-                // Other tier fields you might need
               },
             },
           },
@@ -264,6 +264,8 @@ class TierService {
   
     return customers;
   }
+  
+  
   
 
 };
