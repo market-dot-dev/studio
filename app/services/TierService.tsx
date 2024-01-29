@@ -218,6 +218,54 @@ class TierService {
     
   }
 
+  static async getCustomersOfUserTiers() {
+    // Get the current user's session
+    const session = await getSession();
+    if (!session?.user.id) {
+      throw new Error("User not authenticated");
+    }
+  
+    // Retrieve all customers subscribed to the tiers owned by the logged-in user
+    const customers = await prisma.user.findMany({
+      where: {
+        // Filter for users who are subscribed to tiers owned by the logged-in user
+        Subscription: {
+          some: {
+            Tier: {
+              userId: session.user.id,
+            },
+          },
+        },
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        // Other user fields you might need
+        Subscription: {
+          where: {
+            Tier: {
+              userId: session.user.id,
+            },
+          },
+          select: {
+            id: true,
+            Tier: {
+              select: {
+                id: true,
+                name: true,
+                // Other tier fields you might need
+              },
+            },
+          },
+        },
+      },
+    });
+  
+    return customers;
+  }
+  
+
 };
 
 export const createStripePriceById = async (id: string) => {
@@ -239,4 +287,4 @@ export const destroyStripePriceById = async (id: string) => {
 }
 
 export default TierService;
-export const { findTier, updateTier, createTier, createStripePrice, destroyStripePrice } = TierService;
+export const { findTier, updateTier, createTier, createStripePrice, destroyStripePrice, getCustomersOfUserTiers } = TierService;

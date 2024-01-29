@@ -17,7 +17,7 @@ export default function Tiers({tiers}: { tiers : any[]}) : JSX.Element {
                         </Col>
                     ))}
                 </Grid> : 
-                <SkeletonTiers cols={3} />
+                <SkeletonTiers />
                 }
             </div>
             </section>

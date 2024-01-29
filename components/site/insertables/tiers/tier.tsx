@@ -1,26 +1,9 @@
 'use client'
 
-import { Button } from "@tremor/react";
 import { useState } from "react";
+import PrimaryLinkButton from "@/components/common/link-button";
 
 export default function Tier({tier}: { tier : any}) : JSX.Element {
-
-    const [ isSubscribing, setIsSubscribing ] = useState(false);
-
-    const subscribe = async () => {
-        
-        setIsSubscribing(true);
-        const response = await fetch('/api/subscription', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                tierId: tier.id
-            })
-        });
-        setIsSubscribing(false);
-    }
 
     return (
         
@@ -39,7 +22,7 @@ export default function Tier({tier}: { tier : any}) : JSX.Element {
                 </li>
                 ))}
             </ul>
-            <Button onClick={subscribe} disabled={isSubscribing} loading={isSubscribing}>Get Started</Button>
+            <PrimaryLinkButton href={`/checkout/${tier.id}`} label="Get Started" />
         </div>
             
     )
