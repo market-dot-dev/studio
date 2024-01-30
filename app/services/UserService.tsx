@@ -37,6 +37,14 @@ class UserService {
     });
   }
 
+  static async updateCurrentUser(userData: Partial<User>) {
+    const session = await getSession();
+    const userId = session?.user.id;
+    if (!userId) return null;
+
+    return UserService.updateUser(userId, userData);
+  }
+
   static async updateUser(id: string, userData: Partial<User>) {
     return prisma?.user.update({
       where: { id },
@@ -88,4 +96,4 @@ export const getStripePaymentMethodIdById = async (userId: string) => {
 }
 
 export default UserService;
-export const { createStripeCustomer, getCurrentUserId, getCurrentUser, findCurrentUser, findUser } = UserService;
+export const { createStripeCustomer, getCurrentUserId, getCurrentUser, findCurrentUser, findUser, updateCurrentUser } = UserService;

@@ -64,7 +64,8 @@ async function customMiddleware(req: NextRequest) {
 
   // rewrites for app pages
   if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
-    const session = await getToken({ req });
+    const session = await getToken({ req }) as any;
+
     const isLoginPath = path === "/login" ||
       path === "/login/local-auth" ||
       /\/checkout\/[A-Za-z0-9]+/.test(path);
@@ -74,6 +75,14 @@ async function customMiddleware(req: NextRequest) {
     } else if (session && path == "/login") {
       return NextResponse.redirect(new URL("/", req.url));
     }
+
+    // if customer, then redirect to customer dashboard
+    if( session?.user?.roleId === 'customer' ) {
+      return NextResponse.rewrite(
+        new URL(`/app/c${path === "/" ? "" : path}`, req.url),
+      );
+    } 
+
     return NextResponse.rewrite(
       new URL(`/app${path === "/" ? "" : path}`, req.url),
     );
