@@ -84,7 +84,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt: async ({ token, user, account } : any) => {
+    jwt: async ({ token, user, account, trigger, session } : any) => {
 
       const userData = user ? {...user} : null;
 
@@ -122,6 +122,12 @@ export const authOptions: NextAuthOptions = {
       if (userData) {
         token.user = userData;
       }
+
+      // update the roleId if switched by the user from the frontend
+      if (trigger === "update" && session.roleId) {
+        token.user = { ...token.user, roleId: session.roleId}
+      }
+
       
       return token;
     },
