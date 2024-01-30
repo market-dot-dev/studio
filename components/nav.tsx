@@ -179,13 +179,13 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
           href: "/channels/embeds",
           isActive: urlSegments[0] === "embeds",
           icon: <Code2 width={18} />,
-        },
-        {
-          name: "Enterprise",
-          href: "/channels/enterprise",
-          isActive: urlSegments[0] === "enterprise",
-          icon: <Building2 width={18} />,
-        },
+        }
+        // {
+        //   name: "Enterprise",
+        //   href: "/channels/enterprise",
+        //   isActive: urlSegments[0] === "enterprise",
+        //   icon: <Building2 width={18} />,
+        // },
       ] : []),
         // {
         //   name: `Role: ${roleId}`,
