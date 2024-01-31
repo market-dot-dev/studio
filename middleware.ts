@@ -62,6 +62,11 @@ async function customMiddleware(req: NextRequest) {
     searchParams.length > 0 ? `?${searchParams}` : ""
   }`;
 
+  // Handle alpha.gitwallet.co, and go to /alpha/page.tsx
+  if (hostname.startsWith("alpha.")) {
+    return NextResponse.rewrite(new URL(`/alpha${path}`, req.url));
+  }
+
   // rewrites for app pages
   if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
     const session = await getToken({ req }) as any;
