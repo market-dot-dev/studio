@@ -7,6 +7,7 @@ import GithubLoginButton from "../app/(auth)/login/github-login-button";
 import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
 
 const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
+const loginUrl = process.env.NODE_ENV === "development" ? `http://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/customer-login` : `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/customer-login`;
 
 // Define a type for the testimonial props, including the logo
 type TestimonialProps = {
@@ -69,10 +70,8 @@ export default function HomePage() {
             <p className="text-xl font-extralight leading-6 mb-6">Gitwallet is a toolkit to <b>build, sell and manage</b> robust support offerings for your repos and ecosystems.</p>
             <div>
               <GithubLoginButton />
-
               <p className="font-bold">Customer Login</p>
-              <p className="font-light mb-8">Already a customer? <Link href="http://app.localhost:3000/customer-login" target="_blank" className="underline underline-offset-2">Login here.</Link></p>
-
+                <p className="font-light mb-8">Already a customer? <a href={loginUrl} className="underline underline-offset-2">Login here</a>.</p>
             </div>
           </div>
         </div>
