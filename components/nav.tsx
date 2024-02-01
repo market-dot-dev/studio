@@ -22,6 +22,7 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
+import { GearIcon } from "@radix-ui/react-icons";
 
 export default function Nav({ children, siteId, roleId }: { children: ReactNode, siteId: string | null, roleId: string | null }) {
   const urlSegments = useSelectedLayoutSegments();
@@ -157,6 +158,12 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         href: "",
         isDivider: true,
       },
+      ...(['admin', 'maintainer'].includes(roleId || '') ? 
+        [{
+          name: "Connect Stripe",
+          href: `/maintainer/stripe-connect`,
+          icon: <GearIcon width={18} />,
+        }] : []),
     ];
   }, [urlSegments, id, siteId, roleId]);
 
