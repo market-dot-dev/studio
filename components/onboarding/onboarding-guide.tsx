@@ -119,6 +119,8 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     }, [setIsDismissing]);
 
 
+
+    
     if (completedSteps === null || isDismissed || (pathName === '/' && !dashboard)) {
         return (
             <></>
@@ -128,9 +130,11 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     return (
         <div className="flex max-w-screen-xl flex-col space-y-4">
             <Flex flexDirection="col" alignItems="stretch" className="gap-6">
-            <div className="px-4 pb-4 text-start text-sm">
-                            <p>Use this personalized guide to get your store up and running.</p>
-                        </div>
+            <div className="text-start text-sm">
+                    <Text className="">
+                        <p>Here's a guide to help you get started with your site. You can dismiss this guide at any time.</p>
+                    </Text>
+            </div>
 
                 <AccordionList>
 
