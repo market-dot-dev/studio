@@ -11,8 +11,8 @@ export default function LoginPage() {
     <div className="mx-5 border border-stone-200 py-10 dark:border-stone-700 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
       <Image
         alt="Gitwallet"
-        width={100}
-        height={100}
+        width={520}
+        height={142}
         className="relative mx-auto h-12 w-auto dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
         src="/wordmark.png"
       />
