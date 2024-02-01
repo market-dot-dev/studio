@@ -276,6 +276,16 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
       stripeCustomerId = updatedUser?.stripeCustomerId!;
     }
 
+    const maintainer = await UserService.findUser(tier.userId);
+
+    if (!maintainer) {
+      throw new Error('Maintainer not connected to tier.');
+    }
+
+    if (!maintainer.stripeAccountId) {
+      throw new Error("Maintainer hasn't connected stripe account.");
+    }
+
     console.log("===== purchasing ", {
       customer: stripeCustomerId,
       items: [{ price: tier.stripePriceId! }],
@@ -288,6 +298,10 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
       items: [{ price: tier.stripePriceId! }],
       payment_behavior: 'error_if_incomplete',
       expand: ['latest_invoice.payment_intent'],
+      transfer_data: {
+        destination: maintainer.stripeAccountId,
+      },
+      on_behalf_of: maintainer.stripeAccountId,
     });
 
     if (!subscription) {
