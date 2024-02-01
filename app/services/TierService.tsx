@@ -260,10 +260,9 @@ class TierService {
     // Retrieve all customers subscribed to the tiers owned by the logged-in user
     const customers = await prisma.user.findMany({
       where: {
-        
-        Subscription: {
+        subscriptions: {
           some: {
-            Tier: {
+            tier: {
               userId: session.user.id,
             },
           },
@@ -274,16 +273,16 @@ class TierService {
         name: true,
         email: true,
         
-        Subscription: {
+        subscriptions: {
           where: {
-            Tier: {
+            tier: {
               userId: session.user.id,
             },
           },
           select: {
             createdAt: true, 
             tierVersionId: true, 
-            Tier: {
+            tier: {
               select: {
                 id: true,
                 name: true,
@@ -296,10 +295,6 @@ class TierService {
   
     return customers;
   }
-  
-  
-  
-
 };
 
 export const createStripePriceById = async (id: string) => {
