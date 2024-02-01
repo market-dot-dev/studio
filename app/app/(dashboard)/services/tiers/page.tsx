@@ -1,11 +1,10 @@
 import PageHeading from '@/components/common/page-heading';
 import PrimaryButton from '@/components/common/link-button';
 import TierService, { TierWithFeatures } from '@/app/services/TierService';
-import { Grid, Col } from '@tremor/react';
+import { Grid } from '@tremor/react';
 
-import Link from 'next/link';
 import UserService from '@/app/services/UserService';
-import TierFeatureList from '@/components/features/tier-feature-list';
+import TierCard from '@/components/tiers/tier-card';
 
 export default async function Tiers() {
   const currentUserId = await UserService.getCurrentUserId();
@@ -29,19 +28,7 @@ export default async function Tiers() {
           <div className="mx-auto max-w-screen-xl lg:py-4">
             <Grid numItems={3} className="gap-12" >
               {tiers.map((tier, index) => (
-                <Col key={index} className="flex flex-col p-6 mx-auto w-full max-w-xs text-center text-gray-900 bg-white rounded-lg border border-gray-100 shadow dark:border-gray-600 xl:p-8 dark:bg-gray-800 dark:text-white">
-                  <h3 className="mb-2 text-2xl font-semibold">{tier.name}</h3>
-                  <p className="font-light text-gray-500 sm:text-lg dark:text-gray-400">{tier.description}</p>
-                  <div className="flex justify-center items-baseline my-4">
-                    <span className="mr-2 text-5xl font-extrabold">{tier.price}</span>
-                    <span className="text t-gray-500 dark:text-gray-400">{'monthly' /*tier.frequency */}</span>
-                  </div>
-                  <TierFeatureList features={tier.features || []} />
-
-                  <PrimaryButton href={`/checkout/${tier.id}`} label="Get Started" />
-                  
-                  <Link href={`tiers/${tier.id}`}>Edit</Link>
-                </Col>
+                <TierCard key={index} tier={tier} canEdit={true} />
               ))}
             </Grid>
           </div>
