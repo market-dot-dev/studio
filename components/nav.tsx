@@ -46,13 +46,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
           href: `/site/${id}/analytics`,
           isActive: urlSegments.includes("analytics"),
           icon: <BarChart3 width={18} />,
-        },
-        {
-          name: "Settings",
-          href: `/site/${id}/settings`,
-          isActive: urlSegments.includes("settings"),
-          icon: <Settings width={18} />,
-        },
+        }
       ];
     } 
     else if(urlSegments[0] === "page" && siteId) {

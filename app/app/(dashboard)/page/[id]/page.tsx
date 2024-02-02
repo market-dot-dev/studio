@@ -26,7 +26,9 @@ export default async function Page({ params }: { params: { id: string } }) {
 					user: {
 						select: {
 							name: true,
-							image: true
+							image: true,
+							projectName: true,
+							projectDescription: true,
 						}
 					}
 				},

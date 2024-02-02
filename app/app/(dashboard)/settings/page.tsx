@@ -10,16 +10,52 @@ import UserProductWidget from "./UserProductWidget";
 import UserCustomerWidget from "./UserCustomerWidget";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget"
 
+import {
+  TabGroup,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+} from "@tremor/react";
+
+// Import your settings components
+import GeneralSettings from "./settings-tabs/general-settings";
+import ProjectSettings from "./settings-tabs/project-settings";
+import SiteSettings from "./settings-tabs/site-settings";
+
+import RepositorySettings from "./settings-tabs/repository-settings";
+import PaymentSettings from "./settings-tabs/payment-settings";
+import ContractSettings from "./settings-tabs/contract-settings";
+import PlanSettings from "./settings-tabs/plan-settings";
+
+// Define your settings tabs
+enum SettingsTabs {
+  General = "General",
+  Project = "Project",
+  Site  = "Site",
+  
+  Repositories = "Repositories",
+  Payments = "Payments",
+  Contracts = "Contracts",
+  Plan = "Plan",
+}
+
+// Map tabs to components
+const tabComponents = {
+  [SettingsTabs.General]: GeneralSettings,
+  [SettingsTabs.Project]: ProjectSettings,
+  [SettingsTabs.Site]: SiteSettings,
+  
+  [SettingsTabs.Repositories]: RepositorySettings,
+  [SettingsTabs.Payments]: PaymentSettings,
+  [SettingsTabs.Contracts]: ContractSettings,
+  [SettingsTabs.Plan]: PlanSettings,
+};
+
 export default async function SettingsPage() {
   const session = await getSession();
 
   if (!session) {
-    redirect("/login");
-  }
-
-  const user = await UserService.findUser(session.user.id!);
-
-  if (!user) {
     redirect("/login");
   }
 
@@ -29,70 +65,21 @@ export default async function SettingsPage() {
         <h1 className="font-cal text-3xl font-bold dark:text-white">
           Settings
         </h1>
-        <Card className="p-10">
-          <Flex flexDirection="col" alignItems="start" className="gap-4">
-            <h2 className="font-cal text-xl dark:text-white">Repos</h2>
-            <Text>
-              Repositories you have access to.
-            </Text>
-            <Flex className="max-w-lg gap-4">
-              <TextInput placeholder="Repo name" />
-              <Button>Add</Button>
-            </Flex>
-          </Flex>
-        </Card>
-        <Form
-          title="Name"
-          description="Your name on this app."
-          helpText="Please use 32 characters maximum."
-          inputAttrs={{
-            name: "name",
-            type: "text",
-            defaultValue: session.user.name!,
-            placeholder: "Brendon Urie",
-            maxLength: 32,
-          }}
-          handleSubmit={editUser}
-        />
-        <Form
-          title="Email"
-          description="Your email on this app."
-          helpText="Please enter a valid email."
-          inputAttrs={{
-            name: "email",
-            type: "email",
-            defaultValue: session.user.email!,
-            placeholder: "panic@thedis.co",
-          }}
-          handleSubmit={editUser}
-        />
-        <Form
-          title="Project Name"
-          description="The project you're offering support for."
-          helpText="Please enter your project name."
-          inputAttrs={{
-            name: "projectName",
-            type: "text",
-            defaultValue: user.projectName || "",
-            placeholder: "Nokogiri",
-          }}
-          handleSubmit={editUser}
-        />
-        <Form
-          title="Project Description"
-          description="Describe your project."
-          helpText="Enter a description for your project."
-          inputAttrs={{
-            name: "projectDescription",
-            type: "text",
-            defaultValue: user.projectDescription || "",
-            placeholder: "It slices! It dices! It makes julienne fries!",
-          }}
-          handleSubmit={editUser}
-        />
-        <UserProductWidget user={user} />
-        <UserCustomerWidget user={user} />
-        { /* <UserPaymentMethodWidget userId={user.id} /> */ }
+
+        <TabGroup>
+          <TabList className="mt-8">
+            {Object.keys(tabComponents).map(tabName => (
+              <Tab key={tabName}>{tabName}</Tab>
+            ))}
+          </TabList>
+          <TabPanels>
+            {Object.values(tabComponents).map((Component, index) => (
+              <TabPanel key={index}>
+                <Component />
+              </TabPanel>
+            ))}
+          </TabPanels>
+        </TabGroup>
       </div>
     </div>
   );
