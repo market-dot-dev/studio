@@ -101,6 +101,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                 setCompletedSteps(JSON.parse(data));
             }
         });
+
         if (pathName.includes('/project')) {
             setCurrentStep(onboardingSteps.setupProject);
         } else if (pathName.startsWith('/services/tiers')) {
@@ -131,16 +132,19 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     }
 
     return (
-        <div className="flex max-w-screen-xl flex-col space-y-4">
+        <div className="flex max-w-screen-xl flex-col space-y-4 p-8">
             <Flex flexDirection="col" alignItems="stretch" className="gap-6">
+                
+                {dashboard &&
                 <div className="flex gap-1">
                     <p className="text-start text-md font-semibold">
                     Welcome to Gitwallet. Here's a quick guide to get you started.&nbsp;
-                    <Button variant="light" onClick={dismissGuide} className="py-0.5 px-1 text-sm underline">Dismiss</Button>
                     </p>
-                </div>
+                </div> }
 
                 <Card className="max-w-full p-4">
+                    
+                    <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
 
                         <TodoItem
                             title="Setup your project"
@@ -160,7 +164,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                             </Flex>
                         </TodoItem>
 
-                        <Divider className="my-3" />
+                        {dashboard && <Divider className="my-3" />}
 
                         <TodoItem
                             title="Define your services"
@@ -179,7 +183,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                             </Flex>
                         </TodoItem>
 
-                        <Divider />
+                        {dashboard && <Divider className="my-3" />}
 
                         <TodoItem
                             title="Setup your sales channels"
@@ -197,7 +201,8 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                                 </Flex>
                             </Flex>
                         </TodoItem>
-                        <Divider />
+
+                        {dashboard && <Divider className="my-3" />}
 
                         <TodoItem
                             title="Setup payment information"
@@ -216,9 +221,11 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                                 }
                             </Flex>
                         </TodoItem>
+                        </div>
                 </Card>
-
             </Flex>
+            <Button variant="light" onClick={dismissGuide} className="my-0 text-sm underline">Dismiss</Button>
+
         </div>
     )
 }
