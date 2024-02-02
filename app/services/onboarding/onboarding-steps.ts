@@ -1,4 +1,9 @@
+// TODO
+// ADD Setup project step
+// ADD 
+
 export type OnboardingStepsType = {
+    setupProject: boolean,
     setupTiers: boolean,
     setupSite: boolean,
     setupPayment: boolean
@@ -6,6 +11,7 @@ export type OnboardingStepsType = {
 
 // enumerate the steps that the user needs to complete
 export const onboardingSteps = {
+    setupProject: 'setupProject',
     setupTiers: 'setupTiers',
     setupSite: 'setupSite',
     setupPayment: 'setupPayment'
@@ -18,4 +24,3 @@ Object.values(onboardingSteps).forEach((step ) => {
 })
 
 export const defaultOnboardingState = onboardingState as OnboardingStepsType;
-

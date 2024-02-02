@@ -1,6 +1,6 @@
 'use client';
 
-import { Accordion, AccordionHeader, AccordionBody, Text, Flex, Bold, Button, AccordionList } from "@tremor/react";
+import { Card, Title, List, Text, Flex, Bold, Button, AccordionList, Badge, Divider } from "@tremor/react";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { FaArrowLeft, FaChevronDown, FaChevronUp } from "react-icons/fa";
@@ -8,6 +8,7 @@ import { IoIosClose } from "react-icons/io";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
 import { onboardingSteps, type OnboardingStepsType } from "@/app/services/onboarding/onboarding-steps";
 import { useSiteId } from "../dashboard/dashboard-context";
+import Link from "next/link";
 
 
 
@@ -67,15 +68,15 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
     }, [completedSteps[step]])
 
     return (
-        <div className="p-2 rounded-md border-none shadow-none w-full bg-neutral-100">
-            <div className="p-2 cursor-pointer">
-                <Flex alignItems="center" justifyContent="start" className="gap-3">
+        <div className="w-full">
+            <div className="px-1 mb-2">
+                <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}>
                     <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} />
                     <Bold>{title}</Bold>
-                </Flex>
+                </div>
             </div>
             <div>
-                <div className="p-2">
+                <div className="p-0 leading-tight">
                     {children}
                 </div>
             </div>
@@ -100,14 +101,16 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                 setCompletedSteps(JSON.parse(data));
             }
         });
-
-        if (pathName.startsWith('/services/tiers')) {
+        if (pathName.includes('/project')) {
+            setCurrentStep(onboardingSteps.setupProject);
+        } else if (pathName.startsWith('/services/tiers')) {
             setCurrentStep(onboardingSteps.setupTiers);
         } else if (pathName.startsWith('/site')) {
             setCurrentStep(onboardingSteps.setupSite);
-        } else if (pathName.startsWith('/settings')) {
+        } else if (pathName.startsWith('/settings/payment')) {
             setCurrentStep(onboardingSteps.setupPayment);
         }
+
     }, [pathName])
 
     const dismissGuide = useCallback(() => {
@@ -120,7 +123,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
 
 
 
-    
+
     if (completedSteps === null || isDismissed || (pathName === '/' && !dashboard)) {
         return (
             <></>
@@ -130,101 +133,91 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     return (
         <div className="flex max-w-screen-xl flex-col space-y-4">
             <Flex flexDirection="col" alignItems="stretch" className="gap-6">
-            <div className="text-start text-sm">
-                    <Text className="">
-                        <p>Here's a guide to help you get started with your site. You can dismiss this guide at any time.</p>
-                    </Text>
-            </div>
+                <div className="flex gap-1">
+                    <p className="text-start text-md font-semibold">
+                    Welcome to Gitwallet. Here's a quick guide to get you started.&nbsp;
+                    <Button variant="light" onClick={dismissGuide} className="py-0.5 px-1 text-sm underline">Dismiss</Button>
+                    </p>
+                </div>
 
-                <AccordionList>
+                <Card className="max-w-full p-4">
 
-                <Accordion defaultOpen={true}>
-                        <AccordionHeader>Create and update your site</AccordionHeader>
-                        
-                        <AccordionBody className="p-2">
+                        <TodoItem
+                            title="Setup your project"
+                            step={onboardingSteps.setupTiers}
+                            currentStep={currentStep}
+                            pathName={pathName}
+                            completedSteps={completedSteps}
+                            setCompletedSteps={setCompletedSteps}
+                            className=""
+                        >
                             <Flex flexDirection="col" alignItems="start" className="gap-1">
-                                <TodoItem
-                                    title="Setup site / primary channel"
-                                    step={onboardingSteps.setupSite}
-                                    currentStep={currentStep}
-                                    pathName={pathName}
-                                    completedSteps={completedSteps}
-                                    setCompletedSteps={setCompletedSteps}
-                                >
-                                    <Flex flexDirection="col" alignItems="start" className="gap-4">
-                                        <p>Update your site settings or edit the default pages</p>
-                                        <Flex className="gap-4" justifyContent="start">
-                                            <>
-                                                {!pathName.startsWith('/site') || !pathName.endsWith('/settings') ?
-                                                    <Button size="xs" onClick={() => router.push(`/site/${siteId}/settings`)}>Site Settings</Button>
-                                                    : null}
-                                                {!pathName.startsWith('/site') || pathName.endsWith('/settings') ?
-                                                    <Button size="xs" onClick={() => router.push(`/site/${siteId}`)}>Edit Homepage</Button>
-                                                    : null}
-                                            </>
-
-                                        </Flex>
-                                    </Flex>
-                                </TodoItem>
-
+                                <p>Describe your project and link your repos. These settings apply in many places, from your website to checkout.</p>
+                                {currentStep === onboardingSteps.setupProject ?
+                                    <FaArrowLeft />
+                                    : <Button size="xs" onClick={() => router.push('/settings/')}>Your Project Settings</Button>
+                                }
                             </Flex>
-                        </AccordionBody>
-                    </Accordion>
-                    <Accordion defaultOpen={true}>
-                        <AccordionHeader>Setup your offerings and packages</AccordionHeader>
-                        
-                        <AccordionBody className="p-2">
+                        </TodoItem>
+
+                        <Divider className="my-3" />
+
+                        <TodoItem
+                            title="Define your services"
+                            step={onboardingSteps.setupTiers}
+                            currentStep={currentStep}
+                            pathName={pathName}
+                            completedSteps={completedSteps}
+                            setCompletedSteps={setCompletedSteps}
+                        >
                             <Flex flexDirection="col" alignItems="start" className="gap-1">
-                                <TodoItem
-                                    title="Setup tiers"
-                                    step={onboardingSteps.setupTiers}
-                                    currentStep={currentStep}
-                                    pathName={pathName}
-                                    completedSteps={completedSteps}
-                                    setCompletedSteps={setCompletedSteps}
-                                >
-                                    <Flex flexDirection="col" alignItems="start" className="gap-4">
-                                        <p>Add one or more tiers to present your services to prospective customers.</p>
-                                        {currentStep === onboardingSteps.setupTiers ?
-                                            <FaArrowLeft />
-                                            : <Button size="xs" onClick={() => router.push('/services/tiers/new')}>Add Tier</Button>
-                                        }
-                                    </Flex>
-                                </TodoItem>
+                                <p>Add one or more tiers to present your services to prospective customers.</p>
+                                {currentStep === onboardingSteps.setupTiers ?
+                                    <FaArrowLeft />
+                                    : <Button size="xs" onClick={() => router.push('/services/tiers/new')}>Add Tier</Button>
+                                }
                             </Flex>
-                        </AccordionBody>
-                    </Accordion>
+                        </TodoItem>
 
-                    <Accordion defaultOpen={true}>
-                        <AccordionHeader>Add your payment information</AccordionHeader>
+                        <Divider />
 
-                        <AccordionBody className="p-2">
+                        <TodoItem
+                            title="Setup your sales channels"
+                            step={onboardingSteps.setupSite}
+                            currentStep={currentStep}
+                            pathName={pathName}
+                            completedSteps={completedSteps}
+                            setCompletedSteps={setCompletedSteps}
+                        >
                             <Flex flexDirection="col" alignItems="start" className="gap-1">
-                                <TodoItem
-                                    title="Setup payment information"
-                                    step={onboardingSteps.setupPayment}
-                                    currentStep={currentStep}
-                                    pathName={pathName}
-                                    completedSteps={completedSteps}
-                                    setCompletedSteps={setCompletedSteps}
-                                >
-                                    <Flex flexDirection="col" alignItems="start" className="gap-4">
-                                        <p>Update your payment information</p>
-                                        {currentStep === onboardingSteps.setupPayment ?
-                                            <FaArrowLeft />
-                                            :
-                                            <Button size="xs" onClick={() => router.push('/settings')}>Setup payment</Button>
-                                        }
-                                    </Flex>
-                                </TodoItem>
-                            </Flex>
-                        </AccordionBody>
-                    </Accordion>
-                    
-                <Flex justifyContent="end" alignItems="center" className="gap-4 p-2">
-                                    <Button icon={IoIosClose} loading={isDismissing} disabled={isDismissing} variant="light" iconPosition="right" onClick={dismissGuide}>Dismiss this guide</Button>
+                                <p>Update your site settings or edit the default pages</p>
+                                <Flex className="gap-4" justifyContent="start">
+                                    <Button size="xs" onClick={() => router.push(`/site/${siteId}/settings`)}>Site Settings</Button>
+                                    <Button size="xs" onClick={() => router.push(`/site/${siteId}`)}>Edit Homepage</Button>
                                 </Flex>
-                </AccordionList>
+                            </Flex>
+                        </TodoItem>
+                        <Divider />
+
+                        <TodoItem
+                            title="Setup payment information"
+                            step={onboardingSteps.setupPayment}
+                            currentStep={currentStep}
+                            pathName={pathName}
+                            completedSteps={completedSteps}
+                            setCompletedSteps={setCompletedSteps}
+                        >
+                            <Flex flexDirection="col" alignItems="start" className="gap-1">
+                                <p>Connect a payment service. We currently support Stripe, and will be adding more payment partners soon!</p>
+                                {currentStep === onboardingSteps.setupPayment ?
+                                    <FaArrowLeft />
+                                    :
+                                    <Button size="xs" onClick={() => router.push('/settings')}>Setup payment</Button>
+                                }
+                            </Flex>
+                        </TodoItem>
+                </Card>
+
             </Flex>
         </div>
     )
