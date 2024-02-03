@@ -6,7 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { FaArrowLeft, FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { IoIosClose } from "react-icons/io";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
-import { onboardingSteps, type OnboardingStepsType } from "@/app/services/onboarding/onboarding-steps";
+import { onboardingSteps, type OnboardingStepsType, onboardingStepsDescription, onboardingStepsTitles, onboardingStepsURLs } from "@/app/services/onboarding/onboarding-steps";
 import { useSiteId } from "../dashboard/dashboard-context";
 import Link from "next/link";
 
@@ -16,6 +16,8 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
 
     const [isSaving, setIsSaving] = useState(false);
     const [active, setActive] = useState(false);
+    const router = useRouter()
+
 
     // this function is called when the tier is saved, by means of a tier-saved event
     const saveTierCompleted = useCallback(() => {
@@ -67,12 +69,19 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
         }
     }, [completedSteps[step]])
 
+    const stepTitle = onboardingStepsTitles[step as keyof typeof onboardingStepsTitles];
+    const url = onboardingStepsURLs[step as keyof typeof onboardingStepsURLs];
+    const description = onboardingStepsDescription[step as keyof typeof onboardingStepsDescription];
+
     return (
         <div className="w-full">
             <div className="px-1 mb-2">
                 <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}>
                     <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} />
-                    <Bold>{title}</Bold>
+                    <Bold>{stepTitle}</Bold>
+                </div>
+                <div className="flex">
+                    <Text>{description}</Text>
                 </div>
             </div>
             <div>
@@ -80,13 +89,13 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
                     {children}
                 </div>
             </div>
+            <Button size="xs" onClick={() => router.push(url)}>{url}</Button>
         </div>
     )
 }
 export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }): JSX.Element {
 
     const pathName = usePathname();
-    const router = useRouter()
     const [currentStep, setCurrentStep] = useState<string | null>(null);
     const [completedSteps, setCompletedSteps] = useState(null);
     const [isDismissing, setIsDismissing] = useState(false);
@@ -132,100 +141,66 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     }
 
     return (
-        <div className="flex max-w-screen-xl flex-col space-y-4 p-8">
+        <div className={`flex max-w-screen-xl flex-col space-y-4` + (!dashboard ? ` p-8` : ``)}>
             <Flex flexDirection="col" alignItems="stretch" className="gap-6">
-                
+
                 {dashboard &&
-                <div className="flex gap-1">
-                    <p className="text-start text-md font-semibold">
-                    Welcome to Gitwallet. Here's a quick guide to get you started.&nbsp;
-                    </p>
-                </div> }
+                    <div className="flex gap-1">
+                        <p className="text-start text-md font-semibold">
+                            Welcome to Gitwallet. Here's a quick guide to get you started.&nbsp;
+                        </p>
+                    </div>}
 
                 <Card className="max-w-full p-4">
-                    
-                    <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
 
+                    <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
                         <TodoItem
                             title="Setup your project"
-                            step={onboardingSteps.setupTiers}
+                            step={onboardingSteps.setupProject}
                             currentStep={currentStep}
                             pathName={pathName}
                             completedSteps={completedSteps}
                             setCompletedSteps={setCompletedSteps}
                             className=""
-                        >
-                            <Flex flexDirection="col" alignItems="start" className="gap-1">
-                                <p>Describe your project and link your repos. These settings apply in many places, from your website to checkout.</p>
-                                {currentStep === onboardingSteps.setupProject ?
-                                    <FaArrowLeft />
-                                    : <Button size="xs" onClick={() => router.push('/settings/')}>Your Project Settings</Button>
-                                }
-                            </Flex>
-                        </TodoItem>
+                        />
 
                         {dashboard && <Divider className="my-3" />}
 
                         <TodoItem
-                            title="Define your services"
                             step={onboardingSteps.setupTiers}
                             currentStep={currentStep}
                             pathName={pathName}
                             completedSteps={completedSteps}
                             setCompletedSteps={setCompletedSteps}
-                        >
-                            <Flex flexDirection="col" alignItems="start" className="gap-1">
-                                <p>Add one or more tiers to present your services to prospective customers.</p>
-                                {currentStep === onboardingSteps.setupTiers ?
-                                    <FaArrowLeft />
-                                    : <Button size="xs" onClick={() => router.push('/services/tiers/new')}>Add Tier</Button>
-                                }
-                            </Flex>
-                        </TodoItem>
+                        />
 
                         {dashboard && <Divider className="my-3" />}
 
                         <TodoItem
-                            title="Setup your sales channels"
                             step={onboardingSteps.setupSite}
                             currentStep={currentStep}
                             pathName={pathName}
                             completedSteps={completedSteps}
                             setCompletedSteps={setCompletedSteps}
-                        >
-                            <Flex flexDirection="col" alignItems="start" className="gap-1">
-                                <p>Update your site settings or edit the default pages</p>
-                                <Flex className="gap-4" justifyContent="start">
-                                    <Button size="xs" onClick={() => router.push(`/site/${siteId}/settings`)}>Site Settings</Button>
-                                    <Button size="xs" onClick={() => router.push(`/site/${siteId}`)}>Edit Homepage</Button>
-                                </Flex>
-                            </Flex>
-                        </TodoItem>
+                        />
+
 
                         {dashboard && <Divider className="my-3" />}
 
                         <TodoItem
-                            title="Setup payment information"
                             step={onboardingSteps.setupPayment}
                             currentStep={currentStep}
                             pathName={pathName}
                             completedSteps={completedSteps}
                             setCompletedSteps={setCompletedSteps}
-                        >
-                            <Flex flexDirection="col" alignItems="start" className="gap-1">
-                                <p>Connect a payment service. We currently support Stripe, and will be adding more payment partners soon!</p>
-                                {currentStep === onboardingSteps.setupPayment ?
-                                    <FaArrowLeft />
-                                    :
-                                    <Button size="xs" onClick={() => router.push('/settings')}>Setup payment</Button>
-                                }
-                            </Flex>
-                        </TodoItem>
-                        </div>
+                        />
+
+                    </div>
                 </Card>
             </Flex>
-            <Button variant="light" onClick={dismissGuide} className="my-0 text-sm underline">Dismiss</Button>
-
+            <div className="flex justify-end m-0">
+                <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
+            </div>
         </div>
     )
 }
