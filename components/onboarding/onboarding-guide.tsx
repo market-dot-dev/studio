@@ -147,7 +147,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                 {dashboard &&
                     <div className="flex gap-1">
                         <p className="text-start text-md font-semibold">
-                            Welcome to Gitwallet. Here's a quick guide to get you started.&nbsp;
+                            Welcome to Gitwallet. Here&apos;s a quick guide to get you started.&nbsp;
                         </p>
                     </div>}
 
