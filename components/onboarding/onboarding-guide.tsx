@@ -17,6 +17,8 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
     const [isSaving, setIsSaving] = useState(false);
     const [active, setActive] = useState(false);
     const router = useRouter()
+    const siteId = useSiteId();
+
 
 
     // this function is called when the tier is saved, by means of a tier-saved event
@@ -70,18 +72,19 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
     }, [completedSteps[step]])
 
     const stepTitle = onboardingStepsTitles[step as keyof typeof onboardingStepsTitles];
-    const url = onboardingStepsURLs[step as keyof typeof onboardingStepsURLs];
-    const description = onboardingStepsDescription[step as keyof typeof onboardingStepsDescription];
+    const stepURL = onboardingStepsURLs[step as keyof typeof onboardingStepsURLs];
+    const stepDescription = onboardingStepsDescription[step as keyof typeof onboardingStepsDescription];
+    const activeStep = currentStep === step;
 
     return (
-        <div className="w-full">
+        <div className={activeStep ? `px-2 mx-2 pb-2 rounded-xl w-full bg-gray-300` : `w-full`}>
             <div className="px-1 mb-2">
                 <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}>
                     <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} />
                     <Bold>{stepTitle}</Bold>
                 </div>
                 <div className="flex">
-                    <Text>{description}</Text>
+                    <Text>{stepDescription}</Text>
                 </div>
             </div>
             <div>
@@ -89,7 +92,8 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
                     {children}
                 </div>
             </div>
-            <Button size="xs" onClick={() => router.push(url)}>{url}</Button>
+
+            <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step === onboardingSteps.setupSite && siteId ? stepURL+siteId : stepURL)}>{stepTitle} →</Button>
         </div>
     )
 }
@@ -101,7 +105,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     const [isDismissing, setIsDismissing] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
 
-    const siteId = useSiteId();
 
     useEffect(() => {
         // refer to the db everytime you navigate to a new page
@@ -111,13 +114,13 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
             }
         });
 
-        if (pathName.includes('/project')) {
+        if (pathName.includes(onboardingStepsURLs.setupProject)) {
             setCurrentStep(onboardingSteps.setupProject);
-        } else if (pathName.startsWith('/services/tiers')) {
+        } else if (pathName.includes(onboardingStepsURLs.setupTiers)) {
             setCurrentStep(onboardingSteps.setupTiers);
-        } else if (pathName.startsWith('/site')) {
+        } else if (pathName.includes(onboardingStepsURLs.setupSite)) {
             setCurrentStep(onboardingSteps.setupSite);
-        } else if (pathName.startsWith('/settings/payment')) {
+        } else if (pathName.includes(onboardingStepsURLs.setupPayment)) {
             setCurrentStep(onboardingSteps.setupPayment);
         }
 
@@ -131,9 +134,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
         });
     }, [setIsDismissing]);
 
-
-
-
     if (completedSteps === null || isDismissed || (pathName === '/' && !dashboard)) {
         return (
             <></>
@@ -142,7 +142,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
 
     return (
         <div className={`flex max-w-screen-xl flex-col space-y-4` + (!dashboard ? ` p-8` : ``)}>
-            <Flex flexDirection="col" alignItems="stretch" className="gap-6">
+            <Flex flexDirection="col" alignItems="stretch" className="gap-8">
 
                 {dashboard &&
                     <div className="flex gap-1">

@@ -24,11 +24,12 @@ export const onboardingStepsDescription = {
     setupPayment: 'Connect your Stripe account and you can start selling!'
 }
 
+// Update these before launch
 export const onboardingStepsURLs = {
-    setupProject: '/settings/project',
+    setupProject: '/settings',
     setupTiers: '/services/tiers/new',
-    setupSite: '/site/${siteId}/settings',
-    setupPayment: '/onboarding/setup-payment'
+    setupSite: '/site/',
+    setupPayment: '/settings'
 }
 
 export const onboardingStepsTitles = {
