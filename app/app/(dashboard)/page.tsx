@@ -14,7 +14,7 @@ export default async function Overview() {
   return (
     <>
     
-      <div className="text-center">
+    <div className="flex max-w-screen-xl flex-col p-8">
         <OnboardingGuide dashboard={true} />
       </div>
       
