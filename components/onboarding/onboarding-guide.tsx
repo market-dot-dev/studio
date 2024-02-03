@@ -93,7 +93,7 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
                 </div>
             </div>
 
-            <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step === onboardingSteps.setupSite && siteId ? stepURL+siteId : stepURL)}>{stepTitle} →</Button>
+            <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step === onboardingSteps.setupSite && siteId ? stepURL+siteId : stepURL)}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
         </div>
     )
 }

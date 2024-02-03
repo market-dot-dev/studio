@@ -33,9 +33,9 @@ export const onboardingStepsURLs = {
 }
 
 export const onboardingStepsTitles = {
-    setupProject: 'Setup Project',
+    setupProject: 'Setup Project Details',
     setupTiers: 'Define your services',
-    setupSite: 'Setup your site',
+    setupSite: 'Publish your site',
     setupPayment: 'Connect Stripe'
 }
 
