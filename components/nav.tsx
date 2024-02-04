@@ -15,6 +15,9 @@ import {
   Github,
   BarChart4,
   Code2,
+  Cog,
+  Box,
+  Package,
 } from "lucide-react";
 import {
   useParams,
@@ -43,12 +46,6 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
           icon: <Newspaper width={18} />,
         },
         {
-          name: "Analytics",
-          href: `/site/${id}/analytics`,
-          isActive: urlSegments.includes("analytics"),
-          icon: <BarChart3 width={18} />,
-        },
-        {
           name: "Settings",
           href: `/site/${id}/settings`,
           isActive: urlSegments.includes("settings"),
@@ -62,12 +59,6 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
           name: "Back to Site",
           href: `/site/${siteId}`,
           icon: <ArrowLeft width={18} />,
-        },
-        {
-          name: "Analytics",
-          href: `/site/${siteId}/analytics`,
-          isActive: urlSegments.includes("analytics"),
-          icon: <BarChart3 width={18} />,
         },
         {
           name: "Settings",
@@ -162,7 +153,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         [{
           name: "Connect Stripe",
           href: `/maintainer/stripe-connect`,
-          icon: <GearIcon width={18} />,
+          icon: <Cog width={18} />,
         }] : []),
     ];
   }, [urlSegments, id, siteId, roleId]);
