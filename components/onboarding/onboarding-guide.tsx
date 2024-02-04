@@ -12,7 +12,7 @@ import Link from "next/link";
 
 
 
-function TodoItem({ title, children, step, currentStep, pathName, completedSteps, setCompletedSteps }: any): JSX.Element {
+function TodoItem({ title, children, step, currentStep, pathName, completedSteps, setCompletedSteps, dashboard }: any): JSX.Element {
 
     const [isSaving, setIsSaving] = useState(false);
     const [active, setActive] = useState(false);
@@ -46,19 +46,19 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
     }, [currentStep]);
 
     // on checkbox click
-    const handleCheckboxChange = useCallback((e: any) => {
-        setIsSaving(true);
-        setCompletedSteps((prev: OnboardingStepsType) => {
-            const newState = {
-                ...prev,
-                [step]: e.target.checked
-            }
-            return newState;
-        })
+    // const handleCheckboxChange = useCallback((e: any) => {
+    //     setIsSaving(true);
+    //     setCompletedSteps((prev: OnboardingStepsType) => {
+    //         const newState = {
+    //             ...prev,
+    //             [step]: e.target.checked
+    //         }
+    //         return newState;
+    //     })
 
-    }, [setCompletedSteps])
+    // }, [setCompletedSteps])
 
-    const checkboxClasses = 'rounded-full outline-none focus:outline-none focus:border-none' + (isSaving ? ' opacity-50 cursor-not-allowed animate-spin' : '');
+    // const checkboxClasses = 'rounded-full outline-none focus:outline-none focus:border-none' + (isSaving ? ' opacity-50 cursor-not-allowed animate-spin' : '');
 
     useEffect(() => {
         if (isSaving) {
@@ -77,10 +77,11 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
     const activeStep = currentStep === step;
 
     return (
-        <div className={activeStep ? `px-2 mx-2 pb-2 rounded-xl w-full bg-gray-300` : `w-full`}>
+        <div className={!dashboard && activeStep ? `mx-2 p-4 rounded-xl w-full bg-gray-200` : !dashboard ? `p-4 w-full` : ``}>
             <div className="px-1 mb-2">
-                <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}>
-                    <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} />
+                {/* <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}> */}
+                <div className="flex items-center justify-start gap-3">
+                    {/* <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} /> */}
                     <Bold>{stepTitle}</Bold>
                 </div>
                 <div className="flex">
@@ -93,7 +94,7 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
                 </div>
             </div>
 
-            <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step === onboardingSteps.setupSite && siteId ? stepURL+siteId : stepURL)}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
+            <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step === onboardingSteps.setupSite && siteId ? stepURL + siteId : stepURL)}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
         </div>
     )
 }
@@ -139,6 +140,9 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
             <></>
         );
     }
+    const ConditionalWrapper = ({ condition, wrapper, children }: { condition: boolean, wrapper: (children: React.ReactNode) => JSX.Element, children: React.ReactNode }) => {
+        return condition ? wrapper(children) : children;
+    };
 
     return (
         <div className={`flex max-w-screen-xl flex-col space-y-4` + (!dashboard ? ` p-8` : ``)}>
@@ -151,8 +155,14 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                         </p>
                     </div>}
 
-                <Card className="max-w-full p-4">
 
+                <ConditionalWrapper condition={dashboard ?? false}
+                        wrapper={children => 
+                        <Card className="max-w-full p-4">
+                            {children}
+                        </Card>
+                    }
+                >
                     <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
                         <TodoItem
                             title="Setup your project"
@@ -161,6 +171,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                             pathName={pathName}
                             completedSteps={completedSteps}
                             setCompletedSteps={setCompletedSteps}
+                            dashboard={dashboard}
                             className=""
                         />
 
@@ -172,6 +183,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                             pathName={pathName}
                             completedSteps={completedSteps}
                             setCompletedSteps={setCompletedSteps}
+                            dashboard={dashboard}
                         />
 
                         {dashboard && <Divider className="my-3" />}
@@ -182,6 +194,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                             pathName={pathName}
                             completedSteps={completedSteps}
                             setCompletedSteps={setCompletedSteps}
+                            dashboard={dashboard}
                         />
 
 
@@ -193,10 +206,11 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                             pathName={pathName}
                             completedSteps={completedSteps}
                             setCompletedSteps={setCompletedSteps}
+                            dashboard={dashboard}
                         />
 
                     </div>
-                </Card>
+                </ConditionalWrapper>
             </Flex>
             <div className="flex justify-end m-0">
                 <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
