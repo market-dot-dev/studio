@@ -17,7 +17,7 @@ import {
   Code2,
   Cog,
   Box,
-  Package,
+  AlertTriangle,
 } from "lucide-react";
 import {
   useParams,
@@ -135,16 +135,16 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         isDivider: true,
       },
       {
-        name: `Role: ${roleId}`,
+        name: `Role: ${roleId?.toUpperCase() || "NONE"}`,
         href: "/",
         isActive: urlSegments[0] === "/",
-        icon: <Cog width={18} />,
+        icon: <AlertTriangle width={18} />,
       },
       ...(['admin', 'maintainer'].includes(roleId || '') ?
         [{
           name: "Connect Stripe",
           href: `/maintainer/stripe-connect`,
-          icon: <Cog width={18} />,
+          icon: <AlertTriangle width={18} />,
         }] : []),
     ];
   }, [urlSegments, id, siteId, roleId]);
