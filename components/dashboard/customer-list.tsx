@@ -16,13 +16,13 @@ import { MoreHorizontal } from "lucide-react";
 import TierService from "@/app/services/TierService";
 import PrimaryLinkButton from "../common/link-button";
 
-export default async function CustomersList(props: { numRecords?: number, previewMode?: boolean}) {
+export default async function LatestCustomersList(props: { numRecords?: number, previewMode?: boolean}) {
 
   // Number of records to show (optional)
-  const numRecords = props.numRecords || null;
+  const numRecords = props.numRecords || 5;
 
   // In preview mode, only a few columns are shown
-  const previewMode = props.previewMode || false;
+  const previewMode = props.previewMode || true;
 
   // Number of days to look back for new customers
   const daysAgo = 30;
