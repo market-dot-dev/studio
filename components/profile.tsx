@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import LogoutButton from "./logout-button";
-import RoleSwitcher from "./user/role-switcher";
 import { Flex, Text } from "@tremor/react";
 
 export default async function Profile() {
@@ -13,10 +12,7 @@ export default async function Profile() {
   }
 
   return (
-    <>
-      
-        <RoleSwitcher />
-      
+    <>      
       <div className="flex w-full items-center justify-between">
         <Link
           href="/settings"
