@@ -1,12 +1,12 @@
 "use client";
 
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput } from "@tremor/react"
 import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
-import TierPriceWidget from './TierPriceWidget';
 import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
+import { userCanSellById } from '@/app/services/StripeService';
 
 interface TierFormProps {
 	tier: Partial<Tier>;
@@ -55,6 +55,12 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 			
 		}
 	}
+
+	const [canPublish, setCanPublish] = useState(false);
+
+	useEffect(() => {
+		userCanSellById().then(setCanPublish);
+	}, []);
 
 	return (
 		<>
@@ -106,10 +112,16 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
 							<Flex className='gap-2' justifyContent='start'>
-								<input type="checkbox" checked={tier.published} onChange={(e) => {
-									setTier({ ...tier, published: e.target.checked } as Tier);
-								}} /> 
-								<span>Published</span>
+								<input type="checkbox"
+									checked={tier.published}
+									disabled={!canPublish}
+									onChange={(e) => {
+										setTier({ ...tier, published: e.target.checked } as Tier);
+									}} /> 
+								<span>
+									Published
+									{ !canPublish && <Text color="red" >You need to connect your Stripe account to publish a tier</Text> }
+								</span>
 							</Flex>
 						</label>
 					</div>
@@ -128,8 +140,6 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 								<Bold>Stripe Price Id</Bold>
 								<TextInput value={tier.stripePriceId || ''} name="stripePriceId" placeholder="Stripe Price Id" onChange={handleInputChange}/>
 							</Flex>
-							
-							{/* <FeaturesEditor features={tier.features} setFeatures={setFeatures}  /> */}
 						</Flex>
 					</Card>
 
@@ -140,13 +150,6 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					>
 						{label}
 					</Button>
-
-					<br />
-					{ tier?.id && <>
-						<Card>
-							<h2>Stripe price object</h2>
-							<TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } />
-						</Card> </> }
 				</div>
 
 				{/* Preview Section */}

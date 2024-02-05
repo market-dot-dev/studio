@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card, Button } from '@tremor/react';
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
-import useCurrentSession from '@/app/contexts/current-user-context';
+import useCurrentSession, { CurrentSessionProvider } from '@/app/contexts/current-user-context';
 import { getPaymentMethod } from '@/app/services/StripeService';
 import { StripeCard } from '@/app/services/StripeService';
 
@@ -59,7 +59,7 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError }: UserPaymentM
             <CardElementComponent />
             <br />
             {(loading === null || loading === undefined) && (
-              <Button type="submit" disabled={!stripeCustomerId}>
+              <Button type="submit" disabled={false && !stripeCustomerId}>
                 Save
               </Button>
             )}
@@ -74,6 +74,14 @@ const UserPaymentMethodWidgetWrapper = (props: UserPaymentMethodWidgetProps) => 
   return <StripeCheckoutFormWrapper>
     {(innerProps: UserPaymentMethodWidgetProps) => <UserPaymentMethodWidget {...props} {...innerProps} />}
   </StripeCheckoutFormWrapper>
+};
+
+export const UserPaymentMethodWidgetWrapperSSR = (props: UserPaymentMethodWidgetProps) => {
+  return <CurrentSessionProvider>
+    <StripeCheckoutFormWrapper>
+      {(innerProps: UserPaymentMethodWidgetProps) => <UserPaymentMethodWidget {...props} {...innerProps} />}
+    </StripeCheckoutFormWrapper>
+  </CurrentSessionProvider>;
 };
 
 export default UserPaymentMethodWidgetWrapper;

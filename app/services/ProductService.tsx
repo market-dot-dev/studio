@@ -29,6 +29,13 @@ class ProductService {
     const existingUser = await UserService.findUser(userId);
     if (!existingUser) throw new Error(`User with ID ${userId} not found`);
 
+    if(existingUser.stripeProductId) {
+      return {
+        userId: existingUser.id,
+        stripeProductId: existingUser.stripeProductId,
+      } as Product;
+    }
+
     const stripeProduct = await StripeService.createOrUpdateProduct({ userId: userId, name: `user-${userId}-${existingUser.name!}` });
 
     // Update the user record with the new Stripe product ID
@@ -78,4 +85,5 @@ class ProductService {
   }
 };
 
+export default ProductService;
 export const { createProduct, destroyProduct, findProduct, updateProduct } = ProductService;

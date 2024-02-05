@@ -90,6 +90,22 @@ class StripeService {
     const deletedProduct = await stripe.products.del(stripeProductId);
   }
 
+  static async userCanSell(user: User) {
+    return !!user.stripeAccountId && !!user.stripeProductId;
+  }
+
+  static async userCanSellById() {
+    const user = await UserService.getCurrentUser();
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return StripeService.userCanSell(user);
+  }
+
+  static async userCanBuy(user: User) {
+    return !!user.stripeCustomerId && !!user.stripePaymentMethodId;
+  }
+
   static async createCustomer(email: string, paymentMethodId?: string) {
     if(!email) {
       throw new Error('Email is required to create a customer.');
@@ -117,13 +133,23 @@ class StripeService {
   static async attachPaymentMethod(paymentMethodId: string) {
     const user = await UserService.getCurrentUser();
 
-    if(!user || !user.stripeCustomerId) {
-      throw new Error('User not found or does not have a Stripe customer ID.');
+    if(!user) {
+      throw new Error('User not found.');
+    }
+
+    let stripeCustomerId = user.stripeCustomerId;
+
+    if(!user.stripeCustomerId) {
+      stripeCustomerId = await UserService.createStripeCustomer(user);
+    }
+
+    if(!stripeCustomerId) {
+      throw new Error('Failed to create a Stripe customer.');
     }
     
-    await stripe.paymentMethods.attach(paymentMethodId, { customer: user.stripeCustomerId });
+    await stripe.paymentMethods.attach(paymentMethodId, { customer: stripeCustomerId });
 
-    await stripe.customers.update(user.stripeCustomerId, {
+    await stripe.customers.update(stripeCustomerId, {
       invoice_settings: {
         default_payment_method: paymentMethodId,
       },
@@ -328,6 +354,6 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
 };
 
 
-export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod, disconnectStripeAccount } = StripeService
+export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod, disconnectStripeAccount, userCanSellById } = StripeService
 
 export default StripeService;

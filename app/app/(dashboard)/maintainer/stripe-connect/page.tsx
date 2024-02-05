@@ -7,6 +7,7 @@ import UserService from "@/app/services/UserService";
 import StripeService from "@/app/services/StripeService";
 import LinkButton from "@/components/common/link-button";
 import DisconnectStripeAccountButton from "./disconnect-stripe-account-button";
+import ProductService from "@/app/services/ProductService";
 
 const StripeOauthButton = async ({ userId }: { userId: string }) => {
   const oauthUrl = await StripeService.getOAuthLink(userId);
@@ -34,6 +35,12 @@ export default async function StripeConnect({
     redirect("/login");
     return null;
   }
+
+  if(!user?.stripeProductId) {
+    await ProductService.createProduct(user.id);
+    user = await UserService.findUser(session.user.id!);
+  }
+
 
   const code = searchParams["code"] as string;
   const state = searchParams["state"] as string;

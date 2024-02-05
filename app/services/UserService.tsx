@@ -4,6 +4,8 @@ import { User } from '@prisma/client';
 import prisma from "@/lib/prisma";
 import { getSession } from '@/lib/auth';
 import StripeService from './StripeService';
+import ProductService from './ProductService';
+import TierService, { createStripePrice } from './TierService';
 
 class UserService {
   static async getCurrentUserId() {
@@ -57,11 +59,28 @@ class UserService {
       throw new Error('User does not have an email address.');
     }
 
+    if(user.stripeCustomerId) {
+      return user.stripeCustomerId;
+    }
+
     const customer = await StripeService.createCustomer(user.email, user.stripePaymentMethodId || undefined);
     
     await prisma?.user.update({
       where: { id: user.id },
       data: { stripeCustomerId: customer.id },
+    });
+
+    return customer.id;
+  }
+
+  static async clearStripeCustomer(user: User) {
+    if(!user.stripeCustomerId) {
+      return;
+    }
+
+    await prisma?.user.update({
+      where: { id: user.id },
+      data: { stripeCustomerId: null },
     });
   }
 };
@@ -72,7 +91,16 @@ export const createStripeCustomerById = async (userId: string) => {
     throw new Error('User not found.');
   }
 
-  await UserService.createStripeCustomer(user);
+  return await UserService.createStripeCustomer(user);
+}
+
+export const clearStripeCustomerById = async (userId: string) => {
+  const user = await UserService.findUser(userId);
+  if(!user) {
+    throw new Error('User not found.');
+  }
+
+  return await UserService.clearStripeCustomer(user);
 }
 
 export const getStripeCustomerById = async (userId: string) => {
@@ -95,5 +123,42 @@ export const getStripePaymentMethodIdById = async (userId: string) => {
   return user.stripePaymentMethodId;
 }
 
+export const ensureMaintainerId = async (userId: string) => {
+  return new Promise((resolve, reject) => {
+    ProductService.createProduct(userId).then(() => {
+      return UserService.findUser(userId).then((user) => {
+
+        if(!user) {
+          reject('User not found.');
+        }
+
+        if(!StripeService.userCanSell(user!)) {
+          reject('Maintainer missing required stripe keys');
+        }
+        resolve(userId);
+      });
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+export const ensureTierId = async (tierId: string) => {
+  return new Promise((resolve, reject) => {
+    TierService.findTier(tierId).then((tier) => {
+      if(!tier) {
+        return reject('Tier not found.');
+      }
+
+      if(!tier.stripePriceId) {
+        return reject('Tier missing required stripe keys');
+      }
+      resolve(tierId);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
 export default UserService;
-export const { createStripeCustomer, getCurrentUserId, getCurrentUser, findCurrentUser, findUser, updateCurrentUser } = UserService;
+export const { createStripeCustomer, getCurrentUserId, getCurrentUser, findCurrentUser, findUser, updateCurrentUser, clearStripeCustomer } = UserService;

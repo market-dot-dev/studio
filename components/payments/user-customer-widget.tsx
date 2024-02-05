@@ -2,7 +2,7 @@
 
 import { Button, TextInput } from "@tremor/react";
 import { User } from "@prisma/client";
-import { createStripeCustomerById } from "@/app/services/UserService";
+import { createStripeCustomerById, clearStripeCustomerById } from "@/app/services/UserService";
 import { useState } from "react";
 
 const UserCustomerWidget = ({ user }: { user: User; }) => {
@@ -16,8 +16,8 @@ const UserCustomerWidget = ({ user }: { user: User; }) => {
     />
 
     { user?.stripeCustomerId ? 
-      <Button onClick={async () => { }} >Destroy</Button>
-      : <Button onClick={async () => { createStripeCustomerById(user.id) }} >Create</Button>
+      <Button onClick={async () => clearStripeCustomerById(user.id) } >Destroy</Button>
+      : <Button onClick={async () => createStripeCustomerById(user.id) } >Create</Button>
     }
   </>);
 }

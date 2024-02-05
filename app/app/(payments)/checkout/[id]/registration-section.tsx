@@ -1,14 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import {
-  Col,
-  Grid,
-  Badge,
   Card,
   Divider,
   TextInput,
-  Switch,
   Button,
 } from "@tremor/react";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";

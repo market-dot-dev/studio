@@ -1,9 +1,9 @@
 import { useStripe, useElements, CardElement, Elements } from '@stripe/react-stripe-js';
-import { useState, useEffect, useCallback, ReactElement, ReactNode } from 'react';
+import { useState, useCallback, ReactElement, ReactNode } from 'react';
 import { attachPaymentMethod, detachPaymentMethod } from '@/app/services/StripeService';
-import { getStripeCustomerById } from '@/app/services/UserService';
 import { loadStripe } from '@stripe/stripe-js';
 import { User } from '@prisma/client';
+import { createStripeCustomerById } from '@/app/services/UserService';
 
 const stripePromise = loadStripe('pk_test_ki6H49wdOldcE2KR7m5p8ulH00rsY96tmR');
 
@@ -80,6 +80,7 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting }: UseStripeP
     } else if (paymentMethod) {
       console.log('Payment method attached: ', paymentMethod);
       await attachPaymentMethod(paymentMethod.id);
+      setStripeCustomerId(await createStripeCustomerById(user?.id || ''));
       setSubmitting(false);
     }
   }, [stripe, elements, setError, setSubmitting]);

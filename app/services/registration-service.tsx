@@ -1,7 +1,6 @@
 import { User } from "@prisma/client"
 import prisma from "@/lib/prisma"
 import { siteName, siteDescription, homepageTitle, homepageTemplate} from "@/lib/constants/site-template";
-import UserService, { findCurrentUser } from "./UserService";
 import { signIn } from "next-auth/react";
 
 interface UserDetails {

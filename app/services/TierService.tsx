@@ -6,13 +6,37 @@ import Tier, { newTier } from "@/app/models/Tier";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
 import { Feature } from "@prisma/client";
+import ProductService from "./ProductService";
 
 export type TierWithFeatures = Tier & { features?: Feature[] };
 
 class TierService {
   static async createStripePrice(tier: Tier) {
     const session = await getSession();
-    const currentUser = await UserService.findUser(session?.user.id || '');
+    const userId = session?.user.id;
+
+    if(!userId) {
+      throw new Error('User not authenticated');
+    }
+
+    let currentUser = await UserService.findUser(userId);
+
+    if(!currentUser){
+      throw new Error('User not found');
+    }
+
+    if(!currentUser.stripeProductId) {
+      ProductService.createProduct(currentUser.id);
+      currentUser = await UserService.findUser(session.user.id);
+      if(!currentUser?.stripeProductId) {
+        throw new Error('Tried to attach a stripe product id to user, but failed.');
+      }
+    }
+
+    if(tier.published && !currentUser.stripeAccountId) {
+      throw new Error('Tried to publish a tier, but the user has no connected stripe account.');
+    }
+
     const stripeProductId = currentUser?.stripeProductId;
 
     if(!stripeProductId) {
@@ -52,10 +76,15 @@ class TierService {
 
   static async createTier(tierData: Partial<Tier>) {
     // Ensure the current user is the owner of the tier or has permissions to create it
-    const userId = await UserService.getCurrentUserId();
+    const user = await UserService.getCurrentUser();
+    const userId = user?.id;
 
     if (!userId) {
       throw new Error("User not authenticated");
+    }
+
+    if(tierData.published && !user.stripeAccountId) {
+      throw new Error('Tried to publish an existing tier, but the user has no connected stripe account.');
     }
 
     const tierAttributes = newTier({
