@@ -26,6 +26,7 @@ import {
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
+import RoleSwitcher from "./user/role-switcher";
 
 export default function Nav({ children, siteId, roleId }: { children: ReactNode, siteId: string | null, roleId: string | null }) {
   const urlSegments = useSelectedLayoutSegments();
@@ -129,16 +130,11 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         isActive: urlSegments[0] === "github",
         icon: <Github width={18} />,
       },
-      {
+      ...(process.env.NODE_ENV === "development" ?
+      [{
         name: "⚠️ DEBUG MENU ⚠️",
         href: "",
         isDivider: true,
-      },
-      {
-        name: `Role: ${roleId?.toUpperCase() || "NONE"}`,
-        href: "/",
-        isActive: urlSegments[0] === "/",
-        icon: <AlertTriangle width={18} />,
       },
       ...(['admin', 'maintainer'].includes(roleId || '') ?
         [{
@@ -146,6 +142,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
           href: `/maintainer/stripe-connect`,
           icon: <AlertTriangle width={18} />,
         }] : []),
+      ] : []),
     ];
   }, [urlSegments, id, siteId, roleId]);
 
@@ -176,9 +173,9 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
           } fixed z-10 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-4 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
       >
         <div className="grid gap-2">
-          <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
+          <div className="flex items-center space-x-2 rounded-lg py-1.5">
             <div className="text-md font-medium">
-              Gitwallet
+              <img src="/wordmark.png" className="h-8" />
             </div>
           </div>
           <div className="grid gap-0.5">
@@ -197,7 +194,9 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
                 </Link>
               )
             ))}
+            
           </div>
+            <RoleSwitcher />
         </div>
         <div>
           <div className="grid gap-1">

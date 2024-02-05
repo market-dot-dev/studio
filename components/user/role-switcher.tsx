@@ -3,6 +3,7 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react"
 import { useCallback } from "react";
 import { useRouter } from 'next/navigation'
+import { Select } from "@tremor/react";
 
 export default function RoleSwitcher() {
     const { data: session, status, update } = useSession()
@@ -19,13 +20,13 @@ export default function RoleSwitcher() {
     return (
         <>
         { user ?
-            <div className="max-w-sm mx-auto space-y-6">
-               <select value={user.roleId } onChange={handleSwitch}>
+            <div className="w-full mx-auto">
+               <select value={user.roleId } onChange={handleSwitch} className="rounded-xl py-0" >
                     <option value="customer">
-                        Customer
+                        Role: Customer
                     </option>
                     <option value="maintainer">
-                        Maintainer
+                        Role: Maintainer
                     </option>
                 
                 </select> 
