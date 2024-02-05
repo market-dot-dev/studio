@@ -1,15 +1,11 @@
 'use client';
 
 import { Card, Title, List, Text, Flex, Bold, Button, AccordionList, Badge, Divider } from "@tremor/react";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { FaArrowLeft, FaChevronDown, FaChevronUp } from "react-icons/fa";
-import { IoIosClose } from "react-icons/io";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
-import { onboardingSteps, type OnboardingStepsType, onboardingStepsDescription, onboardingStepsTitles, onboardingStepsURLs } from "@/app/services/onboarding/onboarding-steps";
+import { onboardingSteps, type OnboardingStepsType, onboardingStepsDescription, onboardingStepsTitles, onboardingStepsURLs, defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { useSiteId } from "../dashboard/dashboard-context";
-import Link from "next/link";
-
 
 
 function TodoItem({ title, children, step, currentStep, pathName, completedSteps, setCompletedSteps, dashboard }: any): JSX.Element {
@@ -135,11 +131,38 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
         });
     }, [setIsDismissing]);
 
+    // for debugging purposes only, only shown in development
+    if( (process.env.NODE_ENV === "development") && (completedSteps === null || isDismissed) && (pathName === '/' && dashboard)) {
+        return (
+            <div className="p-4 w-1/2">
+                <Card className='border-2 border-slate-800 bg-slate-50'>
+                    <Badge size="xs" className="me-2 mb-1.5">FOR DEBUGGING PURPOSES ONLY</Badge>
+                    <Title>Restore Onboarding Guide</Title>
+                    <Button onClick={() => {
+                        saveOnboardingState(defaultOnboardingState).then(() => {
+                            const newState = { ...defaultOnboardingState };
+                            setCompletedSteps((prev : any) => {
+                                return {
+                                    ...prev,
+                                    ...newState
+                                }
+                            });
+                            setIsDismissed(false);
+                        })
+                    }}>Restore</Button>
+                </Card>
+            </div>
+        );
+    }
+
+
     if (completedSteps === null || isDismissed || (pathName === '/' && !dashboard)) {
         return (
             <></>
         );
     }
+
+
     const ConditionalWrapper = ({ condition, wrapper, children }: { condition: boolean, wrapper: (children: React.ReactNode) => JSX.Element, children: React.ReactNode }) => {
         return condition ? wrapper(children) : children;
     };
