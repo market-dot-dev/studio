@@ -22,6 +22,7 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
+import RoleSwitcher from "./user/role-switcher";
 
 export default function CustomerNav({ children }: { children: ReactNode  }) {
   const urlSegments = useSelectedLayoutSegments();
@@ -101,6 +102,7 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
               )
             ))}
           </div>
+          <RoleSwitcher />
         </div>
         <div>
           <div className="grid gap-1">
