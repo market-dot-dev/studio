@@ -1,15 +1,14 @@
 "use server";
 
-
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
-import GeneralSettings from "@/components/user/general-settings";
+import ProjectSettings from "@/components/user/project-settings";
+import { Title } from "@tremor/react";
 
 
-export default async function GeneralSettingsPage() {
+export default async function ProjectSettingsPage() {
   const session = await getSession();
 
   if (!session) {
@@ -23,10 +22,9 @@ export default async function GeneralSettingsPage() {
   }
 
   return (    
-    <div className="space-y-12 p-8">
-        <PageHeading title="User Settings" />
-        <GeneralSettings user={user} />
-    </div>
-    
+    <div className="space-y-6">
+      <Title>Project Settings</Title>
+      <ProjectSettings user={user} />
+  </div>
   );
 }

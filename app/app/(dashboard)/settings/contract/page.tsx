@@ -3,6 +3,7 @@
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import UserService from "@/app/services/UserService";
+import { Title } from "@tremor/react";
 
 export default async function ContractSettings() {
   const session = await getSession();
@@ -18,8 +19,8 @@ export default async function ContractSettings() {
   }
 
   return (    
-    <div className="w-full mt-10">
-    Your Contract Settings
-  </div>
+    <div className="space-y-6">
+      <Title>Contract Settings</Title>
+    </div>
   );
 }

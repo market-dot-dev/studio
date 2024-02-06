@@ -108,13 +108,13 @@ export const authOptions: NextAuthOptions = {
             // just ensuring that the account object has the following values
             expires_at: account.expires_at,
             refresh_token: account.refresh_token,
-            refresh_token_expires_in: account.refresh_token_expires_in,
+            refresh_token_expires_in: account.refresh_token_expires_in
           },
           // the default nextauth implementation does not add the following values to the account object, so updating here
           update: {
             expires_at: account.expires_at,
             refresh_token: account.refresh_token,
-            refresh_token_expires_in: account.refresh_token_expires_in,
+            refresh_token_expires_in: account.refresh_token_expires_in
           },
         });
       } 
