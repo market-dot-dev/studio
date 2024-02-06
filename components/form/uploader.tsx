@@ -11,7 +11,7 @@ export default function Uploader({
 }: {
   defaultValue: string | null;
   name: "image" | "logo";
-  setChanged: (changed: boolean) => void;
+  setChanged?: (changed: boolean) => void;
 }) {
   const aspectRatio = name === "image" ? "aspect-video" : "aspect-square";
 
@@ -33,7 +33,7 @@ export default function Uploader({
       ) {
         toast.error("Invalid file type (must be .png, .jpg, or .jpeg)");
       } else {
-        setChanged(true)
+        if(setChanged) setChanged(true)
         const reader = new FileReader();
         reader.onload = (e) => {
           setData((prev) => ({ ...prev, [name]: e.target?.result as string }));
