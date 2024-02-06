@@ -1,42 +1,86 @@
 "use server";
 
-import Form from "@/components/form";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { editUser } from "@/lib/actions";
-import { Card, Flex, Text, TextInput, Button, Grid, Bold, Badge, Title } from "@tremor/react";
+import { Card, Flex, Text, Button } from "@tremor/react";
 import UserService from "@/app/services/UserService";
+import StripeService from "@/app/services/StripeService";
+import LinkButton from "@/components/common/link-button";
+import DisconnectStripeAccountButton from "../../maintainer/stripe-connect/disconnect-stripe-account-button";
+const StripeOauthButton = async ({ userId }: { userId: string }) => {
+  const oauthUrl = await StripeService.getOAuthLink(userId);
 
-import UserProductWidget from "../UserCustomerWidget";
-import UserCustomerWidget from "../UserCustomerWidget";
-import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
+  return <LinkButton href={oauthUrl} label="Connect to Stripe" />;
+};
 
-
-
-export default async function PaymentSettings() {
+export default async function PaymentSettings({
+  params,
+  searchParams = {},
+}: {
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const session = await getSession();
 
   if (!session) {
     redirect("/login");
+    return null;
   }
 
-  const user = await UserService.findUser(session.user.id!);
+  let user = await UserService.findUser(session.user.id!);
 
   if (!user) {
     redirect("/login");
+    return null;
   }
 
-  return (    
-    <div className="space-y-6">
-      <Title>Payment Settings</Title>
-      <Card className='border-2 border-slate-800 bg-slate-50'>
-        <Badge size="xs" className="me-2 mb-1.5">FOR DEBUGGING PURPOSES ONLY</Badge>
-        <Flex flexDirection="col" alignItems="start" className="gap-4">
-          <UserProductWidget user={user} />
-          <UserCustomerWidget user={user} />
-          { /* <UserPaymentMethodWidget userId={user.id} /> */ }
-        </Flex>
-      </Card>
-  </div>
+  const code = searchParams["code"] as string;
+  const state = searchParams["state"] as string;
+
+  // Check for OAuth callback
+  if (code && state) {
+    try {
+      await StripeService.handleOAuthResponse(code, state);
+      user = await UserService.findUser(session.user.id!);
+    } catch (error) {
+      console.error("Error handling Stripe OAuth callback:", error);
+      // Handle error
+      // Potentially display an error message or redirect to an error page
+    }
+  }
+
+  if (!user) {
+    redirect("/login");
+    return null;
+  }
+
+  const stripeConnected = !!user.stripeAccountId;
+
+  return (
+    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+      <div className="flex flex-col space-y-6">
+        <Card className="p-10">
+          <Flex flexDirection="col" alignItems="start" className="gap-4">
+            { !stripeConnected && <>
+              <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
+              <Text>
+                Connect your Stripe account to manage and receive payments.
+              </Text>
+              <StripeOauthButton userId={session.user.id!} />
+            </> }
+            { stripeConnected && <>
+              <h2 className="font-cal text-xl dark:text-white">Stripe Account</h2>
+              <Text>
+                Your stripe account is connected.
+              </Text>
+              <DisconnectStripeAccountButton user={user} />
+              <pre>
+                { user.stripeAccountId }
+              </pre>
+            </> }
+          </Flex>
+        </Card>
+      </div>
+    </div>
   );
 }
