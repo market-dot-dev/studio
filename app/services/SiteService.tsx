@@ -6,7 +6,8 @@ import prisma from "@/lib/prisma";
 import { revalidateTag } from 'next/cache';
 
 import { customAlphabet } from "nanoid";
-import { getBlurDataURL } from "@/lib/utils";
+import fs from 'fs';
+import yaml from 'js-yaml';
 import { put } from "@vercel/blob";
 import { getCurrentUserId } from './UserService';
 
@@ -15,7 +16,19 @@ const nanoid = customAlphabet(
   7,
 );
 
-const reservedSubdomains = ['www', 'mail', 'admin', 'blog', 'ftp', 'webmail'];
+const loadReservedSubdomains = () => {
+    try {
+      const filePath = process.cwd() + '/config/reserved-subdomains.yaml'; // Adjust the path as necessary
+      const fileContents = fs.readFileSync(filePath, 'utf8');
+      const data = yaml.load(fileContents);
+      return data;
+    } catch (e) {
+      console.error(e);
+      return []; // Return an empty array as a fallback
+    }
+  };
+
+const reservedSubdomains = loadReservedSubdomains() as string[];
 
 class SiteService {
 
@@ -87,9 +100,7 @@ class SiteService {
             return { message: "Site updated successfully", response };
         } catch (error: any) {
             console.error("Error updating site: ", error);
-            return {
-                error: error.code === "P2002" ? `This value is already taken.` : error.message,
-            };
+            throw error;
         }
     }
 
