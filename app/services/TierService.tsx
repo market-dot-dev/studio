@@ -224,6 +224,8 @@ class TierService {
         tagline: true,
         description: true,
         createdAt: true,
+        features: true,
+        price: true,
         versions: {
           orderBy: {
             createdAt: 'desc' // Order by creation date in descending order
@@ -232,7 +234,7 @@ class TierService {
           include: {
             features: true, // Include the features of the latest version
           },
-        }
+        },
       },
       orderBy: [
         {

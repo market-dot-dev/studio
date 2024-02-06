@@ -1,9 +1,9 @@
 'use client'
 import { Grid, Col } from '@tremor/react';
-import Tier from '../tier';
 import { useEffect } from 'react';
 import { TiersEmbedSettingsProps } from './tiers-embed-settings';
 import SkeletonTiers from '../../skeleton-tiers';
+import TierCard from '@/components/tiers/tier-card';
 const transparentBody = 'body {background: transparent}';
 // This renders the actual component for both server and client sides.
 export default function Tiers({tiers, subdomain, settings}: { tiers : any[], subdomain: string, settings: TiersEmbedSettingsProps}) : JSX.Element {
@@ -28,7 +28,7 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
                             <Grid numItems={1} numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-4 sm:gap-8 md:gap-12">
                                 {tiers.map((tier: any, index: number) => (
                                     <Col key={index} className="flex flex-col p-4 sm:p-5 md:p-6 mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
-                                        <Tier tier={tier} subdomain={subdomain} darkmode={settings.darkmode} />
+                                        <TierCard tier={tier} url={subdomain} darkMode={settings.darkmode} />
                                     </Col>
                                 ))}
                             </Grid> : 

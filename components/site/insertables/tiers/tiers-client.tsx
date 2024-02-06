@@ -17,7 +17,7 @@ export default function TiersClient({site, page}: { site : any, page : any}) {
         getTiers();
     }, []);
 
-    return (
+    return (<>
         <Tiers tiers={tiers} />
-    )
+    </>)
 }

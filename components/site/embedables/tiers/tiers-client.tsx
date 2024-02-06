@@ -1,4 +1,5 @@
-'use client'
+'use client';
+
 import { useState, useEffect } from "react";
 import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings";
@@ -18,7 +19,7 @@ export default function TiersClient({site, settings}: { site : any, settings: Ti
         getTiers();
     }, []);
 
-    return (
+    return (<>
         <Tiers tiers={tiers} subdomain={site.subdomain} settings={settings} />
-    )
+    </>)
 }
