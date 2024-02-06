@@ -1,8 +1,13 @@
+import { getSession } from '@/lib/auth';
 import prisma from "@/lib/prisma";
 
 class SessionService {
-    // return a refreshed acccess token of github
-    static async getAccessToken(userId : string) : Promise<string | null> {
+
+  // return a refreshed acccess token of github
+  static async getAccessToken() : Promise<string | null> {
+    const session = await getSession();
+    const userId = session?.user.id;
+
     try {
       // Retrieve the current refresh token from the database
       const currentAccount = await prisma.account.findFirst({

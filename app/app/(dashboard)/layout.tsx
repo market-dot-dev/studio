@@ -3,7 +3,7 @@ import { getSession } from "@/lib/auth";
 import Profile from "@/components/profile";
 import Nav from "@/components/nav";
 import { redirect } from "next/navigation";
-import { getOnlySiteFromUserId } from "@/lib/actions";
+import { getOnlySiteFromUserId } from "@/app/services/SiteService";
 import { Flex } from "@tremor/react";
 import OnboardingGuide from "@/components/onboarding/onboarding-guide";
 import { DasboardProvider } from "@/components/dashboard/dashboard-context";

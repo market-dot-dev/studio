@@ -14,7 +14,7 @@ export const addRepo = async ({ name }: { name: string}) => {
     }
 
     // get github access token from user
-    const accessToken = await SessionService.getAccessToken(session.user.id);
+    const accessToken = await SessionService.getAccessToken();
 
     // verify if the user has admin access to the repo
     const response = await fetch(`https://api.github.com/repos/${name}/collaborators/${session.user.username}`, {

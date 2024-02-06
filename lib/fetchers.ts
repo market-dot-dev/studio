@@ -17,7 +17,9 @@ export async function getSiteData(domain: string) {
           user: {
             select: {
               name: true,
-              image: true
+              image: true,
+              projectName: true,
+              projectDescription: true,
             }
           },
           // pages: {

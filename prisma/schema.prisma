@@ -214,6 +214,7 @@ model WaitlistUser {
 
 model Repo {
   id        String   @id @default(cuid())
+  repoId    String   @unique
   name      String
   url       String?
   createdAt DateTime @default(now())

@@ -214,14 +214,6 @@ export const getSiteFromPostId = async (postId: string) => {
   return post?.siteId;
 };
 
-export const getOnlySiteFromUserId = async (userId: string) => {
-  const site = await prisma.site.findFirst({
-    where: {
-      userId,
-    },
-  });
-  return site;
-}
 
 export const createPage = withSiteAuth(async (_: FormData, site: Site) => {
   const session = await getSession();

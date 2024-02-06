@@ -4,26 +4,46 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { useParams, useSelectedLayoutSegment } from "next/navigation";
 
-export default function SiteSettingsNav() {
+export default function SettingsNav() {
   const { id } = useParams() as { id?: string };
   const segment = useSelectedLayoutSegment();
 
   const navItems = [
     {
       name: "General",
-      href: `/site/${id}/settings`,
+      href: `/settings`,
       segment: null,
     },
     {
-      name: "Domains",
-      href: `/site/${id}/settings/domains`,
-      segment: "domains",
+      name: "Project",
+      href: `/settings/project`,
+      segment: "project",
     },
     {
-      name: "Appearance",
-      href: `/site/${id}/settings/appearance`,
-      segment: "appearance",
+      name: "Site",
+      href: `/settings/site`,
+      segment: "site",
     },
+    {
+        name: "Repositories",
+        href: `/settings/repos`,
+        segment: "repos",
+    },
+    {
+        name: "Payment",
+        href: `/settings/payment`,
+        segment: "payment",
+    },
+    {
+      name: "Contract",
+      href: `/settings/contract`,
+      segment: "contract",
+    },
+    {
+        name: "Plan",
+        href: `/settings/plan`,
+        segment: "plan",
+    }
   ];
 
   return (
