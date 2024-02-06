@@ -4,58 +4,43 @@ import { serialize } from "next-mdx-remote/serialize";
 import { replaceExamples, replaceTweets } from "@/lib/remark-plugins";
 
 export async function getSiteData(domain: string) {
-  
-  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
-    : null;
-  
-  return await unstable_cache(
-    async () => {
-      const site = await prisma.site.findUnique({
-        where: subdomain ? { subdomain } : { customDomain: domain },
-        include: { 
-          user: {
-            select: {
-              name: true,
-              image: true,
-              projectName: true,
-              projectDescription: true,
-            }
-          },
-          // pages: {
-          //   take: 1, // Retrieve only the first page
-          // }
+  const isDomain = domain.match(/\./);
+
+  const site = await prisma.site.findUnique({
+    where: isDomain ? { customDomain: domain } : { subdomain: domain },
+    include: { 
+      user: {
+        select: {
+          name: true,
+          image: true,
+          projectName: true,
+          projectDescription: true,
         }
-      });
-      
-      if (!site) {
-        return null; // or handle the case where the site doesn't exist
-      }
-    
-      // Now, get the homepage using the homepageId
-      let homepage = null;
-      if (site.homepageId) {
-        homepage = await prisma.page.findUnique({
-          where: { id: site.homepageId }
-        });
-      } else {
-        homepage = await prisma.page.findFirst({
-          where: {
-            siteId: site.id,
-          },
-        });
-      }
-      return {
-        ...site,
-        homepage: homepage,
-      };
-    },
-    [`${domain}-metadata`],
-    {
-      revalidate: 900,
-      tags: [`${domain}-metadata`],
-    },
-  )();
+      },
+    }
+  });
+
+  if (!site) {
+    return null; // or handle the case where the site doesn't exist
+  }
+
+  // Now, get the homepage using the homepageId
+  let homepage = null;
+  if (site.homepageId) {
+    homepage = await prisma.page.findUnique({
+      where: { id: site.homepageId }
+    });
+  } else {
+    homepage = await prisma.page.findFirst({
+      where: {
+        siteId: site.id,
+      },
+    });
+  }
+  return {
+    ...site,
+    homepage: homepage,
+  };
 }
 
 export async function getSitePage(domain: string, slug: string | undefined) {

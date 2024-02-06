@@ -5,6 +5,9 @@ type Role = 'anonymous' | 'customer' | 'maintainer' | 'admin';
 class RoleService {
   static anonymousPaths = [
     /^\/$/,
+    /^\/alpha$/,
+    /^\/home$/,
+    /^\/alpha\/login$/,
     /^\/login$/,
     /^\/customer-login$/,
     /^\/login\/local-auth$/,

@@ -4,7 +4,7 @@
 module.exports = {
   experimental: {
     serverActions: {
-      allowedOrigins: ["app.localhost:3000"],
+      allowedOrigins: ["*.gitwallet.local:3000", "*.gitwallet.co"],
     },
   },
   images: {

@@ -9,16 +9,13 @@ export default async function SiteHomePage({
   params,
 }: {
   params: { domain: string };
-}) {
-  
+}) {  
   const domain = decodeURIComponent(params.domain);
   const data = await getSiteData(domain);
   // const [data, posts] = await Promise.all([
   //   getSiteData(domain),
   //   getPostsForSite(domain),
   // ]);
-
-  
 
   if (!data) {
     notFound();

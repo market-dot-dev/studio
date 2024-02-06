@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
 import { getToken } from "next-auth/jwt";
 import RoleService from "./app/services/role-service";
+import DomainService from "./app/services/domain-service";
 
 export const config = {
   matcher: [
@@ -17,119 +18,87 @@ export const config = {
 
 export default withAuth(
   async function middleware(req) {
-    // First, handle the authentication part
-    //console.log(req.nextauth.token);
-
-    // Then, call your custom middleware logic
     return await customMiddleware(req);
   },
   {
     callbacks: {
       authorized: async ({ token, req }) => {
-        return await RoleService.canViewPath(req.nextUrl.pathname, (token as any)?.user?.roleId);
+        return true;
+        //return await RoleService.canViewPath(req.nextUrl.pathname, (token as any)?.user?.roleId);
       }
     },
   }
 );
 
+const rewrite = (path: string, url: string) => {
+  console.log("-------- rewriting: ", path, url);
+  return NextResponse.rewrite(new URL(path, url));
+}
+
 async function customMiddleware(req: NextRequest) {
   const url = req.nextUrl;
 
-  // Get hostname of request (e.g. demo.vercel.pub, demo.localhost:3000)
-  let hostname = req.headers
-    .get("host")!
-    .replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
+  const hostname = DomainService.getHostnameFromRequest(req);
+  const rootUrl = DomainService.getRootUrl();
 
-  // special case for Vercel preview deployment URLs
-  if (
-    hostname.includes("---") &&
-    hostname.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
-  ) {
-    hostname = `${hostname.split("---")[0]}.${
-      process.env.NEXT_PUBLIC_ROOT_DOMAIN
-    }`;
-  }
+  const ghUsername = DomainService.getGhUsernameFromRequest(req);
+  const reservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);
+  const bareDomain = !ghUsername && !reservedSubdomain;
+  const session = await getToken({ req }) as any;
+  const signedIn = !!session;
+  const roleId = session?.user?.roleId;
+  const hostUrl = DomainService.getRootUrlFromRequest(req)
 
-  // special case, not processing any api calls except it is a maintainer's subdomain.
-  if( url.pathname.startsWith('/api') &&
-    (!(hostname !== process.env.NEXT_PUBLIC_ROOT_DOMAIN && hostname !== "localhost:3000") || hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)) {
-    return NextResponse.next();
-  }
-  
   const searchParams = req.nextUrl.searchParams.toString();
-  // Get the pathname of the request (e.g. /, /about, /blog/first-post)
-  const path = `${url.pathname}${
+
+  let path = `${url.pathname}${
     searchParams.length > 0 ? `?${searchParams}` : ""
   }`;
+  path = path === "/" ? "" : path;
 
-  // Handle alpha.gitwallet.co, and go to /alpha/page.tsx
-  if (hostname.startsWith("alpha.")) {
-    return NextResponse.rewrite(new URL(`/alpha${path}`, req.url));
-  }
-
-  // rewrites for app pages
-  if (hostname == `app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) {
-    const session = await getToken({ req }) as any;
-
-    const isLoginPath = path === "/login" || path === "/customer-login" ||
-      path === "/login/local-auth" ||
-      /\/checkout\/[A-Za-z0-9]+/.test(path);
-
-    if (!session && !isLoginPath) {
-      return NextResponse.redirect(new URL("/login", req.url));
-    } else if (session && path == "/login") {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-
-    // if customer, then redirect to customer dashboard
-    if( session?.user?.roleId === 'customer' ) {
-      return NextResponse.rewrite(
-        new URL(`/app/c${path === "/" ? "" : path}`, req.url),
-      );
-    } 
-
-    return NextResponse.rewrite(
-      new URL(`/app${path === "/" ? "" : path}`, req.url),
-    );
-  }
-
-  // Check if on a subdomain and handle login logic
-  if (hostname !== process.env.NEXT_PUBLIC_ROOT_DOMAIN && hostname !== "localhost:3000") {
-
-    if( path.startsWith('/api') ) {
-      return NextResponse.rewrite(new URL(`/api/${hostname}${path.replace('/api', '')}`, req.url));
-    }
-    
-    const session = await getToken({ req });
-
-    // Redirect to login if not logged in and not already on login page
-    // if (!session && !path.startsWith("/login")) {
-    //   return NextResponse.redirect(new URL(`/login${path}`, req.url));
-    // }
-
-    // Redirect to home if logged in and on login page
-    if (session && (path.startsWith("/login") || path.startsWith("/customer-login"))) {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-  }
-
-  // special case for `vercel.pub` domain
+  // vercel.pub
   if (hostname === "vercel.pub") {
     return NextResponse.redirect(
       "https://vercel.com/blog/platforms-starter-kit",
     );
   }
 
-  // rewrite root application to `/home` folder
-  if (
-    hostname === "localhost:3000" ||
-    hostname === process.env.NEXT_PUBLIC_ROOT_DOMAIN
-  ) {
-    return NextResponse.rewrite(
-      new URL(`/home${path === "/" ? "" : path}`, req.url),
-    );
+  // alpha.gitwallet.co
+  if(reservedSubdomain === 'alpha') {
+    return rewrite(`/alpha${path}`, req.url);
   }
 
-  // rewrite everything else to `/[domain]/[slug] dynamic route
-  return NextResponse.rewrite(new URL(`/${hostname}${path}`, req.url));
+  // gitwallet.co
+  if (bareDomain) {
+    return rewrite(`/home${path}`, req.url);
+  }
+
+  // $GHUSERNAME.gitwallet.co
+    // permit API from users' subdomains
+  if(!!ghUsername) {
+    if( url.pathname.startsWith('/api') && ghUsername) {
+      return NextResponse.next();
+    }
+
+    return rewrite(`/${ghUsername}${path}`, req.url);
+  }
+
+  // app.gitwallet.co
+  if (reservedSubdomain === 'app') {
+    // if customer, then lock to /app/c/
+    if(roleId === 'customer' ) {
+      return rewrite(`/app/c${path}`, req.url);
+    } 
+
+    // else lock to /app/
+    return rewrite(`/app${path}`, req.url);
+  }
+
+  // *.gitwallet.co
+  const loginPaths = ["/login", "/customer-login", "/login/local-auth"];
+
+  // if you're on a login page and already signed in, kick you to /
+  if (session && loginPaths.includes(url.pathname)) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
 }

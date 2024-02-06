@@ -7,6 +7,7 @@ import TierService from './TierService';
 import { createSubscription as createLocalSubscription } from '@/app/services/SubscriptionService';
 import { User } from '@prisma/client';
 import prisma from "@/lib/prisma";
+import DomainService from './domain-service';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
@@ -230,8 +231,9 @@ class StripeService {
     if(!user.stripeCSRF) {
       await UserService.updateUser(userId, { stripeCSRF: state }); // Save the state in your database for later verification
     }
-  
-    const oauthLink = `https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.STRIPE_CLIENT_ID}&scope=read_write&state=${state}&redirect_uri=${process.env.NEXTAUTH_URL}${process.env.STRIPE_REDIRECT_PATH}`;
+
+    const redirectUri = DomainService.getRootUrl("app", "/settings/payment");
+    const oauthLink = `https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.STRIPE_CLIENT_ID}&scope=read_write&state=${state}&redirect_uri=${redirectUri}`;
   
     return oauthLink;
   }
