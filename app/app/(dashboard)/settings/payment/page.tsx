@@ -59,9 +59,6 @@ export default async function PaymentSettings({
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
-        <h1 className="font-cal text-3xl font-bold dark:text-white">
-          Stripe Integration
-        </h1>
         <Card className="p-10">
           <Flex flexDirection="col" alignItems="start" className="gap-4">
             { !stripeConnected && <>
