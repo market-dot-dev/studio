@@ -54,7 +54,13 @@ Overwite your local dev database with the contents of `prisma.schema`.
 pnpm prisma db push
 ```
 
-5. Launch the server:
+5. Populate db tables (required)
+
+```bash
+pnpm sync:services
+```
+
+6. Launch the server:
 
 ```bash
 pnpm dev

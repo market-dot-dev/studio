@@ -1,64 +1,37 @@
-import { Suspense } from "react";
-import Sites from "@/components/sites";
-import OverviewStats from "@/components/overview-stats";
-import Posts from "@/components/posts";
+import DashboardCharts from "@/components/dashboard/dashboard-charts";
+import LatestCustomersList from "@/components/dashboard/customer-list";
+import { Button, Bold } from "@tremor/react";
 import { getSession } from "@/lib/auth";
-import PlaceholderCard from "@/components/placeholder-card";
 import OnboardingGuide from "@/components/onboarding/onboarding-guide";
-
-
+import DashboardCard from "@/components/common/dashboard-card";
 
 export default async function Overview() {
   const session = await getSession();
 
   return (
     <>
-    
-      <div className="text-center">
-        <OnboardingGuide dashboard={true} />
+      <div className="flex max-w-screen-xl flex-col space-y-12 py-4 px-6">
+        <div className="text-center">
+          <OnboardingGuide dashboard={true} />
+        </div>
+        <div className="flex flex-col space-y-6">
+          <h1 className="font-cal text-3xl font-bold dark:text-white">
+            Business Overview
+          </h1>
+          <DashboardCard>
+            <LatestCustomersList numRecords={5} previewMode={true} />
+          </DashboardCard>
+          <div className="grid justify-items-end">
+            <Button size="xs" className="h-6" variant="secondary">
+              All Customers →
+            </Button>
+          </div>
+
+        </div>
       </div>
-      
+      <DashboardCharts />
       <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
-        <div className="flex flex-col space-y-6">
-          <h1 className="font-cal text-3xl font-bold dark:text-white">
-            Overview
-          </h1>
-          <OverviewStats />
-        </div>
-
-        <div className="flex flex-col space-y-6">
-        
-          <Suspense
-            fallback={
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {Array.from({ length: 4 }).map((_, i) => (
-                  <PlaceholderCard key={i} />
-                ))}
-              </div>
-            }
-          >
-            <Sites limit={4} />
-          </Suspense>
-        </div>
-
-        <div className="flex flex-col space-y-6">
-          <h1 className="font-cal text-3xl font-bold dark:text-white">
-            Recent Posts
-          </h1>
-          <Suspense
-            fallback={
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <PlaceholderCard key={i} />
-                ))}
-              </div>
-            }
-          >
-            <Posts limit={8} />
-          </Suspense>
-        </div>
       </div>
-    
     </>
   );
 }

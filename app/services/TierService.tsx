@@ -5,6 +5,9 @@ import { getSession } from "@/lib/auth";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
+import { Feature } from "@prisma/client";
+
+export type TierWithFeatures = Tier & { features?: Feature[] };
 
 class TierService {
   static async createStripePrice(tier: Tier) {
@@ -114,8 +117,7 @@ class TierService {
         },
       });
 
-      // Check if the price has changed
-      if (tierData.price && tierData.price !== currentTier.price) {
+      if(TierService.shouldCreateNewVersion(currentTier, tierData)) {
         // Create a new TierVersion record with the pre-update price and stripePriceId
         await prisma.tierVersion.create({
           data: {
@@ -145,9 +147,39 @@ class TierService {
     return result;
   }
 
+  static shouldCreateNewVersion = (tier: Tier, tierData: Partial<Tier>) => {
+    return (
+      tierData.price &&
+      tierData.price !== tier.price &&
+      tierData.published === true
+    );
+  }
+
   static async onNewVersion(tier: Tier) {
     console.log(`New version ${tier.revision} created for tier ${tier.id}`);
     TierService.createStripePrice(tier);
+  }
+
+  static async findByUserId( userId: string) {
+    return prisma.tier.findMany({
+      where: {
+        userId,
+      },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
+    }); 
+  }
+
+  static async findByUserIdWithFeatures(userId: string): Promise<TierWithFeatures[]> {
+    return prisma.tier.findMany({
+      where: { userId },
+      include: {
+        features: true,
+      },
+    });
   }
 
   // this pulls published tiers to display on the front end site for customers to subscribe to
@@ -218,8 +250,10 @@ class TierService {
     
   }
 
+  
+
+
   static async getCustomersOfUserTiers() {
-    
     const session = await getSession();
     if (!session?.user.id) {
       throw new Error("User not authenticated");
@@ -228,10 +262,9 @@ class TierService {
     // Retrieve all customers subscribed to the tiers owned by the logged-in user
     const customers = await prisma.user.findMany({
       where: {
-        
-        Subscription: {
+        subscriptions: {
           some: {
-            Tier: {
+            tier: {
               userId: session.user.id,
             },
           },
@@ -241,17 +274,16 @@ class TierService {
         id: true,
         name: true,
         email: true,
-        
-        Subscription: {
+        subscriptions: {
           where: {
-            Tier: {
+            tier: {
               userId: session.user.id,
             },
           },
           select: {
-            createdAt: true, 
-            tierVersionId: true, 
-            Tier: {
+            createdAt: true,
+            tierVersionId: true,
+            tier: {
               select: {
                 id: true,
                 name: true,
@@ -265,10 +297,68 @@ class TierService {
     return customers;
   }
   
+  static async getLatestCustomers(numberOfRecords?: number, daysAgo?: number) {
+    const session = await getSession();
+    if (!session?.user.id) {
+      throw new Error("User not authenticated");
+    }
   
+    // Calculate the date for filtering records from the last `daysAgo` days
+    let dateFilter = undefined;
+    if (daysAgo !== undefined) {
+      const currentDate = new Date();
+      currentDate.setDate(currentDate.getDate() - daysAgo);
+      dateFilter = currentDate;
+    }
+  
+    // Retrieve customers based on the provided parameters
+    const customers = await prisma.user.findMany({
+      where: {
+        AND: [
+          {
+            subscriptions: {
+              some: {
+                tier: {
+                  userId: session.user.id,
+                },
+                createdAt: dateFilter ? { gte: dateFilter } : undefined,
+              },
+            },
+          },
+        ],
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        subscriptions: {
+          where: {
+            tier: {
+              userId: session.user.id,
+            },
+            createdAt: dateFilter ? { gte: dateFilter } : undefined,
+          },
+          select: {
+            createdAt: true,
+            tierVersionId: true,
+            tier: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+      },
+      take: numberOfRecords,
+    });
+  
+    return customers;
+  }
   
 
 };
+
 
 export const createStripePriceById = async (id: string) => {
   const tier = await TierService.findTier(id);

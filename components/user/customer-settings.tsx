@@ -6,7 +6,7 @@ import { updateCurrentUser } from "@/app/services/UserService";
 
 export default function CustomerSettings({ user  }: {user : Partial<User> }) {
     const [isSaving, setIsSaving] = useState(false);
-    const [ userData, setUserData ] = useState<Partial<User>>(user);
+    const [userData, setUserData ] = useState<Partial<User>>(user);
 
     const saveChanges = useCallback( async () => {
         setIsSaving(true);

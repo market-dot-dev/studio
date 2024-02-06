@@ -18,8 +18,6 @@ export default async function CustomersList({ params }: { params: { id: string }
           </div> */}
         </div>
 
-
-
         <DashboardCard>
           <Table className="">
             <TableHead>
@@ -42,13 +40,13 @@ export default async function CustomersList({ params }: { params: { id: string }
                   <TableCell className="p-2 m-0">{customer.id}</TableCell>
                   <TableCell className="p-2 m-0">{customer.name}</TableCell>
                   <TableCell className="p-2 m-0 text-right">{/* Company */}</TableCell>
-                  <TableCell className="p-2 m-0 text-right">{customer.Subscription[0]?.Tier?.name}</TableCell>
+                  <TableCell className="p-2 m-0 text-right">{customer.subscriptions[0]?.Tier?.name}</TableCell>
                   <TableCell className="p-2 m-0 text-right">
                     <BadgeDelta size="xs">
                       
                     </BadgeDelta>
                   </TableCell>
-                  <TableCell className="p-2 m-0 text-right">{ new Date(customer.Subscription[0]?.createdAt).toLocaleDateString()}</TableCell>
+                  <TableCell className="p-2 m-0 text-right">{ new Date(customer.subscriptions[0]?.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell className="p-2 m-0 text-right">{/* Next Renewal */}</TableCell>
                   <TableCell className="p-2 m-0 text-right">{/* Location */}</TableCell>
                   <TableCell className="p-2 m-0 text-right">
@@ -64,15 +62,6 @@ export default async function CustomersList({ params }: { params: { id: string }
             </TableBody>
           </Table>
         </DashboardCard>
-
-
-
-
-
-
-
-        
-
     </div>
 
     );

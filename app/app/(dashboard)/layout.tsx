@@ -27,12 +27,12 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         </Nav>
         <div className="min-h-screen dark:bg-black sm:pl-60">
           <Flex alignItems="stretch" className="w-full">
+
             <div className="w-full grow">
+            <OnboardingGuide/>
+
               {children}
-            </div>
-            
-                <OnboardingGuide/>
-            
+            </div>            
           </Flex>
         </div>
       </div>

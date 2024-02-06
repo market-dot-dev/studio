@@ -1,5 +1,4 @@
 import React from 'react';
-import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { getPostsForSite, getSiteData } from "@/lib/fetchers";
 import { JSDOM } from "jsdom";

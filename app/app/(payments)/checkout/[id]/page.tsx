@@ -6,6 +6,8 @@ import { CurrentSessionProvider } from "@/app/contexts/current-user-context";
 import RegistrationSection from "./registration-section";
 import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
+import useFeatures from "@/app/hooks/use-features";
+import TierFeatureList from "@/components/features/tier-feature-list";
 
 const checkoutCurrency = "USD";
 const projectDescriptionDefault = "Default project description.";
@@ -19,6 +21,7 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
 
   const [tier] = useTier(id);
   const [maintainer] = useUser(tier?.userId);
+  const [features] = useFeatures(id);
 
   const checkoutMaintainer = maintainer?.name;
   const checkoutProject = maintainer?.projectName || maintainer?.name;
@@ -67,9 +70,7 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
               Expand for Tier Details
             </AccordionHeader>
             <AccordionBody>
-              These are all the awesome tier features. These are all the awesome
-              tier features. These are all the awesome tier features. These are
-              all the awesome tier features.
+              <TierFeatureList features={features || []} />
             </AccordionBody>
           </Accordion>
 
