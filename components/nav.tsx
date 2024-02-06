@@ -124,12 +124,6 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         isActive: urlSegments[0] === "embeds",
         icon: <Code2 width={18} />,
       },
-      {
-        name: "Github",
-        href: "/channels/github",
-        isActive: urlSegments[0] === "github",
-        icon: <Github width={18} />,
-      },
       ...(process.env.NODE_ENV === "development" ?
       [{
         name: "⚠️ DEBUG MENU ⚠️",
