@@ -26,10 +26,10 @@ export const onboardingStepsDescription = {
 
 // Update these before launch
 export const onboardingStepsURLs = {
-    setupProject: '/settings',
-    setupTiers: '/services/tiers/new',
+    setupProject: '/settings/project',
+    setupTiers: '/services/offerings',
     setupSite: '/site/',
-    setupPayment: '/settings'
+    setupPayment: '/settings/payment'
 }
 
 export const onboardingStepsTitles = {
