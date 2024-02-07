@@ -23,8 +23,7 @@ export default withAuth(
   {
     callbacks: {
       authorized: async ({ token, req }) => {
-        return true;
-        //return await RoleService.canViewPath(req.nextUrl.pathname, (token as any)?.user?.roleId);
+        return await RoleService.canViewPath(req.nextUrl.pathname, (token as any)?.user?.roleId);
       }
     },
   }
