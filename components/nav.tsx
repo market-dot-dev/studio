@@ -130,7 +130,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         href: "",
         isDivider: true,
       },
-      ...(['admin', 'maintainer'].includes(roleId || '') ?
+      ...(['admin', 'maintainer', 'customer'].includes(roleId || '') ?
         [{
           name: "Debug",
           href: `/admin/debug`,
