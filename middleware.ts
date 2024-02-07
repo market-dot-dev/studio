@@ -80,7 +80,7 @@ async function customMiddleware(req: NextRequest) {
       return NextResponse.next();
     }
 
-    return rewrite(`/${ghUsername}${path}`, req.url);
+    return rewrite(`/maintainer-site/${ghUsername}${path}`, req.url);
   }
 
   // app.gitwallet.co

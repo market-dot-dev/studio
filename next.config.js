@@ -4,7 +4,8 @@
 module.exports = {
   experimental: {
     serverActions: {
-      allowedOrigins: ["*.gitwallet.local:3000", "*.gitwallet.co"],
+      allowForwardedHosts: ["gitwallet.local:3000", "gitwallet.co", "*.gitwallet.local:3000", "*.gitwallet.co", "gitwallet.co", "gitwallet.local:3000"],
+      allowedOrigins: ["*.gitwallet.local:3000", "*.gitwallet.co", "gitwallet.co", "gitwallet.local:3000"],
     },
   },
   images: {
