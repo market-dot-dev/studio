@@ -117,7 +117,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     if (purchaseIntent && user && user.stripePaymentMethodId) {
       onClickSubscribe(user.id, tierId).then(() => {
         setPurchaseIntent(false);
-        window.location.href = "/subscriptions";
+        window.location.href = "/success";
       });
     }
   }, [purchaseIntent, user?.id, user?.stripePaymentMethodId]);

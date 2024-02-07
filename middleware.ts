@@ -31,7 +31,7 @@ export default withAuth(
 );
 
 const rewrite = (path: string, url: string) => {
-  console.log("-------- rewriting: ", path, url);
+  //console.log("-------- rewriting: ", path, url);
   return NextResponse.rewrite(new URL(path, url));
 }
 
@@ -65,7 +65,7 @@ async function customMiddleware(req: NextRequest) {
 
   // alpha.gitwallet.co
   if(reservedSubdomain === 'alpha') {
-    return rewrite(`/alpha${path}`, req.url);
+    return rewrite(`/app/alpha${path}`, req.url);
   }
 
   // gitwallet.co
