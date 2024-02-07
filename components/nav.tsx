@@ -132,15 +132,9 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
       },
       ...(['admin', 'maintainer'].includes(roleId || '') ?
         [{
-<<<<<<< HEAD
-          name: "Connect Stripe",
-          href: `/maintainer/stripe-connect`,
-          icon: <AlertTriangle width={18} />,
-=======
           name: "Debug",
           href: `/admin/debug`,
           icon: <GearIcon width={18} />,
->>>>>>> 9e49a22 (wip stripe ids)
         }] : []),
       ] : []),
     ];
