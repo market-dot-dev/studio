@@ -60,7 +60,13 @@ pnpm prisma db push
 pnpm sync:services
 ```
 
-6. Launch the server:
+6. Set up hosts
+
+```
+127.0.0.1 gitwallet.local agraves.gitwallet.local app.gitwallet.local alpha.gitwallet.local
+```
+
+7. Launch the server:
 
 ```bash
 pnpm dev
