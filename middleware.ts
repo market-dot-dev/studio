@@ -76,7 +76,7 @@ async function customMiddleware(req: NextRequest) {
   // $GHUSERNAME.gitwallet.co
     // permit API from users' subdomains
   if(!!ghUsername) {
-    if( url.pathname.startsWith('/api') && ghUsername) {
+    if( url.pathname.startsWith('/api')) {
       return NextResponse.next();
     }
 
@@ -99,6 +99,10 @@ async function customMiddleware(req: NextRequest) {
     if(roleId === 'customer' ) {
       return rewrite(`/app/c${path}`, req.url);
     } 
+
+    if( url.pathname.startsWith('/api')) {
+      return NextResponse.next();
+    }
 
     // else lock to /app/
     return rewrite(`/app${path}`, req.url);
