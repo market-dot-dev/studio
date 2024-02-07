@@ -226,6 +226,7 @@ model Service {
   id          String    @id
   name        String
   category    String
+  description String
   requiresUri Boolean
   features    Feature[]
 }
@@ -243,6 +244,7 @@ model Feature {
   user         User          @relation(fields: [userId], references: [id])
   service      Service?      @relation(fields: [serviceId], references: [id])
   serviceId    String?
+  isEnabled    Boolean       @default(false)
 
   @@index([userId])
 }

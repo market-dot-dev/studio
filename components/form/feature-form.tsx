@@ -2,18 +2,40 @@
 
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Select, Button, TextInput, SelectItem } from '@tremor/react';
+import { Button, TextInput, Switch } from '@tremor/react';
 import { TextArea } from "@radix-ui/themes"; // Corrected import for TextArea based on Radix UI
 import { Service, Feature } from '@prisma/client';
 import { update, create } from '@/app/services/feature-service';
 import { getCurrentUser } from '@/app/services/UserService';
 
 type Props = {
-  service: Service[];
+  service: Service;
   initialFeature?: Feature;
 };
 
 type FeatureAttributes = Partial<Feature>;
+
+type ToggleSwitchOptions = {
+  isEnabled: boolean;
+  handleToggle: () => void;
+};
+
+
+const ToggleSwitch: React.FC<ToggleSwitchOptions> = ({ isEnabled, handleToggle }) => {
+  return (<Switch
+    checked={isEnabled}
+    onChange={handleToggle}
+    className={`${
+      isEnabled ? 'bg-blue-600' : 'bg-gray-200'
+    } relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none`}
+  >
+    <span
+      className={`${
+        isEnabled ? 'translate-x-6' : 'translate-x-1'
+      } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+    />
+  </Switch>);
+}
 
 const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
   const { register, handleSubmit, setValue, watch } = useForm<FeatureAttributes>({
@@ -21,9 +43,16 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
       name: initialFeature?.name || '',
       uri: initialFeature?.uri || '',
       description: initialFeature?.description || '',
-      serviceId: initialFeature?.serviceId || '',
+      serviceId: service.id,
     },
   });
+
+  useEffect(() => {
+    setValue('name', initialFeature?.name || '');
+    setValue('uri', initialFeature?.uri || '');
+    setValue('description', initialFeature?.description || '');
+    setValue('serviceId', service.id || '');
+  }, [initialFeature, setValue]);
 
   // This will watch the serviceId field for changes
   // Necessary if you're interacting with the serviceId outside of the standard form flow
@@ -48,38 +77,20 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
     }
     
     if (returnedFeature && returnedFeature.id) {
-      window.location.href = `/services/${returnedFeature.id}`;
+      window.location.href = `/features`;
     } else {
       console.error('Failed to get the feature ID after operation.');
     }
   };
 
-  useEffect(() => {
-    if (initialFeature?.serviceId) {
-      setValue('serviceId', initialFeature.serviceId);
-    }
-  }, [initialFeature, setValue]);
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {/* Manually manage Select state */}
-      <Select 
-        defaultValue={initialFeature?.serviceId || ""} 
-        onValueChange={(value) => setValue('serviceId', value) } // Directly update the form state
-      >
-        <SelectItem value="">Select a service</SelectItem>
-        {service.map((s) => (
-          <SelectItem key={s.id} value={s.id}>
-            {s.name}
-          </SelectItem>
-        ))}
-      </Select>
       <TextInput
         placeholder="Enter feature name"
         {...register("name")}
       />
       <TextInput
-        placeholder="Enter URI"
+        placeholder="Enter link"
         {...register("uri")}
       />
       <TextArea
