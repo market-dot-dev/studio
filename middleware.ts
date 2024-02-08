@@ -65,7 +65,7 @@ async function customMiddleware(req: NextRequest) {
 
   // alpha.gitwallet.co
   if(reservedSubdomain === 'alpha') {
-    return rewrite(`/app/alpha${path}`, req.url);
+    return rewrite(`/alpha${path}`, req.url);
   }
 
   // gitwallet.co
