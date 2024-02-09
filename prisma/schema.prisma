@@ -226,7 +226,7 @@ model Service {
   id          String    @id
   name        String
   category    String
-  description String
+  description String?
   requiresUri Boolean
   features    Feature[]
 }
