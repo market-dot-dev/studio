@@ -79,7 +79,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         [{
           name: "Your Site",
           href: `/site/${siteId}`,
-          isActive: urlSegments[0] === "site",
+          isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
           icon: <Globe width={18} />,
         }] : []),
       {
