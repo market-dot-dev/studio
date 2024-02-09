@@ -79,12 +79,12 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
       <TextInput placeholder="Enter feature name" {...register("name")} />
       <TextInput placeholder="Enter link" {...register("uri")} />
       <TextArea placeholder="Enter description" rows={3} {...register("description")} />
       <ToggleSwitch isEnabled={isEnabled || false} handleToggle={() => setValue('isEnabled', !isEnabled)} />
-      <Button type="submit">Save</Button>
+      <Button type="submit">{ initialFeature?.id ? 'Update' : 'Save'}</Button>
     </form>
   );
 };

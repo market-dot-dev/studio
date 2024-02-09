@@ -94,23 +94,28 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
     <div className={`flex items-center justify-between mb-2 p-4 border-2 border-gray-300 rounded-md ${selectedStyles}`} onClick={handleClick}>
       <div className="flex items-center">
         <div className="ml-4">
-          <h4 className="font-semibold"><Icon id={service.id} /> &nbsp;{service.name}</h4>
+          <div className="flex flex-row justify-between">
+            <h4 className="font-semibold"><Icon id={service.id} /> &nbsp;{service.name}</h4>
+            <Switch
+              checked={currentFeatureEnabled}
+              onChange={handleToggle}
+              className={`${
+                currentFeatureEnabled ? 'bg-blue-600' : 'bg-gray-200'
+              } relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none`}
+            >
+              <span
+                className={`${
+                  currentFeatureEnabled ? 'translate-x-6' : 'translate-x-1'
+                } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+              />
+            </Switch>
+          </div>
+
           <p className="text-sm text-gray-600">{service.description}</p>
+          
         </div>
       </div>
-      <Switch
-        checked={currentFeatureEnabled}
-        onChange={handleToggle}
-        className={`${
-          currentFeatureEnabled ? 'bg-blue-600' : 'bg-gray-200'
-        } relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none`}
-      >
-        <span
-          className={`${
-            currentFeatureEnabled ? 'translate-x-6' : 'translate-x-1'
-          } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
-        />
-      </Switch>
+      
     </div>
   );
 };
@@ -130,7 +135,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
   return (
     <div className="flex flex-row gap-4 container mx-auto p-6">
       <aside className="w-1/4">
-        <div className="py-5 sm:px-6">
+        <div className="py-5 font-bold">
           Categories
         </div>
         <ul className="space-y-2">
@@ -146,7 +151,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
       </aside>
       <main className="w-1/2">
         <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-          <div className="px-4 py-5 sm:px-6">
+          <div className="py-5 font-bold">
             Options
           </div>
           <div className="border-t border-gray-200">
@@ -162,7 +167,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
         </div>
       </main>
       <aside className="w-1/4">
-        <div className="px-4 py-5 sm:px-6">
+        <div className="py-5 font-bold">
           Details
         </div>
         <FeatureForm initialFeature={currentFeature} service={selectedService} />

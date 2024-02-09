@@ -24,7 +24,7 @@ const OfferingsWrapper = async () => {
   const features: Feature[] = await prisma.feature.findMany();
 
   return (<>
-    <div className="p-6">
+    <div className="px-6 pt-6">
       <h3 className="text-lg leading-6 font-medium text-gray-900">Product &amp; Service Offerings</h3>
       <div>Create and manage your support offerings</div>
     </div>
