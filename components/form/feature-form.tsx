@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, TextInput, Switch } from '@tremor/react';
-import { TextArea } from "@radix-ui/themes"; // Corrected import for TextArea based on Radix UI
+import { TextArea } from "@radix-ui/themes";
 import { Service, Feature } from '@prisma/client';
 import { update, create } from '@/app/services/feature-service';
 import { getCurrentUser } from '@/app/services/UserService';
@@ -15,48 +15,44 @@ type Props = {
 
 type FeatureAttributes = Partial<Feature>;
 
-type ToggleSwitchOptions = {
+const ToggleSwitch: React.FC<{
   isEnabled: boolean;
   handleToggle: () => void;
-};
-
-
-const ToggleSwitch: React.FC<ToggleSwitchOptions> = ({ isEnabled, handleToggle }) => {
-  return (<Switch
+}> = ({ isEnabled, handleToggle }) => (
+  <Switch
     checked={isEnabled}
     onChange={handleToggle}
-    className={`${
-      isEnabled ? 'bg-blue-600' : 'bg-gray-200'
-    } relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none`}
+    className={`${isEnabled ? 'bg-blue-600' : 'bg-gray-200'
+      } relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none`}
   >
     <span
-      className={`${
-        isEnabled ? 'translate-x-6' : 'translate-x-1'
-      } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
+      className={`${isEnabled ? 'translate-x-6' : 'translate-x-1'
+        } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
     />
-  </Switch>);
-}
+  </Switch>
+);
 
 const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
   const { register, handleSubmit, setValue, watch } = useForm<FeatureAttributes>({
-    defaultValues: {
-      name: initialFeature?.name || '',
-      uri: initialFeature?.uri || '',
-      description: initialFeature?.description || '',
+    defaultValues: initialFeature || {
+      name: '',
+      uri: '',
+      description: '',
       serviceId: service.id,
-    },
+      isEnabled: false,
+    }
   });
+
+  // Watches the isEnabled value for live updates
+  const isEnabled = watch("isEnabled");
 
   useEffect(() => {
     setValue('name', initialFeature?.name || '');
     setValue('uri', initialFeature?.uri || '');
     setValue('description', initialFeature?.description || '');
     setValue('serviceId', service.id || '');
+    setValue('isEnabled', initialFeature?.isEnabled || false);
   }, [initialFeature, setValue]);
-
-  // This will watch the serviceId field for changes
-  // Necessary if you're interacting with the serviceId outside of the standard form flow
-  const serviceId = watch("serviceId");
 
   const onSubmit = async (data: FeatureAttributes) => {
     const currentUser = await getCurrentUser();
@@ -65,9 +61,8 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
       throw new Error("User is required to create a feature.");
     }
     
-    // Include serviceId in submission data, as it could be set outside the standard form flow
-    const submissionData = { ...data, serviceId, userId: currentUser.id };
-    
+    const submissionData = { ...data, userId: currentUser.id, serviceId: service.id };
+
     let returnedFeature;
     
     if (initialFeature?.id) {
@@ -85,19 +80,10 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <TextInput
-        placeholder="Enter feature name"
-        {...register("name")}
-      />
-      <TextInput
-        placeholder="Enter link"
-        {...register("uri")}
-      />
-      <TextArea
-        placeholder="Enter description"
-        rows={3}
-        {...register("description")}
-      />
+      <TextInput placeholder="Enter feature name" {...register("name")} />
+      <TextInput placeholder="Enter link" {...register("uri")} />
+      <TextArea placeholder="Enter description" rows={3} {...register("description")} />
+      <ToggleSwitch isEnabled={isEnabled || false} handleToggle={() => setValue('isEnabled', !isEnabled)} />
       <Button type="submit">Save</Button>
     </form>
   );

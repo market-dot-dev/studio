@@ -75,9 +75,10 @@ type ServiceCardProps = {
   onUpdate: (service: Service) => void;
   selectedService?: Service | null;
   setSelectedService: (service: Service) => void;
+  currentFeatureEnabled: boolean;
 };
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedService, setSelectedService }) => {
+const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedService, setSelectedService, currentFeatureEnabled }) => {
   const isSelected = service.id === selectedService?.id;
   const selectedStyles = isSelected ? 'border-gray-600' : 'text-gray-700 hover:bg-gray-100';
 
@@ -89,8 +90,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
     setSelectedService(service);
   }
 
-  const isEnabled = false;
-
   return (
     <div className={`flex items-center justify-between mb-2 p-4 border-2 border-gray-300 rounded-md ${selectedStyles}`} onClick={handleClick}>
       <div className="flex items-center">
@@ -100,15 +99,15 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
         </div>
       </div>
       <Switch
-        checked={isEnabled}
+        checked={currentFeatureEnabled}
         onChange={handleToggle}
         className={`${
-          isEnabled ? 'bg-blue-600' : 'bg-gray-200'
+          currentFeatureEnabled ? 'bg-blue-600' : 'bg-gray-200'
         } relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none`}
       >
         <span
           className={`${
-            isEnabled ? 'translate-x-6' : 'translate-x-1'
+            currentFeatureEnabled ? 'translate-x-6' : 'translate-x-1'
           } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
         />
       </Switch>
@@ -125,6 +124,8 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
   useEffect(() => {
     setSelectedService(filteredServices[0]);
   }, [selectedCategory]);
+
+  const currentFeature = features.find((f) => f.serviceId === selectedService.id);
 
   return (
     <div className="flex flex-row gap-4 container mx-auto p-6">
@@ -150,7 +151,12 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
           </div>
           <div className="border-t border-gray-200">
             {filteredServices.map((service) => (
-              <ServiceCard key={service.id} service={service} onUpdate={() => {}} selectedService={selectedService} setSelectedService={setSelectedService} />
+              <ServiceCard
+                key={service.id}
+                service={service} onUpdate={() => {}}
+                selectedService={selectedService}
+                setSelectedService={setSelectedService}
+                currentFeatureEnabled={features.find((f) => f.serviceId === service.id)?.isEnabled || false} />
             ))}
           </div>
         </div>
@@ -159,7 +165,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
         <div className="px-4 py-5 sm:px-6">
           Details
         </div>
-        <FeatureForm initialFeature={features.find((f) => f.serviceId === selectedService.id)} service={selectedService} />
+        <FeatureForm initialFeature={currentFeature} service={selectedService} />
       </aside>
     </div>
   );
