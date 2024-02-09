@@ -1,10 +1,11 @@
-import { TextInput, Button } from "@tremor/react";
+
 import { cookies } from 'next/headers';
 import { Metadata } from "next";
 import { ReactNode } from "react";
 import Image from "next/image";
 import LoginButton from "@/components/common/login-button";
 import { Suspense } from "react";
+import CustomerLogin from "@/components/login/customer-login";
 
 export const metadata: Metadata = {
   title: "Login | Gitwallet",
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 export default function LoginPage({ children }: { children: ReactNode }) {
   const localAuthAvailable = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
   const csrfToken = cookies().get('next-auth.csrf-token')?.value.split('|')[0];
+
 
   return (
     <>
@@ -33,18 +35,7 @@ export default function LoginPage({ children }: { children: ReactNode }) {
               <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
             }
           >
-            <form method="post" action="/api/auth/signin/email">
-              <input name="csrfToken" type="hidden" defaultValue={csrfToken} />
-                <label className="block text-sm text-slate-400 text-center mb-4">Enter your email to receive a magic link.</label>
-                <div className="flex flex-row gap-4 w-full">
-                  <div className="items-center w-full">
-                    <TextInput placeholder="Enter your work email" id="input-email-for-email-provider" name="email" autoFocus />
-                  </div>
-                  <div className="items-center">
-                    <Button type="submit" id="submitButton">Get Link</Button>
-                  </div>
-                </div>
-            </form>
+          <CustomerLogin csrfToken={csrfToken} />
           </Suspense>
           {localAuthAvailable &&
             <Suspense>
