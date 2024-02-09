@@ -33,22 +33,6 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
   const { id } = useParams() as { id?: string };
 
   const tabs = useMemo(() => {
-    
-    if (urlSegments[0] === "page" && siteId) {
-      return [
-        {
-          name: "Back to Site",
-          href: `/site/${siteId}`,
-          icon: <ArrowLeft width={18} />,
-        },
-        {
-          name: "Settings",
-          href: `/site/${siteId}/settings`,
-          isActive: urlSegments.includes("settings"),
-          icon: <Settings width={18} />,
-        },
-      ];
-    }
     return [
       {
         name: "Home",
