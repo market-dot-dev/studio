@@ -1,35 +1,42 @@
 services:
   - id: "discord"
     name: "Discord"
+    description: "Discord is a voice, video and text communication service to talk and hang out with your friends and communities."
     category: "chat"
     requiresUri: true
 
   - id: "slack"
     name: "Slack"
+    description: "Slack is a collaboration hub for work, no matter what work you do. It’s a place where conversations happen, decisions are made, and information is always at your fingertips."
     category: "chat"
     requiresUri: true
 
   - id: "email"
     name: "Email"
+    description: "Email is a method of exchanging messages between people using electronic devices."
     category: "email"
     requiresUri: false
 
   - id: "telegram"
     name: "Telegram"
+    description: "Telegram is a cloud-based instant messaging and voice over IP service."
     category: "chat"
     requiresUri: true
 
   - id: "phone"
-    name: "Phone"
+    name: "Support Phone"
+    description: "Phone support is a service that provides assistance to customers over the phone." 
     category: "voice"
     requiresUri: false
 
   - id: "zendesk"
     name: "Zendesk"
+    description: "Zendesk is a customer service software company that provides a cloud-based customer support platform."
     category: "ticketing"
     requiresUri: true
 
   - id: "sla"
     name: "Response SLA"
+    description: "Service Level Agreement (SLA) is a commitment between a service provider and a client. Particular aspects of the service – quality, availability, responsibilities – are agreed between the service provider and the service user."
     category: "sla"
     requiresUri: false

@@ -80,9 +80,19 @@ async function customMiddleware(req: NextRequest) {
 
     return rewrite(`/maintainer-site/${ghUsername}${path}`, req.url);
   }
+  
+  // *.gitwallet.co
+  const loginPaths = ["/login", "/customer-login", "/login/local-auth"];
+
+  // if you're on a login page and already signed in, kick you to /
+  if (session && loginPaths.includes(url.pathname)) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+
 
   // app.gitwallet.co
   if (reservedSubdomain === 'app') {
+
     // if customer, then lock to /app/c/
     if(roleId === 'customer' ) {
       return rewrite(`/app/c${path}`, req.url);
@@ -95,12 +105,5 @@ async function customMiddleware(req: NextRequest) {
     // else lock to /app/
     return rewrite(`/app${path}`, req.url);
   }
-
-  // *.gitwallet.co
-  const loginPaths = ["/login", "/customer-login", "/login/local-auth"];
-
-  // if you're on a login page and already signed in, kick you to /
-  if (session && loginPaths.includes(url.pathname)) {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
+  
 }
