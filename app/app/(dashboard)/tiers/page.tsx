@@ -19,13 +19,14 @@ export default async function Tiers() {
             <PageHeading title="Your Active Tiers" />
           </div>
           <div className="flex flex-row">
-            <PrimaryButton label="New Tier" href="/services/tiers/new" />
+            <PrimaryButton label="New Tier" href="/tiers/new" />
           </div>
       </div>
 
       <div className="flex flex-col space-y-6">
         <section>
           <div className="mx-auto max-w-screen-xl lg:py-4">
+            { tiers.length === 0 && <div>You have no tiers. Create a new tier to get started.</div> }
             <Grid numItems={3} className="gap-12" >
               {tiers.map((tier, index) => (
                 <TierCard key={index} tier={tier} canEdit={true} />
