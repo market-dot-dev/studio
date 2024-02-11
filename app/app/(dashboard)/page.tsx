@@ -16,7 +16,7 @@ export default async function Overview() {
         </div>
         <div className="flex flex-col space-y-6">
           <h1 className="font-cal text-3xl font-bold dark:text-white">
-            Business Overview
+            {session?.user.name ? <Bold>Welcome, {session.user.name}!</Bold> : "Your Dashboard"}
           </h1>
           <DashboardCard>
             <LatestCustomersList numRecords={5} previewMode={true} />
