@@ -1,4 +1,4 @@
-import { getSiteNav } from "@/lib/site/fetchers";
+import {getSiteNav} from "@/app/services/SiteService";
 import Menu from "./menu";
 
 export default async function MenuServer( { site, page }: { site: any, page: any } ) {
