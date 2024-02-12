@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getPostsForSite, getSiteData } from "@/lib/fetchers";
 import { JSDOM } from "jsdom";
 import renderElement from '@/components/site/page-renderer';
+import Head from 'next/head';
 
 
 export default async function SiteHomePage({

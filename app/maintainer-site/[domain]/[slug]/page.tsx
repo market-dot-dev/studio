@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { findPage } from '@/app/services/PageService';
 import { JSDOM } from "jsdom";
 import renderElement from '@/components/site/page-renderer';
+import Head from 'next/head';
 
 export default async function SitePage({
   params,

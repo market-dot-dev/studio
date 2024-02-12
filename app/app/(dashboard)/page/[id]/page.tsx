@@ -36,7 +36,6 @@ export default async function Page({ params }: { params: { id: string } }) {
 		},
 	});
 
-
     if (!data || data.userId !== session.user.id) {
     notFound();
   }
