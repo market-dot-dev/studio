@@ -1,12 +1,13 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput } from "@tremor/react"
+import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput, Textarea } from "@tremor/react"
 import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
 import { userCanSellById } from '@/app/services/StripeService';
+import DashboardCard from '../common/dashboard-card';
 
 interface TierFormProps {
 	tier: Partial<Tier>;
@@ -19,7 +20,7 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 
 	const newRecord = !tier.id;
 
-	const label = newRecord ? 'Create' : 'Update';
+	const label = newRecord ? 'Create Tier' : 'Update Tier';
 	
 	//const [features, setFeatures] = useState(tier.features ?? []);
 	const [errors, setErrors] = useState<any>({});
@@ -70,9 +71,9 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 				<div className="md:col-span-2 space-y-6">
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Name</label>
-						<input
+						<TextInput
 							id="tierName"
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							// className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							placeholder="Premium"
 							required
 							name="name"
@@ -85,9 +86,9 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Tagline</label>
-						<input
+						<TextInput
 							id="tierTagline"
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+							// className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							placeholder="Great for startups and smaller companies."
 							required
 							name="tagline"
@@ -98,15 +99,15 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Description</label>
-						<textarea
+						<Textarea
 							id="tierDescription"
 							rows={4}
-							className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+							// className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
 							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
 							name="description"
 							value={tier.description || ''}
 							onChange={handleInputChange}
-						></textarea>
+						/>
 					</div>
 
 					<div className="mb-4">
@@ -127,16 +128,15 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					</div>
 
 					{/* Current version */}
-					<Card>
+					<DashboardCard>
 						<Flex flexDirection="col" alignItems="start" className="gap-4">
-							<Title>Current Version</Title>
 							
 							<Flex flexDirection="col" alignItems="start" className="gap-1">
 								<Bold>Price</Bold>
 								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange}/>
 							</Flex>
 						</Flex>
-					</Card>
+					</DashboardCard>
 
 					<Button
 						disabled={isSaving}
