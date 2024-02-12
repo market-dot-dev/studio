@@ -1,11 +1,11 @@
-import { getSession } from "@/lib/auth";
+import {getCurrentUser} from "@/app/services/UserService";
 import UserInfo from "./user-info";
 
 export default async function UserInfoServer() {
 
-    const session = await getSession();
+    const user = await getCurrentUser();
     
     return (
-        <UserInfo user={session?.user} />
+        <UserInfo user={ user } />
     )
 }

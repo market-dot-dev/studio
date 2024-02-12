@@ -1,5 +1,5 @@
 import SubscriptionService from "@/app/services/SubscriptionService";
-import { getSession } from "@/lib/auth_customer";
+import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: Request, res: Response) {
