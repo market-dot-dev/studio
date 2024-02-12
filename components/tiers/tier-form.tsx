@@ -169,14 +169,6 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
 						</Flex>
 					</div>
-
-					<Button
-						disabled={isSaving}
-						loading={isSaving}
-						onClick={onSubmit}
-					>
-						{label}
-					</Button>
 				</div>
 
 				{/* Preview Section */}
