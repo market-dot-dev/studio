@@ -1,38 +1,41 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput, Textarea } from "@tremor/react"
+import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput, Textarea, Callout, Switch } from "@tremor/react"
 import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
 import { userCanSellById } from '@/app/services/StripeService';
 import DashboardCard from '../common/dashboard-card';
+import PageHeading from '../common/page-heading';
+import { d } from '@vercel/blob/dist/put-96a1f07e';
+import { Checkbox } from '@radix-ui/themes';
 
 interface TierFormProps {
 	tier: Partial<Tier>;
 	handleSubmit: (tier: Tier) => void;
 }
 
-export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps) {
+export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps) {
 	const router = useRouter();
 	const [tier, setTier] = useState<Tier>(tierObj as Tier);
 
 	const newRecord = !tier.id;
 
-	const label = newRecord ? 'Create Tier' : 'Update Tier';
-	
+	const label = newRecord ? 'Create Tier' : `Update Tier`;
+
 	//const [features, setFeatures] = useState(tier.features ?? []);
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
 
 	const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    const updatedTier = { ...tier, [name]: value } as Tier;
-    setTier(updatedTier);
-  };
+		e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+	) => {
+		const { name, value } = e.target;
+		const updatedTier = { ...tier, [name]: value } as Tier;
+		setTier(updatedTier);
+	};
 
 	const validateForm = () => {
 		if (!tier.name) {
@@ -51,9 +54,9 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 			handleSubmit(savedTier);
 		} catch (error) {
 			console.log(error);
-		} finally	{
+		} finally {
 			setIsSaving(false);
-			
+
 		}
 	}
 
@@ -69,6 +72,31 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 				{/* Form Fields Section */}
 				<div className="md:col-span-2 space-y-6">
+					<div className="flex justify-between">
+						<div>
+							<PageHeading title={label} />
+						</div>
+						<div>
+							<Button
+								disabled={isSaving}
+								loading={isSaving}
+								onClick={onSubmit}
+							>
+								{label}
+							</Button>
+						</div>
+					</div>
+
+				</div>
+
+				<div>
+					&nbsp;
+				</div>
+			</div>
+
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
+				<div className="md:col-span-2 space-y-6">
+
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Name</label>
 						<TextInput
@@ -79,7 +107,7 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 							name="name"
 							value={tier.name}
 							onChange={handleInputChange}
-							
+
 						/>
 						{errors['name'] ? <Text color="red" >{errors['name']}</Text> : null}
 					</div>
@@ -111,48 +139,42 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					</div>
 
 					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
-							<Flex className='gap-2' justifyContent='start'>
-								<input type="checkbox"
-									checked={tier.published}
-									disabled={!canPublish}
-									onChange={(e) => {
-										setTier({ ...tier, published: e.target.checked } as Tier);
-									}} /> 
-								<span>
-									Published
-									{ !canPublish && <Text color="red" >You need to connect your Stripe account to publish a tier</Text> }
-								</span>
-							</Flex>
-						</label>
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Status</label>
+
+						<input type="checkbox"
+								className='rounded-md border-2 disabled:opacity-25 h-5 w-5'
+								disabled={!canPublish}
+								checked={tier.published}
+								onChange={(e) => {
+									setTier({ ...tier, published: e.target.checked } as Tier);
+								}} />
+
+							<label htmlFor="switch" className="text-sm text-gray-500 ms-2">
+								Make this tier <span className="font-medium text-gray-700">available for sale.</span>
+							</label>
+
+							{!canPublish && <Callout className="my-2" title="Payment Setup Required" color="red">You need to connect your Stripe account to publish a tier. Visit <a href="/settings/payment" className="underline">Payment Settings</a> to get started.</Callout>}
+
 					</div>
 
-					{/* Current version */}
-					<DashboardCard>
-						<Flex flexDirection="col" alignItems="start" className="gap-4">
-							
-							<Flex flexDirection="col" alignItems="start" className="gap-1">
-								<Bold>Price</Bold>
-								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange}/>
-							</Flex>
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price</label>
+						<Flex className='gap-2' justifyContent='start'>
+							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
 						</Flex>
-					</DashboardCard>
-
-					<Button
-						disabled={isSaving}
-						loading={isSaving}
-						onClick={onSubmit}
-					>
-						{label}
-					</Button>
+					</div>
 				</div>
+
 
 				{/* Preview Section */}
 				<div className="md:w-[300px] text-center" >
+
+
 					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
 					<TierCard tier={tier} />
 				</div>
 			</div>
+
 		</>
 	);
 }
