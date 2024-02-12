@@ -6,6 +6,7 @@ import UserService from "./UserService";
 
 import { Subscription } from "@prisma/client";
 import TierService from "./TierService";
+import EmailService from "./EmailService";
 
 class SubscriptionService {
   static async findSubscription({ tierId }: { tierId: string; }): Promise<Subscription | null> {
@@ -63,11 +64,30 @@ class SubscriptionService {
 
   // Cancel or destroy a subscription
   static async destroySubscription(subscriptionId: string) {
-    const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+    // const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+    const subscription = await prisma.subscription.findUnique({
+      where: { id: subscriptionId },
+      include: {
+        user: true, // customer
+        tier: {
+          select: {
+            name: true,
+            user: true, // tier owner
+          },
+        },
+      },
+    });
     if (!subscription) throw new Error('Subscription not found');
 
     await StripeService.destroySubscription(subscription.stripeSubscriptionId);
     await prisma.subscription.delete({ where: { id: subscriptionId } });
+    
+    await Promise.all([
+      // inform the tier owner
+      subscription?.tier?.user ? EmailService.subscriptionCancelledInfo(subscription?.tier?.user, subscription.user, subscription?.tier?.name) : null,
+      // inform the customer
+      subscription.user ? EmailService.subscriptionCancelledConfirmation(subscription.user,  subscription?.tier?.name ?? '') : null,
+    ])
   }
 
   // Update a subscription (change tier, for example)
