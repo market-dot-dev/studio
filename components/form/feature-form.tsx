@@ -47,6 +47,7 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
   const isEnabled = watch("isEnabled");
 
   useEffect(() => {
+    setValue('id', initialFeature?.id || '');
     setValue('name', initialFeature?.name || '');
     setValue('uri', initialFeature?.uri || '');
     setValue('description', initialFeature?.description || '');
