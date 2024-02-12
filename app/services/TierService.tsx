@@ -99,6 +99,12 @@ class TierService {
       data: tierAttributes as Tier,
     });
 
+    if(!user.stripeProductId) {
+      ProductService.createProduct(user.id);
+    }
+    
+    await TierService.createStripePrice(tier);
+
     return tier;
   }
 
@@ -389,7 +395,6 @@ class TierService {
   
 
 };
-
 
 export const createStripePriceById = async (id: string) => {
   const tier = await TierService.findTier(id);

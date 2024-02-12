@@ -95,6 +95,14 @@ class StripeService {
     return !!user.stripeAccountId && !!user.stripeProductId;
   }
 
+  static async userHasStripeAccountIdById() {
+    const user = await UserService.getCurrentUser();
+    if (!user) {
+      throw new Error('User not found');
+    }
+    return !!user.stripeAccountId;
+  }
+
   static async userCanSellById() {
     const user = await UserService.getCurrentUser();
     if (!user) {
@@ -356,6 +364,6 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
 };
 
 
-export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod, disconnectStripeAccount, userCanSellById } = StripeService
+export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod, disconnectStripeAccount, userCanSellById, userHasStripeAccountIdById } = StripeService
 
 export default StripeService;

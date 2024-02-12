@@ -6,7 +6,7 @@ import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
-import { userCanSellById } from '@/app/services/StripeService';
+import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 
 interface TierFormProps {
 	tier: Partial<Tier>;
@@ -59,7 +59,7 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 	const [canPublish, setCanPublish] = useState(false);
 
 	useEffect(() => {
-		userCanSellById().then(setCanPublish);
+		userHasStripeAccountIdById().then(setCanPublish);
 	}, []);
 
 	return (
