@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, Suspense, useEffect, useState } from 'react';
 import { Flex, Text, Button, Card, Title, Bold, NumberInput, Callout, TextInput, Textarea } from "@tremor/react"
 import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
@@ -8,13 +8,15 @@ import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
+import TierFeaturePicker from '../features/tier-feature-picker';
 
 interface TierFormProps {
 	tier: Partial<Tier>;
 	handleSubmit: (tier: Tier) => void;
+	children?: any;
 }
 
-export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps) {
+export default function TierForm({ tier: tierObj, handleSubmit, children }: TierFormProps) {
 	const router = useRouter();
 	const [tier, setTier] = useState<Tier>(tierObj as Tier);
 
@@ -169,6 +171,8 @@ export default function TierForm({ tier: tierObj, handleSubmit }: TierFormProps)
 							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
 						</Flex>
 					</div>
+
+					{ children }
 				</div>
 
 				{/* Preview Section */}
