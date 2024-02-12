@@ -15,12 +15,13 @@ const TierFeaturePicker = async ({ tierId }: { tierId: string }) => {
     return <div>User not found</div>;
   }
   let allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUser.id);
+  
   allTiers = allTiers.sort((a, b) => {
     if (a.id === tierId) return -1;
     if (b.id === tierId) return 1;
     return a.price - b.price;
   });
-  
+
   const tier: TierWithFeatures | undefined = allTiers.find((t) => t.id === tierId);
 
   if(!tier) return (<>

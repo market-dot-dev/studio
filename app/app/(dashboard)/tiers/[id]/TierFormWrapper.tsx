@@ -10,5 +10,7 @@ export default function TierFormWrapper({ tier, children } : { tier: Tier, child
 
   if(!(tier && tier.id)) return null;
 
-  return <TierForm tier={tier} handleSubmit={handleSubmit} children={children} />
+  return <TierForm tier={tier} handleSubmit={handleSubmit}>
+    {children}
+  </TierForm>
 }

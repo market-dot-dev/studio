@@ -1,6 +1,5 @@
 import { findTier } from '@/app/services/TierService';
 import TierFormWrapper from './TierFormWrapper';
-import PageHeading from '@/components/common/page-heading';
 import { Suspense } from 'react';
 import TierFeaturePicker from '@/components/features/tier-feature-picker';
 
