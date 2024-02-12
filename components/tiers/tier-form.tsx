@@ -135,11 +135,6 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 								<Bold>Price</Bold>
 								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange}/>
 							</Flex>
-
-							<Flex flexDirection="col" alignItems="start" className="gap-1">
-								<Bold>Stripe Price Id</Bold>
-								<TextInput value={tier.stripePriceId || ''} name="stripePriceId" placeholder="Stripe Price Id" onChange={handleInputChange}/>
-							</Flex>
 						</Flex>
 					</Card>
 

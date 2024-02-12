@@ -11,7 +11,7 @@ export default function NewTierPage() {
   const [tier, setTier] = useState<Partial<Tier>>(attrs);
 
   const handleSubmit = async (tier: Tier) => {
-    window.location.href = `/services/tiers/${tier.id}`;
+    window.location.href = `/tiers/${tier.id}`;
   };
 
   return (

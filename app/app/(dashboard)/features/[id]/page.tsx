@@ -21,7 +21,7 @@ export default async function ServiceEditPage({ params }: { params: { id: string
   return (
     <div>
       <h1>Edit Service</h1>
-      <FeatureForm service={services} initialFeature={feature} />
+      { /* <FeatureForm service={services} initialFeature={feature} /> */ }
     </div>
   );
 }
