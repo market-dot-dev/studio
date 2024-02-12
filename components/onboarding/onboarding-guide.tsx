@@ -131,31 +131,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
         });
     }, [setIsDismissing]);
 
-    // for debugging purposes only, only shown in development
-    if( (process.env.NODE_ENV === "development") && (completedSteps === null || isDismissed) && (pathName === '/' && dashboard)) {
-        return (
-            <div className="p-4 w-1/2">
-                <Card className='border-2 border-slate-800 bg-slate-50'>
-                    <Badge size="xs" className="me-2 mb-1.5">FOR DEBUGGING PURPOSES ONLY</Badge>
-                    <Title>Restore Onboarding Guide</Title>
-                    <Button onClick={() => {
-                        saveOnboardingState(defaultOnboardingState).then(() => {
-                            const newState = { ...defaultOnboardingState };
-                            setCompletedSteps((prev : any) => {
-                                return {
-                                    ...prev,
-                                    ...newState
-                                }
-                            });
-                            setIsDismissed(false);
-                        })
-                    }}>Restore</Button>
-                </Card>
-            </div>
-        );
-    }
-
-
     if (completedSteps === null || isDismissed || (pathName === '/' && !dashboard)) {
         return (
             <></>
