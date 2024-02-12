@@ -91,10 +91,13 @@ dependencies:
     version: 14.1.0(@opentelemetry/api@1.7.0)(react-dom@18.2.0)(react@18.2.0)
   next-auth:
     specifier: 4.24.5
-    version: 4.24.5(next@14.1.0)(react-dom@18.2.0)(react@18.2.0)
+    version: 4.24.5(next@14.1.0)(nodemailer@6.9.9)(react-dom@18.2.0)(react@18.2.0)
   next-mdx-remote:
     specifier: ^4.4.1
     version: 4.4.1(react-dom@18.2.0)(react@18.2.0)
+  nodemailer:
+    specifier: ^6.9.9
+    version: 6.9.9
   novel:
     specifier: ^0.1.22
     version: 0.1.22(@opentelemetry/api@1.7.0)(react@18.2.0)(solid-js@1.8.14)(svelte@4.2.10)(vue@3.4.15)
@@ -1247,7 +1250,7 @@ packages:
       next-auth: ^4
     dependencies:
       '@prisma/client': 5.9.1(prisma@5.9.1)
-      next-auth: 4.24.5(next@14.1.0)(react-dom@18.2.0)(react@18.2.0)
+      next-auth: 4.24.5(next@14.1.0)(nodemailer@6.9.9)(react-dom@18.2.0)(react@18.2.0)
     dev: false
 
   /@next/env@13.4.20-canary.15:
@@ -8318,7 +8321,7 @@ packages:
   /natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  /next-auth@4.24.5(next@14.1.0)(react-dom@18.2.0)(react@18.2.0):
+  /next-auth@4.24.5(next@14.1.0)(nodemailer@6.9.9)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-3RafV3XbfIKk6rF6GlLE4/KxjTcuMCifqrmD+98ejFq73SRoj2rmzoca8u764977lH/Q7jo6Xu6yM+Re1Mz/Og==}
     peerDependencies:
       next: ^12.2.5 || ^13 || ^14
@@ -8334,6 +8337,7 @@ packages:
       cookie: 0.5.0
       jose: 4.15.4
       next: 14.1.0(@opentelemetry/api@1.7.0)(react-dom@18.2.0)(react@18.2.0)
+      nodemailer: 6.9.9
       oauth: 0.9.15
       openid-client: 5.6.4
       preact: 10.19.3
@@ -8502,6 +8506,11 @@ packages:
   /node-releases@2.0.14:
     resolution: {integrity: sha512-y10wOWt8yZpqXmOgRo77WaHEmhYQYGNA6y421PKsKYWEK8aW+cqAphborZDhqfyKrbZEN92CN1X2KbafY2s7Yw==}
     dev: true
+
+  /nodemailer@6.9.9:
+    resolution: {integrity: sha512-dexTll8zqQoVJEZPwQAKzxxtFn0qTnjdQTchoU6Re9BUUGBJiOy3YMn/0ShTW6J5M0dfQ1NeDeRTTl4oIWgQMA==}
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   /normalize-path@3.0.0:
     resolution: {integrity: sha512-6eZs5Ls3WtCisHWp9S2GUy8dqkpGi4BVSz3GaqiE6ezub0512ESztXUwUB6C6IKbQkY2Pnb/mD4WYojCRwcwLA==}
