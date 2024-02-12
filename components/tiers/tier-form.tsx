@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput } from "@tremor/react"
+import { Flex, Text, Button, Card, Title, Bold, NumberInput } from "@tremor/react"
 import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import { useRouter } from 'next/navigation';
@@ -129,11 +129,9 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					{/* Current version */}
 					<Card>
 						<Flex flexDirection="col" alignItems="start" className="gap-4">
-							<Title>Current Version</Title>
-							
 							<Flex flexDirection="col" alignItems="start" className="gap-1">
-								<Bold>Price</Bold>
-								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange}/>
+								<Bold>Monthly Price</Bold>
+								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange} enableStepper={false} />
 							</Flex>
 						</Flex>
 					</Card>
