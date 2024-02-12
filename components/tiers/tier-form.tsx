@@ -1,7 +1,7 @@
 "use client";
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Flex, Text, Button, Card, Title, Bold, NumberInput } from "@tremor/react"
+import { Flex, Text, Button, Card, Title, Bold, NumberInput, Callout } from "@tremor/react"
 import Tier from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import { useRouter } from 'next/navigation';
@@ -116,8 +116,10 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					</div>
 
 					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Status</label>
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
 							<Flex className='gap-2' justifyContent='start'>
+
 							{ canPublishLoading && <Text>(checking stripe eligiblity)</Text> }
 							{ !canPublishLoading && <>
 								<input type="checkbox"
@@ -127,11 +129,15 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 										setTier({ ...tier, published: e.target.checked } as Tier);
 									}} /> 
 								<span>
-									{ !canPublishDisabled && <>Published</> }
-									{ (!canPublish && !canPublishLoading) && <Text color="red" >You need to connect your Stripe account to publish a tier</Text> }
+									<label htmlFor="switch" className="text-sm text-gray-500 ms-2">
+										Make this tier <span className="font-medium text-gray-700">available for sale.</span>
+									</label>
 								</span>
-								</>}
+							</>}
 							</Flex>
+							{ (!canPublish && !canPublishLoading) && <>
+								<Callout className="my-2" title="Payment Setup Required" color="red">You need to connect your Stripe account to publish a tier. Visit <a href="/settings/payment" className="underline">Payment Settings</a> to get started.</Callout>
+							</>}
 						</label>
 					</div>
 
