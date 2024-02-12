@@ -10,7 +10,6 @@ export default async function EditTierPage({params} : {params: { id: string }}) 
   
   return (
     <div className="flex max-w-screen-xl flex-col p-8">
-    <PageHeading title="Edit Tier" />
       <TierFormWrapper tier={tier} />
 
       <Suspense>
