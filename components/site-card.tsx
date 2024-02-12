@@ -33,9 +33,9 @@ export default function SiteCard({ data }: { data: Site }) {
       <div className="absolute bottom-4 flex w-full justify-between space-x-4 px-4">
         <a
           href={
-            process.env.NEXT_PUBLIC_VERCEL_ENV
+            process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development'
               ? `https://${url}`
-              : `http://${data.subdomain}.localhost:3000`
+              : `http://${data.subdomain}.gitwallet.local:3000`
           }
           target="_blank"
           rel="noreferrer"

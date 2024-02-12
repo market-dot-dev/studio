@@ -24,9 +24,9 @@ export default function Pages({ pages, homepageId, subdomain }: { pages: any, ho
 							<Table.Cell>
 								<a
 									href={
-										process.env.NEXT_PUBLIC_VERCEL_ENV
+										process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development'
 											? `https://${url}` + (page.id === homepageId ? '' : `/${page.slug}`)
-											: `http://${subdomain}.localhost:3000` + (page.id === homepageId ? '' : `/${page.slug}`)
+											: `http://${subdomain}.gitwallet.local:3000` + (page.id === homepageId ? '' : `/${page.slug}`)
 									}
 									target="_blank"
 									rel="noreferrer"

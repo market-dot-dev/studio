@@ -18,9 +18,9 @@ const ExternalLinkChip = ({ href, children }: { href: string, children: ReactNod
 }
 
 export default function ExternalLink({ subdomain, url }: { subdomain?: string, url: string }) {
-  const href: string = process.env.NEXT_PUBLIC_VERCEL_ENV
+  const href: string = process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development'
   ? `https://${url}`
-  : `http://${subdomain}.localhost:3000`;
+  : `http://${subdomain}.gitwallet.local:3000`;
 
     return (
       <ExternalLinkChip href={href}>

@@ -45,9 +45,9 @@ export default function PostCard({
       <div className="absolute bottom-4 flex w-full px-4">
         <a
           href={
-            process.env.NEXT_PUBLIC_VERCEL_ENV
+            process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development'
               ? `https://${url}`
-              : `http://${data.site?.subdomain}.localhost:3000/${data.slug}`
+              : `http://${data.site?.subdomain}.gitwallet.local:3000/${data.slug}`
           }
           target="_blank"
           rel="noreferrer"
