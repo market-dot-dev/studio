@@ -1,4 +1,3 @@
-
 import { cookies } from 'next/headers';
 import { Metadata } from "next";
 import { ReactNode } from "react";
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
   title: "Login | Gitwallet",
 };
 
-export default function LoginPage({ children }: { children: ReactNode }) {
+export default async function LoginPage() {
   const localAuthAvailable = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
   const csrfToken = cookies().get('next-auth.csrf-token')?.value.split('|')[0];
 

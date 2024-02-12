@@ -1,5 +1,5 @@
 import { getSession } from "@/lib/auth";
-import { getSiteNav } from "@/lib/site/fetchers";
+import { getSiteNav } from "@/app/services/SiteService";
 
 // Get nav items for the site of the current admin
 export async function GET(req: Request, res: Response) {
