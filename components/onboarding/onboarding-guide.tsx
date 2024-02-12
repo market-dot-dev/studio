@@ -143,14 +143,15 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     };
 
     return (
-        <div className={`flex max-w-screen-xl flex-col space-y-4` + (!dashboard ? ` p-8` : ``)}>
+        <div className={`flex max-w-screen-xl flex-col space-y-2` + (!dashboard ? ` p-8` : ``)}>
             <Flex flexDirection="col" alignItems="stretch" className="gap-8">
 
                 {dashboard &&
-                    <div className="flex gap-1">
-                        <p className="text-start text-md font-semibold">
-                            Welcome to Gitwallet. Here&apos;s a quick guide to get you started.&nbsp;
+                    <div className="flex flex-col text-start">
+                        <p className="font-cal text-3xl font-bold mb-2">
+                            Welcome to Gitwallet!
                         </p>
+                        <Text>Here&apos;s a quick guide to get you started.&nbsp;</Text>
                     </div>}
 
 
