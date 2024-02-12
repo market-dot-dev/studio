@@ -57,10 +57,16 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 	}
 
 	const [canPublish, setCanPublish] = useState(false);
+	const [canPublishLoading, setCanPublishLoading] = useState(true);
 
 	useEffect(() => {
-		userHasStripeAccountIdById().then(setCanPublish);
+		userHasStripeAccountIdById().then((value: boolean) => {
+			setCanPublish(value)
+			setCanPublishLoading(false);
+		});
 	}, []);
+
+	const canPublishDisabled = !canPublish || canPublishLoading;
 
 	return (
 		<>
@@ -112,16 +118,19 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
 							<Flex className='gap-2' justifyContent='start'>
+							{ canPublishLoading && <Text>(checking stripe eligiblity)</Text> }
+							{ !canPublishLoading && <>
 								<input type="checkbox"
 									checked={tier.published}
-									disabled={!canPublish}
+									disabled={canPublishDisabled}
 									onChange={(e) => {
 										setTier({ ...tier, published: e.target.checked } as Tier);
 									}} /> 
 								<span>
-									Published
-									{ !canPublish && <Text color="red" >You need to connect your Stripe account to publish a tier</Text> }
+									{ !canPublishDisabled && <>Published</> }
+									{ (!canPublish && !canPublishLoading) && <Text color="red" >You need to connect your Stripe account to publish a tier</Text> }
 								</span>
+								</>}
 							</Flex>
 						</label>
 					</div>
