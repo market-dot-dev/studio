@@ -13,7 +13,7 @@ export default async function Tiers() {
   const tiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUserId);
 
   return (
-    <div className="flex max-w flex-col space-y-12 p-8">
+    <div className="flex max-w flex-col space-y-12">
       <div className="flex justify-between w-full">
           <div className="flex flex-row">
             <PageHeading title="Your Active Tiers" />

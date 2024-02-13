@@ -4,6 +4,7 @@ import { random } from "@/lib/utils";
 import { Metric, Text, AreaChart, BadgeDelta, Flex, BarChart, LineChart, Button } from "@tremor/react";
 import { useMemo } from "react";
 import DashboardCard from "../common/dashboard-card";
+import Link from "next/link";
 
 export default function DashboardCharts() {
   const data = useMemo(() => {
@@ -95,7 +96,7 @@ export default function DashboardCharts() {
 
   return (
     <>
-      <div className="flex max-w-screen-xl flex-col mt-4 space-y-4 px-6">
+      <div className="flex max-w-screen-xl flex-col mt-4 space-y-4">
         <div className="grid gap-6 sm:grid-cols-2">
           <DashboardCard>
             <Text>Customers</Text>
@@ -151,10 +152,12 @@ export default function DashboardCharts() {
           </DashboardCard>
         </div>
 
-        <div className="grid justify-items-end">
-          <Button size="xs" className="h-6" variant="secondary">
-            All Reports →
-          </Button>
+        <div className="grid justify-items-end mt-4">
+          <Link href='/reports'>
+            <Button size="xs" className="h-6" variant="secondary">
+              All Reports →
+            </Button>
+          </Link>
         </div>
       </div>
     </>
