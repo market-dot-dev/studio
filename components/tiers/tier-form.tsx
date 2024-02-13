@@ -8,15 +8,15 @@ import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
-import TierFeaturePicker from '../features/tier-feature-picker';
 
 interface TierFormProps {
 	tier: Partial<Tier>;
 	handleSubmit: (tier: Tier) => void;
 	children?: any;
+	setTierObj: (tier: Partial<Tier>) => void;
 }
 
-export default function TierForm({ tier: tierObj, handleSubmit, children }: TierFormProps) {
+export default function TierForm({ tier: tierObj, setTierObj, handleSubmit, children }: TierFormProps) {
 	const router = useRouter();
 	const [tier, setTier] = useState<Tier>(tierObj as Tier);
 
@@ -27,6 +27,10 @@ export default function TierForm({ tier: tierObj, handleSubmit, children }: Tier
 	//const [features, setFeatures] = useState(tier.features ?? []);
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
+
+	useEffect(() => {
+		setTierObj(tier as Tier);
+	}, [tier, setTierObj]);
 
 	const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>

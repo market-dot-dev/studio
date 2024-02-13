@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma"; // Adjust the import path based on your actual Prisma setup
 import { Feature } from "@prisma/client";
+import UserService from "./UserService";
 
 interface FeatureCreateAttributes {
   name?: string | null;
@@ -47,6 +48,22 @@ class FeatureService {
     const features = await prisma.feature.findMany({
       where: {
         userId,
+      },
+    });
+
+    return features ? features : [];
+  }
+
+  static async findByCurrentUser(): Promise<Feature[]> {
+    const user = await UserService.getCurrentUser();
+
+    if(!user){
+      throw new Error("not logged in");
+    }
+
+    const features = await prisma.feature.findMany({
+      where: {
+        userId: user?.id,
       },
     });
 
@@ -126,6 +143,6 @@ class FeatureService {
   }
 }
 
-export const { create, find, update, attach, detach, findByTierId } = FeatureService;
+export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser } = FeatureService;
 
 export default FeatureService;

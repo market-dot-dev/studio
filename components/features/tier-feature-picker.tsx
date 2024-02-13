@@ -1,39 +1,32 @@
-"use server";
 // tier-feature-picker.tsx
+"use client";
 
-import FeatureService from "@/app/services/feature-service";
-import TierService, { TierWithFeatures } from "@/app/services/TierService";
-import { Feature } from "@prisma/client";
-import UserService from "@/app/services/UserService";
+import { TierWithFeatures, getTiersForMatrix } from "@/app/services/TierService";
+import { Feature, Tier } from "@prisma/client";
 import TierFeaturePickerWidget from "./tier-feature-picker-widget";
+import { findByCurrentUser } from "@/app/services/feature-service";
+import { useEffect, useState } from "react";
 
-const TierFeaturePicker = async ({ tierId }: { tierId: string }) => {
-  const currentUser = await UserService.findCurrentUser();
+const TierFeaturePicker = ({ tierId, newTier }: { tierId?: string, newTier?: Tier }) => {
+  const [tiers, setTiers] = useState<TierWithFeatures[]>([]);
+  const [features, setFeatures] = useState<Feature[]>([]);
 
-  if (!currentUser) {
-    return <div>User not found</div>;
-  }
-  let allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUser.id);
+  useEffect(() => {
+    getTiersForMatrix().then((tiersData) => {
+      setTiers(tiersData);
+    });
 
-  allTiers = allTiers.sort((a, b) => {
-    if (a.id === tierId) return -1;
-    if (b.id === tierId) return 1;
-    return a.price - b.price;
-  });
+    findByCurrentUser().then((featuresData) => {
+      setFeatures(featuresData);
+    });
+  }, []); // Empty dependency array means this effect runs once on mount
 
-  const tier: TierWithFeatures | undefined = allTiers.find((t) => t.id === tierId);
+  const allTiers = newTier ? [newTier, ...tiers] : tiers;
 
-  if(!tier) return (<>
-    <div>No tier found</div>
-  </>);
-
-  const features = await FeatureService.findByUserId(tier.userId);
-
-  const isAttached = (tier: TierWithFeatures, feature: Feature) => {
-    return tier.features?.some(f => f.id === feature.id) || false;
-  }
-
-  return <TierFeaturePickerWidget tiers={allTiers} features={features} />;
+  return <>
+    { JSON.stringify(newTier) }
+    <TierFeaturePickerWidget tiers={allTiers} features={features} />
+  </>;
 };
 
 export default TierFeaturePicker;

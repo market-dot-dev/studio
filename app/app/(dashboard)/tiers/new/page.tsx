@@ -1,9 +1,9 @@
 'use client'
 
-import PageHeading from '@/components/common/page-heading';
 import Tier, { newTier } from '@/app/models/Tier';
 import TierForm from '@/components/tiers/tier-form';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
+import TierFeaturePicker from '@/components/features/tier-feature-picker';
 
 const attrs = newTier();
 
@@ -16,7 +16,12 @@ export default function NewTierPage() {
 
   return (
     <div className="flex max-w-screen-xl flex-col p-8">
-      <TierForm tier={tier} handleSubmit={handleSubmit} />
+      <h1>OMG</h1>
+      <TierForm tier={tier} setTierObj={setTier} handleSubmit={handleSubmit} >
+        <Suspense>
+          <TierFeaturePicker newTier={tier as Tier} />
+        </Suspense>
+      </TierForm>
     </div>
   )
 }

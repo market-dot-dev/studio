@@ -29,10 +29,10 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tiers
 
     if (isAlreadySelected) {
       updatedFeatures = selectedFeatures[tierId].filter(f => f.id !== feature.id);
-      await detach({ featureId: feature.id, referenceId: tierId }, 'tier');
+      if(tierId) await detach({ featureId: feature.id, referenceId: tierId }, 'tier');
     } else {
       updatedFeatures = [...(selectedFeatures[tierId] || []), feature];
-      await attach({ featureId: feature.id, referenceId: tierId }, 'tier');
+      if(tierId) await attach({ featureId: feature.id, referenceId: tierId }, 'tier');
     }
 
     setSelectedFeatures({
