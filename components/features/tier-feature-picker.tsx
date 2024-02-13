@@ -14,7 +14,14 @@ const TierFeaturePicker = async ({ tierId }: { tierId: string }) => {
   if (!currentUser) {
     return <div>User not found</div>;
   }
-  const allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUser.id);
+  let allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUser.id);
+  
+  allTiers = allTiers.sort((a, b) => {
+    if (a.id === tierId) return -1;
+    if (b.id === tierId) return 1;
+    return a.price - b.price;
+  });
+
   const tier: TierWithFeatures | undefined = allTiers.find((t) => t.id === tierId);
 
   if(!tier) return (<>
@@ -28,34 +35,40 @@ const TierFeaturePicker = async ({ tierId }: { tierId: string }) => {
   }
 
   return (
-    <Card>
-      <h1>Features available in {tier.name}</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Feature</th>
-            {allTiers.map((t) => (
-              <th key={t.id}>{t.name}</th>
+    <Card className="mt-5">
+      <h1 className="text-lg font-semibold pb-4">Features available in {tier.name}</h1>
+      <div className="overflow-x-auto">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Feature
+              </th>
+              {allTiers.map((t) => (
+                <th key={t.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {t.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-200">
+            {features.map((feature) => (
+              <tr key={feature.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  {feature.name}
+                </td>
+                {allTiers.map((t) => (
+                  <td key={t.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <Suspense fallback={<div>Loading...</div>}>
+                      <FeatureAddRemoveButton feature={feature} tier={t} isAttached={isAttached(t, feature)} />
+                    </Suspense>  
+                  </td>
+                ))}
+              </tr>
             ))}
-          </tr>
-        </thead>
-        <tbody>
-        {features.map((feature) => (
-          <tr key={feature.id}>
-            <td>
-              {feature.name}
-            </td>
-            {allTiers.map((t) => (
-              <td key={t.id}>
-                <Suspense fallback={<div>Loading...</div>}>
-                  <FeatureAddRemoveButton feature={feature} tier={t} isAttached={isAttached(t, feature)} />
-                </Suspense>  
-              </td>
-            ))}
-          </tr>
-        ))}
-        </tbody>
-      </table>
+          </tbody>
+        </table>
+      </div>
     </Card>
   );
 };

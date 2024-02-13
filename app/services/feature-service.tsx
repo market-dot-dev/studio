@@ -58,8 +58,13 @@ class FeatureService {
     if (!attributes.userId) {
       throw new Error("UserId is required to create a feature.");
     }
+    
+    // FIXME: try Omit<FeatureCreateAttributes, 'id'> instead of casting to any
+    const attrs = attributes as any;
+    attrs['id'] = undefined;
+
     return prisma.feature.create({
-      data: attributes,
+      data: attrs as FeatureCreateAttributes,
     });
   }
 

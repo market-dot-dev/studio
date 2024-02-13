@@ -3,12 +3,14 @@
 import TierForm from '@/components/tiers/tier-form';
 import Tier from '@/app/models/Tier';
 
-export default function TierFormWrapper({ tier } : { tier: Tier }) {
+export default function TierFormWrapper({ tier, children } : { tier: Tier, children: any }) {
   const handleSubmit = async (tier: Tier) => {
     window.location.href = `/tiers/${tier.id}`;
   };
 
   if(!(tier && tier.id)) return null;
 
-  return <TierForm tier={tier} handleSubmit={handleSubmit} />
+  return <TierForm tier={tier} handleSubmit={handleSubmit}>
+    {children}
+  </TierForm>
 }
