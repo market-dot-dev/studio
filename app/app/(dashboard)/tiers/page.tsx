@@ -16,7 +16,7 @@ export default async function Tiers() {
     <div className="flex max-w flex-col space-y-12">
       <div className="flex justify-between w-full">
         <div className="flex flex-row">
-          <PageHeading title="Packages" />
+          <PageHeading title="Tiers" />
         </div>
         <div className="flex flex-row">
           <PrimaryButton label="New Tier" href="/tiers/new" />
