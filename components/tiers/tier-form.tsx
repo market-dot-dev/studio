@@ -29,7 +29,7 @@ export default function TierForm({ tier: tierObj, setTierObj, handleSubmit, chil
 	const [isSaving, setIsSaving] = useState(false);
 
 	useEffect(() => {
-		setTierObj(tier as Tier);
+		setTierObj && setTierObj(tier as Tier);
 	}, [tier, setTierObj]);
 
 	const handleInputChange = (

@@ -16,7 +16,6 @@ export default function NewTierPage() {
 
   return (
     <div className="flex max-w-screen-xl flex-col p-8">
-      <h1>OMG</h1>
       <TierForm tier={tier} setTierObj={setTier} handleSubmit={handleSubmit} >
         <Suspense>
           <TierFeaturePicker newTier={tier as Tier} />

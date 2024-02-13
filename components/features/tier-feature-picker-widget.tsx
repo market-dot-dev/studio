@@ -53,7 +53,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tiers
               </th>
               {tiers.length > 0 ? tiers.map(tier => (
                 <th key={tier.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {tier.name}
+                  {tier.name || '(Unnamed Tier)' }
                 </th>
               )) : <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No tiers available</th>}
             </tr>

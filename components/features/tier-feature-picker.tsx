@@ -24,7 +24,6 @@ const TierFeaturePicker = ({ tierId, newTier }: { tierId?: string, newTier?: Tie
   const allTiers = newTier ? [newTier, ...tiers] : tiers;
 
   return <>
-    { JSON.stringify(newTier) }
     <TierFeaturePickerWidget tiers={allTiers} features={features} />
   </>;
 };
