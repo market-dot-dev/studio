@@ -156,15 +156,12 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
           </div>
           <div className="border-t border-gray-200">
             {filteredServices.map((service) => (
-              <div className="flex flex-col space-y-4">
               <ServiceCard
                 key={service.id}
                 service={service} onUpdate={() => {}}
                 selectedService={selectedService}
                 setSelectedService={setSelectedService}
                 currentFeatureEnabled={features.find((f) => f.serviceId === service.id)?.isEnabled || false} />
-                <FeatureForm initialFeature={currentFeature} service={service} />
-</div>
             ))}
           </div>
         </div>

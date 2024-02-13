@@ -15,7 +15,7 @@ export default function NewTierPage() {
   };
 
   return (
-    <div className="flex max-w-screen-xl flex-col">
+    <div className="flex max-w-screen-xl flex-col p-8">
       <TierForm tier={tier} handleSubmit={handleSubmit} />
     </div>
   )

@@ -29,7 +29,7 @@ export default async function SubscriptionsList({ params }: { params: { id: stri
   const anySubscriptions = subscriptions && subscriptions.length > 0;
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12">
+    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
       <PageHeading title="Your Subscriptions" />
 
