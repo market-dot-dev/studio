@@ -1,26 +1,30 @@
 "use client";
+// tier-form.tsx
 
 import { ChangeEvent, Suspense, useEffect, useState } from 'react';
 import { Flex, Text, Button, Card, Title, Bold, NumberInput, Callout, TextInput, Textarea } from "@tremor/react"
-import Tier from '@/app/models/Tier';
+import Tier, { newTier } from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
+import { Feature } from '@prisma/client';
 import TierFeaturePicker from '../features/tier-feature-picker';
+import { attachMany } from '@/app/services/feature-service';
 
 interface TierFormProps {
-	tier: Partial<Tier>;
-	handleSubmit: (tier: Tier) => void;
-	children?: any;
+	tier?: Partial<Tier>;
 }
 
-export default function TierForm({ tier: tierObj, handleSubmit, children }: TierFormProps) {
-	const router = useRouter();
-	const [tier, setTier] = useState<Tier>(tierObj as Tier);
+const attrs = newTier() as Tier;
 
-	const newRecord = !tier.id;
+export default function TierForm({ tier: tierObj }: TierFormProps) {
+	const router = useRouter();
+	const [tier, setTier] = useState<Tier>((tierObj ? tierObj : newTier()) as Tier);
+	const [selectedFeatures, setSelectedFeatures] = useState<Record<string, Feature[]>>({});
+
+	const newRecord = !tier?.id;
 
 	const label = newRecord ? 'Create Tier' : 'Update Tier';
 	
@@ -50,7 +54,11 @@ export default function TierForm({ tier: tierObj, handleSubmit, children }: Tier
 
 		try {
 			const savedTier = newRecord ? await createTier(tier) : await updateTier(tier.id as string, tier);
-			handleSubmit(savedTier);
+
+			if(newRecord) {
+				await attachMany({ referenceId: savedTier.id, featureIds: Object.values(selectedFeatures).flat().map(f => f.id) }, 'tier');
+			}
+			window.location.href = `/tiers/${savedTier.id}`;
 		} catch (error) {
 			console.log(error);
 		} finally {
@@ -172,7 +180,9 @@ export default function TierForm({ tier: tierObj, handleSubmit, children }: Tier
 						</Flex>
 					</div>
 
-					{ children }
+					{ tier?.id ?
+						<TierFeaturePicker tierId={tier.id} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> :
+						<TierFeaturePicker newTier={attrs} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> }
 				</div>
 
 				{/* Preview Section */}
