@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma"; // Adjust the import path based on your actual Prisma setup
 import { Feature } from "@prisma/client";
+import UserService from "./UserService";
 
 interface FeatureCreateAttributes {
   name?: string | null;
@@ -47,6 +48,22 @@ class FeatureService {
     const features = await prisma.feature.findMany({
       where: {
         userId,
+      },
+    });
+
+    return features ? features : [];
+  }
+
+  static async findByCurrentUser(): Promise<Feature[]> {
+    const user = await UserService.getCurrentUser();
+
+    if(!user){
+      throw new Error("not logged in");
+    }
+
+    const features = await prisma.feature.findMany({
+      where: {
+        userId: user?.id,
       },
     });
 
@@ -101,6 +118,17 @@ class FeatureService {
     }
   }
 
+
+  // FIXME: do it in a single query
+  static async attachMany({ featureIds, referenceId }: {
+    featureIds: string[];
+    referenceId: string; // Either Tier or TierVersion ID
+  }, type: 'tier' | 'tierVersion') {
+    featureIds.forEach(async (featureId) => {
+      await this.attach({ featureId, referenceId }, type);
+    });
+  }
+
   static async detach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
     if (type === 'tier') {
       return prisma.feature.update({
@@ -126,6 +154,6 @@ class FeatureService {
   }
 }
 
-export const { create, find, update, attach, detach, findByTierId } = FeatureService;
+export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser, attachMany } = FeatureService;
 
 export default FeatureService;

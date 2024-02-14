@@ -1,42 +1,66 @@
-"use server";
+"use client";
+// tier-feature-picker-widget.tsx
 
-import FeatureService from "@/app/services/feature-service";
-import TierService, { TierWithFeatures } from "@/app/services/TierService";
-import { Feature } from "@prisma/client";
-import FeatureAddRemoveButton from "@/components/features/feature-add-remove-toggle";
-import { Suspense } from "react";
+import React, { useState, useEffect } from "react";
+import { Feature, Tier } from "@prisma/client";
+import FeatureAddRemoveToggle from "@/components/features/feature-add-remove-toggle";
 import { Card } from "@tremor/react";
-import UserService from "@/app/services/UserService";
+import { attach, detach } from "@/app/services/feature-service";
+import { TierWithFeatures, getTiersForMatrix } from "@/app/services/TierService";
+import { findByCurrentUser } from "@/app/services/feature-service";
 
-const TierFeaturePicker = async ({ tierId }: { tierId: string }) => {
-  const currentUser = await UserService.findCurrentUser();
+interface TierFeaturePickerWidgetProps {
+  tierId?: string;
+  newTier?: Tier;
+  selectedFeatures: Record<string, Feature[]>;
+  setSelectedFeatures: (features: Record<string, Feature[]>) => void;
+}
 
-  if (!currentUser) {
-    return <div>User not found</div>;
-  }
-  let allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUser.id);
-  
-  allTiers = allTiers.sort((a, b) => {
-    if (a.id === tierId) return -1;
-    if (b.id === tierId) return 1;
-    return a.price - b.price;
-  });
+const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatures, setSelectedFeatures }) => {
+  const [tiers, setTiers] = useState<TierWithFeatures[]>([]);
+  const [features, setFeatures] = useState<Feature[]>([]);
 
-  const tier: TierWithFeatures | undefined = allTiers.find((t) => t.id === tierId);
+  useEffect(() => {
+    getTiersForMatrix().then((tiersData) => {
+      setTiers(tiersData);
+    });
 
-  if(!tier) return (<>
-    <div>No tier found</div>
-  </>);
+    findByCurrentUser().then((featuresData) => {
+      setFeatures(featuresData);
+    });
+  }, [])
 
-  const features = await FeatureService.findByUserId(tier.userId);
+  const allTiers = newTier ? [newTier, ...tiers] : tiers;
 
-  const isAttached = (tier: TierWithFeatures, feature: Feature) => {
-    return tier.features?.some(f => f.id === feature.id) || false;
-  }
+  useEffect(() => {
+    const initialSelection: Record<string, Feature[]> = {};
+    tiers.forEach(tier => {
+      initialSelection[tier.id] = tier.features ?? [];
+    });
+    setSelectedFeatures(initialSelection);
+  }, [tiers]);
+
+  const handleFeatureToggle = async (feature: Feature, tierId: string) => {
+    const isAlreadySelected = selectedFeatures[tierId]?.some(f => f.id === feature.id);
+    let updatedFeatures;
+
+    if (isAlreadySelected) {
+      updatedFeatures = selectedFeatures[tierId].filter(f => f.id !== feature.id);
+      if(tierId) await detach({ featureId: feature.id, referenceId: tierId }, 'tier');
+    } else {
+      updatedFeatures = [...(selectedFeatures[tierId] || []), feature];
+      if(tierId) await attach({ featureId: feature.id, referenceId: tierId }, 'tier');
+    }
+
+    setSelectedFeatures({
+      ...selectedFeatures,
+      [tierId]: updatedFeatures,
+    });
+  };
 
   return (
     <Card className="mt-5">
-      <h1 className="text-lg font-semibold pb-4">Features available in {tier.name}</h1>
+      <h1 className="text-lg font-semibold pb-4">Configure Features</h1>
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
@@ -44,24 +68,26 @@ const TierFeaturePicker = async ({ tierId }: { tierId: string }) => {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Feature
               </th>
-              {allTiers.map((t) => (
-                <th key={t.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {t.name}
+              {tiers.length > 0 ? tiers.map(tier => (
+                <th key={tier.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  {tier.name || '(Unnamed Tier)' }
                 </th>
-              ))}
+              )) : <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No tiers available</th>}
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {features.map((feature) => (
+            {features.map(feature => (
               <tr key={feature.id}>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                   {feature.name}
                 </td>
-                {allTiers.map((t) => (
-                  <td key={t.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <Suspense fallback={<div>Loading...</div>}>
-                      <FeatureAddRemoveButton feature={feature} tier={t} isAttached={isAttached(t, feature)} />
-                    </Suspense>  
+                {tiers.map(tier => (
+                  <td key={tier.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <FeatureAddRemoveToggle
+                      feature={feature}
+                      isAttached={selectedFeatures[tier.id]?.some(f => f.id === feature.id)}
+                      onToggle={() => handleFeatureToggle(feature, tier.id).catch(console.error)}
+                    />
                   </td>
                 ))}
               </tr>
@@ -73,4 +99,4 @@ const TierFeaturePicker = async ({ tierId }: { tierId: string }) => {
   );
 };
 
-export default TierFeaturePicker;
+export default TierFeaturePickerWidget;
