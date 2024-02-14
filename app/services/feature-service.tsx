@@ -92,65 +92,37 @@ class FeatureService {
     });
   }
 
-
-  // Attach a Tier or TierVersion to a Feature
-  static async attach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
-    if (type === 'tier') {
-      return prisma.feature.update({
-        where: { id: featureId },
-        data: {
-          tiers: {
-            connect: { id: referenceId },
-          },
-        },
-      });
-    } else if (type === 'tierVersion') {
-      return prisma.feature.update({
-        where: { id: featureId },
-        data: {
-          tierVersions: {
-            connect: { id: referenceId },
-          },
-        },
-      });
-    } else {
-      throw new Error("Invalid type for attach operation.");
-    }
+  private static updateData(referenceId: string, type: 'tier' | 'tierVersion', operation: 'connect' | 'disconnect') {
+    const dataPath = type === 'tier' ? 'tiers' : 'tierVersions';
+    return {
+      [dataPath]: {
+        [operation]: { id: referenceId },
+      },
+    };
   }
 
+  static async attach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
+    const data = this.updateData(referenceId, type, 'connect');
+    return prisma.feature.update({
+      where: { id: featureId },
+      data: data,
+    });
+  }
 
-  // FIXME: do it in a single query
-  static async attachMany({ featureIds, referenceId }: {
-    featureIds: string[];
-    referenceId: string; // Either Tier or TierVersion ID
-  }, type: 'tier' | 'tierVersion') {
-    featureIds.forEach(async (featureId) => {
-      await FeatureService.attach({ featureId, referenceId }, type);
+  static async attachMany({ featureIds, referenceId }: { featureIds: string[]; referenceId: string; }, type: 'tier' | 'tierVersion') {
+    const data = this.updateData(referenceId, type, 'connect');
+    return prisma.feature.updateMany({
+      where: { id: { in: featureIds } },
+      data: data,
     });
   }
 
   static async detach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
-    if (type === 'tier') {
-      return prisma.feature.update({
-        where: { id: featureId },
-        data: {
-          tiers: {
-            disconnect: { id: referenceId },
-          },
-        },
-      });
-    } else if (type === 'tierVersion') {
-      return prisma.feature.update({
-        where: { id: featureId },
-        data: {
-          tierVersions: {
-            disconnect: { id: referenceId },
-          },
-        },
-      });
-    } else {
-      throw new Error("Invalid type for detach operation.");
-    }
+    const data = this.updateData(referenceId, type, 'disconnect');
+    return prisma.feature.update({
+      where: { id: featureId },
+      data: data,
+    });
   }
 }
 
