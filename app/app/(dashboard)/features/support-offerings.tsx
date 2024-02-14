@@ -133,7 +133,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
   const currentFeature = features.find((f) => f.serviceId === selectedService.id);
 
   return (
-    <div className="flex flex-row gap-4 container mx-auto p-6">
+    <div className="flex flex-row gap-4 container mx-auto">
       <aside className="w-1/4">
         <div className="py-5 font-bold">
           Categories

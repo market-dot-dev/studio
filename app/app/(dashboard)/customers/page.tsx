@@ -1,17 +1,18 @@
 import TierService from "@/app/services/TierService";
 import DashboardCard from "@/components/common/dashboard-card";
 import PageHeading from "@/components/common/page-heading";
-import { BadgeDelta, Button, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import { BadgeDelta, Button, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Text } from "@tremor/react";
 
 export default async function CustomersList({ params }: { params: { id: string } }) {
 
     const customers = await TierService.getCustomersOfUserTiers() as any[];
     
     return (
-      <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+      <div className="flex max-w-screen-xl flex-col space-y-12">
         <div className="flex justify-between w-full">
-          <div className="flex flex-row">
+          <div className="flex flex-col">
             <PageHeading title="All Customers" />
+            <Text>Manage your customers and their tiers here. </Text>
           </div>
           {/* <div className="flex flex-row gap-1">
             <LinkButton href="/customers/new" label="New Customer" />
