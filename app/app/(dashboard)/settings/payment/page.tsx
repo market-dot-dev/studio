@@ -57,9 +57,8 @@ export default async function PaymentSettings({
   const stripeConnected = !!user.stripeAccountId;
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+    <div className="flex max-w-screen-xl flex-col space-y-12">
       <div className="flex flex-col space-y-6">
-        <Card className="p-10">
           <Flex flexDirection="col" alignItems="start" className="gap-4">
             { !stripeConnected && <>
               <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
@@ -71,15 +70,14 @@ export default async function PaymentSettings({
             { stripeConnected && <>
               <h2 className="font-cal text-xl dark:text-white">Stripe Account</h2>
               <Text>
-                Your stripe account is connected.
+                Your stripe account is connected. Your account ID is:
               </Text>
-              <DisconnectStripeAccountButton user={user} />
               <pre>
                 { user.stripeAccountId }
               </pre>
+              <DisconnectStripeAccountButton user={user} />
             </> }
           </Flex>
-        </Card>
       </div>
     </div>
   );

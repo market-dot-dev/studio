@@ -1,4 +1,4 @@
-import { Text, Flex, TextInput, NumberInput } from "@tremor/react";
+import { Text, Flex, TextInput, NumberInput, Switch } from "@tremor/react";
 
 export type TiersEmbedSettingsProps = {
   darkmode: boolean | undefined;

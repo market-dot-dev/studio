@@ -4,6 +4,8 @@ import prisma from '@/lib/prisma';
 import { Service, Feature } from '@prisma/client';
 import React from 'react';
 import Offerings from './support-offerings';
+import { Text } from '@tremor/react';
+import PageHeading from '@/components/common/page-heading';
 
 type Category = {
   id: string;
@@ -24,11 +26,11 @@ const OfferingsWrapper = async () => {
   const features: Feature[] = await prisma.feature.findMany();
 
   return (<>
-    <div className="px-6 pt-6">
-      <h3 className="text-lg leading-6 font-medium text-gray-900">Product &amp; Service Offerings</h3>
-      <div>Create and manage your support offerings</div>
-    </div>
-    <Offerings services={services} features={features} />
+      <div className="flex flex-col">
+        <PageHeading title="Your Services" />
+        <Text>Create and manage your support offerings</Text>
+      </div>
+      <Offerings services={services} features={features} />
   </>);
 };
 

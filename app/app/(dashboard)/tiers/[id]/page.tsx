@@ -6,7 +6,7 @@ export default async function EditTierPage({params} : {params: { id: string }}) 
   if(!tier || !tier.id) return null;
   
   return (
-    <div className="flex max-w-screen-xl flex-col p-8">
+    <div className="flex max-w-screen-xl flex-col">
       <TierForm tier={tier} />
     </div>
   );
