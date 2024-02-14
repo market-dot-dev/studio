@@ -27,6 +27,7 @@ import {
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
 import RoleSwitcher from "./user/role-switcher";
+import { FaDiscord, FaTelegram, FaTelegramPlane } from "react-icons/fa";
 
 export default function Nav({ children, siteId, roleId }: { children: ReactNode, siteId: string | null, roleId: string | null }) {
   const urlSegments = useSelectedLayoutSegments();
@@ -88,6 +89,24 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         isActive: urlSegments[0] === "embeds",
         icon: <Code2 width={18} />,
       },
+      {
+        
+        name: "Get Support",
+        href: "",
+        isDivider: true,
+      },
+      {
+        name: "Gitwallet Discord",
+        href: "https://discord.gg/ZdSpS4BuGd",
+        target: "_blank",
+        icon: <FaDiscord width={18} />,
+      },
+      {
+        name: "DM Founder",
+        href: "https://t.me/tarunsachdeva2",
+        target: "_blank",
+        icon: <FaTelegramPlane width={18} />, 
+      },
       ...(process.env.NODE_ENV === "development" ?
       [{
         name: "⚠️ DEBUG MENU ⚠️",
@@ -137,13 +156,14 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
             </div>
           </div>
           <div className="grid gap-0.5">
-            {tabs.map(({ name, href, isActive, icon }) => (
+            {tabs.map(({ name, href, target, isActive, icon }) => (
               href === "" ? (
                 <span key={name} className="text-xs font-small uppercase mt-4">{name}</span>
               ) : (
                 <Link
                   key={name}
                   href={href}
+                  target={target}
                   className={`flex items-center space-x-3 ${isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
                     } rounded-lg px-1 py-0.5 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                 >

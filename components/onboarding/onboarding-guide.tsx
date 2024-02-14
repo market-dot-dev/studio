@@ -73,7 +73,7 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
     const stepDescription = onboardingStepsDescription[step as keyof typeof onboardingStepsDescription];
     const stepIcon = onboardingStepsIcons[step as keyof typeof onboardingStepsIcons];
     const stepIconDiv = 
-        <div className="flex items-center justify-center">
+        <div className="me-2">
             <Icon icon={stepIcon} size={"xl"} />    
         </div>;
 
