@@ -13,8 +13,8 @@ export default async function Tiers() {
   const tiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUserId);
 
   return (
-    <div className="flex max-w flex-col space-y-12">
-      <div className="flex justify-between w-full">
+    <div className="flex max-w flex-col max-w-screen-xl space-y-12">
+      <div className="flex justify-between">
         <div className="flex flex-row">
           <PageHeading title="Tiers" />
         </div>
@@ -27,11 +27,11 @@ export default async function Tiers() {
         <section>
           <div className="max-w-screen-xl">
             {tiers.length === 0 && <div>You have no tiers. Create a new tier to get started.</div>}
-            <Grid numItems={3} className="gap-12" >
+            <Grid numItems={4} className="gap-8" >
               {tiers.map((tier, index) => (
                 <>
-                <div>
-                  <Badge key={index} className="mb-2" color={tier.published ? 'green' : 'gray'}>{tier.published ? 'Active' : 'Inactive'}</Badge>
+                <div className='text-center'>
+                  <Badge key={index} className="mb-2 mx-auto" color={tier.published ? 'green' : 'gray'}>{tier.published ? 'Active' : 'Inactive'}</Badge>
                   <TierCard key={index} tier={tier} canEdit={true} />
                   </div>
                 </>
