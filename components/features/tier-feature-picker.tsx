@@ -20,6 +20,8 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   const [savedTiers, setSavedTiers] = useState<TierWithFeatures[]>([]);
   const [features, setFeatures] = useState<Feature[]>([]);
 
+  const anyFeatures = features.length > 0;
+
   useEffect(() => {
     getTiersForMatrix().then((tiersData) => {
       setSavedTiers(tiersData);
@@ -38,7 +40,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
       initialSelection[tier.id] = tier.features ?? [];
     });
     setSelectedFeatures(initialSelection);
-  }, [savedTiers]);
+  }, [savedTiers, setSelectedFeatures]);
 
   const handleFeatureToggle = async (feature: Feature, tierId: string) => {
     const isAlreadySelected = selectedFeatures[tierId]?.some(f => f.id === feature.id);
@@ -62,38 +64,42 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
     <Card className="mt-5">
       <h1 className="text-lg font-semibold pb-4">Configure Features</h1>
       <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Feature
-              </th>
-              {tiers.length > 0 ? tiers.map(tier => (
-                <th key={tier.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  {tier.name || '(Unnamed Tier)' }
+        { !anyFeatures && <p>No features defined. You can add some <a href="/features">here</a></p> }
+        { anyFeatures &&
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Feature
                 </th>
-              )) : <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No tiers available</th>}
-            </tr>
-          </thead>
-          <tbody className="bg-white divide-y divide-gray-200">
-            {features.map(feature => (
-              <tr key={feature.id}>
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {feature.name}
-                </td>
-                {tiers.map(tier => (
-                  <td key={tier.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <FeatureAddRemoveToggle
-                      feature={feature}
-                      isAttached={selectedFeatures[tier.id]?.some(f => f.id === feature.id)}
-                      onToggle={() => handleFeatureToggle(feature, tier.id).catch(console.error)}
-                    />
-                  </td>
-                ))}
+                {tiers.length > 0 ? tiers.map(tier => (
+                  <th key={tier.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {tier.name || '(Unnamed Tier)' }
+                  </th>
+                )) : <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No tiers available</th>}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            
+            <tbody className="bg-white divide-y divide-gray-200">
+              {features.map(feature => (
+                <tr key={feature.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {feature.name}
+                  </td>
+                  {tiers.map(tier => (
+                    <td key={tier.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <FeatureAddRemoveToggle
+                        feature={feature}
+                        isAttached={selectedFeatures[tier.id]?.some(f => f.id === feature.id)}
+                        onToggle={() => handleFeatureToggle(feature, tier.id).catch(console.error)}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
       </div>
     </Card>
   );
