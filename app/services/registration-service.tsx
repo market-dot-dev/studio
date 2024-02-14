@@ -1,3 +1,5 @@
+'use server';
+
 import { User } from "@prisma/client"
 import prisma from "@/lib/prisma"
 import { siteName, siteDescription, homepageTitle, homepageTemplate} from "@/lib/constants/site-template";
@@ -23,15 +25,42 @@ class RegistrationService {
     });
   }
 
-  static async registerAndSignInCustomer(userAttributes: Partial<User> ) { 
+  static async registerAndSignInCustomer(userAttributes: Partial<User> ) : Promise<User> { 
     // FIXME
     // return findCurrentUser();
 
-    const res = await signIn("credentials", {
-      redirect: false,
-      gh_username: userAttributes.name,
-      password: userAttributes.email,
+    // const res = await signIn("credentials", {
+    //   redirect: false,
+    //   gh_username: userAttributes.name,
+    //   password: userAttributes.email,
+    // });
+
+    if ( !userAttributes.email || !userAttributes.name ) {
+      throw new Error('Invalid user attributes');
+    }
+
+    // check if the user exists with the given email in the database
+    const user = await prisma.user.findUnique({
+      where: {
+        email: userAttributes.email,
+      },
     });
+
+    // if the user exists, return the user
+    if (user) {
+      return user;
+    }
+
+    // if the user does not exist, create a new user and return the user
+    return await prisma.user.create({
+      data: {
+        email: userAttributes.email,
+        name: userAttributes.name,
+        roleId: 'customer',
+      },
+    });
+
+    
   }
 
   static async upsertUser(userDetails: UserDetails) {
@@ -127,3 +156,4 @@ class RegistrationService {
 };
 
 export default RegistrationService;
+export const { registerAndSignInCustomer } = RegistrationService;

@@ -10,11 +10,12 @@ import UserPaymentMethodWidget from "@/components/common/user-payment-method-wid
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Subscription, User } from "@prisma/client";
 import useCurrentSession from "@/app/contexts/current-user-context";
-import RegistrationService from "@/app/services/registration-service";
+import {registerAndSignInCustomer} from "@/app/services/registration-service";
 import { onClickSubscribe } from '@/app/services/StripeService';
 import { findSubscription, isSubscribed } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
+import { signOut } from "next-auth/react";
 
 const checkoutCurrency = "USD";
   "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
@@ -29,9 +30,17 @@ interface RegistrationFormProps {
   user?: User;
   userAttributes: Partial<User>;
   setUserAttributes: Dispatch<SetStateAction<Partial<User>>>;
+  loggedIn: boolean;
 }
 
-const RegistrationForm = ({ user, userAttributes, setUserAttributes }: RegistrationFormProps) => {
+const RegistrationForm = ({ user, userAttributes, setUserAttributes, loggedIn }: RegistrationFormProps) => {
+  const [loading, setLoading] = useState(false);
+
+  const handleLogout = () => {
+    setLoading(true);
+    signOut({ callbackUrl: '/customer-login'});
+  }
+
   const handleInputChange = (
     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
@@ -42,10 +51,15 @@ const RegistrationForm = ({ user, userAttributes, setUserAttributes }: Registrat
 
   return <>
     <Card>
-      { user && <>
-        <p>You&apos;re logged in as {user.email}</p>
-        <Button onClick={() => {}} className="w-full">Logout</Button>
-      </> }
+      { loggedIn ?
+        user && <>
+          <p>You&apos;re logged in as {user.email}</p>
+          <Button onClick={handleLogout} loading={loading} disabled={loading} className="w-full">Logout</Button>
+        </>
+        : user && <>
+          <p>Customer Email:  {user.email}</p>
+        </>
+      }
       { !user && <>
         <div className="items-center mb-4">
           <TextInput 
@@ -82,8 +96,12 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   const [error, setError] = useState<string | null>();
 
   const { currentSession, refreshCurrentSession } = useCurrentSession();
-  const { user } = currentSession;
+  const [user, setUser] = useState<User | undefined>(currentSession?.user);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
+
+  useEffect(() => {
+    if(currentSession.user) setUser(currentSession.user);
+  }, [currentSession.user])
 
   useEffect(() => {
     if(user?.id) {
@@ -97,8 +115,9 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     setPurchaseIntent(true);
 
     if(!user) {
-      await RegistrationService.registerAndSignInCustomer(userAttributes).then(() => {
-        refreshCurrentSession();
+      await registerAndSignInCustomer(userAttributes).then((createdUser) => {
+        setUser(createdUser);
+        // refreshCurrentSession();
       }).catch((error) => {
         console.log(error);
         setError(error.message);
@@ -130,7 +149,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         <Divider>Register</Divider>
         { error && <div className="mb-4 text-red-500">{error}</div> }
 
-        <RegistrationForm user={user} userAttributes={userAttributes} setUserAttributes={setUserAttributes} />
+        <RegistrationForm user={user} userAttributes={userAttributes} setUserAttributes={setUserAttributes} loggedIn={!!currentSession.user} />
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
