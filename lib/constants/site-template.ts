@@ -1,5 +1,5 @@
-export const siteName = 'Welcome to the Jungle';
-export const siteDescription = 'This is site description, which can be edited in the site settings. Consectetur adipiscing elit. Suspendisse nec magna venenatis, dictum eros at, eleifend urna. Vestibulum vestibulum ut quam in venenatis. In rutrum augue in libero consequat tempus. Pellentesque vestibulum at ligula at posuere. Suspendisse sit amet nisl leo. Etiam aliquet nisl ut dui porta tristique. Mauris a volutpat neque. Nulla facilisi. Vestibulum porttitor auctor est vitae mattis.';
+export const siteName = 'Gitwallet';
+export const siteDescription = 'The business builder for open source.';
 export const homepageTitle = 'Welcome';
 export const homepageTemplate = `<span>
 <Section size="3">
