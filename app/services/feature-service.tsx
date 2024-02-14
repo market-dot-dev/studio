@@ -125,7 +125,7 @@ class FeatureService {
     referenceId: string; // Either Tier or TierVersion ID
   }, type: 'tier' | 'tierVersion') {
     featureIds.forEach(async (featureId) => {
-      await this.attach({ featureId, referenceId }, type);
+      await FeatureService.attach({ featureId, referenceId }, type);
     });
   }
 

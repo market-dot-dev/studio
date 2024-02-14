@@ -17,12 +17,12 @@ interface TierFeaturePickerWidgetProps {
 }
 
 const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatures, setSelectedFeatures }) => {
-  const [tiers, setTiers] = useState<TierWithFeatures[]>([]);
+  const [savedTiers, setSavedTiers] = useState<TierWithFeatures[]>([]);
   const [features, setFeatures] = useState<Feature[]>([]);
 
   useEffect(() => {
     getTiersForMatrix().then((tiersData) => {
-      setTiers(tiersData);
+      setSavedTiers(tiersData);
     });
 
     findByCurrentUser().then((featuresData) => {
@@ -30,15 +30,15 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
     });
   }, [])
 
-  const allTiers = newTier ? [newTier, ...tiers] : tiers;
+  const tiers: TierWithFeatures[] = newTier ? [newTier, ...savedTiers] : savedTiers;
 
   useEffect(() => {
     const initialSelection: Record<string, Feature[]> = {};
-    tiers.forEach(tier => {
+    savedTiers.forEach(tier => {
       initialSelection[tier.id] = tier.features ?? [];
     });
     setSelectedFeatures(initialSelection);
-  }, [tiers]);
+  }, [savedTiers]);
 
   const handleFeatureToggle = async (feature: Feature, tierId: string) => {
     const isAlreadySelected = selectedFeatures[tierId]?.some(f => f.id === feature.id);

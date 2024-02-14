@@ -17,8 +17,6 @@ interface TierFormProps {
 	tier?: Partial<Tier>;
 }
 
-const attrs = newTier() as Tier;
-
 export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const router = useRouter();
 	const [tier, setTier] = useState<Tier>((tierObj ? tierObj : newTier()) as Tier);
@@ -182,7 +180,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 					{ tier?.id ?
 						<TierFeaturePicker tierId={tier.id} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> :
-						<TierFeaturePicker newTier={attrs} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> }
+						<TierFeaturePicker newTier={tier} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> }
 				</div>
 
 				{/* Preview Section */}
