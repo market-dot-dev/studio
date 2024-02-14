@@ -211,7 +211,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                     <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
                         
                         <TodoItem
-                            icon={onboardingStepsIcons.setupProject}
                             title="Setup your project"
                             step={onboardingSteps.setupProject}
                             currentStep={currentStep}
