@@ -26,7 +26,6 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 	const label = newRecord ? 'Create Tier' : 'Update Tier';
 	
-	//const [features, setFeatures] = useState(tier.features ?? []);
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
 
@@ -54,7 +53,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 			const savedTier = newRecord ? await createTier(tier) : await updateTier(tier.id as string, tier);
 
 			if(newRecord) {
-				await attachMany({ referenceId: savedTier.id, featureIds: Object.values(selectedFeatures).flat().map(f => f.id) }, 'tier');
+				const featureIds = (selectedFeatures[tier.id] || []).map(f => f.id)
+				await attachMany({ referenceId: savedTier.id, featureIds: featureIds }, 'tier');
 			}
 			window.location.href = `/tiers/${savedTier.id}`;
 		} catch (error) {
@@ -106,7 +106,6 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
 				<div className="md:col-span-2 space-y-6">
-
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Name</label>
 						<TextInput

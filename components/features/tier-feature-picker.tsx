@@ -23,7 +23,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   const anyFeatures = features.length > 0;
 
   useEffect(() => {
-    getTiersForMatrix().then((tiersData) => {
+    getTiersForMatrix(tierId, newTier).then((tiersData) => {
       setSavedTiers(tiersData);
     });
 
@@ -32,6 +32,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
     });
   }, [])
 
+  
   const tiers: TierWithFeatures[] = newTier ? [newTier, ...savedTiers] : savedTiers;
 
   useEffect(() => {
