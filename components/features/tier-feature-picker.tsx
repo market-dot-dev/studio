@@ -1,63 +1,108 @@
-"use server";
+"use client";
+// tier-feature-picker-widget.tsx
 
-import FeatureService from "@/app/services/feature-service";
-import TierService, { TierWithFeatures } from "@/app/services/TierService";
-import { Feature } from "@prisma/client";
-import FeatureAddRemoveButton from "@/components/features/feature-add-remove-toggle";
-import { Suspense } from "react";
+import React, { useState, useEffect } from "react";
+import { Feature, Tier } from "@prisma/client";
+import FeatureAddRemoveToggle from "@/components/features/feature-add-remove-toggle";
 import { Card } from "@tremor/react";
-import UserService from "@/app/services/UserService";
+import { attach, detach } from "@/app/services/feature-service";
+import { TierWithFeatures, getTiersForMatrix } from "@/app/services/TierService";
+import { findByCurrentUser } from "@/app/services/feature-service";
 
-const TierFeaturePicker = async ({ tierId }: { tierId: string }) => {
-  const currentUser = await UserService.findCurrentUser();
+interface TierFeaturePickerWidgetProps {
+  tierId?: string;
+  newTier?: Tier;
+  selectedFeatures: Record<string, Feature[]>;
+  setSelectedFeatures: (features: Record<string, Feature[]>) => void;
+}
 
-  if (!currentUser) {
-    return <div>User not found</div>;
-  }
-  const allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUser.id);
-  const tier: TierWithFeatures | undefined = allTiers.find((t) => t.id === tierId);
+const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatures, setSelectedFeatures }) => {
+  const [savedTiers, setSavedTiers] = useState<TierWithFeatures[]>([]);
+  const [features, setFeatures] = useState<Feature[]>([]);
 
-  if(!tier) return (<>
-    <div>No tier found</div>
-  </>);
+  const anyFeatures = features.length > 0;
 
-  const features = await FeatureService.findByUserId(tier.userId);
+  useEffect(() => {
+    getTiersForMatrix().then((tiersData) => {
+      setSavedTiers(tiersData);
+    });
 
-  const isAttached = (tier: TierWithFeatures, feature: Feature) => {
-    return tier.features?.some(f => f.id === feature.id) || false;
-  }
+    findByCurrentUser().then((featuresData) => {
+      setFeatures(featuresData);
+    });
+  }, [])
+
+  const tiers: TierWithFeatures[] = newTier ? [newTier, ...savedTiers] : savedTiers;
+
+  useEffect(() => {
+    const initialSelection: Record<string, Feature[]> = {};
+    savedTiers.forEach(tier => {
+      initialSelection[tier.id] = tier.features ?? [];
+    });
+    setSelectedFeatures(initialSelection);
+  }, [savedTiers, setSelectedFeatures]);
+
+  const handleFeatureToggle = async (feature: Feature, tierId: string) => {
+    const isAlreadySelected = selectedFeatures[tierId]?.some(f => f.id === feature.id);
+    let updatedFeatures;
+
+    if (isAlreadySelected) {
+      updatedFeatures = selectedFeatures[tierId].filter(f => f.id !== feature.id);
+      if(tierId) await detach({ featureId: feature.id, referenceId: tierId }, 'tier');
+    } else {
+      updatedFeatures = [...(selectedFeatures[tierId] || []), feature];
+      if(tierId) await attach({ featureId: feature.id, referenceId: tierId }, 'tier');
+    }
+
+    setSelectedFeatures({
+      ...selectedFeatures,
+      [tierId]: updatedFeatures,
+    });
+  };
 
   return (
-    <Card>
-      <h1>Features available in {tier.name}</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>Feature</th>
-            {allTiers.map((t) => (
-              <th key={t.id}>{t.name}</th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-        {features.map((feature) => (
-          <tr key={feature.id}>
-            <td>
-              {feature.name}
-            </td>
-            {allTiers.map((t) => (
-              <td key={t.id}>
-                <Suspense fallback={<div>Loading...</div>}>
-                  <FeatureAddRemoveButton feature={feature} tier={t} isAttached={isAttached(t, feature)} />
-                </Suspense>  
-              </td>
-            ))}
-          </tr>
-        ))}
-        </tbody>
-      </table>
+    <Card className="mt-5">
+      <h1 className="text-lg font-semibold pb-4">Configure Features</h1>
+      <div className="overflow-x-auto">
+        { !anyFeatures && <p>No features defined. You can add some <a href="/features">here</a></p> }
+        { anyFeatures &&
+          <table className="min-w-full divide-y divide-gray-200">
+            <thead className="bg-gray-50">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Feature
+                </th>
+                {tiers.length > 0 ? tiers.map(tier => (
+                  <th key={tier.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {tier.name || '(Unnamed Tier)' }
+                  </th>
+                )) : <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No tiers available</th>}
+              </tr>
+            </thead>
+            
+            <tbody className="bg-white divide-y divide-gray-200">
+              {features.map(feature => (
+                <tr key={feature.id}>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    {feature.name}
+                  </td>
+                  {tiers.map(tier => (
+                    <td key={tier.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      <FeatureAddRemoveToggle
+                        feature={feature}
+                        isAttached={selectedFeatures[tier.id]?.some(f => f.id === feature.id)}
+                        onToggle={() => handleFeatureToggle(feature, tier.id).catch(console.error)}
+                      />
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        }
+      </div>
     </Card>
   );
 };
 
-export default TierFeaturePicker;
+export default TierFeaturePickerWidget;

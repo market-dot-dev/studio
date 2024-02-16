@@ -7,6 +7,7 @@ import StripeService from "./StripeService";
 import UserService from "./UserService";
 import { Feature } from "@prisma/client";
 import ProductService from "./ProductService";
+import FeatureService from "./feature-service";
 
 export type TierWithFeatures = Tier & { features?: Feature[] };
 
@@ -98,6 +99,12 @@ class TierService {
     const tier = await prisma.tier.create({
       data: tierAttributes as Tier,
     });
+
+    if(!user.stripeProductId) {
+      ProductService.createProduct(user.id);
+    }
+    
+    await TierService.createStripePrice(tier);
 
     return tier;
   }
@@ -281,9 +288,6 @@ class TierService {
     
   }
 
-  
-
-
   static async getCustomersOfUserTiers() {
     const session = await getSession();
     if (!session?.user.id) {
@@ -386,10 +390,31 @@ class TierService {
   
     return customers;
   }
-  
 
+  static async getTiersForMatrix(tierId?: string, newTier?: Tier): Promise<TierWithFeatures[]> {
+    const currentUser = await UserService.findCurrentUser();
+
+    if (!currentUser) {
+      throw new Error("Not logged in");
+    }
+
+    let allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUser.id);
+
+    allTiers = allTiers.sort((a, b) => {
+      if(tierId){
+        if (a.id === tierId) return -1;
+        if (b.id === tierId) return 1;
+      }
+      return a.price - b.price;
+    });
+
+    //let tier: TierWithFeatures | undefined = tierId ? allTiers.find((t) => t.id === tierId) : newTier;
+
+    //if(!tier) return [];
+
+    return allTiers;
+  }
 };
-
 
 export const createStripePriceById = async (id: string) => {
   const tier = await TierService.findTier(id);
@@ -410,4 +435,4 @@ export const destroyStripePriceById = async (id: string) => {
 }
 
 export default TierService;
-export const { findTier, updateTier, createTier, createStripePrice, destroyStripePrice, getCustomersOfUserTiers } = TierService;
+export const { findTier, updateTier, createTier, createStripePrice, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix } = TierService;

@@ -35,12 +35,12 @@ export default function SettingsNav() {
         segment: "payment",
     },
     {
-      name: "Contract",
+      name: "Contracts",
       href: `/settings/contract`,
       segment: "contract",
     },
     {
-        name: "Plan",
+        name: "Gitwallet Plan",
         href: `/settings/plan`,
         segment: "plan",
     }

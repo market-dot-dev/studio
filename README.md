@@ -5,7 +5,7 @@ Gitwallet: A toolkit for maintainers to build, sell and manage support tiers.
 - Clone this repo
 - Run `pnpm install`
 - Run `pnpm dev`
-- Go To http://app.localhost:3000
+- Go To http://gitwallet.local:3000 (See Hosts file instructions below)
 
 ## Deploying
 

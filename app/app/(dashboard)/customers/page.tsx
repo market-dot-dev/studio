@@ -1,68 +1,104 @@
-import TierService from "@/app/services/TierService";
+import SubscriptionService, {
+  SubscriptionWithUser,
+} from "@/app/services/SubscriptionService";
+import LinkButton from "@/components/common/link-button";
+import UserService from "@/app/services/UserService";
 import DashboardCard from "@/components/common/dashboard-card";
 import PageHeading from "@/components/common/page-heading";
-import { BadgeDelta, Button, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import {
+  BadgeDelta,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeaderCell,
+  TableRow,
+  Text,
+} from "@tremor/react";
 
-export default async function CustomersList({ params }: { params: { id: string } }) {
+export default async function CustomersList({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const currentUserId = await UserService.getCurrentUserId();
+  const subscriptions: SubscriptionWithUser[] =
+    await SubscriptionService.subscribedToUser(currentUserId!);
 
-    const customers = await TierService.getCustomersOfUserTiers() as any[];
-    
-    return (
-      <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
-        <div className="flex justify-between w-full">
-          <div className="flex flex-row">
-            <PageHeading title="All Customers" />
-          </div>
-          {/* <div className="flex flex-row gap-1">
+  return (
+    <div className="flex max-w-screen-xl flex-col space-y-12">
+      <div className="flex w-full justify-between">
+        <div className="flex flex-col">
+          <PageHeading title="All Customers" />
+          <Text>Manage your customers and their tiers here. </Text>
+        </div>
+        {/* <div className="flex flex-row gap-1">
             <LinkButton href="/customers/new" label="New Customer" />
           </div> */}
-        </div>
+      </div>
 
-        <DashboardCard>
-          <Table className="">
-            <TableHead>
-              <TableRow>
-                <TableHeaderCell>ID</TableHeaderCell>
-                <TableHeaderCell>Name</TableHeaderCell>
-                <TableHeaderCell className="text-right">Company</TableHeaderCell>
-                <TableHeaderCell className="text-right">Tier</TableHeaderCell>
-                <TableHeaderCell className="text-right">Status</TableHeaderCell>
-                <TableHeaderCell className="text-right">Customer Since</TableHeaderCell>
-                <TableHeaderCell className="text-right">Next Renewal</TableHeaderCell>
-                <TableHeaderCell className="text-right">Location</TableHeaderCell>
-                <TableHeaderCell className="text-right">Actions</TableHeaderCell>
-              </TableRow>
-            </TableHead>
+      <DashboardCard>
+        <Table className="">
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>ID</TableHeaderCell>
+              <TableHeaderCell>Name</TableHeaderCell>
+              <TableHeaderCell className="text-right">Company</TableHeaderCell>
+              <TableHeaderCell className="text-right">Tier</TableHeaderCell>
+              <TableHeaderCell className="text-right">Status</TableHeaderCell>
+              <TableHeaderCell className="text-right">
+                Customer Since
+              </TableHeaderCell>
+              <TableHeaderCell className="text-right">
+                Next Renewal
+              </TableHeaderCell>
+              <TableHeaderCell className="text-right">Location</TableHeaderCell>
+              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+            </TableRow>
+          </TableHead>
 
-            <TableBody>
-              {customers.map((customer) => (
-                <TableRow className="p-2 m-0" key={customer.id}>
-                  <TableCell className="p-2 m-0">{customer.id}</TableCell>
-                  <TableCell className="p-2 m-0">{customer.name}</TableCell>
-                  <TableCell className="p-2 m-0 text-right">{/* Company */}</TableCell>
-                  <TableCell className="p-2 m-0 text-right">{customer.subscriptions[0]?.Tier?.name}</TableCell>
-                  <TableCell className="p-2 m-0 text-right">
-                    <BadgeDelta size="xs">
-                      
-                    </BadgeDelta>
-                  </TableCell>
-                  <TableCell className="p-2 m-0 text-right">{ new Date(customer.subscriptions[0]?.createdAt).toLocaleDateString()}</TableCell>
-                  <TableCell className="p-2 m-0 text-right">{/* Next Renewal */}</TableCell>
-                  <TableCell className="p-2 m-0 text-right">{/* Location */}</TableCell>
-                  <TableCell className="p-2 m-0 text-right">
-                    <div className="flex flex-row gap-1 justify-end">
-                      <Button size="xs" variant="primary">
-                        View
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              )
-              )}
-            </TableBody>
-          </Table>
-        </DashboardCard>
+          <TableBody>
+            {subscriptions.map((subscription) => {
+              const user = subscription.user;
+              return (
+                <>
+                  <TableRow className="m-0 p-2" key={subscription.id}>
+                    <TableCell className="m-0 p-2">{user.id}</TableCell>
+                    <TableCell className="m-0 p-2">{user.name}</TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      {user.company}
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      {subscription.tier!.name}
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      <BadgeDelta size="xs"></BadgeDelta>
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      {new Date(subscription.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      {/* Next Renewal */}
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      {/* Location */}
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      <div className="flex flex-row justify-end gap-1">
+                        <LinkButton
+                          label="View"
+                          href={`/customers/${subscription.id}`}
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                </>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </DashboardCard>
     </div>
-
-    );
-  }
+  );
+}

@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma"; // Adjust the import path based on your actual Prisma setup
 import { Feature } from "@prisma/client";
+import UserService from "./UserService";
 
 interface FeatureCreateAttributes {
   name?: string | null;
@@ -53,13 +54,34 @@ class FeatureService {
     return features ? features : [];
   }
 
+  static async findByCurrentUser(): Promise<Feature[]> {
+    const user = await UserService.getCurrentUser();
+
+    if(!user){
+      throw new Error("not logged in");
+    }
+
+    const features = await prisma.feature.findMany({
+      where: {
+        userId: user?.id,
+      },
+    });
+
+    return features ? features : [];
+  }
+
   static async create(attributes: FeatureCreateAttributes) {
     // Ensure the required `userId` is available when a feature is created.
     if (!attributes.userId) {
       throw new Error("UserId is required to create a feature.");
     }
+    
+    // FIXME: try Omit<FeatureCreateAttributes, 'id'> instead of casting to any
+    const attrs = attributes as any;
+    attrs['id'] = undefined;
+
     return prisma.feature.create({
-      data: attributes,
+      data: attrs as FeatureCreateAttributes,
     });
   }
 
@@ -70,57 +92,40 @@ class FeatureService {
     });
   }
 
+  private static updateData(referenceId: string, type: 'tier' | 'tierVersion', operation: 'connect' | 'disconnect') {
+    const dataPath = type === 'tier' ? 'tiers' : 'tierVersions';
+    return {
+      [dataPath]: {
+        [operation]: { id: referenceId },
+      },
+    };
+  }
 
-  // Attach a Tier or TierVersion to a Feature
   static async attach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
-    if (type === 'tier') {
-      return prisma.feature.update({
-        where: { id: featureId },
-        data: {
-          tiers: {
-            connect: { id: referenceId },
-          },
-        },
-      });
-    } else if (type === 'tierVersion') {
-      return prisma.feature.update({
-        where: { id: featureId },
-        data: {
-          tierVersions: {
-            connect: { id: referenceId },
-          },
-        },
-      });
-    } else {
-      throw new Error("Invalid type for attach operation.");
-    }
+    const data = this.updateData(referenceId, type, 'connect');
+    return prisma.feature.update({
+      where: { id: featureId },
+      data: data,
+    });
+  }
+
+  static async attachMany({ featureIds, referenceId }: { featureIds: string[]; referenceId: string; }, type: 'tier' | 'tierVersion') {
+    const data = this.updateData(referenceId, type, 'connect');
+    return prisma.feature.updateMany({
+      where: { id: { in: featureIds } },
+      data: data,
+    });
   }
 
   static async detach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
-    if (type === 'tier') {
-      return prisma.feature.update({
-        where: { id: featureId },
-        data: {
-          tiers: {
-            disconnect: { id: referenceId },
-          },
-        },
-      });
-    } else if (type === 'tierVersion') {
-      return prisma.feature.update({
-        where: { id: featureId },
-        data: {
-          tierVersions: {
-            disconnect: { id: referenceId },
-          },
-        },
-      });
-    } else {
-      throw new Error("Invalid type for detach operation.");
-    }
+    const data = this.updateData(referenceId, type, 'disconnect');
+    return prisma.feature.update({
+      where: { id: featureId },
+      data: data,
+    });
   }
 }
 
-export const { create, find, update, attach, detach, findByTierId } = FeatureService;
+export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser, attachMany } = FeatureService;
 
 export default FeatureService;
