@@ -194,14 +194,14 @@ model TierVersion {
 model Subscription {
   id                   String   @id @default(cuid())
   userId               String // Foreign key to reference User
-  tierId               String?
+  tierId               String
   stripeSubscriptionId String   @unique
   tierVersionId        String? // Foreign key to reference TierVersion
   createdAt            DateTime @default(now())
 
   user        User         @relation(fields: [userId], references: [id])
   tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
-  tier        Tier?        @relation(fields: [tierId], references: [id])
+  tier        Tier         @relation(fields: [tierId], references: [id])
 
   @@unique([userId, tierId])
 }

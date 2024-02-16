@@ -1,34 +1,25 @@
+
+"use server";
+
 import PageHeading from "@/components/common/page-heading";
 import {
   Button,
-  Grid,
-  Text,
-  Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, 
+  Table, TableBody, TableCell, TableRow, 
   Textarea,
 } from "@tremor/react";
 
 import DashboardCard from "@/components/common/dashboard-card";
+import SubscriptionService from "@/app/services/SubscriptionService";
 import LinkButton from "@/components/common/link-button";
 
-const customerDetails = [
-    {
-      id: "ID-1",
-      name: "Peter Doe",
-      email: "peter.doe@acme.inc",
-      tier: "Premium",
-      github: "peterdoecodes",
-      tierVersion: "v1",
-      status: "Active",
-      dateSince: "01/15/2023",
-      nextRenewal: "02/15/2024",
-      location: "New York",
-      company: "Acme Inc.",
-      notes: "Building a really cool AI assistant product, using our web framework for their dashboard.",
-    },
-  ];
+const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
+  const subscription = await SubscriptionService.findSubscription(params.id);
+  const customer = subscription?.user;
+  const tier = subscription?.tier;
 
-export default function CustomerDetailPage({ params }: { params: { id: string } }) {
-    const customer = customerDetails[0];
+  if(!subscription || !customer || !tier) {
+    return <div>Customer not found</div>;
+  }
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12">
@@ -37,8 +28,6 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
           <PageHeading title="Acme Inc." />
         </div>
       </div>
-
-
 
       <DashboardCard>
         <div className="p-1">
@@ -59,7 +48,7 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
                 </TableRow>
                 <TableRow>
                     <TableCell className="py-2"><strong>Github</strong></TableCell>
-                    <TableCell className="py-2"><a href={"https://www.github.com/"+customer.github} className="underline">{customer.github}</a></TableCell>
+                    <TableCell className="py-2"><a href={"https://www.github.com/"+customer.gh_username} className="underline">{customer.gh_username}</a></TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell className="py-2"><strong>Email</strong></TableCell>
@@ -73,27 +62,29 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
             <TableBody>
                 <TableRow>
                     <TableCell className="py-2"><strong>Current Tier</strong></TableCell>
-                    <TableCell className="py-2">{customer.tier} ({customer.tierVersion})
-                    <Button variant="secondary" size="xs" className="ms-8">Edit Package</Button>
+                    <TableCell className="py-2">
+                      {tier.name}
+                      { subscription.tierVersionId ? `(${subscription.tierVersionId})` : "" }
+                    <LinkButton href={`/tiers/${tier.id}`} label="Edit Package" className="ms-8" />
                     </TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell className="py-2"><strong>Status</strong></TableCell>
-                    <TableCell className="py-2">{customer.status}</TableCell>
+                    <TableCell className="py-2">{/*customer.status*/}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell className="py-2"><strong>Customer Since</strong></TableCell>
-                    <TableCell className="py-2">{customer.dateSince}</TableCell>
+                    <TableCell className="py-2">{/*customer.dateSince*/}</TableCell>
                 </TableRow>
                 <TableRow>
                     <TableCell className="py-2"><strong>Next Renewal Date</strong></TableCell>
-                    <TableCell className="py-2">{customer.nextRenewal}</TableCell>
+                    <TableCell className="py-2">{/*customer.nextRenewal*/}</TableCell>
                 </TableRow>
             </TableBody>
         </Table>
 
           <h2 className="text-xl font-semibold mb-4 mt-8">Notes</h2>
-          <Textarea value={customer.notes} className="mb-4" />
+          <Textarea value={'' /*customer.notes*/} className="mb-4" />
           <Button variant="primary" size="xs">Save</Button>
         </div>
       </DashboardCard>
@@ -101,3 +92,5 @@ export default function CustomerDetailPage({ params }: { params: { id: string } 
     </div>
   );
 }
+
+export default CustomerDetailPage;

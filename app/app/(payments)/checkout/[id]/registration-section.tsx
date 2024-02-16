@@ -12,7 +12,7 @@ import { Subscription, User } from "@prisma/client";
 import useCurrentSession from "@/app/contexts/current-user-context";
 import RegistrationService from "@/app/services/registration-service";
 import { onClickSubscribe } from '@/app/services/StripeService';
-import { findSubscription, isSubscribed } from '@/app/services/SubscriptionService';
+import { findSubscriptionByTierId, isSubscribed } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 
@@ -87,7 +87,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
 
   useEffect(() => {
     if(user?.id) {
-      findSubscription({ tierId }).then(setSubscription);
+      findSubscriptionByTierId({ tierId }).then(setSubscription);
     }
   }, [user?.id]);
 
