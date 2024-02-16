@@ -1,7 +1,10 @@
+'use server';
+
 import { User } from "@prisma/client"
 import prisma from "@/lib/prisma"
 import { siteName, siteDescription, homepageTitle, homepageTemplate} from "@/lib/constants/site-template";
 import { signIn } from "next-auth/react";
+
 
 interface UserDetails {
   id: string;
@@ -23,15 +26,16 @@ class RegistrationService {
     });
   }
 
+  
   static async registerAndSignInCustomer(userAttributes: Partial<User> ) { 
     // FIXME
     // return findCurrentUser();
 
-    const res = await signIn("credentials", {
+    const res = await signIn("email", {
       redirect: false,
-      gh_username: userAttributes.name,
-      password: userAttributes.email,
+      email: userAttributes.email
     });
+
   }
 
   static async upsertUser(userDetails: UserDetails) {
@@ -124,6 +128,36 @@ class RegistrationService {
       }
     });
   }
+
+  static async userExists(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    return !!user;
+  }
+
+  static async signUpUser(userAttributes: Partial<User>) {
+    if(! userAttributes.email ) {
+      throw new Error('Email is required');
+    }
+
+    // Check if the user exists
+    const exists = await RegistrationService.userExists(userAttributes.email);
+
+    if(exists) {
+      return false;
+    }
+
+    return await prisma.user.create({
+      data: {
+        email: userAttributes.email,
+        name: userAttributes.name,
+        roleId: 'customer',
+      },
+    });
+  }
 };
 
 export default RegistrationService;
+export const { registerAndSignInCustomer, userExists, signUpUser } = RegistrationService;
