@@ -23,7 +23,7 @@ export function CustomerLoginComponent({ redirect } : { redirect?: string }) {
 
     const handleLogout = () => {
         setIsSubmitting(true);
-        signOut({ callbackUrl: '/customer-login'});
+        signOut({ callbackUrl: '/'});
     }
 
     const handleEmail = async (e: any) => {
