@@ -102,7 +102,7 @@ class FeatureService {
   }
 
   static async attach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
-    const data = this.updateData(referenceId, type, 'connect');
+    const data = FeatureService.updateData(referenceId, type, 'connect');
     return prisma.feature.update({
       where: { id: featureId },
       data: data,
@@ -110,7 +110,7 @@ class FeatureService {
   }
 
   static async attachMany({ featureIds, referenceId }: { featureIds: string[]; referenceId: string; }, type: 'tier' | 'tierVersion') {
-    const data = this.updateData(referenceId, type, 'connect');
+    const data = FeatureService.updateData(referenceId, type, 'connect');
     return prisma.feature.updateMany({
       where: { id: { in: featureIds } },
       data: data,
@@ -118,7 +118,7 @@ class FeatureService {
   }
 
   static async detach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
-    const data = this.updateData(referenceId, type, 'disconnect');
+    const data = FeatureService.updateData(referenceId, type, 'disconnect');
     return prisma.feature.update({
       where: { id: featureId },
       data: data,

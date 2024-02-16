@@ -174,7 +174,6 @@ export const authOptions: NextAuthOptions = {
     signIn: async ({user, account }: any) => {
     },
     createUser: async ({user}: {user: any}) => {
-
       if (!user) {
         return;
       }
