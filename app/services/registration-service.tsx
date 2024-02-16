@@ -128,7 +128,36 @@ class RegistrationService {
       }
     });
   }
+
+  static async userExists(email: string) {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    return !!user;
+  }
+
+  static async signUpUser(userAttributes: Partial<User>) {
+    if(! userAttributes.email ) {
+      throw new Error('Email is required');
+    }
+
+    // Check if the user exists
+    const exists = await RegistrationService.userExists(userAttributes.email);
+
+    if(exists) {
+      return false;
+    }
+
+    return await prisma.user.create({
+      data: {
+        email: userAttributes.email,
+        name: userAttributes.name,
+        roleId: 'customer',
+      },
+    });
+  }
 };
 
 export default RegistrationService;
-export const { registerAndSignInCustomer } = RegistrationService;
+export const { registerAndSignInCustomer, userExists, signUpUser } = RegistrationService;

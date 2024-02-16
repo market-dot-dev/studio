@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
 import useCurrentSession, { CurrentSessionProvider } from "@/app/contexts/current-user-context";
+import { userExists, signUpUser } from "@/app/services/registration-service";
 
 export function CustomerLoginComponent({ redirect } : { redirect?: string }) {
     
@@ -12,6 +13,8 @@ export function CustomerLoginComponent({ redirect } : { redirect?: string }) {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [verificationEmail, setVerificationEmail] = useState<string>('');
     const [verificationCode, setVerificationCode] = useState<string>('');
+    const [isSignUp, setIsSignUp] = useState(false); 
+    const [name, setName] = useState<string>('');
     
 
     const { currentSession, refreshCurrentSession } = useCurrentSession();
@@ -28,9 +31,51 @@ export function CustomerLoginComponent({ redirect } : { redirect?: string }) {
 
     const handleEmail = async (e: any) => {
         
-        if( !verificationEmail ) return;
+        if( !verificationEmail ) {
+            setError('Please enter your email.');
+            return;
+        };
 
         setIsSubmitting(true);
+
+        // check if user exists
+        const exists = await userExists(verificationEmail);
+
+        if( isSignUp ) {
+            
+            if( !name ) {
+                setError('Please enter your name.');
+                setIsSubmitting(false);
+                return;
+            }
+            try {
+                const res = await signUpUser({
+                    email: verificationEmail,
+                    name,
+                })
+
+                if( res === false ) {
+                    setError('User already exists. Please sign in.');
+                    setIsSubmitting(false);
+                    setIsSignUp(false);
+                    return;
+                }
+            } catch(err) {
+                console.error('Error signing up:', err);
+                setError('Error signing up. Please try again.');
+                setIsSubmitting(false);
+                return;
+            }
+
+        } else {
+            
+            if( !exists ) {
+                setError('User does not exist. Please sign up.');
+                setIsSubmitting(false);
+                setIsSignUp(true);
+                return;
+            }
+        }
         
         signIn('email', {
             email: verificationEmail,
@@ -83,47 +128,63 @@ export function CustomerLoginComponent({ redirect } : { redirect?: string }) {
 
     }
 
+    const toggleSignUp = () => setIsSignUp(!isSignUp);
+
     return (
         <>
-            {error ? <>
+            {error ? <div className="flex justify-center w-full text-sm">
                 <p className="text-red-500">{error}</p>
-            </> : null}
-            { user ? <>
+                </div> : null}
+            {user ? (
                 <div className="items-center w-full">
                     <p>Logged in as {user.email}</p>
                     <Button onClick={handleLogout} loading={isSubmitting} disabled={isSubmitting} className="w-full">Logout</Button>
                 </div>
-            </> :
-                !isSubmitted ? 
-                    <div>
-                        <label className="block text-sm text-slate-400 text-center mb-4">Enter your email to receive a verification code.</label>
-                        <div className="flex flex-row gap-4 w-full">
-                            <div className="items-center w-full">
-                                <TextInput placeholder="Enter your email" value={verificationEmail} onChange={(e) => setVerificationEmail(e.target.value)} autoFocus />
-                            </div>
-                            <div className="items-center">
-                                <Button onClick={handleEmail} loading={isSubmitting} disabled={isSubmitting}>Get Link</Button>
-                            </div>
+            ) : !isSubmitted ? (
+                <div>
+                    {isSignUp ? (
+                        <>
+                        <label className="block text-sm text-slate-400 text-center mb-4">Enter your name and email to sign up.</label>
+                        <div className="mb-4">
+                            <TextInput placeholder="Enter your name" value={name} onChange={(e) => {
+                                setName(e.target.value)
+                                setError(null);
+                            }} autoFocus />
+                        </div>
+                        </>
+                    ) :
+                    <label className="block text-sm text-slate-400 text-center mb-4">Enter your email to receive a verification code.</label>
+                    }
+                    
+                    <div className="flex flex-row gap-4 w-full">
+                        <div className="items-center w-full">
+                            <TextInput placeholder="Enter your email" value={verificationEmail} onChange={(e) => setVerificationEmail(e.target.value)} />
+                        </div>
+                        <div className="items-center">
+                            <Button onClick={handleEmail} loading={isSubmitting} disabled={isSubmitting}>Get Code</Button>
                         </div>
                     </div>
-                : 
-                
-                    <div>
-                        <label className="block text-sm text-slate-400 text-center mb-4">A verification code has been sent to your email. Please enter the value here.</label>
-                        <div className="flex flex-row gap-4 w-full">
-                            <div className="items-center w-full">
-                                <TextInput 
-                                    placeholder="000000"
-                                    value={verificationCode}
-                                    onChange={(e) => setVerificationCode(e.target.value)}
-                                    autoFocus />
-                            </div>
-                            <div className="items-center">
-                                <Button onClick={handleVerification} loading={isSubmitting} disabled={isSubmitting}>Verify Code</Button>
-                            </div>
+                    <p className="mt-4 text-center text-sm text-slate-500 cursor-pointer" onClick={toggleSignUp}>
+                        {isSignUp ? "Already have an account? Sign in here" : "Don't have an account? Sign up here"}
+                    </p>
+                </div>
+            ) : (
+                <div>
+                    <label className="block text-sm text-slate-400 text-center mb-4">A verification code has been sent to your email. Please enter the value here.</label>
+                    <div className="flex flex-row gap-4 w-full">
+                        <div className="items-center w-full">
+                            <TextInput 
+                                placeholder="000000"
+                                value={verificationCode}
+                                onChange={(e) => setVerificationCode(e.target.value)}
+                                autoFocus />
+                        </div>
+                        <div className="items-center">
+                            <Button onClick={handleVerification} loading={isSubmitting} disabled={isSubmitting}>Verify Code</Button>
                         </div>
                     </div>
-            }
+                </div>
+            )}
         </>
     );
 }
