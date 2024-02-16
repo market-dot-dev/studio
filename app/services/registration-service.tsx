@@ -5,6 +5,7 @@ import prisma from "@/lib/prisma"
 import { siteName, siteDescription, homepageTitle, homepageTemplate} from "@/lib/constants/site-template";
 import { signIn } from "next-auth/react";
 
+
 interface UserDetails {
   id: string;
   gh_username: string;
@@ -25,42 +26,16 @@ class RegistrationService {
     });
   }
 
-  static async registerAndSignInCustomer(userAttributes: Partial<User> ) : Promise<User> { 
+  
+  static async registerAndSignInCustomer(userAttributes: Partial<User> ) { 
     // FIXME
     // return findCurrentUser();
 
-    // const res = await signIn("credentials", {
-    //   redirect: false,
-    //   gh_username: userAttributes.name,
-    //   password: userAttributes.email,
-    // });
-
-    if ( !userAttributes.email || !userAttributes.name ) {
-      throw new Error('Invalid user attributes');
-    }
-
-    // check if the user exists with the given email in the database
-    const user = await prisma.user.findUnique({
-      where: {
-        email: userAttributes.email,
-      },
+    const res = await signIn("email", {
+      redirect: false,
+      email: userAttributes.email
     });
 
-    // if the user exists, return the user
-    if (user) {
-      return user;
-    }
-
-    // if the user does not exist, create a new user and return the user
-    return await prisma.user.create({
-      data: {
-        email: userAttributes.email,
-        name: userAttributes.name,
-        roleId: 'customer',
-      },
-    });
-
-    
   }
 
   static async upsertUser(userDetails: UserDetails) {

@@ -16,6 +16,7 @@ import { findSubscription, isSubscribed } from '@/app/services/SubscriptionServi
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { signOut } from "next-auth/react";
+import { CustomerLoginComponent } from "@/components/login/customer-login";
 
 const checkoutCurrency = "USD";
   "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
@@ -33,57 +34,44 @@ interface RegistrationFormProps {
   loggedIn: boolean;
 }
 
-const RegistrationForm = ({ user, userAttributes, setUserAttributes, loggedIn }: RegistrationFormProps) => {
-  const [loading, setLoading] = useState(false);
+// const RegistrationForm = ({ user, userAttributes, setUserAttributes, loggedIn }: RegistrationFormProps) => {
+//   const [loading, setLoading] = useState(false);
 
-  const handleLogout = () => {
-    setLoading(true);
-    signOut({ callbackUrl: '/customer-login'});
-  }
+//   const handleLogout = () => {
+//     setLoading(true);
+//     signOut({ callbackUrl: '/customer-login'});
+//   }
 
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    const updatedUser = { ...userAttributes, [name]: value } as User;
-    setUserAttributes(updatedUser);
-  };
+//   const handleInputChange = (
+//     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+//   ) => {
+//     const { name, value } = e.target;
+//     const updatedUser = { ...userAttributes, [name]: value } as User;
+//     setUserAttributes(updatedUser);
+//   };
 
-  return <>
-    <Card>
-      { loggedIn ?
-        user && <>
-          <p>You&apos;re logged in as {user.email}</p>
-          <Button onClick={handleLogout} loading={loading} disabled={loading} className="w-full">Logout</Button>
-        </>
-        : user && <>
-          <p>Customer Email:  {user.email}</p>
-        </>
-      }
-      { !user && <>
-        <div className="items-center mb-4">
-          <TextInput 
-            name="name"
-            onChange={handleInputChange}
-            placeholder="Name" 
-          />
-        </div>
-        <div className="items-center mb-4">
-          <TextInput 
-            name="email"
-            onChange={handleInputChange}
-            placeholder="Work Email" />
-        </div>
-        <div className="items-center">
-          <TextInput 
-            name="company"
-            onChange={handleInputChange}
-            placeholder="Company" />
-        </div>
-      </> }
-    </Card>
-  </>;
-}
+//   return <>
+//     <Card>
+//       { loggedIn ?
+//         user && <>
+//           <p>You&apos;re logged in as {user.email}</p>
+//           <Button onClick={handleLogout} loading={loading} disabled={loading} className="w-full">Logout</Button>
+//         </>
+//         : user && <>
+//           <p>Customer Email:  {user.email}</p>
+//         </>
+//       }
+//       { !user && <>
+//         <div className="items-center mb-4">
+//           <TextInput 
+//             name="email"
+//             onChange={handleInputChange}
+//             placeholder="Work Email" />
+//         </div>
+//       </> }
+//     </Card>
+//   </>;
+// }
 
 
 const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
@@ -96,12 +84,11 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   const [error, setError] = useState<string | null>();
 
   const { currentSession, refreshCurrentSession } = useCurrentSession();
-  const [user, setUser] = useState<User | undefined>(currentSession?.user);
+  
   const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const { user } = currentSession;
 
-  useEffect(() => {
-    if(currentSession.user) setUser(currentSession.user);
-  }, [currentSession.user])
+  
 
   useEffect(() => {
     if(user?.id) {
@@ -116,8 +103,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
 
     if(!user) {
       await registerAndSignInCustomer(userAttributes).then((createdUser) => {
-        setUser(createdUser);
-        // refreshCurrentSession();
+        refreshCurrentSession();
       }).catch((error) => {
         console.log(error);
         setError(error.message);
@@ -149,7 +135,8 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         <Divider>Register</Divider>
         { error && <div className="mb-4 text-red-500">{error}</div> }
 
-        <RegistrationForm user={user} userAttributes={userAttributes} setUserAttributes={setUserAttributes} loggedIn={!!currentSession.user} />
+        {/* <RegistrationForm user={user} userAttributes={userAttributes} setUserAttributes={setUserAttributes} loggedIn={!!currentSession.user} /> */}
+        <CustomerLoginComponent />
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">

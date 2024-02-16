@@ -1,18 +1,30 @@
 'use client'
 import { TextInput, Button } from "@tremor/react";
-import { useState } from "react";
-import { signIn } from "next-auth/react";
+import { useEffect, useState } from "react";
+import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
+import useCurrentSession, { CurrentSessionProvider } from "@/app/contexts/current-user-context";
 
-export default function CustomerLogin({ csrfToken }: { csrfToken?: string }) {
+export function CustomerLoginComponent({ redirect } : { redirect?: string }) {
     
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [verificationEmail, setVerificationEmail] = useState<string>('');
     const [verificationCode, setVerificationCode] = useState<string>('');
+    
+
+    const { currentSession, refreshCurrentSession } = useCurrentSession();
+
+    const { user } = currentSession;
 
     const router = useRouter();
+
+
+    const handleLogout = () => {
+        setIsSubmitting(true);
+        signOut({ callbackUrl: '/customer-login'});
+    }
 
     const handleEmail = async (e: any) => {
         
@@ -39,67 +51,36 @@ export default function CustomerLogin({ csrfToken }: { csrfToken?: string }) {
             setIsSubmitting(false);
         });
 
-        // const urlEncodedData = new URLSearchParams(formData as any).toString();
-        
-        // try {
-        //     const response = await fetch('/api/auth/signin/email', {
-        //         method: 'POST',
-        //         headers: {
-        //             'Content-Type': 'application/x-www-form-urlencoded',
-        //         },
-        //         body: urlEncodedData
-        //     });
-
-            
-        //     if (response.status === 200) {
-        //         setIsSubmitted(true);
-        //     } else {
-        //         setError('Error submitting form. Please try again.');
-        //     }
-        // } catch (error) {
-        //     console.error('Error submitting form:', error);
-        //     setError('Error submitting form. Please try again.');
-            
-        // } finally {
-        //     setIsSubmitting(false);
-        // }
     };
 
     const handleVerification = async (e: any) => {
         e.preventDefault();
-
+        
         if (!verificationEmail || !verificationCode) return;
 
         setIsSubmitting(true);
 
-        // signIn('email', {
-        //     email: verificationEmail,
-        //     token: verificationCode,
-        //     redirect: false,
-        // }).then((res: any) => {
-        //     console.log(res)
-        //     if(res.error) {
-        //         setError('Unable to verify code. Please try again.');
-        //     }
-        // }).catch(err => {
-        //     console.error('Error verifying code:', err);
-        //     setError('Unable to verify code. Please try again.');
-        // }).finally(() => {
-        //     setIsSubmitting(false);
-        // });
-
-        fetch(`/api/auth/callback/email?redirect=false&email=${encodeURIComponent(verificationEmail)}&token=${verificationCode}`).then(res => {
-            if(res.status !== 200) {
-                setError('Error verifying code. Please try again.');
+        try {
+            const res = await fetch(`/api/auth/callback/email?email=${encodeURIComponent(verificationEmail)}&token=${verificationCode}&host=${window.location.origin}`);
+            
+            if(res.status === 200) {
+                if(redirect) {
+                    router.push( redirect )
+                } else {
+                    refreshCurrentSession();
+                    setError(null);
+                }
             } else {
-                router.push('/')
+                setError('Error verifying code. Please try again.');
             }
-        }).catch(err => {
+    
+        } catch(err) {
             console.error('Error verifying code:', err);
             setError('Error verifying code. Please try again.');
-        }).finally(() => {
+        } finally {
             setIsSubmitting(false);
-        });
+        }
+
     }
 
     return (
@@ -107,37 +88,50 @@ export default function CustomerLogin({ csrfToken }: { csrfToken?: string }) {
             {error ? <>
                 <p className="text-red-500">{error}</p>
             </> : null}
-            {!isSubmitted ? 
-                <div>
-                    <label className="block text-sm text-slate-400 text-center mb-4">Enter your email to receive a verification code.</label>
-                    <div className="flex flex-row gap-4 w-full">
-                        <div className="items-center w-full">
-                            <TextInput placeholder="Enter your email" value={verificationEmail} onChange={(e) => setVerificationEmail(e.target.value)} autoFocus />
-                        </div>
-                        <div className="items-center">
-                            <Button onClick={handleEmail} loading={isSubmitting} disabled={isSubmitting}>Get Link</Button>
+            { user ? <>
+                <div className="items-center w-full">
+                    <p>Logged in as {user.email}</p>
+                    <Button onClick={handleLogout} loading={isSubmitting} disabled={isSubmitting} className="w-full">Logout</Button>
+                </div>
+            </> :
+                !isSubmitted ? 
+                    <div>
+                        <label className="block text-sm text-slate-400 text-center mb-4">Enter your email to receive a verification code.</label>
+                        <div className="flex flex-row gap-4 w-full">
+                            <div className="items-center w-full">
+                                <TextInput placeholder="Enter your email" value={verificationEmail} onChange={(e) => setVerificationEmail(e.target.value)} autoFocus />
+                            </div>
+                            <div className="items-center">
+                                <Button onClick={handleEmail} loading={isSubmitting} disabled={isSubmitting}>Get Link</Button>
+                            </div>
                         </div>
                     </div>
-                </div>
-             : 
-            
-            
-                <div>
-                    <label className="block text-sm text-slate-400 text-center mb-4">A verification code has been sent to your email. Please enter the value here.</label>
-                    <div className="flex flex-row gap-4 w-full">
-                        <div className="items-center w-full">
-                            <TextInput 
-                                placeholder="000000"
-                                value={verificationCode}
-                                onChange={(e) => setVerificationCode(e.target.value)}
-                                autoFocus />
-                        </div>
-                        <div className="items-center">
-                            <Button onClick={handleVerification} loading={isSubmitting} disabled={isSubmitting}>Verify Code</Button>
+                : 
+                
+                    <div>
+                        <label className="block text-sm text-slate-400 text-center mb-4">A verification code has been sent to your email. Please enter the value here.</label>
+                        <div className="flex flex-row gap-4 w-full">
+                            <div className="items-center w-full">
+                                <TextInput 
+                                    placeholder="000000"
+                                    value={verificationCode}
+                                    onChange={(e) => setVerificationCode(e.target.value)}
+                                    autoFocus />
+                            </div>
+                            <div className="items-center">
+                                <Button onClick={handleVerification} loading={isSubmitting} disabled={isSubmitting}>Verify Code</Button>
+                            </div>
                         </div>
                     </div>
-                </div>
             }
         </>
+    );
+}
+
+export default function CustomerLogin() {
+    return (
+        <CurrentSessionProvider>
+            <CustomerLoginComponent redirect='/' />
+        </CurrentSessionProvider>
     );
 }
