@@ -1,13 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
 import { ReactNode } from "react";
-import CTA from "@/components/cta";
-import ReportAbuse from "@/components/report-abuse";
 import { notFound, redirect } from "next/navigation";
 import { getSiteData } from "@/lib/fetchers";
-import { fontMapper } from "@/styles/fonts";
 import { Metadata } from "next";
-import { Container } from "@radix-ui/themes";
 
 export async function generateMetadata({
   params,

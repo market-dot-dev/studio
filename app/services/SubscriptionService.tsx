@@ -4,12 +4,26 @@ import prisma from "@/lib/prisma";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
 
-import { Subscription } from "@prisma/client";
+import { Subscription, Tier, User } from "@prisma/client";
 import TierService from "./TierService";
 import EmailService from "./EmailService";
 
+export type SubscriptionWithUser = Subscription & { user: User, tier?: Tier};
+
 class SubscriptionService {
-  static async findSubscription({ tierId }: { tierId: string; }): Promise<Subscription | null> {
+  static async findSubscription(subscriptionId: string): Promise<SubscriptionWithUser | null> {
+    return prisma.subscription.findUnique({
+      where: {
+        id: subscriptionId,
+      },
+      include: {
+        user: true,
+        tier: true,
+      },
+    });
+  }
+
+  static async findSubscriptionByTierId({ tierId }: { tierId: string; }): Promise<Subscription | null> {
     const userId = await UserService.getCurrentUserId();
     
     if(!userId) return null;
@@ -37,6 +51,20 @@ class SubscriptionService {
     });
 
     return subscriptions;
+  }
+
+  static async subscribedToUser(userId: string): Promise<SubscriptionWithUser[]> {
+    return prisma.subscription.findMany({
+      where: {
+        tier: {
+          userId: userId,
+        },
+      },
+      include: {
+        user: true,
+        tier: true,
+      },
+    });
   }
 
   // Create a subscription for a user
@@ -120,5 +148,5 @@ class SubscriptionService {
   }
 };
 
-export const { createSubscription, destroySubscription, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed } = SubscriptionService;
+export const { createSubscription, destroySubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed } = SubscriptionService;
 export default SubscriptionService;

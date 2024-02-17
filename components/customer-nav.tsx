@@ -102,7 +102,6 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
               )
             ))}
           </div>
-          <RoleSwitcher />
         </div>
         <div>
           <div className="grid gap-1">
