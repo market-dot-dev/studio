@@ -52,7 +52,7 @@ class EmailService {
     }
 
     try {
-      await this.sendEmail(user, subject, text, html);
+      await this.sendEmail(user.email, subject, text, html);
       console.log("Email sent successfully");
     } catch (error) {
       console.error("Failed to send email:", error);
@@ -65,7 +65,7 @@ class EmailService {
     const html = `Thank you for purchasing the <b>${tierName}</b> tier.`;
 
     try {
-      await this.sendEmail(customer, subject, text, html);
+      await this.sendEmail(customer.email, subject, text, html);
       console.log("Email sent successfully");
     } catch (error) {
       console.error("Failed to send email:", error);
@@ -78,7 +78,7 @@ class EmailService {
     const html = `<b>${customer.name}</b> has cancelled their subscription to your <b>${tierName}</b> tier.`;
     
     try {
-      await this.sendEmail(user, subject, text, html);
+      await this.sendEmail(user.email, subject, text, html);
       console.log("Email sent successfully");
     } catch (error) {
       console.error("Failed to send email:", error);
@@ -91,7 +91,7 @@ class EmailService {
     const html = `You have cancelled your subscription to the <b>${tierName}</b> tier.`;
 
     try {
-      await this.sendEmail(customer, subject, text, html);
+      await this.sendEmail(customer.email, subject, text, html);
       console.log("Email sent successfully");
     } catch (error) {
       console.error("Failed to send email:", error);
