@@ -8,6 +8,7 @@ import { Provider } from "next-auth/providers";
 import EmailService from "@/app/services/EmailService";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import RegistrationService from "@/app/services/registration-service";
+import { cookies } from 'next/headers'
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -23,7 +24,15 @@ export const authOptions: NextAuthOptions = {
 					pass: process.env.SENDGRID_API_KEY,
 				}
 			},
-			from: process.env.SENDGRID_FROM_EMAIL
+      from: process.env.SENDGRID_FROM_EMAIL,
+      // the following configuration of EmailProvider makes it use a 6 digit token number instead of a magic link
+      maxAge: 5 * 60,
+      generateVerificationToken: async () => Math.floor(100000 + Math.random() * 900000).toString(),
+      sendVerificationRequest: ({ identifier: email, token }) => {
+        const html = `<p>Your verification code for signing in to Gitwallet.co is <strong>${token}</strong></p>`;
+        const text = `Your verification code for signing in to Gitwallet.co is ${token}`;
+        return EmailService.sendEmail(email, `Verification code`, text, html)
+      }
 		}),
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
@@ -75,8 +84,8 @@ export const authOptions: NextAuthOptions = {
   ].filter(Boolean) as Provider[],
   pages: {
     signIn: `/login`,
-    verifyRequest: `/login/thanks`,
-    error: "/login/error", // Error code passed in query string as ?error=
+    verifyRequest: `/api/authresponse`,
+    error: "/api/authresponse", // Error code passed in query string as ?error=
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -88,9 +97,10 @@ export const authOptions: NextAuthOptions = {
         sameSite: "lax",
         path: "/",
         // When working on localhost, the cookie domain must be omitted entirely (https://stackoverflow.com/a/1188145)
-        domain: VERCEL_DEPLOYMENT
-          ? `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
-          : undefined,
+        // domain: VERCEL_DEPLOYMENT
+        //   ? `.${process.env.NEXT_PUBLIC_ROOT_HOST}`
+        //   : undefined,
+        domain: `.${process.env.NEXT_PUBLIC_ROOT_HOST}`,
         secure: VERCEL_DEPLOYMENT,
       },
     },
@@ -102,15 +112,23 @@ export const authOptions: NextAuthOptions = {
 
       // if its a new user, then based on the provider, we can set the roleId
       if( isNewUser ) {
+        
+        const signupName = (cookies().get('signup_name') ?? null) ;
+        const name = (signupName?.value ?? null) as string | null;
+      
         const roleId = account.provider === 'github' ? 'maintainer' : 'customer';
         await prisma.user.update({
           where: { id: user.id },
           data: {
             roleId,
+            ...(name ? { name } : {})
           },
         });
         // also update the roleId in the token
         userData.roleId = roleId;
+        if(name) {
+          userData.name = name;
+        }
       }
 
       // Store the refresh token in the database when the user logs in
@@ -161,6 +179,7 @@ export const authOptions: NextAuthOptions = {
         ...session.user,
         id: token.sub,
         username: token?.user?.username || token?.user?.gh_username,
+        name: token?.user?.name,
         roleId: token?.user?.roleId || 'anonymous',
         
         // an empty token.user?.onboarding will signal that the user's onboarding isnt complete yet
@@ -168,12 +187,13 @@ export const authOptions: NextAuthOptions = {
       };
       
       return session;
-    },
+    }
   },
   events: {
     signIn: async ({user, account }: any) => {
     },
     createUser: async ({user}: {user: any}) => {
+
       if (!user) {
         return;
       }
@@ -182,7 +202,7 @@ export const authOptions: NextAuthOptions = {
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          onboarding: JSON.stringify( defaultOnboardingState ),
+          onboarding: JSON.stringify( defaultOnboardingState )
         },
       });
 
