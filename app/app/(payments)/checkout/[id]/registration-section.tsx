@@ -116,6 +116,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
       setSubmittingPaymentMethod(true);
       setLoading(false);
     }
+    
   }
 
   useEffect(() => {

@@ -6,6 +6,7 @@ import UserService from "./UserService";
 
 import { Subscription, Tier, User } from "@prisma/client";
 import TierService from "./TierService";
+import EmailService from "./EmailService";
 
 export type SubscriptionWithUser = Subscription & { user: User, tier?: Tier};
 
@@ -79,7 +80,7 @@ class SubscriptionService {
     if (!tier.stripePriceId) throw new Error('Stripe price ID not found for tier');
 
     const subscription = await StripeService.createSubscription(stripeCustomerId, tier.stripePriceId);
-    return await prisma.subscription.create({
+    const res = await prisma.subscription.create({
       data: {
         userId: userId,
         tierId: tierId,
@@ -87,15 +88,43 @@ class SubscriptionService {
         stripeSubscriptionId: subscription.id,
       },
     });
+
+    await Promise.all([
+      // send email to the tier owner
+      EmailService.newSubscriptionInformation(tier.userId, user, tier.name),
+      // send email to the customer
+      EmailService.newSubscriptionConfirmation(user, tier.name)
+    ]);
+
+    return res;
   }
 
   // Cancel or destroy a subscription
   static async destroySubscription(subscriptionId: string) {
-    const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+    // const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+    const subscription = await prisma.subscription.findUnique({
+      where: { id: subscriptionId },
+      include: {
+        user: true, // customer
+        tier: {
+          select: {
+            name: true,
+            user: true, // tier owner
+          },
+        },
+      },
+    });
     if (!subscription) throw new Error('Subscription not found');
 
     await StripeService.destroySubscription(subscription.stripeSubscriptionId);
     await prisma.subscription.delete({ where: { id: subscriptionId } });
+    
+    await Promise.all([
+      // inform the tier owner
+      subscription?.tier?.user ? EmailService.subscriptionCancelledInfo(subscription?.tier?.user, subscription.user, subscription?.tier?.name) : null,
+      // inform the customer
+      subscription.user ? EmailService.subscriptionCancelledConfirmation(subscription.user,  subscription?.tier?.name ?? '') : null,
+    ])
   }
 
   // Update a subscription (change tier, for example)
