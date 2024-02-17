@@ -26,7 +26,6 @@ import {
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
-import RoleSwitcher from "./user/role-switcher";
 import { FaDiscord, FaTelegram, FaTelegramPlane } from "react-icons/fa";
 
 export default function Nav({ children, siteId, roleId }: { children: ReactNode, siteId: string | null, roleId: string | null }) {
@@ -90,7 +89,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         icon: <Code2 width={18} />,
       },
       {
-        
+
         name: "Get Support",
         href: "",
         isDivider: true,
@@ -105,21 +104,20 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         name: "DM Founder",
         href: "https://t.me/tarunsachdeva2",
         target: "_blank",
-        icon: <FaTelegramPlane width={18} />, 
-      },
-      ...(process.env.NODE_ENV === "development" ?
-      [{
-        name: "⚠️ DEBUG MENU ⚠️",
-        href: "",
-        isDivider: true,
+        icon: <FaTelegramPlane width={18} />,
       },
       ...(['admin', 'maintainer'].includes(roleId || '') ?
         [{
+          name: "⚠️ DEBUG MENU ⚠️",
+          href: "",
+          isDivider: true,
+        },
+        {
           name: "Debug",
           href: `/admin/debug`,
           icon: <GearIcon width={18} />,
-        }] : []),
-      ] : []),
+        }
+        ] : []),
     ];
   }, [urlSegments, id, siteId, roleId]);
 
@@ -172,9 +170,8 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
                 </Link>
               )
             ))}
-            
+
           </div>
-            <RoleSwitcher />
         </div>
         <div>
           <div className="grid gap-1">

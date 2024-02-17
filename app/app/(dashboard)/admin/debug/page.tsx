@@ -3,6 +3,7 @@
 
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
+import RoleSwitcher from "@/components/user/role-switcher";
 import Link from "next/link";
 
 const StripeDebug = async () => {
@@ -24,6 +25,7 @@ const StripeDebug = async () => {
         <Link href="/settings/payment">Stripe Connect</Link> <br/>
         <Link href="/subscriptions">Your active subscriptions</Link> <br/>
         <Link href="/admin/debug/onboarding">Onboarding State</Link> <br/>
+        <RoleSwitcher />
       </div>
     </div>
   );
