@@ -15,7 +15,6 @@ import { onClickSubscribe } from '@/app/services/StripeService';
 import { findSubscriptionByTierId, isSubscribed } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
-import EmailService from "@/app/services/EmailService";
 
 const checkoutCurrency = "USD";
   "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
@@ -118,14 +117,6 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   useEffect(() => {
     if (purchaseIntent && user && user.stripePaymentMethodId) {
       onClickSubscribe(user.id, tierId).then(async () => {
-        
-        await Promise.all([
-          // send email to the tier owner
-          EmailService.newSubscriptionInformation(tier.userId, user, tier.name),
-          // send email to the customer
-          EmailService.newSubscriptionConfirmation(user, tier.name)
-        ]);
-
         setPurchaseIntent(false);
         window.location.href = "/success";
       });

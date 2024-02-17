@@ -80,7 +80,7 @@ class SubscriptionService {
     if (!tier.stripePriceId) throw new Error('Stripe price ID not found for tier');
 
     const subscription = await StripeService.createSubscription(stripeCustomerId, tier.stripePriceId);
-    return await prisma.subscription.create({
+    const res = await prisma.subscription.create({
       data: {
         userId: userId,
         tierId: tierId,
@@ -88,6 +88,15 @@ class SubscriptionService {
         stripeSubscriptionId: subscription.id,
       },
     });
+
+    await Promise.all([
+      // send email to the tier owner
+      EmailService.newSubscriptionInformation(tier.userId, user, tier.name),
+      // send email to the customer
+      EmailService.newSubscriptionConfirmation(user, tier.name)
+    ]);
+
+    return res;
   }
 
   // Cancel or destroy a subscription
