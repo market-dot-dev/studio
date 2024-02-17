@@ -116,7 +116,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
 
   useEffect(() => {
     if (purchaseIntent && user && user.stripePaymentMethodId) {
-      onClickSubscribe(user.id, tierId).then(async () => {
+      onClickSubscribe(user.id, tierId).then(() => {
         setPurchaseIntent(false);
         window.location.href = "/success";
       });
