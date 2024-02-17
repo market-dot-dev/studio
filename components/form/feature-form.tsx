@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, TextInput, Switch } from '@tremor/react';
 import { TextArea } from "@radix-ui/themes";
@@ -45,6 +45,7 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
 
   // Watches the isEnabled value for live updates
   const isEnabled = watch("isEnabled");
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
     setValue('id', initialFeature?.id || '');
@@ -56,9 +57,11 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
   }, [initialFeature, setValue]);
 
   const onSubmit = async (data: FeatureAttributes) => {
+    setIsSaving(true);
     const currentUser = await getCurrentUser();
     
     if (!currentUser) {
+      setIsSaving(false);
       throw new Error("User is required to create a feature.");
     }
     
@@ -75,6 +78,7 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
     if (returnedFeature && returnedFeature.id) {
       window.location.href = `/features`;
     } else {
+      setIsSaving(false);
       console.error('Failed to get the feature ID after operation.');
     }
   };
@@ -85,7 +89,7 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
       <TextInput placeholder="Enter link" {...register("uri")} />
       <TextArea placeholder="Enter description" rows={3} {...register("description")} />
       <ToggleSwitch isEnabled={isEnabled || false} handleToggle={() => setValue('isEnabled', !isEnabled)} />
-      <Button type="submit">{ initialFeature?.id ? 'Update' : 'Save'}</Button>
+      <Button type="submit" disabled={isSaving}>{ initialFeature?.id ? 'Update' : 'Save'}</Button>
     </form>
   );
 };
