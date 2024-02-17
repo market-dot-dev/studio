@@ -6,13 +6,14 @@ import LoginButton from "@/components/common/login-button";
 import { Suspense } from "react";
 import CustomerLogin from "@/components/login/customer-login";
 
-
 export const metadata: Metadata = {
   title: "Login | Gitwallet",
 };
 
 export default async function LoginPage() {
   const localAuthAvailable = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
+  const csrfToken = cookies().get('next-auth.csrf-token')?.value.split('|')[0];
+
 
   return (
     <>
@@ -33,9 +34,7 @@ export default async function LoginPage() {
               <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
             }
           >
-            
-            <CustomerLogin />
-            
+          <CustomerLogin csrfToken={csrfToken} />
           </Suspense>
           {localAuthAvailable &&
             <Suspense>

@@ -23,15 +23,7 @@ export const authOptions: NextAuthOptions = {
 					pass: process.env.SENDGRID_API_KEY,
 				}
 			},
-      from: process.env.SENDGRID_FROM_EMAIL,
-      // the following configuration of EmailProvider makes it use a 6 digit token number instead of a magic link
-      maxAge: 5 * 60,
-      generateVerificationToken: async () => Math.floor(100000 + Math.random() * 900000).toString(),
-      sendVerificationRequest: ({ identifier: email, token }) => {
-        const html = `<p>Your verification code for signing in to Gitwallet.co is <strong>${token}</strong></p>`;
-        const text = `Your verification code for signing in to Gitwallet.co is ${token}`;
-        return EmailService.sendEmail(email, `Verification code`, text, html)
-      }
+			from: process.env.SENDGRID_FROM_EMAIL
 		}),
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
@@ -83,8 +75,8 @@ export const authOptions: NextAuthOptions = {
   ].filter(Boolean) as Provider[],
   pages: {
     signIn: `/login`,
-    verifyRequest: `/api/authresponse`,
-    error: "/api/authresponse", // Error code passed in query string as ?error=
+    verifyRequest: `/login/thanks`,
+    error: "/login/error", // Error code passed in query string as ?error=
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -96,10 +88,9 @@ export const authOptions: NextAuthOptions = {
         sameSite: "lax",
         path: "/",
         // When working on localhost, the cookie domain must be omitted entirely (https://stackoverflow.com/a/1188145)
-        // domain: VERCEL_DEPLOYMENT
-        //   ? `.${process.env.NEXT_PUBLIC_ROOT_HOST}`
-        //   : undefined,
-        domain: `.${process.env.NEXT_PUBLIC_ROOT_HOST}`,
+        domain: VERCEL_DEPLOYMENT
+          ? `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`
+          : undefined,
         secure: VERCEL_DEPLOYMENT,
       },
     },

@@ -12,14 +12,9 @@ type RequiredUserProps = {
   } & Partial<User>;
 
 class EmailService {
-  static async sendEmail(email: string | null, subject: string, text: string, html: string) {
-    console.log('sending email', email, subject, html)
-    if( !email ) {
-      console.error('Invalid email address');
-      return;
-    }
+  static async sendEmail(user: RequiredUserProps, subject: string, text: string, html: string) {
     const msg = {
-      to: email, // recipient
+      to: user.email, // recipient
       from: process.env.SENDGRID_FROM_EMAIL, // verified sender
       subject: subject,
       text: text,
@@ -28,7 +23,7 @@ class EmailService {
 
     try {
       await sgMail.send(msg);
-      console.log(`Email sent to ${email}`);
+      console.log(`Email sent to ${user.email}`);
     } catch (error: any) {
       console.error(error);
 
@@ -48,7 +43,7 @@ class EmailService {
         <p>Get started here: <a href="https://app.gitwallet.co">app.gitwallet.co</a></p>
     `;
 
-    await this.sendEmail(user.email, subject, text, html);
+    await this.sendEmail(user, subject, text, html);
   }
 
   static async sendNewSubscriberEmail(user: RequiredUserProps) {
