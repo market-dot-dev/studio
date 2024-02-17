@@ -92,38 +92,37 @@ class FeatureService {
     });
   }
 
+  private static updateData(referenceId: string, type: 'tier' | 'tierVersion', operation: 'connect' | 'disconnect') {
+    const dataPath = type === 'tier' ? 'tiers' : 'tierVersions';
+    return {
+      [dataPath]: {
+        [operation]: { id: referenceId },
+      },
+    };
+  }
+
   static async attach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
-    return FeatureService.attachMany({ featureIds: [featureId], referenceId }, type);
+    const data = this.updateData(referenceId, type, 'connect');
+    return prisma.feature.update({
+      where: { id: featureId },
+      data: data,
+    });
   }
 
   static async attachMany({ featureIds, referenceId }: { featureIds: string[]; referenceId: string; }, type: 'tier' | 'tierVersion') {
-    const query = {
-      where: { id: referenceId },
-      data: {
-        features: {
-          connect: featureIds.map(featureId => ({ id: featureId })),
-        }
-      },
-    }
-
-    return type === 'tier' ? prisma.tier.update(query) : prisma.tierVersion.update(query);
-  }
-
-  static async detachMany({ featureIds, referenceId }: { featureIds: string[]; referenceId: string; }, type: 'tier' | 'tierVersion') {
-    const query = {
-      where: { id: referenceId },
-      data: {
-        features: {
-          disconnect: featureIds.map(featureId => ({ id: featureId })),
-        }
-      },
-    }
-
-    return type === 'tier' ? prisma.tier.update(query) : prisma.tierVersion.update(query);
+    const data = this.updateData(referenceId, type, 'connect');
+    return prisma.feature.updateMany({
+      where: { id: { in: featureIds } },
+      data: data,
+    });
   }
 
   static async detach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
-    return FeatureService.detachMany({ featureIds: [featureId], referenceId }, type);
+    const data = this.updateData(referenceId, type, 'disconnect');
+    return prisma.feature.update({
+      where: { id: featureId },
+      data: data,
+    });
   }
 }
 

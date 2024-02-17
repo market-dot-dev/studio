@@ -104,9 +104,7 @@ class TierService {
       ProductService.createProduct(user.id);
     }
     
-    if(await StripeService.userCanSell(user)) {
-      await TierService.createStripePrice(tier);
-    }
+    await TierService.createStripePrice(tier);
 
     return tier;
   }
@@ -114,15 +112,8 @@ class TierService {
   static async updateTier(id: string, tierData: Partial<Tier>) {
     // Ensure the current user is the owner of the tier or has permissions to update it
     const userId = await UserService.getCurrentUserId();
-
     if (!userId) {
       throw new Error("User not authenticated");
-    }
-
-    const user = await UserService.findUser(userId);
-
-    if (!user) {
-      throw new Error("User not found");
     }
 
     const tier = await prisma.tier.findUnique({
@@ -137,10 +128,6 @@ class TierService {
       throw new Error("User does not have permission to update this tier");
     }
     
-    if(await StripeService.userCanSell(user) && !tier.stripePriceId) {
-      await TierService.createStripePrice(tier);
-    }
-
     // Start a transaction
     const result = await prisma.$transaction(async (prisma) => {
       // Fetch the current tier data
@@ -153,13 +140,11 @@ class TierService {
         throw new Error(`Tier with ID ${id} not found`);
       }
 
-      // FIXME: this can clobber values if we're not careful
       const tierAttributes = tierData as any;
       tierAttributes.price = parseFloat(`${tierAttributes.price}`);
       tierAttributes.revision = currentTier.revision + 1;
       delete tierAttributes.id;
       delete tierAttributes.features;
-      delete tierAttributes.stripePriceId;
 
       const writtenTier = await prisma.tier.update({
         where: { id },
@@ -207,6 +192,7 @@ class TierService {
   }
 
   static async onNewVersion(tier: Tier) {
+    console.log(`New version ${tier.revision} created for tier ${tier.id}`);
     TierService.createStripePrice(tier);
   }
 
@@ -421,6 +407,10 @@ class TierService {
       }
       return a.price - b.price;
     });
+
+    //let tier: TierWithFeatures | undefined = tierId ? allTiers.find((t) => t.id === tierId) : newTier;
+
+    //if(!tier) return [];
 
     return allTiers;
   }

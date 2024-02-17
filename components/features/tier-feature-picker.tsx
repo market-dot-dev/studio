@@ -23,16 +23,15 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   const anyFeatures = features.length > 0;
 
   useEffect(() => {
-    getTiersForMatrix(tierId, newTier).then((tiersData) => {
-      setSavedTiers(tiersData.filter(t => t.published || t.id === tierId));
+    getTiersForMatrix().then((tiersData) => {
+      setSavedTiers(tiersData);
     });
 
     findByCurrentUser().then((featuresData) => {
-      setFeatures(featuresData.filter(f => f.isEnabled));
+      setFeatures(featuresData);
     });
   }, [])
 
-  
   const tiers: TierWithFeatures[] = newTier ? [newTier, ...savedTiers] : savedTiers;
 
   useEffect(() => {

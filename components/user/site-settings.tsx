@@ -37,10 +37,6 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
                         <TextInput placeholder="Your subdomain" name="subdomain" id="subdomain" defaultValue={site.subdomain ?? ''} />
                     </Flex>
                     <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-                        <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-                        <TextInput placeholder="Title of your site" name="name" id="name" defaultValue={site.name ?? ''} />
-                    </Flex>
-                    <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
                         <label htmlFor="logo" className="block text-sm font-medium text-gray-700">Logo</label>
                         <Uploader defaultValue={site.logo ?? null} name="logo" setChanged={setChanged} />
                     </Flex>

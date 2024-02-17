@@ -81,8 +81,7 @@ class SiteService {
                     });
 
                     updateData.logo = url;
-                } else if (key === "name") {
-                    updateData.name = value.toString();
+                    
                 }
             }
 
