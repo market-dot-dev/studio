@@ -205,9 +205,12 @@ export const authOptions: NextAuthOptions = {
           onboarding: JSON.stringify( defaultOnboardingState )
         },
       });
-
+      
       await RegistrationService.createSite(user);
-      await EmailService.sendNewUserSignUpEmail(user);
+
+      const signupName = (cookies().get('signup_name') ?? null) ;
+      const name = (signupName?.value ?? null) as string | null;
+      await EmailService.sendNewUserSignUpEmail({...user, ...(user.name ? {} : { name })});
     },
   },
 };
