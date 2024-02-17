@@ -187,7 +187,7 @@ export const authOptions: NextAuthOptions = {
       };
       
       return session;
-    },
+    }
   },
   events: {
     signIn: async ({user, account }: any) => {

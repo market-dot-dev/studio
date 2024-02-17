@@ -152,15 +152,8 @@ class RegistrationService {
 
     cookies().set('signup_name', userAttributes.name);
 
-    // return true;
+    return true;
 
-    // return await prisma.user.create({
-    //   data: {
-    //     email: userAttributes.email,
-    //     name: userAttributes.name,
-    //     roleId: 'customer',
-    //   },
-    // });
   }
 };
 

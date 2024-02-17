@@ -2,19 +2,34 @@ import { authOptions } from "@/lib/auth";
 import NextAuth from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
+
 const nextAuthHandler = NextAuth(authOptions);
 
 const handler = async (req: NextRequest, res: NextResponse) => {
     
-    // enable next auth email token verification on subdomain
+    // in case its an email verification callback request, then the redirect should be made to the subdomain of the given host
     if( req.nextUrl.pathname === '/api/auth/callback/email') {
-        const host = req.nextUrl.searchParams.get('host');
-        if(host && host !== process.env.NEXTAUTH_URL) {
-            process.env.NEXTAUTH_URL = host;
-        }
-    }
+        
+        const referer = req.headers.get('referer') as string;    
+        
+        const subdomain = referer.split('.')[0].split('://')[1];
+        
+        const options = {...authOptions, callbacks: {
+            ...authOptions.callbacks,
+            async redirect({ url } : { url: string}) {
+                // replace the original subdomain from the url
+                const originalSubdomain = url.split('.')[0].split('://')[1];
+                const final = url.replace(originalSubdomain, subdomain);
 
+                return final
+            }
+        }};
+        
+        return NextAuth(options)(req, res);
+    }
+    
     return nextAuthHandler(req, res);
-  };
+
+};
 
 export { handler as GET, handler as POST };

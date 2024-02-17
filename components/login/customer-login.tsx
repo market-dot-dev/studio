@@ -106,7 +106,7 @@ export function CustomerLoginComponent({ redirect } : { redirect?: string }) {
         setIsSubmitting(true);
 
         try {
-            const res = await fetch(`/api/auth/callback/email?email=${encodeURIComponent(verificationEmail)}&token=${verificationCode}&host=${window.location.origin}`);
+            const res = await fetch(`/api/auth/callback/email?email=${encodeURIComponent(verificationEmail)}&token=${verificationCode}`);
             
             if(res.status === 200) {
                 if(redirect) {
