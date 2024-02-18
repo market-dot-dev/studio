@@ -26,7 +26,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
     const handleLogout = () => {
         setIsSubmitting(true);
-        signOut({ callbackUrl: '/'});
+        signOut({ callbackUrl: user?.roleId === 'maintainer' ? '/login' : '/customer-login' })
     }
 
     const handleEmail = async (e: any) => {
@@ -35,6 +35,13 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
             setError('Please enter your email.');
             return;
         };
+
+        // check for email format
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        if( !re.test(String(verificationEmail).toLowerCase())) {
+            setError('Please enter a valid email.');
+            return;
+        }
 
         setIsSubmitting(true);
 
@@ -158,7 +165,18 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                     
                     <div className="flex flex-row gap-4 w-full">
                         <div className="items-center w-full">
-                            <TextInput placeholder="Enter your email" value={verificationEmail} onChange={(e) => setVerificationEmail(e.target.value)} />
+                            <TextInput 
+                                placeholder="Enter your email" 
+                                value={verificationEmail} 
+                                onChange={(e) => {
+                                    setVerificationEmail(e.target.value)
+                                    setError(null);
+                                }}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleEmail(e);
+                                    }
+                                }}  />
                         </div>
                         <div className="items-center">
                             <Button onClick={handleEmail} loading={isSubmitting} disabled={isSubmitting}>Get Code</Button>
@@ -177,6 +195,11 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                                 placeholder="000000"
                                 value={verificationCode}
                                 onChange={(e) => setVerificationCode(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleVerification(e);
+                                    }
+                                }}
                                 autoFocus />
                         </div>
                         <div className="items-center">
