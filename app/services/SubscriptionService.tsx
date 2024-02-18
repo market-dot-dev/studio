@@ -4,11 +4,26 @@ import prisma from "@/lib/prisma";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
 
-import { Subscription } from "@prisma/client";
+import { Subscription, Tier, User } from "@prisma/client";
 import TierService from "./TierService";
+import EmailService from "./EmailService";
+
+export type SubscriptionWithUser = Subscription & { user: User, tier?: Tier};
 
 class SubscriptionService {
-  static async findSubscription({ tierId }: { tierId: string; }): Promise<Subscription | null> {
+  static async findSubscription(subscriptionId: string): Promise<SubscriptionWithUser | null> {
+    return prisma.subscription.findUnique({
+      where: {
+        id: subscriptionId,
+      },
+      include: {
+        user: true,
+        tier: true,
+      },
+    });
+  }
+
+  static async findSubscriptionByTierId({ tierId }: { tierId: string; }): Promise<Subscription | null> {
     const userId = await UserService.getCurrentUserId();
     
     if(!userId) return null;
@@ -38,6 +53,20 @@ class SubscriptionService {
     return subscriptions;
   }
 
+  static async subscribedToUser(userId: string): Promise<SubscriptionWithUser[]> {
+    return prisma.subscription.findMany({
+      where: {
+        tier: {
+          userId: userId,
+        },
+      },
+      include: {
+        user: true,
+        tier: true,
+      },
+    });
+  }
+
   // Create a subscription for a user
   static async createSubscription(userId: string, tierId: string, tierVersionId?: string) {
     const user = await UserService.findUser(userId);
@@ -51,7 +80,7 @@ class SubscriptionService {
     if (!tier.stripePriceId) throw new Error('Stripe price ID not found for tier');
 
     const subscription = await StripeService.createSubscription(stripeCustomerId, tier.stripePriceId);
-    return await prisma.subscription.create({
+    const res = await prisma.subscription.create({
       data: {
         userId: userId,
         tierId: tierId,
@@ -59,15 +88,43 @@ class SubscriptionService {
         stripeSubscriptionId: subscription.id,
       },
     });
+
+    await Promise.all([
+      // send email to the tier owner
+      EmailService.newSubscriptionInformation(tier.userId, user, tier.name),
+      // send email to the customer
+      EmailService.newSubscriptionConfirmation(user, tier.name)
+    ]);
+
+    return res;
   }
 
   // Cancel or destroy a subscription
   static async destroySubscription(subscriptionId: string) {
-    const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+    // const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
+    const subscription = await prisma.subscription.findUnique({
+      where: { id: subscriptionId },
+      include: {
+        user: true, // customer
+        tier: {
+          select: {
+            name: true,
+            user: true, // tier owner
+          },
+        },
+      },
+    });
     if (!subscription) throw new Error('Subscription not found');
 
     await StripeService.destroySubscription(subscription.stripeSubscriptionId);
     await prisma.subscription.delete({ where: { id: subscriptionId } });
+    
+    await Promise.all([
+      // inform the tier owner
+      subscription?.tier?.user ? EmailService.subscriptionCancelledInfo(subscription?.tier?.user, subscription.user, subscription?.tier?.name) : null,
+      // inform the customer
+      subscription.user ? EmailService.subscriptionCancelledConfirmation(subscription.user,  subscription?.tier?.name ?? '') : null,
+    ])
   }
 
   // Update a subscription (change tier, for example)
@@ -100,5 +157,5 @@ class SubscriptionService {
   }
 };
 
-export const { createSubscription, destroySubscription, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed } = SubscriptionService;
+export const { createSubscription, destroySubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed } = SubscriptionService;
 export default SubscriptionService;

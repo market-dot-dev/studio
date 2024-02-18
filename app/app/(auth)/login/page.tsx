@@ -2,12 +2,20 @@ import Image from "next/image";
 import GithubLoginButton from "./github-login-button";
 import LoginButton from "@/components/common/login-button";
 import { Suspense } from "react";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  
   const localAuthAvailable = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
+  const session = await getSession();
+
+  if (session) {
+    redirect("/");
+  }
 
   return (
-    <div className="mx-5 border border-stone-200 py-10 dark:border-stone-700 sm:mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
+    <>
       <Image
         alt="Gitwallet"
         width={100}
@@ -39,6 +47,6 @@ export default function LoginPage() {
             </LoginButton>
           </Suspense> }
       </div>
-    </div>
+    </>
   );
 }

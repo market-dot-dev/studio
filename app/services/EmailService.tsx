@@ -2,6 +2,7 @@
 
 import { User } from '@prisma/client';
 import sgMail from '@sendgrid/mail';
+import UserService from './UserService';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
 
@@ -30,6 +31,65 @@ class EmailService {
       if (error.response) {
         console.error(error.response.body);
       }
+    }
+  }
+
+  static async newSubscriptionInformation(userId: string, customer: RequiredUserProps, tierName: string) {
+
+    const subject = "New Tier Purchase";
+    const text = `${customer.name} has purchased your ${tierName} tier.`;
+    const html = `<b>${customer.name}</b> has purchased your <b>${tierName}</b> tier.`;
+    const user = await UserService.findUser(userId);
+    
+    if(!user) {
+      console.error(`User not found with id: ${userId}`);
+      return;
+    }
+
+    try {
+      await this.sendEmail(user, subject, text, html);
+      console.log("Email sent successfully");
+    } catch (error) {
+      console.error("Failed to send email:", error);
+    }
+  }
+
+  static async newSubscriptionConfirmation(customer: RequiredUserProps, tierName: string) {
+    const subject = "Tier Purchase Confirmation";
+    const text = `Thank you for purchasing the ${tierName} tier.`;
+    const html = `Thank you for purchasing the <b>${tierName}</b> tier.`;
+
+    try {
+      await this.sendEmail(customer, subject, text, html);
+      console.log("Email sent successfully");
+    } catch (error) {
+      console.error("Failed to send email:", error);
+    }
+  }
+
+  static async subscriptionCancelledInfo(user: RequiredUserProps, customer: RequiredUserProps, tierName: string) {
+    const subject = "Subscription Cancelled";
+    const text = `${customer.name} has cancelled their subscription to your ${tierName} tier.`;
+    const html = `<b>${customer.name}</b> has cancelled their subscription to your <b>${tierName}</b> tier.`;
+    
+    try {
+      await this.sendEmail(user, subject, text, html);
+      console.log("Email sent successfully");
+    } catch (error) {
+      console.error("Failed to send email:", error);
+    }
+  }
+
+  static async subscriptionCancelledConfirmation(customer: RequiredUserProps, tierName: string) {
+    const subject = "Subscription Cancelled";
+    const text = `You have cancelled your subscription to the ${tierName} tier.`;
+    const html = `You have cancelled your subscription to the <b>${tierName}</b> tier.`;
+
+    try {
+      await this.sendEmail(customer, subject, text, html);
+      console.log("Email sent successfully");
+    } catch (error) {
+      console.error("Failed to send email:", error);
     }
   }
 

@@ -1,27 +1,31 @@
 "use client";
+// tier-form.tsx
 
-import { ChangeEvent, useEffect, useState } from 'react';
-import { Flex, Text, Button, TextInput, Card, Title, Bold, NumberInput } from "@tremor/react"
-import Tier from '@/app/models/Tier';
+import { ChangeEvent, Suspense, useEffect, useState } from 'react';
+import { Flex, Text, Button, Card, Title, Bold, NumberInput, Callout, TextInput, Textarea } from "@tremor/react"
+import Tier, { newTier } from '@/app/models/Tier';
 import { createTier, updateTier } from '@/app/services/TierService';
 import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
-import { userCanSellById } from '@/app/services/StripeService';
+import { userHasStripeAccountIdById } from '@/app/services/StripeService';
+import PageHeading from '../common/page-heading';
+import { Feature } from '@prisma/client';
+import TierFeaturePicker from '../features/tier-feature-picker';
+import { attachMany } from '@/app/services/feature-service';
 
 interface TierFormProps {
-	tier: Partial<Tier>;
-	handleSubmit: (tier: Tier) => void;
+	tier?: Partial<Tier>;
 }
 
-export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps) {
+export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const router = useRouter();
-	const [tier, setTier] = useState<Tier>(tierObj as Tier);
+	const [tier, setTier] = useState<Tier>((tierObj ? tierObj : newTier()) as Tier);
+	const [selectedFeatures, setSelectedFeatures] = useState<Record<string, Feature[]>>({});
 
-	const newRecord = !tier.id;
+	const newRecord = !tier?.id;
 
-	const label = newRecord ? 'Create' : 'Update';
+	const label = newRecord ? 'Create Tier' : 'Update Tier';
 	
-	//const [features, setFeatures] = useState(tier.features ?? []);
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
 
@@ -47,20 +51,30 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 
 		try {
 			const savedTier = newRecord ? await createTier(tier) : await updateTier(tier.id as string, tier);
-			handleSubmit(savedTier);
+
+			if(newRecord) {
+				const featureIds = (selectedFeatures[tier.id] || []).map(f => f.id)
+				await attachMany({ referenceId: savedTier.id, featureIds: featureIds }, 'tier');
+			}
+			window.location.href = `/tiers/${savedTier.id}`;
 		} catch (error) {
 			console.log(error);
-		} finally	{
+		} finally {
 			setIsSaving(false);
-			
 		}
 	}
 
 	const [canPublish, setCanPublish] = useState(false);
+	const [canPublishLoading, setCanPublishLoading] = useState(true);
 
 	useEffect(() => {
-		userCanSellById().then(setCanPublish);
+		userHasStripeAccountIdById().then((value: boolean) => {
+			setCanPublish(value)
+			setCanPublishLoading(false);
+		});
 	}, []);
+
+	const canPublishDisabled = !canPublish || canPublishLoading;
 
 	return (
 		<>
@@ -68,11 +82,34 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 				{/* Form Fields Section */}
 				<div className="md:col-span-2 space-y-6">
+				<div className="flex justify-between">
+						<div>
+							<PageHeading title={label} />
+						</div>
+						<div>
+							<Button
+								disabled={isSaving}
+								loading={isSaving}
+								onClick={onSubmit}
+							>
+								{label}
+							</Button>
+						</div>
+					</div>
+
+				</div>
+
+				<div>
+					&nbsp;
+				</div>
+			</div>
+
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
+				<div className="md:col-span-2 space-y-6">
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Name</label>
-						<input
+						<TextInput
 							id="tierName"
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							placeholder="Premium"
 							required
 							name="name"
@@ -85,9 +122,8 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Tagline</label>
-						<input
+						<TextInput
 							id="tierTagline"
-							className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
 							placeholder="Great for startups and smaller companies."
 							required
 							name="tagline"
@@ -98,53 +134,52 @@ export default function TierForm({ tier: tierObj, handleSubmit } : TierFormProps
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Description</label>
-						<textarea
+						<Textarea
 							id="tierDescription"
 							rows={4}
-							className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
 							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
 							name="description"
 							value={tier.description || ''}
 							onChange={handleInputChange}
-						></textarea>
+						/>
 					</div>
 
 					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Status</label>
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
 							<Flex className='gap-2' justifyContent='start'>
+
+							{ canPublishLoading && <Text>(checking stripe eligiblity)</Text> }
+							{ !canPublishLoading && <>
 								<input type="checkbox"
 									checked={tier.published}
-									disabled={!canPublish}
+									disabled={canPublishDisabled}
 									onChange={(e) => {
 										setTier({ ...tier, published: e.target.checked } as Tier);
 									}} /> 
 								<span>
-									Published
-									{ !canPublish && <Text color="red" >You need to connect your Stripe account to publish a tier</Text> }
+									<label htmlFor="switch" className="text-sm text-gray-500 ms-2">
+										Make this tier <span className="font-medium text-gray-700">available for sale.</span>
+									</label>
 								</span>
+							</>}
 							</Flex>
+							{ (!canPublish && !canPublishLoading) && <>
+								<Callout className="my-2" title="Payment Setup Required" color="red">You need to connect your Stripe account to publish a tier. Visit <a href="/settings/payment" className="underline">Payment Settings</a> to get started.</Callout>
+							</>}
 						</label>
 					</div>
 
-					{/* Current version */}
-					<Card>
-						<Flex flexDirection="col" alignItems="start" className="gap-4">
-							<Title>Current Version</Title>
-							
-							<Flex flexDirection="col" alignItems="start" className="gap-1">
-								<Bold>Price</Bold>
-								<NumberInput value={tier.price} name="price" placeholder="Enter price" onChange={handleInputChange}/>
-							</Flex>
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price</label>
+						<Flex className='gap-2' justifyContent='start'>
+							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
 						</Flex>
-					</Card>
+					</div>
 
-					<Button
-						disabled={isSaving}
-						loading={isSaving}
-						onClick={onSubmit}
-					>
-						{label}
-					</Button>
+					{ tier?.id ?
+						<TierFeaturePicker tierId={tier.id} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> :
+						<TierFeaturePicker newTier={tier} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> }
 				</div>
 
 				{/* Preview Section */}

@@ -1,5 +1,6 @@
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
+import EmailProvider from "next-auth/providers/email";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
@@ -13,6 +14,17 @@ const isDevelopment = process.env.NODE_ENV === "development";
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    EmailProvider({
+			server: {
+				host: process.env.EMAIL_SERVER_HOST,
+				port: process.env.EMAIL_SERVER_PORT,
+				auth: {
+					user: process.env.EMAIL_SERVER_USER,
+					pass: process.env.SENDGRID_API_KEY,
+				}
+			},
+			from: process.env.SENDGRID_FROM_EMAIL
+		}),
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
       clientSecret: process.env.AUTH_GITHUB_SECRET as string,
@@ -63,8 +75,8 @@ export const authOptions: NextAuthOptions = {
   ].filter(Boolean) as Provider[],
   pages: {
     signIn: `/login`,
-    verifyRequest: `/login`,
-    error: "/login", // Error code passed in query string as ?error=
+    verifyRequest: `/login/thanks`,
+    error: "/login/error", // Error code passed in query string as ?error=
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -84,9 +96,22 @@ export const authOptions: NextAuthOptions = {
     },
   },
   callbacks: {
-    jwt: async ({ token, user, account, trigger, session } : any) => {
+    jwt: async ({ token, user, account, trigger, session, isNewUser } : any) => {
 
       const userData = user ? {...user} : null;
+
+      // if its a new user, then based on the provider, we can set the roleId
+      if( isNewUser ) {
+        const roleId = account.provider === 'github' ? 'maintainer' : 'customer';
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            roleId,
+          },
+        });
+        // also update the roleId in the token
+        userData.roleId = roleId;
+      }
 
       // Store the refresh token in the database when the user logs in
       if (account && user) {
@@ -146,7 +171,7 @@ export const authOptions: NextAuthOptions = {
     },
   },
   events: {
-    signIn: async ({user}: {user: any}) => {
+    signIn: async ({user, account }: any) => {
     },
     createUser: async ({user}: {user: any}) => {
       if (!user) {

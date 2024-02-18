@@ -11,7 +11,7 @@ import { DasboardProvider } from "@/components/dashboard/dashboard-context";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const session = await getSession();
-  
+
   if (!session) {
     redirect("/login");
   }
@@ -25,14 +25,12 @@ export default async function DashboardLayout({ children }: { children: ReactNod
             <Profile />
           </Suspense>
         </Nav>
-        <div className="min-h-screen dark:bg-black sm:pl-60">
+        <div className="min-h-screen sm:pl-60">
           <Flex alignItems="stretch" className="w-full">
-
-            <div className="w-full grow">
-            <OnboardingGuide/>
-
+            <div className="w-full grow p-8">
+              <OnboardingGuide />
               {children}
-            </div>            
+            </div>
           </Flex>
         </div>
       </div>
