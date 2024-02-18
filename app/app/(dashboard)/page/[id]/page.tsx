@@ -4,7 +4,7 @@ import { notFound, redirect } from "next/navigation";
 
 import PageEditor from "@/components/page-editor";
 import PageHeading from "@/components/common/page-heading";
-import ExternalLink from "@/components/common/external-link";
+import DomainServices from "@/app/services/domain-service";
 
 export default async function Page({ params }: { params: { id: string } }) {
 	const session = await getSession();
@@ -35,11 +35,16 @@ export default async function Page({ params }: { params: { id: string } }) {
 			},
 		},
 	});
-
+	
+	
 
     if (!data || data.userId !== session.user.id) {
     notFound();
+
+	
   }
+
+  const previewUrl = DomainServices.getRootUrl(data?.site?.subdomain ?? 'app', data.id === data.site?.homepageId ? "" : `/${data.slug}`);
   
   return (
     <>
@@ -52,7 +57,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       </div>
 
 
-    <PageEditor site={data?.site} page={data} subdomain={data?.site?.subdomain ?? null} homepageId={ data.site?.homepageId || null} />
+    <PageEditor site={data?.site} page={data} previewUrl={previewUrl} homepageId={ data.site?.homepageId || null} />
     </>
   )
 }

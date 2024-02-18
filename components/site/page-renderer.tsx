@@ -25,9 +25,9 @@ type DynamicComponentProps = {
     "wbr"
   ];
   
-  const DynamicComponent: React.FC<DynamicComponentProps> = ({ tag, className, children }) => {
+  const DynamicComponent: React.FC<DynamicComponentProps> = ({ tag, className, children, ...attributes }) => {
     const Tag = tag;
-    return <Tag className={className}>{children}</Tag>;
+    return <Tag className={className} {...attributes}>{children}</Tag>;
   };
   
   // For recursively rendering elements
@@ -71,19 +71,28 @@ type DynamicComponentProps = {
   
     const className = element.className;
 
+    let attributes = {} as any;
+    Array.from(element.attributes).forEach((item : any) => {
+      if(item.name === 'class') return;
+      if(item.name === 'style') {
+        return;
+      }
+      attributes[item.name] = item.value;
+    });
+    
     // Check if the element is a void element
     if (voidElements.indexOf(tag) !== -1) {
-      return <DynamicComponent tag={tag} className={className} key={index} />;
+      return <DynamicComponent tag={tag} className={className} key={index} {...attributes} />;
     }
   
     if (element.children.length > 0) {
       return (
-        <DynamicComponent tag={tag} className={className} key={index}>
+        <DynamicComponent tag={tag} className={className} key={index}  {...attributes}>
           { Array.from(element.childNodes).map((child, index) => child.nodeName.startsWith('#text') ? child.textContent : renderElement(child as Element, index as number, site, page, isPreview)) }
         </DynamicComponent>
       );
     } else {
-      return <DynamicComponent tag={tag} className={className} key={index}>{element.textContent}</DynamicComponent>;
+      return <DynamicComponent tag={tag} className={className} key={index}  {...attributes}>{element.textContent}</DynamicComponent>;
     }
   };
 

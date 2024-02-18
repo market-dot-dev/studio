@@ -10,12 +10,16 @@ import CreatePageButton from "@/components/create-page-button";
 import Pages from "@/components/pages";
 import PageHeading from "@/components/common/page-heading";
 import PrimaryButton from "@/components/common/link-button";
-import ExternalLink, { ExternalLinkChip } from "@/components/common/external-link";
+import { ExternalLinkChip } from "@/components/common/external-link";
+import DomainService from "@/app/services/domain-service";
 
 export default async function SitePosts({
   params,
 }: {
   params: { id: string };
+
+
+
 }) {
   const session = await getSession();
   if (!session) {
@@ -35,7 +39,8 @@ export default async function SitePosts({
     notFound();
   }
 
-  const url = `${siteData.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  // const url = `${siteData.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const url = DomainService.getRootUrl(siteData.subdomain ?? 'app');
   const homepage = siteData.pages.find((page) => page.id === siteData.homepageId);
 
   return (
@@ -45,7 +50,9 @@ export default async function SitePosts({
           <PageHeading title="Site Content" />
         </div>
         <div className="flex flex-row">
-          <ExternalLink subdomain={siteData.subdomain ?? ''} url={url} />
+          <ExternalLinkChip href={url}>
+                {url} ↗
+          </ExternalLinkChip>
         </div>
       </div>
       
@@ -75,7 +82,9 @@ export default async function SitePosts({
 
             <div>
               Preview:
-              <ExternalLink subdomain={siteData.subdomain ?? ''}  url={url} />
+              <ExternalLinkChip href={url}>
+                {url} ↗
+              </ExternalLinkChip>
             </div>
 
           </div>

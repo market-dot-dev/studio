@@ -9,6 +9,7 @@ import EmailService from "@/app/services/EmailService";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import RegistrationService from "@/app/services/registration-service";
 import { cookies } from 'next/headers'
+import { projectDescription, projectName } from "./constants/site-template";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -121,6 +122,8 @@ export const authOptions: NextAuthOptions = {
           where: { id: user.id },
           data: {
             roleId,
+            projectName,
+            projectDescription,
             ...(name ? { name } : {})
           },
         });

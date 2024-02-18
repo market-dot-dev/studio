@@ -19,6 +19,7 @@ import {
 } from "@/app/services/PageService";
 import { Page, Site } from "@prisma/client";
 
+
 function TimedAlert({
   message,
   timeout = 0,
@@ -146,12 +147,12 @@ export default function PageEditor({
   site,
   page,
   homepageId,
-  subdomain,
+  previewUrl,
 }: {
   site: Partial<Site>;
   page: Partial<Page>;
   homepageId: string | null;
-  subdomain: string | null;
+  previewUrl: string | null;
 }): JSX.Element {
   const isHome = page.id === homepageId;
 
@@ -384,24 +385,16 @@ export default function PageEditor({
   );
 
   let previewLink = null;
-  if (subdomain) {
-    const url = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-
+  if (previewUrl) {
     previewLink = (
       <Flex>
         <a
-          href={
-            process.env.NEXT_PUBLIC_VERCEL_ENV
-              ? `https://${url}` +
-                (page.id === homepageId ? "" : `/${page.slug}`)
-              : `http://${subdomain}.localhost:3000` +
-                (page.id === homepageId ? "" : `/${page.slug}`)
-          }
+          href={previewUrl}
           target="_blank"
           rel="noreferrer"
           className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200"
         >
-          {url + (page.id === homepageId ? "" : `/${page.slug}`)} ↗
+          {previewUrl} ↗
         </a>
       </Flex>
     );

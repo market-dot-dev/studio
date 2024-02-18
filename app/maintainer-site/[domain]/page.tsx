@@ -3,7 +3,8 @@ import { notFound } from "next/navigation";
 import { getPostsForSite, getSiteData } from "@/lib/fetchers";
 import { JSDOM } from "jsdom";
 import renderElement from '@/components/site/page-renderer';
-
+import Head from 'next/head';
+import PageService from '@/app/services/PageService';
 
 export default async function SiteHomePage({
   params,
@@ -11,13 +12,13 @@ export default async function SiteHomePage({
   params: { domain: string };
 }) {  
   const domain = decodeURIComponent(params.domain);
-  const data = await getSiteData(domain);
+  const data = await PageService.getHomepage(domain);
   // const [data, posts] = await Promise.all([
   //   getSiteData(domain),
   //   getPostsForSite(domain),
   // ]);
 
-  if (!data) {
+  if (!data || !data.homepage?.content) {
     notFound();
   }
   
