@@ -1,17 +1,26 @@
-'use client';
+'use server';
 
+import DomainService from '@/app/services/domain-service';
+/*
 import PrimaryButton from '@/components/common/link-button';
+import PageHeading from '@/components/common/page-heading';
+import { Card } from '@tremor/react';
+*/
+import { redirect } from 'next/navigation';
 
-const AdminIndex = () => {
+const SubscriptionSuccess = () => {
+  /*
   return (
-    <div>
-      <h1>Success!</h1>
-      <div>
-        Click here to go to gitwallet and manage your subscriptions
-        <PrimaryButton href="http://app.gitwallet.local:3000/" label="Go to gitwallet" />
+    <Card>
+      <PageHeading>Success</PageHeading>
+      <div className="mt-5">
+        Click here to go to Gitwallet view and manage your subscriptions
       </div>
-    </div>
+      <PrimaryButton href={DomainService.getRootUrl('app', '/subscriptions')} className="mt-2" label="Go to Gitwallet" />
+    </Card>
   );
+  */
+  redirect(DomainService.getRootUrl('app', '/subscriptions'));
 };
 
-export default AdminIndex;
+export default SubscriptionSuccess;
