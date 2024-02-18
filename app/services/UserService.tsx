@@ -63,7 +63,7 @@ class UserService {
       return user.stripeCustomerId;
     }
 
-    const customer = await StripeService.createCustomer(user.email, user.stripePaymentMethodId || undefined);
+    const customer = await StripeService.createCustomer(user.email, user.name ?? '', user.stripePaymentMethodId || undefined);
     
     await prisma?.user.update({
       where: { id: user.id },

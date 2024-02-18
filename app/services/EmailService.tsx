@@ -13,9 +13,14 @@ type RequiredUserProps = {
   } & Partial<User>;
 
 class EmailService {
-  static async sendEmail(user: RequiredUserProps, subject: string, text: string, html: string) {
+  static async sendEmail(email: string | null, subject: string, text: string, html: string) {
+    console.log('sending email', email, subject, html)
+    if( !email ) {
+      console.error('Invalid email address');
+      return;
+    }
     const msg = {
-      to: user.email, // recipient
+      to: email, // recipient
       from: process.env.SENDGRID_FROM_EMAIL, // verified sender
       subject: subject,
       text: text,
@@ -24,7 +29,7 @@ class EmailService {
 
     try {
       await sgMail.send(msg);
-      console.log(`Email sent to ${user.email}`);
+      console.log(`Email sent to ${email}`);
     } catch (error: any) {
       console.error(error);
 
@@ -47,7 +52,7 @@ class EmailService {
     }
 
     try {
-      await this.sendEmail(user, subject, text, html);
+      await this.sendEmail(user.email, subject, text, html);
       console.log("Email sent successfully");
     } catch (error) {
       console.error("Failed to send email:", error);
@@ -60,7 +65,7 @@ class EmailService {
     const html = `Thank you for purchasing the <b>${tierName}</b> tier.`;
 
     try {
-      await this.sendEmail(customer, subject, text, html);
+      await this.sendEmail(customer.email, subject, text, html);
       console.log("Email sent successfully");
     } catch (error) {
       console.error("Failed to send email:", error);
@@ -73,7 +78,7 @@ class EmailService {
     const html = `<b>${customer.name}</b> has cancelled their subscription to your <b>${tierName}</b> tier.`;
     
     try {
-      await this.sendEmail(user, subject, text, html);
+      await this.sendEmail(user.email, subject, text, html);
       console.log("Email sent successfully");
     } catch (error) {
       console.error("Failed to send email:", error);
@@ -86,7 +91,7 @@ class EmailService {
     const html = `You have cancelled your subscription to the <b>${tierName}</b> tier.`;
 
     try {
-      await this.sendEmail(customer, subject, text, html);
+      await this.sendEmail(customer.email, subject, text, html);
       console.log("Email sent successfully");
     } catch (error) {
       console.error("Failed to send email:", error);
@@ -103,7 +108,7 @@ class EmailService {
         <p>Get started here: <a href="https://app.gitwallet.co">app.gitwallet.co</a></p>
     `;
 
-    await this.sendEmail(user, subject, text, html);
+    await this.sendEmail(user.email, subject, text, html);
   }
 
   static async sendNewSubscriberEmail(user: RequiredUserProps) {

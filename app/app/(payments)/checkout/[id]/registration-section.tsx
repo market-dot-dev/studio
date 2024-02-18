@@ -10,11 +10,13 @@ import UserPaymentMethodWidget from "@/components/common/user-payment-method-wid
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Subscription, User } from "@prisma/client";
 import useCurrentSession from "@/app/contexts/current-user-context";
-import RegistrationService from "@/app/services/registration-service";
+
 import { onClickSubscribe } from '@/app/services/StripeService';
 import { findSubscriptionByTierId, isSubscribed } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
+import { signOut } from "next-auth/react";
+import { CustomerLoginComponent } from "@/components/login/customer-login";
 
 const checkoutCurrency = "USD";
   "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
@@ -29,48 +31,8 @@ interface RegistrationFormProps {
   user?: User;
   userAttributes: Partial<User>;
   setUserAttributes: Dispatch<SetStateAction<Partial<User>>>;
+  loggedIn: boolean;
 }
-
-const RegistrationForm = ({ user, userAttributes, setUserAttributes }: RegistrationFormProps) => {
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    const updatedUser = { ...userAttributes, [name]: value } as User;
-    setUserAttributes(updatedUser);
-  };
-
-  return <>
-    <Card>
-      { user && <>
-        <p>You&apos;re logged in as {user.email}</p>
-        <Button onClick={() => {}} className="w-full">Logout</Button>
-      </> }
-      { !user && <>
-        <div className="items-center mb-4">
-          <TextInput 
-            name="name"
-            onChange={handleInputChange}
-            placeholder="Name" 
-          />
-        </div>
-        <div className="items-center mb-4">
-          <TextInput 
-            name="email"
-            onChange={handleInputChange}
-            placeholder="Work Email" />
-        </div>
-        <div className="items-center">
-          <TextInput 
-            name="company"
-            onChange={handleInputChange}
-            placeholder="Company" />
-        </div>
-      </> }
-    </Card>
-  </>;
-}
-
 
 const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   const tierId = tier?.id;
@@ -82,8 +44,11 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   const [error, setError] = useState<string | null>();
 
   const { currentSession, refreshCurrentSession } = useCurrentSession();
-  const { user } = currentSession;
+  
   const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const { user } = currentSession;
+
+  
 
   useEffect(() => {
     if(user?.id) {
@@ -95,17 +60,6 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     setLoading(true);
     setError(null);
     setPurchaseIntent(true);
-
-    if(!user) {
-      await RegistrationService.registerAndSignInCustomer(userAttributes).then(() => {
-        refreshCurrentSession();
-      }).catch((error) => {
-        console.log(error);
-        setError(error.message);
-      }).finally(() => {
-        setLoading(false);
-      });
-    }
 
     if(user && !user.stripePaymentMethodId) {
       setSubmittingPaymentMethod(true);
@@ -131,7 +85,8 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         <Divider>Register</Divider>
         { error && <div className="mb-4 text-red-500">{error}</div> }
 
-        <RegistrationForm user={user} userAttributes={userAttributes} setUserAttributes={setUserAttributes} />
+        {/* <RegistrationForm user={user} userAttributes={userAttributes} setUserAttributes={setUserAttributes} loggedIn={!!currentSession.user} /> */}
+        <CustomerLoginComponent signup={true} />
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
@@ -147,7 +102,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Button onClick={onSubmit} disabled={purchaseIntent} className="w-full">
+        <Button onClick={onSubmit} disabled={purchaseIntent || !user?.id} className="w-full">
           {purchaseIntent ? <LoadingDots color="#A8A29E" /> : "Checkout"}
         </Button>
         <label className="my-2 block text-center text-sm text-slate-400">
