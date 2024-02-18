@@ -11,6 +11,7 @@ export default async function Profile() {
     redirect("/login");
   }
 
+
   return (
     <>      
       <div className="flex w-full items-center justify-between">
@@ -32,7 +33,7 @@ export default async function Profile() {
             {session.user.name}
           </span>
         </Link>
-        <LogoutButton />
+        <LogoutButton redirect={ session.user.roleId === 'maintainer' ? '/login' : '/customer-login'} />
       </div>
       
     </>
