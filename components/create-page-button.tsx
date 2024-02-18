@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import LoadingDots from "@/components/icons/loading-dots";
 import va from "@vercel/analytics";
+import { Button } from "@tremor/react";
 
 export default function CreatePageButton() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export default function CreatePageButton() {
   const [isPending, startTransition] = useTransition();
 
   return (
-    <button
+    <Button
       onClick={() =>
         startTransition(async () => {
           const page = await createPage(null, id, null);
@@ -36,6 +37,6 @@ export default function CreatePageButton() {
           <LoadingDots color="#808080" />
         </> : 
         <p>Create New Page</p>}
-    </button>
+    </Button>
   );
 }
