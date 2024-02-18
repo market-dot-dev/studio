@@ -9,6 +9,7 @@ import UserInfoClient from "./userinfo/user-info-client";
 
 import SiteName from "./site-name/site-name";
 
+
 // import { Subscriptions, SubscriptionsPreview } from "./subscriptions";
 // import { SubscriptionsServer } from "./subscriptions/subscriptions-server";
 // import { SubscriptionsClient } from "./subscriptions/subscriptions-client";
@@ -63,6 +64,7 @@ export const siteComponents = {
         tag: 'SiteOwner',
         element: SiteOwner
     },
+    
 } as any;
 
 export const layoutComponents = {
@@ -108,6 +110,7 @@ export const layoutComponents = {
         element: Avatar,
         ui: true 
     }
+    
 } as any;
 
 export const textComponents = {
