@@ -62,6 +62,9 @@ export default async function SitePosts({
 
       <Card>
         <div className="flex justify-between w-full">
+          <div>
+            <img src="/site-preview.png" alt="Site Preview" />
+          </div>
           <div className="flex-column">
             <div>
               Title: {homepage?.title ?? "No Home Page Set"}
