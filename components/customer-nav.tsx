@@ -22,7 +22,6 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import RoleSwitcher from "./user/role-switcher";
 
 export default function CustomerNav({ children }: { children: ReactNode  }) {
   const urlSegments = useSelectedLayoutSegments();
