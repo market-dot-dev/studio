@@ -16,15 +16,72 @@ class PageService {
     : null;
   }
 
-  static async findPage(domain: string, slug: string) {
-    const subdomain = PageService.getSubdomain(domain);
+  // meant for frontend site rendering
+  static async getPage(subdomain: string, slug: string) {
+    const site = await prisma.site.findUnique({
+      where: { 
+        subdomain,
+      },
+      include: { 
+        user: true,
+        pages: {
+          where: {
+            slug: slug,
+            draft: false
+          },
+          take: 1,
+          select: {
+            content: true
+          }
+        }
+      }
+    });
+  
+    return site;
+  }
+  // meant for frontend site rendering
+  static async getHomepage(subdomain: string) {
+    const site = await prisma.site.findUnique({
+      where: {
+        subdomain,
+      },
+      select: { 
+        user: {
+          select: {
+            name: true,
+            image: true,
+            projectName: true,
+            projectDescription: true,
+          }
+        },
+        homepageId: true
+      }
+    });
+
+    if (!site?.homepageId) {
+      return null;
+    }
+
+    const page = await prisma.page.findUnique({
+      where: {
+        id: site.homepageId,
+        draft: false
+      },
+      select: {
+        content: true
+      }
+    });
+  
+    return {...site, homepage: page};
+  }
+  
+  static async findPage(subdomain: string, slug: string) {
+
     const currentUserId = await PageService.getCurrentUserId();
   
     const site = await prisma.site.findUnique({
-      where: subdomain ? { 
+      where: { 
         subdomain,
-      } : {
-        customDomain: domain
       },
       include: { 
         user: true,

@@ -2,6 +2,7 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import AnalyticsMockup from "@/components/analytics";
+import DomainService from "@/app/services/domain-service";
 
 export default async function SiteAnalytics({
   params,
@@ -21,8 +22,8 @@ export default async function SiteAnalytics({
     notFound();
   }
 
-  const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-
+  // const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const url = DomainService.getRootUrl(data.subdomain ?? 'app');
   return (
     <>
       <div className="flex items-center justify-center sm:justify-start">

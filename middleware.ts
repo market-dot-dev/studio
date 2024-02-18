@@ -77,7 +77,7 @@ async function customMiddleware(req: NextRequest) {
     if( url.pathname.startsWith('/api')) {
       return NextResponse.next();
     }
-
+    
     return rewrite(`/maintainer-site/${ghUsername}${path}`, req.url);
   }
   
