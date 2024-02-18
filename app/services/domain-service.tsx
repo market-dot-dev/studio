@@ -76,3 +76,4 @@ class DomainService {
 }
 
 export default DomainService;
+export const { getRootUrl } = DomainService;

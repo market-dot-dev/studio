@@ -13,17 +13,28 @@ export async function generateMetadata({
   if (!data) {
     return null;
   }
+  
   const {
-    name: title,
-    description,
     image,
     logo,
+    user
   } = data as {
-    name: string;
-    description: string;
     image: string;
     logo: string;
+    user: {
+      projectName: string;
+      projectDescription: string;
+    };
   };
+
+  const {
+    projectName : title,
+    projectDescription: description,
+  } = user as {
+    projectName: string;
+    projectDescription: string;
+  };
+  
 
   return {
     title,

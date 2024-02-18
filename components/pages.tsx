@@ -4,8 +4,10 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import { Table } from "@radix-ui/themes";
 import Link from 'next/link';
 import { Badge } from "@tremor/react";
+import DomainService from "@/app/services/domain-service";
 export default function Pages({ pages, homepageId, subdomain }: { pages: any, homepageId: string | null, subdomain: string | null }) {
-	const url = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+	// const url = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+	const url = DomainService.getRootUrl(subdomain ?? 'app');
 	return pages.length > 0 ? (
 		<Table.Root>
 			<Table.Header>
@@ -23,11 +25,7 @@ export default function Pages({ pages, homepageId, subdomain }: { pages: any, ho
 							<Table.Cell>{page.title}</Table.Cell>
 							<Table.Cell>
 								<a
-									href={
-										process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development'
-											? `https://${url}` + (page.id === homepageId ? '' : `/${page.slug}`)
-											: `http://${subdomain}.gitwallet.local:3000` + (page.id === homepageId ? '' : `/${page.slug}`)
-									}
+									href={ url + (page.id === homepageId ? '' : `/${page.slug}`) }
 									target="_blank"
 									rel="noreferrer"
 									className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600"

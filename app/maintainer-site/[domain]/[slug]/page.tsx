@@ -4,6 +4,7 @@ import { findPage } from '@/app/services/PageService';
 import { JSDOM } from "jsdom";
 import renderElement from '@/components/site/page-renderer';
 import Head from 'next/head';
+import PageService from '@/app/services/PageService';
 
 export default async function SitePage({
   params,
@@ -11,7 +12,8 @@ export default async function SitePage({
   params: { domain: string, slug: string };
 }) {
   const domain = decodeURIComponent(params.domain);
-  const data = await findPage(domain, params.slug);
+  const data = await PageService.getPage(domain, params.slug);
+  
   
   if (!data) {
     notFound();

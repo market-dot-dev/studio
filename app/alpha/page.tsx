@@ -6,10 +6,11 @@ import DashboardCard from "@/components/common/dashboard-card";
 import GithubLoginButton from "@/app/app/(auth)/login/github-login-button";
 import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
 import { Suspense } from "react";
+import DomainService from "../services/domain-service";
 
 const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
-const loginUrl = process.env.NODE_ENV === "development" ? `http://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/customer-login` : `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/customer-login`;
-
+// const loginUrl = process.env.NODE_ENV === "development" ? `http://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/customer-login` : `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/customer-login`;
+const loginUrl = DomainService.getRootUrl('app', '/customer-login');
 // Define a type for the testimonial props, including the logo
 type TestimonialProps = {
   ecosystem: string;
