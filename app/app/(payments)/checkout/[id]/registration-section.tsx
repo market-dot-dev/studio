@@ -10,7 +10,7 @@ import UserPaymentMethodWidget from "@/components/common/user-payment-method-wid
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Subscription, User } from "@prisma/client";
 import useCurrentSession from "@/app/contexts/current-user-context";
-import {registerAndSignInCustomer} from "@/app/services/registration-service";
+
 import { onClickSubscribe } from '@/app/services/StripeService';
 import { findSubscriptionByTierId, isSubscribed } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
@@ -33,46 +33,6 @@ interface RegistrationFormProps {
   setUserAttributes: Dispatch<SetStateAction<Partial<User>>>;
   loggedIn: boolean;
 }
-
-// const RegistrationForm = ({ user, userAttributes, setUserAttributes, loggedIn }: RegistrationFormProps) => {
-//   const [loading, setLoading] = useState(false);
-
-//   const handleLogout = () => {
-//     setLoading(true);
-//     signOut({ callbackUrl: '/customer-login'});
-//   }
-
-//   const handleInputChange = (
-//     e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-//   ) => {
-//     const { name, value } = e.target;
-//     const updatedUser = { ...userAttributes, [name]: value } as User;
-//     setUserAttributes(updatedUser);
-//   };
-
-//   return <>
-//     <Card>
-//       { loggedIn ?
-//         user && <>
-//           <p>You&apos;re logged in as {user.email}</p>
-//           <Button onClick={handleLogout} loading={loading} disabled={loading} className="w-full">Logout</Button>
-//         </>
-//         : user && <>
-//           <p>Customer Email:  {user.email}</p>
-//         </>
-//       }
-//       { !user && <>
-//         <div className="items-center mb-4">
-//           <TextInput 
-//             name="email"
-//             onChange={handleInputChange}
-//             placeholder="Work Email" />
-//         </div>
-//       </> }
-//     </Card>
-//   </>;
-// }
-
 
 const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   const tierId = tier?.id;
@@ -100,17 +60,6 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     setLoading(true);
     setError(null);
     setPurchaseIntent(true);
-
-    if(!user) {
-      await registerAndSignInCustomer(userAttributes).then((createdUser) => {
-        refreshCurrentSession();
-      }).catch((error) => {
-        console.log(error);
-        setError(error.message);
-      }).finally(() => {
-        setLoading(false);
-      });
-    }
 
     if(user && !user.stripePaymentMethodId) {
       setSubmittingPaymentMethod(true);
@@ -153,7 +102,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Button onClick={onSubmit} disabled={purchaseIntent} className="w-full">
+        <Button onClick={onSubmit} disabled={purchaseIntent || !user?.id} className="w-full">
           {purchaseIntent ? <LoadingDots color="#A8A29E" /> : "Checkout"}
         </Button>
         <label className="my-2 block text-center text-sm text-slate-400">
