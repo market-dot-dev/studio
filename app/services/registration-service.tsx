@@ -139,9 +139,14 @@ class RegistrationService {
   }
 
   static async setSignUp(userAttributes: Partial<User>) {
-    if(! userAttributes.email || !userAttributes.name ) {
+    if(! userAttributes.email ) {
       throw new Error('Email is required');
     }
+
+    if( !userAttributes.name ) {
+      throw new Error('Name is required');
+    }
+
 
     // Check if the user exists
     const exists = await RegistrationService.userExists(userAttributes.email);
