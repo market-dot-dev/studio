@@ -106,7 +106,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         target: "_blank",
         icon: <FaTelegramPlane width={18} />,
       },
-      ...(['admin', 'maintainer'].includes(roleId || '') ?
+      ...(['admin'].includes(roleId || '') ?
         [{
           name: "⚠️ DEBUG MENU ⚠️",
           href: "",
