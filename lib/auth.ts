@@ -129,6 +129,10 @@ export const authOptions: NextAuthOptions = {
         if(name) {
           userData.name = name;
         }
+
+        if(signupName) {
+          cookies().delete('signup_name')
+        }
       }
 
       // Store the refresh token in the database when the user logs in
