@@ -11,7 +11,7 @@ export default function Tiers({tiers}: { tiers : any[]}) : JSX.Element {
                 { tiers.length ? 
                 <Grid numItems={3} className="gap-12" >
                     {tiers.map((tier : any, index: number) => (
-                        <Col key={index} className="flex flex-col p-6 mx-auto w-full max-w-xs ">
+                        <Col key={index} className="flex flex-col mx-auto w-full">
                             <TierCard tier={tier} />
                         </Col>
                     ))}
