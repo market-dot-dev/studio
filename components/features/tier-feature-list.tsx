@@ -14,7 +14,7 @@ const TierFeatureList = ({ features, darkMode = false }: { features: Feature[]; 
     <div className="text-left">
       <ul>
         {features.filter((f) => f.isEnabled).map((feature) => (
-          <li key={feature.id} className="flex flex-row my-3">
+          <li key={feature.id} className="flex flex-row my-1">
             <CheckSquare className={featureIconClasses}/> &nbsp; {feature.name}
           </li>
         ))}

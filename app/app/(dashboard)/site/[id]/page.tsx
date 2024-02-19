@@ -1,17 +1,14 @@
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-import { Bold, Card, Badge, Grid } from "@tremor/react";
-
-
-// import CreatePostButton from "@/components/create-post-button";
+import { Bold, Card, Badge, Text } from "@tremor/react";
 import CreatePageButton from "@/components/create-page-button";
-
 import Pages from "@/components/pages";
 import PageHeading from "@/components/common/page-heading";
 import PrimaryButton from "@/components/common/link-button";
 import { ExternalLinkChip } from "@/components/common/external-link";
 import DomainService from "@/app/services/domain-service";
+import { formatDistanceToNow } from 'date-fns';
 
 export default async function SitePosts({
   params,
@@ -51,45 +48,39 @@ export default async function SitePosts({
         </div>
         <div className="flex flex-row">
           <ExternalLinkChip href={url}>
-                {url} ↗
+            {url} ↗
           </ExternalLinkChip>
         </div>
       </div>
-      
-      <Bold>
-        Your Home Page
-      </Bold>
+
+      <div className="my-2">&nbsp;</div>
 
       <Card>
         <div className="flex justify-between w-full">
-          <div>
-            <img src="/site-preview.png" alt="Site Preview" />
+          <div className="absolute bottom-0 left-4">
+            <img src="https://www.gitwallet.co/site-preview.png" width={300} alt="Site Preview" />
           </div>
-          <div className="flex-column">
-            <div>
-              Title: {homepage?.title ?? "No Home Page Set"}
+          <div className="flex-column ms-[300px]">
+
+            <div className="mb-2">
+            <Bold className="me-2">
+              Site Homepage
+            </Bold>
+
+            {homepage?.draft ?
+              <Badge color="gray" size="xs">Draft</Badge> :
+              <Badge color="green" size="xs">Live</Badge>
+            }
             </div>
 
             <div>
-              Status: 
-            {homepage?.draft ? 
-								<Badge color="gray" size="xs">Draft</Badge> :
-								<Badge color="green" size="xs">Live</Badge>
-                }
-            </div>
-
-            <div>
-              Path: 
-            {homepage?.slug}
-            </div>
-
-            <div>
-              Preview:
               <ExternalLinkChip href={url}>
                 {url} ↗
               </ExternalLinkChip>
             </div>
 
+            <Text className="mt-2">Title: {homepage?.title ?? "No Home Page Set"}</Text>
+            <Text>Last Updated: {homepage?.updatedAt ? formatDistanceToNow(new Date(homepage.updatedAt), { addSuffix: true }) : 'Unknown'}</Text>
           </div>
           <div className="flex flex-row">
             <PrimaryButton label="Edit" href={`/page/${siteData.homepageId}`} />

@@ -21,7 +21,7 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
     <div className="flex flex-col space-y-2">
       <div className="flex flex-row justify-between">
         <div className="flex flex-row space-x-2 items-center">
-          <Github size={32} /> <b>widgetbot</b>
+          <Github size={32} /> <b>{maintainer.projectName}</b>
         </div>
       </div>
 

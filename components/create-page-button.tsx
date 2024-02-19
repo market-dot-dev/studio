@@ -13,6 +13,7 @@ export default function CreatePageButton() {
   const { id } = useParams() as { id: string };
   const [isPending, startTransition] = useTransition();
 
+  
   return (
     <Button
       onClick={() =>
@@ -27,7 +28,7 @@ export default function CreatePageButton() {
         "flex h-8 items-center justify-center space-x-2 px-4 py-1.5  rounded-lg border text-sm transition-all sm:h-9",
         isPending
           ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400"
-          : "border border-black bg-black px-4 py-1.5  text-white active:bg-stone-100",
+          : "border border-black bg-gray-800 hover:bg-gray-900 px-4 py-1.5 text-white active:bg-stone-100",
       )}
       disabled={isPending}
     >

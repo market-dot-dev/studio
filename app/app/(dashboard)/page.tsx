@@ -1,5 +1,5 @@
 import DashboardCharts from "@/components/dashboard/dashboard-charts";
-import LatestCustomersList from "@/components/dashboard/customer-list";
+import LatestCustomersList from "@/components/dashboard/latest-customer-list";
 import { Button, Bold } from "@tremor/react";
 import { getSession } from "@/lib/auth";
 import OnboardingGuide from "@/components/onboarding/onboarding-guide";
@@ -18,7 +18,7 @@ export default async function Overview() {
         <div className="flex flex-col space-y-6">
           <PageHeading title={title} />
           
-          <LatestCustomersList numRecords={5} previewMode={true} />
+          <LatestCustomersList numRecords={3} previewMode={true} />
         </div>
       </div>
       <DashboardCharts />

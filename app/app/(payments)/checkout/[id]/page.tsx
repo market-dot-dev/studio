@@ -1,16 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { Accordion, AccordionBody, AccordionHeader } from "@tremor/react";
+import { Accordion, AccordionBody, AccordionHeader, Badge } from "@tremor/react";
 import { CurrentSessionProvider } from "@/app/contexts/current-user-context";
 import RegistrationSection from "./registration-section";
 import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
+import { Text } from "@tremor/react";
 
 const checkoutCurrency = "USD";
-const projectDescriptionDefault = "Default project description.";
+const projectDescriptionDefault = "The business builder made for open source maintainers.";
 
 const renderSectionHeading = (text: string) => {
   return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
@@ -39,15 +40,15 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
         <div className="overflow-y-auto">
           <div className="w-7/8 lg:w-5/6">
             <h1 className="mb-8 text-4xl font-semibold">{checkoutProject}</h1>
-            <p className="mb-6 text-xl font-extralight leading-6">
+            <p className="mb-8 text-xl font-extralight leading-6">
               {projectDescription}
             </p>
+            <Text className="text-xs mb-1">Powered by:</Text>
             <Image
               alt="Gitwallet"
               src="/logo-white.png"
               height={0}
               width={100}
-              className="my-12"
             />
             {/* <h1 className="text-xl font-light leading-8 mb-6">The business builder made for open source maintainers.</h1> */}
             <div></div>

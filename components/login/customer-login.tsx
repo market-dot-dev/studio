@@ -1,5 +1,5 @@
 'use client'
-import { TextInput, Button } from "@tremor/react";
+import { TextInput, Button, Text } from "@tremor/react";
 import { useEffect, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
@@ -143,9 +143,9 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                 <p className="text-red-500">{error}</p>
                 </div> : null}
             {user ? (
-                <div className="items-center w-full">
-                    <p>Logged in as {user.email}</p>
-                    <Button onClick={handleLogout} loading={isSubmitting} disabled={isSubmitting} className="w-full">Logout</Button>
+                <div className="flex flex-row justify-between w-full">
+                    <Text>You are logged in as {user.name} ({user.email}).</Text>
+                    <Button variant="secondary" onClick={handleLogout} loading={isSubmitting} disabled={isSubmitting} className="p-1">Logout</Button>
                 </div>
             ) : !isSubmitted ? (
                 <div>
