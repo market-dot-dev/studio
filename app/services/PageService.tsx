@@ -22,8 +22,17 @@ class PageService {
       where: { 
         subdomain,
       },
-      include: { 
-        user: true,
+      select: {
+        id: true,
+        userId: true,
+        user: {
+          select: {
+            name: true,
+            image: true,
+            projectName: true,
+            projectDescription: true,
+          }
+        },
         pages: {
           where: {
             slug: slug,
@@ -39,13 +48,16 @@ class PageService {
   
     return site;
   }
+
   // meant for frontend site rendering
   static async getHomepage(subdomain: string) {
     const site = await prisma.site.findUnique({
       where: {
         subdomain,
       },
-      select: { 
+      select: {
+        id: true,
+        userId: true, 
         user: {
           select: {
             name: true,

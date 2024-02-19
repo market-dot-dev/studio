@@ -6,6 +6,7 @@ import TierService from "@/app/services/TierService";
 export default async function TiersServer({site, searchParams}: { site : any, searchParams: TiersEmbedSettingsProps}) {
     // getting the tiers by means of server functions
     const tiers = site?.userId ? await TierService.getTiersForUser(site.userId) : [];
+
     return (
         <Tiers tiers={tiers ?? []}  subdomain={site.subdomain} settings={searchParams} />
     )
