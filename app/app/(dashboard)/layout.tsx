@@ -1,5 +1,4 @@
 import { ReactNode, Suspense } from "react";
-import { getSession } from "@/lib/auth";
 import Profile from "@/components/profile";
 import Nav from "@/components/nav";
 import { redirect } from "next/navigation";
@@ -7,20 +6,23 @@ import { getOnlySiteFromUserId } from "@/app/services/SiteService";
 import { Flex } from "@tremor/react";
 import OnboardingGuide from "@/components/onboarding/onboarding-guide";
 import { DasboardProvider } from "@/components/dashboard/dashboard-context";
+import SessionService from "@/app/services/SessionService";
 
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  const session = await getSession();
+  const session = await SessionService.getSession();
+  const { id: userId, roleId } = session?.user || {};
 
-  if (!session) {
+  if (!userId) {
     redirect("/login");
   }
-  const site = await getOnlySiteFromUserId(session.user.id);
+
+  const site = await getOnlySiteFromUserId(userId);
 
   return (
     <DasboardProvider siteId={site?.id ?? null}>
       <div>
-        <Nav siteId={site?.id ?? null} roleId={session.user?.roleId || 'anonymous'}>
+        <Nav siteId={site?.id ?? null} roleId={roleId || 'anonymous'}>
           <Suspense fallback={<div>Loading...</div>}>
             <Profile />
           </Suspense>

@@ -3,7 +3,6 @@ import { User } from "@prisma/client";
 import { useSession } from "next-auth/react"
 import { useCallback } from "react";
 import { useRouter } from 'next/navigation'
-import { Select } from "@tremor/react";
 
 export default function RoleSwitcher() {
     const { data: session, status, update } = useSession()
@@ -17,6 +16,7 @@ export default function RoleSwitcher() {
             }, 0)
         });
     }, [update, router])
+
     return (
         <>
         { user ?

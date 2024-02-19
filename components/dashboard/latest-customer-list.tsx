@@ -15,12 +15,12 @@ import {
 import SubscriptionService, {
   SubscriptionWithUser,
 } from "@/app/services/SubscriptionService";
-import UserService from "@/app/services/UserService";
 import DashboardCard from "@/components/common/dashboard-card";
 import TierService from "@/app/services/TierService";
 import PrimaryLinkButton from "../common/link-button";
 import Link from "next/link";
 import LinkButton from "../common/link-button";
+import SessionService from "@/app/services/SessionService";
 
 export default async function LatestCustomersList(props: { numRecords?: number, previewMode?: boolean }) {
 
@@ -33,7 +33,7 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
   // Number of days to look back for new customers
   const daysAgo = 30;
 
-  const currentUserId = await UserService.getCurrentUserId();
+  const currentUserId = await SessionService.getCurrentUserId();
   const subscriptions: SubscriptionWithUser[] =
     await SubscriptionService.subscribedToUser(currentUserId!);
 

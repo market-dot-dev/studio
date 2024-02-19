@@ -1,6 +1,5 @@
 "use server";
 import SessionService from "./SessionService";
-import UserService from "./UserService";
 
 import prisma from "@/lib/prisma";
 
@@ -79,7 +78,7 @@ class RepoService {
 
     static async getRepos() {
         // get repos of a given userId from the database
-        const userId = await UserService.getCurrentUserId();
+        const userId = await SessionService.getCurrentUserId();
 
         if (!userId) {
             throw new Error('No user found.');
@@ -101,7 +100,7 @@ class RepoService {
       try {
         const accessToken = await SessionService.getAccessToken();
 
-        const userId = await UserService.getCurrentUserId();
+        const userId = await SessionService.getCurrentUserId();
 
         if (!accessToken) {
             throw new Error('No access token found.');

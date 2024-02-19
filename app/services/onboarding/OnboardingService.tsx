@@ -3,7 +3,7 @@
 // like writing to db schema etc
 
 import prisma from "@/lib/prisma";
-import {getCurrentUserId} from "../UserService";
+import {getCurrentUserId} from "../SessionService";
 import type { OnboardingStepsType } from "./onboarding-steps";
 import { onboardingSteps } from "./onboarding-steps";
 

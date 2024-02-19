@@ -1,7 +1,7 @@
 "use client";
 
 import { onClickSubscribe } from '@/app/services/StripeService';
-import { getCurrentUserId } from '@/app/services/UserService';
+import { getCurrentUserId } from '@/app/services/SessionService';
 import React, { useState } from 'react';
 
 const TierSubscribeButton = ({ tierId }: { tierId: string }) => {

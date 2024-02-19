@@ -7,6 +7,7 @@ import UserService from "./UserService";
 import { Subscription, Tier, User } from "@prisma/client";
 import TierService from "./TierService";
 import EmailService from "./EmailService";
+import SessionService from "./SessionService";
 
 export type SubscriptionWithUser = Subscription & { user: User, tier?: Tier};
 
@@ -24,7 +25,7 @@ class SubscriptionService {
   }
 
   static async findSubscriptionByTierId({ tierId }: { tierId: string; }): Promise<Subscription | null> {
-    const userId = await UserService.getCurrentUserId();
+    const userId = await SessionService.getCurrentUserId();
     
     if(!userId) return null;
 
@@ -41,7 +42,7 @@ class SubscriptionService {
   }
 
   static async findSubscriptions(): Promise<Subscription[]> {
-    const userId = await UserService.getCurrentUserId();
+    const userId = await SessionService.getCurrentUserId();
     if(!userId) return [];
 
     const subscriptions = await prisma.subscription.findMany({
