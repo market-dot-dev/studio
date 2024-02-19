@@ -3,7 +3,7 @@
 import { Service, Feature } from '@prisma/client';
 import React, { useCallback, useEffect, useState } from 'react';
 import FeatureForm from '@/components/form/feature-form';
-import { Switch } from '@tremor/react';
+import { Badge, Switch } from '@tremor/react';
 
 import {
   Mail,
@@ -91,12 +91,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
   }
 
   return (
-    <div className={`flex items-center justify-between mb-2 p-4 border-2 border-gray-300 rounded-md ${selectedStyles}`} onClick={handleClick}>
+    <div className={`flex items-center justify-between mb-2 p-4 border-2 ${currentFeatureEnabled ? `border-4 border-gray-800` : `border-gray-300`} rounded-md ${selectedStyles}`} onClick={handleClick}>
       <div className="flex items-center">
         <div className="ml-4">
           <div className="flex flex-row justify-between">
             <h4 className="font-semibold"><Icon id={service.id} /> &nbsp;{service.name}</h4>
-            <Switch
+            {currentFeatureEnabled && <Badge size="xs" color="green">Enabled</Badge>}
+            {/* <Switch
               checked={currentFeatureEnabled}
               onChange={handleToggle}
               className={`${
@@ -108,7 +109,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
                   currentFeatureEnabled ? 'translate-x-6' : 'translate-x-1'
                 } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
               />
-            </Switch>
+            </Switch> */}
           </div>
 
           <p className="text-sm text-gray-600">{service.description}</p>
@@ -141,7 +142,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
 
 
   return (
-    <div className="flex flex-row gap-4 container mx-auto">
+    <div className="flex flex-row gap-4 container">
       <aside className="w-1/4">
         <div className="py-5 font-bold">
           Categories

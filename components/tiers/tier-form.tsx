@@ -25,17 +25,17 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const newRecord = !tier?.id;
 
 	const label = newRecord ? 'Create Tier' : 'Update Tier';
-	
+
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
 
 	const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
-    const { name, value } = e.target;
-    const updatedTier = { ...tier, [name]: value } as Tier;
-    setTier(updatedTier);
-  };
+		e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+	) => {
+		const { name, value } = e.target;
+		const updatedTier = { ...tier, [name]: value } as Tier;
+		setTier(updatedTier);
+	};
 
 	const validateForm = () => {
 		if (!tier.name) {
@@ -52,7 +52,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 		try {
 			const savedTier = newRecord ? await createTier(tier) : await updateTier(tier.id as string, tier);
 
-			if(newRecord) {
+			if (newRecord) {
 				const featureIds = (selectedFeatures[tier.id] || []).map(f => f.id)
 				await attachMany({ referenceId: savedTier.id, featureIds: featureIds }, 'tier');
 			}
@@ -82,7 +82,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 				{/* Form Fields Section */}
 				<div className="md:col-span-2 space-y-6">
-				<div className="flex justify-between">
+					<div className="flex justify-between">
 						<div>
 							<PageHeading title={label} />
 						</div>
@@ -104,7 +104,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 				</div>
 			</div>
 
-			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4">
+			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4 pb-20">
 				<div className="md:col-span-2 space-y-6">
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Name</label>
@@ -115,7 +115,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							name="name"
 							value={tier.name}
 							onChange={handleInputChange}
-							
+
 						/>
 						{errors['name'] ? <Text color="red" >{errors['name']}</Text> : null}
 					</div>
@@ -149,37 +149,39 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
 							<Flex className='gap-2' justifyContent='start'>
 
-							{ canPublishLoading && <Text>(checking stripe eligiblity)</Text> }
-							{ !canPublishLoading && <>
-								<input type="checkbox"
-									checked={tier.published}
-									disabled={canPublishDisabled}
-									onChange={(e) => {
-										setTier({ ...tier, published: e.target.checked } as Tier);
-									}} /> 
-								<span>
-									<label htmlFor="switch" className="text-sm text-gray-500 ms-2">
-										Make this tier <span className="font-medium text-gray-700">available for sale.</span>
-									</label>
-								</span>
-							</>}
+								{canPublishLoading && <Text>(checking stripe eligiblity)</Text>}
+								{!canPublishLoading && <>
+									<input type="checkbox"
+										checked={tier.published}
+										disabled={canPublishDisabled}
+										onChange={(e) => {
+											setTier({ ...tier, published: e.target.checked } as Tier);
+										}} />
+									<span>
+										<label htmlFor="switch" className="text-sm text-gray-500 ms-2">
+											Make this tier <span className="font-medium text-gray-700">available for sale.</span>
+										</label>
+									</span>
+								</>}
 							</Flex>
-							{ (!canPublish && !canPublishLoading) && <>
+							{(!canPublish && !canPublishLoading) && <>
 								<Callout className="my-2" title="Payment Setup Required" color="red">You need to connect your Stripe account to publish a tier. Visit <a href="/settings/payment" className="underline">Payment Settings</a> to get started.</Callout>
 							</>}
 						</label>
 					</div>
 
 					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price</label>
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price (USD)</label>
 						<Flex className='gap-2' justifyContent='start'>
 							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
 						</Flex>
 					</div>
-
-					{ tier?.id ?
-						<TierFeaturePicker tierId={tier.id} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> :
-						<TierFeaturePicker newTier={tier} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> }
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Features</label>
+						{tier?.id ?
+							<TierFeaturePicker tierId={tier.id} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} /> :
+							<TierFeaturePicker newTier={tier} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} />}
+					</div>
 				</div>
 
 				{/* Preview Section */}

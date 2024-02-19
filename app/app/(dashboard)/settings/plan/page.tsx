@@ -18,20 +18,14 @@ const plans: PricingPlan[] = [
     title: "Free",
     price: "$0",
     tagline: "For early adopters only.",
-    features: ["Basic feature 1", "Basic feature 2", "Basic feature 3"],
+    features: ["Services and Tier Builder", "Sell Across Multiple Channels", "Basic CRM and Reporting"],
     active: true,
-  },
-  {
-    title: "Plus",
-    price: "$5",
-    tagline: "For growing OSS projects that are beginning to scale.",
-    features: ["Premium feature 1", "Premium feature 2", "Unlimited access"],
   },
   {
     title: "Premium",
     price: "$29",
     tagline: "For OSS projects with a large community and maturing ecosystem.",
-    features: ["Large feature 1", "Large feature 2", "Priority support"],
+    features: ["Everything in Free, plus:","Direct Sales", "Marketing and Acquisition", "Prioritized Bug Fixes" ],
   },
 ];
 

@@ -4,7 +4,7 @@
 import React, { useState, useEffect } from "react";
 import { Feature, Tier } from "@prisma/client";
 import FeatureAddRemoveToggle from "@/components/features/feature-add-remove-toggle";
-import { Card } from "@tremor/react";
+import { Text } from "@tremor/react";
 import { attach, detach } from "@/app/services/feature-service";
 import { TierWithFeatures, getTiersForMatrix } from "@/app/services/TierService";
 import { findByCurrentUser } from "@/app/services/feature-service";
@@ -62,16 +62,15 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   };
 
   return (
-    <Card className="mt-5">
-      <h1 className="text-lg font-semibold pb-4">Configure Features</h1>
+    <div>
       <div className="overflow-x-auto">
-        { !anyFeatures && <p>No features defined. You can add some <a href="/features">here</a></p> }
+        { !anyFeatures && <Text>Loading service offerings for this tier...If you haven&apos;t created any yet, you can define your Service offering <a href="/features" className="underline">here</a>.</Text> }
         { anyFeatures &&
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead>
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Feature
+                  &nbsp;
                 </th>
                 {tiers.length > 0 ? tiers.map(tier => (
                   <th key={tier.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -102,7 +101,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
           </table>
         }
       </div>
-    </Card>
+    </div>
   );
 };
 

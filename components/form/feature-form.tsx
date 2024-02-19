@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, TextInput, Switch } from '@tremor/react';
+import { Button, TextInput, Switch, Text } from '@tremor/react';
 import { TextArea } from "@radix-ui/themes";
 import { Feature } from '@prisma/client'; // Assuming Service stays as is, importing it if needed
 import { update, create } from '@/app/services/feature-service';
 import { getCurrentUser } from '@/app/services/UserService';
+import DashboardCard from '../common/dashboard-card';
 
 type Props = {
   serviceId: string;
@@ -83,10 +84,10 @@ const FeatureForm: React.FC<Props> = ({ serviceId, initialFeature, onSuccess }) 
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-      <TextInput placeholder="Enter feature name" {...register("name")} />
-      <TextInput placeholder="Enter link" {...register("uri")} />
-      <TextArea placeholder="Enter description" rows={3} {...register("description")} />
-      <ToggleSwitch isEnabled={watch("isEnabled")} handleToggle={() => setValue('isEnabled', !watch('isEnabled'))} />
+      <TextInput placeholder="Enter service name (public)" {...register("name")} />
+      <TextInput placeholder="Enter a link or contact information" {...register("uri")} />
+      <TextArea placeholder="Enter fulfillment or workflow information" rows={3} {...register("description")} />
+      <DashboardCard><Text>Feature Enabled:</Text><ToggleSwitch isEnabled={watch("isEnabled")} handleToggle={() => setValue('isEnabled', !watch('isEnabled'))} /></DashboardCard>
       <Button type="submit" disabled={isSaving}>{ initialFeature?.id ? 'Update' : 'Save'}</Button>
     </form>
   );
