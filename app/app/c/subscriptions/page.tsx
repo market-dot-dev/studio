@@ -31,7 +31,7 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
       <p>${tier.price} / month</p>
       <p>{subscription.tierVersionId}</p>
       <div className="flex flex-row space-x-2">
-      <LinkButton label="Details" href="/c/subscriptions/123" />
+      <LinkButton label="Details" href={`/subscriptions/${subscription.id}`} />
         <CancelSubscriptionButton subscription={subscription} />
       </div>
     </div>

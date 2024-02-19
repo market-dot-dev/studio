@@ -229,6 +229,7 @@ model Service {
   description String?
   requiresUri Boolean
   features    Feature[]
+  protocol    String?
 }
 
 model Feature {
