@@ -15,7 +15,8 @@ services:
     name: "Email"
     description: "Email is a method of exchanging messages between people using electronic devices."
     category: "email"
-    requiresUri: false
+    requiresUri: true
+    protocol: "mailto:"
 
   - id: "telegram"
     name: "Telegram"
@@ -27,7 +28,8 @@ services:
     name: "Support Phone"
     description: "Phone support is a service that provides assistance to customers over the phone." 
     category: "voice"
-    requiresUri: false
+    requiresUri: true
+    protocol: "tel:"
 
   - id: "zendesk"
     name: "Zendesk"
