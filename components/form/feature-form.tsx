@@ -1,19 +1,18 @@
-"use client";
-
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
 import { Button, TextInput, Switch } from '@tremor/react';
 import { TextArea } from "@radix-ui/themes";
-import { Service, Feature } from '@prisma/client';
+import { Feature } from '@prisma/client'; // Assuming Service stays as is, importing it if needed
 import { update, create } from '@/app/services/feature-service';
 import { getCurrentUser } from '@/app/services/UserService';
 
 type Props = {
-  service: Service;
+  serviceId: string;
   initialFeature?: Feature;
+  onSuccess: (feature: Feature) => void;
 };
 
-type FeatureAttributes = Partial<Feature>;
+type FeatureAttributes = Omit<Feature, 'id'> & { id?: string }; // Making `id` optional for new entries
 
 const ToggleSwitch: React.FC<{
   isEnabled: boolean;
@@ -22,7 +21,7 @@ const ToggleSwitch: React.FC<{
   <Switch
     checked={isEnabled}
     onChange={handleToggle}
-    className={`${isEnabled ? 'bg-blue-600' : 'bg-gray-200'
+    className={`${isEnabled ? '' : 'bg-gray-200'
       } relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none`}
   >
     <span
@@ -32,19 +31,17 @@ const ToggleSwitch: React.FC<{
   </Switch>
 );
 
-const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
+const FeatureForm: React.FC<Props> = ({ serviceId, initialFeature, onSuccess }) => {
   const { register, handleSubmit, setValue, watch } = useForm<FeatureAttributes>({
     defaultValues: initialFeature || {
       name: '',
       uri: '',
       description: '',
-      serviceId: service.id,
+      serviceId,
       isEnabled: false,
     }
   });
 
-  // Watches the isEnabled value for live updates
-  const isEnabled = watch("isEnabled");
   const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
@@ -52,43 +49,44 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature }) => {
     setValue('name', initialFeature?.name || '');
     setValue('uri', initialFeature?.uri || '');
     setValue('description', initialFeature?.description || '');
-    setValue('serviceId', service.id || '');
+    setValue('serviceId', serviceId || '');
     setValue('isEnabled', initialFeature?.isEnabled || false);
-  }, [initialFeature, setValue]);
+  }, [initialFeature, setValue, serviceId]);
 
-  const onSubmit = async (data: FeatureAttributes) => {
+  const onSubmit = useCallback(async (data: FeatureAttributes) => {
     setIsSaving(true);
-    const currentUser = await getCurrentUser();
-    
-    if (!currentUser) {
-      setIsSaving(false);
-      throw new Error("User is required to create a feature.");
-    }
-    
-    const submissionData = { ...data, userId: currentUser.id, serviceId: service.id };
 
-    let returnedFeature;
-    
-    if (initialFeature?.id) {
-      returnedFeature = await update(initialFeature.id, submissionData);
-    } else {
-      returnedFeature = await create(submissionData);
-    }
-    
-    if (returnedFeature && returnedFeature.id) {
-      window.location.href = `/features`;
-    } else {
+    try {
+      const currentUser = await getCurrentUser();
+
+      if (!currentUser) {
+        throw new Error("User is required to create or update a feature.");
+      }
+      
+      const submissionData = Object.assign({}, data, { userId: currentUser.id, serviceId });
+
+      let returnedFeature: Feature;
+      
+      if (initialFeature?.id) {
+        returnedFeature = await update(initialFeature.id, submissionData);
+      } else {
+        returnedFeature = await create(submissionData);
+      }
+      
+      onSuccess(returnedFeature);
+    } catch (error) {
+      console.error('Error in feature submission: ', error);
+    } finally {
       setIsSaving(false);
-      console.error('Failed to get the feature ID after operation.');
     }
-  };
+  }, [initialFeature, serviceId, onSuccess]);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
       <TextInput placeholder="Enter feature name" {...register("name")} />
       <TextInput placeholder="Enter link" {...register("uri")} />
       <TextArea placeholder="Enter description" rows={3} {...register("description")} />
-      <ToggleSwitch isEnabled={isEnabled || false} handleToggle={() => setValue('isEnabled', !isEnabled)} />
+      <ToggleSwitch isEnabled={watch("isEnabled")} handleToggle={() => setValue('isEnabled', !watch('isEnabled'))} />
       <Button type="submit" disabled={isSaving}>{ initialFeature?.id ? 'Update' : 'Save'}</Button>
     </form>
   );
