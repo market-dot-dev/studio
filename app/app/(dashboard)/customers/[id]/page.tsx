@@ -25,7 +25,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
     <div className="flex max-w-screen-xl flex-col space-y-12">
       <div className="flex justify-between w-full">
         <div className="flex flex-row">
-          <PageHeading title="Acme Inc." />
+          <PageHeading title={customer.company || customer.name || "Customer Details"} />
         </div>
       </div>
 
