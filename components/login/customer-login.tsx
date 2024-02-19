@@ -26,7 +26,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
     const handleLogout = () => {
         setIsSubmitting(true);
-        signOut({ callbackUrl: user?.roleId === 'maintainer' ? '/login' : '/customer-login' })
+        signOut({ callbackUrl: '/' })
     }
 
     const handleEmail = async (e: any) => {

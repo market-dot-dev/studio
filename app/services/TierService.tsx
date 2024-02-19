@@ -259,7 +259,7 @@ class TierService {
       },
       orderBy: [
         {
-          createdAt: "desc",
+          createdAt: "asc",
         },
       ],
     }); 

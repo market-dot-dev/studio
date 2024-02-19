@@ -42,13 +42,15 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      images: [image],
+      // temporarily disabling images
+      // images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [image],
+      // temporarily disabling images
+      // images: [image],
       creator: "@vercel",
     },
     icons: [logo],
