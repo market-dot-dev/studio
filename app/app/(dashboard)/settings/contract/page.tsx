@@ -3,7 +3,7 @@
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import UserService from "@/app/services/UserService";
-import { Title } from "@tremor/react";
+import { Title, Text } from "@tremor/react";
 
 export default async function ContractSettings() {
   const session = await getSession();
@@ -20,7 +20,8 @@ export default async function ContractSettings() {
 
   return (    
     <div className="space-y-6">
-      <Title>Contract Settings</Title>
+      <Title>Services Agreement</Title>
+      <Text>Gitwallet has created a Master Service Agreement optimized for the world of Open Source.</Text>
     </div>
   );
 }
