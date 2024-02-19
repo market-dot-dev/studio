@@ -82,7 +82,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   } else return (
     <>
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Divider>Register</Divider>
+        <Divider className={!user?.id ? "font-bold text-lg" : ""}>Login / Signup</Divider>
         { error && <div className="mb-4 text-red-500">{error}</div> }
 
         {/* <RegistrationForm user={user} userAttributes={userAttributes} setUserAttributes={setUserAttributes} loggedIn={!!currentSession.user} /> */}
@@ -90,15 +90,13 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Divider>Credit Card Information</Divider>
-        <Card>
-          <div className="mb-4">
+        <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
+          <div>
             <UserPaymentMethodWidget
               loading={submittingPaymentMethod}
               setError={setError}
             />
           </div>
-        </Card>
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
