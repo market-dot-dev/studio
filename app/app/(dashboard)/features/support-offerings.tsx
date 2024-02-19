@@ -1,7 +1,7 @@
 "use client";
 
 import { Service, Feature } from '@prisma/client';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import FeatureForm from '@/components/form/feature-form';
 import { Switch } from '@tremor/react';
 
@@ -100,7 +100,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
               checked={currentFeatureEnabled}
               onChange={handleToggle}
               className={`${
-                currentFeatureEnabled ? 'bg-blue-600' : 'bg-gray-200'
+                currentFeatureEnabled ? '' : 'bg-gray-200'
               } relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none`}
             >
               <span
@@ -123,14 +123,22 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
 const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ services, features }) => {
   const [selectedCategory, setSelectedCategory] = useState<Category>(categories[0]);
   const filteredServices = services.filter((s) => s.category === selectedCategory.id);
-
+  const [featuresList, setFeaturesList] = useState<Feature[]>(features); // Use a state for features
   const [selectedService, setSelectedService] = useState<Service>(filteredServices[0]);
 
   useEffect(() => {
     setSelectedService(filteredServices[0]);
   }, [selectedCategory]);
 
-  const currentFeature = features.find((f) => f.serviceId === selectedService.id);
+  const currentFeature = featuresList.find((f) => f.serviceId === selectedService.id);
+
+  const handleFeatureSuccess = useCallback((updatedFeature: Feature) => {
+    setFeaturesList((prevFeatures) => {
+      const otherFeatures = prevFeatures.filter(f => f.id !== updatedFeature.id);
+      return [...otherFeatures, updatedFeature];
+    });
+ }, []);
+
 
   return (
     <div className="flex flex-row gap-4 container mx-auto">
@@ -161,7 +169,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
                 service={service} onUpdate={() => {}}
                 selectedService={selectedService}
                 setSelectedService={setSelectedService}
-                currentFeatureEnabled={features.find((f) => f.serviceId === service.id)?.isEnabled || false} />
+                currentFeatureEnabled={featuresList.find((f) => f.serviceId === service.id)?.isEnabled || false} />
             ))}
           </div>
         </div>
@@ -170,7 +178,8 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
         <div className="py-5 font-bold">
           Details
         </div>
-        <FeatureForm initialFeature={currentFeature} service={selectedService} />
+        { selectedService && 
+          <FeatureForm initialFeature={currentFeature} serviceId={selectedService.id} onSuccess={handleFeatureSuccess}/> }
       </aside>
     </div>
   );
