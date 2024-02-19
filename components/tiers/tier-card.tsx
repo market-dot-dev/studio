@@ -23,20 +23,22 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
   const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
 
   return (<>
-    <Card className={`flex flex-col p-6 mx-auto w-full max-w-xs text-center rounded-lg border shadow ${containerClasses}`}>
-      <h3 className={`mb-2 text-2xl font-bold ${textClasses}`}>{tier.name}</h3>
-      <p className="font-light text-gray-500">{tier.tagline}</p>
-      <div className="flex justify-center items-baseline my-4">
-        <span className={`mr-1 text-4xl font-extrabold ${textClasses}`}>${tier.price}</span>
-        /&nbsp;
-        <span className="text-gray-500 dark:text-gray-400">{'month' /*tier.frequency */}</span>
+    <Card className={`flex flex-col p-6 mx-auto w-full h-full justify-between max-w-xs text-center rounded-lg border shadow ${containerClasses}`}>
+      <div>
+        <h3 className={`mb-2 text-2xl font-bold ${textClasses}`}>{tier.name}</h3>
+        <p className="font-light text-gray-500">{tier.tagline}</p>
+        <div className="flex justify-center items-baseline my-4">
+          <span className={`mr-1 text-4xl font-extrabold ${textClasses}`}>${tier.price}</span>
+          /&nbsp;
+          <span className="text-gray-500 dark:text-gray-400">{'month' /*tier.frequency */}</span>
+        </div>
+        <Text className="text-center text-xs text-gray-400">What's Included:</Text>
+        <TierFeatureList features={tier.features || []} darkMode={darkMode} />
       </div>
-      <Text className="text-center text-xs text-gray-400">What's Included:</Text>
-      <TierFeatureList features={tier.features || []} darkMode={darkMode} />
 
-      <div className="flex flex-col gap-2 w-full mt-2">
+      <div className="flex flex-col gap-2 w-full mt-4">
         {canEdit && <Link href={`tiers/${tier.id}`}><Button variant="primary" className="w-full">Edit</Button></Link>}
-        <Link href={`${url ? url : ''}/checkout/${tier.id}`}><Button variant={canEdit? "secondary" : "primary"} className="w-full">Get Started</Button></Link>
+        <Link href={`${url ? url : ''}/checkout/${tier.id}`}><Button variant={canEdit ? "secondary" : "primary"} className="w-full">Get Started</Button></Link>
       </div>
 
     </Card>
