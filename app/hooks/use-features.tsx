@@ -4,12 +4,20 @@ import { Feature } from "@prisma/client";
 
 const useFeatures = (tierId: string) => {
   const [features, setFeatures] = useState<Feature[]>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    findByTierId(tierId).catch(console.error).then((features) => features && setFeatures(features))
+    findByTierId(tierId)
+      .then((features) => {
+        if (features) {
+          setFeatures(features);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setIsLoading(false));
   }, [tierId]);
 
-  return [features] as const;
+  return [features, isLoading] as const;
 }
 
 export default useFeatures;
