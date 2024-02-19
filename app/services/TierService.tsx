@@ -229,6 +229,11 @@ class TierService {
       include: {
         features: true,
       },
+      orderBy: [
+        {
+          published: "desc",
+        },
+      ],
     });
   }
 
@@ -259,7 +264,7 @@ class TierService {
       },
       orderBy: [
         {
-          createdAt: "asc",
+          createdAt: "desc",
         },
       ],
     }); 
