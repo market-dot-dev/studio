@@ -9,14 +9,12 @@ import PrimaryButton from "@/components/common/link-button";
 import { ExternalLinkChip } from "@/components/common/external-link";
 import DomainService from "@/app/services/domain-service";
 import { formatDistanceToNow } from 'date-fns';
+import Image from 'next/image';
 
 export default async function SitePosts({
   params,
 }: {
   params: { id: string };
-
-
-
 }) {
   const session = await getSession();
   if (!session) {
@@ -58,7 +56,14 @@ export default async function SitePosts({
       <Card>
         <div className="flex justify-between w-full">
           <div className="absolute bottom-0 left-4">
-            <img src="https://www.gitwallet.co/site-preview.png" width={300} alt="Site Preview" />
+          <Image
+              src="/site-preview.png"
+              alt="Site Preview"
+              width={843} // Original width
+              height={596} // Original height to maintain the aspect ratio
+              layout="responsive"
+              style={{maxWidth: '300px', width: '100%'}}
+          />
           </div>
           <div className="flex-column ms-[300px]">
 
