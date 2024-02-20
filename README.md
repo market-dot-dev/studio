@@ -71,3 +71,28 @@ pnpm sync:services
 ```bash
 pnpm dev
 ```
+
+## Migrations
+
+to run:
+
+`$ pnpm prisma migrate deploy`
+
+to make a new one:
+
+1. edit your schema.prisma
+1. `$ pnpm prisma migrate dev`
+1. edit the affected file as needed
+
+## Backups
+
+visit [vercel](https://vercel.com/lab0324/gitwallet-web/stores/postgres/store_3VM9LMSgYfiNtAI0/data) to get the DB_SERVER_URL, USERNAME and password
+
+`$ pg_dump -h DB_SERVER_URL.us-east-1.aws.neon.tech -p 5432 -U USERNAME -d verceldb -W --no-owner --no-acl -F c > gitwallet_prod.dump`
+
+to restore
+
+```
+$ createdb gitwallet_prod
+$ pg_restore -d gitwallet_prod gitwallet_prod.dump
+```
