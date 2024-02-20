@@ -84,6 +84,10 @@ to make a new one:
 1. `$ pnpm prisma migrate dev`
 1. edit the affected file as needed
 
+to skip a destructive migration
+
+`$ pnpm prisma migrate resolve --applied 20240220203418_sync_migrations_with_schema`
+
 ## Backups
 
 visit [vercel](https://vercel.com/lab0324/gitwallet-web/stores/postgres/store_3VM9LMSgYfiNtAI0/data) to get the DB_SERVER_URL, USERNAME and password
