@@ -2,14 +2,14 @@
 // tier-form.tsx
 
 import { ChangeEvent, Suspense, useEffect, useState } from 'react';
-import { Flex, Text, Button, Card, Title, Bold, NumberInput, Callout, TextInput, Textarea } from "@tremor/react"
+import { Flex, Text, Button, Card, Title, Bold, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
-import { createTier, updateTier } from '@/app/services/TierService';
+import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, TierVersionWithFeatures } from '@/app/services/TierService';
 import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
-import { Feature } from '@prisma/client';
+import { Feature, TierVersion } from '@prisma/client';
 import TierFeaturePicker from '../features/tier-feature-picker';
 import { attachMany } from '@/app/services/feature-service';
 
@@ -17,10 +17,21 @@ interface TierFormProps {
 	tier?: Partial<Tier>;
 }
 
+const TierVersionCard = async ({ tierVersion }: { tierVersion: TierVersionWithFeatures }) => {
+	return <Card key={tierVersion.id} className="p-2" >
+		<Text>Revision: {tierVersion.revision}</Text>
+		<Text>Price: {tierVersion.price}</Text>
+		<Text>Stripe Id: {tierVersion.stripePriceId}</Text>
+		<Text>Features: {JSON.stringify((tierVersion.features || []).map(f => f.name).join(', '))}</Text>
+	</Card>
+};
+
 export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const router = useRouter();
 	const [tier, setTier] = useState<Tier>((tierObj ? tierObj : newTier()) as Tier);
 	const [selectedFeatures, setSelectedFeatures] = useState<Record<string, Feature[]>>({});
+	const [willCreateNewVersion, setWillCreateNewVersion] = useState(false);
+	const [versions, setVersions] = useState<TierVersionWithFeatures[]>([]);
 
 	const newRecord = !tier?.id;
 
@@ -74,6 +85,18 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 		});
 	}, []);
 
+	useEffect(() => {
+		getVersionsByTierId(tier.id).then(setVersions);
+	}, []);
+
+	useEffect(() => {
+		if(tier && tierObj){
+			shouldCreateNewVersion(tierObj as Tier, tier).then(ret => {
+				setWillCreateNewVersion(ret);
+			});
+		}
+	}, [tier, tierObj, shouldCreateNewVersion]);
+
 	const canPublishDisabled = !canPublish || canPublishLoading;
 
 	return (
@@ -107,6 +130,12 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4 pb-20">
 				<div className="md:col-span-2 space-y-6">
 					<div className="mb-4">
+						{ willCreateNewVersion && 
+						<Callout className="mt-2 mb-5" title="New Version" color="red">
+							You've changed the price of the published tier, which will result in a new version.
+						</Callout>
+						}
+
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Name</label>
 						<TextInput
 							id="tierName"
@@ -176,6 +205,20 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
 						</Flex>
 					</div>
+					{ versions && versions.length > 0 && 
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Old Versions</label>
+						<Flex className='gap-2' justifyContent='start'>
+							<Accordion className="my-2">
+								<AccordionHeader className="my-0 py-1">
+									Expand for past versions ({versions.length})
+								</AccordionHeader>
+								<AccordionBody>
+									{ versions.map((version) => <TierVersionCard tierVersion={version} />) }
+								</AccordionBody>
+							</Accordion>
+						</Flex>
+					</div> }
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Features</label>
 						{tier?.id ?
