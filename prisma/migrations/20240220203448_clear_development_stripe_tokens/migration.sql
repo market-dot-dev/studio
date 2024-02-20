@@ -9,4 +9,4 @@ SET
 
 UPDATE "Tier" SET "stripePriceId" = NULL;
 
-UPDATE "Subscription" SET "stripeSubscriptionId" = NULL;
+TRUNCATE "Subscription";
