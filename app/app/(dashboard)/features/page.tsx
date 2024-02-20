@@ -7,20 +7,6 @@ import Offerings from './support-offerings';
 import { Text } from '@tremor/react';
 import PageHeading from '@/components/common/page-heading';
 
-type Category = {
-  id: string;
-  name: string;
-  icon?: string;
-};
-
-const categories: Category[] = [
-  { id: 'email', name: 'Email', icon: 'email' },
-  { id: 'chat', name: 'Chat', icon: 'chat' },
-  { id: 'voice', name: 'Voice', icon: 'phone' },
-  { id: 'ticketing', name: 'Ticketing', icon: 'ticket' },
-  { id: 'sla', name: 'SLA', icon: 'clock' },
-];
-
 const OfferingsWrapper = async () => {
   const services: Service[] = await prisma.service.findMany();
   const features: Feature[] = await prisma.feature.findMany();
