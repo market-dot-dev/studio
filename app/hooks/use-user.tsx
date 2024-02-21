@@ -4,14 +4,24 @@ import { findUser } from "../services/UserService";
 
 const useUser = (id?: string) => {
   const [user, setUser] = useState<User>();
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    if(id) {
-      findUser(id).catch(console.error).then((user) => user && setUser(user))
+    if (id) {
+      findUser(id)
+        .then((user) => {
+          if (user) {
+            setUser(user);
+          }
+        })
+        .catch(console.error)
+        .finally(() => setIsLoading(false));
+    } else {
+      setIsLoading(false);
     }
   }, [id]);
 
-  return [user] as const;
+  return [user, isLoading] as const;
 }
 
 export default useUser;

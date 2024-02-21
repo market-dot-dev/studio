@@ -1,14 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { Accordion, AccordionBody, AccordionHeader, Badge } from "@tremor/react";
+import { Accordion, AccordionBody, AccordionHeader, Badge, Flex } from "@tremor/react";
 import { CurrentSessionProvider } from "@/app/contexts/current-user-context";
 import RegistrationSection from "./registration-section";
 import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
-import { Text } from "@tremor/react";
+import { Text, Bold } from "@tremor/react";
 
 const checkoutCurrency = "USD";
 const projectDescriptionDefault = "The business builder made for open source maintainers.";
@@ -17,12 +17,16 @@ const renderSectionHeading = (text: string) => {
   return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
 };
 
-const CheckoutPage = ({params} : {params: { id: string }}) => {
+const SkeletonLoader = ({ className }: { className?: string }) => (
+  <div className={`animate-pulse bg-slate-300 ${className}`}></div>
+);
+
+const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
 
-  const [tier] = useTier(id);
-  const [maintainer] = useUser(tier?.userId);
-  const [features] = useFeatures(id);
+  const [tier, isTierLoading] = useTier(id);
+  const [maintainer, isMaintainerLoading] = useUser(tier?.userId);
+  const [features, isFeaturesLoading] = useFeatures(id);
 
   const checkoutMaintainer = maintainer?.name;
   const checkoutProject = maintainer?.projectName || maintainer?.name;
@@ -39,10 +43,23 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
       >
         <div className="overflow-y-auto">
           <div className="w-7/8 lg:w-5/6">
-            <h1 className="mb-8 text-4xl font-semibold">{checkoutProject}</h1>
-            <p className="mb-8 text-xl font-extralight leading-6">
-              {projectDescription}
-            </p>
+            {isMaintainerLoading ?
+              <Flex flexDirection="col" alignItems="start" className='gap-10 mb-6 opacity-50'>
+                <SkeletonLoader className="h-6 w-3/4 rounded-xl" />
+                <Flex flexDirection="col" alignItems="start" className='gap-2'>
+                  <SkeletonLoader className="h-4 w-full rounded-full" />
+                  <SkeletonLoader className="h-4 w-1/2 rounded-full" />
+                </Flex>
+              </Flex>
+              :
+              <>
+                <h1 className="mb-8 text-4xl font-semibold">{checkoutProject}</h1>
+                <p className="mb-8 text-xl font-extralight leading-6">
+                  {projectDescription}
+                </p>
+              </>
+            }
+
             <Text className="text-xs mb-1">Powered by:</Text>
             <Image
               alt="Gitwallet"
@@ -59,36 +76,65 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
       {/* Right Column */}
       <div className="ml-auto w-full overflow-y-auto bg-slate-100 p-8 text-slate-800 md:w-1/2 md:p-16">
         <section className="w-7/8 mb-8 lg:w-5/6">
-          <div className="mb-2 text-lg font-medium leading-6">
-            {checkoutProject}: {checkoutTier}
-          </div>
+          {isTierLoading ?
+            <div className="opacity-50">
+              <SkeletonLoader className="h-4 w-3/5 rounded-full leading-6 mb-2" />
+              <SkeletonLoader className="h-4 w-1/2 rounded-full leading-6 mb-4" />
+            </div>
+            :
+            <div>
+              <div className="mb-2 text-lg font-medium leading-6">
+                <Bold>{checkoutProject}: {checkoutTier}</Bold>
+              </div>
+              <div className="mb-4 leading-6">
+                <Text>{checkoutCurrency + " " + checkoutPrice} per month</Text>
+              </div>
+            </div>
+          }
 
-          <div className="mb-4 text-sm font-light leading-6">
-            {checkoutCurrency + " " + checkoutPrice} per month
-          </div>
-          <Accordion className="my-2">
-            <AccordionHeader className="my-0 py-1">
-              Expand for Tier Details
-            </AccordionHeader>
-            <AccordionBody>
-              <TierFeatureList features={features || []} />
-            </AccordionBody>
-          </Accordion>
+          {isFeaturesLoading ?
+            <SkeletonLoader className="h-8 w-full rounded-xl my-2" /> 
+            :
+            <Accordion className="my-2">
+              <AccordionHeader className="my-0 py-1">
+                Expand for Tier Details
+              </AccordionHeader>
+              <AccordionBody>
+                <TierFeatureList features={features || []} />
+              </AccordionBody>
+            </Accordion>
+          }
 
           {/* accept terms of service */}
           <div className="flex flex-row items-center gap-2">
-            <label className="mb-4 text-sm font-light leading-6">
-              {checkoutProject} uses the{" "}
-              <a href="#" className="underline">
-                Standard Gitwallet MSA
-              </a>
-              .
-            </label>
+            {isFeaturesLoading ?
+              <SkeletonLoader className="h-4 w-3/4 rounded-full mb-4" /> :
+
+              <Text className="mb-4 leading-6">
+                {checkoutProject} uses the{" "}
+                <a href="/contracts/default" className="underline">
+                  Standard Gitwallet MSA
+                </a>
+                .
+              </Text>
+            }
           </div>
         </section>
 
         <CurrentSessionProvider>
-          { tier && <RegistrationSection tier={tier} /> }
+          {isTierLoading ?
+            <>
+              <Flex flexDirection="col" alignItems="start" className='gap-12 opacity-50'>
+                <SkeletonLoader className="h-16 w-5/6 rounded-xl" />
+                <SkeletonLoader className="h-36 w-5/6 rounded-xl" />
+                <SkeletonLoader className="h-12 w-5/6 rounded-xl" />
+              </Flex>
+
+            </> :
+            <>
+              {tier && <RegistrationSection tier={tier} />}
+            </>
+          }
         </CurrentSessionProvider>
       </div>
     </div>
