@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Card, Button } from '@tremor/react';
+import { Card, Button, Text } from '@tremor/react';
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
 import useCurrentSession, { CurrentSessionProvider } from '@/app/contexts/current-user-context';
 import { getPaymentMethod } from '@/app/services/StripeService';
@@ -47,7 +47,7 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError }: UserPaymentM
       <Card>
         {user?.stripePaymentMethodId ? (
           <div className="flex flex-row justify-between items-center">
-            Use saved {cardInfo?.brand} ending in {cardInfo?.last4}
+            <Text>Use saved {cardInfo?.brand.toUpperCase()} ending in {cardInfo?.last4}</Text>
             <br />
             <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshCurrentSession)}>
               Remove

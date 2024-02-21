@@ -3,7 +3,7 @@
 import {
   Card,
   Divider,
-  TextInput,
+  Text,
   Button,
 } from "@tremor/react";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
@@ -23,7 +23,7 @@ const checkoutCurrency = "USD";
 
 const AlreadySubscribedCard = ({ subscription }: { subscription: Subscription }) => {
   return (<Card>
-    <p>You&apos;re already subscribed to this product.</p>
+    <Text>You&apos;re already subscribed to this product.</Text>
   </Card>);
 }
 

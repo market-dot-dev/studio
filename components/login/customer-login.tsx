@@ -145,7 +145,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
             {user ? (
                 <div className="flex flex-row justify-between w-full">
                     <Text>You are logged in as {user.name} ({user.email}).</Text>
-                    <Button variant="secondary" onClick={handleLogout} loading={isSubmitting} disabled={isSubmitting} className="p-1">Logout</Button>
+                    <Button variant="secondary" onClick={handleLogout} loading={isSubmitting} disabled={isSubmitting} className="p-1 h-min">Logout</Button>
                 </div>
             ) : !isSubmitted ? (
                 <div>

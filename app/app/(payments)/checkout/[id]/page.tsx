@@ -8,7 +8,7 @@ import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
-import { Text } from "@tremor/react";
+import { Text, Bold } from "@tremor/react";
 
 const checkoutCurrency = "USD";
 const projectDescriptionDefault = "The business builder made for open source maintainers.";
@@ -84,29 +84,26 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
             :
             <div>
               <div className="mb-2 text-lg font-medium leading-6">
-                {checkoutProject}: {checkoutTier}
+                <Bold>{checkoutProject}: {checkoutTier}</Bold>
               </div>
-              <div className="mb-4 text-sm font-light leading-6">
-                {checkoutCurrency + " " + checkoutPrice} per month
+              <div className="mb-4 leading-6">
+                <Text>{checkoutCurrency + " " + checkoutPrice} per month</Text>
               </div>
             </div>
           }
-          <Accordion className="my-2">
-            <AccordionHeader className="my-0 py-1">
-              Expand for Tier Details
-            </AccordionHeader>
-            <AccordionBody>
-              {isFeaturesLoading ? (
-                <div className="opacity-50">
-                  <SkeletonLoader className="h-4 w-1/2 rounded-full mb-2" />
-                  <SkeletonLoader className="h-4 w-1/4 rounded-full mb-2" />
-                  <SkeletonLoader className="h-4 w-3/5 rounded-full mb-2" />
-                </div>
-              ) : (
+
+          {isFeaturesLoading ?
+            <SkeletonLoader className="h-8 w-full rounded-xl my-2" /> 
+            :
+            <Accordion className="my-2">
+              <AccordionHeader className="my-0 py-1">
+                Expand for Tier Details
+              </AccordionHeader>
+              <AccordionBody>
                 <TierFeatureList features={features || []} />
-              )}
-            </AccordionBody>
-          </Accordion>
+              </AccordionBody>
+            </Accordion>
+          }
 
           {/* accept terms of service */}
           <div className="flex flex-row items-center gap-2">
