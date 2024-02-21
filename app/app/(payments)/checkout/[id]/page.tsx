@@ -17,11 +17,11 @@ const renderSectionHeading = (text: string) => {
   return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
 };
 
-const SkeletonLoader = ({ className } : { className?: string}) => (
+const SkeletonLoader = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-slate-300 ${className}`}></div>
 );
 
-const CheckoutPage = ({params} : {params: { id: string }}) => {
+const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
 
   const [tier, isTierLoading] = useTier(id);
@@ -43,17 +43,15 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
       >
         <div className="overflow-y-auto">
           <div className="w-7/8 lg:w-5/6">
-            {isMaintainerLoading ? 
+            {isMaintainerLoading ?
               <Flex flexDirection="col" alignItems="start" className='gap-10 mb-6 opacity-50'>
-                <SkeletonLoader className="h-8 w-3/4" />
+                <SkeletonLoader className="h-6 w-3/4 rounded-xl" />
                 <Flex flexDirection="col" alignItems="start" className='gap-2'>
-                  <SkeletonLoader className="h-6 w-full"/>
-                  <SkeletonLoader className="h-6 w-full" />
-                  <SkeletonLoader className="h-6 w-full" />
-                  <SkeletonLoader className="h-6 w-1/2" />
+                  <SkeletonLoader className="h-4 w-full rounded-full" />
+                  <SkeletonLoader className="h-4 w-1/2 rounded-full" />
                 </Flex>
               </Flex>
-             : 
+              :
               <>
                 <h1 className="mb-8 text-4xl font-semibold">{checkoutProject}</h1>
                 <p className="mb-8 text-xl font-extralight leading-6">
@@ -61,7 +59,7 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
                 </p>
               </>
             }
-            
+
             <Text className="text-xs mb-1">Powered by:</Text>
             <Image
               alt="Gitwallet"
@@ -78,12 +76,12 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
       {/* Right Column */}
       <div className="ml-auto w-full overflow-y-auto bg-slate-100 p-8 text-slate-800 md:w-1/2 md:p-16">
         <section className="w-7/8 mb-8 lg:w-5/6">
-          {isTierLoading ? 
+          {isTierLoading ?
             <div className="opacity-50">
-              <SkeletonLoader className="h-6 w-3/5 mb-2" />
-              <SkeletonLoader className="h-6 w-1/2 mb-4" />
+              <SkeletonLoader className="h-4 w-3/5 rounded-full leading-6 mb-2" />
+              <SkeletonLoader className="h-4 w-1/2 rounded-full leading-6 mb-4" />
             </div>
-           : 
+            :
             <div>
               <div className="mb-2 text-lg font-medium leading-6">
                 {checkoutProject}: {checkoutTier}
@@ -98,43 +96,48 @@ const CheckoutPage = ({params} : {params: { id: string }}) => {
               Expand for Tier Details
             </AccordionHeader>
             <AccordionBody>
-            {isFeaturesLoading ? (
-              <div className="opacity-50">
-                <SkeletonLoader className="h-24 w-full" />
-              </div>
-            ) : (
-              <TierFeatureList features={features || []} />
-            )}
+              {isFeaturesLoading ? (
+                <div className="opacity-50">
+                  <SkeletonLoader className="h-4 w-1/2 rounded-full mb-2" />
+                  <SkeletonLoader className="h-4 w-1/4 rounded-full mb-2" />
+                  <SkeletonLoader className="h-4 w-3/5 rounded-full mb-2" />
+                </div>
+              ) : (
+                <TierFeatureList features={features || []} />
+              )}
             </AccordionBody>
           </Accordion>
 
           {/* accept terms of service */}
           <div className="flex flex-row items-center gap-2">
-            <label className="mb-4 text-sm font-light leading-6">
-              {checkoutProject} uses the{" "}
-              <a href="#" className="underline">
-                Standard Gitwallet MSA
-              </a>
-              .
-            </label>
+            {isFeaturesLoading ?
+              <SkeletonLoader className="h-4 w-3/4 rounded-full mb-4" /> :
+
+              <Text className="mb-4 leading-6">
+                {checkoutProject} uses the{" "}
+                <a href="/contracts/default" className="underline">
+                  Standard Gitwallet MSA
+                </a>
+                .
+              </Text>
+            }
           </div>
         </section>
 
         <CurrentSessionProvider>
-          { isTierLoading ?
-             <>
-              
-                <Flex flexDirection="col" alignItems="start" className='gap-12 opacity-50'>
-                  <SkeletonLoader className="h-16 w-5/6" />
-                  <SkeletonLoader className="h-36 w-5/6" />
-                  <SkeletonLoader className="h-12 w-5/6" />
-                </Flex>
-              
+          {isTierLoading ?
+            <>
+              <Flex flexDirection="col" alignItems="start" className='gap-12 opacity-50'>
+                <SkeletonLoader className="h-16 w-5/6 rounded-xl" />
+                <SkeletonLoader className="h-36 w-5/6 rounded-xl" />
+                <SkeletonLoader className="h-12 w-5/6 rounded-xl" />
+              </Flex>
+
             </> :
             <>
-            { tier && <RegistrationSection tier={tier} /> }
+              {tier && <RegistrationSection tier={tier} />}
             </>
-            }
+          }
         </CurrentSessionProvider>
       </div>
     </div>
