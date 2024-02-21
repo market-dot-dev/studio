@@ -3,8 +3,7 @@ export const siteDescription = 'The business builder for open source.';
 export const projectName = 'Gitwallet';
 export const projectDescription = 'The business builder for open source.';
 export const homepageTitle = 'Welcome';
-export const homepageTemplate = `<span>
-<Section size="3">
+export const homepageTemplate = `<Section size="3">
     <Container size="3">
         <Flex direction="column" gap="6" align="center">
             <Heading size="8"><SiteName></SiteName></Heading>
@@ -34,5 +33,24 @@ export const homepageTemplate = `<span>
             </Text>   
         </Flex>
     </Container>
-</Section>
-</span>`
+</Section>`
+
+export const newPageTemplate = `<Section size="3">
+    <Container size="3">
+        <Flex direction="column" gap="6" align="center">
+            <Heading size="8">New Page</Heading>
+            <Heading as="h5" size=6">Lorem ipsum dolor sit amet, consectetur adipiscing elit</Heading>
+            <Text>Mauris libero nulla, tincidunt ac elit nec, vehicula pulvinar orci. Aenean consectetur odio quis congue varius. Maecenas vitae massa at nibh commodo accumsan id vel purus. Integer sodales odio sit amet justo malesuada molestie. Aliquam interdum pulvinar tempor.</Text>
+        </Flex>
+    </Container>
+    </Section>
+    <Section size="3" bg="rgb(243 244 246)">
+    <Container size="3">
+        <Grid columns="1fr 3fr" gap="6">
+            <Card></Card>
+            <Flex direction="column" gap="6" align="stretch">
+                <Heading size="6" align="center">More Content</Heading>
+                <Text>n hac habitasse platea dictumst. Fusce tempor tortor nec lectus lacinia fringilla. Mauris magna dui, hendrerit non vulputate viverra, scelerisque ut nisl. Integer porta, est a elementum convallis, magna dolor malesuada ex, quis aliquet augue nisi vitae eros. Integer fringilla convallis elementum. Praesent posuere nulla quis diam accumsan, ac cursus orci condimentum. Pellentesque ac turpis in augue rutrum pellentesque ac id odio. Maecenas quis odio vitae velit blandit pellentesque in non magna. Etiam ornare, ante et elementum egestas, felis velit congue felis, suscipit laoreet risus orci porttitor lacus. Nullam tincidunt tellus eget aliquet rutrum.</Text>
+            </Flex>
+    </Container>
+</Section>`

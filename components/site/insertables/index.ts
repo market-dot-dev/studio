@@ -18,7 +18,7 @@ import Section from "./section/section";
 
 import { 
     Flex, Box, Grid, Container, Card, Avatar,
-    Text, Heading, Blockquote, Code, Em, Kbd, Link, Quote
+    Text, Heading, Blockquote, Code, Em, Link, Quote
 } from '@radix-ui/themes'
 
 import SiteDescription from "./site-description/site-description";
@@ -142,12 +142,6 @@ export const textComponents = {
         name: 'Em',
         tag: 'Em',
         element: Em,
-        ui: true 
-    },
-    kbd: {
-        name: 'Kbd',
-        tag: 'Kbd',
-        element: Kbd,
         ui: true 
     },
     link: {

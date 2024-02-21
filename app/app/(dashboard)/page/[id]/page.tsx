@@ -44,7 +44,7 @@ export default async function Page({ params }: { params: { id: string } }) {
 	
   }
 
-  const previewUrl = DomainServices.getRootUrl(data?.site?.subdomain ?? 'app', data.id === data.site?.homepageId ? "" : `/${data.slug}`);
+  const siteUrl = DomainServices.getRootUrl(data?.site?.subdomain ?? 'app');
   
   return (
     <>
@@ -57,7 +57,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       </div>
 
 
-    <PageEditor site={data?.site} page={data} previewUrl={previewUrl} homepageId={ data.site?.homepageId || null} />
+    <PageEditor site={data?.site} page={data} siteUrl={siteUrl} homepageId={ data.site?.homepageId || null} />
     </>
   )
 }

@@ -19,6 +19,7 @@ import {
 } from "@/app/services/PageService";
 import { Page, Site } from "@prisma/client";
 
+let debounceTimeout: any;
 
 function TimedAlert({
   message,
@@ -147,18 +148,18 @@ export default function PageEditor({
   site,
   page,
   homepageId,
-  previewUrl,
+  siteUrl,
 }: {
   site: Partial<Site>;
   page: Partial<Page>;
   homepageId: string | null;
-  previewUrl: string | null;
+  siteUrl: string | null;
 }): JSX.Element {
   const isHome = page.id === homepageId;
 
   const [data, setData] = useState<any>(page);
 
-  const [slugVirgin, setSlugVirgin] = useState<boolean>(true);
+  const [slugVirgin, setSlugVirgin] = useState<boolean>(!data.slug);
 
   const [editorRef, setEditorRef] = useState<any>(null);
 
@@ -204,19 +205,20 @@ export default function PageEditor({
 
   useEffect(() => {
     if (!slugVirgin) return;
-    if (!data.title) return;
-    if (data.slug) return;
+    // if (!data.title) return;
+    // if (data.slug) return;
 
-    const slug = data.title
+    const slug = data.title ? data.title
       .toLowerCase()
       .replace(/ /g, "-")
-      .replace(/[^a-z0-9-]/g, "");
+      .replace(/[^a-z0-9-]/g, "") : "";
     setData({ ...data, slug });
+    setSlugError(null);
   }, [data.title]);
 
-  useEffect(() => {
-    if (!page.content) setIsPreview(false);
-  }, [page.content]);
+  // useEffect(() => {
+  //   if (!page.content) setIsPreview(false);
+  // }, [page.content]);
 
   useEffect(() => {
     if (isPreview) {
@@ -232,6 +234,13 @@ export default function PageEditor({
       setPreviewElement(null);
     }
   }, [isPreview]);
+
+  // trigger auto save on content change
+  useEffect(() => {
+    if (data?.content) {
+      debouncedSaveChanges();
+    }
+  }, [data.content]);
 
   const validate = () => {
     let isValid = true;
@@ -284,6 +293,17 @@ export default function PageEditor({
     setInprogress(false);
   };
 
+  const autoSaveChanges = useCallback(async () => {
+    if (!data || !data?.id) return;
+    console.log('Auto-saving page');
+    await saveContent(data); 
+  }, [data]);
+
+  const debouncedSaveChanges = useCallback(() => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(autoSaveChanges, 2000);
+  }, []);
+
   const doDeletePage = async () => {
     if (inProgress || !page?.id) return;
 
@@ -329,9 +349,9 @@ export default function PageEditor({
     <Button
       className="w-full bg-red-500 hover:bg-red-600 border-red-600"
       size="xs"
-      disabled={inProgress || isDeleting}
+      disabled={inProgress || isDeleting || isHome}
       loading={isDeleting}
-      
+      tooltip={isHome ? "Cannot delete the homepage" : ""}
       onClick={() => {
         if (window.confirm("Are you sure you want to delete this page?")) {
           doDeletePage();
@@ -376,29 +396,31 @@ export default function PageEditor({
     <Button
       className="w-full"
       size="xs"
-      disabled={inProgress || isMakingHomepage}
+      disabled={inProgress || isMakingHomepage || isHome}
       loading={isDeleting}
+      tooltip={isHome ? "This page is already the homepage" : ""}
+      
       onClick={doMakeHomepage}
     >
       Make Homepage
     </Button>
   );
 
-  let previewLink = null;
-  if (previewUrl) {
-    previewLink = (
-      <Flex>
+  const linkWithSlug = siteUrl + ( isHome ? '' : data.slug )
+  
+  const previewLink = (
+      <Flex className={ data.draft ? 'pointer-events-none opacity-50' : '' }>
         <a
-          href={previewUrl}
+          href={ linkWithSlug }
           target="_blank"
           rel="noreferrer"
           className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200"
         >
-          {previewUrl} ↗
+          {linkWithSlug} ↗
         </a>
       </Flex>
     );
-  }
+  
 
   const PREVIEW_INDEX = 0;
   const CODE_INDEX = 1;
@@ -432,7 +454,7 @@ export default function PageEditor({
 
             <Col numColSpanMd={4}>
               <Flex>
-                <Bold>URL</Bold>
+                <Bold>URL Slug</Bold>
               </Flex>
 
               <Flex>
@@ -455,7 +477,7 @@ export default function PageEditor({
             <Box>
               <Bold>Page Content</Bold>
             </Box>
-            <Box>{previewLink}</Box>
+            <Box>{ data.slug ? previewLink : null}</Box>
           </Flex>
 
           <Flex className="mb-2" justifyContent="between">

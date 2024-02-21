@@ -4,10 +4,9 @@ import { CheckIcon } from "@radix-ui/react-icons";
 import { Table } from "@radix-ui/themes";
 import Link from 'next/link';
 import { Badge } from "@tremor/react";
-import DomainService from "@/app/services/domain-service";
-export default function Pages({ pages, homepageId, subdomain }: { pages: any, homepageId: string | null, subdomain: string | null }) {
-	// const url = `${subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-	const url = DomainService.getRootUrl(subdomain ?? 'app');
+
+export default function Pages({ pages, homepageId, url }: { pages: any, homepageId: string | null, url?: string }) {
+	
 	return pages.length > 0 ? (
 		<Table.Root>
 			<Table.Header>
