@@ -1,9 +1,34 @@
+'use client'
 import { useState } from 'react';
-import { Button, Flex } from '@tremor/react'
-export default function CodeSnippet({ code } : { code: string}) {
+import { Button, Flex } from '@tremor/react';
+
+export default function CodeSnippet({ code }: { code: string }) {
   const [copied, setCopied] = useState(false);
 
-  const copyToClipboard = async (code : string) => {
+  const fallbackCopyTextToClipboard = (text: string) => {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    try {
+      const successful = document.execCommand('copy');
+      const msg = successful ? 'successful' : 'unsuccessful';
+      console.log('Fallback: Copying text command was ' + msg);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000); // Reset copied state after 2 seconds
+    } catch (err) {
+      console.error('Fallback: Oops, unable to copy', err);
+    }
+    document.body.removeChild(textArea);
+  };
+
+  const copyToClipboard = async (code: string) => {
+    if (!navigator.clipboard) {
+      console.log('Clipboard API not available, using fallback');
+      fallbackCopyTextToClipboard(code);
+      return;
+    }
     try {
       await navigator.clipboard.writeText(code);
       setCopied(true);
@@ -14,7 +39,7 @@ export default function CodeSnippet({ code } : { code: string}) {
   };
 
   return (
-    <Flex flexDirection="col" alignItems="start" className="gap-4" >
+    <Flex flexDirection="col" alignItems="start" className="gap-4">
       <pre>
         <div className="text-sm inline-flex text-left items-center space-x-4 bg-gray-800 text-white rounded-lg p-4 pl-6" style={{whiteSpace: 'normal'}}>
           {code}

@@ -12,9 +12,10 @@ type TierCardProps = {
   tier: TierWithFeatures;
   canEdit?: boolean;
   darkMode?: boolean;
+  children?: React.ReactNode;
 };
 
-const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, darkMode = false }) => {
+const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, darkMode = false, children }) => {
 
   const containerClasses = darkMode
     ? "text-white bg-gray-800 border-gray-600"
@@ -38,7 +39,9 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
 
       <div className="flex flex-col gap-2 w-full mt-4">
         {canEdit && <Link href={`tiers/${tier.id}`}><Button variant="primary" className="w-full">Edit</Button></Link>}
-        <Link href={`${url ? url : ''}/checkout/${tier.id}`}><Button variant={canEdit ? "secondary" : "primary"} className="w-full">Get Started</Button></Link>
+        { children ? children : <>
+          <Link href={`${url ? url : ''}/checkout/${tier.id}`}><Button variant={canEdit ? "secondary" : "primary"} className="w-full">Get Started</Button></Link>
+          </>}
       </div>
 
     </Card>
