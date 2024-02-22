@@ -237,7 +237,8 @@ export default function PageEditor({
 
   // trigger auto save on content change
   useEffect(() => {
-    if (data?.content) {
+    // do not attempt auto save if the title and slug of the page are not set
+    if (data?.content && data?.title && data?.slug) {
       debouncedSaveChanges();
     }
   }, [data.content]);
@@ -302,7 +303,7 @@ export default function PageEditor({
   const debouncedSaveChanges = useCallback(() => {
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(autoSaveChanges, 2000);
-  }, []);
+  }, [data]);
 
   const doDeletePage = async () => {
     if (inProgress || !page?.id) return;
