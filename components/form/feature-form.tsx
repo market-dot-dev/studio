@@ -84,9 +84,9 @@ const FeatureForm: React.FC<Props> = ({ serviceId, initialFeature, onSuccess }) 
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
-      <TextInput placeholder="Enter service name (public)" {...register("name")} />
-      <TextInput placeholder="Enter a link or contact information" {...register("uri")} />
-      <TextArea placeholder="Enter fulfillment or workflow information" rows={3} {...register("description")} />
+      <TextInput placeholder="Service Name (Displayed on Tier)" {...register("name")} />
+      <TextInput placeholder="Relevant Link, Email, or Phone#" {...register("uri")} />
+      <TextArea placeholder="Detail fulfillment or workflow information" rows={3} {...register("description")} />
       <DashboardCard><Text>Feature Enabled:</Text><ToggleSwitch isEnabled={watch("isEnabled")} handleToggle={() => setValue('isEnabled', !watch('isEnabled'))} /></DashboardCard>
       <Button type="submit" disabled={isSaving}>{ initialFeature?.id ? 'Update' : 'Save'}</Button>
     </form>

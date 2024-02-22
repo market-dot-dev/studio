@@ -6,14 +6,20 @@ services:
     requiresUri: true
 
   - id: "slack"
-    name: "Slack"
-    description: "Slack is a collaboration hub for work, no matter what work you do. It’s a place where conversations happen, decisions are made, and information is always at your fingertips."
+    name: "Custom Slack Channel"
+    description: "Create a custom Slack channel for each customer."
+    category: "chat"
+    requiresUri: true
+  
+  - id: "slackconnect"
+    name: "Slack Connect"
+    description: "Use Slack Connect to create a shared channel across instances"
     category: "chat"
     requiresUri: true
 
   - id: "email"
     name: "Email"
-    description: "Email is a method of exchanging messages between people using electronic devices."
+    description: "Provide a dedicated email support line for customers."
     category: "email"
     requiresUri: true
     protocol: "mailto:"
@@ -25,11 +31,29 @@ services:
     requiresUri: true
 
   - id: "phone"
-    name: "Support Phone"
+    name: "Support Phone Number"
     description: "Phone support is a service that provides assistance to customers over the phone." 
     category: "voice"
     requiresUri: true
     protocol: "tel:"
+
+  - id: "pair"
+    name: "Pair Programming Sessions"
+    description: "Provide pair programming sessions to help customers resolve issues." 
+    category: "voice"
+    requiresUri: true
+
+  - id: "oneone"
+    name: "1:1 Meetings"
+    description: "1:1 Support Meetings to help customers resolve issues." 
+    category: "voice"
+    requiresUri: true
+
+  - id: "github-issues"
+    name: "Github Issues"
+    description: "Create a dedicated Github issues project for prioritized requests from customers."
+    category: "ticketing"
+    requiresUri: true
 
   - id: "zendesk"
     name: "Zendesk"
@@ -37,8 +61,62 @@ services:
     category: "ticketing"
     requiresUri: true
 
+  - id: "other-ticketing"
+    name: "Other Project Management Tools"
+    description: "Other project or ticketing services for prioritized requests from customers."
+    category: "ticketing"
+    requiresUri: true
+
   - id: "sla"
-    name: "Response SLA"
-    description: "Service Level Agreement (SLA) is a commitment between a service provider and a client. Particular aspects of the service – quality, availability, responsibilities – are agreed between the service provider and the service user."
+    name: "General SLA"
+    description: "A general Service Level Agreement (SLA) commitment between a service provider and a client."
     category: "sla"
+    requiresUri: false
+
+  - id: "sla-24"
+    name: "SLA (24 Hour Response Time)"
+    description: "A 24 Hour Service Level Agreement (SLA) commitment between a service provider and a client."
+    category: "sla"
+    requiresUri: false
+
+  - id: "sla-48"
+    name: "SLA (48 Hour Response Time)"
+    description: "A 48 Hour Service Level Agreement (SLA) commitment between a service provider and a client."
+    category: "sla"
+    requiresUri: false
+
+  - id: "advertising"
+    name: "General Website Advertising"
+    description: "Promotion and advertising on your website."
+    category: "ads"
+    requiresUri: true
+
+  - id: "advertising-github"
+    name: "Advertising on Github Readme"
+    description: "Promotion and advertising on your Github README"
+    category: "ads"
+    requiresUri: true
+  
+  - id: "advertising-social"
+    name: "Advertising on Social Media"
+    description: "Promotion and advertising on your social media properties like X, Linkedin or others."
+    category: "ads"
+    requiresUri: true
+
+  - id: "custom"
+    name: "Custom"
+    description: "Custom Support Services"
+    category: "custom"
+    requiresUri: false
+
+  - id: "custom-integration"
+    name: "Custom Integration Support"
+    description: "Provide custom support for customized integrations"
+    category: "custom"
+    requiresUri: false
+
+  - id: "account-rep"
+    name: "Dedicated Account Representative"
+    description: "Provide a dedicated account rep for your customers."
+    category: "staff"
     requiresUri: false

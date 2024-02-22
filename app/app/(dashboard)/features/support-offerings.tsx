@@ -12,11 +12,20 @@ import {
   Ticket,
   Clock,
   LucideIcon,
+  Pencil,
   Slack,
   Send,
   Gamepad2,
   X,
   AlarmClock,
+  Volume2Icon,
+  Users,
+  ListTodo,
+  Github,
+  Milestone,
+  Wrench,
+  Twitter,
+  ListTodoIcon,
 } from "lucide-react";
 
 type Category = {
@@ -26,11 +35,13 @@ type Category = {
 };
 
 const categories: Category[] = [
-  { id: 'email', name: 'Email', icon: Mail },
   { id: 'chat', name: 'Chat', icon: MessageCircle },
-  { id: 'voice', name: 'Voice', icon: Phone },
-  { id: 'ticketing', name: 'Ticketing', icon: Ticket },
+  { id: 'voice', name: 'Live Support', icon: Phone },
+  { id: 'email', name: 'Email Support', icon: Mail },
   { id: 'sla', name: 'SLA', icon: Clock },
+  { id: 'ticketing', name: 'Custom Ticketing', icon: Ticket },
+  { id: 'ads', name: 'Promotions and Ads', icon: Volume2Icon},
+  { id: 'custom', name: 'Custom Services', icon: Pencil}
 ];
 
 type CategoryCardProps = {
@@ -60,11 +71,23 @@ const Icon = ({ id }: { id: string }) => {
   const IconElement = {
     'email': Mail,
     'slack': Slack,
+    'slackconnect': Slack,
     'discord': Gamepad2,
     'telegram': Send,
     'phone': Phone,
+    'pair': Users,
+    'oneone': Users,
     'sla': AlarmClock,
+    'sla-24': AlarmClock,
+    'sla-48': AlarmClock,
+    'github-issues': Github,
+    'other-ticketing': ListTodo,
     'zendesk': Ticket,
+    'advertising': Volume2Icon,
+    'advertising-github': Github,
+    'advertising-social': Twitter,
+    'custom': Pencil,
+    'custom-integration': Wrench
   }[id] || X;
 
   return <IconElement className="inline-block" />
