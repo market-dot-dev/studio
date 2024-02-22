@@ -280,13 +280,13 @@ export default function PageEditor({
     try {
       await updatePage(page.id, { title, slug, content });
 
-      setStatus({ message: "The page was succesfully saved", timeout: 3000 });
+      // setStatus({ message: "The page was succesfully saved", timeout: 3000 });
     } catch (error) {
-      setStatus({
-        message: "An error occured while saving the page",
-        color: "error",
-        timeout: 3000,
-      });
+      // setStatus({
+      //   message: "An error occured while saving the page",
+      //   color: "error",
+      //   timeout: 3000,
+      // });
     } finally {
       setForceStatusRefresh(!forceStatusRefresh);
     }
@@ -340,6 +340,7 @@ export default function PageEditor({
       className="w-full"
       disabled={inProgress}
       loading={inProgress}
+      loadingText="Saving..."
       onClick={() => saveContent(page)}
     >
       Save
