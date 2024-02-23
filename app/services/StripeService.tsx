@@ -49,7 +49,7 @@ class StripeService {
       
       } catch (error) {
         console.error('Error fetching Stripe account info:', error);
-        
+        throw error;
       }
     }
       return { user, accountInfo};
