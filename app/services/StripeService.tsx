@@ -17,15 +17,6 @@ export type StripeCard = {
 }
 
 class StripeService {
-  static async getIntent(price: number) {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: price,
-      currency: 'usd',
-    });
-
-    return paymentIntent.client_secret;
-  }
-
   static async validatePayment(paymentIntentId: string, clientSecret: string) {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
     if (paymentIntent.client_secret !== clientSecret) {
@@ -40,7 +31,7 @@ class StripeService {
 
   static async createPrice(stripeProductId: string, price: number) {
     const newPrice = await stripe.prices.create({
-      unit_amount: price,
+      unit_amount: price * 100, // Stripe requires the price in cents
       currency: 'usd',
       product: stripeProductId,
       recurring: { interval: 'month' },
@@ -304,81 +295,76 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
   let error = null;
   let subscription = null;
 
-  //try {
-    const tier = await TierService.findTier(tierId);
-    if (!tier) {
-      throw new Error('Tier not found.');
-    }
+  const tier = await TierService.findTier(tierId);
+  if (!tier) {
+    throw new Error('Tier not found.');
+  }
 
-    if (!userId) {
-      throw new Error('Not logged in.');
-    }
+  if (!userId) {
+    throw new Error('Not logged in.');
+  }
 
-    const user = await UserService.findUser(userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
+  const user = await UserService.findUser(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
 
-    let stripeCustomerId = user.stripeCustomerId;
-    
-    if (!stripeCustomerId) {
-      await UserService.createStripeCustomer(user);
-      const updatedUser = await UserService.findUser(userId);
-      stripeCustomerId = updatedUser?.stripeCustomerId!;
-    }
+  let stripeCustomerId = user.stripeCustomerId;
+  
+  if (!stripeCustomerId) {
+    await UserService.createStripeCustomer(user);
+    const updatedUser = await UserService.findUser(userId);
+    stripeCustomerId = updatedUser?.stripeCustomerId!;
+  }
 
-    const maintainer = await UserService.findUser(tier.userId);
+  const maintainer = await UserService.findUser(tier.userId);
 
-    if (!maintainer) {
-      throw new Error('Maintainer not connected to tier.');
-    }
+  if (!maintainer) {
+    throw new Error('Maintainer not connected to tier.');
+  }
 
-    if (!maintainer.stripeAccountId) {
-      throw new Error("Maintainer hasn't connected stripe account.");
-    }
+  if (!maintainer.stripeAccountId) {
+    throw new Error("Maintainer hasn't connected stripe account.");
+  }
 
-    console.log("===== purchasing ", {
-      customer: stripeCustomerId,
-      items: [{ price: tier.stripePriceId! }],
-      payment_behavior: 'error_if_incomplete',
-      expand: ['latest_invoice.payment_intent'],
-    });
+  console.log("===== purchasing ", {
+    customer: stripeCustomerId,
+    items: [{ price: tier.stripePriceId! }],
+    payment_behavior: 'error_if_incomplete',
+    expand: ['latest_invoice.payment_intent'],
+  });
 
-    subscription = await stripe.subscriptions.create({
-      customer: stripeCustomerId,
-      items: [{ price: tier.stripePriceId! }],
-      payment_behavior: 'error_if_incomplete',
-      expand: ['latest_invoice.payment_intent'],
-      transfer_data: {
-        destination: maintainer.stripeAccountId,
-      },
-      on_behalf_of: maintainer.stripeAccountId,
-    });
+  subscription = await stripe.subscriptions.create({
+    customer: stripeCustomerId,
+    items: [{ price: tier.stripePriceId! }],
+    payment_behavior: 'error_if_incomplete',
+    expand: ['latest_invoice.payment_intent'],
+    transfer_data: {
+      destination: maintainer.stripeAccountId,
+    },
+    on_behalf_of: maintainer.stripeAccountId,
+  });
 
-    if (!subscription) {
-      throw new Error('Error creating subscription.');
-    }
+  if (!subscription) {
+    throw new Error('Error creating subscription.');
+  }
 
-    const invoice = subscription.latest_invoice as Stripe.Invoice;
+  const invoice = subscription.latest_invoice as Stripe.Invoice;
 
-    if (invoice.status === 'paid') {
-      await createLocalSubscription(userId, tierId);
-      status = 'success';
-    } else if (invoice.payment_intent) {
-      throw new Error('Subscription attempt returned a payment intent, which should never happen.');
-    } else {
-      status = 'error';
-      error = 'Unknown error occurred';
-    }
-  //} catch (e: any) {
-  //  status = 'error';
-  //  error = e.message;
-  //}
+  if (invoice.status === 'paid') {
+    await createLocalSubscription(userId, tierId);
+    status = 'success';
+  } else if (invoice.payment_intent) {
+    throw new Error('Subscription attempt returned a payment intent, which should never happen.');
+  } else {
+    status = 'error';
+    error = 'Unknown error occurred';
+  }
 
   return { status, error /*, subscription*/ };
 };
 
 
-export const { getIntent, validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod, disconnectStripeAccount, userCanSellById, userHasStripeAccountIdById } = StripeService
+export const { validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod, disconnectStripeAccount, userCanSellById, userHasStripeAccountIdById } = StripeService
 
 export default StripeService;
