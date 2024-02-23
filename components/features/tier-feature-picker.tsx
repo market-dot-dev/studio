@@ -30,7 +30,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
     findByCurrentUser().then((featuresData) => {
       setFeatures(featuresData.filter(f => f.isEnabled));
     });
-  }, [])
+  }, [newTier, tierId])
 
   
   const tiers: TierWithFeatures[] = newTier ? [newTier, ...savedTiers] : savedTiers;
