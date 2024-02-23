@@ -17,6 +17,44 @@ export type StripeCard = {
 }
 
 class StripeService {
+
+  static async getAccountInfo() {
+    const user = await UserService.getCurrentUser();
+    if (!user) {
+      throw new Error('User not found');
+    }
+    let accountInfo = null;
+    
+    if (user.stripeAccountId) {
+      
+      try {
+        const account = await stripe.accounts.retrieve(user.stripeAccountId) as any;
+        
+        // Extracting only relevant information
+        accountInfo = {
+          chargesEnabled: account.charges_enabled,
+          payoutsEnabled: account.payouts_enabled,
+          country: account.country,
+          defaultCurrency: account.default_currency,
+          // capabilities: {
+          //     cardPayments: account.capabilities.card_payments,
+          //     transfers: account.capabilities.transfers,
+          // },
+          requirements: {
+              currentlyDue: account.requirements.currently_due,
+              // pastDue: account.requirements.past_due,
+              disabledReason: account.requirements.disabled_reason,
+          }
+        };
+      
+      } catch (error) {
+        console.error('Error fetching Stripe account info:', error);
+        
+      }
+    }
+      return { user, accountInfo};
+  }
+
   static async validatePayment(paymentIntentId: string, clientSecret: string) {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
     if (paymentIntent.client_secret !== clientSecret) {
@@ -369,6 +407,6 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
 };
 
 
-export const { validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod, disconnectStripeAccount, userCanSellById, userHasStripeAccountIdById } = StripeService
+export const { validatePayment, createPrice, destroyPrice, attachPaymentMethod, detachPaymentMethod, getPaymentMethod, disconnectStripeAccount, userCanSellById, userHasStripeAccountIdById, getAccountInfo } = StripeService
 
 export default StripeService;
