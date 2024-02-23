@@ -1,9 +1,10 @@
 'use client'
-import { Grid, Col } from '@tremor/react';
+import { Grid, Col, Button } from '@tremor/react';
 import { useEffect } from 'react';
 import { TiersEmbedSettingsProps } from './tiers-embed-settings';
 import SkeletonTiers from '../../skeleton-tiers';
 import TierCard from '@/components/tiers/tier-card';
+import Link from 'next/link';
 const transparentBody = 'body {background: transparent}';
 // This renders the actual component for both server and client sides.
 export default function Tiers({tiers, subdomain, settings}: { tiers : any[], subdomain: string, settings: TiersEmbedSettingsProps}) : JSX.Element {
@@ -25,10 +26,12 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
                 <section>
                     <div className="mx-auto max-w-screen-xl lg:py-4">
                         { tiers.length ? 
-                            <Grid numItems={1} numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-4 sm:gap-8 md:gap-12">
+                            <Grid numItems={1} numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-4 sm:gap-8 md:gap-12 w-full">
                                 {tiers.map((tier: any, index: number) => (
                                     <Col key={index} className="flex flex-col p-4 sm:p-5 md:p-6 mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
-                                        <TierCard tier={tier} url={subdomain} darkMode={settings.darkmode} />
+                                        <TierCard tier={tier} url={subdomain} darkMode={settings.darkmode}>
+                                            <Link href={`/checkout/${tier.id}`} target="_blank"><Button variant="primary" className="w-full">Get Started</Button></Link>
+                                        </TierCard>
                                     </Col>
                                 ))}
                             </Grid> : 
