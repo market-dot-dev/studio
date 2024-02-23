@@ -7,7 +7,7 @@ import {
   Button,
 } from "@tremor/react";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Subscription, User } from "@prisma/client";
 import useCurrentSession from "@/app/contexts/current-user-context";
 
@@ -54,7 +54,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     if(user?.id) {
       findSubscriptionByTierId({ tierId }).then(setSubscription);
     }
-  }, [user?.id]);
+  }, [user?.id, tierId]);
 
   const onSubmit = async () => {
     setLoading(true);
@@ -75,7 +75,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         window.location.href = "/success";
       });
     }
-  }, [purchaseIntent, user?.id, user?.stripePaymentMethodId]);
+  }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user]);
 
   if(subscription) {
     return <AlreadySubscribedCard subscription={subscription} />

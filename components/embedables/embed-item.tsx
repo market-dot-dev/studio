@@ -19,7 +19,7 @@ export default function EmbedItem({site, index} : any) {
   return (
     <Flex flexDirection='col' alignItems="stretch" className='gap-4'>
       <Title>{embedables[index].name}</Title>
-      <Grid numItems={1} className="gap-8 lg:w-full xl:w-2/3">
+      <Grid numItems={1} className="gap-8">
         
         <Col numColSpan={1}>
 
