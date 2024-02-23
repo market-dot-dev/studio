@@ -8,6 +8,7 @@ import { createSubscription as createLocalSubscription } from '@/app/services/Su
 import { User } from '@prisma/client';
 import prisma from "@/lib/prisma";
 import DomainService from './domain-service';
+import ProductService from './ProductService';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
@@ -16,17 +17,43 @@ export type StripeCard = {
   last4: string;
 }
 
-class StripeService {
+interface HealthCheckResult {
+  canSell: boolean;
+  messageCodes: ErrorMessageCode[];
+  disabledReasons?: string[];
+}
 
+enum ErrorMessageCode {
+  UserNotFound = 'err_user_not_found',
+  StripeAccountNotConnected = 'err_stripe_account_not_connected',
+  StripeProductIdCreationFailed = 'err_stripe_product_id_creation_failed',
+  StripeChargeNotEnabled = 'err_stripe_charge_enabled_false',
+  StripePayoutNotEnabled = 'err_stripe_payout_enabled_false',
+  StripeAccountInfoFetchError = 'err_stripe_account_info_fetch_fail',
+  StripeAccountDisabled = 'err_stripe_account_disabled',
+}
+
+const errorMessageMapping: Record<ErrorMessageCode, string> = {
+  [ErrorMessageCode.UserNotFound]: 'User not found.',
+  [ErrorMessageCode.StripeAccountNotConnected]: 'You need to connect your Stripe account.',
+  [ErrorMessageCode.StripeProductIdCreationFailed]: 'Error creating stripe product id.',
+  [ErrorMessageCode.StripeChargeNotEnabled]: 'Stripe account cannot currently charge customers. Check your Stripe dashboard for more details.',
+  [ErrorMessageCode.StripePayoutNotEnabled]: 'Stripe account cannot currently perform payouts. Check your Stripe dashboard for more details.',
+  [ErrorMessageCode.StripeAccountInfoFetchError]: 'Error fetching stripe account info.',
+  [ErrorMessageCode.StripeAccountDisabled]: 'Your Stripe account is disabled.',
+};
+
+class StripeService {
   static async getAccountInfo() {
     const user = await UserService.getCurrentUser();
+
     if (!user) {
       throw new Error('User not found');
     }
+
     let accountInfo = null;
     
     if (user.stripeAccountId) {
-      
       try {
         const account = await stripe.accounts.retrieve(user.stripeAccountId) as any;
         
@@ -36,14 +63,9 @@ class StripeService {
           payoutsEnabled: account.payouts_enabled,
           country: account.country,
           defaultCurrency: account.default_currency,
-          // capabilities: {
-          //     cardPayments: account.capabilities.card_payments,
-          //     transfers: account.capabilities.transfers,
-          // },
           requirements: {
-              currentlyDue: account.requirements.currently_due,
-              // pastDue: account.requirements.past_due,
-              disabledReason: account.requirements.disabled_reason,
+            currentlyDue: account.requirements.currently_due,
+            disabledReason: account.requirements.disabled_reason,
           }
         };
       
@@ -52,8 +74,76 @@ class StripeService {
         throw error;
       }
     }
-      return { user, accountInfo};
+
+    return { user, accountInfo};
   }
+
+  static getErrorMessage(code: ErrorMessageCode): string {
+    return errorMessageMapping[code] || 'An unknown error occurred.';
+  }
+
+  static async performStripeAccountHealthCheck(): Promise<HealthCheckResult> {
+    const { messageCodes, canSell, disabledReasons } = await StripeService.stripeAccountHealthCheck();
+    const reasons = JSON.stringify(messageCodes.map(code => StripeService.getErrorMessage(code)));
+    UserService.updateCurrentUser({ stripeAccountDisabled: !canSell, stripeAccountDisabledReason: reasons });
+
+    return { messageCodes, canSell, disabledReasons };
+  }
+
+  static async stripeAccountHealthCheck(): Promise<HealthCheckResult> {
+    const messageCodes: ErrorMessageCode[] = [];
+    let canSell = true;
+    let disabledReasons = [];
+
+    const user = await UserService.getCurrentUser();
+
+    if (!user) {
+      throw new Error(ErrorMessageCode.UserNotFound);
+    }
+
+    if (!user.stripeAccountId) {
+      messageCodes.push(ErrorMessageCode.StripeAccountNotConnected);
+      canSell = false;
+    }
+
+    if (!user.stripeProductId) {
+      try {
+        await ProductService.createProduct(user.id);
+      } catch (error) {
+        console.error("Error creating stripe product id", error);
+        messageCodes.push(ErrorMessageCode.StripeProductIdCreationFailed);
+        canSell = false;
+      }
+    }
+
+    try {
+      const { accountInfo } = await StripeService.getAccountInfo();
+
+      if (accountInfo) {
+        if (!accountInfo.chargesEnabled) {
+            messageCodes.push(ErrorMessageCode.StripeChargeNotEnabled);
+            canSell = false;
+        }
+
+        if (!accountInfo.payoutsEnabled) {
+            messageCodes.push(ErrorMessageCode.StripePayoutNotEnabled);
+            canSell = false;
+        }
+
+        if(accountInfo.requirements.disabledReason) {
+          messageCodes.push(ErrorMessageCode.StripeAccountDisabled);
+          disabledReasons = Array(accountInfo.requirements.disabledReason);
+          canSell = false;
+        }
+      }
+    } catch (error) {
+        console.error("Error fetching stripe account info", error);
+        messageCodes.push(ErrorMessageCode.StripeAccountInfoFetchError);
+        canSell = false;
+    }
+
+    return { canSell, messageCodes, disabledReasons };
+}
 
   static async validatePayment(paymentIntentId: string, clientSecret: string) {
     const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);

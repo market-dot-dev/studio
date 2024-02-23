@@ -9,34 +9,36 @@ datasource db {
 }
 
 model User {
-  id                    String         @id @default(cuid())
-  name                  String?
-  username              String?
-  gh_username           String?        @unique
-  email                 String?        @unique
-  stripeProductId       String?        @unique
-  stripeCustomerId      String?        @unique
-  stripePaymentMethodId String?        @unique
-  stripeAccountId       String?        @unique
-  stripeCSRF            String?        @unique
-  projectName           String?
-  projectDescription    String?
-  emailVerified         DateTime?
-  image                 String?
-  roleId                String         @default("customer")
-  createdAt             DateTime       @default(now())
-  updatedAt             DateTime       @updatedAt
-  accounts              Account[]
-  pages                 Page[]
-  posts                 Post[]
-  sessions              Session[]
-  sites                 Site[]
-  tiers                 Tier[]
-  features              Feature[]
-  subscriptions         Subscription[]
-  repos                 Repo[]
-  onboarding            String?
-  company               String?
+  id                          String         @id @default(cuid())
+  name                        String?
+  username                    String?
+  gh_username                 String?        @unique
+  email                       String?        @unique
+  stripeProductId             String?        @unique
+  stripeCustomerId            String?        @unique
+  stripePaymentMethodId       String?        @unique
+  stripeAccountId             String?        @unique
+  stripeCSRF                  String?        @unique
+  stripeAccountDisabled       Boolean        @default(false)
+  stripeAccountDisabledReason String?
+  projectName                 String?
+  projectDescription          String?
+  emailVerified               DateTime?
+  image                       String?
+  roleId                      String         @default("customer")
+  createdAt                   DateTime       @default(now())
+  updatedAt                   DateTime       @updatedAt
+  accounts                    Account[]
+  pages                       Page[]
+  posts                       Post[]
+  sessions                    Session[]
+  sites                       Site[]
+  tiers                       Tier[]
+  features                    Feature[]
+  subscriptions               Subscription[]
+  repos                       Repo[]
+  onboarding                  String?
+  company                     String?
 }
 
 model Account {
