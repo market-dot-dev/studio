@@ -113,21 +113,21 @@ class StripeService {
 
     let customer: Stripe.Customer;
 
-    const address = {
-      city: 'Los Angeles',
-      country: 'US',
-      line1: '1234 Main St',
-      line2: 'Apt 123',
-      postal_code: '90001',
-      state: 'CA',
-    }
+    // const address = {
+    //   city: 'Los Angeles',
+    //   country: 'US',
+    //   line1: '1234 Main St',
+    //   line2: 'Apt 123',
+    //   postal_code: '90001',
+    //   state: 'CA',
+    // }
 
     if(paymentMethodId) {
        customer = await stripe.customers.create({
         email: email,
         ...(name ? { name } : {}),
         // for now hard coding the address for debugging purposes
-        address,
+        // address,
         payment_method: paymentMethodId,
         invoice_settings: {
           default_payment_method: paymentMethodId,
@@ -138,7 +138,7 @@ class StripeService {
         email: email,
         ...(name ? { name } : {}),
         // for now hard coding the address for debugging purposes
-        address,
+        // address,
       });
     }   
 
