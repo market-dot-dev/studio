@@ -333,32 +333,36 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
     payment_behavior: 'error_if_incomplete',
     expand: ['latest_invoice.payment_intent'],
   });
-
-  subscription = await stripe.subscriptions.create({
-    customer: stripeCustomerId,
-    items: [{ price: tier.stripePriceId! }],
-    payment_behavior: 'error_if_incomplete',
-    expand: ['latest_invoice.payment_intent'],
-    transfer_data: {
-      destination: maintainer.stripeAccountId,
-    },
-    on_behalf_of: maintainer.stripeAccountId,
-  });
-
-  if (!subscription) {
-    throw new Error('Error creating subscription.');
+  try {
+    subscription = await stripe.subscriptions.create({
+      customer: stripeCustomerId,
+      items: [{ price: tier.stripePriceId! }],
+      payment_behavior: 'error_if_incomplete',
+      expand: ['latest_invoice.payment_intent'],
+      transfer_data: {
+        destination: maintainer.stripeAccountId,
+      },
+      on_behalf_of: maintainer.stripeAccountId,
+    });
+  } catch (e: any) {
+    error = error ?? e.message;
   }
 
-  const invoice = subscription.latest_invoice as Stripe.Invoice;
-
-  if (invoice.status === 'paid') {
-    await createLocalSubscription(userId, tierId);
-    status = 'success';
-  } else if (invoice.payment_intent) {
-    throw new Error('Subscription attempt returned a payment intent, which should never happen.');
+  if (!subscription) {
+    error = error ?? 'Error creating subscription.';
   } else {
-    status = 'error';
-    error = 'Unknown error occurred';
+
+    const invoice = subscription.latest_invoice as Stripe.Invoice;
+
+    if (invoice.status === 'paid') {
+      await createLocalSubscription(userId, tierId);
+      status = 'success';
+    } else if (invoice.payment_intent) {
+      throw new Error('Subscription attempt returned a payment intent, which should never happen.');
+    } else {
+      status = 'error';
+      error = error ?? 'Unknown error occurred';
+    }
   }
 
   return { status, error /*, subscription*/ };
