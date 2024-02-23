@@ -47,7 +47,12 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
   return (
     <>
       <DashboardCard>
-        <Table className="">
+{        latestSubscriptions.length === 0 ? (
+          <div className="text-center">
+            You don&apos;t have any customers yet. 
+          </div>
+        ) :
+<Table className="">
           <TableHead>
             <TableRow>
               <TableHeaderCell>Name</TableHeaderCell>
@@ -83,7 +88,7 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
               );
             })}
           </TableBody>
-        </Table>
+        </Table>}
       </DashboardCard>
 
       <div className="grid justify-items-end">
