@@ -70,9 +70,14 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
 
   useEffect(() => {
     if (purchaseIntent && user && user.stripePaymentMethodId) {
-      onClickSubscribe(user.id, tierId).then(() => {
+      onClickSubscribe(user.id, tierId).then((res) => {
         setPurchaseIntent(false);
-        window.location.href = "/success";
+        if(res.error) {
+          setError(res.error);
+          setLoading(false);
+        } else {
+          window.location.href = "/success";
+        }
       });
     }
   }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user]);
@@ -83,13 +88,11 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     <>
       <section className="w-7/8 mb-8 lg:w-5/6">
         <Divider className={!user?.id ? "font-bold text-lg" : ""}>Login / Signup</Divider>
-        { error && <div className="mb-4 text-red-500">{error}</div> }
-
-        {/* <RegistrationForm user={user} userAttributes={userAttributes} setUserAttributes={setUserAttributes} loggedIn={!!currentSession.user} /> */}
         <CustomerLoginComponent signup={true} />
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
+        { error && <div className="mb-4 text-red-500">{error}</div> }
         <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
           <div>
             <UserPaymentMethodWidget
