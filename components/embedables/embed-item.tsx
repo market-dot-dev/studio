@@ -1,19 +1,25 @@
 'use client'
 import { Card, Tab, TabGroup, TabList, TabPanel, TabPanels, Title, Flex, Grid, Col } from "@tremor/react";
 import { EyeOpenIcon, CodeIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import embedables from "../site/embedables";
 import CodeSnippet from "./code-snippet";
 import DashboardCard from "../common/dashboard-card";
-
 
 export default function EmbedItem({site, index} : any) {
     
   const [active, setActive] = useState(0)
   const [settings, setSettings] = useState({} as any);
   const domain = `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const [protocol, setProtocol] = useState('https' as 'http' | 'https');
   const Component = embedables[index].preview;
   const Settings = embedables[index].settings;
+  
+  useEffect(() => {
+    // determine protocol from the current location
+    const protocol = location.protocol === 'https:' ? 'https' : 'http';
+    setProtocol(protocol);
+  }, [])
   
 
   return (
@@ -38,7 +44,7 @@ export default function EmbedItem({site, index} : any) {
               </TabPanel>
               <TabPanel>
                 <DashboardCard>
-                  <CodeSnippet code={`<script data-domain='${domain}' data-widget='${index}' data-settings='${JSON.stringify(settings)}' src='http://${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} />
+                  <CodeSnippet code={`<script data-domain='${domain}' data-widget='${index}' data-settings='${JSON.stringify(settings)}' src='${protocol}://${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} />
                 </DashboardCard>
                 </TabPanel>
               </TabPanels>
