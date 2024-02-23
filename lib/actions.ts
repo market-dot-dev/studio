@@ -215,28 +215,6 @@ export const getSiteFromPostId = async (postId: string) => {
 };
 
 
-export const createPage = withSiteAuth(async (_: FormData, site: Site) => {
-  const session = await getSession();
-  if (!session?.user.id) {
-    return {
-      error: "Not authenticated",
-    };
-  }
-  const response = await prisma.page.create({
-    data: {
-      siteId: site.id,
-      userId: session.user.id,
-    },
-  });
-
-  // await revalidateTag(
-  //   `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
-  // );
-  // site.customDomain && (await revalidateTag(`${site.customDomain}-posts`));
-
-  return response;
-});
-
 // creating a separate function for this because we're not using FormData
 export const updatePage = async (data: Page, willBeHome: boolean, isHome: boolean) => {
   const session = await getSession();

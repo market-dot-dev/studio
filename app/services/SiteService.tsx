@@ -9,7 +9,7 @@ import { customAlphabet } from "nanoid";
 import fs from 'fs';
 import yaml from 'js-yaml';
 import { put } from "@vercel/blob";
-import { getCurrentUserId } from './UserService';
+import UserService, { getCurrentUserId } from './UserService';
 
 const nanoid = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -40,6 +40,20 @@ class SiteService {
         }
 
         return SiteService.getOnlySiteFromUserId(userId);
+    }
+
+    static async getSiteAndPages(id: string) {
+        const userId = await UserService.getCurrentUserId();
+        const site = await prisma.site.findUnique({
+            where: {
+                id: decodeURIComponent(id),
+                userId
+            },
+            include: {
+                pages: true
+            },
+        });
+        return site;
     }
 
     static async getOnlySiteFromUserId(userId: string)  {
@@ -129,4 +143,4 @@ class SiteService {
 }
 
 export default SiteService;
-export const { updateCurrentSite, getOnlySiteFromUserId, getSiteNav } = SiteService;
+export const { updateCurrentSite, getOnlySiteFromUserId, getSiteNav, getSiteAndPages } = SiteService;

@@ -1,8 +1,10 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Page } from "@prisma/client";
+import { Page, Site } from "@prisma/client";
 import { getSession } from "@/lib/auth";
+import SiteService from "./SiteService";
+import { newPageTemplate} from "@/lib/constants/site-template";
 
 class PageService {
   static async getCurrentUserId() {
@@ -118,10 +120,11 @@ class PageService {
   };
 
   static async setHomepage(siteId: string, id: string) {
+    const userId = await PageService.getCurrentUserId();
     return await prisma.site.update({
       where: {
         id: siteId,
-        userId: await this.getCurrentUserId(),
+        userId
       },
       data: {
         homepageId: id
@@ -130,12 +133,14 @@ class PageService {
   };
 
   static async deletePage(id: string) {
+    const userId = await PageService.getCurrentUserId();
+
     // First, retrieve the page along with the related site's homepageId
     const page = await prisma.page.findUnique({
       where: {
         id,
         site: {
-          userId: await this.getCurrentUserId()
+          userId
         }
       },
       include: {
@@ -144,12 +149,12 @@ class PageService {
         }
       }
     });
-
+    
     if (!page) {
       throw new Error("Page not found.");
     }
 
-    if (page.site.userId !== await this.getCurrentUserId()) {
+    if (page.site.userId !== userId) {
       throw new Error("You don't own that page.");
     }
   
@@ -204,8 +209,38 @@ class PageService {
       };
     }
   }
+
+  static async createPage() {
+    const session = await getSession();
+    if (!session?.user.id) {
+      throw new Error("Not authenticated");
+    }
+
+    // First, retrieve the site
+    const site = await SiteService.getCurrentSite();
+
+    if (!site) {
+      throw new Error("Site not found.");
+    }
+
+
+    const response = await prisma.page.create({
+      data: {
+        siteId: site.id,
+        userId: session.user.id,
+        content: newPageTemplate ?? "",
+      },
+    });
+
+    // await revalidateTag(
+    //   `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-posts`,
+    // );
+    // site.customDomain && (await revalidateTag(`${site.customDomain}-posts`));
+
+    return response;
+  }
 };
 
-export const { findPage, updatePage, setHomepage, deletePage } = PageService
+export const { findPage, updatePage, setHomepage, deletePage, createPage } = PageService
 
 export default PageService;

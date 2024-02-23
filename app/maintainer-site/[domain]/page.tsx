@@ -5,6 +5,7 @@ import { JSDOM } from "jsdom";
 import renderElement from '@/components/site/page-renderer';
 import Head from 'next/head';
 import PageService from '@/app/services/PageService';
+import { e } from '@vercel/blob/dist/put-96a1f07e';
 
 export default async function SiteHomePage({
   params,
@@ -23,10 +24,11 @@ export default async function SiteHomePage({
   }
   
   const dom = new JSDOM(data.homepage?.content ?? '' )
-  const rootElement = dom.window.document.body.firstChild;
+  const rootElement = dom.window.document.body;
 
   const {homepage, ...site} = data;
-  const reactElement = renderElement(rootElement as Element, 0, site, homepage);
+  const elements: Element[] = Array.from(rootElement.children);
+  const reactElement = renderElement(elements, 0, site, homepage);
   
   return (
     <>

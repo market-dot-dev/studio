@@ -1,16 +1,17 @@
 "use client";
 
 import { useTransition } from "react";
-import { createPage } from "@/lib/actions";
+import { createPage } from "@/app/services/PageService";
 import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import LoadingDots from "@/components/icons/loading-dots";
 import va from "@vercel/analytics";
 import { Button } from "@tremor/react";
+import { Page } from "@prisma/client";
 
 export default function CreatePageButton() {
   const router = useRouter();
-  const { id } = useParams() as { id: string };
+  // const { id } = useParams() as { id: string };
   const [isPending, startTransition] = useTransition();
 
   
@@ -18,10 +19,14 @@ export default function CreatePageButton() {
     <Button
       onClick={() =>
         startTransition(async () => {
-          const page = await createPage(null, id, null);
-          va.track("Created Page");
-          router.refresh();
-          router.push(`/page/${page.id}`);
+          try {
+            const page = await createPage();
+            va.track("Created Page");
+            router.refresh();
+            router.push(`/page/${page.id}`);
+          } catch (error) {
+            console.error(error);
+          }
         })
       }
       className={cn(
