@@ -2,35 +2,46 @@ import PageHeading from "@/components/common/page-heading";
 import { Feature } from "@prisma/client";
 import CancelSubscriptionButton from "../cancel-subscription-button";
 import SubscriptionService from "@/app/services/SubscriptionService";
-import TierFeatureList from "@/components/features/tier-feature-list";
+// import TierFeatureList from "@/components/features/tier-feature-list";
 import FeatureService from "@/app/services/feature-service";
 import prisma from "@/lib/prisma";
 import LinkButton from "@/components/common/link-button";
 import UserService from "@/app/services/UserService";
+import {
+  CheckSquare2 as CheckSquare,
+} from "lucide-react";
+import { Card, Bold } from "@tremor/react";
 
 const formatFeatureLink = async (feature: Feature) => {
   const service = await prisma.service.findUnique({ where: { id: feature.serviceId! }});
 
-  console.log(service);
-
   if(!service || !service.requiresUri) return <></>;
 
   const uri = service.protocol ? `${service.protocol}${feature.uri}` : feature.uri;
-
+  
   return <>
-    <LinkButton href={uri || ''} label={feature.name || service.name}/>
+    <LinkButton disabled={!feature.isEnabled} href={uri || ''} label={feature.name || service.name}/>
   </>
 }
 
 const FeatureAction = async ({ feature }: { feature: Feature }) => {
-  return (<>
-    <div className="flex flex-row space-x-2">
-      <div>{feature.name}</div>
-      <div>{feature.description}</div>
-      <div>{feature.uri}</div>
-      <div>{ await formatFeatureLink(feature) }</div>
+  const button = await formatFeatureLink(feature);
+  return (
+    <div className="flex items-start justify-between mb-2 p-4 border-2 rounded-md w-full xl:w-3/4">
+      <div className="flex items-start">
+        <CheckSquare className={`mr-4 ${feature.isEnabled ? 'text-green-500' : 'text-gray-400'}`} />
+        <div className="ml-4">
+          <div className="flex flex-col">
+            <h4 className="font-semibold">{feature.name}</h4>
+            <p className="text-sm text-gray-600">{feature.description}</p>
+            <div>{feature.uri}</div>
+          </div>
+        </div>
+      </div>
+      <div>{button}</div>
     </div>
-  </>);
+    
+  );
 };
 
 export default async function SubscriptionDetail({ params }: { params: { id: string } }) {
@@ -47,10 +58,12 @@ export default async function SubscriptionDetail({ params }: { params: { id: str
         <div>{ tier?.description }</div>
 
         <div className="flex flex-col space-y-2">
-          <TierFeatureList features={features} />
-          { features.filter(f => f.isEnabled).map(f => <FeatureAction feature={f} key={f.id} />) }
-          <CancelSubscriptionButton subscription={subscription} />
+          {/* <TierFeatureList features={features} /> */}
+          { features.map(f => <FeatureAction feature={f} key={f.id} />) }
+
+          <Bold>Manage your Subscription</Bold>
         </div>
+          <CancelSubscriptionButton subscription={subscription} />
       </div>
     </div>
   );
