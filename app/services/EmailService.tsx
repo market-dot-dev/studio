@@ -98,14 +98,25 @@ class EmailService {
     }
   }
 
-  static async sendNewUserSignUpEmail(user: RequiredUserProps): Promise<void> {
-    console.log(`Sending signup confirmation email to new user: ${user.email}`);
+  static async sendNewMaintainerSignUpEmail(user: RequiredUserProps): Promise<void> {
     const subject = 'Welcome to gitwallet.co!';
     const text = `Hello ${user.name},\n\nThank you for registering with gitwallet.co! The next steps are to set up your payment information and offerings at app.gitwallet.co in order to start selling your services.\n\nGet started here: app.gitwallet.co`;
     const html = `
         <p>Hello <strong>${user.name}</strong>,</p>
         <p>Thank you for registering with <strong>gitwallet.co</strong>! The next steps are to set up your payment information and offerings at <a href="https://app.gitwallet.co">app.gitwallet.co</a> in order to start selling your services.</p>
         <p>Get started here: <a href="https://app.gitwallet.co">app.gitwallet.co</a></p>
+    `;
+
+    await this.sendEmail(user.email, subject, text, html);
+  }
+
+  static async sendNewCustomerSignUpEmail(user: RequiredUserProps): Promise<void> {
+    const subject = 'Welcome to gitwallet.co!';
+    const text = `Hello ${user.name},\n\nThank you for registering with gitwallet.co!\n\nGet started here: gitwallet.co`;
+    const html = `
+        <p>Hello <strong>${user.name}</strong>,</p>
+        <p>Thank you for registering with <strong>gitwallet.co</strong>!</p>
+        <p>Get started here: <a href="https://gitwallet.co">gitwallet.co</a></p>
     `;
 
     await this.sendEmail(user.email, subject, text, html);
