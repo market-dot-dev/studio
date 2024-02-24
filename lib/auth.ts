@@ -134,6 +134,12 @@ export const authOptions: NextAuthOptions = {
         if(name) {
           userData.name = name;
         }
+        
+        if(userData.roleId === 'maintainer') {
+          await EmailService.sendNewMaintainerSignUpEmail({...userData});
+        } else {
+          await EmailService.sendNewCustomerSignUpEmail({...userData});
+        }
 
         if(signupName) {
           cookies().delete('signup_name')
@@ -216,10 +222,7 @@ export const authOptions: NextAuthOptions = {
       });
       
       await RegistrationService.createSite(user);
-
-      const signupName = (cookies().get('signup_name') ?? null) ;
-      const name = (signupName?.value ?? null) as string | null;
-      await EmailService.sendNewUserSignUpEmail({...user, ...(user.name ? {} : { name })});
+      
     },
   },
 };
