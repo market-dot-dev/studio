@@ -24,9 +24,19 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     const router = useRouter();
 
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
         setIsSubmitting(true);
-        signOut({ callbackUrl: '/' })
+        try {
+            await signOut({ redirect: false });
+            await refreshCurrentSession();
+            setIsSubmitted(false);
+            setIsSignUp(false);
+
+        } catch(err) {
+            console.error('Error logging out:', err);
+        } finally {
+            setIsSubmitting(false);
+        }
     }
 
     const handleEmail = async (e: any) => {
@@ -131,6 +141,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
             setError('Error verifying code. Please try again.');
         } finally {
             setIsSubmitting(false);
+            setVerificationCode('');
         }
 
     }
