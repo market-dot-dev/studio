@@ -43,6 +43,9 @@ export const CurrentSessionProvider: React.FC<PropsWithChildren> = ({
         setCurrentSession(session);
         setIsAuthenticated(true);
         return session;
+      } else {
+        setCurrentSession({ user: undefined });
+        setIsAuthenticated(false);
       }
     } catch (err) {
       setCurrentSession({ user: undefined });
