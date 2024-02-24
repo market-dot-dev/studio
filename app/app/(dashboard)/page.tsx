@@ -17,11 +17,12 @@ export default async function Overview() {
         </div>
         <div className="flex flex-col space-y-6">
           <PageHeading title={title} />
-          
+          <div className="flex flex-col gap-8">
           <LatestCustomersList numRecords={3} previewMode={true} />
+          <DashboardCharts />
+          </div>
         </div>
       </div>
-      <DashboardCharts />
     </>
   );
 }

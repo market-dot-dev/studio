@@ -10,6 +10,7 @@ import {
   BadgeDelta,
   Bold,
   Badge,
+  Card,
 } from "@tremor/react";
 import SubscriptionService, {
   SubscriptionWithUser,
@@ -42,61 +43,111 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
   // Get the latest 5 subscriptions
   const latestSubscriptions = subscriptions.slice(0, numRecords);
 
-    
+
 
   return (
     <>
-      <DashboardCard>
-{        latestSubscriptions.length === 0 ? (
-          <div className="text-center">
-            You don&apos;t have any customers yet. 
-          </div>
-        ) :
-<Table className="">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell className="text-right">Company</TableHeaderCell>
-              <TableHeaderCell className="text-right">Tier</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
-            </TableRow>
-          </TableHead>
+      <div className="flex max-w-screen-xl flex-col mt-4 space-y-4">
 
-          <TableBody>
-            {latestSubscriptions.map((subscription) => {
-              const user = subscription.user;
-              return (
-                <>
-                  <TableRow className="m-0 p-2" key={subscription.id}>
-                    <TableCell className="m-0 p-2">{user.name}</TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      {user.company}
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      {subscription.tier!.name}
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      <div className="flex flex-row justify-end gap-1">
-                        <LinkButton
-                          label="View"
-                          href={`/customers/${subscription.id}`}
-                        />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                </>
-              );
-            })}
-          </TableBody>
-        </Table>}
-      </DashboardCard>
+        <Card>
+          {latestSubscriptions.length === 0 ? (
+            <Table className="">
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Company</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Tier</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+                </TableRow>
+              </TableHead>
 
-      <div className="grid justify-items-end">
-        <Link href='/customers'>
-          <Button size="xs" className="h-6" variant="secondary">
-            All Customers →
-          </Button>
-        </Link>
+              <TableBody>
+                <TableRow className="m-0 p-2">
+                  <TableCell className="m-0 p-2">John Appleseed (Example Customer)</TableCell>
+                  <TableCell className="m-0 p-2 text-right">
+                    Acme Inc.
+                  </TableCell>
+                  <TableCell className="m-0 p-2 text-right">
+                    Premium Tier
+                  </TableCell>
+                  <TableCell className="m-0 p-2 text-right">
+                    <div className="flex flex-row justify-end gap-1">
+                      <LinkButton
+                        label="View"
+                        href={`/customers/`}
+                        className="disabled"
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+
+                <TableRow className="m-0 p-2">
+                  <TableCell className="m-0 p-2">Joan Lisgar (Example Customer)</TableCell>
+                  <TableCell className="m-0 p-2 text-right">
+                    Megacorp Inc.
+                  </TableCell>
+                  <TableCell className="m-0 p-2 text-right">
+                    Enterprise Tier
+                  </TableCell>
+                  <TableCell className="m-0 p-2 text-right">
+                    <div className="flex flex-row justify-end gap-1">
+                      <LinkButton
+                        label="View"
+                        href={`/customers/`}
+                        className="disabled"
+                      />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>)
+            :
+            <Table className="">
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Company</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Tier</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+                </TableRow>
+              </TableHead>
+
+              <TableBody>
+                {latestSubscriptions.map((subscription) => {
+                  const user = subscription.user;
+                  return (
+                    <>
+                      <TableRow className="m-0 p-2" key={subscription.id}>
+                        <TableCell className="m-0 p-2">{user.name}</TableCell>
+                        <TableCell className="m-0 p-2 text-right">
+                          {user.company}
+                        </TableCell>
+                        <TableCell className="m-0 p-2 text-right">
+                          {subscription.tier!.name}
+                        </TableCell>
+                        <TableCell className="m-0 p-2 text-right">
+                          <div className="flex flex-row justify-end gap-1">
+                            <LinkButton
+                              label="View"
+                              href={`/customers/${subscription.id}`}
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  );
+                })}
+              </TableBody>
+            </Table>}
+        </Card>
+
+        <div className="grid justify-items-end">
+          <Link href='/customers'>
+            <Button size="xs" className="h-6" variant="secondary">
+              All Customers →
+            </Button>
+          </Link>
+        </div>
       </div>
     </>
   );
