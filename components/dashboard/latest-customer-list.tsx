@@ -78,11 +78,7 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
                     <TableCell className="m-0 p-2 text-right">{customer.tier}</TableCell>
                     <TableCell className="m-0 p-2 text-right">
                       <div className="flex flex-row justify-end gap-1">
-                        <LinkButton
-                          label="View"
-                          href={`/customers/`}
-                          className="disabled"
-                        />
+                        <Button className="py-1" disabled>View</Button>
                       </div>
                     </TableCell>
                   </TableRow>
