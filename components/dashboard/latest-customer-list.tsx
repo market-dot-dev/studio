@@ -43,7 +43,17 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
   // Get the latest 5 subscriptions
   const latestSubscriptions = subscriptions.slice(0, numRecords);
 
+  interface CustomerRow {
+    name: string;
+    company: string;
+    tier: string;
+  }
 
+  // Example customer data could eventually come from a data source
+  const exampleCustomers: CustomerRow[] = [
+    { name: 'John Appleseed (Example Customer)', company: 'Acme Inc.', tier: 'Premium Tier' },
+    { name: 'Joan Lisgar (Example Customer)', company: 'Megacorp Inc.', tier: 'Enterprise Tier' },
+  ];
 
   return (
     <>
@@ -51,7 +61,7 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
 
         <Card>
           {latestSubscriptions.length === 0 ? (
-            <Table className="">
+            <Table>
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
@@ -60,49 +70,26 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
                   <TableHeaderCell className="text-right">Actions</TableHeaderCell>
                 </TableRow>
               </TableHead>
-
               <TableBody>
-                <TableRow className="m-0 p-2">
-                  <TableCell className="m-0 p-2">John Appleseed (Example Customer)</TableCell>
-                  <TableCell className="m-0 p-2 text-right">
-                    Acme Inc.
-                  </TableCell>
-                  <TableCell className="m-0 p-2 text-right">
-                    Premium Tier
-                  </TableCell>
-                  <TableCell className="m-0 p-2 text-right">
-                    <div className="flex flex-row justify-end gap-1">
-                      <LinkButton
-                        label="View"
-                        href={`/customers/`}
-                        className="disabled"
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
-
-                <TableRow className="m-0 p-2">
-                  <TableCell className="m-0 p-2">Joan Lisgar (Example Customer)</TableCell>
-                  <TableCell className="m-0 p-2 text-right">
-                    Megacorp Inc.
-                  </TableCell>
-                  <TableCell className="m-0 p-2 text-right">
-                    Enterprise Tier
-                  </TableCell>
-                  <TableCell className="m-0 p-2 text-right">
-                    <div className="flex flex-row justify-end gap-1">
-                      <LinkButton
-                        label="View"
-                        href={`/customers/`}
-                        className="disabled"
-                      />
-                    </div>
-                  </TableCell>
-                </TableRow>
+                {exampleCustomers.map((customer, index) => (
+                  <TableRow className="m-0 p-2" key={index}>
+                    <TableCell className="m-0 p-2">{customer.name}</TableCell>
+                    <TableCell className="m-0 p-2 text-right">{customer.company}</TableCell>
+                    <TableCell className="m-0 p-2 text-right">{customer.tier}</TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      <div className="flex flex-row justify-end gap-1">
+                        <LinkButton
+                          label="View"
+                          href={`/customers/`}
+                          className="disabled"
+                        />
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
-            </Table>)
-            :
-            <Table className="">
+            </Table>) :
+            (<Table className="">
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
@@ -138,7 +125,7 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
                   );
                 })}
               </TableBody>
-            </Table>}
+            </Table>)}
         </Card>
 
         <div className="grid justify-items-end">
