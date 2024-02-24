@@ -32,7 +32,9 @@ export const authOptions: NextAuthOptions = {
       sendVerificationRequest: ({ identifier: email, token }) => {
         const html = `<p>Your verification code for signing in to Gitwallet.co is <strong>${token}</strong></p>`;
         const text = `Your verification code for signing in to Gitwallet.co is ${token}`;
+        console.log('sending verification email', email, token)
         return EmailService.sendEmail(email, `Verification code`, text, html)
+        
       }
 		}),
     GitHubProvider({
