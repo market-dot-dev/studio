@@ -1,7 +1,7 @@
 "use client";
 
 import { random } from "@/lib/utils";
-import { Metric, Text, AreaChart, BadgeDelta, Flex, BarChart, LineChart, Button } from "@tremor/react";
+import { Metric, Card, Text, AreaChart, BadgeDelta, Flex, BarChart, LineChart, Button, Badge } from "@tremor/react";
 import { useMemo } from "react";
 import DashboardCard from "../common/dashboard-card";
 import Link from "next/link";
@@ -98,8 +98,11 @@ export default function DashboardCharts() {
     <>
       <div className="flex max-w-screen-xl flex-col mt-4 space-y-4">
         <div className="grid gap-6 sm:grid-cols-2">
-          <DashboardCard>
-            <Text>Customers</Text>
+          <Card>
+            <div className="flex flex-row justify-between">
+              <Text>Customers</Text>
+              <Badge className="z-100">Example Data Shown</Badge>
+            </div>
             <Flex
               className="space-x-3 truncate"
               justifyContent="start"
@@ -119,13 +122,16 @@ export default function DashboardCharts() {
               data={customerTotals}
               index="date"
               categories={["New Subscriptions", "Renewals"]}
-              stack={true}
+              colors={["gray-400", "gray-200"]}
               yAxisWidth={30}
             />
-          </DashboardCard>
+          </Card>
 
-          <DashboardCard>
-            <Text>Monthly Revenue</Text>
+          <Card>
+            <div className="flex flex-row justify-between">
+              <Text>Monthly Revenue</Text>
+              <Badge className="z-100">Example Data Shown</Badge>
+            </div>
             <Flex
               className="space-x-3 truncate"
               justifyContent="start"
@@ -145,11 +151,11 @@ export default function DashboardCharts() {
               data={revenueData}
               index="date"
               categories={["New Subscriptions", "Renewals"]}
-              colors={["neutral", "indigo"]}
+              colors={["gray-500", "gray-300"]}
               yAxisWidth={30}
               connectNulls={true}
             />
-          </DashboardCard>
+          </Card>
         </div>
 
         <div className="grid justify-items-end mt-4">

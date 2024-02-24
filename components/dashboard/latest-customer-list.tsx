@@ -10,6 +10,7 @@ import {
   BadgeDelta,
   Bold,
   Badge,
+  Card,
 } from "@tremor/react";
 import SubscriptionService, {
   SubscriptionWithUser,
@@ -42,56 +43,98 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
   // Get the latest 5 subscriptions
   const latestSubscriptions = subscriptions.slice(0, numRecords);
 
-    
+  interface CustomerRow {
+    name: string;
+    company: string;
+    tier: string;
+  }
+
+  // Example customer data could eventually come from a data source
+  const exampleCustomers: CustomerRow[] = [
+    { name: 'John Appleseed (Example Customer)', company: 'Acme Inc.', tier: 'Premium Tier' },
+    { name: 'Joan Lisgar (Example Customer)', company: 'Megacorp Inc.', tier: 'Enterprise Tier' },
+  ];
 
   return (
     <>
-      <DashboardCard>
-        <Table className="">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell className="text-right">Company</TableHeaderCell>
-              <TableHeaderCell className="text-right">Tier</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
-            </TableRow>
-          </TableHead>
+      <div className="flex max-w-screen-xl flex-col mt-4 space-y-4">
 
-          <TableBody>
-            {latestSubscriptions.map((subscription) => {
-              const user = subscription.user;
-              return (
-                <>
-                  <TableRow className="m-0 p-2" key={subscription.id}>
-                    <TableCell className="m-0 p-2">{user.name}</TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      {user.company}
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      {subscription.tier!.name}
-                    </TableCell>
+        <Card>
+          {latestSubscriptions.length === 0 ? (
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Company</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Tier</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {exampleCustomers.map((customer, index) => (
+                  <TableRow className="m-0 p-2" key={index}>
+                    <TableCell className="m-0 p-2">{customer.name}</TableCell>
+                    <TableCell className="m-0 p-2 text-right">{customer.company}</TableCell>
+                    <TableCell className="m-0 p-2 text-right">{customer.tier}</TableCell>
                     <TableCell className="m-0 p-2 text-right">
                       <div className="flex flex-row justify-end gap-1">
                         <LinkButton
                           label="View"
-                          href={`/customers/${subscription.id}`}
+                          href={`/customers/`}
+                          className="disabled"
                         />
                       </div>
                     </TableCell>
                   </TableRow>
-                </>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </DashboardCard>
+                ))}
+              </TableBody>
+            </Table>) :
+            (<Table className="">
+              <TableHead>
+                <TableRow>
+                  <TableHeaderCell>Name</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Company</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Tier</TableHeaderCell>
+                  <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+                </TableRow>
+              </TableHead>
 
-      <div className="grid justify-items-end">
-        <Link href='/customers'>
-          <Button size="xs" className="h-6" variant="secondary">
-            All Customers →
-          </Button>
-        </Link>
+              <TableBody>
+                {latestSubscriptions.map((subscription) => {
+                  const user = subscription.user;
+                  return (
+                    <>
+                      <TableRow className="m-0 p-2" key={subscription.id}>
+                        <TableCell className="m-0 p-2">{user.name}</TableCell>
+                        <TableCell className="m-0 p-2 text-right">
+                          {user.company}
+                        </TableCell>
+                        <TableCell className="m-0 p-2 text-right">
+                          {subscription.tier!.name}
+                        </TableCell>
+                        <TableCell className="m-0 p-2 text-right">
+                          <div className="flex flex-row justify-end gap-1">
+                            <LinkButton
+                              label="View"
+                              href={`/customers/${subscription.id}`}
+                            />
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    </>
+                  );
+                })}
+              </TableBody>
+            </Table>)}
+        </Card>
+
+        <div className="grid justify-items-end">
+          <Link href='/customers'>
+            <Button size="xs" className="h-6" variant="secondary">
+              All Customers →
+            </Button>
+          </Link>
+        </div>
       </div>
     </>
   );
