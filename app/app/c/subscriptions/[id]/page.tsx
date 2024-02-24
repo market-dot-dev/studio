@@ -10,7 +10,7 @@ import UserService from "@/app/services/UserService";
 import {
   CheckSquare2 as CheckSquare,
 } from "lucide-react";
-
+import { Card, Bold } from "@tremor/react";
 
 const formatFeatureLink = async (feature: Feature) => {
   const service = await prisma.service.findUnique({ where: { id: feature.serviceId! }});
@@ -60,10 +60,10 @@ export default async function SubscriptionDetail({ params }: { params: { id: str
         <div className="flex flex-col space-y-2">
           {/* <TierFeatureList features={features} /> */}
           { features.map(f => <FeatureAction feature={f} key={f.id} />) }
-          <div className="w-full xl:w-3/4 pt-4">
-            <CancelSubscriptionButton subscription={subscription} />
-          </div>
+
+          <Bold>Manage your Subscription</Bold>
         </div>
+          <CancelSubscriptionButton subscription={subscription} />
       </div>
     </div>
   );
