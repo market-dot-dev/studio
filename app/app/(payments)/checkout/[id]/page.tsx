@@ -38,7 +38,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Left Column */}
       <div
-        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 p-8 text-slate-50 md:fixed md:w-1/2 lg:py-32 xl:px-32"
+        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 p-8 text-slate-50 md:fixed md:w-2/5 lg:py-32 xl:px-32"
         style={{ backgroundImage: "url(/voronoi.png)" }}
       >
         <div className="overflow-y-auto">
@@ -74,7 +74,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
       </div>
 
       {/* Right Column */}
-      <div className="ml-auto w-full overflow-y-auto bg-slate-100 p-8 text-slate-800 md:w-1/2 md:p-16">
+      <div className="ml-auto w-full overflow-y-auto bg-slate-100 p-8 text-slate-800 md:w-3/5 md:p-16">
         <section className="w-7/8 mb-8 lg:w-5/6">
           {isTierLoading ?
             <div className="opacity-50">

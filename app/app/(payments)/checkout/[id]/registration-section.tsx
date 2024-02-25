@@ -86,10 +86,12 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     return <AlreadySubscribedCard subscription={subscription} />
   } else return (
     <>
+      <Card>
       <section className="w-7/8 mb-8 lg:w-5/6">
         <Divider className={!user?.id ? "font-bold text-lg" : ""}>Login / Signup</Divider>
         <CustomerLoginComponent signup={true} />
       </section>
+      </Card>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
         { error && <div className="mb-4 text-red-500">{error}</div> }
@@ -110,6 +112,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
           Your card will be charged {checkoutCurrency + " " + tier?.price}
         </label>
       </section>
+      
     </>
   );
 };
