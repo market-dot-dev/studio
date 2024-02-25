@@ -26,7 +26,7 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
                 <section>
                     <div className="mx-auto max-w-screen-xl lg:py-4">
                         { tiers.length ? 
-                            <Grid numItems={1} numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-4 sm:gap-8 md:gap-12 w-full">
+                            <Grid numItems={1} numItemsSm={1} numItemsMd={tiers.length < 2 ? tiers.length : 2} numItemsLg={tiers.length < 3 ? tiers.length : 3}  className="gap-4 sm:gap-8 md:gap-12 w-full">
                                 {tiers.map((tier: any, index: number) => (
                                     <Col key={index} className="flex flex-col p-4 sm:p-5 md:p-6 mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
                                         <TierCard tier={tier} url={subdomain} darkMode={settings.darkmode}>
