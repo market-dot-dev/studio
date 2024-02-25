@@ -9,7 +9,7 @@ export default function Tiers({tiers}: { tiers : any[]}) : JSX.Element {
             <section>
             <div className="mx-auto max-w-screen-xl lg:py-4">
                 { tiers.length ? 
-                <Grid numItems={1} numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-12" >
+                <Grid numItems={1} numItemsSm={1} numItemsMd={tiers.length < 2 ? tiers.length : 2} numItemsLg={tiers.length < 3 ? tiers.length : 3} className="gap-12" >
                     {tiers.map((tier : any, index: number) => (
                         <Col key={index} className="flex flex-col mx-auto w-full">
                             <TierCard tier={tier} />
