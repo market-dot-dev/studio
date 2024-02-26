@@ -25,6 +25,14 @@ type DynamicComponentProps = {
     "wbr"
   ];
   
+  function sanitizeAttributeName(attrName: string) {
+    // Define a regex pattern for invalid characters
+    const invalidChars = /[^a-zA-Z0-9-_:.]/g;
+    // Remove invalid characters
+    const sanitized = attrName.replace(invalidChars, '');
+    return sanitized;
+  }
+
   const DynamicComponent: React.FC<DynamicComponentProps> = ({ tag, className, children, ...attributes }) => {
     const Tag = tag;
     return <Tag className={className} {...attributes}>{children}</Tag>;
@@ -32,14 +40,14 @@ type DynamicComponentProps = {
   
   // For recursively rendering elements
   const renderElement = (element: Element | Element[], index : number, site : any = null, page : any = null, isPreview : boolean = false): JSX.Element => {
-
+    
     // in case there are multiple root elements, wrap them in a fragment
     if(Array.isArray(element)) {
       return (<>
         {element.map((child, index) => renderElement(child as Element, index, site, page, isPreview))}
       </>)
     } 
-
+    
     if(!element?.tagName) return <></>;
     const tag = element.tagName.toLowerCase() as keyof JSX.IntrinsicElements;
 
@@ -53,7 +61,12 @@ type DynamicComponentProps = {
       
       const props = componentsMap[tag]['ui'] ? 
           element.getAttributeNames().reduce((props : any, attr) => {
-            props[attr] = element.getAttribute(attr);
+            // sanitize attr as html attributes can be anything
+            const sanitizedAttr = sanitizeAttributeName(attr)
+            const val = element.getAttribute(sanitizedAttr);
+            if( val ) {
+              props[sanitizedAttr] = val;
+            }
             return props;
           }
         , {})
@@ -61,14 +74,13 @@ type DynamicComponentProps = {
         ...( site? {site} : {}),
         ...( page? {page} : {}),
       }
-      // const children = Array.from(element.children).map((child, index) => renderElement(child as Element, index, site, page, isPreview))
       const children = Array.from(element.childNodes).map((child, index) => {
         if(child.nodeName.startsWith('#text')) return child.textContent
         return renderElement(child as Element, index, site, page, isPreview)
       });
       return <CustomComponent key={'component'+index} {...props}>{children}</CustomComponent>;
     }
-  
+    
     const className = element.className;
 
     let attributes = {} as any;
