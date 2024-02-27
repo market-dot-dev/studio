@@ -12,6 +12,7 @@ import { Text, Bold } from "@tremor/react";
 
 const checkoutCurrency = "USD";
 const projectDescriptionDefault = "";
+const pathToDefaultMSA = "https://www.gitwallet.co/legal/standard-msa";
 
 const renderSectionHeading = (text: string) => {
   return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
@@ -112,7 +113,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
 
               <Text className="mb-4 leading-6">
                 {checkoutProject} uses the{" "}
-                <a href="/contracts/default" className="underline">
+                <a href={pathToDefaultMSA} className="underline" target="_blank">
                   Standard Gitwallet MSA
                 </a>
                 .
