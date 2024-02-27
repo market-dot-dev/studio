@@ -17,9 +17,19 @@ import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { signOut } from "next-auth/react";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
-
+import {
+  Step,
+  StepDescription,
+  StepIcon,
+  StepIndicator,
+  StepNumber,
+  StepSeparator,
+  StepStatus,
+  StepTitle,
+  Stepper,
+  useSteps,
+} from '@chakra-ui/stepper'
 const checkoutCurrency = "USD";
-  "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
 
 const AlreadySubscribedCard = ({ subscription }: { subscription: Subscription }) => {
   return (<Card>
@@ -34,6 +44,12 @@ interface RegistrationFormProps {
   loggedIn: boolean;
 }
 
+const steps = [
+  { title: 'Sign up or Login', description: '' },
+  { title: 'Enter Payment Details', description: '' },
+  { title: 'Confirm', description: '' },
+]
+
 const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   const tierId = tier?.id;
   const [loading, setLoading] = useState(false);
@@ -44,14 +60,12 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   const [error, setError] = useState<string | null>();
 
   const { currentSession, refreshCurrentSession } = useCurrentSession();
-  
+
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const { user } = currentSession;
 
-  
-
   useEffect(() => {
-    if(user?.id) {
+    if (user?.id) {
       findSubscriptionByTierId({ tierId }).then(setSubscription);
     }
   }, [user?.id, tierId]);
@@ -61,18 +75,18 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     setError(null);
     setPurchaseIntent(true);
 
-    if(user && !user.stripePaymentMethodId) {
+    if (user && !user.stripePaymentMethodId) {
       setSubmittingPaymentMethod(true);
       setLoading(false);
     }
-    
+
   }
 
   useEffect(() => {
     if (purchaseIntent && user && user.stripePaymentMethodId) {
       onClickSubscribe(user.id, tierId).then((res) => {
         setPurchaseIntent(false);
-        if(res.error) {
+        if (res.error) {
           setError(res.error);
           setLoading(false);
         } else {
@@ -82,28 +96,44 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     }
   }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user]);
 
-  if(subscription) {
+  const { activeStep } = useSteps({
+    index: 1,
+    count: steps.length,
+  })
+
+
+  if (subscription) {
     return <AlreadySubscribedCard subscription={subscription} />
   } else return (
     <>
+<<<<<<< Updated upstream
       <Card>
       <section className="w-7/8 mb-8 lg:w-5/6">
         <Divider className={!user?.id ? "font-bold text-lg" : ""}>Login / Signup</Divider>
         <CustomerLoginComponent signup={true} />
       </section>
       </Card>
+=======
+      <div className="flex flex-col w-full">
+        <div className="w-1/8 border-4">
+          <Stepper index={activeStep} orientation='vertical' height='400px' gap='0'>
+            {steps.map((step, index) => (
+              <Step key={index}>
+                <StepIndicator>
+                  <StepStatus
+                    complete={<StepIcon />}
+                    incomplete={<StepNumber />}
+                    active={<></>}
+                  />
+                </StepIndicator>
+>>>>>>> Stashed changes
 
-      <section className="w-7/8 mb-8 lg:w-5/6">
-        { error && <div className="mb-4 text-red-500">{error}</div> }
-        <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
-          <div>
-            <UserPaymentMethodWidget
-              loading={submittingPaymentMethod}
-              setError={setError}
-            />
-          </div>
-      </section>
+                <StepSeparator />
+              </Step>
+            ))}
+          </Stepper>
 
+<<<<<<< Updated upstream
       <section className="w-7/8 mb-8 lg:w-5/6">
         <Button onClick={onSubmit} disabled={purchaseIntent || !user?.id} className="w-full">
           {purchaseIntent ? <LoadingDots color="#A8A29E" /> : "Checkout"}
@@ -113,6 +143,36 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         </label>
       </section>
       
+=======
+        </div>
+        <div className="w-7/8 border-4">
+          <section className="w-7/8 mb-8 lg:w-5/6">
+            <Divider className={!user?.id ? "font-bold text-lg" : ""}>Login / Signup</Divider>
+            <CustomerLoginComponent signup={true} />
+          </section>
+
+          <section className="w-7/8 mb-8 lg:w-5/6">
+            {error && <div className="mb-4 text-red-500">{error}</div>}
+            <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
+            <div>
+              <UserPaymentMethodWidget
+                loading={submittingPaymentMethod}
+                setError={setError}
+              />
+            </div>
+          </section>
+
+          <section className="w-7/8 mb-8 lg:w-5/6">
+            <Button onClick={onSubmit} disabled={purchaseIntent || !user?.id} className="w-full">
+              {purchaseIntent ? <LoadingDots color="#A8A29E" /> : "Checkout"}
+            </Button>
+            <label className="my-2 block text-center text-sm text-slate-400">
+              Your card will be charged {checkoutCurrency + " " + tier?.price}
+            </label>
+          </section>
+        </div>
+      </div>
+>>>>>>> Stashed changes
     </>
   );
 };

@@ -9,6 +9,18 @@ import useUser from "@/app/hooks/use-user";
 import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
 import { Text, Bold } from "@tremor/react";
+import {
+  Step,
+  StepDescription,
+  StepIcon,
+  StepIndicator,
+  StepNumber,
+  StepSeparator,
+  StepStatus,
+  StepTitle,
+  Stepper,
+  useSteps,
+} from '@chakra-ui/stepper'
 
 const checkoutCurrency = "USD";
 const projectDescriptionDefault = "The business builder made for open source maintainers.";
