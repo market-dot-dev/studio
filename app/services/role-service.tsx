@@ -10,6 +10,7 @@ class RoleService {
     /^\/home$/,
     /^\/alpha\/login$/,
     /^\/login$/,
+    /^\/legal/,
     /^\/customer-login$/,
     /^\/login\/local-auth$/,
     /\/checkout\/[A-Za-z0-9]+/,

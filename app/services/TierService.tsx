@@ -1,20 +1,18 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
 import { Feature } from "@prisma/client";
 import ProductService from "./ProductService";
-import FeatureService from "./feature-service";
+import SessionService from "./SessionService";
 
 export type TierWithFeatures = Tier & { features?: Feature[] };
 
 class TierService {
   static async createStripePrice(tier: Tier) {
-    const session = await getSession();
-    const userId = session?.user.id;
+    const userId = await SessionService.getCurrentUserId();
 
     if(!userId) {
       throw new Error('User not authenticated');
@@ -28,7 +26,7 @@ class TierService {
 
     if(!currentUser.stripeProductId) {
       ProductService.createProduct(currentUser.id);
-      currentUser = await UserService.findUser(session.user.id);
+      currentUser = await UserService.findUser(userId);
       if(!currentUser?.stripeProductId) {
         throw new Error('Tried to attach a stripe product id to user, but failed.');
       }
@@ -113,7 +111,7 @@ class TierService {
 
   static async updateTier(id: string, tierData: Partial<Tier>) {
     // Ensure the current user is the owner of the tier or has permissions to update it
-    const userId = await UserService.getCurrentUserId();
+    const userId = await SessionService.getCurrentUserId();
 
     if (!userId) {
       throw new Error("User not authenticated");
@@ -264,7 +262,7 @@ class TierService {
       },
       orderBy: [
         {
-          createdAt: "desc",
+          price: "asc",
         },
       ],
     }); 
@@ -272,15 +270,16 @@ class TierService {
 
   // this pulls all tiers for the admin to manage
   static async getTiersForAdmin() {
-    const session = await getSession();
-    if (!session?.user.id) {
+    const userId = await SessionService.getCurrentUserId();
+
+    if (!userId) {
       return {
         error: "Not authenticated",
       };
     }
     return prisma.tier.findMany({
       where: {
-        userId: session.user.id
+        userId
       },
       select: {
         id: true,
@@ -308,8 +307,9 @@ class TierService {
   }
 
   static async getCustomersOfUserTiers() {
-    const session = await getSession();
-    if (!session?.user.id) {
+    const userId = await SessionService.getCurrentUserId();
+
+    if (!userId) {
       throw new Error("User not authenticated");
     }
   
@@ -319,7 +319,7 @@ class TierService {
         subscriptions: {
           some: {
             tier: {
-              userId: session.user.id,
+              userId
             },
           },
         },
@@ -331,7 +331,7 @@ class TierService {
         subscriptions: {
           where: {
             tier: {
-              userId: session.user.id,
+              userId
             },
           },
           select: {
@@ -352,8 +352,8 @@ class TierService {
   }
   
   static async getLatestCustomers(numberOfRecords?: number, daysAgo?: number) {
-    const session = await getSession();
-    if (!session?.user.id) {
+    const userId = await SessionService.getCurrentUserId();
+    if (!userId) {
       throw new Error("User not authenticated");
     }
   
@@ -373,7 +373,7 @@ class TierService {
             subscriptions: {
               some: {
                 tier: {
-                  userId: session.user.id,
+                  userId
                 },
                 createdAt: dateFilter ? { gte: dateFilter } : undefined,
               },
@@ -388,7 +388,7 @@ class TierService {
         subscriptions: {
           where: {
             tier: {
-              userId: session.user.id,
+              userId
             },
             createdAt: dateFilter ? { gte: dateFilter } : undefined,
           },
@@ -411,13 +411,13 @@ class TierService {
   }
 
   static async getTiersForMatrix(tierId?: string, newTier?: Tier): Promise<TierWithFeatures[]> {
-    const currentUser = await UserService.findCurrentUser();
+    const currentUserId = await SessionService.getCurrentUserId();
 
-    if (!currentUser) {
+    if (!currentUserId) {
       throw new Error("Not logged in");
     }
 
-    let allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUser.id);
+    let allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUserId);
 
     allTiers = allTiers.sort((a, b) => {
       if(tierId){

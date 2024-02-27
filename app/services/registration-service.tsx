@@ -29,9 +29,6 @@ class RegistrationService {
 
   
   static async registerAndSignInCustomer(userAttributes: Partial<User> ) { 
-    // FIXME
-    // return findCurrentUser();
-
     const res = await signIn("email", {
       redirect: false,
       email: userAttributes.email

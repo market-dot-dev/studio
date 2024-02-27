@@ -3,11 +3,11 @@ import PrimaryButton from '@/components/common/link-button';
 import TierService, { TierWithFeatures } from '@/app/services/TierService';
 import { Grid, Badge } from '@tremor/react';
 
-import UserService from '@/app/services/UserService';
 import TierCard from '@/components/tiers/tier-card';
+import SessionService from '@/app/services/SessionService';
 
 export default async function Tiers() {
-  const currentUserId = await UserService.getCurrentUserId();
+  const currentUserId = await SessionService.getCurrentUserId();
   if (!currentUserId) return <>You must log in</>;
 
   const tiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUserId);

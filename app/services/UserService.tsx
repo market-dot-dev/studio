@@ -6,29 +6,15 @@ import { getSession } from '@/lib/auth';
 import StripeService from './StripeService';
 import ProductService from './ProductService';
 import TierService, { createStripePrice } from './TierService';
+import SessionService from './SessionService';
 
 class UserService {
-  static async getCurrentUserId() {
-    const session = await getSession();
-
-    return session?.user.id;
-  }
-
   static async getCurrentUser() {
     const session = await getSession();
     const userId = session?.user.id;
     if (!userId) return null;
 
-    return UserService.findUser(session.user.id);
-  }
-
-  static async findCurrentUser(): Promise<User | undefined | null> {
-    const session = await getSession();
-    return prisma?.user.findUnique({
-      where: {
-        email: session?.user?.email || '',
-      },
-    });
+    return UserService.findUser(userId);
   }
 
   static async findUser(id: string): Promise<User | undefined | null> {
@@ -40,11 +26,14 @@ class UserService {
   }
 
   static async updateCurrentUser(userData: Partial<User>) {
-    const session = await getSession();
-    const userId = session?.user.id;
-    if (!userId) return null;
+    const userId = await SessionService.getCurrentUserId()
 
-    return UserService.updateUser(userId, userData);
+    if(!userId) return null;
+
+    const result = await UserService.updateUser(userId, userData);
+    //await SessionService.refreshSession();
+    return result;
+
   }
 
   static async updateUser(id: string, userData: Partial<User>) {
@@ -161,4 +150,4 @@ export const ensureTierId = async (tierId: string) => {
 }
 
 export default UserService;
-export const { createStripeCustomer, getCurrentUserId, getCurrentUser, findCurrentUser, findUser, updateCurrentUser, clearStripeCustomer } = UserService;
+export const { createStripeCustomer, getCurrentUser, findUser, updateCurrentUser, clearStripeCustomer } = UserService;

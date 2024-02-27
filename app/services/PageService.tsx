@@ -1,17 +1,13 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Page, Site } from "@prisma/client";
+import { Page } from "@prisma/client";
 import { getSession } from "@/lib/auth";
 import SiteService from "./SiteService";
 import { newPageTemplate} from "@/lib/constants/site-template";
+import SessionService from "./SessionService";
 
 class PageService {
-  static async getCurrentUserId() {
-    const session = await getSession();
-    return session?.user.id;
-  }
-
   static getSubdomain(domain: string) {
     return domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
     ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
@@ -91,7 +87,7 @@ class PageService {
   
   static async findPage(subdomain: string, slug: string) {
 
-    const currentUserId = await PageService.getCurrentUserId();
+    const currentUserId = await SessionService.getCurrentUserId();
   
     const site = await prisma.site.findUnique({
       where: { 
@@ -120,7 +116,7 @@ class PageService {
   };
 
   static async setHomepage(siteId: string, id: string) {
-    const userId = await PageService.getCurrentUserId();
+    const userId = await SessionService.getCurrentUserId();
     return await prisma.site.update({
       where: {
         id: siteId,
@@ -133,7 +129,7 @@ class PageService {
   };
 
   static async deletePage(id: string) {
-    const userId = await PageService.getCurrentUserId();
+    const userId = await SessionService.getCurrentUserId();
 
     // First, retrieve the page along with the related site's homepageId
     const page = await prisma.page.findUnique({
