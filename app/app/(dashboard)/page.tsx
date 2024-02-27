@@ -24,7 +24,8 @@ export default async function Overview() {
         <div className="flex flex-col space-y-6">
           <PageHeading title={title} />
           <div className="flex flex-col gap-8">
-            { user?.stripeAccountDisabled && <StripeDisabledBanner />}
+            { /* FIXME: reenable once banner is styled -- also need to health check on login or somesuch
+              user?.stripeAccountDisabled && <StripeDisabledBanner /> */}
 
             <LatestCustomersList numRecords={3} previewMode={true} />
             <DashboardCharts />
