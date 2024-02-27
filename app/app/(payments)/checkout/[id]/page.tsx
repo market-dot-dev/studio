@@ -11,7 +11,7 @@ import TierFeatureList from "@/components/features/tier-feature-list";
 import { Text, Bold } from "@tremor/react";
 
 const checkoutCurrency = "USD";
-const projectDescriptionDefault = "The business builder made for open source maintainers.";
+const projectDescriptionDefault = "";
 
 const renderSectionHeading = (text: string) => {
   return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
@@ -60,13 +60,13 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               </>
             }
 
-            <Text className="text-xs mb-1">Powered by:</Text>
+            {/* <Text className="text-xs mb-1">Powered by:</Text>
             <Image
               alt="Gitwallet"
               src="/logo-white.png"
               height={0}
               width={100}
-            />
+            /> */}
             {/* <h1 className="text-xl font-light leading-8 mb-6">The business builder made for open source maintainers.</h1> */}
             <div></div>
           </div>
