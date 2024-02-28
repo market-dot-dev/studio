@@ -39,3 +39,6 @@ yarn-error.log*
 
 # ignore yarn.lock b/c we're not using it
 yarn.lock
+
+# Sentry Config File
+.sentryclirc

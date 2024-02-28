@@ -1,12 +1,31 @@
 import { getSession } from '@/lib/auth';
 import prisma from "@/lib/prisma";
+import { SessionUser } from '../models/Session';
 
 class SessionService {
+  static async getSession() {
+    return getSession();
+  }
+
+  static async getCurrentUserId() {
+    const session = await getSession();
+    return session?.user!.id;
+  }
+
+  static async getSessionUser(): Promise<SessionUser | undefined> {
+    const session = await getSession();
+    return session?.user;
+  }
+
+  static async signedIn(){
+    const session = await getSession();
+    return !!session?.user!.id;
+  }
 
   // return a refreshed acccess token of github
   static async getAccessToken() : Promise<string | null> {
     const session = await getSession();
-    const userId = session?.user.id;
+    const userId = session?.user!.id;
 
     try {
       // Retrieve the current refresh token from the database
@@ -65,4 +84,4 @@ class SessionService {
 }
 
 export default SessionService;
-export const { getAccessToken } = SessionService;
+export const { getAccessToken, getCurrentUserId } = SessionService;

@@ -10,6 +10,8 @@ import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-ste
 import RegistrationService from "@/app/services/registration-service";
 import { cookies } from 'next/headers'
 import { projectDescription, projectName } from "./constants/site-template";
+import Session, { createSessionUser } from "@/app/models/Session";
+import UserService from "@/app/services/UserService";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 const isDevelopment = process.env.NODE_ENV === "development";
@@ -99,10 +101,6 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        // When working on localhost, the cookie domain must be omitted entirely (https://stackoverflow.com/a/1188145)
-        // domain: VERCEL_DEPLOYMENT
-        //   ? `.${process.env.NEXT_PUBLIC_ROOT_HOST}`
-        //   : undefined,
         domain: `.${process.env.NEXT_PUBLIC_ROOT_HOST}`,
         secure: VERCEL_DEPLOYMENT,
       },
@@ -110,12 +108,29 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     jwt: async ({ token, user, account, trigger, session, isNewUser } : any) => {
+      // update the roleId if switched by the user from the frontend
+      if (trigger === "update"){
+        const currentUser = await UserService.getCurrentUser();
+        const isAdmin = currentUser?.roleId === 'admin';
+
+        if(session?.roleId && isAdmin) {
+          token.user = { ...token.user, roleId: session.roleId}
+        } else {
+          if(currentUser) {
+            token.user = {
+              ...token.user,
+              ...createSessionUser(currentUser),
+            }
+          }
+        }
+
+        return token;
+      }
 
       const userData = user ? {...user} : null;
 
       // if its a new user, then based on the provider, we can set the roleId
       if( isNewUser ) {
-        
         const signupName = (cookies().get('signup_name') ?? null) ;
         const name = (signupName?.value ?? null) as string | null;
       
@@ -180,23 +195,15 @@ export const authOptions: NextAuthOptions = {
       if (userData) {
         token.user = userData;
       }
-
-      // update the roleId if switched by the user from the frontend
-      if (trigger === "update" && session.roleId) {
-        token.user = { ...token.user, roleId: session.roleId}
-      }
-
       
       return token;
     },
-    session: async ({ session, token } : any) => {
+    session: async ({ session, token }: any) => {
+      const filteredSession = createSessionUser(token.user);
+
       session.user = {
-        ...session.user,
         id: token.sub,
-        username: token?.user?.username || token?.user?.gh_username,
-        name: token?.user?.name,
-        roleId: token?.user?.roleId || 'anonymous',
-        
+        ...(filteredSession || {}),
         // an empty token.user?.onboarding will signal that the user's onboarding isnt complete yet
         ...(token.user?.onboarding?.length ? { onboarding: true } : {}),
       };
@@ -208,7 +215,6 @@ export const authOptions: NextAuthOptions = {
     signIn: async ({user, account }: any) => {
     },
     createUser: async ({user}: {user: any}) => {
-
       if (!user) {
         return;
       }
@@ -228,17 +234,7 @@ export const authOptions: NextAuthOptions = {
 };
 
 export function getSession() {
-  return getServerSession(authOptions) as Promise<{
-    user: {
-      id: string;
-      name: string;
-      username: string;
-      email: string;
-      image: string;
-      onboarding?: string;
-      roleId: string;
-    };
-  } | null>;
+  return getServerSession(authOptions) as Promise<Session>;
 }
 
 export function withSiteAuth(action: any) {
@@ -258,7 +254,7 @@ export function withSiteAuth(action: any) {
         id: siteId,
       },
     });
-    if (!site || site.userId !== session.user.id) {
+    if (!site || site.userId !== session.user!.id) {
       return {
         error: "Not authorized",
       };
@@ -275,7 +271,7 @@ export function withPostAuth(action: any) {
     key: string | null,
   ) => {
     const session = await getSession();
-    if (!session?.user.id) {
+    if (!session?.user!.id) {
       return {
         error: "Not authenticated",
       };

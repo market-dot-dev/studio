@@ -61,6 +61,11 @@ async function customMiddleware(req: NextRequest) {
     );
   }
 
+  // exempt from middleware rewrites
+  if( url.pathname.startsWith('/monitoring')) {
+    return NextResponse.next();
+  }
+
   // alpha.gitwallet.co
   if(reservedSubdomain === 'alpha') {
     return rewrite(`/alpha${path}`, req.url);
