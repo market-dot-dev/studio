@@ -24,6 +24,16 @@ class SubscriptionService {
     });
   }
 
+  static async hasSubscribers(tierId: string): Promise<boolean> {
+    const subscriptions = await prisma.subscription.findMany({
+      where: {
+        tierId: tierId,
+      }
+    });
+
+    return subscriptions.length > 0;
+  }
+
   static async findSubscriptionByTierId({ tierId }: { tierId: string; }): Promise<Subscription | null> {
     const userId = await SessionService.getCurrentUserId();
     
@@ -158,5 +168,5 @@ class SubscriptionService {
   }
 };
 
-export const { createSubscription, destroySubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed } = SubscriptionService;
+export const { createSubscription, destroySubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed, hasSubscribers } = SubscriptionService;
 export default SubscriptionService;

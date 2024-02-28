@@ -1,15 +1,15 @@
 "use client";
 // tier-form.tsx
 
-import { ChangeEvent, Suspense, useEffect, useState } from 'react';
-import { Flex, Text, Button, Card, Title, Bold, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody } from "@tremor/react"
+import { ChangeEvent, useEffect, useState } from 'react';
+import { Flex, Text, Button, Card, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
+import { hasSubscribers } from '@/app/services/SubscriptionService';
 import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, TierVersionWithFeatures } from '@/app/services/TierService';
-import { useRouter } from 'next/navigation';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
-import { Feature, TierVersion } from '@prisma/client';
+import { Feature } from '@prisma/client';
 import TierFeaturePicker from '../features/tier-feature-picker';
 import { attachMany } from '@/app/services/feature-service';
 
@@ -27,10 +27,10 @@ const TierVersionCard = async ({ tierVersion }: { tierVersion: TierVersionWithFe
 };
 
 export default function TierForm({ tier: tierObj }: TierFormProps) {
-	const router = useRouter();
 	const [tier, setTier] = useState<Tier>((tierObj ? tierObj : newTier()) as Tier);
 	const [selectedFeatures, setSelectedFeatures] = useState<Record<string, Feature[]>>({});
 	const [willCreateNewVersion, setWillCreateNewVersion] = useState(false);
+	const [tierHasSubscribers, setTierHasSubscribers] = useState(false);
 	const [versions, setVersions] = useState<TierVersionWithFeatures[]>([]);
 
 	const newRecord = !tier?.id;
@@ -86,8 +86,11 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	}, []);
 
 	useEffect(() => {
-		getVersionsByTierId(tier.id).then(setVersions);
-	}, []);
+		if(tier.id){
+			getVersionsByTierId(tier.id).then(setVersions);
+			hasSubscribers(tier.id).then(setTierHasSubscribers);
+		}
+	}, [tier.id]);
 
 	useEffect(() => {
 		if(tier && tierObj){
@@ -95,7 +98,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 				setWillCreateNewVersion(ret);
 			});
 		}
-	}, [tier, tierObj, shouldCreateNewVersion]);
+	}, [tier, tierObj]);
 
 	const canPublishDisabled = !canPublish || canPublishLoading;
 
@@ -130,9 +133,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 			<div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-4 pb-20">
 				<div className="md:col-span-2 space-y-6">
 					<div className="mb-4">
-						{ willCreateNewVersion && 
+						{ willCreateNewVersion && tierHasSubscribers &&
 						<Callout className="mt-2 mb-5" title="New Version" color="red">
-							You've changed the price of the published tier, which will result in a new version.
+							You&amp;re changing the price of a tier with subscribers, which will result in a new version.
 						</Callout>
 						}
 
@@ -214,7 +217,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 									Expand for past versions ({versions.length})
 								</AccordionHeader>
 								<AccordionBody>
-									{ versions.map((version) => <TierVersionCard tierVersion={version} />) }
+									{ versions.map((version) => <TierVersionCard tierVersion={version} key={version.id} />) }
 								</AccordionBody>
 							</Accordion>
 						</Flex>
