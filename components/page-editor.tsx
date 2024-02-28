@@ -127,9 +127,9 @@ function ComponentsBlock({components, insertAtCursor} : { components : Insertabl
           return (
             <Col key={index}>
                 <div
-                  className="cursor-pointer bg-gray-200 hover:bg-gray-600 hover:text-white hover:font-bold p-2 rounded-md h-full text-xs align-middle text-center py-4">
+                  className="cursor-pointer bg-gray-200 hover:bg-gray-600 hover:text-white hover:font-bold rounded-md h-full text-xs align-middle text-center">
                     { component.insert ? <component.insert insertAtCursor={insertAtCursor} /> :
-                      <div onClick={() => {
+                      <div className="p-2 py-4" onClick={() => {
                         insertAtCursor(
                           `<${component.tag}></${component.tag}>`,
                         )

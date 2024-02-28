@@ -28,7 +28,6 @@ model User {
   updatedAt             DateTime       @updatedAt
   accounts              Account[]
   pages                 Page[]
-  media                 Media[]
   posts                 Post[]
   sessions              Session[]
   sites                 Site[]
@@ -118,6 +117,7 @@ model Site {
   homepageId    String?
   pages         Page[]
   posts         Post[]
+  media         Media[]
   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -254,11 +254,11 @@ model Feature {
 
 model Media {
   id        String   @id @default(cuid())
-  userId    String
+  siteId  String
   url      String
-  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade) 
+  site    Site     @relation(fields: [siteId], references: [id], onDelete: Cascade) 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([userId])
+  @@index([siteId])
 }
