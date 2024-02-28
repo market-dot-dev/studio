@@ -7,6 +7,8 @@ import UserService from "./UserService";
 import { Feature, TierVersion } from "@prisma/client";
 import ProductService from "./ProductService";
 import SessionService from "./SessionService";
+import FeatureService from "./feature-service";
+import SubscriptionService from "./SubscriptionService";
 
 export type TierWithFeatures = Tier & { features?: Feature[] };
 export type TierVersionWithFeatures = TierVersion & { features?: Feature[]};
@@ -170,7 +172,10 @@ class TierService {
         },
       });
 
-      if(await TierService.shouldCreateNewVersion(currentTier, tierData)) {
+      const hasSubscribers = await SubscriptionService.hasSubscribers(id);
+      const shouldCreateNewVersion = await TierService.shouldCreateNewVersion(currentTier, tierData);
+
+      if(hasSubscribers && shouldCreateNewVersion) {
         // Create a new TierVersion record with the pre-update price and stripePriceId
         const writtenVersion = await prisma.tierVersion.create({
           data: {
@@ -208,7 +213,8 @@ class TierService {
   }
 
   static shouldCreateNewVersion = async (tier: Tier, tierData: Partial<Tier>): Promise<boolean> => {
-    return tierData.published === true && Number(tierData.price) !== Number(tier.price);
+    return tierData.published === true && 
+      Number(tierData.price) !== Number(tier.price);
   }
 
   static async onNewVersion(tier: Tier) {
