@@ -1,10 +1,23 @@
-export default function GithubChannel({ params }: { params: { id: string } }) {
+import GithubEmbedItem from "@/components/github/github-embed-item";
+import { Divider, Flex, Text } from "@tremor/react";
+import githubEmbeds from "@/components/site/github-embeds";
+import { getSite } from "@/lib/site/fetchers";
+import PageHeading from "@/components/common/page-heading";
+
+export default async function EmbedChannel({ params }: { params: { id: string } }) {
+    const site = await getSite();
     return (
-      <div className="flex items-center justify-between">
-        <h1 className="font-cal text-3xl font-bold dark:text-white">
-          Channels: Github
-        </h1>
-        
-      </div>
+      <Flex flexDirection="col" alignItems="start" className="gap-6">
+        <PageHeading title="Github Embeds" />
+        <Text>Embed services in your Github Readme.</Text>
+          <Flex flexDirection="col" className="gap-12 w-full">
+            {Object.keys(githubEmbeds).map((index) => (
+              <div key={index} className='w-full' >
+                <GithubEmbedItem index={index} site={site} />
+                <Divider/>
+              </div>
+            ))}
+          </Flex>
+      </Flex>   
     );
-  }
+}
