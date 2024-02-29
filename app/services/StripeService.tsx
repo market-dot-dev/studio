@@ -264,7 +264,7 @@ class StripeService {
     return subscription;
   }
 
-  static async destroySubscription(subscriptionId: string) {
+  static async cancelSubscription(subscriptionId: string) {
     await stripe.subscriptions.cancel(subscriptionId);
   }
 

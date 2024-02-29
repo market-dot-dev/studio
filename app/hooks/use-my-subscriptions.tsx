@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { findSubscriptions } from "../services/SubscriptionService";
-import { Subscription } from "@prisma/client";
+import Subscription from "@/app/models/Subscription";
 
 const useMySubscriptions = (userId: string) => {
   const [subscriptions, setSubscriptions] = useState<Subscription[]>();

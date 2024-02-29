@@ -198,6 +198,7 @@ model Subscription {
   stripeSubscriptionId String   @unique
   tierVersionId        String? // Foreign key to reference TierVersion
   createdAt            DateTime @default(now())
+  state       String @default("active")
 
   user        User         @relation(fields: [userId], references: [id])
   tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
