@@ -65,7 +65,11 @@ type DynamicComponentProps = {
             const sanitizedAttr = sanitizeAttributeName(attr)
             const val = element.getAttribute(sanitizedAttr);
             if( val ) {
-              props[sanitizedAttr] = val;
+              if('class' === sanitizedAttr || 'classname' === sanitizedAttr.toLowerCase()) {
+                props['className'] = val;
+              } else {
+                props[sanitizedAttr] = val;
+              }
             }
             return props;
           }
@@ -74,6 +78,7 @@ type DynamicComponentProps = {
         ...( site? {site} : {}),
         ...( page? {page} : {}),
       }
+      
       const children = Array.from(element.childNodes).map((child, index) => {
         if(child.nodeName.startsWith('#text')) return child.textContent
         return renderElement(child as Element, index, site, page, isPreview)
@@ -81,14 +86,16 @@ type DynamicComponentProps = {
       return <CustomComponent key={'component'+index} {...props}>{children}</CustomComponent>;
     }
     
-    const className = element.className;
-
+    // const className = element.className;
+    let className = element.getAttribute('class') + ' ' + element.getAttribute('classname');
     let attributes = {} as any;
+
     Array.from(element.attributes).forEach((item : any) => {
-      if(item.name === 'class') return;
-      if(item.name === 'style') {
+      
+      if(item.name === 'style' || item.name === 'class') {
         return;
       }
+
       attributes[item.name] = item.value;
     });
     

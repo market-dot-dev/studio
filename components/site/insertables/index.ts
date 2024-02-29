@@ -24,6 +24,9 @@ import {
 import SiteDescription from "./site-description/site-description";
 import SiteOwner from "./site-owner/site-owner";
 
+import GreenBox from "./GreenBox";
+
+
 export const siteComponents = {
     tiers: {
         name: 'Tiers',
@@ -108,6 +111,12 @@ export const layoutComponents = {
         name: 'Avatar',
         tag: 'Avatar',
         element: Avatar,
+        ui: true 
+    },
+    greenbox: {
+        name: 'Green Box',
+        tag: 'GreenBox',
+        element: GreenBox,
         ui: true 
     }
     

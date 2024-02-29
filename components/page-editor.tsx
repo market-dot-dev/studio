@@ -554,13 +554,14 @@ export default function PageEditor({
               <TabPanels>
                 <TabPanel>
                   {previewElement
-                    ? renderElement(
-                        previewElement as Element,
-                        0,
-                        site,
-                        page,
-                        true,
-                      )
+                    ? 
+                    renderElement(
+                          previewElement as Element,
+                          0,
+                          site,
+                          page,
+                          true,
+                        )
                     : null}
                 </TabPanel>
                 <TabPanel>
