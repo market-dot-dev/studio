@@ -1,15 +1,14 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { getSession } from "@/lib/auth";
 import Product from "@/app/models/Product";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
+import SessionService from "./SessionService";
 
 class ProductService {
   static async getCurrentUserId() {
-    const session = await getSession();
-    return session?.user.id;
+    return SessionService.getCurrentUserId();
   }
 
   static async findProduct(userId: string): Promise<Product | null> {

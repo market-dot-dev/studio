@@ -21,10 +21,12 @@ const StripeDebug = async () => {
       </div>
       <div>
         <Link href="/admin/debug/stripe-debug">Stripe</Link> <br/>
+        <Link href="/admin/debug/sentry-example-page">Sentry</Link> <br/>
         <Link href="/services">Feature Index</Link> <br/>
         <Link href="/settings/payment">Stripe Connect</Link> <br/>
         <Link href="/subscriptions">Your active subscriptions</Link> <br/>
         <Link href="/admin/debug/onboarding">Onboarding State</Link> <br/>
+        <Link href="/admin/debug/session">Session Viewer</Link> <br/>
         <RoleSwitcher />
       </div>
     </div>

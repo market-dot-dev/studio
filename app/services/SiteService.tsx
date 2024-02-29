@@ -9,7 +9,7 @@ import { customAlphabet } from "nanoid";
 import fs from 'fs';
 import yaml from 'js-yaml';
 import { put } from "@vercel/blob";
-import UserService, { getCurrentUserId } from './UserService';
+import SessionService from './SessionService';
 
 const nanoid = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -33,7 +33,7 @@ const reservedSubdomains = loadReservedSubdomains() as string[];
 class SiteService {
 
     static async getCurrentSite() {
-        const userId = await getCurrentUserId();
+        const userId = await SessionService.getCurrentUserId();
 
         if (!userId) {
             throw new Error('No user found.');
@@ -43,7 +43,7 @@ class SiteService {
     }
 
     static async getSiteAndPages(id: string) {
-        const userId = await UserService.getCurrentUserId();
+        const userId = await SessionService.getCurrentUserId();
         const site = await prisma.site.findUnique({
             where: {
                 id: decodeURIComponent(id),
