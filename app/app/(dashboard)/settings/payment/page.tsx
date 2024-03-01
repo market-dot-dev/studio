@@ -1,10 +1,12 @@
 "use server";
 import { redirect } from "next/navigation";
-import { Flex, Text } from "@tremor/react";
+import { Flex, Text, Card, Button } from "@tremor/react";
+import Link from "next/link";
 import StripeService from "@/app/services/StripeService";
 import LinkButton from "@/components/common/link-button";
 import DisconnectStripeAccountButton from "../../maintainer/stripe-connect/disconnect-stripe-account-button";
 import UserService from "@/app/services/UserService";
+import { ExternalLink } from "lucide-react";
 
 const StripeOauthButton = async ({ userId }: { userId: string }) => {
   const oauthUrl = await StripeService.getOAuthLink(userId);
@@ -13,9 +15,9 @@ const StripeOauthButton = async ({ userId }: { userId: string }) => {
 };
 
 const ActionRequiredBanner: React.FC = () => (
-  <div className="mb-6 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+  <div className="flex flex-col mb-2">
     <p className="font-semibold">Action Required!</p>
-    <p>It looks like there are some issues with your Stripe account settings. Please visit your <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Stripe Dashboard</a> to resolve these issues and ensure your account is fully operational.</p>
+    <p>It looks like there are some issues with your Stripe account settings. Please visit your <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Stripe Dashboard</a> to resolve these issues and ensure your account is fully operational. See below for details:</p>
   </div>
 );
 
@@ -28,7 +30,7 @@ const AccountCheck: React.FC<AccountCheckProps> = ({ status, children }) => {
   const color = status === 'pass' ? 'text-green-600' : 'text-red-600';
 
   return (
-    <p className={`text-base font-semibold ${color}`}>{children}</p>
+    <li className={`${color} font-semibold`}>{children}</li>
   );
 };
 
@@ -66,42 +68,46 @@ export default async function PaymentSettings({
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12">
       <div className="flex flex-col space-y-6">
-          <Flex flexDirection="col" alignItems="start" className="gap-4">
-            { !stripeConnected && <>
-              <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
-              <Text>
-                Connect your Stripe account to manage and receive payments.
-              </Text>
-              <StripeOauthButton userId={user.id!} />
-            </> }
-            { stripeConnected ? 
+        <Flex flexDirection="col" alignItems="start" className="gap-4">
+          {!stripeConnected && <>
+            <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
+            <Text>
+              Connect your Stripe account to manage and receive payments.
+            </Text>
+            <StripeOauthButton userId={user.id!} />
+          </>}
+          {stripeConnected ?
             <>
               <h2 className="font-cal text-xl dark:text-white">Stripe Account</h2>
               <Text>
-                Your stripe account is connected. Your account ID is:
+                Your Stripe account is connected. Your account ID is: {user.stripeAccountId}
               </Text>
-              <pre>
-                { user.stripeAccountId }
-              </pre>
-              
+              <DisconnectStripeAccountButton user={user} />
               <>
                 {!canSell && (
-                  <Flex flexDirection="col" alignItems="start" className="gap-4">
+                  <Card
+                    className="mb-4 flex flex-col bg-gray-100 border border-gray-400 px-4 py-3 text-gray-700"
+                  >
                     <ActionRequiredBanner />
-                    { messageCodes.map((message, index) => (
+                    {messageCodes.map((message, index) => (
                       <AccountCheck key={index} status='fail'>{StripeService.getErrorMessage(message)}</AccountCheck>
                     ))}
-                    { disabledReasons?.map((message, index) => (
-                      <AccountCheck key={index} status='fail'>Stripe err code: {message}</AccountCheck>
+
+                    {disabledReasons && <Text className="mt-2">Stripe Error Codes (These specific codes provide a hint about what may be wrong with the account).</Text>}
+                    {disabledReasons?.map((message, index) => (
+                      <AccountCheck key={index} status='fail'>{message}</AccountCheck>
                     ))}
-                  </Flex>
+
+                    <Link href="https://dashboard.stripe.com" target="_blank" className="mt-4" >
+                      <Button>Go to Stripe Dashboard</Button>
+                    </Link>
+                  </Card>
                 )}
               </>
-              <DisconnectStripeAccountButton user={user} />
             </> :
             null
-            }
-          </Flex>
+          }
+        </Flex>
       </div>
     </div>
   );
