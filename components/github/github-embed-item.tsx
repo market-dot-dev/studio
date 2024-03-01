@@ -1,7 +1,7 @@
 'use client'
 import { Tab, TabGroup, TabList, TabPanel, TabPanels, Title, Flex, Grid, Col } from "@tremor/react";
 import { EyeOpenIcon, CodeIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import githubEmbeds from "../site/github-embeds";
 import CodeSnippet from "../embedables/code-snippet";
 import DashboardCard from "../common/dashboard-card";
@@ -9,9 +9,17 @@ import DashboardCard from "../common/dashboard-card";
 export default function GithubEmbedItem({site, index} : any) {
     
   const [active, setActive] = useState(0)
+  const [markdown, setMarkdown] = useState<string>('');
+  const [html, setHtml] = useState<string>('');
 
-  const domain = `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-  const Component = githubEmbeds[index].element;
+  
+  useEffect(() => {
+    githubEmbeds[index]().then(({html, markdown} : {html: string, markdown: string}) => {
+      setHtml(html);
+      setMarkdown(markdown);
+    });
+
+  }, [githubEmbeds[index]])
 
   return (
     <Flex flexDirection='col' alignItems="stretch" className='gap-4'>
@@ -30,12 +38,12 @@ export default function GithubEmbedItem({site, index} : any) {
             <TabPanels>
               <TabPanel>
                 <DashboardCard>
-                  <Component site={site}  />
+                  <div dangerouslySetInnerHTML={{__html: html}} />
                 </DashboardCard>
               </TabPanel>
               <TabPanel>
                 <DashboardCard>
-                  <CodeSnippet code={``} />
+                  <CodeSnippet code={markdown} />
                 </DashboardCard>
                 </TabPanel>
               </TabPanels>

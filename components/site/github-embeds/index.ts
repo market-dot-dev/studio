@@ -1,10 +1,7 @@
-import Tiers from "./tiers";
+import tiers from "./tiers";
 
 const embedables =  {
-    tiers: {
-        name: 'Published Tiers',
-        element: Tiers
-    }
+    tiers
 } as any;
 
 export default embedables;
