@@ -8,6 +8,7 @@ import OnboardingGuide from "@/components/onboarding/onboarding-guide";
 import { DasboardProvider } from "@/components/dashboard/dashboard-context";
 import SessionService from "@/app/services/SessionService";
 import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
+import SessionRefresher from "@/components/common/session-refresher";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const user = await SessionService.getSessionUser();
@@ -20,6 +21,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
 
   return (
     <DasboardProvider siteId={site?.id ?? null}>
+      <SessionRefresher />
       <div>
         <Nav siteId={site?.id ?? null} roleId={user.roleId || 'anonymous'}>
           <Suspense fallback={<div>Loading...</div>}>
@@ -30,8 +32,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           <Flex alignItems="stretch" className="w-full">
             <div className="max-w-screen-xl grow p-8">
               <OnboardingGuide />
-              { /* FIXME: reenable once banner is styled -- also need to health check on login or somesuch */ }
-              {user?.stripeAccountDisabled && <StripeDisabledBanner /> }
+              {user?.stripeAccountDisabled && user?.stripeAccountId && <StripeDisabledBanner /> }
               {children}
             </div>
           </Flex>
