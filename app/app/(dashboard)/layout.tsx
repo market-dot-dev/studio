@@ -7,30 +7,31 @@ import { Flex } from "@tremor/react";
 import OnboardingGuide from "@/components/onboarding/onboarding-guide";
 import { DasboardProvider } from "@/components/dashboard/dashboard-context";
 import SessionService from "@/app/services/SessionService";
-
+import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
-  const session = await SessionService.getSession();
-  const { id: userId, roleId } = session?.user || {};
+  const user = await SessionService.getSessionUser();
 
-  if (!userId) {
+  if (!user?.id) {
     redirect("/login");
   }
 
-  const site = await getOnlySiteFromUserId(userId);
+  const site = await getOnlySiteFromUserId(user.id);
 
   return (
     <DasboardProvider siteId={site?.id ?? null}>
       <div>
-        <Nav siteId={site?.id ?? null} roleId={roleId || 'anonymous'}>
+        <Nav siteId={site?.id ?? null} roleId={user.roleId || 'anonymous'}>
           <Suspense fallback={<div>Loading...</div>}>
             <Profile />
           </Suspense>
         </Nav>
         <div className="min-h-screen sm:pl-60">
           <Flex alignItems="stretch" className="w-full">
-            <div className="w-full grow p-8">
+            <div className="max-w-screen-xl grow p-8">
               <OnboardingGuide />
+              { /* FIXME: reenable once banner is styled -- also need to health check on login or somesuch */ }
+              {user?.stripeAccountDisabled && <StripeDisabledBanner /> }
               {children}
             </div>
           </Flex>
