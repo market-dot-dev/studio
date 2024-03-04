@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 import { getSiteData } from "@/lib/fetchers";
 import { Metadata } from "next";
-
+import { getRootUrl } from "@/app/services/domain-service";
 export async function generateMetadata({
   params,
 }: {
@@ -13,9 +13,10 @@ export async function generateMetadata({
   if (!data) {
     return null;
   }
+  const image = getRootUrl(data?.subdomain ?? 'app', `/api/og/${data.id}`);
+
   
   const {
-    image,
     logo,
     user
   } = data as {
@@ -34,7 +35,6 @@ export async function generateMetadata({
     projectName: string;
     projectDescription: string;
   };
-  
 
   return {
     title,
@@ -42,15 +42,14 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      // temporarily disabling images
-      // images: [image],
+      
+      images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      // temporarily disabling images
-      // images: [image],
+      images: [image],
       creator: "@vercel",
     },
     icons: [logo],

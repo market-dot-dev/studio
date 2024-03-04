@@ -5,7 +5,7 @@ import Editor from "@monaco-editor/react";
 import { Box, Text, TextField, Checkbox } from "@radix-ui/themes";
 import { Button, Bold, TextInput, Card } from "@tremor/react";
 import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import {siteComponents, layoutComponents, textComponents} from "./site/insertables";
+import {siteComponents, layoutComponents, textComponents, standardComponents} from "./site/insertables";
 import renderElement from "./site/page-renderer";
 import { useRouter } from "next/navigation";
 import type { Insertable } from "./site/insertables";
@@ -556,13 +556,14 @@ export default function PageEditor({
               <TabPanels>
                 <TabPanel>
                   {previewElement
-                    ? renderElement(
-                        previewElement as Element,
-                        0,
-                        site,
-                        page,
-                        true,
-                      )
+                    ? 
+                    renderElement(
+                          previewElement as Element,
+                          0,
+                          site,
+                          page,
+                          true,
+                        )
                     : null}
                 </TabPanel>
                 <TabPanel>
@@ -571,7 +572,7 @@ export default function PageEditor({
                       <Flex flexDirection="col" className="gap-4">
                         <Flex flexDirection="col" className="gap-2">
                           <Bold>Layout Components</Bold>
-                          <ComponentsBlock components={layoutComponents} insertAtCursor={insertAtCursor} />
+                          <ComponentsBlock components={{...standardComponents, ...layoutComponents}} insertAtCursor={insertAtCursor} />
                         </Flex>
                         <Flex flexDirection="col" className="gap-2">
                           <Bold>Dynamic Components</Bold>
