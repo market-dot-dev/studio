@@ -14,6 +14,7 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
+    const [isFileSelected, setIsFileSelected] = useState(false);
 
     const [alt, setAlt] = useState<string>('');
     const [width, setWidth] = useState<string>('');
@@ -91,7 +92,7 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     }, [selectedMedia, setMediaList]);
 
     return (
-        <Flex flexDirection="col" className="w-4/5 h-4/5 bg-white border">
+        <Flex flexDirection="col" className="w-4/5 bg-white border">
             <Flex className="h-12 p-4 border-b">
                 <div className="grow">
                     <Title>Select or Upload Image</Title>
@@ -120,12 +121,12 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                     <Flex className="p-4 gap-12 border" justifyContent="start">
                         <Title>Upload Image</Title>
                         <form onSubmit={handleFileUpload}>
-                            <input type="file" name="file" className="file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" />
-                            <Button type="submit" loading={isUploading}>Upload</Button>
+                            <input type="file" name="file" onInput={() => setIsFileSelected(true)} className="file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" />
+                            <Button type="submit" loading={isUploading} disabled={!isFileSelected}>Upload</Button>
                         </form>
                     </Flex>
                 </Flex>
-                <Flex flexDirection="col" justifyContent="between" className="w-1/3 bg-slate-400 p-4">
+                <Flex flexDirection="col" justifyContent="between" className="w-1/3 bg-slate-400 p-4 gap-6">
                     <Flex flexDirection="col" className="grow gap-4" justifyContent="start">
                     {selectedMedia && (
                         <>
