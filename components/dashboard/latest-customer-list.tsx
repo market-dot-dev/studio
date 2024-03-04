@@ -12,9 +12,8 @@ import {
   Badge,
   Card,
 } from "@tremor/react";
-import SubscriptionService, {
-  SubscriptionWithUser,
-} from "@/app/services/SubscriptionService";
+import SubscriptionService from "@/app/services/SubscriptionService";
+import { SubscriptionWithUser } from "@/app/models/Subscription";
 import DashboardCard from "@/components/common/dashboard-card";
 import TierService from "@/app/services/TierService";
 import PrimaryLinkButton from "../common/link-button";

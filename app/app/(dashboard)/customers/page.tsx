@@ -1,6 +1,4 @@
-import SubscriptionService, {
-  SubscriptionWithUser,
-} from "@/app/services/SubscriptionService";
+import SubscriptionService from "@/app/services/SubscriptionService";
 import LinkButton from "@/components/common/link-button";
 import DashboardCard from "@/components/common/dashboard-card";
 import PageHeading from "@/components/common/page-heading";
@@ -23,8 +21,7 @@ export default async function CustomersList({
   params: { id: string };
 }) {
   const currentUserId = await SessionService.getCurrentUserId();
-  const subscriptions: SubscriptionWithUser[] =
-    await SubscriptionService.subscribedToUser(currentUserId!);
+  const subscriptions = await SubscriptionService.subscribedToUser(currentUserId!);
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12">
@@ -33,9 +30,6 @@ export default async function CustomersList({
           <PageHeading title="All Customers" />
           <Text>Manage your customers and their tiers here. </Text>
         </div>
-        {/* <div className="flex flex-row gap-1">
-            <LinkButton href="/customers/new" label="New Customer" />
-          </div> */}
       </div>
 
       <DashboardCard>

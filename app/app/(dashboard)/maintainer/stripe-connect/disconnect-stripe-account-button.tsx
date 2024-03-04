@@ -6,7 +6,7 @@ import { Button } from "@tremor/react";
 
 const DisconnectStripeAccountButton = ({ user }: { user: User }) => {
   return (
-    <div className="mt-4">
+    <div className="mt-2">
       <Button
         onClick={() => disconnectStripeAccount(user?.id).then(() => window.location.reload())}
         disabled={!user?.stripeAccountId}
