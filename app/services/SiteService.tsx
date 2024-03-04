@@ -49,6 +49,7 @@ class SiteService {
             },
             select: {
                 logo: true,
+                subdomain: true,
                 user: {
                     select: {
                         projectName: true,
