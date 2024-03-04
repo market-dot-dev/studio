@@ -4,8 +4,8 @@ import TiersClient from "./tiers/tiers-client";
 import MenuServer from "./menu/menu-server";
 import MenuClient from "./menu/menu-client";
 
-import UserInfoServer from "./userinfo/user-info-server";
-import UserInfoClient from "./userinfo/user-info-client";
+// import UserInfoServer from "./userinfo/user-info-server";
+// import UserInfoClient from "./userinfo/user-info-client";
 
 import SiteName from "./site-name/site-name";
 
@@ -17,12 +17,16 @@ import SiteName from "./site-name/site-name";
 import Section from "./section/section";
 
 import { 
-    Flex, Box, Grid, Container, Card, Avatar,
+    Flex, Box, Grid, Container, Card,
     Text, Heading, Blockquote, Code, Em, Link, Quote
 } from '@radix-ui/themes'
 
 import SiteDescription from "./site-description/site-description";
 import SiteOwner from "./site-owner/site-owner";
+import { c } from "@vercel/blob/dist/put-96a1f07e";
+
+
+
 
 export const siteComponents = {
     tiers: {
@@ -31,12 +35,12 @@ export const siteComponents = {
         element: TiersServer,
         preview: TiersClient
     },
-    userinfo: {
-        name: 'User Info',
-        tag: 'UserInfo',
-        element: UserInfoServer,
-        preview: UserInfoClient
-    },
+    // userinfo: {
+    //     name: 'User Info',
+    //     tag: 'UserInfo',
+    //     element: UserInfoServer,
+    //     preview: UserInfoClient
+    // },
     // subscriptions: {
     //     name: 'Subscriptions',
     //     tag: 'Subscriptions',
@@ -67,50 +71,95 @@ export const siteComponents = {
     
 } as any;
 
+export const standardComponents = {
+    div: {
+        name: 'Div',
+        tag: 'div'
+    },
+    twFlex: {
+        name: 'Flex',
+        tag: 'div',
+        attributes: {
+            class: "flex flex-row gap-4"
+        }
+    },
+    twFlexCol: {
+        name: 'Flex Col',
+        tag: 'div',
+        attributes: {
+            class: "flex flex-col gap-4"
+        }
+    },
+    twGrid: {
+        name: 'Grid',
+        tag: 'div',
+        attributes: {
+            class: "grid grid-cols-3 gap-4"
+        }
+    },
+    twContainer: {
+        name: 'Container',
+        tag: 'div',
+        attributes: {
+            class: "container mx-auto"
+        }
+    },
+    twSection: {
+        name: 'Section',
+        tag: 'section'
+    },
+    twCard: {
+        name: 'Card',
+        tag: 'div',
+        attributes: {
+            class: "bg-white shadow-md p-4 rounded-lg"
+        }
+    },
+}
+
 export const layoutComponents = {
     flex: {
         name: 'Flex',
         tag: 'Flex',
         element: Flex,
-        ui: true // This is a UI component, not a site component, so props like site and pages are not available
+        ui: true, // This is a UI component, not a site component, so props like site and pages are not available
+        hidden: true
     },
     box: {
         name: 'Box',
         tag: 'Box',
         element: Box,
-        ui: true 
+        ui: true,
+        hidden: true
     },
     grid: {
         name: 'Grid',
         tag: 'Grid',
         element: Grid,
-        ui: true
+        ui: true,
+        hidden: true
     },
     container: {
         name: 'Container',
         tag: 'Container',
         element: Container,
-        ui: true // This is a UI component, not a site component, so props like site and pages are not available
+        ui: true, // This is a UI component, not a site component, so props like site and pages are not available
+        hidden: true
     },
     section: {
         name: 'Section',
         tag: 'Section',
         element: Section,
-        ui: true 
+        ui: true,
+        hidden: true
     },
     card: {
         name: 'Card',
         tag: 'Card',
         element: Card,
-        ui: true 
-    },
-    avatar: {
-        name: 'Avatar',
-        tag: 'Avatar',
-        element: Avatar,
-        ui: true 
+        ui: true,
+        hidden: true
     }
-    
 } as any;
 
 export const textComponents = {

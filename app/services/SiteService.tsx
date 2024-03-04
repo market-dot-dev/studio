@@ -42,6 +42,25 @@ class SiteService {
         return SiteService.getOnlySiteFromUserId(userId);
     }
 
+    static async getSiteInfo(siteId: string) {
+        const site = await prisma.site.findUnique({
+            where: {
+                id: siteId
+            },
+            select: {
+                logo: true,
+                subdomain: true,
+                user: {
+                    select: {
+                        projectName: true,
+                        projectDescription: true,
+                    }
+                }
+            }
+        });
+        return site;
+    }
+
     static async getSiteAndPages(id: string) {
         const userId = await SessionService.getCurrentUserId();
         const site = await prisma.site.findUnique({

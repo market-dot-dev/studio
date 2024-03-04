@@ -4,11 +4,14 @@ import prisma from "@/lib/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
-import { Feature } from "@prisma/client";
+import { Feature, TierVersion } from "@prisma/client";
 import ProductService from "./ProductService";
 import SessionService from "./SessionService";
+import FeatureService from "./feature-service";
+import SubscriptionService from "./SubscriptionService";
 
 export type TierWithFeatures = Tier & { features?: Feature[] };
+export type TierVersionWithFeatures = TierVersion & { features?: Feature[]};
 
 class TierService {
   static async createStripePrice(tier: Tier) {
@@ -139,6 +142,9 @@ class TierService {
       await TierService.createStripePrice(tier);
     }
 
+    let newlyWrittenVersion: TierVersionWithFeatures | undefined;
+    let featuresIdsToAttach: string[] = [];
+
     // Start a transaction
     const result = await prisma.$transaction(async (prisma) => {
       // Fetch the current tier data
@@ -166,9 +172,12 @@ class TierService {
         },
       });
 
-      if(TierService.shouldCreateNewVersion(currentTier, tierData)) {
+      const hasSubscribers = await SubscriptionService.hasSubscribers(id);
+      const shouldCreateNewVersion = await TierService.shouldCreateNewVersion(currentTier, tierData);
+
+      if(hasSubscribers && shouldCreateNewVersion) {
         // Create a new TierVersion record with the pre-update price and stripePriceId
-        await prisma.tierVersion.create({
+        const writtenVersion = await prisma.tierVersion.create({
           data: {
             tierId: id,
             price: currentTier.price,
@@ -176,6 +185,9 @@ class TierService {
             revision: currentTier.revision,
           },
         });
+
+        newlyWrittenVersion = writtenVersion;
+        featuresIdsToAttach = (await FeatureService.findByTierId(id)).map(f => f.id);
 
         // remove the stripePriceId from the original tier
         await prisma.tier.update({
@@ -193,15 +205,16 @@ class TierService {
       return writtenTier;
     });
 
+    if(newlyWrittenVersion && featuresIdsToAttach.length > 0) {
+      await FeatureService.attachMany({ referenceId: newlyWrittenVersion.id, featureIds: featuresIdsToAttach }, 'tierVersion');
+    }
+
     return result;
   }
 
-  static shouldCreateNewVersion = (tier: Tier, tierData: Partial<Tier>) => {
-    return (
-      tierData.price &&
-      tierData.price !== tier.price &&
-      tierData.published === true
-    );
+  static shouldCreateNewVersion = async (tier: Tier, tierData: Partial<Tier>): Promise<boolean> => {
+    return tierData.published === true && 
+      Number(tierData.price) !== Number(tier.price);
   }
 
   static async onNewVersion(tier: Tier) {
@@ -219,6 +232,22 @@ class TierService {
         },
       ],
     }); 
+  }
+
+  static async getVersionsByTierId(tierId: string): Promise<TierVersionWithFeatures[]> {
+    return prisma.tierVersion.findMany({
+      where: {
+        tierId,
+      },
+      include: {
+        features: true,
+      },
+      orderBy: [
+        {
+          createdAt: "desc",
+        },
+      ],
+    });
   }
 
   static async findByUserIdWithFeatures(userId: string): Promise<TierWithFeatures[]> {
@@ -450,4 +479,4 @@ export const destroyStripePriceById = async (id: string) => {
 }
 
 export default TierService;
-export const { findTier, updateTier, createTier, createStripePrice, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix } = TierService;
+export const { findTier, updateTier, createTier, createStripePrice, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId } = TierService;

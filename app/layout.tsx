@@ -39,6 +39,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+      </head>
       <body className={cn(cal.variable, inter.variable)}>
         <Providers>
           {children}

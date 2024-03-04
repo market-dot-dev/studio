@@ -7,15 +7,15 @@ import {
   Button,
 } from "@tremor/react";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { Subscription, User } from "@prisma/client";
+import { useEffect, useState } from "react";
+import { User } from "@prisma/client";
+import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
 import useCurrentSession from "@/app/contexts/current-user-context";
 
 import { onClickSubscribe } from '@/app/services/StripeService';
-import { findSubscriptionByTierId, isSubscribed } from '@/app/services/SubscriptionService';
+import { findSubscriptionByTierId } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
-import { signOut } from "next-auth/react";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 
 const checkoutCurrency = "USD";
@@ -25,13 +25,6 @@ const AlreadySubscribedCard = ({ subscription }: { subscription: Subscription })
   return (<Card>
     <Text>You&apos;re already subscribed to this product.</Text>
   </Card>);
-}
-
-interface RegistrationFormProps {
-  user?: User;
-  userAttributes: Partial<User>;
-  setUserAttributes: Dispatch<SetStateAction<Partial<User>>>;
-  loggedIn: boolean;
 }
 
 const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
@@ -82,7 +75,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     }
   }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user]);
 
-  if(subscription) {
+  if(subscription && subscription.state === SubscriptionStates.active) {
     return <AlreadySubscribedCard subscription={subscription} />
   } else return (
     <>

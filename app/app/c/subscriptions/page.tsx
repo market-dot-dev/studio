@@ -1,7 +1,8 @@
 import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
-import { Subscription } from "@prisma/client";
+import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
+
 import {
   Card,
   Tab,
@@ -13,9 +14,7 @@ import {
   Text,
   Bold,
 } from "@tremor/react";
-import CancelSubscriptionButton from "./cancel-subscription-button";
 import SubscriptionService from "@/app/services/SubscriptionService";
-import LinkButton from "@/components/common/link-button";
 import Link from "next/link";
 
 const SubscriptionCard = async ({ subscription }: { subscription: Subscription }) => {
@@ -51,7 +50,12 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
 
 export default async function SubscriptionsList({ params }: { params: { id: string } }) {
   const subscriptions = await SubscriptionService.findSubscriptions();
-  const anySubscriptions = subscriptions && subscriptions.length > 0;
+
+  const activeSubscriptions = subscriptions && subscriptions.filter(sub => sub.state === SubscriptionStates.active) || [];
+  const pastSubscriptions = subscriptions && subscriptions.filter(sub => sub.state === SubscriptionStates.canceled) || [];
+
+  const anyActive = activeSubscriptions.length > 0;
+  const anyPast = pastSubscriptions.length > 0;
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
@@ -64,20 +68,19 @@ export default async function SubscriptionsList({ params }: { params: { id: stri
           </TabList>
           <TabPanels className="pt-6">
             <TabPanel>
-              {(subscriptions || []).map(element => <SubscriptionCard subscription={element} key={element.id} />)}
-              {!anySubscriptions && <div className="flex flex-col space-y-2">
+              {activeSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
+              {!anyActive && <div className="flex flex-col space-y-2">
                 <h2>No active subscriptions</h2>
               </div>}
             </TabPanel>
             <TabPanel>
-              <div className="flex flex-col space-y-2">
+              {pastSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
+              {!anyPast && <div className="flex flex-col space-y-2">
                 <h2>No past subscriptions</h2>
-              </div>
+              </div>}
             </TabPanel>
           </TabPanels>
         </TabGroup>
-
-
       </div>
     </div>
   );
