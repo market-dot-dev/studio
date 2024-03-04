@@ -5,6 +5,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
 import useCurrentSession, { CurrentSessionProvider } from "@/app/contexts/current-user-context";
 import { userExists, setSignUp } from "@/app/services/registration-service";
+import OTPInputElement from "./otp-input-element"
 
 export function CustomerLoginComponent({ redirect, signup = false } : { redirect?: string, signup?: boolean }) {
     
@@ -116,7 +117,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     };
 
     const handleVerification = async (e: any) => {
-        e.preventDefault();
+        // e.preventDefault();
         
         if (!verificationEmail || !verificationCode) return;
 
@@ -200,9 +201,23 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
             ) : (
                 <div>
                     <label className="block text-sm text-slate-400 text-center mb-4">A verification code has been sent to your email. Please enter the value here.</label>
-                    <div className="flex flex-row gap-4 w-full">
+                    <div className="flex flex-col gap-4 w-full items-center">
                         <div className="items-center w-full">
-                            <TextInput 
+
+                            <OTPInputElement
+                                verifying={isSubmitting}
+                                onInput={(e: any) => {
+                                    setVerificationCode(e.target.value);
+                                    console.log(e.target.value)
+                                    setError(null);
+                                }}
+                                onComplete={(e: any) => {
+                                    handleVerification(e);
+                                }}
+                             />
+ 
+                            
+                            {/* <TextInput 
                                 placeholder="000000"
                                 value={verificationCode}
                                 onChange={(e) => setVerificationCode(e.target.value)}
@@ -211,11 +226,11 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                                         handleVerification(e);
                                     }
                                 }}
-                                autoFocus />
+                                autoFocus /> */}
                         </div>
-                        <div className="items-center">
+                        {/* <div className="items-center">
                             <Button onClick={handleVerification} loading={isSubmitting} disabled={isSubmitting}>Verify Code</Button>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
             )}
