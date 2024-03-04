@@ -28,6 +28,19 @@ import { c } from "@vercel/blob/dist/put-96a1f07e";
 
 
 
+import ImageInsert from "./image/image-insert";
+
+export type Insertable = {
+    name: string,
+    tag: string,
+    element: any,
+    preview?: any,
+    insert?: any, // component for inserting the element
+    ui?: boolean,
+    hidden?: boolean
+    attributes?: any
+}
+
 export const siteComponents = {
     tiers: {
         name: 'Tiers',
@@ -52,22 +65,22 @@ export const siteComponents = {
         tag: 'Menu',
         element: MenuServer,
         preview: MenuClient
-    },
+    } as Insertable,
     sitename: {
         name: 'Site Name',
         tag: 'SiteName',
         element: SiteName
-    },
+    } as Insertable,
     sitedescription: {
         name: 'Site Description',
         tag: 'SiteDescription',
         element: SiteDescription
-    },
+    } as Insertable,
     siteowner: {
         name: 'Site Owner',
         tag: 'SiteOwner',
         element: SiteOwner
-    },
+    } as Insertable,
     
 } as any;
 
@@ -159,7 +172,13 @@ export const layoutComponents = {
         element: Card,
         ui: true,
         hidden: true
-    }
+    },
+    image: {
+        name: 'Image',
+        tag: 'img',
+        insert: ImageInsert,
+        ui: true 
+    } as Insertable
 } as any;
 
 export const textComponents = {
@@ -168,43 +187,43 @@ export const textComponents = {
         tag: 'Text',
         element: Text,
         ui: true
-    },
+    } as Insertable,
     heading: {
         name: 'Heading',
         tag: 'Heading',
         element: Heading,
         ui: true 
-    },
+    } as Insertable,
     blockquote: {
         name: 'Blockquote',
         tag: 'Blockquote',
         element: Blockquote,
         ui: true 
-    },
+    } as Insertable,
     code: {
         name: 'Code',
         tag: 'Code',
         element: Code,
         ui: true 
-    },
+    } as Insertable,
     em: {
         name: 'Em',
         tag: 'Em',
         element: Em,
         ui: true 
-    },
+    } as Insertable,
     link: {
         name: 'Link',
         tag: 'Link',
         element: Link,
         ui: true 
-    },
+    } as Insertable,
     quote: {
         name: 'Quote',
         tag: 'Quote',
         element: Quote,
         ui: true 
-    }
+    } as Insertable
 
 } as any;
 
