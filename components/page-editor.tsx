@@ -8,7 +8,7 @@ import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import {siteComponents, layoutComponents, textComponents, standardComponents} from "./site/insertables";
 import renderElement from "./site/page-renderer";
 import { useRouter } from "next/navigation";
-
+import type { Insertable } from "./site/insertables";
 import { Flex, Grid, Col, Badge, Callout } from "@tremor/react";
 import DashboardCard from "./common/dashboard-card";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
@@ -119,22 +119,24 @@ const DraftSelectBox = ({
   );
 };
 
-function ComponentsBlock({components, insertAtCursor} : any ) : JSX.Element {
+function ComponentsBlock({components, insertAtCursor} : { components : Insertable[], insertAtCursor: (prop: string) => void} ) : JSX.Element {
   return (
     <Grid numItems={2} className="gap-2 w-full">
       {Object.values(components).filter((item: any) => !item.hidden).map(
-        (component: any, index: number) => {
+        (component: Insertable, index: number) => {
           return (
             <Col key={index}>
                 <div
-                  className="cursor-pointer bg-gray-200 hover:bg-gray-600 hover:text-white hover:font-bold p-2 rounded-md h-full text-xs align-middle text-center py-4"
-                  onClick={() =>
-                    insertAtCursor(
-                      `<${component.tag}${component.attributes ? ' ' + Object.keys(component.attributes).map((key) => `${key}="${component.attributes[key]}"`).join(' ') : ''}></${component.tag}>`,
-                    )
+                  className="cursor-pointer bg-gray-200 hover:bg-gray-600 hover:text-white hover:font-bold rounded-md h-full text-xs align-middle text-center">
+                    { component.insert ? <component.insert insertAtCursor={insertAtCursor} /> :
+                      <div className="p-2 py-4" onClick={() => {
+                        insertAtCursor(
+                          `<${component.tag}${component.attributes ? ' ' + Object.keys(component.attributes).map((key) => `${key}="${component.attributes[key]}"`).join(' ') : ''}></${component.tag}>`,
+                        )
+                    }}>
+                      {component.name}
+                    </div>
                   }
-                >
-                  {component.name}
                 </div>
             </Col>
           );
