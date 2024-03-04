@@ -4,8 +4,8 @@ import TiersClient from "./tiers/tiers-client";
 import MenuServer from "./menu/menu-server";
 import MenuClient from "./menu/menu-client";
 
-import UserInfoServer from "./userinfo/user-info-server";
-import UserInfoClient from "./userinfo/user-info-client";
+// import UserInfoServer from "./userinfo/user-info-server";
+// import UserInfoClient from "./userinfo/user-info-client";
 
 import SiteName from "./site-name/site-name";
 
@@ -35,12 +35,12 @@ export const siteComponents = {
         element: TiersServer,
         preview: TiersClient
     },
-    userinfo: {
-        name: 'User Info',
-        tag: 'UserInfo',
-        element: UserInfoServer,
-        preview: UserInfoClient
-    },
+    // userinfo: {
+    //     name: 'User Info',
+    //     tag: 'UserInfo',
+    //     element: UserInfoServer,
+    //     preview: UserInfoClient
+    // },
     // subscriptions: {
     //     name: 'Subscriptions',
     //     tag: 'Subscriptions',
