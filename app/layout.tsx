@@ -10,7 +10,7 @@ import '@radix-ui/themes/styles.css';
 const title =
   "Gitwallet";
 const description =
-  "Gitwallet: The business builder made for open source maintainers.";
+  "Gitwallet: The business builder made for open source projects.";
 const image = "https://gitwallet.co/thumbnail.png";
 
 export const metadata: Metadata = {

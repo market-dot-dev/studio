@@ -63,7 +63,7 @@ export default function HomePage() {
         <div className="overflow-y-auto">
           <div className="w-7/8 lg:w-5/6">
             <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
-            <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for open source maintainers.</h1>
+            <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for open source projects.</h1>
             <p className="text-xl font-extralight leading-6 mb-6">Gitwallet is a toolkit to <b>build, sell and manage</b> robust support offerings for your repos and ecosystems.</p>
             <div>
               <SimpleEmailInputForm email={{}} placeholder="Enter Your Email" />
