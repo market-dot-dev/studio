@@ -38,26 +38,27 @@ function markdownToHtmlTable(markdown: string) {
   }
 
 
-// This component will be used to prepare data for the preview mode
-export default async function tiers() {
-    
-    const response = await fetch('/api/preview/tiers');
-    const tiers = await response.json() as TierWithFeatures[];
-    
-    let markdownTable = `| ${tiers.map(tier => tier.name).join(' | ')} |\n`;
-    markdownTable += `| ${tiers.map(() => '-').join(' | ')} |\n`;
 
-    const maxFeatures = Math.max(...tiers.map(tier => tier.features.length));
+export default async function tiers(buyUrl?: string) {
+  const response = await fetch('/api/preview/tiers');
+  const tiers = await response.json() as TierWithFeatures[];
 
-    for (let i = 0; i < maxFeatures; i++) {
-        const row = tiers.map(tier => tier.features[i] ? tier.features[i].name : '');
-        markdownTable += `| ${row.join(' | ')} |\n`;
-    }
-    
+  
+  let markdownTable = `| ${tiers.map(tier => tier.name).join(' | ')} |\n`;
+  markdownTable += `| ${tiers.map(() => '-').join(' | ')} |\n`;
 
-    return {
-      html : markdownToHtmlTable(markdownTable),
-      markdown : markdownTable
-    }
-    
+  
+  const featuresRows = tiers.map(tier => tier.features.map(feature => `✅ ${feature.name}`).join('<br />')).join(' | ');
+
+  const priceRows = tiers.map(tier => tier.price ? `$${tier.price}` : '').join(' | ');
+  const buyLinkRows = tiers.map(tier => `<a href="${buyUrl ?? ''}">Buy</a>`).join(' | ');
+
+  markdownTable += `| ${featuresRows} |\n`; // Second row with features
+  markdownTable += `| ${priceRows} |\n`; // Third row with prices
+  markdownTable += `| ${buyLinkRows} |`; // Fourth row with "Buy" links
+
+  return {
+    html: markdownToHtmlTable(markdownTable),
+    markdown: markdownTable 
+  };
 }

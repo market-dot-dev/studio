@@ -6,15 +6,16 @@ import githubEmbeds from "../site/github-embeds";
 import CodeSnippet from "../embedables/code-snippet";
 import DashboardCard from "../common/dashboard-card";
 
-export default function GithubEmbedItem({site, index} : any) {
+
+export default function GithubEmbedItem({site, index, rootUrl} : any) {
     
   const [active, setActive] = useState(0)
   const [markdown, setMarkdown] = useState<string>('');
   const [html, setHtml] = useState<string>('');
-
   
   useEffect(() => {
-    githubEmbeds[index]().then(({html, markdown} : {html: string, markdown: string}) => {
+
+    githubEmbeds[index](rootUrl).then(({html, markdown} : {html: string, markdown: string}) => {
       setHtml(html);
       setMarkdown(markdown);
     });
