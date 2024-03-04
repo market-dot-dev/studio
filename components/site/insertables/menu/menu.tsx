@@ -1,11 +1,11 @@
 'use client'
 
-import DomainService from "@/app/services/domain-service";
+import { getRootUrl } from "@/app/services/domain-service";
 import { Flex } from "@tremor/react";
 
 export default function Menu( { site, page, nav }: { site: any, page: any, nav: any[] } ) {
     // const url = `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-    const url = DomainService.getRootUrl(site.subdomain ?? 'app', page.id === site.homepageId ? '' : `/${page.slug}`);
+    const url = getRootUrl(site.subdomain ?? 'app', page.id === site.homepageId ? '' : `/${page.slug}`);
 
     return (
         <Flex justifyContent="start" className="gap-4">
