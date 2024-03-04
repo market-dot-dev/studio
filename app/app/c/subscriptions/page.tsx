@@ -51,8 +51,8 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
 export default async function SubscriptionsList({ params }: { params: { id: string } }) {
   const subscriptions = await SubscriptionService.findSubscriptions();
 
-  const activeSubscriptions = subscriptions && subscriptions.filter(sub => sub.state === SubscriptionStates.active) || [];
-  const pastSubscriptions = subscriptions && subscriptions.filter(sub => sub.state === SubscriptionStates.canceled) || [];
+  const activeSubscriptions = subscriptions && subscriptions.filter(sub => sub.isActive()) || [];
+  const pastSubscriptions = subscriptions && subscriptions.filter(sub => sub.isCancelled()) || [];
 
   const anyActive = activeSubscriptions.length > 0;
   const anyPast = pastSubscriptions.length > 0;
