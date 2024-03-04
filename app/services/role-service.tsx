@@ -7,6 +7,7 @@ class RoleService {
     /^\/$/,
     /^\/alpha$/,
     /^\/embed\//,
+    /^\/api\/og\//,
     /^\/home$/,
     /^\/alpha\/login$/,
     /^\/login$/,

@@ -119,6 +119,7 @@ model Site {
   homepageId    String?
   pages         Page[]
   posts         Post[]
+  media         Media[]
   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
@@ -251,4 +252,16 @@ model Feature {
   isEnabled    Boolean       @default(false)
 
   @@index([userId])
+}
+
+
+model Media {
+  id        String   @id @default(cuid())
+  siteId  String
+  url      String
+  site    Site     @relation(fields: [siteId], references: [id], onDelete: Cascade) 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([siteId])
 }
