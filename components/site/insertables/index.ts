@@ -36,7 +36,9 @@ export type Insertable = {
     element: any,
     preview?: any,
     insert?: any, // component for inserting the element
-    ui?: boolean
+    ui?: boolean,
+    hidden?: boolean
+    attributes?: any
 }
 
 export const siteComponents = {

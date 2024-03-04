@@ -122,7 +122,7 @@ const DraftSelectBox = ({
 function ComponentsBlock({components, insertAtCursor} : { components : Insertable[], insertAtCursor: (prop: string) => void} ) : JSX.Element {
   return (
     <Grid numItems={2} className="gap-2 w-full">
-      {Object.values(components).map(
+      {Object.values(components).filter((item: any) => !item.hidden).map(
         (component: Insertable, index: number) => {
           return (
             <Col key={index}>
@@ -131,7 +131,7 @@ function ComponentsBlock({components, insertAtCursor} : { components : Insertabl
                     { component.insert ? <component.insert insertAtCursor={insertAtCursor} /> :
                       <div className="p-2 py-4" onClick={() => {
                         insertAtCursor(
-                          `<${component.tag}></${component.tag}>`,
+                          `<${component.tag}${component.attributes ? ' ' + Object.keys(component.attributes).map((key) => `${key}="${component.attributes[key]}"`).join(' ') : ''}></${component.tag}>`,
                         )
                     }}>
                       {component.name}
