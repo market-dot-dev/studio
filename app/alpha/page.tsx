@@ -68,7 +68,7 @@ export default function HomePage() {
           <div className="w-7/8 lg:w-5/6">
             <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
             <Badge size="xs" className="mb-4">Now Open for Alpha Users</Badge>
-            <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for open source maintainers.</h1>
+            <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for open source projects.</h1>
             <p className="text-xl font-extralight leading-6 mb-6">Gitwallet is a toolkit to <b>build, sell and manage</b> robust support offerings for your repos and ecosystems.</p>
             <div>
               <Suspense>
@@ -152,16 +152,6 @@ export default function HomePage() {
           </AccordionList>
 
         </section>
-
-        {/* 
-          <section className="w-5/6 mb-8">
-            <Divider>Founders Note</Divider>
-            <p className="text-center text-sm mb-2">We are building Gitwallet with a simple goal: to make it easier for open source maintainers to build strong businesses on the foundation of their OSS work. We often joke that &quot;the creator economy&quot; forgot about the original online creators - the OSS developers that built the Internet. We want to help fill that gap. We hope Gitwallet becomes a toolkit for developers around the world to turn into entrepreneurs.</p>
-            <p className="text-center text-sm">- <b><Link href="https://www.github.com/tarunsachdeva" target="_blank" className="">Tarun</Link> & the Gitwallet team</b></p>
-            <Divider />
-        </section> */}
-
-
       </div>
 
     </div>
