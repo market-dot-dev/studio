@@ -12,6 +12,7 @@ export type SessionUser = {
   stripePaymentMethodId?: string;
   stripeProductId?: string;
   stripeAccountId?: string;
+  stripeAccountDisabled?: boolean;
 };
 
 export type Session = {
@@ -31,6 +32,7 @@ export const createSessionUser = (user: User): SessionUser => {
     stripePaymentMethodId: user.stripePaymentMethodId || undefined,
     stripeProductId: user.stripeProductId || undefined,
     stripeAccountId: user.stripeAccountId || undefined,
+    stripeAccountDisabled: user.stripeAccountDisabled || false,
   }
 }
 
