@@ -8,10 +8,11 @@ import TierService from "./TierService";
 import EmailService from "./EmailService";
 import SessionService from "./SessionService";
 import { SubscriptionWithUser } from "../models/Subscription";
+import { Subscription as SubscriptionSql } from "@prisma/client";
 
 class SubscriptionService {
-  static async findSubscription(subscriptionId: string): Promise<SubscriptionWithUser | null> {
-    return prisma.subscription.findUnique({
+  static async findSubscription(subscriptionId: string): Promise<Subscription | null> {
+    const subscription = await prisma.subscription.findUnique({
       where: {
         id: subscriptionId,
       },
@@ -20,6 +21,8 @@ class SubscriptionService {
         tier: true,
       },
     });
+
+    return subscription ? new Subscription(subscription) : null;
   }
 
   static async findActiveSubscription(subscriptionId: string): Promise<SubscriptionWithUser | null> {
@@ -59,7 +62,7 @@ class SubscriptionService {
       }
     });
 
-    return subscription;
+    return subscription ? new Subscription(subscription) : null;
   }
 
   static async findSubscriptions(): Promise<Subscription[]> {
@@ -72,7 +75,7 @@ class SubscriptionService {
       }
     });
 
-    return subscriptions;
+    return subscriptions.map(subscription => new Subscription(subscription));
   }
 
   static async subscribedToUser(userId: string): Promise<SubscriptionWithUser[]> {
@@ -106,7 +109,7 @@ class SubscriptionService {
 
     const existingSubscription = await SubscriptionService.findSubscriptionByTierId({ tierId });
 
-    let res: Subscription | null = null;
+    let res: SubscriptionSql | null = null;
 
     const attributes = {
       state: SubscriptionStates.active,
@@ -114,6 +117,8 @@ class SubscriptionService {
       tierId: tierId,
       tierVersionId: tierVersionId,
       stripeSubscriptionId: subscription.id,
+      cancelledAt: null,
+      activeUntil: null,
     };
 
     if(existingSubscription){
@@ -156,11 +161,13 @@ class SubscriptionService {
 
     if (!subscription) throw new Error('Subscription not found');
 
-    await StripeService.cancelSubscription(subscription.stripeSubscriptionId);
+    const stripeSubscription = await StripeService.cancelSubscription(subscription.stripeSubscriptionId);
 
     await prisma.subscription.update({
       data: {
         state: SubscriptionStates.canceled,
+        cancelledAt: new Date(),
+        activeUntil: new Date(stripeSubscription.current_period_end * 1000),
       },
       where: {
         id: subscriptionId
@@ -176,6 +183,7 @@ class SubscriptionService {
   }
 
   // Update a subscription (change tier, for example)
+  /*
   static async updateSubscription(subscriptionId: string, newTierId: string) {
     const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
     if (!subscription) throw new Error('Subscription not found');
@@ -184,6 +192,16 @@ class SubscriptionService {
     return await prisma.subscription.update({
       where: { id: subscriptionId },
       data: { tierId: newTierId },
+    });
+  }
+*/
+
+  static async updateSubscription(subscriptionId: string, attributes: Partial<SubscriptionSql>) {
+    const res = await prisma.subscription.update({
+      where: {
+        id: subscriptionId,
+      },
+      data: attributes,
     });
   }
 

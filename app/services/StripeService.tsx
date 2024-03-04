@@ -355,7 +355,7 @@ class StripeService {
   }
 
   static async cancelSubscription(subscriptionId: string) {
-    await stripe.subscriptions.cancel(subscriptionId);
+    return await stripe.subscriptions.cancel(subscriptionId);
   }
 
   static async generateStripeCSRF(userId: string) {

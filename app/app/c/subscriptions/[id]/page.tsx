@@ -51,7 +51,7 @@ export default async function SubscriptionDetail({ params }: { params: { id: str
   const tier = subscription.tier!;
   const maintainer = await UserService.findUser(tier.userId);
   const features = await FeatureService.findByTierId(tier.id);
-  const cancelled = subscription.state === SubscriptionStates.canceled;
+  const cancelled = subscription.isCancelled();
   const resubUrl = DomainService.getRootUrl(maintainer?.gh_username || '', `/checkout/${tier.id}`);
 
   return (
