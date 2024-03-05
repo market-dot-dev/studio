@@ -41,7 +41,6 @@ export default async function StripeConnect({
     user = await UserService.findUser(session.user.id!);
   }
 
-
   const code = searchParams["code"] as string;
   const state = searchParams["state"] as string;
 

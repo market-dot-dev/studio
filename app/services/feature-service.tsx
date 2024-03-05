@@ -18,6 +18,7 @@ interface AttachDetachAttributes {
 }
 
 interface FeatureUpdateAttributes extends Partial<FeatureCreateAttributes> {}
+type FeatureCreateAttributesWithoutId = Omit<FeatureCreateAttributes, 'id'>;
 
 class FeatureService {
   static async find(id: string) {
@@ -51,7 +52,7 @@ class FeatureService {
       },
     });
 
-    return features ? features : [];
+    return features || [];
   }
 
   static async findByCurrentUser(): Promise<Feature[]> {
@@ -67,7 +68,7 @@ class FeatureService {
       },
     });
 
-    return features ? features : [];
+    return features || [];
   }
 
   static async create(attributes: FeatureCreateAttributes) {
@@ -76,12 +77,8 @@ class FeatureService {
       throw new Error("UserId is required to create a feature.");
     }
     
-    // FIXME: try Omit<FeatureCreateAttributes, 'id'> instead of casting to any
-    const attrs = attributes as any;
-    attrs['id'] = undefined;
-
     return prisma.feature.create({
-      data: attrs as FeatureCreateAttributes,
+      data: attributes as FeatureCreateAttributesWithoutId,
     });
   }
 
@@ -125,8 +122,51 @@ class FeatureService {
   static async detach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
     return FeatureService.detachMany({ featureIds: [featureId], referenceId }, type);
   }
+
+  static async setFeatureCollection(referenceId: string, featureIds: string[]) {
+    const tier = await prisma.tier.findUnique({
+      where: { id: referenceId },
+      include: { features: true },
+    });
+  
+    if (!tier) {
+      throw new Error(`Tier with ID ${referenceId} not found.`);
+    }
+  
+    const existingFeatureIds = new Set((tier.features || []).map(f => f.id));
+    const newFeatureIds = new Set(featureIds);
+  
+    const featuresToAttach = [...newFeatureIds].filter(id => !existingFeatureIds.has(id));
+    const featuresToDetach = [...existingFeatureIds].filter(id => !newFeatureIds.has(id));
+  
+    const operations = [];
+  
+    if (featuresToAttach.length > 0) {
+      operations.push(FeatureService.attachMany({ referenceId, featureIds: featuresToAttach }, 'tier'));
+    }
+  
+    if (featuresToDetach.length > 0) {
+      operations.push(FeatureService.detachMany({ referenceId, featureIds: featuresToDetach }, 'tier'));
+    }
+  
+    await Promise.all(operations);
+  }
+  
+  static async haveFeatureIdsChanged(tierId: string, newFeatureIds?: string[]): Promise<boolean> {
+    const currentFeatures = await FeatureService.findByTierId(tierId);
+    const currentFeatureIds = new Set(currentFeatures.map(feature => feature.id));
+    const newFeatureIdsSet = new Set(newFeatureIds || []);
+  
+    return !FeatureService.setsAreEqual(currentFeatureIds, newFeatureIdsSet);
+  }
+  
+  static setsAreEqual<T>(setA: Set<T>, setB: Set<T>): boolean {
+    if (setA.size !== setB.size) return false;
+    for (const item of setA) if (!setB.has(item)) return false;
+    return true;
+  }
 }
 
-export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser, attachMany } = FeatureService;
+export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser, attachMany, setFeatureCollection, haveFeatureIdsChanged } = FeatureService;
 
 export default FeatureService;

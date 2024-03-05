@@ -112,7 +112,7 @@ class TierService {
     return tier;
   }
 
-  static async updateTier(id: string, tierData: Partial<Tier>) {
+  static async updateTier(id: string, tierData: Partial<Tier>, newFeatures?: Feature[]) {
     // Ensure the current user is the owner of the tier or has permissions to update it
     const userId = await SessionService.getCurrentUserId();
 
@@ -174,8 +174,9 @@ class TierService {
 
       const hasSubscribers = await SubscriptionService.hasSubscribers(id);
       const shouldCreateNewVersion = await TierService.shouldCreateNewVersion(currentTier, tierData);
+      const featuresChanged = newFeatures ? (await FeatureService.haveFeatureIdsChanged(id, newFeatures.map(f => f.id))) : false;
 
-      if(hasSubscribers && shouldCreateNewVersion) {
+      if(hasSubscribers && (shouldCreateNewVersion || featuresChanged)) {
         // Create a new TierVersion record with the pre-update price and stripePriceId
         const writtenVersion = await prisma.tierVersion.create({
           data: {

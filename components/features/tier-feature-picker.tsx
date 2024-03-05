@@ -5,20 +5,26 @@ import React, { useState, useEffect } from "react";
 import { Feature, Tier } from "@prisma/client";
 import FeatureAddRemoveToggle from "@/components/features/feature-add-remove-toggle";
 import { Text } from "@tremor/react";
-import { attach, detach } from "@/app/services/feature-service";
 import { TierWithFeatures, getTiersForMatrix } from "@/app/services/TierService";
 import { findByCurrentUser } from "@/app/services/feature-service";
+import LoadingDots from "../icons/loading-dots";
+import {
+  CheckSquare2 as CheckSquare,
+} from "lucide-react";
 
 interface TierFeaturePickerWidgetProps {
   tierId?: string;
   newTier?: Tier;
   selectedFeatures: Record<string, Feature[]>;
   setSelectedFeatures: (features: Record<string, Feature[]>) => void;
+  setFeaturesChanged?: (changed: boolean) => void;
 }
 
-const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatures, setSelectedFeatures }) => {
+const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatures, setSelectedFeatures, setFeaturesChanged }) => {
   const [savedTiers, setSavedTiers] = useState<TierWithFeatures[]>([]);
   const [features, setFeatures] = useState<Feature[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [originalFeatures, setOriginalFeatures] = useState<Record<string, Feature[]>>({});
 
   const anyFeatures = features.length > 0;
 
@@ -29,7 +35,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
 
     findByCurrentUser().then((featuresData) => {
       setFeatures(featuresData.filter(f => f.isEnabled));
-    });
+    }).then(() => setLoading(false));
   }, [newTier, tierId])
 
   
@@ -41,6 +47,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
       initialSelection[tier.id] = tier.features ?? [];
     });
     setSelectedFeatures(initialSelection);
+    setOriginalFeatures(initialSelection);
   }, [savedTiers, setSelectedFeatures]);
 
   const handleFeatureToggle = async (feature: Feature, tierId: string) => {
@@ -49,22 +56,24 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
 
     if (isAlreadySelected) {
       updatedFeatures = selectedFeatures[tierId].filter(f => f.id !== feature.id);
-      if(tierId) await detach({ featureId: feature.id, referenceId: tierId }, 'tier');
     } else {
       updatedFeatures = [...(selectedFeatures[tierId] || []), feature];
-      if(tierId) await attach({ featureId: feature.id, referenceId: tierId }, 'tier');
     }
 
     setSelectedFeatures({
       ...selectedFeatures,
       [tierId]: updatedFeatures,
     });
+
+    const featuresChanged = JSON.stringify(updatedFeatures) !== JSON.stringify(originalFeatures[tierId]);
+    setFeaturesChanged && setFeaturesChanged(featuresChanged);
   };
 
   return (
     <div>
       <div className="overflow-x-auto">
-        { !anyFeatures && <Text>Loading service offerings for this tier...If you haven&apos;t created any yet, you can define your Service offering <a href="/features" className="underline">here</a>.</Text> }
+        { loading && <LoadingDots /> }
+        { !loading && !anyFeatures && <Text>You haven&apos;t listed the services you offer yet. You can do that <a href="/features" className="underline">here</a>.</Text> }
         { anyFeatures &&
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
@@ -88,11 +97,14 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
                   </td>
                   {tiers.map(tier => (
                     <td key={tier.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      { tier.id === tierId ? 
                       <FeatureAddRemoveToggle
                         feature={feature}
                         isAttached={selectedFeatures[tier.id]?.some(f => f.id === feature.id)}
                         onToggle={() => handleFeatureToggle(feature, tier.id).catch(console.error)}
-                      />
+                      /> :
+                      <CheckSquare className="text-green-500" />
+                      }
                     </td>
                   ))}
                 </tr>

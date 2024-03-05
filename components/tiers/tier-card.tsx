@@ -1,11 +1,9 @@
 'use client';
 
-import PrimaryButton from '@/components/common/link-button';
 import { TierWithFeatures } from '@/app/services/TierService';
 import { Card, Button, Text } from '@tremor/react';
 import Link from 'next/link';
 import TierFeatureList from '@/components/features/tier-feature-list';
-import useFeatures from '@/app/hooks/use-features';
 
 type TierCardProps = {
   url?: string;

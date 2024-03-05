@@ -5,17 +5,22 @@ import {
   CheckSquare2 as CheckSquare,
 } from "lucide-react";
 
-
-const TierFeatureList = ({ features, darkMode = false }: { features: Feature[]; darkMode?: boolean }) => {
-  const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
+export const TierFeatureCheck = ({ feature, darkMode = false }: { feature: Feature; darkMode?: boolean }) => {
   const featureIconClasses = darkMode ? "text-green-400" : "text-green-500";
 
+  return (<>
+      <CheckSquare className={featureIconClasses} /> &nbsp; {feature.name}
+  </>);
+}
+
+
+const TierFeatureList = ({ features, darkMode = false }: { features: Feature[]; darkMode?: boolean }) => {
   return (<>
     <div className="text-left">
       <ul>
         {features.filter((f) => f.isEnabled).map((feature) => (
           <li key={feature.id} className="flex flex-row my-1">
-            <CheckSquare className={featureIconClasses}/> &nbsp; {feature.name}
+            <TierFeatureCheck feature={feature} darkMode={darkMode} />
           </li>
         ))}
       </ul>
