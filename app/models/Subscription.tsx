@@ -1,14 +1,13 @@
 import { User, Tier, Subscription as SubscriptionSql } from "@prisma/client"
 
 
-type SubscriptionState = 'active' | 'canceled' | 'trial';
+type SubscriptionState = 'active' | 'cancelled' | 'trial';
 type SubscriptionType = SubscriptionSql & { state: SubscriptionState | string; }
 export type SubscriptionWithUser = SubscriptionType & { user: User, tier?: Tier};
 
-export const SubscriptionStates = {
-  active: 'active' as SubscriptionState,
-  canceled: 'canceled' as SubscriptionState,
-  trial: 'trial' as SubscriptionState,
+export const SubscriptionStates: Record<string, SubscriptionState> = {
+  renewing: 'renewing' as SubscriptionState,
+  cancelled: 'cancelled' as SubscriptionState,
 }
 
 class Subscription implements SubscriptionType {
@@ -38,14 +37,18 @@ class Subscription implements SubscriptionType {
 
   isFinishingMonth() {
     return !!this.activeUntil && this.activeUntil > new Date();
-  } 
+  }
+
+  isRenewing(): boolean {
+    return this.state === SubscriptionStates.renewing;
+  }
 
   isActive(): boolean {
-    return this.state === SubscriptionStates.active || this.isFinishingMonth();
+    return this.isRenewing() || this.isFinishingMonth();
   }
 
   isCancelled(): boolean {
-    return this.state === SubscriptionStates.canceled && !this.isFinishingMonth();
+    return this.state === SubscriptionStates.cancelled;
   }
 }
 

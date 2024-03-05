@@ -26,6 +26,20 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
   const maintainer = await UserService.findUser(tier.userId);
   if (!maintainer) return null;
 
+  let status = '';
+  if (subscription.state === SubscriptionStates.renewing) {
+    status = 'Subscribed';
+  } else if (subscription.state === SubscriptionStates.cancelled) {
+    if (subscription.activeUntil && subscription.activeUntil <= new Date()) {
+      status = 'Cancelled';
+    } else if (subscription.activeUntil) {
+      const daysRemaining = Math.ceil((subscription.activeUntil.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
+      status = `Cancelled -- usable for ${daysRemaining} more day${daysRemaining !== 1 ? 's' : ''}`;
+    } else {
+      status = 'Cancelled';
+    }
+  }
+
   return (<Card>
     <div className="flex flex-col space-y-2">
       <div className="flex flex-row justify-between">
@@ -36,6 +50,9 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
 
       <Bold>Tier: {tier.name}</Bold>
 
+      <Text>Status:&nbsp;
+        { status}
+      </Text>
       <Text>Description: {tier.tagline}</Text>
       <p>${tier.price} / month</p>
       <p>{subscription.tierVersionId}</p>
@@ -49,10 +66,10 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
 }
 
 export default async function SubscriptionsList({ params }: { params: { id: string } }) {
-  const subscriptions = await SubscriptionService.findSubscriptions();
+  const subscriptions = await SubscriptionService.findSubscriptions() || [];
 
-  const activeSubscriptions = subscriptions && subscriptions.filter(sub => sub.isActive()) || [];
-  const pastSubscriptions = subscriptions && subscriptions.filter(sub => sub.isCancelled()) || [];
+  const activeSubscriptions = subscriptions.filter(sub => sub.isActive());
+  const pastSubscriptions = subscriptions.filter(sub => !sub.isActive());
 
   const anyActive = activeSubscriptions.length > 0;
   const anyPast = pastSubscriptions.length > 0;

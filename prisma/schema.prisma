@@ -203,7 +203,7 @@ model Subscription {
   activeUntil          DateTime?
   cancelledAt          DateTime?
   createdAt            DateTime @default(now())
-  state       String @default("active")
+  state       String @default("renewing")
 
   user        User         @relation(fields: [userId], references: [id])
   tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
