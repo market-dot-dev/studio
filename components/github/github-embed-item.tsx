@@ -15,7 +15,7 @@ export default function GithubEmbedItem({site, index, rootUrl} : any) {
   
   useEffect(() => {
 
-    githubEmbeds[index]({site, rootUrl}).then(({html, markdown} : {html: string, markdown: string}) => {
+    githubEmbeds[index]?.callback?.({site, rootUrl}).then(({html, markdown} : {html: string, markdown: string}) => {
       setHtml(html);
       setMarkdown(markdown);
     });
