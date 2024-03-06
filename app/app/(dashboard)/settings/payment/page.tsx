@@ -84,6 +84,14 @@ export default async function PaymentSettings({
               </Text>
               <DisconnectStripeAccountButton user={user} />
               <>
+                { canSell && (
+                  <Card
+                    className="mb-4 flex flex-col bg-green-100 border border-green-400 px-4 py-3 text-green-700"
+                  >
+                    <Text className="font-semibold">Your Stripe account in good standing</Text>
+                    <Text className="mt-2">You can sell your services and receive payments.</Text>
+                  </Card>
+                )}
                 {!canSell && (
                   <Card
                     className="mb-4 flex flex-col bg-gray-100 border border-gray-400 px-4 py-3 text-gray-700"
