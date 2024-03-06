@@ -48,6 +48,7 @@ class SiteService {
                 id: siteId
             },
             select: {
+                userId: true,
                 logo: true,
                 subdomain: true,
                 user: {

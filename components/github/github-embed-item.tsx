@@ -15,7 +15,7 @@ export default function GithubEmbedItem({site, index, rootUrl} : any) {
   
   useEffect(() => {
 
-    githubEmbeds[index](rootUrl).then(({html, markdown} : {html: string, markdown: string}) => {
+    githubEmbeds[index]({site, rootUrl}).then(({html, markdown} : {html: string, markdown: string}) => {
       setHtml(html);
       setMarkdown(markdown);
     });
@@ -40,6 +40,7 @@ export default function GithubEmbedItem({site, index, rootUrl} : any) {
               <TabPanel>
                 <DashboardCard>
                   <div dangerouslySetInnerHTML={{__html: html}} />
+                  
                 </DashboardCard>
               </TabPanel>
               <TabPanel>
