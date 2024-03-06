@@ -8,10 +8,11 @@ import TierService from "./TierService";
 import EmailService from "./EmailService";
 import SessionService from "./SessionService";
 import { SubscriptionWithUser } from "../models/Subscription";
+import { Subscription as SubscriptionSql } from "@prisma/client";
 
 class SubscriptionService {
-  static async findSubscription(subscriptionId: string): Promise<SubscriptionWithUser | null> {
-    return prisma.subscription.findUnique({
+  static async findSubscription(subscriptionId: string): Promise<Subscription | null> {
+    const subscription = await prisma.subscription.findUnique({
       where: {
         id: subscriptionId,
       },
@@ -20,13 +21,26 @@ class SubscriptionService {
         tier: true,
       },
     });
+
+    return subscription ? new Subscription(subscription) : null;
   }
 
   static async findActiveSubscription(subscriptionId: string): Promise<SubscriptionWithUser | null> {
+    const currentDate = new Date();
     return prisma.subscription.findUnique({
       where: {
         id: subscriptionId,
-        state: SubscriptionStates.active,
+        OR: [
+          {
+            state: SubscriptionStates.renewing,
+          },
+          {
+            state: SubscriptionStates.cancelled,
+            activeUntil: {
+              gt: currentDate,
+            },
+          },
+        ],
       },
       include: {
         user: true,
@@ -59,7 +73,7 @@ class SubscriptionService {
       }
     });
 
-    return subscription;
+    return subscription ? new Subscription(subscription) : null;
   }
 
   static async findSubscriptions(): Promise<Subscription[]> {
@@ -72,16 +86,30 @@ class SubscriptionService {
       }
     });
 
-    return subscriptions;
+    return subscriptions.map(subscription => new Subscription(subscription));
   }
 
   static async subscribedToUser(userId: string): Promise<SubscriptionWithUser[]> {
+    const currentDate = new Date();
     return prisma.subscription.findMany({
       where: {
-        state: SubscriptionStates.active,
-        tier: {
-          userId: userId,
-        },
+        OR: [
+          {
+            state: SubscriptionStates.renewing,
+            tier: {
+              userId: userId,
+            },
+          },
+          {
+            state: SubscriptionStates.cancelled,
+            activeUntil: {
+              gt: currentDate,
+            },
+            tier: {
+              userId: userId,
+            },
+          },
+        ],
       },
       include: {
         user: true,
@@ -106,14 +134,16 @@ class SubscriptionService {
 
     const existingSubscription = await SubscriptionService.findSubscriptionByTierId({ tierId });
 
-    let res: Subscription | null = null;
+    let res: SubscriptionSql | null = null;
 
     const attributes = {
-      state: SubscriptionStates.active,
+      state: SubscriptionStates.renewing,
       userId: userId,
       tierId: tierId,
       tierVersionId: tierVersionId,
       stripeSubscriptionId: subscription.id,
+      cancelledAt: null,
+      activeUntil: null,
     };
 
     if(existingSubscription){
@@ -156,11 +186,13 @@ class SubscriptionService {
 
     if (!subscription) throw new Error('Subscription not found');
 
-    await StripeService.cancelSubscription(subscription.stripeSubscriptionId);
+    const stripeSubscription = await StripeService.cancelSubscription(subscription.stripeSubscriptionId);
 
     await prisma.subscription.update({
       data: {
-        state: SubscriptionStates.canceled,
+        state: SubscriptionStates.cancelled,
+        cancelledAt: new Date(),
+        activeUntil: new Date(stripeSubscription.current_period_end * 1000),
       },
       where: {
         id: subscriptionId
@@ -175,33 +207,41 @@ class SubscriptionService {
     ])
   }
 
-  // Update a subscription (change tier, for example)
-  static async updateSubscription(subscriptionId: string, newTierId: string) {
-    const subscription = await prisma.subscription.findUnique({ where: { id: subscriptionId } });
-    if (!subscription) throw new Error('Subscription not found');
-
-    await StripeService.updateSubscription(subscription.stripeSubscriptionId, newTierId);
+  static async updateSubscription(subscriptionId: string, attributes: Partial<SubscriptionSql>) {
     return await prisma.subscription.update({
-      where: { id: subscriptionId },
-      data: { tierId: newTierId },
+      where: {
+        id: subscriptionId,
+      },
+      data: attributes,
     });
   }
 
   static async isSubscribed(userId: string, tierId: string): Promise<boolean> {
+    const currentDate = new Date();
     const subscription = await prisma.subscription.findFirst({
-      where: { userId: userId, tierId: tierId, state: SubscriptionStates.active },
+      where: {
+        userId: userId,
+        tierId: tierId,
+        OR: [
+          {
+            state: SubscriptionStates.renewing,
+          },
+          {
+            state: SubscriptionStates.cancelled,
+            activeUntil: {
+              gt: currentDate,
+            },
+          },
+        ],
+      },
     });
-
+  
     return !!subscription;
   }
 
   // Check if a user can subscribe to a tier (e.g., not already subscribed)
   static async canSubscribe(userId: string, tierId: string): Promise<boolean> {
-    const existingSubscription = await prisma.subscription.findFirst({
-      where: { userId: userId, tierId: tierId, state: SubscriptionStates.active },
-    });
-    
-    return !existingSubscription;
+    return !(await SubscriptionService.isSubscribed(userId, tierId));
   }
 };
 

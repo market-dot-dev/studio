@@ -1,7 +1,7 @@
 export const siteName = 'Gitwallet';
-export const siteDescription = 'The business builder for open source.';
+export const siteDescription = 'The business builder for open source projects.';
 export const projectName = 'Gitwallet';
-export const projectDescription = 'The business builder for open source.';
+export const projectDescription = 'The business builder for open source projects.';
 export const homepageTitle = 'Welcome';
 export const homepageTemplate = `<Section size="3">
     <Container size="3">

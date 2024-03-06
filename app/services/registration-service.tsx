@@ -87,6 +87,7 @@ class RegistrationService {
       title: homepageTitle,
       slug: 'index',
       content: homepageTemplate,
+      draft: false,
       user: {
         connect: {
           id: user.id,

@@ -21,6 +21,7 @@ export async function getSite() {
                 },
                 select: {
                     id: true,
+                    userId: true,
                     subdomain: true,
                     homepageId: true
                 }

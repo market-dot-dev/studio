@@ -75,7 +75,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     }
   }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user]);
 
-  if(subscription && subscription.state === SubscriptionStates.active) {
+  if(subscription?.isActive()) {
     return <AlreadySubscribedCard subscription={subscription} />
   } else return (
     <>
