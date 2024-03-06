@@ -89,6 +89,12 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         icon: <Code2 width={18} />,
       },
       {
+        name: "Github",
+        href: "/channels/github",
+        isActive: urlSegments[0] === "github",
+        icon: <Github width={18} />,
+      },
+      {
 
         name: "Get Support",
         href: "",
