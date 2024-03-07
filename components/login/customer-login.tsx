@@ -7,13 +7,17 @@ import useCurrentSession, { CurrentSessionProvider } from "@/app/contexts/curren
 import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
 
+// usign a local variable to avoid state update delays
+let handlingVerification = false;
+
 export function CustomerLoginComponent({ redirect, signup = false } : { redirect?: string, signup?: boolean }) {
     
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [verificationEmail, setVerificationEmail] = useState<string>('');
-    const [verificationCode, setVerificationCode] = useState<string>('');
+    
+    
     const [isSignUp, setIsSignUp] = useState(signup); 
     const [name, setName] = useState<string>('');
     
@@ -116,10 +120,13 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
     };
 
-    const handleVerification = async (e: any) => {
+    const handleVerification = async (verificationCode: string) => {
         // e.preventDefault();
         
         if (!verificationEmail || !verificationCode) return;
+        
+        if(handlingVerification) return;
+        handlingVerification = true;
 
         setIsSubmitting(true);
 
@@ -142,7 +149,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
             setError('Error verifying code. Please try again.');
         } finally {
             setIsSubmitting(false);
-            setVerificationCode('');
+            handlingVerification = false;
         }
 
     }
@@ -206,31 +213,30 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
                             <OTPInputElement
                                 verifying={isSubmitting}
+                                
+                                onComplete={(code: any) => {
+                                    setError(null);
+                                    handleVerification(code);
+                                    
+                                }}
+
                                 onInput={(e: any) => {
-                                    setVerificationCode(e.target.value);
-                                    console.log(e.target.value)
                                     setError(null);
                                 }}
-                                onComplete={(e: any) => {
-                                    handleVerification(e);
+
+                                onPaste={(e: any) => {
+                                    
+                                    setTimeout(() => {
+                                        handleVerification(e.target.value)
+                                    }, 0)
+                                    
+                                    setError(null);
                                 }}
+
+
                              />
- 
-                            
-                            {/* <TextInput 
-                                placeholder="000000"
-                                value={verificationCode}
-                                onChange={(e) => setVerificationCode(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleVerification(e);
-                                    }
-                                }}
-                                autoFocus /> */}
+
                         </div>
-                        {/* <div className="items-center">
-                            <Button onClick={handleVerification} loading={isSubmitting} disabled={isSubmitting}>Verify Code</Button>
-                        </div> */}
                     </div>
                 </div>
             )}
