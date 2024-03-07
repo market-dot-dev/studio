@@ -49,10 +49,11 @@ class SubscriptionService {
     });
   }
 
-  static async subscriberCount(tierId: string): Promise<number> {
+  static async subscriberCount(tierId: string, revision?: number): Promise<number> {
     return prisma.subscription.count({
       where: {
         tierId: tierId,
+        tierRevision: revision ? revision : undefined,
       }
     });
   }
@@ -152,6 +153,7 @@ class SubscriptionService {
       stripeSubscriptionId: subscription.id,
       cancelledAt: null,
       activeUntil: null,
+      tierRevision: tier.revision,
     };
 
     if(existingSubscription){

@@ -200,6 +200,7 @@ model Subscription {
   tierId               String
   stripeSubscriptionId String   @unique
   tierVersionId        String? // Foreign key to reference TierVersion
+  tierRevision         Int?
   activeUntil          DateTime?
   cancelledAt          DateTime?
   createdAt            DateTime @default(now())

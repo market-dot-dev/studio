@@ -17,6 +17,7 @@ class Subscription implements SubscriptionType {
   state: SubscriptionState | string;
   stripeSubscriptionId: string;
   tierVersionId: string | null;
+  tierRevision: number | null;
   createdAt: Date;
   activeUntil: Date | null;
   cancelledAt: Date | null;
@@ -30,6 +31,7 @@ class Subscription implements SubscriptionType {
     this.state = subscription.state;
     this.stripeSubscriptionId = subscription.stripeSubscriptionId;
     this.tierVersionId = subscription.tierVersionId;
+    this.tierRevision = subscription.tierRevision;
     this.createdAt = subscription.createdAt;
     this.activeUntil = subscription.activeUntil;
     this.cancelledAt = subscription.cancelledAt;

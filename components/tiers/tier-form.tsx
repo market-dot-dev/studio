@@ -68,11 +68,12 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [selectedFeatures, setSelectedFeatures] = useState<Record<string, Feature[]>>({});
 	const [versionedAttributesChanged, setVersionedAttributesChanged] = useState(false);
 	const [tierSubscriberCount, setTierSubscriberCount] = useState(0);
+	const [currentRevisionSubscriberCount, setCurrentRevisionSubscriberCount] = useState(0);
 	const [versions, setVersions] = useState<TierVersionWithFeatures[]>([]);
 	const [featuresChanged, setFeaturesChanged] = useState(false);
 
 	const newRecord = !tier?.id;
-	const tierHasSubscribers = tierSubscriberCount > 0;
+	const tierHasSubscribers = currentRevisionSubscriberCount > 0;
 
 	const label = newRecord ? 'Create Tier' : 'Update Tier';
 
@@ -131,8 +132,10 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 		if(tier.id){
 			getVersionsByTierId(tier.id).then(setVersions);
 			subscriberCount(tier.id).then(setTierSubscriberCount);
+
+			subscriberCount(tier.id, tier.revision).then(setCurrentRevisionSubscriberCount);
 		}
-	}, [tier.id]);
+	}, [tier.id, tier.revision]);
 
 	useEffect(() => {
 		if(tier && tierObj){
@@ -218,9 +221,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						/>
 					</div>
 
-					{ tierSubscriberCount && tierSubscriberCount > 0 &&
+					{ tierHasSubscribers &&
 					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Subscribers: {tierSubscriberCount}</label>
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Subscribers: {currentRevisionSubscriberCount} (all revs: {tierSubscriberCount})</label>
 					</div> }
 
 					<div className="mb-4">
