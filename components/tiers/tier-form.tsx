@@ -4,7 +4,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { Flex, Text, Button, Card, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
-import { hasSubscribers } from '@/app/services/SubscriptionService';
+import { subscriberCount } from '@/app/services/SubscriptionService';
 import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, TierVersionWithFeatures } from '@/app/services/TierService';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
@@ -18,11 +18,23 @@ interface TierFormProps {
 }
 
 const TierVersionCard = async ({ tierVersion }: { tierVersion: TierVersionWithFeatures }) => {
-	return <Card key={tierVersion.id} className="p-2" >
+	const features = tierVersion.features || [];
+
+	return <Card key={tierVersion.id} className="p-2 mb-2" >
 		<Text>Revision: {tierVersion.revision}</Text>
 		<Text>Price: {tierVersion.price}</Text>
-		<Text>Stripe Id: {tierVersion.stripePriceId}</Text>
-		<Text>Features: {JSON.stringify((tierVersion.features || []).map(f => f.name).join(', '))}</Text>
+		<Text>
+			Features: 
+			{features.length > 0 ? 
+				<>
+					<br/>
+					<ul>
+						{(tierVersion.features || []).map(f => <li key={f.id}>{f.name}</li>)}
+					</ul>
+					</> :
+				<>&nbsp;none</>
+			}
+		</Text>
 	</Card>
 };
 
@@ -55,11 +67,12 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [tier, setTier] = useState<Tier>((tierObj ? tierObj : newTier()) as Tier);
 	const [selectedFeatures, setSelectedFeatures] = useState<Record<string, Feature[]>>({});
 	const [versionedAttributesChanged, setVersionedAttributesChanged] = useState(false);
-	const [tierHasSubscribers, setTierHasSubscribers] = useState(false);
+	const [tierSubscriberCount, setTierSubscriberCount] = useState(0);
 	const [versions, setVersions] = useState<TierVersionWithFeatures[]>([]);
 	const [featuresChanged, setFeaturesChanged] = useState(false);
 
 	const newRecord = !tier?.id;
+	const tierHasSubscribers = tierSubscriberCount > 0;
 
 	const label = newRecord ? 'Create Tier' : 'Update Tier';
 
@@ -93,8 +106,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
         const featureIds = (selectedFeatures[tier.id] || []).map(f => f.id);
         await attachMany({ referenceId: savedTier.id, featureIds: featureIds }, 'tier');
       } else {
-        const newFeatures = featuresChanged ? selectedFeatures[tier.id] : undefined;
-        savedTier = await updateTier(tier.id as string, tier, newFeatures);
+        const newFeatureSet = featuresChanged ? selectedFeatures[tier.id] : undefined;
+        savedTier = await updateTier(tier.id as string, tier, newFeatureSet);
       }
       window.location.href = `/tiers/${savedTier.id}`;
     } catch (error) {
@@ -117,7 +130,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	useEffect(() => {
 		if(tier.id){
 			getVersionsByTierId(tier.id).then(setVersions);
-			hasSubscribers(tier.id).then(setTierHasSubscribers);
+			subscriberCount(tier.id).then(setTierSubscriberCount);
 		}
 	}, [tier.id]);
 
@@ -204,6 +217,11 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							onChange={handleInputChange}
 						/>
 					</div>
+
+					{ tierSubscriberCount && tierSubscriberCount > 0 &&
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Subscribers: {tierSubscriberCount}</label>
+					</div> }
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Status</label>

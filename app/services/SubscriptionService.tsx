@@ -49,6 +49,14 @@ class SubscriptionService {
     });
   }
 
+  static async subscriberCount(tierId: string): Promise<number> {
+    return prisma.subscription.count({
+      where: {
+        tierId: tierId,
+      }
+    });
+  }
+
   static async hasSubscribers(tierId: string): Promise<boolean> {
     const subscriptions = await prisma.subscription.findMany({
       where: {
@@ -245,5 +253,5 @@ class SubscriptionService {
   }
 };
 
-export const { createSubscription, cancelSubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed, hasSubscribers } = SubscriptionService;
+export const { createSubscription, cancelSubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed, hasSubscribers, subscriberCount } = SubscriptionService;
 export default SubscriptionService;

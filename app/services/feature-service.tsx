@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma"; // Adjust the import path based on your actual Prisma setup
 import { Feature } from "@prisma/client";
 import UserService from "./UserService";
+import { TierVersionWithFeatures, TierWithFeatures } from "./TierService";
 
 interface FeatureCreateAttributes {
   name?: string | null;
@@ -31,6 +32,24 @@ class FeatureService {
     const tierWithFeatures = await prisma.tier.findUnique({
       where: {
         id: tierId,
+      },
+      include: {
+        features: true,
+      },
+    });
+
+    // If the tier is not found or it has no features, return an empty array
+    if (!tierWithFeatures || !tierWithFeatures.features) {
+      return [];
+    }
+
+    return tierWithFeatures.features;
+  }
+
+  static async findByTierVersionId(tierVersionId: string): Promise<Feature[]> {
+    const tierWithFeatures = await prisma.tierVersion.findUnique({
+      where: {
+        id: tierVersionId,
       },
       include: {
         features: true,
@@ -123,35 +142,35 @@ class FeatureService {
     return FeatureService.detachMany({ featureIds: [featureId], referenceId }, type);
   }
 
-  static async setFeatureCollection(referenceId: string, featureIds: string[]) {
-    const tier = await prisma.tier.findUnique({
+  static async setFeatureCollection(referenceId: string, featureIds: string[], type: 'tier' | 'tierVersion') {
+    const isTier = type === 'tier';
+
+    const query = {
       where: { id: referenceId },
       include: { features: true },
-    });
+    };
+
+    const features = isTier ? await FeatureService.findByTierId(referenceId) : await FeatureService.findByTierVersionId(referenceId);
   
-    if (!tier) {
-      throw new Error(`Tier with ID ${referenceId} not found.`);
-    }
-  
-    const existingFeatureIds = new Set((tier.features || []).map(f => f.id));
+    const existingFeatureIds = new Set(features.map(f => f.id));
     const newFeatureIds = new Set(featureIds);
   
     const featuresToAttach = [...newFeatureIds].filter(id => !existingFeatureIds.has(id));
     const featuresToDetach = [...existingFeatureIds].filter(id => !newFeatureIds.has(id));
-  
+
     const operations = [];
   
-    if (featuresToAttach.length > 0) {
-      operations.push(FeatureService.attachMany({ referenceId, featureIds: featuresToAttach }, 'tier'));
+    if (featuresToDetach.length > 0) {
+      operations.push(FeatureService.detachMany({ referenceId, featureIds: featuresToDetach }, type));
     }
   
-    if (featuresToDetach.length > 0) {
-      operations.push(FeatureService.detachMany({ referenceId, featureIds: featuresToDetach }, 'tier'));
+    if (featuresToAttach.length > 0) {
+      operations.push(FeatureService.attachMany({ referenceId, featureIds: featuresToAttach }, type));
     }
   
     await Promise.all(operations);
   }
-  
+
   static async haveFeatureIdsChanged(tierId: string, newFeatureIds?: string[]): Promise<boolean> {
     const currentFeatures = await FeatureService.findByTierId(tierId);
     const currentFeatureIds = new Set(currentFeatures.map(feature => feature.id));

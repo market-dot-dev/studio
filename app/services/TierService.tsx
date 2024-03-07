@@ -112,7 +112,7 @@ class TierService {
     return tier;
   }
 
-  static async updateTier(id: string, tierData: Partial<Tier>, newFeatures?: Feature[]) {
+  static async updateTier(id: string, tierData: Partial<Tier>, newFeatureSet?: Feature[]) {
     // Ensure the current user is the owner of the tier or has permissions to update it
     const userId = await SessionService.getCurrentUserId();
 
@@ -143,7 +143,9 @@ class TierService {
     }
 
     let newlyWrittenVersion: TierVersionWithFeatures | undefined;
-    let featuresIdsToAttach: string[] = [];
+
+    let existingFeatureSetIds: string[] = [];
+    let newFeatureSetIds: string[] = newFeatureSet ? newFeatureSet.map(f => f.id) : [];
 
     // Start a transaction
     const result = await prisma.$transaction(async (prisma) => {
@@ -174,7 +176,7 @@ class TierService {
 
       const hasSubscribers = await SubscriptionService.hasSubscribers(id);
       const shouldCreateNewVersion = await TierService.shouldCreateNewVersion(currentTier, tierData);
-      const featuresChanged = newFeatures ? (await FeatureService.haveFeatureIdsChanged(id, newFeatures.map(f => f.id))) : false;
+      const featuresChanged = newFeatureSet ? (await FeatureService.haveFeatureIdsChanged(id, newFeatureSet.map(f => f.id))) : false;
 
       if(hasSubscribers && (shouldCreateNewVersion || featuresChanged)) {
         // Create a new TierVersion record with the pre-update price and stripePriceId
@@ -188,7 +190,7 @@ class TierService {
         });
 
         newlyWrittenVersion = writtenVersion;
-        featuresIdsToAttach = (await FeatureService.findByTierId(id)).map(f => f.id);
+        existingFeatureSetIds = (await FeatureService.findByTierId(id)).map(f => f.id);
 
         // remove the stripePriceId from the original tier
         await prisma.tier.update({
@@ -206,8 +208,14 @@ class TierService {
       return writtenTier;
     });
 
-    if(newlyWrittenVersion && featuresIdsToAttach.length > 0) {
-      await FeatureService.attachMany({ referenceId: newlyWrittenVersion.id, featureIds: featuresIdsToAttach }, 'tierVersion');
+    if(newlyWrittenVersion){
+      if(existingFeatureSetIds.length > 0) {
+        await FeatureService.setFeatureCollection(newlyWrittenVersion.id, existingFeatureSetIds, 'tierVersion');
+      }
+
+      if(newFeatureSetIds.length > 0) {
+        await FeatureService.setFeatureCollection(tier.id, newFeatureSetIds, 'tier');
+      }
     }
 
     return result;
