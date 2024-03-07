@@ -72,9 +72,9 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
     const stepURL = onboardingStepsURLs[step as keyof typeof onboardingStepsURLs];
     const stepDescription = onboardingStepsDescription[step as keyof typeof onboardingStepsDescription];
     const stepIcon = onboardingStepsIcons[step as keyof typeof onboardingStepsIcons];
-    const stepIconDiv = 
+    const stepIconDiv =
         <div className="me-2">
-            <Icon icon={stepIcon} size={"xl"} />    
+            <Icon icon={stepIcon} size={"xl"} />
         </div>;
 
     const activeStep = currentStep === step;
@@ -82,28 +82,28 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
 
     return (
         <>
-        <div className="flex flex-row">
-        {dashboard && stepIconDiv}
-        <div className={!dashboard && activeStep ? `mx-2 p-4 rounded-xl w-full bg-gray-200` : !dashboard ? `p-4 w-full` : ``}>
-            <div className="px-1 mb-2">
-                {/* <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}> */}
-                <div className="flex items-center justify-start gap-3">
-                    {/* <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} /> */}
-                    <Bold>{stepTitle}</Bold>
-                </div>
-                <div className="flex">
-                    <Text>{stepDescription}</Text>
-                </div>
-            </div>
-            <div>
-                <div className="p-0 leading-tight">
-                    {children}
-                </div>
-            </div>
+            <div className="flex flex-row">
+                {dashboard && stepIconDiv}
+                <div className={!dashboard && activeStep ? `mx-2 p-4 rounded-xl w-full bg-gray-200` : !dashboard ? `p-4 w-full` : ``}>
+                    <div className="px-1 mb-2">
+                        {/* <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}> */}
+                        <div className="flex items-center justify-start gap-3">
+                            {/* <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} /> */}
+                            <Bold>{stepTitle}</Bold>
+                        </div>
+                        <div className="flex">
+                            <Text>{stepDescription}</Text>
+                        </div>
+                    </div>
+                    <div>
+                        <div className="p-0 leading-tight">
+                            {children}
+                        </div>
+                    </div>
 
-            <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step === onboardingSteps.setupSite && siteId ? stepURL + siteId : stepURL)}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
-        </div>
-        </div>
+                    <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step === onboardingSteps.setupSite && siteId ? stepURL + siteId : stepURL)}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
+                </div>
+            </div>
 
         </>
     )
@@ -159,12 +159,12 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
 
     return (
         <div className={`flex max-w-screen-xl flex-col space-y-2` + (!dashboard ? ` mb-4` : ``)}>
-            
+
             {!dashboard && !isDismissed &&
-            <div className="flex justify-between m-0">
-                <Bold>A quick guide to help you setup...</Bold>
-                <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
-            </div>}
+                <div className="flex justify-between m-0">
+                    <Bold>A quick guide to help you setup...</Bold>
+                    <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
+                </div>}
 
             <Flex flexDirection="col" alignItems="stretch" className="gap-8">
 
@@ -176,7 +176,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                         <Text>Here&apos;s a quick guide to get you started.&nbsp;</Text>
                     </div>}
 
-
                 <ConditionalWrapper condition={dashboard ?? true}
                     wrapper={children =>
                         <Card className="max-w-full p-4">
@@ -185,19 +184,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                     }
                 >
                     <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
-                        
-                        <TodoItem
-                            title="Setup your project"
-                            step={onboardingSteps.setupProject}
-                            currentStep={currentStep}
-                            pathName={pathName}
-                            completedSteps={completedSteps}
-                            setCompletedSteps={setCompletedSteps}
-                            dashboard={dashboard}
-                            className=""
-                        />
-
-                        {dashboard && <Divider className="my-3" />}
 
                         <TodoItem
                             step={onboardingSteps.setupPayment}
@@ -218,6 +204,20 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                             setCompletedSteps={setCompletedSteps}
                             dashboard={dashboard}
                         />
+
+                        {dashboard && <Divider className="my-3" />}
+
+                        <TodoItem
+                            title="Setup your project"
+                            step={onboardingSteps.setupProject}
+                            currentStep={currentStep}
+                            pathName={pathName}
+                            completedSteps={completedSteps}
+                            setCompletedSteps={setCompletedSteps}
+                            dashboard={dashboard}
+                            className=""
+                        />
+
                         {dashboard && <Divider className="my-3" />}
 
                         <TodoItem
@@ -233,9 +233,9 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                 </ConditionalWrapper>
             </Flex>
             {dashboard && !isDismissed &&
-            <div className="flex justify-end m-0">
-                <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
-            </div>}
+                <div className="flex justify-end m-0">
+                    <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
+                </div>}
         </div>
     )
 }

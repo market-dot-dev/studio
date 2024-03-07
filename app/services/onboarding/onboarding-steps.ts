@@ -42,10 +42,10 @@ export const onboardingStepsURLs = {
 }
 
 export const onboardingStepsTitles = {
-    setupProject: 'Setup Project Details',
     setupPayment: 'Connect Payout Account',
     setupTiers: 'Define Services & Tiers',
-    setupSite: 'Publish your Site',
+    setupProject: 'Add Project Details',
+    setupSite: 'Review your Site',
 }
 
 const onboardingState = {} as any;
