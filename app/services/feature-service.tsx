@@ -3,7 +3,6 @@
 import prisma from "@/lib/prisma"; // Adjust the import path based on your actual Prisma setup
 import { Feature } from "@prisma/client";
 import UserService from "./UserService";
-import { TierVersionWithFeatures, TierWithFeatures } from "./TierService";
 
 interface FeatureCreateAttributes {
   name?: string | null;
@@ -19,7 +18,6 @@ interface AttachDetachAttributes {
 }
 
 interface FeatureUpdateAttributes extends Partial<FeatureCreateAttributes> {}
-type FeatureCreateAttributesWithoutId = Omit<FeatureCreateAttributes, 'id'>;
 
 class FeatureService {
   static async find(id: string) {
@@ -96,8 +94,11 @@ class FeatureService {
       throw new Error("UserId is required to create a feature.");
     }
     
+    const attrs = attributes as any;
+    attrs['id'] = undefined;
+
     return prisma.feature.create({
-      data: attributes as FeatureCreateAttributesWithoutId,
+      data: attrs as FeatureCreateAttributes,
     });
   }
 
