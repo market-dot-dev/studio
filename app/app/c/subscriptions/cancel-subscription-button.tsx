@@ -6,13 +6,13 @@ import { Button } from "@tremor/react";
 import { useState } from "react";
 import LoadingDots from "@/components/icons/loading-dots";
 
-const CancelSubscriptionButton = ({ subscription }: { subscription: Subscription }) => {
+const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }) => {
   const [loading, setLoading] = useState(false);
 
   return (
     <Button size="xs" className="w-min" variant="secondary" onClick={async() => {
       setLoading(true);
-      cancelSubscription(subscription.id).finally(() => {
+      cancelSubscription(subscriptionId).finally(() => {
         setLoading(false)
         window.location.reload();
       });

@@ -10,7 +10,6 @@ import {
   CheckSquare2 as CheckSquare,
 } from "lucide-react";
 import { Bold } from "@tremor/react";
-import { SubscriptionStates } from "@/app/models/Subscription";
 import DomainService from "@/app/services/domain-service";
 
 const formatFeatureLink = async (feature: Feature) => {
@@ -72,7 +71,7 @@ export default async function SubscriptionDetail({ params }: { params: { id: str
             { features.map(f => <FeatureAction feature={f} key={f.id} />) }
 
             <Bold>Manage your Subscription</Bold>
-            <CancelSubscriptionButton subscription={subscription} />
+            <CancelSubscriptionButton subscriptionId={subscription.id} />
           </div>
         </> }
       </div>
