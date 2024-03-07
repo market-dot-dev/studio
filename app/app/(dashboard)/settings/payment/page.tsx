@@ -72,7 +72,7 @@ export default async function PaymentSettings({
           {!stripeConnected && <>
             <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
             <Text>
-              Connect your Stripe account to manage and receive payments.
+              Connect your Stripe account to manage and receive payments.If you have made changes recently, try refreshing this page to see the latest status.
             </Text>
             <StripeOauthButton userId={user.id!} />
           </>}
