@@ -95,18 +95,19 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {feature.name}
                   </td>
-                  {tiers.map(tier => (
-                    <td key={tier.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  {tiers.map(tier => {
+                    const isAlreadySelected = selectedFeatures[tier.id]?.some(f => f.id === feature.id);
+                    return <td key={tier.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       { tier.id === tierId ? 
                       <FeatureAddRemoveToggle
                         feature={feature}
-                        isAttached={selectedFeatures[tier.id]?.some(f => f.id === feature.id)}
+                        isAttached={isAlreadySelected}
                         onToggle={() => handleFeatureToggle(feature, tier.id).catch(console.error)}
                       /> :
-                      <CheckSquare className="text-green-500" />
+                      (isAlreadySelected ? <CheckSquare className="text-green-500" /> : null)
                       }
                     </td>
-                  ))}
+                  })}
                 </tr>
               ))}
             </tbody>
