@@ -212,10 +212,10 @@ class TierService {
       if(existingFeatureSetIds.length > 0) {
         await FeatureService.setFeatureCollection(newlyWrittenVersion.id, existingFeatureSetIds, 'tierVersion');
       }
+    }
 
-      if(newFeatureSetIds.length > 0) {
-        await FeatureService.setFeatureCollection(tier.id, newFeatureSetIds, 'tier');
-      }
+    if(newFeatureSetIds.length > 0) {
+      await FeatureService.setFeatureCollection(tier.id, newFeatureSetIds, 'tier');
     }
 
     return result;
