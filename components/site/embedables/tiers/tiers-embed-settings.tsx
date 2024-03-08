@@ -18,13 +18,23 @@ export default function TiersEmbedSettings({settings, setSettings} : { settings:
           min={1}
           max={6}
           /> */}
-          <Text>Dark Mode</Text>
-          <input
-            type="checkbox"
-            checked={settings.darkmode}
-            onChange={(e) => {
-              setSettings((prev: any) => ({...prev, darkmode: e.target.checked}))
-            }} />
+          <label>
+            <Flex className="gap-2">
+              <input
+                type="checkbox"
+                checked={settings.darkmode}
+                onChange={(e) => {
+                  setSettings((prev: any) => {
+                    if(e.target.checked) {
+                      return {...prev, darkmode: e.target.checked}
+                    } else {
+                      return {}
+                    }
+                  })
+                }} />
+              <Text>Dark Mode</Text>
+            </Flex>
+          </label>
       </Flex>
     </Flex>
   )

@@ -25,23 +25,34 @@ export default function EmbedItem({site, index} : any) {
             <TabList variant="solid" className="font-bold">
               <Tab icon={EyeOpenIcon} className={ active === 0 ? 'bg-white' : ''}>Preview</Tab>
               <Tab icon={CodeIcon} className={ active === 1 ? 'bg-white' : ''}>Code</Tab>
-              
             </TabList>
-            <Settings settings={settings} setSettings={setSettings} />
-            <TabPanels>
-              <TabPanel>
-                <DashboardCard>
-                  <Component site={site} settings={settings} />
-                </DashboardCard>
-              </TabPanel>
-              <TabPanel>
-                <DashboardCard>
-                  <CodeSnippet code={`<script data-domain='${domain}' data-widget='${index}' data-settings='${JSON.stringify(settings)}' src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} />
-                </DashboardCard>
+            <Flex className="w-full gap-4" alignItems="stretch">
+              <div className="grow">
+              <TabPanels>
+                <TabPanel>
+                  <DashboardCard>
+                    <Component site={site} settings={settings} />
+                  </DashboardCard>
+                </TabPanel>
+                <TabPanel>
+                  <DashboardCard>
+                    <CodeSnippet code={`<script data-domain='${domain}' data-widget='${index}'`
+                      + (Object.keys(settings)?.length ? ` data-settings='${JSON.stringify(settings)}'` : '')
+                      + ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} 
+                      />
+                  </DashboardCard>
                 </TabPanel>
               </TabPanels>
-            </TabGroup>
-          </Col>
+              </div>
+              <div style={{width: '200px'}} >
+                <Flex flexDirection="col" alignItems="start" className="gap-4">
+                  <Title>Settings</Title>
+                  <Settings settings={settings} setSettings={setSettings} />
+                </Flex>
+              </div>
+            </Flex>
+          </TabGroup>
+        </Col>
       </Grid>
     </Flex>
   )

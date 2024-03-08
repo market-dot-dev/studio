@@ -2,9 +2,10 @@
 
     const scripts = document.getElementsByTagName('script');
     const currentScript = scripts[scripts.length - 1];
-    const protocol = currentScript.getAttribute('src').split("://")?.[0] ?? 'https';
     
-    const server = protocol + "://" + currentScript.getAttribute('data-domain');
+    
+    const server = "//" + currentScript.getAttribute('data-domain');
+    
     // convert a settings object to a query string
 
     function settingsToQueryString(jsonSettings) {
@@ -17,7 +18,7 @@
         var iframe = document.createElement('iframe');
         const widget = currentScript.getAttribute('data-widget');
         const jsonSettings = currentScript.getAttribute('data-settings');
-        iframe.src = `${server}/embed/${widget}/?${settingsToQueryString(jsonSettings)}` ; // URL of your iframe content
+        iframe.src = `${server}/embed/${widget}/`+ (jsonSettings ? `?${settingsToQueryString(jsonSettings)}` : '') ; // URL of your iframe content
         iframe.style.width = '100%';
         iframe.style.border = 'none';
         iframe.style.overflow = 'hidden';
