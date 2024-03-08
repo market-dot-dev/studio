@@ -16,6 +16,6 @@ export default async function tiers({site, rootUrl, settings}: any) {
 
   return {
     html: `<a href="${rootUrl}" target="_blank"><img src="/api/tiers/${site?.userId}${tiers}" /></a>`,
-    markdown: `<a href="${rootUrl}" target="_blank"><img src="${rootUrl}api/tiers/${site?.userId}${tiers}" /></a>`
+    markdown: `<a href="${rootUrl}"><img src="${rootUrl}api/tiers/${site?.userId}${tiers}" /></a>`
   };
 }
