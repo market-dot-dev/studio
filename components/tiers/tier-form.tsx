@@ -12,6 +12,7 @@ import PageHeading from '../common/page-heading';
 import { Feature } from '@prisma/client';
 import TierFeaturePicker from '../features/tier-feature-picker';
 import { attachMany } from '@/app/services/feature-service';
+import Link from 'next/link';
 
 interface TierFormProps {
 	tier?: Partial<Tier>;
@@ -75,7 +76,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const newRecord = !tier?.id;
 	const tierHasSubscribers = currentRevisionSubscriberCount > 0;
 
-	const label = newRecord ? 'Create Tier' : 'Update Tier';
+	const formTitle  = newRecord ? 'Create New Tier' : tier.name;
+	const buttonLabel = newRecord ? 'Create Tier' : 'Update Tier';
 
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
@@ -155,7 +157,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 				<div className="md:col-span-2 space-y-6">
 					<div className="flex justify-between">
 						<div>
-							<PageHeading title={label} />
+							<Link href="/tiers" className="underline">← All Tiers</Link>
+							<PageHeading title={formTitle} />
 						</div>
 						<div>
 							<Button
@@ -163,7 +166,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								loading={isSaving}
 								onClick={onSubmit}
 							>
-								{label}
+								{buttonLabel}
 							</Button>
 						</div>
 					</div>
