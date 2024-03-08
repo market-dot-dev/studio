@@ -41,13 +41,6 @@ export default async function PaymentSettings({
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
 }) {
-
-  const user = await UserService.getCurrentUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
   const code = searchParams["code"] as string;
   const state = searchParams["state"] as string;
 
@@ -59,6 +52,12 @@ export default async function PaymentSettings({
       console.error("Error handling Stripe OAuth callback:", error);
       // Handle error
     }
+  }
+
+  const user = await UserService.getCurrentUser();
+
+  if (!user) {
+    redirect("/login");
   }
 
   const { canSell, messageCodes, disabledReasons } = await StripeService.performStripeAccountHealthCheck();
