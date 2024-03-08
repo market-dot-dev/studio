@@ -10,9 +10,8 @@ interface FeatureAddRemoveToggleProps {
 
 const FeatureAddRemoveToggle: React.FC<FeatureAddRemoveToggleProps> = ({ feature, isAttached, onToggle }) => {
   return (
-    <div className="justify-items-center">
-      <input type="checkbox" 
-        className="border-gray-600 rounded-md p-3 accent-green-400"
+    <div>
+      <Switch 
         id={`feature-switch-${feature.id}`} 
         name={`feature-switch-${feature.id}`} 
         checked={isAttached} 

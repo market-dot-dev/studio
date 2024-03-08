@@ -209,12 +209,12 @@ class TierService {
     });
 
     if(newlyWrittenVersion){
-      if(existingFeatureSetIds.length >= 0) {
+      if(existingFeatureSetIds.length > 0) {
         await FeatureService.setFeatureCollection(newlyWrittenVersion.id, existingFeatureSetIds, 'tierVersion');
       }
     }
 
-    if(newFeatureSetIds.length >= 0) {
+    if(newFeatureSetIds.length > 0) {
       await FeatureService.setFeatureCollection(tier.id, newFeatureSetIds, 'tier');
     }
 
