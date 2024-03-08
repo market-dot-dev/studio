@@ -1,6 +1,8 @@
 'use client'
 import { OTPInput, SlotProps } from 'input-otp'
 import { cn } from "@/lib/utils";
+import { useEffect, useRef } from 'react';
+import { sl } from 'date-fns/locale';
 
 function Spinner() {
 	return (
@@ -27,12 +29,14 @@ export default function OTPInputElement({onComplete, onPaste, onInput, verifying
 			onComplete={onComplete}
 			onPaste={onPaste}
 			onInput={onInput}
+
+			autoFocus
 			
 			render={({ slots }) => (
 				<div className='flex w-full justify-center items-center'>
 					<div className="flex">
 						{slots.slice(0, 3).map((slot, idx) => (
-							<Slot key={idx} {...slot} />
+							<Slot key={idx} index={idx} {...slot} />
 						))}
 					</div>
 					{ verifying ?
@@ -41,7 +45,7 @@ export default function OTPInputElement({onComplete, onPaste, onInput, verifying
 
 					<div className="flex">
 						{slots.slice(3).map((slot, idx) => (
-							<Slot key={idx} {...slot} />
+							<Slot key={idx} index={idx+1} {...slot} />
 						))}
 					</div>
 				</div>
@@ -51,7 +55,8 @@ export default function OTPInputElement({onComplete, onPaste, onInput, verifying
 }
 
 // Feel free to copy. Uses @shadcn/ui tailwind colors.
-function Slot(props: SlotProps) {
+function Slot(props: SlotProps & { index: number }) {
+
 	return (
 		<div
 			className={cn(
