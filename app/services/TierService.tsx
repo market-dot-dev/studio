@@ -488,4 +488,4 @@ export const destroyStripePriceById = async (id: string) => {
 }
 
 export default TierService;
-export const { findTier, updateTier, createTier, createStripePrice, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId } = TierService;
+export const { findTier, updateTier, createTier, createStripePrice, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId, getTiersForUser } = TierService;

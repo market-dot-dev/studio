@@ -1,19 +1,30 @@
 import TierService from '@/app/services/TierService';
+import { NextRequest } from 'next/server';
 
 export async function GET(
-  _req: Request,
+  req: NextRequest,
   { params }: { params: { userid: string } },
 ) {
   
-  const tiers = await TierService.getTiersForUser(params.userid);
+  const searchParams = req.nextUrl.searchParams;
+  const onlyTiersString = searchParams.get('tiers');
+  const onlyTiers = onlyTiersString ? onlyTiersString.split(',') : [];
+
+  let tiers = await TierService.getTiersForUser(params.userid);
+
+  if(onlyTiers.length) {
+    tiers = tiers.filter((tier) => {
+      return onlyTiers.includes(tier.id);
+    });
+  }
 
   // find heighest number of features a tier among all tiers
   const maxFeatures = tiers.reduce((max, tier) => {
     return Math.max(max, tier.features.length);
   }, 0);
 
+  const width = (250 + 100) * tiers.length;
   const height = 300 + (maxFeatures * 24);
-
   
   const tiersMarkup = tiers.map(tier => {
     return `
@@ -43,13 +54,13 @@ export async function GET(
         
   
 
-  const svg = `<svg fill="none" width="100%" height="${height+4}" xmlns="http://www.w3.org/2000/svg">
+  const svg = `<svg fill="none" width="${width+4}" height="${height+4}" xmlns="http://www.w3.org/2000/svg">
     <foreignObject width="100%" height="100%">
       <div xmlns="http://www.w3.org/1999/xhtml">
         <style>
           .container {
             display: flex;
-            width: 100%;
+            width: ${width}px;
             height: ${height}px;
             gap: 4rem;
             justify-content: center;
@@ -57,7 +68,7 @@ export async function GET(
             font-family: -apple-system, "system-ui", "Segoe UI (Custom)", Roboto, "Helvetica Neue", "Open Sans (Custom)", system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
           }
           .tierWrap {
-            min-width: 230px;
+            width: 250px;
             margin-top: 2px;
             padding: 2rem;
             background: #fff;

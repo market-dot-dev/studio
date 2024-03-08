@@ -28,21 +28,21 @@ export default function EmbedItem({site, index} : any) {
             </TabList>
             <Flex className="w-full gap-4" alignItems="stretch">
               <div className="grow">
-              <TabPanels>
-                <TabPanel>
-                  <DashboardCard>
-                    <Component site={site} settings={settings} />
-                  </DashboardCard>
-                </TabPanel>
-                <TabPanel>
-                  <DashboardCard>
-                    <CodeSnippet code={`<script data-domain='${domain}' data-widget='${index}'`
-                      + (Object.keys(settings)?.length ? ` data-settings='${JSON.stringify(settings)}'` : '')
-                      + ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} 
-                      />
-                  </DashboardCard>
-                </TabPanel>
-              </TabPanels>
+                <TabPanels>
+                  <TabPanel>
+                    <DashboardCard>
+                      <Component site={site} settings={settings} />
+                    </DashboardCard>
+                  </TabPanel>
+                  <TabPanel>
+                    <DashboardCard>
+                      <CodeSnippet code={`<script data-domain='${domain}' data-widget='${index}'`
+                        + (Object.keys(settings)?.length ? ` data-settings='${JSON.stringify(settings)}'` : '')
+                        + ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} 
+                        />
+                    </DashboardCard>
+                  </TabPanel>
+                </TabPanels>
               </div>
               <div style={{width: '200px'}} >
                 <Flex flexDirection="col" alignItems="start" className="gap-4">
