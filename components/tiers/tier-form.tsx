@@ -13,6 +13,7 @@ import { Feature } from '@prisma/client';
 import TierFeaturePicker from '../features/tier-feature-picker';
 import { attachMany } from '@/app/services/feature-service';
 import Link from 'next/link';
+import DashboardCard from '../common/dashboard-card';
 
 interface TierFormProps {
 	tier?: Partial<Tier>;
@@ -249,6 +250,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								{!canPublishLoading && <>
 									<input type="checkbox"
 										checked={tier.published}
+										className="border-gray-600 rounded-md p-3 accent-green-400"
 										disabled={canPublishDisabled}
 										onChange={(e) => {
 											setTier({ ...tier, published: e.target.checked } as Tier);
@@ -288,9 +290,11 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						</div>}
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Features</label>
+						<DashboardCard>
 						{tier?.id ?
 							<TierFeaturePicker tierId={tier.id} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} setFeaturesChanged={setFeaturesChanged} /> :
 							<TierFeaturePicker newTier={tier} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} />}
+							</DashboardCard>
 					</div>
 				</div>
 
