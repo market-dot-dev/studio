@@ -78,35 +78,39 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   &nbsp;
                 </th>
                 {tiers.length > 0 ? tiers.map(tier => (
-                  <th key={tier.id} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th key={tier.id} className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                     {tier.name || '(Unnamed Tier)' }
                   </th>
-                )) : <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No tiers available</th>}
+                )) : <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">No tiers available</th>}
               </tr>
             </thead>
             
             <tbody className="bg-white divide-y divide-gray-200">
               {features.map(feature => (
                 <tr key={feature.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                  <td className="py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {feature.name}
                   </td>
                   {tiers.map(tier => {
                     const isAlreadySelected = selectedFeatures[tier.id]?.some(f => f.id === feature.id);
-                    return <td key={tier.id} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      { tier.id === tierId ? 
-                      <FeatureAddRemoveToggle
-                        feature={feature}
-                        isAttached={isAlreadySelected}
-                        onToggle={() => handleFeatureToggle(feature, tier.id).catch(console.error)}
-                      /> :
-                      (isAlreadySelected ? <CheckSquare className="text-green-500" /> : null)
-                      }
-                    </td>
+                    return (
+                      <td key={tier.id} className="py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                        <div className="flex justify-center">
+                        { tier.id === tierId ? 
+                          <FeatureAddRemoveToggle
+                            feature={feature}
+                            isAttached={isAlreadySelected}
+                            onToggle={() => handleFeatureToggle(feature, tier.id).catch(console.error)}
+                          /> :
+                          (isAlreadySelected ? <CheckSquare className="text-gray-500" /> : null)
+                        }
+                        </div>
+                      </td>
+                    );
                   })}
                 </tr>
               ))}
