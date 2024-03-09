@@ -77,6 +77,9 @@ dependencies:
   gray-matter:
     specifier: ^4.0.3
     version: 4.0.3
+  input-otp:
+    specifier: 0.3.31-beta
+    version: 0.3.31-beta(react-dom@18.2.0)(react@18.2.0)
   js-cookie:
     specifier: ^3.0.5
     version: 3.0.5
@@ -7062,6 +7065,16 @@ packages:
 
   /inline-style-parser@0.2.2:
     resolution: {integrity: sha512-EcKzdTHVe8wFVOGEYXiW9WmJXPjqi1T+234YpJr98RiFYKHV3cdy1+3mkTE+KHTHxFFLH51SfaGOoUdW+v7ViQ==}
+    dev: false
+
+  /input-otp@0.3.31-beta(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-PyOlHQ3qfZEPFTu08A8aDQhv4vi16RS6LWGPMN6wY0kA3zIX3dexWYnAb8NXHL3ET2QjcYgfyycCDvy3az2pwQ==}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0
+      react-dom: ^16.8 || ^17.0 || ^18.0
+    dependencies:
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /internal-slot@1.0.7:

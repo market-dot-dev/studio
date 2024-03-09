@@ -5,6 +5,10 @@ import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
 import useCurrentSession, { CurrentSessionProvider } from "@/app/contexts/current-user-context";
 import { userExists, setSignUp } from "@/app/services/registration-service";
+import OTPInputElement from "./otp-input-element"
+
+// usign a local variable to avoid state update delays
+let handlingVerification = false;
 
 export function CustomerLoginComponent({ redirect, signup = false } : { redirect?: string, signup?: boolean }) {
     
@@ -12,7 +16,8 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [verificationEmail, setVerificationEmail] = useState<string>('');
-    const [verificationCode, setVerificationCode] = useState<string>('');
+    
+    
     const [isSignUp, setIsSignUp] = useState(signup); 
     const [name, setName] = useState<string>('');
     
@@ -115,10 +120,13 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
     };
 
-    const handleVerification = async (e: any) => {
-        e.preventDefault();
+    const handleVerification = async (verificationCode: string) => {
+        // e.preventDefault();
         
         if (!verificationEmail || !verificationCode) return;
+        
+        if(handlingVerification) return;
+        handlingVerification = true;
 
         setIsSubmitting(true);
 
@@ -141,7 +149,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
             setError('Error verifying code. Please try again.');
         } finally {
             setIsSubmitting(false);
-            setVerificationCode('');
+            handlingVerification = false;
         }
 
     }
@@ -200,21 +208,34 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
             ) : (
                 <div>
                     <label className="block text-sm text-slate-400 text-center mb-4">A verification code has been sent to your email. Please enter the value here.</label>
-                    <div className="flex flex-row gap-4 w-full">
+                    <div className="flex flex-col gap-4 w-full items-center">
                         <div className="items-center w-full">
-                            <TextInput 
-                                placeholder="000000"
-                                value={verificationCode}
-                                onChange={(e) => setVerificationCode(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleVerification(e);
-                                    }
+
+                            <OTPInputElement
+                                verifying={isSubmitting}
+                                
+                                onComplete={(code: any) => {
+                                    setError(null);
+                                    handleVerification(code);
+                                    
                                 }}
-                                autoFocus />
-                        </div>
-                        <div className="items-center">
-                            <Button onClick={handleVerification} loading={isSubmitting} disabled={isSubmitting}>Verify Code</Button>
+
+                                onInput={(e: any) => {
+                                    setError(null);
+                                }}
+
+                                onPaste={(e: any) => {
+                                    
+                                    setTimeout(() => {
+                                        handleVerification(e.target.value)
+                                    }, 0)
+                                    
+                                    setError(null);
+                                }}
+
+
+                             />
+
                         </div>
                     </div>
                 </div>

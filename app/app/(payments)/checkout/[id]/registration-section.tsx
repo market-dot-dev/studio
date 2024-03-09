@@ -81,7 +81,9 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     <>
       <section className="w-7/8 mb-8 lg:w-5/6">
         <Divider className={!user?.id ? "font-bold text-lg" : ""}>Login / Signup</Divider>
-        <CustomerLoginComponent signup={true} />
+        <Card>
+          <CustomerLoginComponent signup={true} />
+        </Card>
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
