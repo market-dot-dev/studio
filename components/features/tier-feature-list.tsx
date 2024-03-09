@@ -6,7 +6,7 @@ import {
 } from "lucide-react";
 
 export const TierFeatureCheck = ({ feature, darkMode = false }: { feature: Feature; darkMode?: boolean }) => {
-  const featureIconClasses = darkMode ? "text-green-400" : "text-green-500";
+  const featureIconClasses = (darkMode ? "text-green-400" : "text-green-500" )+ " min-w-6";
 
   return (<>
       <CheckSquare className={featureIconClasses} /> &nbsp; {feature.name}

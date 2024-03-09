@@ -21,27 +21,25 @@ export default function EmbedItem({site, index} : any) {
         
         <Col numColSpan={1}>
 
-          <TabGroup defaultIndex={active} onIndexChange={(index) => setActive(index)}>
-            <TabList variant="solid" className="font-bold">
-              <Tab icon={EyeOpenIcon} className={ active === 0 ? 'bg-white' : ''}>Preview</Tab>
-              <Tab icon={CodeIcon} className={ active === 1 ? 'bg-white' : ''}>Code</Tab>
+          <Flex className="w-full gap-6" alignItems="stretch" justifyContent="start">
               
-            </TabList>
-            <Settings settings={settings} setSettings={setSettings} />
-            <TabPanels>
-              <TabPanel>
-                <DashboardCard>
-                  <Component site={site} settings={settings} />
-                </DashboardCard>
-              </TabPanel>
-              <TabPanel>
-                <DashboardCard>
-                  <CodeSnippet code={`<script data-domain='${domain}' data-widget='${index}' data-settings='${JSON.stringify(settings)}' src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} />
-                </DashboardCard>
-                </TabPanel>
-              </TabPanels>
-            </TabGroup>
-          </Col>
+            <DashboardCard className="w-3/4">
+              <Flex flexDirection="col" className="grow gap-6">
+                  
+                <Component site={site} settings={settings} />
+              
+                <CodeSnippet code={`<script data-domain='${domain}' data-widget='${index}'`
+                  + (Object.keys(settings)?.length ? ` data-settings='${JSON.stringify(settings)}'` : '')
+                  + ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} 
+                  />
+                </Flex>  
+            </DashboardCard>
+            <Flex flexDirection="col" alignItems="start" className="gap-4 w-1/4" justifyContent="start">
+                <Title>Settings</Title>
+                <Settings settings={settings} setSettings={setSettings} />
+            </Flex>
+          </Flex>
+        </Col>
       </Grid>
     </Flex>
   )

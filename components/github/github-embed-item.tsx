@@ -11,46 +11,45 @@ export default function GithubEmbedItem({site, index, rootUrl} : any) {
     
   const [active, setActive] = useState(0)
   const [markdown, setMarkdown] = useState<string>('');
+  const [settings, setSettings] = useState({} as any);
   const [html, setHtml] = useState<string>('');
+  
+  const Settings = githubEmbeds[index].settings;
   
   useEffect(() => {
 
-    githubEmbeds[index]?.callback?.({site, rootUrl}).then(({html, markdown} : {html: string, markdown: string}) => {
+    githubEmbeds[index]?.callback?.({site, rootUrl, settings}).then(({html, markdown} : {html: string, markdown: string}) => {
       setHtml(html);
       setMarkdown(markdown);
     });
 
-  }, [githubEmbeds[index]])
+  }, [githubEmbeds[index], settings])
 
   return (
-    <Flex flexDirection='col' alignItems="stretch" className='gap-4'>
+    <Flex flexDirection='col' alignItems="stretch" className='gap-4 grow'>
       <Title>{githubEmbeds[index].name}</Title>
       <Grid numItems={1} className="gap-8">
-        
         <Col numColSpan={1}>
-
-          <TabGroup defaultIndex={active} onIndexChange={(index) => setActive(index)}>
-            <TabList variant="solid" className="font-bold">
-              <Tab icon={EyeOpenIcon} className={ active === 0 ? 'bg-white' : ''}>Preview</Tab>
-              <Tab icon={CodeIcon} className={ active === 1 ? 'bg-white' : ''}>Code</Tab>
+          
+            <Flex className="w-full gap-6" alignItems="stretch" justifyContent="start">
               
-            </TabList>
+              <DashboardCard className="w-3/4">
+                <Flex flexDirection="col" className="grow gap-6">
+                  <div dangerouslySetInnerHTML={{__html: html}} />   
+                  <CodeSnippet code={markdown} /> 
+                </Flex>                
+              </DashboardCard>
+                 
+              
+              
+              <Flex flexDirection="col" alignItems="start" className="gap-4 w-1/4" justifyContent="start">
+                <Title>Embed Configuration</Title>
+                <Settings site={site} settings={settings} setSettings={setSettings} />
+              </Flex>
             
-            <TabPanels>
-              <TabPanel>
-                <DashboardCard>
-                  <div dangerouslySetInnerHTML={{__html: html}} />
-                  
-                </DashboardCard>
-              </TabPanel>
-              <TabPanel>
-                <DashboardCard>
-                  <CodeSnippet code={markdown} />
-                </DashboardCard>
-                </TabPanel>
-              </TabPanels>
-            </TabGroup>
-          </Col>
+            </Flex>
+          
+        </Col>
       </Grid>
     </Flex>
   )
