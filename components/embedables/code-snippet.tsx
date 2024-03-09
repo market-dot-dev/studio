@@ -41,9 +41,9 @@ export default function CodeSnippet({ code }: { code: string }) {
   return (
     <Flex flexDirection="col" alignItems="start" className="gap-4">
       
-      <div className="text-sm inline-flex text-left items-center bg-gray-800 text-white rounded-lg p-4 pl-6 text-wrap w-full box-border" style={{whiteSpace: 'normal'}}>
+      <pre className="text-sm inline-flex text-left items-center bg-gray-800 text-white rounded-lg p-4 pl-6 text-wrap w-full box-border" style={{whiteSpace: 'normal'}}>
         {code}
-      </div>
+      </pre>
       
       <Button onClick={() => copyToClipboard(code)}>
         {copied ? 'Copied!' : 'Copy to Clipboard'}

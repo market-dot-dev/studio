@@ -26,38 +26,29 @@ export default function GithubEmbedItem({site, index, rootUrl} : any) {
   }, [githubEmbeds[index], settings])
 
   return (
-    <Flex flexDirection='col' alignItems="stretch" className='gap-4'>
+    <Flex flexDirection='col' alignItems="stretch" className='gap-4 grow'>
       <Title>{githubEmbeds[index].name}</Title>
       <Grid numItems={1} className="gap-8">
         <Col numColSpan={1}>
-          <TabGroup defaultIndex={active} onIndexChange={(index) => setActive(index)}>
-            <TabList variant="solid" className="font-bold">
-              <Tab icon={EyeOpenIcon} className={ active === 0 ? 'bg-white' : ''}>Preview</Tab>
-              <Tab icon={CodeIcon} className={ active === 1 ? 'bg-white' : ''}>Code</Tab>
-            </TabList>
-            <Flex className="w-full gap-4" alignItems="stretch">
-              <div className="grow">
-                <TabPanels>
-                  <TabPanel>
-                    <DashboardCard>
-                      <div dangerouslySetInnerHTML={{__html: html}} />                    
-                    </DashboardCard>
-                  </TabPanel>
-                  <TabPanel>
-                    <DashboardCard>
-                      <CodeSnippet code={markdown} />
-                    </DashboardCard>
-                  </TabPanel>
-                </TabPanels>
-              </div>
-              <div style={{width: '200px'}} >
-                <Flex flexDirection="col" alignItems="start" className="gap-4">
-                  <Title>Settings</Title>
-                  <Settings site={site} settings={settings} setSettings={setSettings} />
-                </Flex>
-              </div>
+          
+            <Flex className="w-full gap-6" alignItems="stretch" justifyContent="start">
+              
+              <DashboardCard className="w-3/4">
+                <Flex flexDirection="col" className="grow gap-6">
+                  <div dangerouslySetInnerHTML={{__html: html}} />   
+                  <CodeSnippet code={markdown} /> 
+                </Flex>                
+              </DashboardCard>
+                 
+              
+              
+              <Flex flexDirection="col" alignItems="start" className="gap-4 w-1/4" justifyContent="start">
+                <Title>Embed Configuration</Title>
+                <Settings site={site} settings={settings} setSettings={setSettings} />
+              </Flex>
+            
             </Flex>
-          </TabGroup>
+          
         </Col>
       </Grid>
     </Flex>

@@ -12,11 +12,11 @@ export async function GET(
 
   let tiers = await TierService.getTiersForUser(params.userid);
 
-  if(onlyTiers.length) {
+  // if(onlyTiers.length) {
     tiers = tiers.filter((tier) => {
       return onlyTiers.includes(tier.id);
     });
-  }
+  // }
 
   // find heighest number of features a tier among all tiers
   const maxFeatures = tiers.reduce((max, tier) => {
@@ -41,7 +41,7 @@ export async function GET(
             <ul>
           ${tier.features.map(feature => {
             return `<li>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="rgb(14, 159, 110)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="m9 12 2 2 4-4"></path></svg>
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="min-width: 24px; margin-top: -2px" fill="none" stroke="rgb(14, 159, 110)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="m9 12 2 2 4-4"></path></svg>
               ${feature.name}</li>`
           }).join(' ')}
             </ul>
@@ -113,7 +113,7 @@ export async function GET(
           }
           .features ul > li {
             display: flex;
-            align-items: center;
+            align-items: start;
             gap: 0.5rem;
             margin-top: 0.25rem;
             margin-bottom: 0.25rem;

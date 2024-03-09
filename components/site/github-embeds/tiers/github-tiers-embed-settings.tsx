@@ -1,8 +1,10 @@
 'use client'
 
-import { Text, Flex } from "@tremor/react";
+import { Text, Flex, Bold, Card } from "@tremor/react";
 import { useEffect, useState } from "react";
 import { getTiersForUser } from "@/app/services/TierService";
+import LinkButton from "@/components/common/link-button";
+import { AlertCircle } from "lucide-react";
 
 export type GithubTiersEmbedSettingsProps = {
   tiers: string[]
@@ -30,14 +32,17 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
           id: tier.id
         }
       })})
+      
+      // by default all tiers are selected
+      setSettings({tiers: tiers.map((tier: any) => tier.id)})
     }
     action();
   }, [])
 
   return (
     
-    <Flex flexDirection="col" alignItems="start" className="gap-4">
-      <Text>Only display selective tiers</Text>
+    <Flex flexDirection="col" alignItems="start" className="gap-4 grow">
+      <Text>Only display selected tiers</Text>
         {settingsContext.tiers.map((tier: TierItem) => {
           return (
             
@@ -60,7 +65,14 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
 
           )
         })}
-
+      <div className="grow flex items-end">
+        <Card
+            className="mb-4 flex flex-row justify-between items-start bg-gray-100 border border-gray-400 px-4 py-3 text-gray-700"
+          >
+            <AlertCircle size={24} className="mr-2 h-full w-1/4" />
+            <Text>For up-to-date GitHub embeds, refresh the cache by recommitting the README with the same embed code.</Text>
+          </Card>
+      </div>
     </Flex>
     
   )
