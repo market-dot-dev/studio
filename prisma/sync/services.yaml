@@ -49,6 +49,12 @@ services:
     category: "voice"
     requiresUri: true
 
+  - id: "walkthrough"
+    name: "Code Walkthrough"
+    description: "Walk through the code for the OSS project." 
+    category: "voice"
+    requiresUri: false
+
   - id: "github-issues"
     name: "Github Issues"
     description: "Create a dedicated Github issues project for prioritized requests from customers."
