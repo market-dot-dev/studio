@@ -9,6 +9,7 @@ export async function GET(
   const searchParams = req.nextUrl.searchParams;
   const onlyTiersString = searchParams.get('tiers');
   const onlyTiers = onlyTiersString ? onlyTiersString.split(',') : [];
+  const darkmode = searchParams.get('darkmode') === 'true';
 
   let tiers = await TierService.getTiersForUser(params.userid);
 
@@ -26,6 +27,27 @@ export async function GET(
   const width = (250 + 100) * tiers.length;
   const height = 300 + (maxFeatures * 24);
   
+  const darkModeStyles = `
+  .tierWrap {
+    background: rgb(31, 41, 55);
+    border: rgb(31, 41, 55);
+    color: rgb(156, 163, 175)
+  }
+  .title, .price, .features ul > li {
+    color: rgb(156, 163, 175)
+  }
+  .button {
+    background: rgb(55, 65, 81);
+    color: #fff;
+  }
+  .button:hover {
+    background: rgb(55, 65, 81); 
+  }
+  .features ul > li > svg {
+    stroke: rgb(49, 196, 141);
+  }
+`;
+
   const tiersMarkup = tiers.map(tier => {
     return `
       <div class="tierWrap">
@@ -134,6 +156,7 @@ export async function GET(
           .button:hover {
             background: rgb(31, 41, 55);
           }
+          ${darkmode ? darkModeStyles : ''}
         </style>
 
         <div class="container">

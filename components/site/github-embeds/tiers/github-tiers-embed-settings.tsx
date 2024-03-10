@@ -7,10 +7,11 @@ import LinkButton from "@/components/common/link-button";
 import { AlertCircle } from "lucide-react";
 
 export type GithubTiersEmbedSettingsProps = {
+  darkmode: boolean | undefined;
   tiers: string[]
 }
 
-type TierItem = {
+export type TierItem = {
   name: string;
   id: string;
 }
@@ -42,7 +43,26 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
   return (
     
     <Flex flexDirection="col" alignItems="start" className="gap-4 grow">
+      <label>
+            <Flex className="gap-2">
+              <input
+                type="checkbox"
+                checked={settings.darkmode}
+                onChange={(e) => {
+                  setSettings((prev: any) => {
+                    if(e.target.checked) {
+                      return {...prev, darkmode: e.target.checked}
+                    } else {
+                      const { darkmode, ...rest } = prev;
+                      return rest;
+                    }
+                  })
+                }} />
+              <Text>Dark Mode</Text>
+            </Flex>
+          </label>
       <Text>Only display selected tiers</Text>
+        <Flex flexDirection="col" alignItems="start" className="gap-2">
         {settingsContext.tiers.map((tier: TierItem) => {
           return (
             
@@ -56,7 +76,13 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
                         let tiers = prev.tiers || [];
                         return {...prev, tiers: [...tiers, tier.id]}
                       } else {
-                        return {...prev, tiers: prev.tiers.filter((id: string) => id !== tier.id)}
+                        
+                        let newTiers = prev.tiers.filter((id: string) => id !== tier.id);
+                        if(newTiers.length === 0) {
+                          const { tiers, ...rest } = prev;  
+                          return rest;
+                        }
+                        return {...prev, tiers: newTiers }
                       }
                     })
                   }} />
@@ -65,6 +91,7 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
 
           )
         })}
+        </Flex>
       <div className="grow flex items-end">
         <Card
             className="mb-4 flex flex-row justify-between items-start bg-gray-100 border border-gray-400 px-4 py-3 text-gray-700"

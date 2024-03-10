@@ -1,6 +1,5 @@
 'use client'
-import { Tab, TabGroup, TabList, TabPanel, TabPanels, Title, Flex, Grid, Col } from "@tremor/react";
-import { EyeOpenIcon, CodeIcon } from "@radix-ui/react-icons";
+import { Title, Flex, Grid, Col } from "@tremor/react";
 import { useEffect, useState } from "react";
 import githubEmbeds from "../site/github-embeds";
 import CodeSnippet from "../embedables/code-snippet";

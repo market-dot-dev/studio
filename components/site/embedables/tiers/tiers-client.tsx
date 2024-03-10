@@ -5,21 +5,11 @@ import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings";
 
 // This component will be used to prepare data for the preview mode
-export default function TiersClient({site, settings}: { site : any, settings: TiersEmbedSettingsProps}) {
+export default function TiersClient({site, settings, tiers }: { site : any, settings: TiersEmbedSettingsProps, tiers: any[]}) {
     
-    // getting the tiers by means of API routes
-    const [tiers, setTiers] = useState([]);
-
-    useEffect(() => {
-        const getTiers = async () => {
-            const response = await fetch('/api/preview/tiers');
-            const tiers = await response.json();
-            setTiers(tiers);
-        }
-        getTiers();
-    }, []);
+    const filteredTiers = tiers.filter((tier: any) => (settings.tiers ?? []).includes(tier.id));
 
     return (<>
-        <Tiers tiers={tiers} subdomain={site.subdomain} settings={settings} />
+        <Tiers tiers={filteredTiers} subdomain={site.subdomain} settings={settings} />
     </>)
 }

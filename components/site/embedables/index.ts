@@ -1,6 +1,7 @@
 import TiersServer from "./tiers/tiers-server";
 import TiersClient from "./tiers/tiers-client";
 import TiersEmbedSettings from "./tiers/tiers-embed-settings";
+import TiersPreviewProps from "./tiers/tiers-preview-props";
 
 // import TierServer from "./single-tier/tier-server";
 // import TierClient from "./single-tier/tier-client";
@@ -11,6 +12,7 @@ const embedables =  {
         name: 'Published Tiers',
         element: TiersServer,
         preview: TiersClient,
+        previewProps: TiersPreviewProps,
         settings: TiersEmbedSettings
     },
     // tier: {
