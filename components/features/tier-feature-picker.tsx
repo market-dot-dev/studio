@@ -18,9 +18,10 @@ interface TierFeaturePickerWidgetProps {
   selectedFeatureIds: Set<string>;
   setSelectedFeatureIds: (features: Set<string>) => void;
   setFeaturesChanged?: (changed: boolean) => void;
+  setFeatureObjs?: (features: Feature[]) => void;
 }
 
-const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatureIds, setSelectedFeatureIds, setFeaturesChanged }) => {
+const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatureIds, setSelectedFeatureIds, setFeaturesChanged, setFeatureObjs }) => {
   const newRecord = !tierId;
   const [allFeatures, setAllFeatures] = useState<Feature[]>([]);
 
@@ -67,6 +68,10 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   useEffect(() => {
     if(selectedFeatureIds !== pristineFeatureIds && setFeaturesChanged) {
       setFeaturesChanged(true);
+    }
+
+    if(setFeatureObjs) {
+      setFeatureObjs(allFeatures.filter(f => selectedFeatureIds.has(f.id)));
     }
   }, [selectedFeatureIds, pristineFeatureIds]);
 

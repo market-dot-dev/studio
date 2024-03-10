@@ -9,11 +9,11 @@ import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, Ti
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
-import { Feature } from '@prisma/client';
 import TierFeaturePicker from '../features/tier-feature-picker';
 import { attachMany } from '@/app/services/feature-service';
 import Link from 'next/link';
 import DashboardCard from '../common/dashboard-card';
+import { Feature } from '@prisma/client';
 
 interface TierFormProps {
 	tier?: Partial<Tier>;
@@ -73,6 +73,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [currentRevisionSubscriberCount, setCurrentRevisionSubscriberCount] = useState(0);
 	const [versions, setVersions] = useState<TierVersionWithFeatures[]>([]);
 	const [featuresChanged, setFeaturesChanged] = useState(false);
+	const [featureObjs, setFeatureObjs] = useState<Feature[]>([]);
 
 	const newRecord = !tier?.id;
 	const tierHasSubscribers = currentRevisionSubscriberCount > 0;
@@ -281,8 +282,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						<DashboardCard>
 						
 						{tier?.id ?
-							<TierFeaturePicker tierId={tier.id} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeaturesChanged={setFeaturesChanged} /> :
-							<TierFeaturePicker newTier={tier} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} />
+							<TierFeaturePicker tierId={tier.id} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeaturesChanged={setFeaturesChanged} setFeatureObjs={setFeatureObjs}/> :
+							<TierFeaturePicker newTier={tier} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeatureObjs={setFeatureObjs}/>
 						}
 
 						</DashboardCard>
@@ -292,7 +293,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 				{/* Preview Section */}
 				<div className="md:w-[300px] text-center mb-auto" >
 					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
-					<TierCard tier={tier} />
+					<TierCard tier={tier} features={featureObjs} />
 				</div>
 			</div>
 		</>
