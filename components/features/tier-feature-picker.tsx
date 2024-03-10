@@ -15,65 +15,79 @@ import {
 interface TierFeaturePickerWidgetProps {
   tierId?: string;
   newTier?: Tier;
-  selectedFeatures: Record<string, Feature[]>;
-  setSelectedFeatures: (features: Record<string, Feature[]>) => void;
+  selectedFeatureIds: Set<string>;
+  setSelectedFeatureIds: (features: Set<string>) => void;
   setFeaturesChanged?: (changed: boolean) => void;
 }
 
-const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatures, setSelectedFeatures, setFeaturesChanged }) => {
-  const [savedTiers, setSavedTiers] = useState<TierWithFeatures[]>([]);
-  const [features, setFeatures] = useState<Feature[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [originalFeatures, setOriginalFeatures] = useState<Record<string, Feature[]>>({});
+const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatureIds, setSelectedFeatureIds, setFeaturesChanged }) => {
+  const newRecord = !tierId;
+  const [allFeatures, setAllFeatures] = useState<Feature[]>([]);
 
-  const anyFeatures = features.length > 0;
+  const [pristineFeatureIds, setPristineFeatureIds] = useState<Set<string>>(new Set());
+
+  const [tiersLoading, setTiersLoading] = useState(true);
+  const [featuresLoading, setFeaturesLoading] = useState(true);
+
+  const [tier, setTier] = useState<TierWithFeatures | undefined>(newRecord ? newTier : undefined);
+  const [otherTiers, setOtherTiers] = useState<TierWithFeatures[]>([]);
+
+  const anyFeatures = allFeatures.length > 0;
+  const tiers = [tier, ...otherTiers];
 
   useEffect(() => {
-    getTiersForMatrix(tierId, newTier).then((tiersData) => {
-      setSavedTiers(tiersData.filter(t => t.published || t.id === tierId));
-    });
-
     findByCurrentUser().then((featuresData) => {
-      setFeatures(featuresData.filter(f => f.isEnabled));
-    }).then(() => setLoading(false));
-  }, [newTier, tierId])
+      setAllFeatures(featuresData.filter(f => f.isEnabled));
+    }).then(() => setFeaturesLoading(false));
 
-  
-  const tiers: TierWithFeatures[] = newTier ? [newTier, ...savedTiers] : savedTiers;
+    getTiersForMatrix(tierId, newTier).then((tiersData) => {
+      if(newRecord) {
+        setPristineFeatureIds(new Set());
+        setSelectedFeatureIds(new Set());
+        setTier(newTier);
+        setTiersLoading(false);
+        setOtherTiers(tiersData.filter(t => t.published));
+      } else {
+        const tiers = tiersData.filter(t => t.published && t.id !== tierId);
+        const tier = tiersData.find(t => t.id === tierId);
+
+        if(!tier || !tier.features) {
+          console.error("Tier not found", tier, tier?.features);
+          throw new Error("Tier not found");
+        }
+
+        setTier(tier);
+        setSelectedFeatureIds(new Set(tier.features.map(f => f.id)));
+        setPristineFeatureIds(new Set(tier.features.map(f => f.id)));
+        setOtherTiers(tiers);
+      }
+    }).then(() => setTiersLoading(false));
+  }, [newTier, tierId]);
 
   useEffect(() => {
-    const initialSelection: Record<string, Feature[]> = {};
-    savedTiers.forEach(tier => {
-      initialSelection[tier.id] = tier.features ?? [];
-    });
-    setSelectedFeatures(initialSelection);
-    setOriginalFeatures(initialSelection);
-  }, [savedTiers, setSelectedFeatures]);
+    if(selectedFeatureIds !== pristineFeatureIds && setFeaturesChanged) {
+      setFeaturesChanged(true);
+    }
+  }, [selectedFeatureIds, pristineFeatureIds]);
 
-  const handleFeatureToggle = async (feature: Feature, tierId: string) => {
-    const isAlreadySelected = selectedFeatures[tierId]?.some(f => f.id === feature.id);
-    let updatedFeatures;
+  const handleFeatureToggle = async (feature: Feature) => {
+    let updatedFeatures = new Set(selectedFeatureIds);
+    const featureId = feature.id;
 
-    if (isAlreadySelected) {
-      updatedFeatures = selectedFeatures[tierId].filter(f => f.id !== feature.id);
+    if (selectedFeatureIds?.has(featureId)) {
+      updatedFeatures.delete(featureId);
     } else {
-      updatedFeatures = [...(selectedFeatures[tierId] || []), feature];
+      updatedFeatures.add(featureId);
     }
 
-    setSelectedFeatures({
-      ...selectedFeatures,
-      [tierId]: updatedFeatures,
-    });
-
-    const featuresChanged = JSON.stringify(updatedFeatures) !== JSON.stringify(originalFeatures[tierId]);
-    setFeaturesChanged && setFeaturesChanged(featuresChanged);
+    setSelectedFeatureIds(updatedFeatures);
   };
 
   return (
     <div>
       <div className="overflow-x-auto">
-        { loading && <LoadingDots /> }
-        { !loading && !anyFeatures && <Text>You haven&apos;t listed the services you offer yet. You can do that <a href="/features" className="underline">here</a>.</Text> }
+        { featuresLoading && <LoadingDots /> }
+        { !featuresLoading && !anyFeatures && <Text>You haven&apos;t listed the services you offer yet. You can do that <a href="/features" className="underline">here</a>.</Text> }
         { anyFeatures &&
           <table className="min-w-full divide-y divide-gray-200">
             <thead>
@@ -81,30 +95,39 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
                 <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
                   &nbsp;
                 </th>
-                {tiers.length > 0 ? tiers.map(tier => (
-                  <th key={tier.id} className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {tier.name || '(Unnamed Tier)' }
+                {tiers.filter(tier => !!tier).map(tier => (
+                  <th key={tier?.id || 'new-tier'} className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    {tier!.name || '(Unnamed Tier)' }
                   </th>
-                )) : <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">No tiers available</th>}
+                ))}
               </tr>
             </thead>
             
             <tbody className="bg-white divide-y divide-gray-200">
-              {features.map(feature => (
+              {allFeatures.map(feature => (
                 <tr key={feature.id}>
                   <td className="py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                     {feature.name}
                   </td>
-                  {tiers.map(tier => {
-                    const isAlreadySelected = selectedFeatures[tier.id]?.some(f => f.id === feature.id);
+                  { tiersLoading && <>
+                    <td className="py-4 whitespace-nowrap text-sm text-gray-500 text-center" colSpan={tiers.length}>
+                      <LoadingDots />
+                    </td>
+                    </>
+                  }
+                  { !tiersLoading && tiers.map(tier => {
+                    if(!tier) return null;
+
+                    const isAlreadySelected = ((newRecord  && !tier.id) || tier.id === tierId) ? selectedFeatureIds.has(feature.id) : tier?.features?.some(f => f.id === feature.id) || false;
+
                     return (
-                      <td key={tier.id} className="py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                      <td key={tier?.id || 'new-tier'} className="py-4 whitespace-nowrap text-sm text-gray-500 text-center">
                         <div className="flex justify-center">
                         { tier.id === tierId ? 
                           <FeatureAddRemoveToggle
                             feature={feature}
                             isAttached={isAlreadySelected}
-                            onToggle={() => handleFeatureToggle(feature, tier.id).catch(console.error)}
+                            onToggle={() => handleFeatureToggle(feature)}
                           /> :
                           (isAlreadySelected ? <CheckSquare className="text-gray-500" /> : null)
                         }

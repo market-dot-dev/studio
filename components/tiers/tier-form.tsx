@@ -67,7 +67,7 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 
 export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [tier, setTier] = useState<TierWithFeatures>((tierObj ? tierObj : newTier()) as Tier);
-	const [selectedFeatures, setSelectedFeatures] = useState<Record<string, Feature[]>>({});
+	const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(new Set<string>());
 	const [versionedAttributesChanged, setVersionedAttributesChanged] = useState(false);
 	const [tierSubscriberCount, setTierSubscriberCount] = useState(0);
 	const [currentRevisionSubscriberCount, setCurrentRevisionSubscriberCount] = useState(0);
@@ -107,10 +107,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 			let savedTier;
 			if (newRecord) {
 				savedTier = await createTier(tier);
-				const featureIds = (selectedFeatures[tier.id] || []).map(f => f.id);
-				await attachMany({ referenceId: savedTier.id, featureIds: featureIds }, 'tier');
+				await attachMany({ referenceId: savedTier.id, featureIds: Array.from(selectedFeatureIds) }, 'tier');
 			} else {
-				const newFeatureSet = featuresChanged ? selectedFeatures[tier.id] : undefined;
+				const newFeatureSet = featuresChanged ? Array.from(selectedFeatureIds) : undefined;
 				savedTier = await updateTier(tier.id as string, tier, newFeatureSet);
 			}
 			window.location.href = `/tiers/${savedTier.id}`;
@@ -147,17 +146,6 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 			});
 		}
 	}, [tier, tierObj]);
-
-	// Updated useEffect hook considering ExtendedTier
-	useEffect(() => {
-		const currentTierFeatures = selectedFeatures[tier.id] || [];
-		if (JSON.stringify(tier.features) !== JSON.stringify(currentTierFeatures)) {
-			setTier(prevTier => ({
-				...prevTier,
-				features: currentTierFeatures,
-			}));
-		}
-	}, [selectedFeatures, tier.id, tier.features]);
 
 	const canPublishDisabled = !canPublish || canPublishLoading;
 
@@ -291,10 +279,13 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Features</label>
 						<DashboardCard>
+						
 						{tier?.id ?
-							<TierFeaturePicker tierId={tier.id} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} setFeaturesChanged={setFeaturesChanged} /> :
-							<TierFeaturePicker newTier={tier} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} />}
-							</DashboardCard>
+							<TierFeaturePicker tierId={tier.id} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeaturesChanged={setFeaturesChanged} /> :
+							<TierFeaturePicker newTier={tier} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} />
+						}
+
+						</DashboardCard>
 					</div>
 				</div>
 

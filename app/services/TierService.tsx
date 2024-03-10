@@ -96,6 +96,7 @@ class TierService {
 
     tierAttributes.price = parseFloat(`${tierAttributes.price}`);
     tierAttributes.userId = userId;
+    tierAttributes.features = undefined;
 
     const tier = await prisma.tier.create({
       data: tierAttributes as Tier,
@@ -112,7 +113,7 @@ class TierService {
     return tier;
   }
 
-  static async updateTier(id: string, tierData: Partial<Tier>, newFeatureSet?: Feature[]) {
+  static async updateTier(id: string, tierData: Partial<Tier>, newFeatureIds?: string[]) {
     // Ensure the current user is the owner of the tier or has permissions to update it
     const userId = await SessionService.getCurrentUserId();
 
@@ -145,7 +146,7 @@ class TierService {
     let newlyWrittenVersion: TierVersionWithFeatures | undefined;
 
     let existingFeatureSetIds: string[] = [];
-    let newFeatureSetIds: string[] = newFeatureSet ? newFeatureSet.map(f => f.id) : [];
+    let newFeatureSetIds: string[] = newFeatureIds || [];
 
     // Start a transaction
     const result = await prisma.$transaction(async (prisma) => {
@@ -176,7 +177,7 @@ class TierService {
 
       const hasSubscribers = await SubscriptionService.hasSubscribers(id);
       const shouldCreateNewVersion = await TierService.shouldCreateNewVersion(currentTier, tierData);
-      const featuresChanged = newFeatureSet ? (await FeatureService.haveFeatureIdsChanged(id, newFeatureSet.map(f => f.id))) : false;
+      const featuresChanged = newFeatureSetIds ? (await FeatureService.haveFeatureIdsChanged(id, newFeatureSetIds)) : false;
 
       if(hasSubscribers && (shouldCreateNewVersion || featuresChanged)) {
         // Create a new TierVersion record with the pre-update price and stripePriceId
@@ -208,13 +209,13 @@ class TierService {
       return writtenTier;
     });
 
-    if(newlyWrittenVersion){
-      if(existingFeatureSetIds.length >= 0) {
+    if(!!newlyWrittenVersion){
+      if(existingFeatureSetIds) {
         await FeatureService.setFeatureCollection(newlyWrittenVersion.id, existingFeatureSetIds, 'tierVersion');
       }
     }
 
-    if(newFeatureSetIds.length >= 0) {
+    if(!!newFeatureSetIds) {
       await FeatureService.setFeatureCollection(tier.id, newFeatureSetIds, 'tier');
     }
 
