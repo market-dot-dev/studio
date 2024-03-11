@@ -30,9 +30,9 @@ export default async function Tiers() {
             <Grid numItems={4} className="gap-8" >
               {tiers.map((tier, index) => (
                 <>
-                <div key={index} className='text-center mb-8'>
-                  <Badge className="mb-2 mx-auto" color={tier.published ? 'green' : 'gray'}>{tier.published ? 'Active' : 'Inactive'}</Badge>
-                  <TierCard tier={tier} canEdit={true} />
+                <div className='text-center mb-8'>
+                  <Badge key={index} className="mb-2 mx-auto" color={tier.published ? 'green' : 'gray'}>{tier.published ? 'Active' : 'Inactive'}</Badge>
+                  <TierCard key={index} tier={tier} canEdit={true} />
                   </div>
                 </>
               ))}
