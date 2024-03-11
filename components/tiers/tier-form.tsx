@@ -5,14 +5,15 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { Flex, Text, Button, Card, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
-import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, TierVersionWithFeatures } from '@/app/services/TierService';
+import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
-import { Feature } from '@prisma/client';
 import TierFeaturePicker from '../features/tier-feature-picker';
 import { attachMany } from '@/app/services/feature-service';
 import Link from 'next/link';
+import DashboardCard from '../common/dashboard-card';
+import { Feature } from '@prisma/client';
 
 interface TierFormProps {
 	tier?: Partial<Tier>;
@@ -25,14 +26,14 @@ const TierVersionCard = async ({ tierVersion }: { tierVersion: TierVersionWithFe
 		<Text>Revision: {tierVersion.revision}</Text>
 		<Text>Price: {tierVersion.price}</Text>
 		<Text>
-			Features: 
-			{features.length > 0 ? 
+			Features:
+			{features.length > 0 ?
 				<>
-					<br/>
+					<br />
 					<ul>
 						{(tierVersion.features || []).map(f => <li key={f.id}>{f.name}</li>)}
 					</ul>
-					</> :
+				</> :
 				<>&nbsp;none</>
 			}
 		</Text>
@@ -40,13 +41,13 @@ const TierVersionCard = async ({ tierVersion }: { tierVersion: TierVersionWithFe
 };
 
 interface NewVersionCalloutProps {
-  versionedAttributesChanged: boolean;
-  featuresChanged: boolean;
+	versionedAttributesChanged: boolean;
+	featuresChanged: boolean;
 	tierHasSubscribers: boolean;
 }
 
 const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttributesChanged, featuresChanged, tierHasSubscribers }) => {
-	if(tierHasSubscribers && (versionedAttributesChanged || featuresChanged)) {
+	if (tierHasSubscribers && (versionedAttributesChanged || featuresChanged)) {
 		const reasons: string[] = [];
 		if (versionedAttributesChanged) reasons.push("price");
 		if (featuresChanged) reasons.push("features");
@@ -65,18 +66,19 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 
 
 export default function TierForm({ tier: tierObj }: TierFormProps) {
-	const [tier, setTier] = useState<Tier>((tierObj ? tierObj : newTier()) as Tier);
-	const [selectedFeatures, setSelectedFeatures] = useState<Record<string, Feature[]>>({});
+	const [tier, setTier] = useState<TierWithFeatures>((tierObj ? tierObj : newTier()) as Tier);
+	const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(new Set<string>());
 	const [versionedAttributesChanged, setVersionedAttributesChanged] = useState(false);
 	const [tierSubscriberCount, setTierSubscriberCount] = useState(0);
 	const [currentRevisionSubscriberCount, setCurrentRevisionSubscriberCount] = useState(0);
 	const [versions, setVersions] = useState<TierVersionWithFeatures[]>([]);
 	const [featuresChanged, setFeaturesChanged] = useState(false);
+	const [featureObjs, setFeatureObjs] = useState<Feature[]>([]);
 
 	const newRecord = !tier?.id;
 	const tierHasSubscribers = currentRevisionSubscriberCount > 0;
 
-	const formTitle  = newRecord ? 'Create New Tier' : tier.name;
+	const formTitle = newRecord ? 'Create New Tier' : tier.name;
 	const buttonLabel = newRecord ? 'Create Tier' : 'Update Tier';
 
 	const [errors, setErrors] = useState<any>({});
@@ -99,25 +101,24 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	}
 
 	const onSubmit = async () => {
-    if (!validateForm()) return;
-    setIsSaving(true);
+		if (!validateForm()) return;
+		setIsSaving(true);
 
-    try {
-      let savedTier;
-      if (newRecord) {
-        savedTier = await createTier(tier);
-        const featureIds = (selectedFeatures[tier.id] || []).map(f => f.id);
-        await attachMany({ referenceId: savedTier.id, featureIds: featureIds }, 'tier');
-      } else {
-        const newFeatureSet = featuresChanged ? selectedFeatures[tier.id] : undefined;
-        savedTier = await updateTier(tier.id as string, tier, newFeatureSet);
-      }
-      window.location.href = `/tiers/${savedTier.id}`;
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setIsSaving(false);
-    }
+		try {
+			let savedTier;
+			if (newRecord) {
+				savedTier = await createTier(tier);
+				await attachMany({ referenceId: savedTier.id, featureIds: Array.from(selectedFeatureIds) }, 'tier');
+			} else {
+				const newFeatureSet = featuresChanged ? Array.from(selectedFeatureIds) : undefined;
+				savedTier = await updateTier(tier.id as string, tier, newFeatureSet);
+			}
+			window.location.href = `/tiers/${savedTier.id}`;
+		} catch (error) {
+			console.log(error);
+		} finally {
+			setIsSaving(false);
+		}
 	}
 
 	const [canPublish, setCanPublish] = useState(false);
@@ -131,7 +132,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	}, []);
 
 	useEffect(() => {
-		if(tier.id){
+		if (tier.id) {
 			getVersionsByTierId(tier.id).then(setVersions);
 			subscriberCount(tier.id).then(setTierSubscriberCount);
 
@@ -140,7 +141,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	}, [tier.id, tier.revision]);
 
 	useEffect(() => {
-		if(tier && tierObj){
+		if (tier && tierObj) {
 			shouldCreateNewVersion(tierObj as Tier, tier).then(ret => {
 				setVersionedAttributesChanged(ret);
 			});
@@ -224,10 +225,10 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						/>
 					</div>
 
-					{ tierHasSubscribers &&
-					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Subscribers: {currentRevisionSubscriberCount} (all revs: {tierSubscriberCount})</label>
-					</div> }
+					{tierHasSubscribers &&
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Subscribers: {currentRevisionSubscriberCount} (all revs: {tierSubscriberCount})</label>
+						</div>}
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Status</label>
@@ -238,6 +239,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								{!canPublishLoading && <>
 									<input type="checkbox"
 										checked={tier.published}
+										className="border-gray-600 rounded-md p-3 accent-green-400"
 										disabled={canPublishDisabled}
 										onChange={(e) => {
 											setTier({ ...tier, published: e.target.checked } as Tier);
@@ -261,32 +263,37 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
 						</Flex>
 					</div>
-					{ versions && versions.length > 0 && 
-					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Old Versions</label>
-						<Flex className='gap-2' justifyContent='start'>
-							<Accordion className="my-2">
-								<AccordionHeader className="my-0 py-1">
-									Expand for past versions ({versions.length})
-								</AccordionHeader>
-								<AccordionBody>
-									{ versions.map((version) => <TierVersionCard tierVersion={version} key={version.id} />) }
-								</AccordionBody>
-							</Accordion>
-						</Flex>
-					</div> }
+					{versions && versions.length > 0 &&
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Old Versions</label>
+							<Flex className='gap-2' justifyContent='start'>
+								<Accordion className="my-2">
+									<AccordionHeader className="my-0 py-1">
+										Expand for past versions ({versions.length})
+									</AccordionHeader>
+									<AccordionBody>
+										{versions.map((version) => <TierVersionCard tierVersion={version} key={version.id} />)}
+									</AccordionBody>
+								</Accordion>
+							</Flex>
+						</div>}
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Features</label>
+						<DashboardCard>
+						
 						{tier?.id ?
-							<TierFeaturePicker tierId={tier.id} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} setFeaturesChanged={setFeaturesChanged} /> :
-							<TierFeaturePicker newTier={tier} selectedFeatures={selectedFeatures} setSelectedFeatures={setSelectedFeatures} />}
+							<TierFeaturePicker tierId={tier.id} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeaturesChanged={setFeaturesChanged} setFeatureObjs={setFeatureObjs}/> :
+							<TierFeaturePicker newTier={tier} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeatureObjs={setFeatureObjs}/>
+						}
+
+						</DashboardCard>
 					</div>
 				</div>
 
 				{/* Preview Section */}
 				<div className="md:w-[300px] text-center mb-auto" >
 					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
-					<TierCard tier={tier} />
+					<TierCard tier={tier} features={featureObjs} />
 				</div>
 			</div>
 		</>
