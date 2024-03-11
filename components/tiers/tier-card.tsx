@@ -4,6 +4,7 @@ import { TierWithFeatures } from '@/app/services/TierService';
 import { Card, Button, Text } from '@tremor/react';
 import Link from 'next/link';
 import TierFeatureList from '@/components/features/tier-feature-list';
+import { Feature } from '@prisma/client';
 
 type TierCardProps = {
   url?: string;
@@ -11,15 +12,16 @@ type TierCardProps = {
   canEdit?: boolean;
   darkMode?: boolean;
   children?: React.ReactNode;
+  features?: Feature[];
 };
 
-const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, darkMode = false, children }) => {
-
+const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, darkMode = false, features = [], children }) => {
   const containerClasses = darkMode
     ? "text-white bg-gray-800 border-gray-600"
     : "text-gray-900 bg-white border-gray-100";
 
   const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
+  const tierFeatures = !!features ? features : tier.features || [];
 
   return (<>
     <Card className={`flex flex-col p-6 mx-auto w-full h-full justify-between max-w-xs text-center rounded-lg border shadow ${containerClasses}`}>
@@ -32,7 +34,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
           <span className="text-gray-500 dark:text-gray-400">{'month' /*tier.frequency */}</span>
         </div>
         <Text className="text-center text-xs text-gray-400">What&apos;s Included:</Text>
-        <TierFeatureList features={tier.features || []} darkMode={darkMode} />
+        <TierFeatureList features={tierFeatures}  darkMode={darkMode} />
       </div>
 
       <div className="flex flex-col gap-2 w-full mt-4">
