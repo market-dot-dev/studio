@@ -4,14 +4,24 @@ import { Card, Title, List, Text, Flex, Bold, Button, AccordionList, Badge, Divi
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
-import { onboardingSteps, type OnboardingStepsType, onboardingStepsDescription, onboardingStepsTitles, onboardingStepsURLs, defaultOnboardingState, onboardingStepsIcons } from "@/app/services/onboarding/onboarding-steps";
+import { onboardingSteps,type OnboardingStepsType, onBoardingStepType } from "@/app/services/onboarding/onboarding-steps";
+import { getState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
-
-import { Computer, Banknote, Kanban, Globe } from "lucide-react"
-import { ButtonIcon } from "@radix-ui/react-icons";
+import { Check, Circle } from "lucide-react";
 
 
-function TodoItem({ title, children, step, currentStep, pathName, completedSteps, setCompletedSteps, dashboard }: any): JSX.Element {
+
+function TodoItem({ step, index, currentStep, pathName, completedSteps, setCompletedSteps, dashboard }: {
+    // title?: string,
+    // children?: React.ReactNode,
+    step: onBoardingStepType,
+    index: number,
+    currentStep: number | null,
+    pathName: string,
+    completedSteps: OnboardingStepsType,
+    setCompletedSteps: (steps: OnboardingStepsType) => void,
+    dashboard?: boolean
+}): JSX.Element {
 
     const [isSaving, setIsSaving] = useState(false);
     const [active, setActive] = useState(false);
@@ -19,66 +29,52 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
     const siteId = useSiteId();
 
     // this function is called when the tier is saved, by means of a tier-saved event
-    const saveTierCompleted = useCallback(() => {
-        setIsSaving(true);
-        setCompletedSteps((prev: any) => {
-            return {
-                ...prev,
-                [onboardingSteps.setupTiers]: true
-            }
-        })
-    }, [setCompletedSteps]);
-
-    useEffect(() => {
-        // listen for tier-saved event
-        if (currentStep === onboardingSteps.setupTiers) {
-            window.addEventListener('tier-saved', saveTierCompleted);
-        }
-
-        return () => {
-            if (currentStep === onboardingSteps.setupTiers) {
-                window.removeEventListener('tier-saved', saveTierCompleted);
-            }
-        }
-    }, [currentStep]);
-
-    // on checkbox click
-    // const handleCheckboxChange = useCallback((e: any) => {
+    // const saveTierCompleted = useCallback(() => {
     //     setIsSaving(true);
-    //     setCompletedSteps((prev: OnboardingStepsType) => {
-    //         const newState = {
+    //     setCompletedSteps((prev: any) => {
+    //         return {
     //             ...prev,
-    //             [step]: e.target.checked
+    //             [onboardingSteps.setupTiers.step]: true
     //         }
-    //         return newState;
     //     })
+    // }, [setCompletedSteps]);
 
-    // }, [setCompletedSteps])
+    // useEffect(() => {
+    //     // listen for tier-saved event
+    //     if (currentStep === onboardingSteps.setupTiers.step) {
+    //         window.addEventListener('tier-saved', saveTierCompleted);
+    //     }
 
-    // const checkboxClasses = 'rounded-full outline-none focus:outline-none focus:border-none' + (isSaving ? ' opacity-50 cursor-not-allowed animate-spin' : '');
+    //     return () => {
+    //         if (currentStep === onboardingSteps.setupTiers.step) {
+    //             window.removeEventListener('tier-saved', saveTierCompleted);
+    //         }
+    //     }
+    // }, [currentStep]);
 
-    useEffect(() => {
-        if (isSaving) {
-            // saving to db here, because we need to set the 'saving' indicator on this item only.
-            // and after isSaving is set to true, the updated completed step status will be available here
-            saveOnboardingState(completedSteps).then(() => {
-                setIsSaving(false);
-            });
 
-        }
-    }, [completedSteps[step]])
+    // useEffect(() => {
+    //     if (isSaving) {
+    //         // saving to db here, because we need to set the 'saving' indicator on this item only.
+    //         // and after isSaving is set to true, the updated completed step status will be available here
+    //         saveOnboardingState(completedSteps).then(() => {
+    //             setIsSaving(false);
+    //         });
 
-    const stepTitle = onboardingStepsTitles[step as keyof typeof onboardingStepsTitles];
-    const stepURL = onboardingStepsURLs[step as keyof typeof onboardingStepsURLs];
-    const stepDescription = onboardingStepsDescription[step as keyof typeof onboardingStepsDescription];
-    const stepIcon = onboardingStepsIcons[step as keyof typeof onboardingStepsIcons];
+    //     }
+    // }, [completedSteps?[steps[currentStep].name]])
+
+
+    const { title: stepTitle, url: stepURL, description: stepDescription, icon: stepIcon } = step;
+
     const stepIconDiv =
         <div className="me-2">
             <Icon icon={stepIcon} size={"xl"} />
         </div>;
 
-    const activeStep = currentStep === step;
+    const activeStep = currentStep === index;
 
+    const completed = completedSteps?.[step.name] === true;
 
     return (
         <>
@@ -89,6 +85,7 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
                         {/* <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}> */}
                         <div className="flex items-center justify-start gap-3">
                             {/* <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} /> */}
+                            { completed ? <Icon icon={Check} size="md" className="text-green-500" /> : null }  
                             <Bold>{stepTitle}</Bold>
                         </div>
                         <div className="flex">
@@ -96,12 +93,12 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
                         </div>
                     </div>
                     <div>
-                        <div className="p-0 leading-tight">
+                        {/* <div className="p-0 leading-tight">
                             {children}
-                        </div>
+                        </div> */}
                     </div>
 
-                    <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step === onboardingSteps.setupSite && siteId ? stepURL + siteId : stepURL)}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
+                    <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL + siteId : stepURL)}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
                 </div>
             </div>
 
@@ -111,29 +108,27 @@ function TodoItem({ title, children, step, currentStep, pathName, completedSteps
 export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }): JSX.Element {
 
     const pathName = usePathname();
-    const [currentStep, setCurrentStep] = useState<string | null>(null);
-    const [completedSteps, setCompletedSteps] = useState(null);
+    const [currentStep, setCurrentStep] = useState<number | null>(null);
+    const [completedSteps, setCompletedSteps] = useState<OnboardingStepsType>(null);
     const [isDismissing, setIsDismissing] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
-
+    
 
     useEffect(() => {
-        // refer to the db everytime you navigate to a new page
-        fetch('/api/onboarding').then(res => res.json()).then(data => {
-            if (data && data.length) {
-                setCompletedSteps(JSON.parse(data));
+
+        const action = async () => {
+            const state = await getState() as OnboardingStepsType;
+            setCompletedSteps(state);
+        }
+        
+        action();
+
+        onboardingSteps.forEach((step, index) => {
+            if (pathName.includes(step.url)) {
+                setCurrentStep(index);
             }
         });
 
-        if (pathName.includes(onboardingStepsURLs.setupProject)) {
-            setCurrentStep(onboardingSteps.setupProject);
-        } else if (pathName.includes(onboardingStepsURLs.setupTiers)) {
-            setCurrentStep(onboardingSteps.setupTiers);
-        } else if (pathName.includes(onboardingStepsURLs.setupSite)) {
-            setCurrentStep(onboardingSteps.setupSite);
-        } else if (pathName.includes(onboardingStepsURLs.setupPayment)) {
-            setCurrentStep(onboardingSteps.setupPayment);
-        }
 
     }, [pathName])
 
@@ -184,50 +179,26 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                     }
                 >
                     <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
-
-                        <TodoItem
-                            step={onboardingSteps.setupPayment}
-                            currentStep={currentStep}
-                            pathName={pathName}
-                            completedSteps={completedSteps}
-                            setCompletedSteps={setCompletedSteps}
-                            dashboard={dashboard}
-                        />
-
-                        {dashboard && <Divider className="my-3" />}
-
-                        <TodoItem
-                            step={onboardingSteps.setupTiers}
-                            currentStep={currentStep}
-                            pathName={pathName}
-                            completedSteps={completedSteps}
-                            setCompletedSteps={setCompletedSteps}
-                            dashboard={dashboard}
-                        />
-
-                        {dashboard && <Divider className="my-3" />}
-
-                        <TodoItem
-                            title="Setup your project"
-                            step={onboardingSteps.setupProject}
-                            currentStep={currentStep}
-                            pathName={pathName}
-                            completedSteps={completedSteps}
-                            setCompletedSteps={setCompletedSteps}
-                            dashboard={dashboard}
-                            className=""
-                        />
-
-                        {dashboard && <Divider className="my-3" />}
-
-                        <TodoItem
-                            step={onboardingSteps.setupSite}
-                            currentStep={currentStep}
-                            pathName={pathName}
-                            completedSteps={completedSteps}
-                            setCompletedSteps={setCompletedSteps}
-                            dashboard={dashboard}
-                        />
+                        { 
+                            onboardingSteps.map((step, index) => {
+                                return (
+                                    <div key={index}>
+                                        <TodoItem
+                                            index={index}
+                                            step={step as onBoardingStepType}
+                                            currentStep={currentStep}
+                                            pathName={pathName}
+                                            completedSteps={completedSteps}
+                                            setCompletedSteps={setCompletedSteps}
+                                            dashboard={dashboard}
+                                        />
+                                        {dashboard && <Divider className="my-3" />}
+                                    </div>
+                                )
+                            })
+                        }
+                        
+                        
 
                     </div>
                 </ConditionalWrapper>
