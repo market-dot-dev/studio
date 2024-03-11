@@ -21,7 +21,11 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
     : "text-gray-900 bg-white border-gray-100";
 
   const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
-  const tierFeatures = !!features ? features : tier.features || [];
+  // check if this componenet has been called with features passed to it (e.g. when editing tier in preview)
+  const directlyProvidedFeatures = !!features && features.length > 0;
+
+  // if features are directly provided, use them, otherwise use the features from the tier
+  const tierFeatures = (directlyProvidedFeatures ? features : tier.features) || [];
 
   return (<>
     <Card className={`flex flex-col p-6 mx-auto w-full h-full justify-between max-w-xs text-center rounded-lg border shadow ${containerClasses}`}>
