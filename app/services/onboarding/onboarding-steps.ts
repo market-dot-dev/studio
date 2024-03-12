@@ -39,18 +39,18 @@ export const onboardingSteps = [
         icon: Banknote,
     },
     {
-        name: 'setupProject',
-        description: 'Describe your project and link a Github repo. These settings apply in many places, from your website to checkout.',
-        urls: ['/settings/project'],
-        title: 'Add Project Details',
-        icon: Computer,
-    },
-    {
         name: 'setupTiers',
         description: 'Define your service offerings and create a Tier for sale. Tiers are the building blocks of your service.',
         urls: ['/features', '/tiers'],
         title: 'Define Services & Tiers',
         icon: Package,
+    },
+    {
+        name: 'setupProject',
+        description: 'Describe your project and link a Github repo. These settings apply in many places, from your website to checkout.',
+        urls: ['/settings/project'],
+        title: 'Add Project Details',
+        icon: Computer,
     },
     {
         name: 'setupSite',
