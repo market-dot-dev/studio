@@ -32,18 +32,18 @@ export const onboardingStepsIcons = {
 // enumerate the steps that the user needs to complete
 export const onboardingSteps = [
     {
+        name: 'setupPayment',
+        description: 'Connect a Stripe account to start receiving payments.',
+        urls: ['/settings/payment'],
+        title: 'Connect Payout Account',
+        icon: Banknote,
+    },
+    {
         name: 'setupProject',
         description: 'Describe your project and link a Github repo. These settings apply in many places, from your website to checkout.',
         urls: ['/settings/project'],
         title: 'Add Project Details',
         icon: Computer,
-    },
-    {
-        name: 'setupPayment',
-        description: 'Connect a payment service (we currently support Stripe) to start receiving payments.',
-        urls: ['/settings/payment'],
-        title: 'Connect Payout Account',
-        icon: Banknote,
     },
     {
         name: 'setupTiers',

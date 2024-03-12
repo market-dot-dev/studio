@@ -1,13 +1,13 @@
 'use client';
 
-import { Card, Text, Flex, Bold, Button, Divider, Icon } from "@tremor/react";
+import { Card, Text, Flex, Bold, Button, Divider, Icon, Badge } from "@tremor/react";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
 import { onboardingSteps,type OnboardingStepsType, onBoardingStepType } from "@/app/services/onboarding/onboarding-steps";
 import { getState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
-import { Check } from "lucide-react";
+import { Check, BadgeAlert } from "lucide-react";
 
 function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps, dashboard }: {
     step: onBoardingStepType,
@@ -35,25 +35,28 @@ function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps,
 
     return (
         <>
-            <div className="flex flex-row">
-                {dashboard && stepIconDiv}
-                <div className={!dashboard && activeStep ? `mx-2 p-4 rounded-xl w-full bg-gray-200` : !dashboard ? `p-4 w-full` : ``}>
-                    <div className="px-1 mb-2">
-                        
-                        <div className="flex items-center justify-start gap-0">
-                        
-                            { completed ? <Icon icon={Check} size="md" className="text-green-500" /> : null }  
-                            <Bold>{stepTitle}</Bold>
+            <div className="flex cursor-pointer"  onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}>
+                <div className="flex flex-row">
+                    {dashboard && stepIconDiv}
+                    <div className={!dashboard && activeStep ? `mx-2 p-2 mb-2 rounded-xl w-full bg-gray-200` : !dashboard ? `p-2 mb-2 w-full` : ``}>
+                        <div className="px-1 mb-2">
+                            <div className={dashboard ? "flex items-center justify-start gap-0" : "flex flex-col justify-start gap-0"}>
+                                <Badge icon={completed ? Check : BadgeAlert} size="xs" color={completed ? "green" : "gray"} className={dashboard ? `me-2` : `mb-2`}>
+                                    {completed ? `Completed` : `To Do`}
+                                </Badge>
+                                
+                                <Bold>{stepTitle} {!dashboard && `→`}</Bold>
+                            </div>
+                            <div className="flex">
+                                <Text>{stepDescription}</Text>
+                            </div>
                         </div>
-                        <div className="flex">
-                            <Text>{stepDescription}</Text>
-                        </div>
+                        {dashboard &&
+                            <Button size="xs" variant="primary" className="w-min py-1.5 px-4" onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
+                        }
                     </div>
-
-                    <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
                 </div>
             </div>
-
         </>
     )
 }
@@ -145,7 +148,8 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                         { 
                             onboardingSteps.map((step, index) => {
                                 return (
-                                    <div key={index}>
+                                    // assuming 4 onboarding steps, so width is 1/4
+                                    <div className={!dashboard ? `w-1/4` : ``} key={index}>
                                         <TodoItem
                                             index={index}
                                             step={step as onBoardingStepType}
@@ -154,14 +158,11 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                                             setCompletedSteps={setCompletedSteps}
                                             dashboard={dashboard}
                                         />
-                                        {dashboard && <Divider className="my-3" />}
+                                        {dashboard && index !== onboardingSteps.length - 1 && <Divider className="my-5" />}
                                     </div>
                                 )
                             })
                         }
-                        
-                        
-
                     </div>
                 </ConditionalWrapper>
             </Flex>
