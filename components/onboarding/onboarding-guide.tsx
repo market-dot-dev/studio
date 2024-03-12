@@ -1,139 +1,100 @@
 'use client';
 
-import { Card, Title, List, Text, Flex, Bold, Button, AccordionList, Badge, Divider, Icon } from "@tremor/react";
+import { Card, Text, Flex, Bold, Button, Divider, Icon, Badge } from "@tremor/react";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
-import { onboardingSteps, type OnboardingStepsType, onboardingStepsDescription, onboardingStepsTitles, onboardingStepsURLs, defaultOnboardingState, onboardingStepsIcons } from "@/app/services/onboarding/onboarding-steps";
+import { onboardingSteps,type OnboardingStepsType, onBoardingStepType } from "@/app/services/onboarding/onboarding-steps";
+import { getState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
+import { Check, BadgeAlert } from "lucide-react";
 
-import { Computer, Banknote, Kanban, Globe } from "lucide-react"
-import { ButtonIcon } from "@radix-ui/react-icons";
+function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps, dashboard }: {
+    step: onBoardingStepType,
+    index: number,
+    currentStep: number | null,
+    completedSteps: OnboardingStepsType,
+    setCompletedSteps: (steps: OnboardingStepsType) => void,
+    dashboard?: boolean
+}): JSX.Element {
 
-
-function TodoItem({ title, children, step, currentStep, pathName, completedSteps, setCompletedSteps, dashboard }: any): JSX.Element {
-
-    const [isSaving, setIsSaving] = useState(false);
-    const [active, setActive] = useState(false);
     const router = useRouter()
     const siteId = useSiteId();
 
-    // this function is called when the tier is saved, by means of a tier-saved event
-    const saveTierCompleted = useCallback(() => {
-        setIsSaving(true);
-        setCompletedSteps((prev: any) => {
-            return {
-                ...prev,
-                [onboardingSteps.setupTiers]: true
-            }
-        })
-    }, [setCompletedSteps]);
 
-    useEffect(() => {
-        // listen for tier-saved event
-        if (currentStep === onboardingSteps.setupTiers) {
-            window.addEventListener('tier-saved', saveTierCompleted);
-        }
+    const { title: stepTitle, urls: stepURL, description: stepDescription, icon: stepIcon } = step;
 
-        return () => {
-            if (currentStep === onboardingSteps.setupTiers) {
-                window.removeEventListener('tier-saved', saveTierCompleted);
-            }
-        }
-    }, [currentStep]);
-
-    // on checkbox click
-    // const handleCheckboxChange = useCallback((e: any) => {
-    //     setIsSaving(true);
-    //     setCompletedSteps((prev: OnboardingStepsType) => {
-    //         const newState = {
-    //             ...prev,
-    //             [step]: e.target.checked
-    //         }
-    //         return newState;
-    //     })
-
-    // }, [setCompletedSteps])
-
-    // const checkboxClasses = 'rounded-full outline-none focus:outline-none focus:border-none' + (isSaving ? ' opacity-50 cursor-not-allowed animate-spin' : '');
-
-    useEffect(() => {
-        if (isSaving) {
-            // saving to db here, because we need to set the 'saving' indicator on this item only.
-            // and after isSaving is set to true, the updated completed step status will be available here
-            saveOnboardingState(completedSteps).then(() => {
-                setIsSaving(false);
-            });
-
-        }
-    }, [completedSteps[step]])
-
-    const stepTitle = onboardingStepsTitles[step as keyof typeof onboardingStepsTitles];
-    const stepURL = onboardingStepsURLs[step as keyof typeof onboardingStepsURLs];
-    const stepDescription = onboardingStepsDescription[step as keyof typeof onboardingStepsDescription];
-    const stepIcon = onboardingStepsIcons[step as keyof typeof onboardingStepsIcons];
     const stepIconDiv =
         <div className="me-2">
             <Icon icon={stepIcon} size={"xl"} />
         </div>;
 
-    const activeStep = currentStep === step;
+    const activeStep = currentStep === index;
 
+    const completed = completedSteps?.[step.name] === true;
 
     return (
         <>
-            <div className="flex flex-row">
-                {dashboard && stepIconDiv}
-                <div className={!dashboard && activeStep ? `mx-2 p-4 rounded-xl w-full bg-gray-200` : !dashboard ? `p-4 w-full` : ``}>
-                    <div className="px-1 mb-2">
-                        {/* <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}> */}
-                        <div className="flex items-center justify-start gap-3">
-                            {/* <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} /> */}
-                            <Bold>{stepTitle}</Bold>
+            <div className="flex cursor-pointer"  onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}>
+                <div className="flex flex-row">
+                    {dashboard && stepIconDiv}
+                    <div className={!dashboard && activeStep ? `mx-2 p-2 mb-2 rounded-xl w-full bg-gray-200` : !dashboard ? `p-2 mb-2 w-full` : ``}>
+                        <div className="px-1 mb-2">
+                            <div className={dashboard ? "flex items-center justify-start gap-0" : "flex flex-col justify-start gap-0"}>
+                                <Badge icon={completed ? Check : BadgeAlert} size="xs" color={completed ? "green" : "gray"} className={dashboard ? `me-2` : `mb-2`}>
+                                    {completed ? `Completed` : `To Do`}
+                                </Badge>
+                                
+                                <Bold>{stepTitle} {!dashboard && `→`}</Bold>
+                            </div>
+                            <div className="flex">
+                                <Text>{stepDescription}</Text>
+                            </div>
                         </div>
-                        <div className="flex">
-                            <Text>{stepDescription}</Text>
-                        </div>
+                        {dashboard &&
+                            <Button size="xs" variant="primary" className="w-min py-1.5 px-4" onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
+                        }
                     </div>
-                    <div>
-                        <div className="p-0 leading-tight">
-                            {children}
-                        </div>
-                    </div>
-
-                    <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step === onboardingSteps.setupSite && siteId ? stepURL + siteId : stepURL)}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
                 </div>
             </div>
-
         </>
     )
 }
 export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }): JSX.Element {
 
     const pathName = usePathname();
-    const [currentStep, setCurrentStep] = useState<string | null>(null);
-    const [completedSteps, setCompletedSteps] = useState(null);
+    const [currentStep, setCurrentStep] = useState<number | null>(null);
+    const [completedSteps, setCompletedSteps] = useState<OnboardingStepsType>(null);
     const [isDismissing, setIsDismissing] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
-
+    
+    
 
     useEffect(() => {
-        // refer to the db everytime you navigate to a new page
-        fetch('/api/onboarding').then(res => res.json()).then(data => {
-            if (data && data.length) {
-                setCompletedSteps(JSON.parse(data));
+
+        const action = async () => {
+            const state = await getState() as OnboardingStepsType;
+            setCompletedSteps(state);
+        }
+        
+        action();
+        
+        let currentStep = null;
+        onboardingSteps.forEach((step, index) => {
+            if(step.urls.some((url) => pathName.includes(url))) {
+                currentStep = index;
             }
         });
 
-        if (pathName.includes(onboardingStepsURLs.setupProject)) {
-            setCurrentStep(onboardingSteps.setupProject);
-        } else if (pathName.includes(onboardingStepsURLs.setupTiers)) {
-            setCurrentStep(onboardingSteps.setupTiers);
-        } else if (pathName.includes(onboardingStepsURLs.setupSite)) {
-            setCurrentStep(onboardingSteps.setupSite);
-        } else if (pathName.includes(onboardingStepsURLs.setupPayment)) {
-            setCurrentStep(onboardingSteps.setupPayment);
+        setCurrentStep(currentStep);
+
+        // set a window function that can be called from other components to refresh the onboarding guide
+        if(! (window as any)['refreshOnboarding']) {
+            (window as any)['refreshOnboarding'] = () => {
+               action();
+            }
         }
+
 
     }, [pathName])
 
@@ -184,51 +145,24 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                     }
                 >
                     <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
-
-                        <TodoItem
-                            step={onboardingSteps.setupPayment}
-                            currentStep={currentStep}
-                            pathName={pathName}
-                            completedSteps={completedSteps}
-                            setCompletedSteps={setCompletedSteps}
-                            dashboard={dashboard}
-                        />
-
-                        {dashboard && <Divider className="my-3" />}
-
-                        <TodoItem
-                            step={onboardingSteps.setupTiers}
-                            currentStep={currentStep}
-                            pathName={pathName}
-                            completedSteps={completedSteps}
-                            setCompletedSteps={setCompletedSteps}
-                            dashboard={dashboard}
-                        />
-
-                        {dashboard && <Divider className="my-3" />}
-
-                        <TodoItem
-                            title="Setup your project"
-                            step={onboardingSteps.setupProject}
-                            currentStep={currentStep}
-                            pathName={pathName}
-                            completedSteps={completedSteps}
-                            setCompletedSteps={setCompletedSteps}
-                            dashboard={dashboard}
-                            className=""
-                        />
-
-                        {dashboard && <Divider className="my-3" />}
-
-                        <TodoItem
-                            step={onboardingSteps.setupSite}
-                            currentStep={currentStep}
-                            pathName={pathName}
-                            completedSteps={completedSteps}
-                            setCompletedSteps={setCompletedSteps}
-                            dashboard={dashboard}
-                        />
-
+                        { 
+                            onboardingSteps.map((step, index) => {
+                                return (
+                                    // assuming 4 onboarding steps, so width is 1/4
+                                    <div className={!dashboard ? `w-1/4` : ``} key={index}>
+                                        <TodoItem
+                                            index={index}
+                                            step={step as onBoardingStepType}
+                                            currentStep={currentStep}
+                                            completedSteps={completedSteps}
+                                            setCompletedSteps={setCompletedSteps}
+                                            dashboard={dashboard}
+                                        />
+                                        {dashboard && index !== onboardingSteps.length - 1 && <Divider className="my-5" />}
+                                    </div>
+                                )
+                            })
+                        }
                     </div>
                 </ConditionalWrapper>
             </Flex>

@@ -12,6 +12,11 @@ export default function ProjectSettings({ user  }: {user : Partial<User> }) {
         setIsSaving(true);
         try {
             await updateCurrentUser(userData);
+            
+            // call the refreshOnboarding function if it exists
+            if(window?.hasOwnProperty('refreshOnboarding')) {
+                (window as any)['refreshOnboarding']();
+            }
         } catch (error) {
             console.log(error);
         } finally {

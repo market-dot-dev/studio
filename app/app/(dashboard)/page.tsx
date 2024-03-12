@@ -7,12 +7,12 @@ import SessionService from "@/app/services/SessionService";
 export default async function Overview() {
   const user = await SessionService.getSessionUser();
   const title = user?.name ? `Welcome, ${user.name}!` : "Your Dashboard";
-
+  const onboarding = user?.onboarding;
   return (
     <>
       <div className="flex max-w-screen-xl flex-col">
         <div className="text-center">
-          <OnboardingGuide dashboard={true} />
+          { onboarding ? <OnboardingGuide dashboard={true} /> : null }
         </div>
         <div className="flex flex-col space-y-6">
           <PageHeading title={title} />

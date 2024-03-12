@@ -12,11 +12,11 @@ import SessionRefresher from "@/components/common/session-refresher";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const user = await SessionService.getSessionUser();
-
+  const onboarding = user?.onboarding;
   if (!user?.id) {
     redirect("/login");
   }
-
+  console.log(onboarding)
   const site = await getOnlySiteFromUserId(user.id);
 
   return (
@@ -31,7 +31,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         <div className="min-h-screen sm:pl-60">
           <Flex alignItems="stretch" className="w-full">
             <div className="max-w-screen-xl grow p-8">
-              <OnboardingGuide />
+              { onboarding ? <OnboardingGuide /> : null }
               {user?.stripeAccountDisabled && user?.stripeAccountId && <StripeDisabledBanner /> }
               {children}
             </div>

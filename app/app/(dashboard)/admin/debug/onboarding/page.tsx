@@ -4,7 +4,7 @@ import { Card, Title, List, Text, Flex, Bold, Button, AccordionList, Badge, Divi
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
-import { onboardingSteps, type OnboardingStepsType, onboardingStepsDescription, onboardingStepsTitles, onboardingStepsURLs, defaultOnboardingState, onboardingStepsIcons } from "@/app/services/onboarding/onboarding-steps";
+import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 
 export default function RestoreOnboarding(): JSX.Element {
 
