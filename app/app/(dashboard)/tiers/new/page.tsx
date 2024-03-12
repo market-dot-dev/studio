@@ -8,7 +8,7 @@ const attrs = newTier();
 export default function NewTierPage() {
   return (
     <div className="flex max-w-screen-xl flex-col">
-      <TierForm />
+      <TierForm tier={attrs} />
     </div>
   )
 }
