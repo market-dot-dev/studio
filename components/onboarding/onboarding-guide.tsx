@@ -1,71 +1,28 @@
 'use client';
 
-import { Card, Title, List, Text, Flex, Bold, Button, AccordionList, Badge, Divider, Icon } from "@tremor/react";
+import { Card, Text, Flex, Bold, Button, Divider, Icon } from "@tremor/react";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
 import { onboardingSteps,type OnboardingStepsType, onBoardingStepType } from "@/app/services/onboarding/onboarding-steps";
 import { getState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
-import { Check, Circle } from "lucide-react";
+import { Check } from "lucide-react";
 
-
-
-function TodoItem({ step, index, currentStep, pathName, completedSteps, setCompletedSteps, dashboard }: {
-    // title?: string,
-    // children?: React.ReactNode,
+function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps, dashboard }: {
     step: onBoardingStepType,
     index: number,
     currentStep: number | null,
-    pathName: string,
     completedSteps: OnboardingStepsType,
     setCompletedSteps: (steps: OnboardingStepsType) => void,
     dashboard?: boolean
 }): JSX.Element {
 
-    const [isSaving, setIsSaving] = useState(false);
-    const [active, setActive] = useState(false);
     const router = useRouter()
     const siteId = useSiteId();
 
-    // this function is called when the tier is saved, by means of a tier-saved event
-    // const saveTierCompleted = useCallback(() => {
-    //     setIsSaving(true);
-    //     setCompletedSteps((prev: any) => {
-    //         return {
-    //             ...prev,
-    //             [onboardingSteps.setupTiers.step]: true
-    //         }
-    //     })
-    // }, [setCompletedSteps]);
 
-    // useEffect(() => {
-    //     // listen for tier-saved event
-    //     if (currentStep === onboardingSteps.setupTiers.step) {
-    //         window.addEventListener('tier-saved', saveTierCompleted);
-    //     }
-
-    //     return () => {
-    //         if (currentStep === onboardingSteps.setupTiers.step) {
-    //             window.removeEventListener('tier-saved', saveTierCompleted);
-    //         }
-    //     }
-    // }, [currentStep]);
-
-
-    // useEffect(() => {
-    //     if (isSaving) {
-    //         // saving to db here, because we need to set the 'saving' indicator on this item only.
-    //         // and after isSaving is set to true, the updated completed step status will be available here
-    //         saveOnboardingState(completedSteps).then(() => {
-    //             setIsSaving(false);
-    //         });
-
-    //     }
-    // }, [completedSteps?[steps[currentStep].name]])
-
-
-    const { title: stepTitle, url: stepURL, description: stepDescription, icon: stepIcon } = step;
+    const { title: stepTitle, urls: stepURL, description: stepDescription, icon: stepIcon } = step;
 
     const stepIconDiv =
         <div className="me-2">
@@ -82,9 +39,9 @@ function TodoItem({ step, index, currentStep, pathName, completedSteps, setCompl
                 {dashboard && stepIconDiv}
                 <div className={!dashboard && activeStep ? `mx-2 p-4 rounded-xl w-full bg-gray-200` : !dashboard ? `p-4 w-full` : ``}>
                     <div className="px-1 mb-2">
-                        {/* <div className="flex items-center justify-start gap-3" onClick={handleCheckboxChange}> */}
-                        <div className="flex items-center justify-start gap-3">
-                            {/* <input type="checkbox" className={checkboxClasses} checked={completedSteps?.[step]} onChange={handleCheckboxChange} onClick={(e) => e.stopPropagation()} /> */}
+                        
+                        <div className="flex items-center justify-start gap-0">
+                        
                             { completed ? <Icon icon={Check} size="md" className="text-green-500" /> : null }  
                             <Bold>{stepTitle}</Bold>
                         </div>
@@ -92,13 +49,8 @@ function TodoItem({ step, index, currentStep, pathName, completedSteps, setCompl
                             <Text>{stepDescription}</Text>
                         </div>
                     </div>
-                    <div>
-                        {/* <div className="p-0 leading-tight">
-                            {children}
-                        </div> */}
-                    </div>
 
-                    <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL + siteId : stepURL)}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
+                    <Button size="xs" variant="primary" className="py-0 px-2" onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
                 </div>
             </div>
 
@@ -113,6 +65,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     const [isDismissing, setIsDismissing] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
     
+    
 
     useEffect(() => {
 
@@ -122,12 +75,22 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
         }
         
         action();
-
+        
+        let currentStep = null;
         onboardingSteps.forEach((step, index) => {
-            if (pathName.includes(step.url)) {
-                setCurrentStep(index);
+            if(step.urls.some((url) => pathName.includes(url))) {
+                currentStep = index;
             }
         });
+
+        setCurrentStep(currentStep);
+
+        // set a window function that can be called from other components to refresh the onboarding guide
+        if(! (window as any)['refreshOnboarding']) {
+            (window as any)['refreshOnboarding'] = () => {
+               action();
+            }
+        }
 
 
     }, [pathName])
@@ -187,7 +150,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                                             index={index}
                                             step={step as onBoardingStepType}
                                             currentStep={currentStep}
-                                            pathName={pathName}
                                             completedSteps={completedSteps}
                                             setCompletedSteps={setCompletedSteps}
                                             dashboard={dashboard}

@@ -281,7 +281,10 @@ export default function PageEditor({
 
     try {
       await updatePage(page.id, { title, slug, content });
-
+      // call the refreshOnboarding function if it exists
+      if(window?.hasOwnProperty('refreshOnboarding')) {
+        (window as any)['refreshOnboarding']();
+      }
       // setStatus({ message: "The page was succesfully saved", timeout: 3000 });
     } catch (error) {
       // setStatus({

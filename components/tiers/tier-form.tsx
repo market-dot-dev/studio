@@ -124,6 +124,12 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [canPublishLoading, setCanPublishLoading] = useState(true);
 
 	useEffect(() => {
+		if( tierObj ) {
+			// call the refreshOnboarding function if it exists
+			if(window?.hasOwnProperty('refreshOnboarding')) {
+				(window as any)['refreshOnboarding']();
+			}
+		}
 		userHasStripeAccountIdById().then((value: boolean) => {
 			setCanPublish(value)
 			setCanPublishLoading(false);

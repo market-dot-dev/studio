@@ -16,7 +16,7 @@ export type onBoardingStepKeyType = keyof OnboardingStepsType;
 export type onBoardingStepType = {
     name: onBoardingStepKeyType,
     description: string,
-    url: string,
+    urls: string[],
     title: string,
     icon: any,
 
@@ -34,33 +34,31 @@ export const onboardingSteps = [
     {
         name: 'setupProject',
         description: 'Describe your project and link a Github repo. These settings apply in many places, from your website to checkout.',
-        url: '/settings/project',
+        urls: ['/settings/project'],
         title: 'Add Project Details',
         icon: Computer,
-        // for checking if the step is completed
-        query: {
-            object: 'user',
-            where: { }    
-        }
     },
     {
         name: 'setupPayment',
         description: 'Connect a payment service (we currently support Stripe) to start receiving payments.',
-        url: '/settings/payment',
+        urls: ['/settings/payment'],
         title: 'Connect Payout Account',
         icon: Banknote,
     },
     {
         name: 'setupTiers',
         description: 'Define your service offerings and create a Tier for sale. Tiers are the building blocks of your service.',
-        url: '/features',
+        urls: ['/features', '/tiers'],
         title: 'Define Services & Tiers',
         icon: Package,
     },
     {
         name: 'setupSite',
         description: 'Your site is your first sales channel. Customize it to match your brand and start selling.',
-        url: '/site/',
+        urls: [ 
+            '/site/',
+            '/page/'
+         ],
         title: 'Review your Site',
         icon: Globe,
     
