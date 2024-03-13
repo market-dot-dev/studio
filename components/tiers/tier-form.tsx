@@ -64,7 +64,6 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 	}
 };
 
-
 export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [tier, setTier] = useState<TierWithFeatures>((tierObj ? tierObj : newTier()) as Tier);
 	const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(new Set<string>());

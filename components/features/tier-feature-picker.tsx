@@ -36,35 +36,50 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   const anyFeatures = allFeatures.length > 0;
   const tiers = [tier, ...otherTiers];
 
+  // if we get a new tier object, set the initial statae
   useEffect(() => {
-    findByCurrentUser().then((featuresData) => {
-      setAllFeatures(featuresData.filter(f => f.isEnabled));
-    }).then(() => setFeaturesLoading(false));
+    if(!!newTier){
+      setPristineFeatureIds(new Set());
+      setSelectedFeatureIds(new Set());
+      setTier(newTier);
+      setTiersLoading(false);
+    }
+  }, [newTier, setSelectedFeatureIds, setPristineFeatureIds, setTier, setTiersLoading]);
 
-    getTiersForMatrix(tierId, newTier).then((tiersData) => {
-      if(newRecord) {
-        setPristineFeatureIds(new Set());
-        setSelectedFeatureIds(new Set());
-        setTier(newTier);
-        setTiersLoading(false);
-        setOtherTiers(tiersData.filter(t => t.published));
-      } else {
-        const tiers = tiersData.filter(t => t.published && t.id !== tierId);
-        const tier = tiersData.find(t => t.id === tierId);
+  // load the user's features 
+  useEffect(() => {
+    if(featuresLoading) {
+      findByCurrentUser().then((featuresData) => {
+        setAllFeatures(featuresData.filter(f => f.isEnabled));
+      }).then(() => setFeaturesLoading(false));
+    }
+  }, [featuresLoading, setAllFeatures, setFeaturesLoading]);
 
-        if(!tier || !tier.features) {
-          console.error("Tier not found", tier, tier?.features);
-          throw new Error("Tier not found");
+  //if we get a tierId, load the features and tiers
+  useEffect(() => {
+    if(tiersLoading && (tierId || newTier)) {
+      getTiersForMatrix(tierId).then((tiersData) => {
+        if(newRecord) {
+          setOtherTiers(tiersData.filter(t => t.published));
+        } else {
+          const tiers = tiersData.filter(t => t.published && t.id !== tierId);
+          const tier = tiersData.find(t => t.id === tierId);
+
+          if(!tier || !tier.features) {
+            console.error("Tier not found", tier, tier?.features);
+            throw new Error("Tier not found");
+          }
+
+          setTier(tier);
+          setSelectedFeatureIds(new Set(tier.features.map(f => f.id)));
+          setPristineFeatureIds(new Set(tier.features.map(f => f.id)));
+          setOtherTiers(tiers);
         }
+      }).then(() => setTiersLoading(false));
+    }
+  }, [newTier, tierId, newRecord, featuresLoading, tiersLoading, setSelectedFeatureIds, setPristineFeatureIds, setTier, setTiersLoading, setFeaturesLoading, setOtherTiers, setAllFeatures]);
 
-        setTier(tier);
-        setSelectedFeatureIds(new Set(tier.features.map(f => f.id)));
-        setPristineFeatureIds(new Set(tier.features.map(f => f.id)));
-        setOtherTiers(tiers);
-      }
-    }).then(() => setTiersLoading(false));
-  }, [newTier, tierId]);
-
+  // when features change, note if they == pristine
   useEffect(() => {
     if(selectedFeatureIds !== pristineFeatureIds && setFeaturesChanged) {
       setFeaturesChanged(true);
@@ -73,7 +88,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
     if(setFeatureObjs) {
       setFeatureObjs(allFeatures.filter(f => selectedFeatureIds.has(f.id)));
     }
-  }, [selectedFeatureIds, pristineFeatureIds]);
+  }, [selectedFeatureIds, pristineFeatureIds, setFeaturesChanged, setFeatureObjs, allFeatures]);
 
   const handleFeatureToggle = async (feature: Feature) => {
     let updatedFeatures = new Set(selectedFeatureIds);

@@ -461,7 +461,7 @@ class TierService {
     return customers;
   }
 
-  static async getTiersForMatrix(tierId?: string, newTier?: Tier): Promise<TierWithFeatures[]> {
+  static async getTiersForMatrix(tierId?: string): Promise<TierWithFeatures[]> {
     const currentUserId = await SessionService.getCurrentUserId();
 
     if (!currentUserId) {
