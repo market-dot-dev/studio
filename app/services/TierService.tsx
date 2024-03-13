@@ -203,6 +203,18 @@ class TierService {
 
         // Call the static class method onNewVersion
         await TierService.onNewVersion(writtenTier);
+      } else if (shouldCreateNewVersion) {
+        // If there are no subscribers but the price has changed, update the tier's price and create a new Stripe price
+        const updatedTier = await prisma.tier.update({
+          where: { id },
+          data: {
+            price: tierData.price,
+          },
+        });
+  
+        if (await StripeService.userCanSell(user)) {
+          await TierService.createStripePrice(updatedTier);
+        }
       }
 
       // Update the tier with the new data
