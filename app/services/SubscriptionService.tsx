@@ -139,7 +139,11 @@ class SubscriptionService {
     if (!tier) throw new Error('Tier not found');
     if (!tier.stripePriceId) throw new Error('Stripe price ID not found for tier');
 
-    const subscription = await StripeService.createSubscription(stripeCustomerId, tier.stripePriceId);
+    const maintainer = await UserService.findUser(tier.userId);
+    if (!maintainer) throw new Error('Maintainer not found');
+    if (!maintainer.stripeAccountId) throw new Error("Maintainer's account not connected to Stripe");
+
+    const subscription = await StripeService.createSubscription(stripeCustomerId, tier.stripePriceId, maintainer.stripeAccountId);
 
     const existingSubscription = await SubscriptionService.findSubscriptionByTierId({ tierId });
 
