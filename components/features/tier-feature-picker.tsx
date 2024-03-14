@@ -122,7 +122,11 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   return (
     <div>
       <div className="overflow-x-auto">
-        { featuresLoading && <LoadingDots /> }
+        { featuresLoading && 
+          <>
+            <Text><LoadingDots />&nbsp;Loading Features</Text>
+          </>
+        }
         { !featuresLoading && !anyFeatures && <Text>You haven&apos;t listed the services you offer yet. You can do that <a href="/features" className="underline">here</a>.</Text> }
         { anyFeatures &&
           <table className="min-w-full divide-y divide-gray-200">
