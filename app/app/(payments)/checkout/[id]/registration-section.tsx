@@ -9,11 +9,10 @@ import {
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
-import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
 import useCurrentSession from "@/app/contexts/current-user-context";
 
 import { onClickSubscribe } from '@/app/services/StripeService';
-import { findSubscriptionByTierId } from '@/app/services/SubscriptionService';
+import { isSubscribedByTierId } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
@@ -21,7 +20,7 @@ import { CustomerLoginComponent } from "@/components/login/customer-login";
 const checkoutCurrency = "USD";
   "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
 
-const AlreadySubscribedCard = ({ subscription }: { subscription: Subscription }) => {
+const AlreadySubscribedCard = () => {
   return (<Card>
     <Text>You&apos;re already subscribed to this product.</Text>
   </Card>);
@@ -38,14 +37,12 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
 
   const { currentSession, refreshCurrentSession } = useCurrentSession();
   
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [isSubscribed, setIsSubscribed] = useState(false);
   const { user } = currentSession;
-
-  
 
   useEffect(() => {
     if(user?.id) {
-      findSubscriptionByTierId({ tierId }).then(setSubscription);
+      isSubscribedByTierId(user.id, tierId).then(setIsSubscribed);
     }
   }, [user?.id, tierId]);
 
@@ -75,8 +72,8 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
     }
   }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user]);
 
-  if(subscription?.isActive()) {
-    return <AlreadySubscribedCard subscription={subscription} />
+  if(isSubscribed) {
+    return <AlreadySubscribedCard />
   } else return (
     <>
       <section className="w-7/8 mb-8 lg:w-5/6">

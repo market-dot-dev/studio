@@ -231,7 +231,7 @@ class SubscriptionService {
     });
   }
 
-  static async isSubscribed(userId: string, tierId: string): Promise<boolean> {
+  static async isSubscribedByTierId(userId: string, tierId: string): Promise<boolean> {
     const currentDate = new Date();
     const subscription = await prisma.subscription.findFirst({
       where: {
@@ -251,14 +251,14 @@ class SubscriptionService {
       },
     });
   
-    return !!subscription;
+    return subscription ? new Subscription(subscription).isRenewing() : false;
   }
 
   // Check if a user can subscribe to a tier (e.g., not already subscribed)
   static async canSubscribe(userId: string, tierId: string): Promise<boolean> {
-    return !(await SubscriptionService.isSubscribed(userId, tierId));
+    return !(await SubscriptionService.isSubscribedByTierId(userId, tierId));
   }
 };
 
-export const { createSubscription, cancelSubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed, hasSubscribers, subscriberCount } = SubscriptionService;
+export const { createSubscription, cancelSubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribedByTierId, hasSubscribers, subscriberCount } = SubscriptionService;
 export default SubscriptionService;
