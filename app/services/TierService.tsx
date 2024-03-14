@@ -157,7 +157,7 @@ class TierService {
       throw new Error(`Tier with ID ${id} not found`);
     }
 
-    const hasSubscribers = await SubscriptionService.hasSubscribers(id);
+    const hasSubscribers = await SubscriptionService.hasSubscribers(id, tier.revision);
     const newPrice = parseFloat(`${tierData.price}`);
     const priceChanged = Number(tierData.price) !== Number(tier.price);
     const published = tierData.published === true;

@@ -58,10 +58,11 @@ class SubscriptionService {
     });
   }
 
-  static async hasSubscribers(tierId: string): Promise<boolean> {
+  static async hasSubscribers(tierId: string, revision?: number): Promise<boolean> {
     const subscriptions = await prisma.subscription.findMany({
       where: {
         tierId: tierId,
+        tierRevision: revision ? revision : undefined,
       }
     });
 
