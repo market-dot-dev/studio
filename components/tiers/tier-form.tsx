@@ -1,7 +1,7 @@
 "use client";
 // tier-form.tsx
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, use, useEffect, useState } from 'react';
 import { Flex, Text, Button, Card, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
@@ -21,10 +21,16 @@ interface TierFormProps {
 
 const TierVersionCard = async ({ tierVersion }: { tierVersion: TierVersionWithFeatures }) => {
 	const features = tierVersion.features || [];
+	const [versionSubscribers, setVersionSubscribers] = useState(0);
+
+	useEffect(() => {
+		subscriberCount(tierVersion.tierId, tierVersion.revision).then(setVersionSubscribers);
+	}, [tierVersion.tierId, tierVersion.revision]);
 
 	return <Card key={tierVersion.id} className="p-2 mb-2" >
 		<Text>Revision: {tierVersion.revision}</Text>
 		<Text>Price: {tierVersion.price}</Text>
+		<Text>Subscribers: {versionSubscribers}</Text>
 		<Text>
 			Features:
 			{features.length > 0 ?
@@ -229,9 +235,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						/>
 					</div>
 
-					{tierHasSubscribers &&
+					{tierSubscriberCount &&
 						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Subscribers: {currentRevisionSubscriberCount} (all revs: {tierSubscriberCount})</label>
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Current rev subscribers: {currentRevisionSubscriberCount} (all revs: {tierSubscriberCount})</label>
 						</div>}
 
 					<div className="mb-4">
