@@ -41,9 +41,9 @@ class EmailService {
 
   static async newSubscriptionInformation(userId: string, customer: RequiredUserProps, tierName: string) {
 
-    const subject = "New Tier Purchase";
-    const text = `${customer.name} has purchased your ${tierName} tier.`;
-    const html = `<b>${customer.name}</b> has purchased your <b>${tierName}</b> tier.`;
+    const subject = `You have a new customer for ${tierName}!`;
+    const text = `Congratulations! ${customer.name} has purchased your ${tierName} tier.`;
+    const html = `Congratulations! <b>${customer.name}</b> has purchased your <b>${tierName}</b> tier. You can contact them at ${customer.email} to provide them with the benefits of this tier.`;
     const user = await UserService.findUser(userId);
     
     if(!user) {
