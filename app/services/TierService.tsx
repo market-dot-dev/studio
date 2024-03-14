@@ -167,7 +167,7 @@ class TierService {
     if(hasSubscribers && published && materialChange){
       // create a new version and price
       // copy existing state to a version
-      const newlyWrittenVersion = await prisma.tierVersion.create({
+      newlyWrittenVersion = await prisma.tierVersion.create({
         data: {
           tierId: id,
           price: currentTier.price,
