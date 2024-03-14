@@ -21,6 +21,13 @@ interface TierFeaturePickerWidgetProps {
   setFeatureObjs?: (features: Feature[]) => void;
 }
 
+// whyyyyyyyyyyyyyyy
+const setsEqual = (a: Set<any>, b: Set<any>) => {
+  if (a.size !== b.size) return false;
+  for (let item of a) if (!b.has(item)) return false;
+  return true;
+}
+
 const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatureIds, setSelectedFeatureIds, setFeaturesChanged, setFeatureObjs }) => {
   const newRecord = !tierId;
   const [allFeatures, setAllFeatures] = useState<Feature[]>([]);
@@ -38,13 +45,19 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
 
   // if we get a new tier object, set the initial statae
   useEffect(() => {
-    if(!!newTier){
+    if(newRecord){
       setPristineFeatureIds(new Set());
       setSelectedFeatureIds(new Set());
       setTier(newTier);
       setTiersLoading(false);
     }
   }, [newTier, setSelectedFeatureIds, setPristineFeatureIds, setTier, setTiersLoading]);
+
+  useEffect(() => {
+    if(!newRecord) {
+      setTier(newTier);
+    }
+  }, [newTier]);
 
   // load the user's features 
   useEffect(() => {
@@ -81,8 +94,8 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
 
   // when features change, note if they == pristine
   useEffect(() => {
-    if(selectedFeatureIds !== pristineFeatureIds && setFeaturesChanged) {
-      setFeaturesChanged(true);
+    if(setFeaturesChanged){
+      setFeaturesChanged(!setsEqual(selectedFeatureIds, pristineFeatureIds));
     }
 
     if(setFeatureObjs) {

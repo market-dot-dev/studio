@@ -287,7 +287,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						<DashboardCard>
 						
 						{tier?.id ?
-							<TierFeaturePicker tierId={tier.id} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeaturesChanged={setFeaturesChanged} setFeatureObjs={setFeatureObjs}/> :
+							<TierFeaturePicker tierId={tier.id} newTier={tier} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeaturesChanged={setFeaturesChanged} setFeatureObjs={setFeatureObjs}/> :
 							<TierFeaturePicker newTier={tier} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeatureObjs={setFeatureObjs}/>
 						}
 
