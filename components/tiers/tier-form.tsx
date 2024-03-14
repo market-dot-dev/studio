@@ -109,8 +109,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 				savedTier = await createTier(tier);
 				await attachMany({ referenceId: savedTier.id, featureIds: Array.from(selectedFeatureIds) }, 'tier');
 			} else {
-				const newFeatureSet = featuresChanged ? Array.from(selectedFeatureIds) : undefined;
-				savedTier = await updateTier(tier.id as string, tier, newFeatureSet);
+				savedTier = await updateTier(tier.id as string, tier, Array.from(selectedFeatureIds));
 			}
 			window.location.href = `/tiers/${savedTier.id}`;
 		} catch (error) {
