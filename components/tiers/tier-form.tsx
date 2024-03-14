@@ -2,7 +2,7 @@
 // tier-form.tsx
 
 import { ChangeEvent, use, useEffect, useState } from 'react';
-import { Flex, Text, Button, Card, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab } from "@tremor/react"
+import { Flex, Text, Button, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
 import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
@@ -43,7 +43,6 @@ const TierVersionCard = ({ tierVersion }: { tierVersion: TierVersionWithFeatures
 			<TableCell className="p-1 ps-0 m-0">
 				{features.length > 0 ?
 					<>
-						<br />
 						<ul>
 							{(features || []).map(f => <li key={f.id}>· {f.name}</li>)}
 						</ul>
@@ -302,31 +301,58 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						</DashboardCard>
 					</div>
 
-					{versions && versions.length > 0 &&
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Versions</label>
 
-							<Text className="my-4">{tier.name} has <b>{currentRevisionSubscriberCount} customers</b> for the current version, and <b>{tierSubscriberCount} customers</b> across all versions.</Text>
-							
-							<DashboardCard>
-								<Table>
-									<TableHead>
-										<TableRow className="border-b-2 border-gray-400">
-											<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 text-gray-500 uppercase tracking-wider">Created</TableHeaderCell>
-											<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 text-gray-500 uppercase tracking-wider">Features</TableHeaderCell>
-											<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 text-gray-500 uppercase tracking-wider">Price</TableHeaderCell>
-											<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 text-gray-500 uppercase tracking-wider">#Customers</TableHeaderCell>
-										</TableRow>
-									</TableHead>
-									<TableBody>
-										{versions.map((version) => <TierVersionCard tierVersion={version} key={version.id} />)}
-									</TableBody>
-								</Table>
-							</DashboardCard>
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Version History</label>
 
-							<Text className="my-4">Please note that tier versions are only recorded when you make feature or price changes to a tier where you have existing customers.</Text>
-						</div>
-					}
+						{!!versions && versions.length === 0 && <Text>{tier.name} has {currentRevisionSubscriberCount === 0 ? "no customers yet" : currentRevisionSubscriberCount + " customers"}. If you make any price or feature changes for a tier that has customers, your changes to the previous tier will be kept as a tier version. Customers will be charged what they originally purchased.</Text>}
+
+						{!!versions && versions.length > 0 &&
+							<>
+								<Text className="my-4">{tier.name} has {currentRevisionSubscriberCount === 0 ? "no customers yet" : currentRevisionSubscriberCount + " customers"} for the most recent version. There are {versions.length} versions and {tierSubscriberCount} customers across versions.</Text>
+								<DashboardCard>
+									<Table>
+										<TableHead>
+											<TableRow className="border-b-2 border-gray-400">
+												<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 text-gray-500 uppercase tracking-wider">Created</TableHeaderCell>
+												<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 text-gray-500 uppercase tracking-wider">Features</TableHeaderCell>
+												<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 text-gray-500 uppercase tracking-wider">Price</TableHeaderCell>
+												<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 text-gray-500 uppercase tracking-wider">#Customers</TableHeaderCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											<TableRow>
+												<TableCell className="p-1 ps-0 m-0">
+													{tier.createdAt.toDateString()}
+													<Badge color="gray" size="xs" className="ms-1 text-xs font-medium uppercase">Current</Badge>
+												
+												</TableCell>
+												<TableCell className="p-1 ps-0 m-0">
+													{tier.features && tier.features.length > 0 ?
+														<>
+															<ul>
+																{(tier.features || []).map(f => <li key={f.id}>· {f.name}</li>)}
+															</ul>
+														</> :
+														<>&nbsp;None</>
+													}
+												</TableCell>
+												<TableCell className="text-center p-1 ps-0 m-0">
+													${tier.price}
+												</TableCell>
+												<TableCell className="p-1 ps-0 m-0 text-center">
+													{currentRevisionSubscriberCount}
+												</TableCell>
+											</TableRow>
+											{versions.map((version) => <TierVersionCard tierVersion={version} key={version.id} />)}
+										</TableBody>
+									</Table>
+								</DashboardCard>
+
+								<Text className="my-4">Please note that tier versions are only recorded when you make feature or price changes to a tier where you have existing customers. Customers will be charged what they originally purchased.</Text>
+							</>
+						}
+					</div>
 
 				</div>
 
