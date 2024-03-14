@@ -21,7 +21,10 @@ class EmailService {
     }
     const msg = {
       to: email, // recipient
-      from: process.env.SENDGRID_FROM_EMAIL, // verified sender
+      from: {
+        name: process.env.SENDGRID_FROM_NAME, // verified sender
+        email: process.env.SENDGRID_FROM_EMAIL, // verified sender
+      },
       subject: subject,
       text: text,
       html: html,
