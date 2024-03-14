@@ -45,11 +45,14 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
 
   // if we get a new tier object, set the initial statae
   useEffect(() => {
-    if(newRecord){
-      setPristineFeatureIds(new Set());
-      setSelectedFeatureIds(new Set());
+    if(newRecord) {
       setTier(newTier);
-      setTiersLoading(false);
+
+      if(tiersLoading){
+        setPristineFeatureIds(new Set());
+        setSelectedFeatureIds(new Set());
+        setTiersLoading(false);
+      }
     }
   }, [newTier, setSelectedFeatureIds, setPristineFeatureIds, setTier, setTiersLoading]);
 
