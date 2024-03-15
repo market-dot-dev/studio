@@ -11,6 +11,7 @@ interface UseStripePaymentCollectorProps {
   user: User | null | undefined;
   setError: (error: string | null) => void;
   setSubmitting: (submitting: boolean) => void;
+  maintainerUserId: string;
 }
 
 const CARD_ELEMENT_OPTIONS = {
@@ -49,7 +50,7 @@ export const StripeCheckoutFormWrapper = ({ children, ...props }: { children: (p
   </Elements>;
 };
 
-const useStripePaymentCollector = ({ user, setError, setSubmitting }: UseStripePaymentCollectorProps): UseStripePaymentCollectorReturns => {
+const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUserId }: UseStripePaymentCollectorProps): UseStripePaymentCollectorReturns => {
   const stripe = useStripe();
   const elements = useElements();
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
@@ -80,10 +81,10 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting }: UseStripeP
     } else if (paymentMethod) {
       console.log('Payment method attached: ', paymentMethod);
       await attachPaymentMethod(paymentMethod.id);
-      setStripeCustomerId(await createStripeCustomerById(user?.id || ''));
+      setStripeCustomerId(await createStripeCustomerById(user?.id || '', maintainerUserId));
       setSubmitting(false);
     }
-  }, [stripe, elements, setError, setSubmitting]);
+  }, [stripe, elements, setError, setSubmitting, user?.id, maintainerUserId]);
 
   const handleDetach = useCallback(async () => {
     if (user?.stripePaymentMethodId) {

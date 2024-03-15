@@ -44,7 +44,9 @@ class TierService {
     if(!stripeProductId) {
       throw new Error('User does not have a Stripe product ID.');
     }
-    const newStripePrice = await StripeService.createPrice(stripeProductId, newPrice);
+
+    const stripeService = new StripeService(currentUser.stripeAccountId!);
+    const newStripePrice = await stripeService.createPrice(stripeProductId, newPrice);
 
     await prisma?.tier.update({
       where: { id: tier.id },
@@ -57,7 +59,9 @@ class TierService {
       throw new Error('Tier does not have a Stripe price ID.');
     }
 
-    await StripeService.destroyPrice(tier.stripePriceId);
+    const maintainer = await UserService.findUser(tier.userId);
+    const stripeService = new StripeService(maintainer?.stripeAccountId!);
+    await stripeService.destroyPrice(tier.stripePriceId);
 
     await prisma?.tier.update({
       where: { id: tier.id },
@@ -196,7 +200,8 @@ class TierService {
     } else {
       if(priceChanged) {
         if(tier.stripePriceId) {
-          StripeService.destroyPrice(tier.stripePriceId);
+          const stripeService = new StripeService(user.stripeAccountId!);
+          await stripeService.destroyPrice(tier.stripePriceId);
         }
 
         console.log('~~updating with: ', {

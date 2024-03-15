@@ -90,6 +90,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
             <UserPaymentMethodWidget
               loading={submittingPaymentMethod}
               setError={setError}
+              maintainerUserId={tier.userId}
             />
           </div>
       </section>

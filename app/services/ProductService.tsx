@@ -35,7 +35,8 @@ class ProductService {
       } as Product;
     }
 
-    const stripeProduct = await StripeService.createOrUpdateProduct({ userId: userId, name: `user-${userId}-${existingUser.name!}` });
+    const stripeService = new StripeService(existingUser.stripeAccountId!);
+    const stripeProduct = await stripeService.createOrUpdateProduct({ userId: userId, name: `user-${userId}-${existingUser.name!}` });
 
     // Update the user record with the new Stripe product ID
     const user = await prisma.user.update({
@@ -66,7 +67,12 @@ class ProductService {
   }
 
   static async destroyProduct(userId: string) {
-    const user = await prisma.user.update({
+    let user = await UserService.findUser(userId);
+
+    const stripeService = new StripeService(user?.stripeAccountId!);
+    if (user?.stripeProductId) await stripeService.destroyProduct(user.stripeProductId);
+
+    user = await prisma.user.update({
       where: {
         id: userId,
       },
@@ -75,7 +81,7 @@ class ProductService {
       },
     });
 
-    if (user?.stripeProductId) await StripeService.destroyProduct(user.stripeProductId);
+    
 
     return {
       userId: user?.id,

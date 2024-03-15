@@ -11,9 +11,10 @@ interface UserPaymentMethodWidgetProps {
   loading?: boolean;
   setError?: (error: string | null) => void;
   setLoading?: (submitting: boolean) => void;
+  maintainerUserId?: string;
 }
 
-const UserPaymentMethodWidget = ({ loading, setLoading, setError }: UserPaymentMethodWidgetProps) => {
+const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUserId }: UserPaymentMethodWidgetProps) => {
   const setErrorOrNoop = setError ? setError : (error: string | null) => {};
   const setLoadingOrNoop = setLoading ? setLoading : (submitting: boolean) => {};
   const [cardInfo, setCardInfo] = useState<StripeCard>();
@@ -26,13 +27,13 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError }: UserPaymentM
     stripeCustomerId,
     handleSubmit,
     handleDetach
-  } = useStripePaymentCollector({ user, setError: setErrorOrNoop, setSubmitting: setLoadingOrNoop });
+  } = useStripePaymentCollector({ user, setError: setErrorOrNoop, setSubmitting: setLoadingOrNoop, maintainerUserId });
   
   useEffect(() => {
     if (loading && user?.id && !user?.stripePaymentMethodId) {
       handleSubmit().then(refreshCurrentSession);
     }
-  }, [loading, user, handleSubmit]);
+  }, [loading, user, handleSubmit, refreshCurrentSession]);
 
   useEffect(() => {
     if (user?.stripePaymentMethodId) {

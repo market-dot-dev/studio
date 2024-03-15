@@ -43,7 +43,7 @@ class UserService {
     });
   }
 
-  static async createStripeCustomer(user: User) {
+  static async createStripeCustomer(user: User, maintainerStripeAccountId: string) {
     if(!user || !user.email) {
       throw new Error('User does not have an email address.');
     }
@@ -52,7 +52,8 @@ class UserService {
       return user.stripeCustomerId;
     }
 
-    const customer = await StripeService.createCustomer(user.email, user.name ?? '', user.stripePaymentMethodId || undefined);
+    const stripeService = new StripeService(maintainerStripeAccountId);
+    const customer = await stripeService.createCustomer(user.email, user.name ?? '', user.stripePaymentMethodId || undefined);
     
     await prisma?.user.update({
       where: { id: user.id },
@@ -74,13 +75,13 @@ class UserService {
   }
 };
 
-export const createStripeCustomerById = async (userId: string) => {
+export const createStripeCustomerById = async (userId: string, stripeAccountId: string) => {
   const user = await UserService.findUser(userId);
   if(!user) {
     throw new Error('User not found.');
   }
 
-  return await UserService.createStripeCustomer(user);
+  return await UserService.createStripeCustomer(user, stripeAccountId);
 }
 
 export const clearStripeCustomerById = async (userId: string) => {
