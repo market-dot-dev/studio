@@ -1,10 +1,17 @@
 'use client'
-import { searchUserRepos, verifyAndConnectRepo, disconnectRepo } from "@/app/services/RepoService";
+import { verifyAndConnectRepo, disconnectRepo } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { Card, Flex, Text, TextInput, Button, Grid, Col, Bold } from "@tremor/react";
-import { set } from "date-fns";
-import { Github, SearchIcon, XCircle } from "lucide-react";
+import { Card, Flex, Text, TextInput, Button, Grid, Col, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+
+import { Github, SearchIcon, XCircle, Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { getInstallations, getInstallationRepos } from "@/app/services/RepoService";
+const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
+type Installation = {
+    id: string;
+    account: string;
+    accountType: string;
+}
 
 function SearchResultRepo({repo, setRepos, isConnected}: {repo: any, setRepos: any, isConnected: boolean}) {
 
@@ -64,25 +71,13 @@ function RepoItem({repo, setRepos}: {repo: Partial<Repo>, setRepos: any }) {
     )
 }
 
-export default function RepositorySettings({ repos: initialRepos }: { repos: Partial<Repo>[]}) {
-    const [search, setSearch] = useState<string>('');
-    const [isSearching, setIsSearching] = useState<boolean>(false);
-    const [searchResults, setSearchResults] = useState<any[]>([]);
-    const [noSearcResults, setNoSearchResults] = useState<boolean>(false);
+export default function RepositorySettings({ repos: initialRepos }: { repos: Partial<Repo>[] }) {
+    const [installationRepos, setInstallationRepos] = useState<any[]>([]);
     const [repos, setRepos] = useState<Partial<Repo>[]>(initialRepos);
+    const [installations, setInstallations] = useState<Installation[]>([]);
+    const [stateVariable, setStateVariable] = useState<string>('');
 
-    const onSearch = useCallback(() => {
-        setIsSearching(true);
-        searchUserRepos(search)
-            .then(data => {
-                setSearchResults(data)
-                if(!data.length) {
-                    setNoSearchResults(true);
-                }
-            })
-            .catch(error => console.error("Failed to search repos:", error))
-            .finally(() => setIsSearching(false));
-    }, [search]);
+    
 
     const isRepoConnected = useCallback((repoId: string) => {
         return repos.some(repo => `${repo.repoId}` == repoId);
@@ -93,37 +88,48 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     }, [initialRepos]);
 
     useEffect(() => {
-        // Set a timeout to delay the search
-        const handler = setTimeout(() => {
-            if (search.trim()) {
-                onSearch();
-            }
-        }, 500); 
+        getInstallations().then(({state, data}: { state: string, data: Installation[]}) => {
+            setStateVariable(state);
+            setInstallations(data);
+        });
+    }, [])
 
-        // Clear the timeout if the search term changes before the delay is over or if the component is unmounted
-        return () => {
-            clearTimeout(handler);
-        };
-    }, [search, onSearch]);
+    const handleAddAccount = useCallback(() => {
+        window.open(`https://github.com/apps/${appName}/installations/select_target?state=${stateVariable}`, '_blank', 'width=800,height=600');
+    }, [stateVariable]);
 
-    const clearSearch = useCallback(() => {
-        setSearch('');
-        setSearchResults([]);
-        setNoSearchResults(false);
+    const handleInstallationSelect = useCallback((installationId: string) => {
+        getInstallationRepos(installationId).then(setInstallationRepos);
     }, []);
 
 
     return (
         <>
             <Card className="p-10">
+                
                 <Flex flexDirection="col" alignItems="start" className="gap-4">
+                    <Flex flexDirection="col" alignItems="start" className="gap-4">
+                        <SearchSelect onValueChange={handleInstallationSelect}>
+                            {installations.map((installation, index) => (
+                                <SearchSelectItem value={installation.id} key={index}>
+                                    <Flex alignItems="center">
+                                        <Icon icon={Github} /> <Text>{installation.account}</Text>
+                                    </Flex>
+                                </SearchSelectItem>
+                            ))}
+                            <div className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
+                            + Add Github Account
+                            </div>
+                        </SearchSelect>
+
+                    </Flex>
                     <Flex flexDirection="col" alignItems="start" className="gap-4">
                         <h2 className="font-cal text-xl dark:text-white">Repos</h2>
                         <Text>
                             Repositories you have access to.
                         </Text>
                         
-                            <div className='w-full relative'>
+                            {/* <div className='w-full relative'>
                                 <TextInput icon={SearchIcon} placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
                                 { search?.length ?
                                     <div className="absolute right-2 top-2">
@@ -131,19 +137,16 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                                     </div>
                                     : null
                                 }
-                            </div>
+                            </div> */}
                         
                     </Flex>
-                    { searchResults.length ? 
+                    { installationRepos.length ? 
                         <Flex flexDirection="col" className="w-full gap-0 border border-x-0 border-t-0">
-                            {searchResults.map((repo : any, index: number) => (
+                            {installationRepos.map((repo : any, index: number) => (
                                 <SearchResultRepo repo={repo} key={index} setRepos={setRepos} isConnected={isRepoConnected(repo.id)} />
                             ))}
                         </Flex>
-                        : noSearcResults ?
-                            <Text>No results found.</Text>
-                            : null
-
+                        : null
                     }
                 </Flex>
             </Card>

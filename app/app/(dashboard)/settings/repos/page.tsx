@@ -3,9 +3,8 @@
 
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import PageHeading from "@/components/common/page-heading";
 import RepositorySettings from "@/components/user/repository-settings";
-import { getApp, getRepos } from "@/app/services/RepoService";
+import { getRepos } from "@/app/services/RepoService";
 import { Title } from "@tremor/react";
 
 export default async function RepositorySettingsPage() {
@@ -15,7 +14,6 @@ export default async function RepositorySettingsPage() {
     redirect("/login");
   }
   
-  // const [app, repos] = await Promise.all([getApp(), getRepos()]);
 
   const repos = await getRepos();
   // console.log(app);
@@ -23,7 +21,7 @@ export default async function RepositorySettingsPage() {
   return (    
     <div className="space-y-6">
       <Title>Your Github Repositories</Title>
-      <RepositorySettings repos={repos} />
+      <RepositorySettings repos={repos}/>
   </div>
   );
 }
