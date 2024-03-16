@@ -58,10 +58,11 @@ class SubscriptionService {
     });
   }
 
-  static async hasSubscribers(tierId: string): Promise<boolean> {
+  static async hasSubscribers(tierId: string, revision?: number): Promise<boolean> {
     const subscriptions = await prisma.subscription.findMany({
       where: {
         tierId: tierId,
+        tierRevision: revision ? revision : undefined,
       }
     });
 
@@ -139,7 +140,11 @@ class SubscriptionService {
     if (!tier) throw new Error('Tier not found');
     if (!tier.stripePriceId) throw new Error('Stripe price ID not found for tier');
 
-    const subscription = await StripeService.createSubscription(stripeCustomerId, tier.stripePriceId);
+    const maintainer = await UserService.findUser(tier.userId);
+    if (!maintainer) throw new Error('Maintainer not found');
+    if (!maintainer.stripeAccountId) throw new Error("Maintainer's account not connected to Stripe");
+
+    const subscription = await StripeService.createSubscription(stripeCustomerId, tier.stripePriceId, maintainer.stripeAccountId);
 
     const existingSubscription = await SubscriptionService.findSubscriptionByTierId({ tierId });
 
@@ -226,7 +231,7 @@ class SubscriptionService {
     });
   }
 
-  static async isSubscribed(userId: string, tierId: string): Promise<boolean> {
+  static async isSubscribedByTierId(userId: string, tierId: string): Promise<boolean> {
     const currentDate = new Date();
     const subscription = await prisma.subscription.findFirst({
       where: {
@@ -246,14 +251,14 @@ class SubscriptionService {
       },
     });
   
-    return !!subscription;
+    return subscription ? new Subscription(subscription).isRenewing() : false;
   }
 
   // Check if a user can subscribe to a tier (e.g., not already subscribed)
   static async canSubscribe(userId: string, tierId: string): Promise<boolean> {
-    return !(await SubscriptionService.isSubscribed(userId, tierId));
+    return !(await SubscriptionService.isSubscribedByTierId(userId, tierId));
   }
 };
 
-export const { createSubscription, cancelSubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribed, hasSubscribers, subscriberCount } = SubscriptionService;
+export const { createSubscription, cancelSubscription, findSubscriptionByTierId, findSubscription, findSubscriptions, updateSubscription, canSubscribe, isSubscribedByTierId, hasSubscribers, subscriberCount } = SubscriptionService;
 export default SubscriptionService;

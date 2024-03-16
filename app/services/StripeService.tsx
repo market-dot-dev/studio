@@ -335,14 +335,17 @@ class StripeService {
     await stripe.customers.del(customerId);
   }
 
-  static async createSubscription(customerId: string, priceId: string) {
-    const subscription = await stripe.subscriptions.create({
-      customer: customerId,
-      items: [{ price: priceId }],
+  static async createSubscription(stripeCustomerId: string, stripePriceId: string, stripeAccountId: string) {
+    return await stripe.subscriptions.create({
+      customer: stripeCustomerId,
+      items: [{ price: stripePriceId! }],
+      payment_behavior: 'error_if_incomplete',
       expand: ['latest_invoice.payment_intent'],
+      transfer_data: {
+        destination: stripeAccountId,
+      },
+      on_behalf_of: stripeAccountId,
     });
-
-    return subscription;
   }
 
   static async updateSubscription(subscriptionId: string, priceId: string) {
@@ -455,23 +458,8 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
     throw new Error("Maintainer hasn't connected stripe account.");
   }
 
-  console.log("===== purchasing ", {
-    customer: stripeCustomerId,
-    items: [{ price: tier.stripePriceId! }],
-    payment_behavior: 'error_if_incomplete',
-    expand: ['latest_invoice.payment_intent'],
-  });
   try {
-    subscription = await stripe.subscriptions.create({
-      customer: stripeCustomerId,
-      items: [{ price: tier.stripePriceId! }],
-      payment_behavior: 'error_if_incomplete',
-      expand: ['latest_invoice.payment_intent'],
-      transfer_data: {
-        destination: maintainer.stripeAccountId,
-      },
-      on_behalf_of: maintainer.stripeAccountId,
-    });
+    subscription = await StripeService.createSubscription(stripeCustomerId, tier.stripePriceId!, maintainer.stripeAccountId);
   } catch (e: any) {
     error = error ?? e.message;
   }

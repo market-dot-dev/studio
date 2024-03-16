@@ -1,8 +1,8 @@
 "use client";
 // tier-form.tsx
 
-import { ChangeEvent, useEffect, useState } from 'react';
-import { Flex, Text, Button, Card, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody } from "@tremor/react"
+import { ChangeEvent, use, useEffect, useState } from 'react';
+import { Flex, Text, Button, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
 import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
@@ -14,30 +14,50 @@ import { attachMany } from '@/app/services/feature-service';
 import Link from 'next/link';
 import DashboardCard from '../common/dashboard-card';
 import { Feature } from '@prisma/client';
+import LoadingDots from "@/components/icons/loading-dots";
+import {
+	Table,
+	TableHead,
+	TableHeaderCell,
+	TableBody,
+	TableRow,
+	TableCell,
+} from "@tremor/react";
+
 
 interface TierFormProps {
 	tier?: Partial<Tier>;
 }
 
-const TierVersionCard = async ({ tierVersion }: { tierVersion: TierVersionWithFeatures }) => {
+const TierVersionCard = ({ tierVersion }: { tierVersion: TierVersionWithFeatures }) => {
 	const features = tierVersion.features || [];
+	const [versionSubscribers, setVersionSubscribers] = useState(0);
 
-	return <Card key={tierVersion.id} className="p-2 mb-2" >
-		<Text>Revision: {tierVersion.revision}</Text>
-		<Text>Price: {tierVersion.price}</Text>
-		<Text>
-			Features:
-			{features.length > 0 ?
-				<>
-					<br />
-					<ul>
-						{(tierVersion.features || []).map(f => <li key={f.id}>{f.name}</li>)}
-					</ul>
-				</> :
-				<>&nbsp;none</>
-			}
-		</Text>
-	</Card>
+	useEffect(() => {
+		subscriberCount(tierVersion.tierId, tierVersion.revision).then(setVersionSubscribers);
+	}, [tierVersion.tierId, tierVersion.revision]);
+
+	return (
+		<TableRow>
+			<TableCell className="p-1 ps-0 m-0">{tierVersion.createdAt.toDateString()}</TableCell>
+			<TableCell className="p-1 ps-0 m-0">
+				{features.length > 0 ?
+					<>
+						<ul>
+							{(features || []).map(f => <li key={f.id}>· {f.name}</li>)}
+						</ul>
+					</> :
+					<>&nbsp;none</>
+				}
+			</TableCell>
+			<TableCell className="text-center p-1 ps-0 m-0">
+				${tierVersion.price}
+			</TableCell>
+			<TableCell className="p-1 ps-0 m-0 text-center">
+				{versionSubscribers}
+			</TableCell>
+		</TableRow>
+	);
 };
 
 interface NewVersionCalloutProps {
@@ -63,7 +83,6 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 		return <></>;
 	}
 };
-
 
 export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [tier, setTier] = useState<TierWithFeatures>((tierObj ? tierObj : newTier()) as Tier);
@@ -110,8 +129,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 				savedTier = await createTier(tier);
 				await attachMany({ referenceId: savedTier.id, featureIds: Array.from(selectedFeatureIds) }, 'tier');
 			} else {
-				const newFeatureSet = featuresChanged ? Array.from(selectedFeatureIds) : undefined;
-				savedTier = await updateTier(tier.id as string, tier, newFeatureSet);
+				savedTier = await updateTier(tier.id as string, tier, Array.from(selectedFeatureIds));
 			}
 			window.location.href = `/tiers/${savedTier.id}`;
 		} catch (error) {
@@ -125,9 +143,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [canPublishLoading, setCanPublishLoading] = useState(true);
 
 	useEffect(() => {
-		if( tierObj ) {
+		if (tierObj) {
 			// call the refreshOnboarding function if it exists
-			if(window?.hasOwnProperty('refreshOnboarding')) {
+			if (window?.hasOwnProperty('refreshOnboarding')) {
 				(window as any)['refreshOnboarding']();
 			}
 		}
@@ -231,17 +249,18 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						/>
 					</div>
 
-					{tierHasSubscribers &&
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Subscribers: {currentRevisionSubscriberCount} (all revs: {tierSubscriberCount})</label>
-						</div>}
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Status</label>
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
 							<Flex className='gap-2' justifyContent='start'>
 
-								{canPublishLoading && <Text>(checking stripe eligiblity)</Text>}
+								{canPublishLoading &&
+									<>
+										<LoadingDots />
+										<Text>Checking Stripe Eligiblity</Text>
+									</>
+								}
 								{!canPublishLoading && <>
 									<input type="checkbox"
 										checked={tier.published}
@@ -269,31 +288,72 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
 						</Flex>
 					</div>
-					{versions && versions.length > 0 &&
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Old Versions</label>
-							<Flex className='gap-2' justifyContent='start'>
-								<Accordion className="my-2">
-									<AccordionHeader className="my-0 py-1">
-										Expand for past versions ({versions.length})
-									</AccordionHeader>
-									<AccordionBody>
-										{versions.map((version) => <TierVersionCard tierVersion={version} key={version.id} />)}
-									</AccordionBody>
-								</Accordion>
-							</Flex>
-						</div>}
+
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Features</label>
 						<DashboardCard>
-						
-						{tier?.id ?
-							<TierFeaturePicker tierId={tier.id} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeaturesChanged={setFeaturesChanged} setFeatureObjs={setFeatureObjs}/> :
-							<TierFeaturePicker newTier={tier} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeatureObjs={setFeatureObjs}/>
-						}
+
+							{tier?.id ?
+								<TierFeaturePicker tierId={tier.id} newTier={tier} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeaturesChanged={setFeaturesChanged} setFeatureObjs={setFeatureObjs} /> :
+								<TierFeaturePicker newTier={tier} selectedFeatureIds={selectedFeatureIds} setSelectedFeatureIds={setSelectedFeatureIds} setFeatureObjs={setFeatureObjs} />
+							}
 
 						</DashboardCard>
 					</div>
+
+
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Version History</label>
+
+						{!!versions && versions.length === 0 && <Text>{tier.name} has {currentRevisionSubscriberCount === 0 ? "no customers yet" : currentRevisionSubscriberCount + " customers"}. If you make any price or feature changes for a tier that has customers, your changes to the previous tier will be kept as a tier version. Customers will be charged what they originally purchased.</Text>}
+
+						{!!versions && versions.length > 0 &&
+							<>
+								<Text className="my-4">{tier.name} has {currentRevisionSubscriberCount === 0 ? "no customers yet" : currentRevisionSubscriberCount + " customers"} for the most recent version. There are {versions.length} versions and {tierSubscriberCount} customers across versions.</Text>
+								<DashboardCard>
+									<Table>
+										<TableHead>
+											<TableRow className="border-b-2 border-gray-400">
+												<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 text-gray-500 uppercase tracking-wider">Created</TableHeaderCell>
+												<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 text-gray-500 uppercase tracking-wider">Features</TableHeaderCell>
+												<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 text-gray-500 uppercase tracking-wider">Price</TableHeaderCell>
+												<TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 text-gray-500 uppercase tracking-wider">#Customers</TableHeaderCell>
+											</TableRow>
+										</TableHead>
+										<TableBody>
+											<TableRow>
+												<TableCell className="p-1 ps-0 m-0">
+													{tier.createdAt.toDateString()}
+													<Badge color="gray" size="xs" className="ms-1 text-xs font-medium uppercase">Current</Badge>
+												
+												</TableCell>
+												<TableCell className="p-1 ps-0 m-0">
+													{tier.features && tier.features.length > 0 ?
+														<>
+															<ul>
+																{(tier.features || []).map(f => <li key={f.id}>· {f.name}</li>)}
+															</ul>
+														</> :
+														<>&nbsp;None</>
+													}
+												</TableCell>
+												<TableCell className="text-center p-1 ps-0 m-0">
+													${tier.price}
+												</TableCell>
+												<TableCell className="p-1 ps-0 m-0 text-center">
+													{currentRevisionSubscriberCount}
+												</TableCell>
+											</TableRow>
+											{versions.map((version) => <TierVersionCard tierVersion={version} key={version.id} />)}
+										</TableBody>
+									</Table>
+								</DashboardCard>
+
+								<Text className="my-4">Please note that tier versions are only recorded when you make feature or price changes to a tier where you have existing customers. Customers will be charged what they originally purchased.</Text>
+							</>
+						}
+					</div>
+
 				</div>
 
 				{/* Preview Section */}

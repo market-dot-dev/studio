@@ -21,7 +21,10 @@ class EmailService {
     }
     const msg = {
       to: email, // recipient
-      from: process.env.SENDGRID_FROM_EMAIL, // verified sender
+      from: {
+        name: process.env.SENDGRID_FROM_NAME, // verified sender
+        email: process.env.SENDGRID_FROM_EMAIL, // verified sender
+      },
       subject: subject,
       text: text,
       html: html,
@@ -41,9 +44,9 @@ class EmailService {
 
   static async newSubscriptionInformation(userId: string, customer: RequiredUserProps, tierName: string) {
 
-    const subject = "New Tier Purchase";
-    const text = `${customer.name} has purchased your ${tierName} tier.`;
-    const html = `<b>${customer.name}</b> has purchased your <b>${tierName}</b> tier.`;
+    const subject = `You have a new customer for ${tierName}!`;
+    const text = `Congratulations! ${customer.name} has purchased your ${tierName} tier.`;
+    const html = `Congratulations! <b>${customer.name}</b> has purchased your <b>${tierName}</b> tier. You can contact them at ${customer.email} to provide them with the benefits of this tier.`;
     const user = await UserService.findUser(userId);
     
     if(!user) {
@@ -60,9 +63,9 @@ class EmailService {
   }
 
   static async newSubscriptionConfirmation(customer: RequiredUserProps, tierName: string) {
-    const subject = "Tier Purchase Confirmation";
-    const text = `Thank you for purchasing the ${tierName} tier.`;
-    const html = `Thank you for purchasing the <b>${tierName}</b> tier.`;
+    const subject = `Thank you for purchasing ${tierName}!`;
+    const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at https://app.gitwallet.co to view your benefits.`;
+    const html = `Thank you for purchasing the <b>${tierName}</b> tier.  You now have access to all the benefits of this tier. Please visit your <a href=\"https://app.gitwallet.co/customer-login\">dashboard</a> to view your benefits.`;
 
     try {
       await this.sendEmail(customer.email, subject, text, html);
@@ -73,7 +76,7 @@ class EmailService {
   }
 
   static async subscriptionCancelledInfo(user: RequiredUserProps, customer: RequiredUserProps, tierName: string) {
-    const subject = "Subscription Cancelled";
+    const subject = `Subscription Cancelled by ${customer.name}`;
     const text = `${customer.name} has cancelled their subscription to your ${tierName} tier.`;
     const html = `<b>${customer.name}</b> has cancelled their subscription to your <b>${tierName}</b> tier.`;
     
