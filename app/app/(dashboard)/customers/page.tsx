@@ -13,6 +13,8 @@ import {
   Text,
 } from "@tremor/react";
 import SessionService from "@/app/services/SessionService";
+import SubscriptionStatusBadge from "./subscription-state";
+import Link from "next/link";
 
 export default async function CustomersList({
   params,
@@ -37,7 +39,7 @@ export default async function CustomersList({
             <TableRow>
               <TableHeaderCell>Name</TableHeaderCell>
               <TableHeaderCell className="text-right">Company</TableHeaderCell>
-              <TableHeaderCell className="text-right">Tier</TableHeaderCell>
+              <TableHeaderCell className="text-left">Tier</TableHeaderCell>
               <TableHeaderCell className="text-center">Status</TableHeaderCell>
               <TableHeaderCell className="text-center">
                 Customer Since
@@ -52,25 +54,20 @@ export default async function CustomersList({
               return (
                 <>
                   <TableRow className="m-0 p-2" key={subscription.id}>
-                    <TableCell className="m-0 p-2">{user.name}</TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      {user.company}
+                    <TableCell className="m-0 p-2">
+                      <Link href={`/customers/${subscription.id}`}>
+                      {user.name}
+                      </Link>
+                    
                     </TableCell>
                     <TableCell className="m-0 p-2 text-right">
+                      {user.company ? user.company : "(Unknown)"}
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-left">
                       {subscription.tier!.name}
                     </TableCell>
                     <TableCell className="m-0 p-2 text-center">
-                      {subscription.state === "renewing" ? 
-                        <Badge color="green">Active</Badge> :
-                        subscription.state === "cancelled" && subscription.activeUntil ?
-                        <>
-                          <Badge color="yellow">Cancelled</Badge>
-                          <Text className="text-xs">Active Until {subscription.activeUntil?.toLocaleDateString()}</Text>
-                        </>
-                         : 
-                        subscription.state === "cancelled" && !subscription.activeUntil ?
-                        <Badge color="red">Cancelled</Badge> : ""
-                      }
+                      <SubscriptionStatusBadge subscription={subscription}/>
                     </TableCell>
                     <TableCell className="m-0 p-2 text-center">
                       {new Date(subscription.createdAt).toLocaleDateString()}
