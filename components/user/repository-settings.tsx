@@ -5,7 +5,9 @@ import { Card, Flex, Text, TextInput, Button, Grid, Col, Bold, SearchSelect, Sea
 
 import { Github, SearchIcon, XCircle, Plus } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { getInstallations, getInstallationRepos } from "@/app/services/RepoService";
+import { getInstallationsList, getInstallationRepos } from "@/app/services/RepoService";
+
+import LoadingSpinner from "../form/loading-spinner";
 const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
 type Installation = {
     id: string;
@@ -76,7 +78,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     const [repos, setRepos] = useState<Partial<Repo>[]>(initialRepos);
     const [installations, setInstallations] = useState<Installation[]>([]);
     const [stateVariable, setStateVariable] = useState<string>('');
-
+    const [loading, setLoading] = useState<boolean>(false);
     
 
     const isRepoConnected = useCallback((repoId: string) => {
@@ -88,18 +90,38 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     }, [initialRepos]);
 
     useEffect(() => {
-        getInstallations().then(({state, data}: { state: string, data: Installation[]}) => {
+        
+        getInstallationsList().then(({state, data}: { state: string, data: Installation[]}) => {
             setStateVariable(state);
             setInstallations(data);
-        });
+        })
+        .catch(error => console.error("Failed to get installations:", error))
+        
     }, [])
 
     const handleAddAccount = useCallback(() => {
-        window.open(`https://github.com/apps/${appName}/installations/select_target?state=${stateVariable}`, '_blank', 'width=800,height=600');
+        const appInstallationWindow = window.open(`https://github.com/apps/${appName}/installations/select_target?state=${stateVariable}`, '_blank', 'width=800,height=600');
+        if(appInstallationWindow) {
+            const checkWindow = setInterval(function() {
+                if (appInstallationWindow.closed) {
+                    clearInterval(checkWindow); // Stop checking
+                    getInstallationsList().then(({state, data}: { state: string, data: Installation[]}) => {
+                        setStateVariable(state);
+                        setInstallations(data);
+                    }).catch(error => console.error("Failed to get installations:", error))
+                    
+                }
+            }, 1000);
+        }
     }, [stateVariable]);
 
     const handleInstallationSelect = useCallback((installationId: string) => {
-        getInstallationRepos(installationId).then(setInstallationRepos);
+        setLoading(true);
+        setInstallationRepos([]);
+        getInstallationRepos(parseInt(installationId))
+        .then(setInstallationRepos)
+        .catch(error => console.error("Failed to get installation repos:", error))
+        .finally(() => setLoading(false));
     }, []);
 
 
@@ -117,7 +139,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                                     </Flex>
                                 </SearchSelectItem>
                             ))}
-                            <div className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
+                            <div key='add-github-account' className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
                             + Add Github Account
                             </div>
                         </SearchSelect>
@@ -128,7 +150,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                         <Text>
                             Repositories you have access to.
                         </Text>
-                        
+
                             {/* <div className='w-full relative'>
                                 <TextInput icon={SearchIcon} placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
                                 { search?.length ?
@@ -140,6 +162,11 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                             </div> */}
                         
                     </Flex>
+                    { loading ? 
+                        <div className="w-full text-center">
+                            <LoadingSpinner />
+                        </div> : null
+                    }
                     { installationRepos.length ? 
                         <Flex flexDirection="col" className="w-full gap-0 border border-x-0 border-t-0">
                             {installationRepos.map((repo : any, index: number) => (

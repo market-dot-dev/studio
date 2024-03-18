@@ -21,29 +21,7 @@ export async function GET(req: NextRequest) {
 	}
 	
 	if ( 'install' === setup_action ) {
-		
-		const token = RepoService.getJWT();
-
-		try {
-			const res = await fetch(`https://api.github.com/app/installations/${installation_id}/access_tokens`, {
-				method: 'POST',
-				headers: {
-					'Authorization': `Bearer ${token}`,
-					'Accept': 'application/vnd.github.v3+json'
-				}
-			});
-
-			const data = await res.json();
-
-			if (res.status !== 201) {
-				return new Response('Failed to create access token', { status: 500 });
-			}
-			// TODO: store tokens in the database
-			// console.log(data);
-		} catch (error) {
-			console.error(error);
-			return new Response('Failed to create access token', { status: 500 });
-		}
+		RepoService.createInstallation(parseInt(installation_id))
 	}
 
 
