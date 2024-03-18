@@ -37,7 +37,7 @@ model User {
   features                    Feature[]
   subscriptions               Subscription[]
   repos                       Repo[]
-  appInstallations            AppInstallation[]
+  githubAppInstallations            GithubAppInstallation[]
   onboarding                  String?
   company                     String?
 }
@@ -269,7 +269,7 @@ model Media {
   @@index([siteId])
 }
 
-model AppInstallation {
+model GithubAppInstallation {
   id        Int   @id
   userId    String
   token     String

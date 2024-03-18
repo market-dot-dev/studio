@@ -4,7 +4,7 @@ import { nanoid } from 'nanoid';
 import prisma from "@/lib/prisma";
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers'
-import { AppInstallation } from "@prisma/client";
+import { GithubAppInstallation } from "@prisma/client";
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '';
 
 class RepoService {
@@ -41,7 +41,7 @@ class RepoService {
       const { token, expiresAt } = res;
 
       // save the installation information in the database
-      return prisma.appInstallation.create({
+      return prisma.githubAppInstallation.create({
         data: {
           id,
           userId,
@@ -53,7 +53,7 @@ class RepoService {
     }
 
     static async removeInstallation(id: number) {
-      return prisma.appInstallation.delete({
+      return prisma.githubAppInstallation.delete({
         where: {
           id,
         },
@@ -61,7 +61,7 @@ class RepoService {
     }
 
     static async getInstallation(id: number) {
-      return prisma.appInstallation.findUnique({
+      return prisma.githubAppInstallation.findUnique({
         where: {
           id,
         },
@@ -98,7 +98,7 @@ class RepoService {
     }
 
     static async getInstallationToken(id: number) {
-      let installation = await RepoService.getInstallation(id) as AppInstallation;
+      let installation = await RepoService.getInstallation(id) as GithubAppInstallation;
       
       if (!installation) {
           // verify the installation with github and create a new installation
@@ -116,7 +116,7 @@ class RepoService {
 
           await RepoService.createInstallation(id);
 
-          installation = await RepoService.getInstallation(id) as AppInstallation;
+          installation = await RepoService.getInstallation(id) as GithubAppInstallation;
       }
 
       // check if the token is still valid
@@ -128,7 +128,7 @@ class RepoService {
         const res = await RepoService.generateInstallationToken(id);
         
         if( res ) {
-          await prisma.appInstallation.update({
+          await prisma.githubAppInstallation.update({
             where: {
               id,
             },
