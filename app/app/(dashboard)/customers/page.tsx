@@ -3,8 +3,7 @@ import LinkButton from "@/components/common/link-button";
 import DashboardCard from "@/components/common/dashboard-card";
 import PageHeading from "@/components/common/page-heading";
 import {
-  BadgeDelta,
-  Button,
+  Badge,
   Table,
   TableBody,
   TableCell,
@@ -14,6 +13,8 @@ import {
   Text,
 } from "@tremor/react";
 import SessionService from "@/app/services/SessionService";
+import SubscriptionStatusBadge from "./subscription-state";
+import Link from "next/link";
 
 export default async function CustomersList({
   params,
@@ -36,19 +37,14 @@ export default async function CustomersList({
         <Table className="">
           <TableHead>
             <TableRow>
-              <TableHeaderCell>ID</TableHeaderCell>
               <TableHeaderCell>Name</TableHeaderCell>
               <TableHeaderCell className="text-right">Company</TableHeaderCell>
-              <TableHeaderCell className="text-right">Tier</TableHeaderCell>
-              <TableHeaderCell className="text-right">Status</TableHeaderCell>
-              <TableHeaderCell className="text-right">
+              <TableHeaderCell className="text-left">Tier</TableHeaderCell>
+              <TableHeaderCell className="text-center">Status</TableHeaderCell>
+              <TableHeaderCell className="text-center">
                 Customer Since
               </TableHeaderCell>
-              <TableHeaderCell className="text-right">
-                Next Renewal
-              </TableHeaderCell>
-              <TableHeaderCell className="text-right">Location</TableHeaderCell>
-              <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+              <TableHeaderCell className="text-right"></TableHeaderCell>
             </TableRow>
           </TableHead>
 
@@ -58,25 +54,23 @@ export default async function CustomersList({
               return (
                 <>
                   <TableRow className="m-0 p-2" key={subscription.id}>
-                    <TableCell className="m-0 p-2">{user.id}</TableCell>
-                    <TableCell className="m-0 p-2">{user.name}</TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      {user.company}
+                    <TableCell className="m-0 p-2">
+                      <Link href={`/customers/${subscription.id}`}>
+                      {user.name}
+                      </Link>
+                    
                     </TableCell>
                     <TableCell className="m-0 p-2 text-right">
+                      {user.company ? user.company : "(Unknown)"}
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-left">
                       {subscription.tier!.name}
                     </TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      <BadgeDelta size="xs"></BadgeDelta>
+                    <TableCell className="m-0 p-2 text-center">
+                      <SubscriptionStatusBadge subscription={subscription}/>
                     </TableCell>
-                    <TableCell className="m-0 p-2 text-right">
+                    <TableCell className="m-0 p-2 text-center">
                       {new Date(subscription.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      {/* Next Renewal */}
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      {/* Location */}
                     </TableCell>
                     <TableCell className="m-0 p-2 text-right">
                       <div className="flex flex-row justify-end gap-1">

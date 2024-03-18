@@ -26,6 +26,7 @@ import {
   Code,
   Wrench,
   Twitter,
+  UserCircle,
   ListTodoIcon,
 } from "lucide-react";
 
@@ -40,6 +41,7 @@ const categories: Category[] = [
   { id: 'voice', name: 'Live Support', icon: Phone },
   { id: 'email', name: 'Email Support', icon: Mail },
   { id: 'sla', name: 'SLA', icon: Clock },
+  { id: 'staff', name: 'Dedicated Staff', icon: Users },
   { id: 'ticketing', name: 'Custom Ticketing', icon: Ticket },
   { id: 'ads', name: 'Promotions and Ads', icon: Volume2Icon},
   { id: 'custom', name: 'Custom Services', icon: Pencil}
@@ -89,6 +91,7 @@ export const Icon = ({ id }: { id: string }) => {
     'advertising-github': Github,
     'advertising-social': Twitter,
     'custom': Pencil,
+    'account-rep': UserCircle,
     'custom-integration': Wrench
   }[id] || X;
 
