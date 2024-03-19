@@ -73,12 +73,16 @@ function RepoItem({repo, setRepos}: {repo: Partial<Repo>, setRepos: any }) {
     )
 }
 
+let filterTimeout: any;
+
 export default function RepositorySettings({ repos: initialRepos }: { repos: Partial<Repo>[] }) {
     const [installationRepos, setInstallationRepos] = useState<any[]>([]);
     const [repos, setRepos] = useState<Partial<Repo>[]>(initialRepos);
     const [installations, setInstallations] = useState<Installation[]>([]);
     const [stateVariable, setStateVariable] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
+    const [filter, setFilter] = useState<string>('');
+    const [filteredInstallationRepos, setFilteredInstallationRepos] = useState<any[]>([]);
     
 
     const isRepoConnected = useCallback((repoId: string) => {
@@ -88,6 +92,24 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     useEffect(() => {
         setRepos(initialRepos);
     }, [initialRepos]);
+
+    useEffect(() => {
+
+        if(filterTimeout) {
+            clearTimeout(filterTimeout);
+        }
+
+        filterTimeout = setTimeout(() => {
+            if(!filter) {
+                setFilteredInstallationRepos(installationRepos);
+                return;
+            }
+    
+            setFilteredInstallationRepos(installationRepos.filter(repo => repo.name.toLowerCase().includes(filter.toLowerCase())));
+        }, 500);
+        
+
+    }, [filter])
 
     useEffect(() => {
         
@@ -119,7 +141,11 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
         setLoading(true);
         setInstallationRepos([]);
         getInstallationRepos(parseInt(installationId))
-        .then(setInstallationRepos)
+        .then((repos) => {
+            setInstallationRepos(repos);
+            setFilter('');
+            setFilteredInstallationRepos(repos);
+        })
         .catch(error => console.error("Failed to get installation repos:", error))
         .finally(() => setLoading(false));
     }, []);
@@ -151,15 +177,15 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                             Repositories you have access to.
                         </Text>
 
-                            {/* <div className='w-full relative'>
-                                <TextInput icon={SearchIcon} placeholder="Search..." value={search} onChange={(e) => setSearch(e.target.value)} />
-                                { search?.length ?
+                            <div className='w-full relative'>
+                                <TextInput icon={SearchIcon} placeholder="filter..." value={filter} onChange={(e) => setFilter(e.target.value)} />
+                                { filter?.length ?
                                     <div className="absolute right-2 top-2">
-                                        <Button variant="light" icon={XCircle} onClick={clearSearch} loading={isSearching} disabled={isSearching} />
+                                        <Button variant="light" icon={XCircle} onClick={() => setFilter('')} />
                                     </div>
                                     : null
                                 }
-                            </div> */}
+                            </div>
                         
                     </Flex>
                     { loading ? 
@@ -169,7 +195,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                     }
                     { installationRepos.length ? 
                         <Flex flexDirection="col" className="w-full gap-0 border border-x-0 border-t-0">
-                            {installationRepos.map((repo : any, index: number) => (
+                            {filteredInstallationRepos.map((repo : any, index: number) => (
                                 <SearchResultRepo repo={repo} key={index} setRepos={setRepos} isConnected={isRepoConnected(repo.id)} />
                             ))}
                         </Flex>
