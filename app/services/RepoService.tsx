@@ -293,7 +293,6 @@ class RepoService {
             data: {
                 repoId: repoDetails.id.toString(),
                 name: repoDetails.name,
-                ...(repoDetails.description ? { description: repoDetails.description } : {} ),
                 url: repoDetails.html_url,
                 userId, // Assuming this is the ID in your own user table
             },
