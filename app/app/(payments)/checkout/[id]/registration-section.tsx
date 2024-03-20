@@ -110,11 +110,10 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         <Divider className={!user?.id ? "font-bold text-lg" : ""}>Login / Signup</Divider>
         
         <Flex>
-          <Flex alignItems="center" justifyContent="start" className="w-16">
+          <Flex alignItems="center" justifyContent="start" className="w-16 hidden sm:flex">
             <Step step={1} currentStep={currentStep} />
           </Flex>
           <div className='grow'>
-            
             <Card>
               <CustomerLoginComponent signup={true} />
             </Card>
@@ -126,7 +125,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         { error && <div className="mb-4 text-red-500">{error}</div> }
         <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
         <Flex>
-          <Flex alignItems="center" justifyContent="start" className="w-16">
+          <Flex alignItems="center" justifyContent="start" className="w-16 hidden sm:flex">
             <Step step={2} currentStep={currentStep} />
           </Flex>
           <div className='grow'>
@@ -140,7 +139,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
 
       <section className="w-7/8 mb-8 lg:w-5/6">
         <Flex alignItems="start">
-          <Flex alignItems="center" justifyContent="start" className="w-16">
+          <Flex alignItems="center" justifyContent="start" className="w-16 hidden sm:flex">
             <Step step={3} currentStep={currentStep} />
           </Flex>
           <Flex flexDirection="col" alignItems="center" className='grow'>
