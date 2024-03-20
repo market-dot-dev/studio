@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
-import SimpleEmailInputForm from "@/components/common/simple-email-input";
-import { Col, Grid, Badge, Divider } from "@tremor/react";
+import { Col, Grid, Badge, Divider, Button } from "@tremor/react";
 import DashboardCard from "@/components/common/dashboard-card";
+
+import GithubLoginButton from "@/app/app/(auth)/login/github-login-button";
 import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
+import { Suspense } from "react";
+import DomainService from "../services/domain-service";
 
 const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
+const loginUrl = DomainService.getRootUrl('app', '/customer-login');
 
 // Define a type for the testimonial props, including the logo
 type TestimonialProps = {
@@ -66,7 +70,11 @@ export default function HomePage() {
             <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for open source projects.</h1>
             <p className="text-xl font-extralight leading-6 mb-6">Gitwallet is a toolkit to <b>build, sell and manage</b> robust support offerings for your repos and ecosystems.</p>
             <div>
-              <SimpleEmailInputForm email={{}} placeholder="Enter Your Email" />
+              <Suspense>
+                <GithubLoginButton />
+              </Suspense>
+              <p className="font-bold">Customer Login</p>
+                <p className="font-light mb-8">Already a customer? <a href={loginUrl} className="underline underline-offset-2">Login here</a>.</p>
             </div>
           </div>
         </div>
@@ -143,7 +151,6 @@ export default function HomePage() {
           </AccordionList>
 
         </section>
-
       </div>
 
     </div>
