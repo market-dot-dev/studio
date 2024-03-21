@@ -5,7 +5,7 @@ import {
   type PropsWithChildren,
   useEffect,
 } from 'react';
-import { fetchSessionUser } from '../services/SessionService';
+import { getCurrentSessionUser } from '../services/UserService';
 import { SessionUser } from '../models/Session';
 
 interface CurrentSessionContextType {
@@ -30,7 +30,7 @@ export const CurrentSessionProvider: React.FC<PropsWithChildren> = ({
   const fetchCurrentUser = async (): Promise<SessionUser | undefined> => {
     try {
       setIsLoading(true);
-      const fetchedUser = await fetchSessionUser();
+      const fetchedUser = await getCurrentSessionUser();
       
       if (fetchedUser) {
         setCurrentSessionUser(fetchedUser);

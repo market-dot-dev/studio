@@ -231,11 +231,11 @@ export const authOptions: NextAuthOptions = {
   },
 };
 
-export function getSession() {
+export async function getSession() {
   return getServerSession(authOptions) as Promise<Session>;
 }
 
-export function withSiteAuth(action: any) {
+export async function withSiteAuth(action: any) {
   return async (
     formData: FormData | null,
     siteId: string,
@@ -262,7 +262,7 @@ export function withSiteAuth(action: any) {
   };
 }
 
-export function withPostAuth(action: any) {
+export async function withPostAuth(action: any) {
   return async (
     formData: FormData | null,
     postId: string,

@@ -8,6 +8,7 @@ import ProductService from './ProductService';
 import TierService from './TierService';
 import SessionService from './SessionService';
 import Customer from '../models/Customer';
+import { createSessionUser } from '../models/Session';
 
 class UserService {
   static async getCurrentUser() {
@@ -16,6 +17,11 @@ class UserService {
     if (!userId) return null;
 
     return UserService.findUser(userId);
+  }
+
+  static async getCurrentSessionUser() {
+    const currentUser = await getCurrentUser();
+    return currentUser ? createSessionUser(currentUser) : null;
   }
 
   static async findUser(id: string): Promise<User | undefined | null> {
@@ -129,4 +135,4 @@ export const ensureTierId = async (tierId: string) => {
 }
 
 export default UserService;
-export const { getCurrentUser, findUser, updateCurrentUser } = UserService;
+export const { getCurrentUser, findUser, updateCurrentUser, getCurrentSessionUser } = UserService;
