@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import { Card, Button, Text } from '@tremor/react';
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
-import useCurrentSession, { CurrentSessionProvider } from '@/app/contexts/current-user-context';
 import { getPaymentMethod } from '@/app/services/StripeService';
 import { StripeCard } from '@/app/services/StripeService';
 import { getCustomerIds } from '@/app/models/Customer';
+import useCurrentSession from '@/app/hooks/use-current-session';
 
 interface UserPaymentMethodWidgetProps {
   loading?: boolean;
@@ -22,7 +22,7 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUser
   const [cardInfo, setCardInfo] = useState<StripeCard>();
   const [stripePaymentMethodId, setStripePaymentMethodId] = useState<string | null>(null);
 
-  const { currentSessionUser: user, refreshCurrentSessionUser } = useCurrentSession();
+  const { currentUser: user, refreshSession} = useCurrentSession();
 
   const {
     CardElementComponent,
@@ -40,9 +40,9 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUser
   
   useEffect(() => {
     if (loading && user?.id && stripePaymentMethodId) {
-      handleSubmit().then(refreshCurrentSessionUser);
+      handleSubmit().then(refreshSession);
     }
-  }, [loading, user, handleSubmit, refreshCurrentSessionUser]);
+  }, [loading, user, handleSubmit, refreshSession]);
 
   useEffect(() => {
     if (stripePaymentMethodId && maintainerUserId) {
@@ -59,7 +59,7 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUser
           <div className="flex flex-row justify-between items-center">
             <Text>Use saved {cardInfo?.brand.toUpperCase()} ending in {cardInfo?.last4}</Text>
             <br />
-            <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshCurrentSessionUser)}>
+            <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshSession)}>
               Remove
             </Button>
           </div>
@@ -87,11 +87,9 @@ const UserPaymentMethodWidgetWrapper = (props: UserPaymentMethodWidgetProps) => 
 };
 
 export const UserPaymentMethodWidgetWrapperSSR = (props: UserPaymentMethodWidgetProps) => {
-  return <CurrentSessionProvider>
-    <StripeCheckoutFormWrapper>
-      {(innerProps: UserPaymentMethodWidgetProps) => <UserPaymentMethodWidget {...props} {...innerProps} />}
-    </StripeCheckoutFormWrapper>
-  </CurrentSessionProvider>;
+  return <StripeCheckoutFormWrapper>
+    {(innerProps: UserPaymentMethodWidgetProps) => <UserPaymentMethodWidget {...props} {...innerProps} />}
+  </StripeCheckoutFormWrapper>
 };
 
 export default UserPaymentMethodWidgetWrapper;

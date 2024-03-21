@@ -1,8 +1,8 @@
 "use client";
 
+import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { Accordion, AccordionBody, AccordionHeader, Badge, Flex } from "@tremor/react";
-import { CurrentSessionProvider } from "@/app/contexts/current-user-context";
 import RegistrationSection from "./registration-section";
 import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
@@ -113,21 +113,19 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
           </div>
         </section>
 
-        <CurrentSessionProvider>
-          {isTierLoading ?
-            <>
-              <Flex flexDirection="col" alignItems="start" className='gap-12 opacity-50'>
-                <SkeletonLoader className="h-16 w-5/6 rounded-xl" />
-                <SkeletonLoader className="h-36 w-5/6 rounded-xl" />
-                <SkeletonLoader className="h-12 w-5/6 rounded-xl" />
-              </Flex>
+        {isTierLoading ?
+          <>
+            <Flex flexDirection="col" alignItems="start" className='gap-12 opacity-50'>
+              <SkeletonLoader className="h-16 w-5/6 rounded-xl" />
+              <SkeletonLoader className="h-36 w-5/6 rounded-xl" />
+              <SkeletonLoader className="h-12 w-5/6 rounded-xl" />
+            </Flex>
 
-            </> :
-            <>
-              {tier && maintainer && <RegistrationSection tier={tier} maintainer={maintainer}/>}
-            </>
-          }
-        </CurrentSessionProvider>
+          </> :
+          <>
+            {tier && maintainer && <RegistrationSection tier={tier} maintainer={maintainer}/>}
+          </>
+        }
       </div>
     </div>
   );

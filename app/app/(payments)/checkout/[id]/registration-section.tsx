@@ -9,7 +9,6 @@ import {
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
-import useCurrentSession from "@/app/contexts/current-user-context";
 
 import { onClickSubscribe } from '@/app/services/StripeService';
 import { isSubscribedByTierId } from '@/app/services/SubscriptionService';
@@ -17,6 +16,7 @@ import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 import { getCustomerIds } from "@/app/models/Customer";
+import useCurrentSession from "@/app/hooks/use-current-session";
 
 const checkoutCurrency = "USD";
   "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
@@ -28,6 +28,8 @@ const AlreadySubscribedCard = () => {
 }
 
 const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintainer: User }) => {
+  const { currentUser: user, refreshSession} = useCurrentSession();
+  
   const tierId = tier?.id;
   const [loading, setLoading] = useState(false);
   const [submittingPaymentMethod, setSubmittingPaymentMethod] = useState(false);
@@ -36,14 +38,13 @@ const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintai
   const [userAttributes, setUserAttributes] = useState<Partial<User>>({});
   const [error, setError] = useState<string | null>();
 
-  const { currentSessionUser: user, refreshCurrentSessionUser } = useCurrentSession();
   
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
   const [stripePaymentMethodId, setStripePaymentMethodId] = useState<string | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
-    if(user?.id) {
+    if(!!user) {
       const { stripeCustomerId, stripePaymentMethodId } = getCustomerIds(user, tier.userId);
       setStripeCustomerId(stripeCustomerId);
       setStripePaymentMethodId(stripePaymentMethodId);
