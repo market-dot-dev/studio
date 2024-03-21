@@ -107,13 +107,18 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: {
     jwt: async ({ token, user, account, trigger, session, isNewUser } : any) => {
+      console.log('-------- session created');
       // update the roleId if switched by the user from the frontend
       if (trigger === "update"){
         const currentUser = await UserService.getCurrentUser();
         const isAdmin = currentUser?.roleId === 'admin';
 
         if(session?.roleId && isAdmin) {
-          token.user = { ...token.user, roleId: session.roleId}
+          token.user = {
+            foo: 'bar',
+            ...token.user,
+            roleId: session.roleId
+          }
         } else {
           if(currentUser) {
             token.user = {
@@ -198,7 +203,8 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     session: async ({ session, token }: any) => {
-      const filteredSession = createSessionUser(token.user);
+      console.log("------------ session refreshed");
+      const filteredSession = createSessionUser(token.user) || {};
       session.user = {
         //id: token.sub, # FIXME do we need this?
         ...(filteredSession || {}),
@@ -235,7 +241,7 @@ export async function getSession() {
   return getServerSession(authOptions) as Promise<Session>;
 }
 
-export async function withSiteAuth(action: any) {
+export function withSiteAuth(action: any) {
   return async (
     formData: FormData | null,
     siteId: string,
@@ -262,7 +268,7 @@ export async function withSiteAuth(action: any) {
   };
 }
 
-export async function withPostAuth(action: any) {
+export function withPostAuth(action: any) {
   return async (
     formData: FormData | null,
     postId: string,
