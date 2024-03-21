@@ -150,64 +150,48 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
 };
 
 const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ services, features }) => {
-  const [selectedCategory, setSelectedCategory] = useState<Category>(categories[0]);
-  const filteredServices = services.filter((s) => s.category === selectedCategory.id);
-  const [featuresList, setFeaturesList] = useState<Feature[]>(features); // Use a state for features
-  const [selectedService, setSelectedService] = useState<Service>(filteredServices[0]);
+  const [selectedService, setSelectedService] = useState<Service | null>(null);
+  const [featuresList, setFeaturesList] = useState<Feature[]>(features);
 
-  useEffect(() => {
-    setSelectedService(filteredServices[0]);
-  }, [selectedCategory]);
-
-  const currentFeature = featuresList.find((f) => f.serviceId === selectedService.id);
-
-  const handleFeatureSuccess = useCallback((updatedFeature: Feature) => {
-    setFeaturesList((prevFeatures) => {
+  const handleFeatureSuccess = (updatedFeature: Feature) => {
+    setFeaturesList(prevFeatures => {
       const otherFeatures = prevFeatures.filter(f => f.id !== updatedFeature.id);
       return [...otherFeatures, updatedFeature];
     });
- }, []);
+  };
 
+  
+  const currentFeature = featuresList.find((f) => f.serviceId === selectedService?.id);
+
+  
+  const renderServices = (categoryId: string) => {
+    return services.filter(service => service.category === categoryId).map(service => (
+      <ServiceCard
+        key={service.id}
+        service={service} 
+        onUpdate={() => {}} 
+        selectedService={selectedService}
+        setSelectedService={setSelectedService}
+        currentFeatureEnabled={featuresList.find((f) => f.serviceId === service.id)?.isEnabled || false}
+      />
+    ));
+  };
 
   return (
-    <div className="flex flex-row gap-4 container">
-      <aside className="w-1/4">
-        <div className="py-5 font-bold">
-          Categories
-        </div>
-        <ul className="space-y-2">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.id}
-              category={category}
-              selectedCategory={selectedCategory}
-              setSelectedCategory={setSelectedCategory}
-            />
-          ))}
-        </ul>
-      </aside>
-      <main className="w-1/2">
-        <div className="bg-white shadow overflow-hidden sm:rounded-lg">
-          <div className="py-5 font-bold">
-            Options
+    <div className="flex flex-row gap-4 container mx-auto">
+      <main className="flex-1">
+        {categories.map(category => (
+          <div key={category.id} className="mb-8">
+            <h3 className="text-xl font-bold mb-2">{category.name}</h3>
+            <div>{renderServices(category.id)}</div>
           </div>
-          <div className="border-t border-gray-200">
-            {filteredServices.map((service) => (
-              <ServiceCard
-                key={service.id}
-                service={service} onUpdate={() => {}}
-                selectedService={selectedService}
-                setSelectedService={setSelectedService}
-                currentFeatureEnabled={featuresList.find((f) => f.serviceId === service.id)?.isEnabled || false} />
-            ))}
-          </div>
-        </div>
+        ))}
       </main>
-      <aside className="w-1/4">
+      <aside className="w-1/4 sticky top-0" style={{ height: 'calc(100vh - 20px)', overflowY: 'auto' }}>
         <div className="py-5 font-bold">
           Details
         </div>
-        { selectedService && 
+        {selectedService && 
           <FeatureForm initialFeature={currentFeature} serviceId={selectedService.id} onSuccess={handleFeatureSuccess}/> }
       </aside>
     </div>
