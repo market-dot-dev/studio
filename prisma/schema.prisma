@@ -14,7 +14,6 @@ model User {
   username                    String?
   gh_username                 String?        @unique
   email                       String?        @unique
-  stripeProductId             String?        @unique
   stripeCustomerIds           Json           @default("{}")
   stripePaymentMethodIds      Json           @default("{}")
   stripeAccountId             String?        @unique
@@ -156,6 +155,7 @@ model Example {
 model Tier {
   id            String  @id @default(cuid())
   userId        String
+  stripeProductId String?        @unique
   stripePriceId String?
 
   name        String
@@ -255,6 +255,13 @@ model Feature {
   isEnabled    Boolean       @default(false)
 
   @@index([userId])
+}
+
+model LegacyProducts {
+  id  String @id
+  tierId String
+  subscriptionId String
+  stripeProductId String
 }
 
 

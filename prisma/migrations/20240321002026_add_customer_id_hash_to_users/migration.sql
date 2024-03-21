@@ -31,8 +31,8 @@ SET "stripeCustomerIds" = jsonb_set(
 );
 
 -- DropIndex
-DROP INDEX "User_stripeCustomerId_key";
-DROP INDEX "User_stripePaymentMethod_key";
+DROP INDEX IF EXISTS "User_stripeCustomerId_key";
+DROP INDEX IF EXISTS "User_stripePaymentMethod_key";
 
 -- AlterTable
 ALTER TABLE "User" DROP COLUMN "stripeCustomerId";
