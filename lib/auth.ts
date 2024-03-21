@@ -10,7 +10,7 @@ import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-ste
 import RegistrationService from "@/app/services/registration-service";
 import { cookies } from 'next/headers'
 import { projectDescription, projectName } from "./constants/site-template";
-import Session, { createSessionUser } from "@/app/models/Session";
+import Session, { createSessionUser, SessionUser } from "@/app/models/Session";
 import UserService from "@/app/services/UserService";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
@@ -194,24 +194,22 @@ export const authOptions: NextAuthOptions = {
             refresh_token_expires_in: account.refresh_token_expires_in
           },
         });
-      } 
+      }
       
       if (userData) {
-        token.user = userData;
+        //token.user = userData;
+        const filteredSession = createSessionUser(userData) || {};
+        token.user = {
+          ...(filteredSession || {}),
+          // an empty token.user?.onboarding will signal that the user's onboarding is complete
+          ...(token.user?.onboarding?.length ? { onboarding: true } : {}),
+        };
       }
       
       return token;
     },
     session: async ({ session, token }: any) => {
-      console.log("------------ session refreshed");
-      const filteredSession = createSessionUser(token.user) || {};
-      session.user = {
-        //id: token.sub, # FIXME do we need this?
-        ...(filteredSession || {}),
-        // an empty token.user?.onboarding will signal that the user's onboarding is complete
-        ...(token.user?.onboarding?.length ? { onboarding: true } : {}),
-      };
-      
+      session.user = token.user;
       return session;
     }
   },
