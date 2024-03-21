@@ -8,7 +8,7 @@ export type SessionUser = {
   image?: string;
   onboarding?: string;
   roleId: string;
-  stripeCustomerId?: string;
+  stripeCustomerIds?: Record<string, string>;
   stripePaymentMethodId?: string;
   stripeProductId?: string;
   stripeAccountId?: string;
@@ -28,7 +28,7 @@ export const createSessionUser = (user: User): SessionUser => {
     roleId: user.roleId || 'anonymous',
     onboarding: user.onboarding || undefined,
     image: user.image || undefined,
-    stripeCustomerId: user.stripeCustomerId || undefined,
+    stripeCustomerIds: user.stripeCustomerIds || undefined,
     stripePaymentMethodId: user.stripePaymentMethodId || undefined,
     stripeProductId: user.stripeProductId || undefined,
     stripeAccountId: user.stripeAccountId || undefined,

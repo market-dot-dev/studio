@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 import { getSession } from '@/lib/auth';
 import StripeService from './StripeService';
 import ProductService from './ProductService';
-import TierService, { createStripePrice } from './TierService';
+import TierService from './TierService';
 import SessionService from './SessionService';
 
 class UserService {
@@ -36,7 +36,7 @@ class UserService {
 
   }
 
-  static async updateUser(id: string, userData: Partial<User>) {
+  static async updateUser(id: string, userData: any) {
     return prisma?.user.update({
       where: { id },
       data: userData,
@@ -51,6 +51,16 @@ class UserService {
   static async setCustomerId(user: User, maintainerUserId: string, customerId: string) {
     const lookup = user.stripeCustomerIds as Record<string, string>;
     lookup[maintainerUserId] = customerId;
+
+    await prisma?.user.update({
+      where: { id: user.id },
+      data: { stripeCustomerIds: lookup },
+    });
+  }
+
+  static async clearCustomerId(user: User, maintainerUserId: string) {
+    const lookup = user.stripeCustomerIds as Record<string, string>;
+    delete lookup[maintainerUserId];
 
     await prisma?.user.update({
       where: { id: user.id },

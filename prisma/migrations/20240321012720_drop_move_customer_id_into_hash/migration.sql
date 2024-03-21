@@ -11,10 +11,17 @@ SET "stripeCustomerIds" = jsonb_set(
     '{gitwallet}', 
     to_jsonb("stripeCustomerId")
 );
+SET "stripePaymentMethodIds" = jsonb_set(
+    coalesce("stripePaymentMethodIds", '{}'::jsonb),
+    '{gitwallet}', 
+    to_jsonb("stripePaymentMethodId")
+);
 
 -- DropIndex
 DROP INDEX "User_stripeCustomerId_key";
+DROP INDEX "User_stripePaymentMethod_key";
 
 -- AlterTable
 ALTER TABLE "User" DROP COLUMN "stripeCustomerId";
+ALTER TABLE "User" DROP COLUMN "stripePaymentMethodId";
 

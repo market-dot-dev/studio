@@ -251,66 +251,34 @@ class StripeService {
     return StripeService.userCanSell(user);
   }
 
-  static async userCanBuy(user: User) {
-    return !!user.stripeCustomerId && !!user.stripePaymentMethodId;
+  static async userCanBuy(user: User, maintainerUserId: string) {
+    const customerId = await UserService.getCustomerId(user, maintainerUserId);
+    return !!customerId && !!user.stripePaymentMethodId;
   }
 
-  async createCustomer(email: string, name: string, paymentMethodId?: string) {
-    if(!email) {
-      throw new Error('Email is required to create a customer.');
-    }
-
-    let customer: Stripe.Customer;
-
-    if(paymentMethodId) {
-      customer = await this.stripe.customers.create({
-        email: email,
-        ...(name ? { name } : {}),
-        // for now hard coding the address for debugging purposes
-        // address,
+  async createCustomer(email: string, name?: string, paymentMethodId?: string): Promise<Stripe.Customer> {
+    const payload = {
+      email: email,
+      ...(name ? { name } : {}),
+      ...(paymentMethodId ? {
         payment_method: paymentMethodId,
         invoice_settings: {
           default_payment_method: paymentMethodId,
         },
-      });
-    } else {
-      customer = await (await connStripe()).customers.create({
-        email: email,
-        ...(name ? { name } : {}),
-        // for now hard coding the address for debugging purposes
-        // address,
-      });
-    }   
+      } : {}),
+    };
 
-    return customer;
+    return await this.stripe.customers.create(payload);
   }
 
-  async attachPaymentMethod(paymentMethodId: string) {
-    const user = await UserService.getCurrentUser();
+  async attachPaymentMethod(paymentMethodId: string, stripeCustomerId: string) {
+    await this.stripe.paymentMethods.attach(paymentMethodId, { customer: stripeCustomerId });
 
-    if(!user) {
-      throw new Error('User not found.');
-    }
-
-    let stripeCustomerId = user.stripeCustomerId;
-
-    if(!user.stripeCustomerId) {
-      stripeCustomerId = await UserService.createStripeCustomer(user, this.stripeAccountId);
-    }
-
-    if(!stripeCustomerId) {
-      throw new Error('Failed to create a Stripe customer.');
-    }
-    
-    await (await connStripe()).paymentMethods.attach(paymentMethodId, { customer: stripeCustomerId });
-
-    await (await connStripe()).customers.update(stripeCustomerId, {
+    await this.stripe.customers.update(stripeCustomerId, {
       invoice_settings: {
         default_payment_method: paymentMethodId,
       },
     });
-
-    UserService.updateUser(user.id, { stripePaymentMethodId: paymentMethodId });
   }
 
   async getPaymentMethod(paymentMethodId: string, maintainerId: string): Promise<StripeCard> {
@@ -325,22 +293,13 @@ class StripeService {
     return { brand, last4 };
   }
 
-  async detachPaymentMethod(paymentMethodId: string, maintainerId: string) {
-    const user: User = await prisma.user.findUniqueOrThrow({ where: { stripePaymentMethodId: paymentMethodId } });
-
-    if(!user || !user.stripePaymentMethodId || !user.stripeCustomerId) {
-      throw new Error('User not found or does not have a Stripe customer ID.');
-    }
-    
+  async detachPaymentMethod(paymentMethodId: string, stripeCustomerId: string) {
     await this.stripe.paymentMethods.detach(paymentMethodId);
-
-    await this.stripe.customers.update(user.stripeCustomerId, {
+    await this.stripe.customers.update(stripeCustomerId, {
       invoice_settings: {
         default_payment_method: undefined,
       },
     });
-
-    UserService.updateUser(user.id, { stripePaymentMethodId: null });
   }
 
   async destroyCustomer(customerId: string) {
@@ -500,16 +459,16 @@ export const attachPaymentMethod = async (paymentMethodId: string, maintainerUse
     throw new Error('Maintainer does not have a connected Stripe account.');
   }
   const stripeService = new StripeService(accountId);
-  await stripeService.attachPaymentMethod(paymentMethodId);
+  await stripeService.attachPaymentMethod(paymentMethodId, maintainerUserId);
 }
 
-export const detachPaymentMethod = async (paymentMethodId: string, maintainerUserId: string) => {
+export const detachPaymentMethod = async (userId: string, paymentMethodId: string, maintainerUserId: string) => {
   const accountId = await UserService.findUser(maintainerUserId).then(user => user?.stripeAccountId);
   if (!accountId) {
     throw new Error('Maintainer does not have a connected Stripe account.');
   }
   const stripeService = new StripeService(accountId);
-  await stripeService.detachPaymentMethod(paymentMethodId);
+  await stripeService.detachPaymentMethod(userId, paymentMethodId, maintainerUserId);
 }
 
 export const getPaymentMethod = async (userId: string, maintainerUserId: string): Promise<StripeCard> => {
@@ -521,7 +480,7 @@ export const getPaymentMethod = async (userId: string, maintainerUserId: string)
   if (!user.stripePaymentMethodId) {
     throw new Error('User does not have a payment method.');
   }
-  return await stripeService.getPaymentMethod(user.stripePaymentMethodId);
+  return await stripeService.getPaymentMethod(user.stripePaymentMethodId, maintainerUserId);
 }
 
 

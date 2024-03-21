@@ -5,4 +5,6 @@
 
 */
 -- AlterTable
-ALTER TABLE "User" ADD COLUMN     "stripeCustomerIds" JSONB NOT NULL DEFAULT '{}';
+ALTER TABLE "User"
+ADD COLUMN "stripeCustomerIds" JSONB NOT NULL DEFAULT '{}',
+ADD COLUMN "stripePaymentMethodIds" JSONB NOT NULL DEFAULT '{}';

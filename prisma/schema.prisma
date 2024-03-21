@@ -16,7 +16,7 @@ model User {
   email                       String?        @unique
   stripeProductId             String?        @unique
   stripeCustomerIds           Json           @default("{}")
-  stripePaymentMethodId       String?        @unique
+  stripePaymentMethodIds      Json           @default("{}")
   stripeAccountId             String?        @unique
   stripeCSRF                  String?        @unique
   stripeAccountDisabled       Boolean        @default(false)
