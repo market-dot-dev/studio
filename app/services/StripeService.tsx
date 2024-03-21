@@ -243,19 +243,6 @@ class StripeService {
     return !!user.stripeAccountId;
   }
 
-  static async userCanSellById() {
-    const user = await UserService.getCurrentUser();
-    if (!user) {
-      throw new Error('User not found');
-    }
-    return StripeService.userCanSell(user);
-  }
-
-  static async userCanBuy(user: User, maintainerUserId: string) {
-    const customerId = await UserService.getCustomerId(user, maintainerUserId);
-    return !!customerId && !!user.stripePaymentMethodId;
-  }
-
   async createCustomer(email: string, name?: string, paymentMethodId?: string): Promise<Stripe.Customer> {
     const payload = {
       email: email,
