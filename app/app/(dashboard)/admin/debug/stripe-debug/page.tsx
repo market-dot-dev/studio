@@ -26,8 +26,10 @@ const StripeDebug = async () => {
         <h2>Customer</h2>
         <h2>Customer ID (for buying subscriptions)</h2>
         {/* <UserCustomerWidget user={user} /> */}
+        {/*
         <h2>Payment method</h2>
         <UserPaymentMethodWidgetWrapperSSR />
+        */}
       </Card>
 
       <br/>

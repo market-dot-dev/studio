@@ -1,6 +1,7 @@
 import { getSession } from '@/lib/auth';
 import prisma from "@/lib/prisma";
-import { SessionUser } from '../models/Session';
+import { SessionUser, createSessionUser } from '../models/Session';
+import UserService from './UserService';
 
 class SessionService {
   static async getSession() {
@@ -15,6 +16,11 @@ class SessionService {
   static async getSessionUser(): Promise<SessionUser | undefined> {
     const session = await getSession();
     return session?.user;
+  }
+
+  static async fetchSessionUser() {
+    const user = await UserService.getCurrentUser();
+    return user ? createSessionUser(user) : undefined;
   }
 
   static async signedIn(){
@@ -84,4 +90,4 @@ class SessionService {
 }
 
 export default SessionService;
-export const { getAccessToken, getCurrentUserId } = SessionService;
+export const { getAccessToken, getCurrentUserId, getSessionUser, signedIn, fetchSessionUser } = SessionService;

@@ -16,6 +16,7 @@ import { isSubscribedByTierId } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
+import { getCustomerIds } from "@/app/models/Customer";
 
 const checkoutCurrency = "USD";
   "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
@@ -26,7 +27,7 @@ const AlreadySubscribedCard = () => {
   </Card>);
 }
 
-const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
+const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintainer: User }) => {
   const tierId = tier?.id;
   const [loading, setLoading] = useState(false);
   const [submittingPaymentMethod, setSubmittingPaymentMethod] = useState(false);
@@ -35,23 +36,27 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   const [userAttributes, setUserAttributes] = useState<Partial<User>>({});
   const [error, setError] = useState<string | null>();
 
-  const { currentSession, refreshCurrentSession } = useCurrentSession();
+  const { currentSessionUser: user, refreshCurrentSessionUser } = useCurrentSession();
   
+  const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
+  const [stripePaymentMethodId, setStripePaymentMethodId] = useState<string | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
-  const { user } = currentSession;
 
   useEffect(() => {
     if(user?.id) {
+      const { stripeCustomerId, stripePaymentMethodId } = getCustomerIds(user, tier.userId);
+      setStripeCustomerId(stripeCustomerId);
+      setStripePaymentMethodId(stripePaymentMethodId);
       isSubscribedByTierId(user.id, tierId).then(setIsSubscribed);
     }
-  }, [user?.id, tierId]);
+  }, [user?.id, tierId, tier.userId, user?.stripeCustomerIds, user?.stripePaymentMethodIds]);
 
   const onSubmit = async () => {
     setLoading(true);
     setError(null);
     setPurchaseIntent(true);
 
-    if(user && !user.stripePaymentMethodId) {
+    if(stripeCustomerId && stripePaymentMethodId) {
       setSubmittingPaymentMethod(true);
       setLoading(false);
     }
@@ -59,7 +64,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   }
 
   useEffect(() => {
-    if (purchaseIntent && user && user.stripePaymentMethodId) {
+    if (purchaseIntent && user && stripePaymentMethodId) {
       onClickSubscribe(user.id, tierId).then((res) => {
         setPurchaseIntent(false);
         if(res.error) {
@@ -70,7 +75,7 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         }
       });
     }
-  }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user]);
+  }, [purchaseIntent, user?.id, stripePaymentMethodId, tierId, user]);
 
   if(isSubscribed) {
     return <AlreadySubscribedCard />
@@ -87,11 +92,13 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         { error && <div className="mb-4 text-red-500">{error}</div> }
         <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
           <div>
-            <UserPaymentMethodWidget
-              loading={submittingPaymentMethod}
-              setError={setError}
-              maintainerUserId={tier.userId}
-            />
+            { maintainer.stripeAccountId  &&
+              <UserPaymentMethodWidget
+                loading={submittingPaymentMethod}
+                setError={setError}
+                maintainerUserId={tier.userId}
+                maintainerStripeAccountId={maintainer.stripeAccountId}
+              /> }
           </div>
       </section>
 

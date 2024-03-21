@@ -5,16 +5,12 @@ import {
   type PropsWithChildren,
   useEffect,
 } from 'react';
-import { User } from '@prisma/client';
-import { getCurrentUser } from '@/app/services/UserService';
-
-interface Session {
-  user: User | undefined;
-}
+import { fetchSessionUser } from '../services/SessionService';
+import { SessionUser } from '../models/Session';
 
 interface CurrentSessionContextType {
-  currentSession: Session;
-  refreshCurrentSession: () => Promise<Session | undefined>;
+  currentSessionUser: SessionUser | undefined;
+  refreshCurrentSessionUser: () => Promise<SessionUser | undefined>;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -26,39 +22,36 @@ const CurrentSessionContext = createContext<
 export const CurrentSessionProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
-  const [currentSession, setCurrentSession] = useState<Session>({
-    user: undefined,
-  });
+  const [currentSessionUser, setCurrentSessionUser] = useState<SessionUser>();
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchCurrentUser = async (): Promise<Session | undefined> => {
+  const fetchCurrentUser = async (): Promise<SessionUser | undefined> => {
     try {
       setIsLoading(true);
-      const fetchedUser = await getCurrentUser();
+      const fetchedUser = await fetchSessionUser();
       
       if (fetchedUser) {
-        const session = { user: fetchedUser };
-        setCurrentSession(session);
+        setCurrentSessionUser(fetchedUser);
         setIsAuthenticated(true);
-        return session;
+        return fetchedUser;
       } else {
-        setCurrentSession({ user: undefined });
+        setCurrentSessionUser(undefined);
         setIsAuthenticated(false);
       }
     } catch (err) {
-      setCurrentSession({ user: undefined });
+      setCurrentSessionUser(undefined);
       setIsAuthenticated(false);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const refreshCurrentSession = async () => fetchCurrentUser();
+  const refreshCurrentSessionUser = async () => fetchCurrentUser();
 
   const restoreSession = async () => {
-    refreshCurrentSession();
+    refreshCurrentSessionUser();
   };
 
   useEffect(() => {
@@ -68,8 +61,8 @@ export const CurrentSessionProvider: React.FC<PropsWithChildren> = ({
   return (
     <CurrentSessionContext.Provider
       value={{
-        currentSession,
-        refreshCurrentSession,
+        currentSessionUser,
+        refreshCurrentSessionUser,
         isAuthenticated,
         isLoading,
       }}

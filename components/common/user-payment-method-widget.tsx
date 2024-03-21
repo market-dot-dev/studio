@@ -6,51 +6,60 @@ import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hook
 import useCurrentSession, { CurrentSessionProvider } from '@/app/contexts/current-user-context';
 import { getPaymentMethod } from '@/app/services/StripeService';
 import { StripeCard } from '@/app/services/StripeService';
+import { getCustomerIds } from '@/app/models/Customer';
 
 interface UserPaymentMethodWidgetProps {
   loading?: boolean;
   setError?: (error: string | null) => void;
   setLoading?: (submitting: boolean) => void;
-  maintainerUserId?: string;
+  maintainerUserId: string;
+  maintainerStripeAccountId: string;
 }
 
-const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUserId }: UserPaymentMethodWidgetProps) => {
+const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUserId, maintainerStripeAccountId }: UserPaymentMethodWidgetProps) => {
   const setErrorOrNoop = setError ? setError : (error: string | null) => {};
   const setLoadingOrNoop = setLoading ? setLoading : (submitting: boolean) => {};
   const [cardInfo, setCardInfo] = useState<StripeCard>();
+  const [stripePaymentMethodId, setStripePaymentMethodId] = useState<string | null>(null);
 
-  const { currentSession, refreshCurrentSession } = useCurrentSession();
-  const user = currentSession.user;
+  const { currentSessionUser: user, refreshCurrentSessionUser } = useCurrentSession();
 
   const {
     CardElementComponent,
     stripeCustomerId,
     handleSubmit,
     handleDetach
-  } = useStripePaymentCollector({ user, setError: setErrorOrNoop, setSubmitting: setLoadingOrNoop, maintainerUserId });
-  
-  useEffect(() => {
-    if (loading && user?.id && !user?.stripePaymentMethodId) {
-      handleSubmit().then(refreshCurrentSession);
-    }
-  }, [loading, user, handleSubmit, refreshCurrentSession]);
+  } = useStripePaymentCollector({ user, setError: setErrorOrNoop, setSubmitting: setLoadingOrNoop, maintainerUserId, maintainerStripeAccountId });
 
   useEffect(() => {
-    if (user?.stripePaymentMethodId && maintainerUserId) {
-      getPaymentMethod(user.stripePaymentMethodId, maintainerUserId).then((paymentMethod) => {
+    if(user) {
+      const { stripePaymentMethodId } = getCustomerIds(user, maintainerUserId);
+      setStripePaymentMethodId(stripePaymentMethodId);
+    }
+  }, []);
+  
+  useEffect(() => {
+    if (loading && user?.id && stripePaymentMethodId) {
+      handleSubmit().then(refreshCurrentSessionUser);
+    }
+  }, [loading, user, handleSubmit, refreshCurrentSessionUser]);
+
+  useEffect(() => {
+    if (stripePaymentMethodId && maintainerUserId) {
+      getPaymentMethod(stripePaymentMethodId, maintainerUserId).then((paymentMethod) => {
         setCardInfo(paymentMethod);
       });
     }
-  }, [user?.stripePaymentMethodId, maintainerUserId]);
+  }, [stripePaymentMethodId, maintainerUserId]);
 
   return (
     <form onSubmit={handleSubmit}>
       <Card>
-        {user?.stripePaymentMethodId ? (
+        {stripePaymentMethodId ? (
           <div className="flex flex-row justify-between items-center">
             <Text>Use saved {cardInfo?.brand.toUpperCase()} ending in {cardInfo?.last4}</Text>
             <br />
-            <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshCurrentSession)}>
+            <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshCurrentSessionUser)}>
               Remove
             </Button>
           </div>

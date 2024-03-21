@@ -124,7 +124,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
 
             </> :
             <>
-              {tier && <RegistrationSection tier={tier} />}
+              {tier && maintainer && <RegistrationSection tier={tier} maintainer={maintainer}/>}
             </>
           }
         </CurrentSessionProvider>

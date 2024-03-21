@@ -200,7 +200,7 @@ export const authOptions: NextAuthOptions = {
     session: async ({ session, token }: any) => {
       const filteredSession = createSessionUser(token.user);
       session.user = {
-        id: token.sub,
+        //id: token.sub, # FIXME do we need this?
         ...(filteredSession || {}),
         // an empty token.user?.onboarding will signal that the user's onboarding is complete
         ...(token.user?.onboarding?.length ? { onboarding: true } : {}),

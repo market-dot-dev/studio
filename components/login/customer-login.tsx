@@ -22,9 +22,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     const [name, setName] = useState<string>('');
     
 
-    const { currentSession, refreshCurrentSession } = useCurrentSession();
-
-    const { user } = currentSession;
+    const { currentSessionUser: user, refreshCurrentSessionUser } = useCurrentSession();
 
     const router = useRouter();
 
@@ -33,7 +31,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
         setIsSubmitting(true);
         try {
             await signOut({ redirect: false });
-            await refreshCurrentSession();
+            await refreshCurrentSessionUser();
             setIsSubmitted(false);
             setIsSignUp(false);
 
@@ -137,7 +135,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                 if(redirect) {
                     router.push( redirect )
                 } else {
-                    refreshCurrentSession();
+                    refreshCurrentSessionUser();
                     setError(null);
                 }
             } else {

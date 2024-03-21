@@ -2,9 +2,10 @@ import { User } from "@prisma/client"
 import Stripe from 'stripe';
 import StripeService from "../services/StripeService";
 import UserService from "../services/UserService";
+import { SessionUser } from "./Session";
 
 class Customer {
-  user: User;
+  user: User | SessionUser;
   maintainerUserId: string;
   maintainerStripeAccountId: string;
   stripeCustomerIds: Record<string, string>;
@@ -13,7 +14,7 @@ class Customer {
   stripe: Stripe;
   stripeService: StripeService;
 
-  constructor(user: User, maintainerUserId: string, maintainerStripeAccountId: string) {
+  constructor(user: User | SessionUser, maintainerUserId: string, maintainerStripeAccountId: string) {
     this.user = user;
     this.stripeCustomerIds = (user.stripeCustomerIds || {}) as Record<string, string>;
     this.stripePaymentMethodIds = (user.stripePaymentMethodIds || {}) as Record<string, string>;
@@ -26,13 +27,13 @@ class Customer {
 
   // utility
   canBuy() {
-    !!this.stripeCustomerIds[this.maintainerUserId] 
-      && !!this.stripePaymentMethodIds[this.maintainerUserId];
+    !!this.stripeCustomerIds[this.maintainerStripeAccountId] 
+      && !!this.stripePaymentMethodIds[this.maintainerStripeAccountId];
   }
 
   // customer
   getStripeCustomerId() {
-    return this.stripeCustomerIds[this.maintainerUserId];
+    return this.stripeCustomerIds[this.maintainerStripeAccountId];
   }
 
   async getOrCreateStripeCustomerId() {
@@ -41,12 +42,12 @@ class Customer {
   }
   
   async setCustomerId(customerId: string) {
-    this.stripeCustomerIds[this.maintainerUserId] = customerId;
+    this.stripeCustomerIds[this.maintainerStripeAccountId] = customerId;
     return this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });
   }
 
   async clearCustomerId() {
-    delete this.stripeCustomerIds[this.maintainerUserId];
+    delete this.stripeCustomerIds[this.maintainerStripeAccountId];
     return this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });
   }
 
@@ -56,7 +57,7 @@ class Customer {
 
     const customer = await this.stripeService.createCustomer(email, name || undefined);
 
-    this.stripeCustomerIds[this.maintainerUserId] = customer.id;
+    this.stripeCustomerIds[this.maintainerStripeAccountId] = customer.id;
 
     await this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });
 
@@ -65,33 +66,47 @@ class Customer {
 
   async destroyCustomer() {
     await this.stripeService.destroyCustomer(await this.getStripeCustomerId());
-    delete this.stripeCustomerIds[this.maintainerUserId];
+    delete this.stripeCustomerIds[this.maintainerStripeAccountId];
 
     return await this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });
   }
 
   // payment method
+  async getStripePaymentMethod(){
+    return await this.stripeService.getPaymentMethod(await this.getStripePaymentMethodId(), this.maintainerStripeAccountId);
+  }
+  
   async getStripePaymentMethodId() {
-    return this.stripePaymentMethodIds[this.maintainerUserId];
+    return this.stripePaymentMethodIds[this.maintainerStripeAccountId];
   }
 
   async attachPaymentMethod(paymenMethodId: string) {
     const customerId = await this.getOrCreateStripeCustomerId();
     await this.stripeService.attachPaymentMethod(paymenMethodId, customerId);
-    this.stripePaymentMethodIds[this.maintainerUserId] = paymenMethodId;
+    this.stripePaymentMethodIds[this.maintainerStripeAccountId] = paymenMethodId;
 
     return await this.updateUser({ stripePaymentMethodIds: this.stripePaymentMethodIds });
   }
 
   async detachPaymentMethod() {
     await this.stripeService.detachPaymentMethod(await this.getStripePaymentMethodId(), await this.getStripeCustomerId());
-    delete this.stripePaymentMethodIds[this.maintainerUserId];
+    delete this.stripePaymentMethodIds[this.maintainerStripeAccountId];
 
     return await this.updateUser({ stripePaymentMethodIds: this.stripePaymentMethodIds });
   }
 
   async updateUser(userData: any) {
     return await UserService.updateUser(this.user.id, userData);
+  }
+}
+
+export const getCustomerIds = (user: User | SessionUser, maintainerStripeAccountId: string) => {
+  const stripeCustomerIds = (user.stripeCustomerIds || {}) as Record<string, string>;
+  const stripePaymentMethodIds = (user.stripePaymentMethodIds || {}) as Record<string, string>;
+
+  return {
+    stripeCustomerId: stripeCustomerIds[maintainerStripeAccountId],
+    stripePaymentMethodId: stripePaymentMethodIds[maintainerStripeAccountId],
   }
 }
 

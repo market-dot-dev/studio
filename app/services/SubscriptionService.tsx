@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import StripeService from "./StripeService";
-import UserService, { getStripeCustomerById } from "./UserService";
+import UserService from "./UserService";
 import Subscription, { SubscriptionStates } from "../models/Subscription";
 import TierService from "./TierService";
 import EmailService from "./EmailService";
