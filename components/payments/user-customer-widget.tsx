@@ -15,10 +15,11 @@ const UserCustomerWidget = ({ user }: { user: User; }) => {
       value={stripeCustomerId || ''}
     />
 
+    {/*
     { user?.stripeCustomerId ? 
       <Button onClick={async () => clearStripeCustomerById(user.id) } >Destroy</Button>
       : <Button onClick={async () => createStripeCustomerById(user.id) } >Create</Button>
-    }
+    }*/}
   </>);
 }
 

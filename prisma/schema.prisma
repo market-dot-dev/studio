@@ -15,7 +15,7 @@ model User {
   gh_username                 String?        @unique
   email                       String?        @unique
   stripeProductId             String?        @unique
-  stripeCustomerId            String?        @unique
+  stripeCustomerIds           Json           @default("{}")
   stripePaymentMethodId       String?        @unique
   stripeAccountId             String?        @unique
   stripeCSRF                  String?        @unique

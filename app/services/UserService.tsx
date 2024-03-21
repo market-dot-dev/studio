@@ -43,23 +43,37 @@ class UserService {
     });
   }
 
+  static async getCustomerId(user: User, maintainerUserId: string) {
+    const lookup = user.stripeCustomerIds as Record<string, string>;
+    return lookup[maintainerUserId];
+  }
+
+  static async setCustomerId(user: User, maintainerUserId: string, customerId: string) {
+    const lookup = user.stripeCustomerIds as Record<string, string>;
+    lookup[maintainerUserId] = customerId;
+
+    await prisma?.user.update({
+      where: { id: user.id },
+      data: { stripeCustomerIds: lookup },
+    });
+  }
+
   static async createStripeCustomer(user: User, maintainerStripeAccountId: string) {
     if(!user || !user.email) {
       throw new Error('User does not have an email address.');
     }
 
-    if(user.stripeCustomerId) {
-      return user.stripeCustomerId;
+    const customerId = await UserService.getCustomerId(user, maintainerStripeAccountId);
+
+    if(customerId) {
+      return customerId;
     }
 
     const stripeService = new StripeService(maintainerStripeAccountId);
     const customer = await stripeService.createCustomer(user.email, user.name ?? '', user.stripePaymentMethodId || undefined);
     
-    await prisma?.user.update({
-      where: { id: user.id },
-      data: { stripeCustomerId: customer.id },
-    });
-
+    await UserService.setCustomerId(user, maintainerStripeAccountId, customer.id);
+    
     return customer.id;
   }
 

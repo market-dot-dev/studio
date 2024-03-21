@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import StripeService from "./StripeService";
-import UserService from "./UserService";
+import UserService, { getStripeCustomerById } from "./UserService";
 import Subscription, { SubscriptionStates } from "../models/Subscription";
 import TierService from "./TierService";
 import EmailService from "./EmailService";
@@ -133,12 +133,12 @@ class SubscriptionService {
     const user = await UserService.findUser(userId);
     if (!user) throw new Error('User not found');
 
-    const stripeCustomerId = user.stripeCustomerId;
-    if (!stripeCustomerId) throw new Error('Stripe customer ID not found for user');
-
     const tier = await TierService.findTier(tierId);
     if (!tier) throw new Error('Tier not found');
     if (!tier.stripePriceId) throw new Error('Stripe price ID not found for tier');
+
+    const stripeCustomerId = await UserService.getCustomerId(user, tier.userId);
+      if (!stripeCustomerId) throw new Error('Stripe customer ID not found for user');
 
     const maintainer = await UserService.findUser(tier.userId);
     if (!maintainer) throw new Error('Maintainer not found');

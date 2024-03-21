@@ -11,7 +11,7 @@ interface UseStripePaymentCollectorProps {
   user: User | null | undefined;
   setError: (error: string | null) => void;
   setSubmitting: (submitting: boolean) => void;
-  maintainerUserId: string;
+  maintainerUserId?: string;
 }
 
 const CARD_ELEMENT_OPTIONS = {
@@ -78,19 +78,19 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUs
     if (error) {
       setError(error.message || '');
       setSubmitting(false);
-    } else if (paymentMethod) {
+    } else if (paymentMethod && maintainerUserId) {
       console.log('Payment method attached: ', paymentMethod);
-      await attachPaymentMethod(paymentMethod.id);
+      await attachPaymentMethod(paymentMethod.id, maintainerUserId);
       setStripeCustomerId(await createStripeCustomerById(user?.id || '', maintainerUserId));
       setSubmitting(false);
     }
   }, [stripe, elements, setError, setSubmitting, user?.id, maintainerUserId]);
 
   const handleDetach = useCallback(async () => {
-    if (user?.stripePaymentMethodId) {
-      await detachPaymentMethod(user?.stripePaymentMethodId);
+    if (user?.stripePaymentMethodId && maintainerUserId) {
+      await detachPaymentMethod(user?.stripePaymentMethodId, maintainerUserId);
     }
-  }, [user]);
+  }, [user, maintainerUserId]);
 
   return {
     CardElementComponent: StripeCardElement,
