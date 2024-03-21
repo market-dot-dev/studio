@@ -5,7 +5,6 @@ import Tier, { newTier } from "@/app/models/Tier";
 import StripeService from "./StripeService";
 import UserService from "./UserService";
 import { Feature, TierVersion } from "@prisma/client";
-import ProductService from "./ProductService";
 import SessionService from "./SessionService";
 import FeatureService from "./feature-service";
 import SubscriptionService from "./SubscriptionService";
@@ -16,7 +15,7 @@ export type TierVersionWithFeatures = TierVersion & { features?: Feature[]};
 class TierService {
   static async createStripePrice(tier: Tier, newPrice: number) {
     const userId = await SessionService.getCurrentUserId();
-
+    
     if(!userId) {
       throw new Error('User not authenticated');
     }
@@ -27,25 +26,21 @@ class TierService {
       throw new Error('User not found');
     }
 
-    if(!currentUser.stripeProductId) {
-      ProductService.createProduct(currentUser.id);
-      currentUser = await UserService.findUser(userId);
-      if(!currentUser?.stripeProductId) {
-        throw new Error('Tried to attach a stripe product id to user, but failed.');
-      }
+    const stripeService = new StripeService(currentUser.stripeAccountId!);
+
+    let stripeProductId = tier.stripeProductId;
+
+    if(!stripeProductId) {
+      const stripeProduct = await stripeService.createProduct(tier.name, tier.description || undefined);
+      stripeProductId = stripeProduct.id;
+            
+      await this.updateTier(tier.id, { stripeProductId: stripeProduct.id });
     }
 
     if(tier.published && !currentUser.stripeAccountId) {
-      throw new Error('Tried to publish a tier, but the user has no connected stripe account.');
+      throw new Error("Tried to update a tier to publish it, but maintainer's stripe account isn't connected.");
     }
-
-    const stripeProductId = currentUser?.stripeProductId;
-
-    if(!stripeProductId) {
-      throw new Error('User does not have a Stripe product ID.');
-    }
-
-    const stripeService = new StripeService(currentUser.stripeAccountId!);
+    
     const newStripePrice = await stripeService.createPrice(stripeProductId, newPrice);
 
     await prisma?.tier.update({
@@ -105,10 +100,6 @@ class TierService {
     const tier = await prisma.tier.create({
       data: tierAttributes as Tier,
     });
-
-    if(!user.stripeProductId) {
-      ProductService.createProduct(user.id);
-    }
     
     if(await StripeService.userCanSell(user)) {
       await TierService.createStripePrice(tier, parseFloat(`${tierAttributes.price}`));

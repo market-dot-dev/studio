@@ -2,9 +2,6 @@
 "use server";
 
 import UserService from "@/app/services/UserService";
-import UserCustomerWidget from "../../../../../../components/payments/user-customer-widget";
-import UserProductWidget from "../../../../../../components/payments/user-product-widget";
-import { UserPaymentMethodWidgetWrapperSSR } from "@/components/common/user-payment-method-widget"
 import UserAccountWidget from "@/components/payments/user-account-widget";
 import TierService from "@/app/services/TierService";
 import { Card } from "@tremor/react";
@@ -37,8 +34,9 @@ const StripeDebug = async () => {
       <Card decoration="top" decorationColor="indigo">
         <h2>Maintainer</h2>
 
+        {/*
         <h2>Product ID (for selling subscriptions)</h2>
-        <UserProductWidget user={user} />
+      <UserProductWidget user={user} /> */}
         
         <h2>Account ID (for getting paid)</h2>
         <UserAccountWidget user={user} />

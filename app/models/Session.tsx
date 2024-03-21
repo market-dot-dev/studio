@@ -10,7 +10,6 @@ export type SessionUser = {
   roleId: string;
   stripeCustomerIds: Record<string, string>;
   stripePaymentMethodIds: Record<string, string>;
-  stripeProductId?: string;
   stripeAccountId?: string;
   stripeAccountDisabled?: boolean;
 };
@@ -31,7 +30,6 @@ export const createSessionUser = (user: User): SessionUser => {
     image: user.image || undefined,
     stripeCustomerIds: (user.stripeCustomerIds || {}) as Record<string, string>,
     stripePaymentMethodIds: (user.stripePaymentMethodIds || {}) as Record<string, string>,
-    stripeProductId: user.stripeProductId || undefined,
     stripeAccountId: user.stripeAccountId || undefined,
     stripeAccountDisabled: user.stripeAccountDisabled || false,
   }

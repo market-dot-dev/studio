@@ -3,8 +3,6 @@
 import { User } from '@prisma/client';
 import prisma from "@/lib/prisma";
 import { getSession } from '@/lib/auth';
-import StripeService from './StripeService';
-import ProductService from './ProductService';
 import TierService from './TierService';
 import SessionService from './SessionService';
 import Customer from '../models/Customer';
@@ -95,26 +93,6 @@ export const createStripeCustomerById = async (userId: string, maintainerUserId:
 
   const customer = new Customer(user, maintainerUserId, maintainerUserId);
   return await customer.createStripeCustomer();
-}
-
-export const ensureMaintainerId = async (userId: string) => {
-  return new Promise((resolve, reject) => {
-    ProductService.createProduct(userId).then(() => {
-      return UserService.findUser(userId).then((user) => {
-
-        if(!user) {
-          reject('User not found.');
-        }
-
-        if(!StripeService.userCanSell(user!)) {
-          reject('Maintainer missing required stripe keys');
-        }
-        resolve(userId);
-      });
-    }).catch((error) => {
-      reject(error);
-    });
-  });
 }
 
 export const ensureTierId = async (tierId: string) => {

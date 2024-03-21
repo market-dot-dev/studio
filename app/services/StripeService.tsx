@@ -8,7 +8,6 @@ import { createSubscription as createLocalSubscription } from '@/app/services/Su
 import { User } from '@prisma/client';
 import prisma from "@/lib/prisma";
 import DomainService from './domain-service';
-import ProductService from './ProductService';
 import SessionService from './SessionService';
 import Customer from '../models/Customer';
 
@@ -129,16 +128,6 @@ class StripeService {
       canSell = false;
     }
 
-    if (!user.stripeProductId) {
-      try {
-        await ProductService.createProduct(user.id);
-      } catch (error) {
-        console.error("Error creating stripe product id", error);
-        messageCodes.push(ErrorMessageCode.StripeProductIdCreationFailed);
-        canSell = false;
-      }
-    }
-
     try {
       const { accountInfo } = await StripeService.getAccountInfo();
 
@@ -200,32 +189,22 @@ class StripeService {
     console.log('Payment was successful');
   }
 
-  async createOrUpdateProduct(product: Partial<Product>) {
-    try {
-      // If the product already has a Stripe product ID, try to update it
-      if (product.stripeProductId) {
-        const existingProduct = await this.stripe.products.retrieve(product.stripeProductId);
-        if (existingProduct) {
-          const updatedProduct = await (await connStripe()).products.update(product.stripeProductId, {
-            metadata: { updated: new Date().toISOString() },
-          });
-          return updatedProduct;
-        }
-      }
+  async createProduct(name: string, description?: string) {
+    const product = await this.stripe.products.create({
+      name,
+      description
+    });
 
-      // If the product does not have a Stripe product ID or it couldn't be found, create a new one
-      const newProduct = await (await connStripe()).products.create({
-        name: product.name || 'product-name',
-        description: 'product-description',
-      });
+    return product;
+  }
 
-      // Update your database with the new Stripe product ID.
-      return newProduct;
+  async updateProduct(productId: string, name: string, description?: string) {
+    const product = await this.stripe.products.update(productId, {
+      name,
+      description
+    });
 
-    } catch (error) {
-      console.error('Error creating or updating Stripe product:', error);
-      throw error; // Re-throw the error to handle it in the caller function or to return a failed response.
-    }
+    return product;
   }
 
   async destroyProduct(stripeProductId: string) {
@@ -233,7 +212,7 @@ class StripeService {
   }
 
   static async userCanSell(user: User) {
-    return !!user.stripeAccountId && !!user.stripeProductId;
+    return !!user.stripeAccountId;
   }
 
   static async userHasStripeAccountIdById() {
