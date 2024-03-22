@@ -9,6 +9,14 @@ import Customer from '../models/Customer';
 import { createSessionUser } from '../models/Session';
 
 class UserService {
+  static filterUserAttributes(user: User | Partial<User>) {
+    const attrs: Partial<User> = { ...user };
+
+    delete attrs.roleId;
+
+    return attrs;
+  }
+
   static async getCurrentUser() {
     const session = await getSession();
     const userId = session?.user.id;
@@ -32,13 +40,12 @@ class UserService {
 
   static async updateCurrentUser(userData: Partial<User>) {
     const userId = await SessionService.getCurrentUserId()
-
     if(!userId) return null;
 
-    const result = await UserService.updateUser(userId, userData);
-    //await SessionService.refreshSession();
-    return result;
+    const attrs = UserService.filterUserAttributes(userData);
 
+    const result = await UserService.updateUser(userId, attrs);
+    return result;
   }
 
   static async updateUser(id: string, userData: any) {
