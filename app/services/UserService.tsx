@@ -55,14 +55,14 @@ class UserService {
     });
   }
 
-  static async getCustomerId(user: User, maintainerUserId: string) {
+  static async getCustomerId(user: User, maintainerStripeAccountId: string) {
     const lookup = user.stripeCustomerIds as Record<string, string>;
-    return lookup[maintainerUserId];
+    return lookup[maintainerStripeAccountId];
   }
 
-  static async setCustomerId(user: User, maintainerUserId: string, customerId: string) {
+  static async setCustomerId(user: User, maintainerStripeAccountId: string, customerId: string) {
     const lookup = user.stripeCustomerIds as Record<string, string>;
-    lookup[maintainerUserId] = customerId;
+    lookup[maintainerStripeAccountId] = customerId;
 
     await prisma?.user.update({
       where: { id: user.id },
@@ -70,9 +70,9 @@ class UserService {
     });
   }
 
-  static async clearCustomerId(user: User, maintainerUserId: string) {
+  static async clearCustomerId(user: User, maintainerStripeAccountId: string) {
     const lookup = user.stripeCustomerIds as Record<string, string>;
-    delete lookup[maintainerUserId];
+    delete lookup[maintainerStripeAccountId];
 
     await prisma?.user.update({
       where: { id: user.id },
@@ -81,13 +81,13 @@ class UserService {
   }
 }
 
-export const clearStripeCustomerById = async (userId: string, maintainerUserId: string) => {
+export const clearStripeCustomerById = async (userId: string, maintainerUserId: string, maintainerStripeAccountId: string) => {
   const user = await UserService.findUser(userId);
   if(!user) {
     throw new Error('User not found.');
   }
 
-  const customer = new Customer(user, maintainerUserId, maintainerUserId);
+  const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
   return await customer.destroyCustomer();
 }
 
