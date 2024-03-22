@@ -14,16 +14,10 @@ export type TierVersionWithFeatures = TierVersion & { features?: Feature[]};
 
 class TierService {
   static async createStripePrice(tier: Tier, newPrice: number) {
-    const userId = await SessionService.getCurrentUserId();
-    
-    if(!userId) {
-      throw new Error('User not authenticated');
-    }
-
-    let currentUser = await UserService.findUser(userId);
+    let currentUser = await UserService.getCurrentUser();
 
     if(!currentUser){
-      throw new Error('User not found');
+      throw new Error('Not logged in');
     }
 
     const stripeService = new StripeService(currentUser.stripeAccountId!);
@@ -76,11 +70,13 @@ class TierService {
   }
 
   static async createTier(tierData: Partial<Tier>) {
+    console.log('------------- create tier');
     // Ensure the current user is the owner of the tier or has permissions to create it
     const user = await UserService.getCurrentUser();
     const userId = user?.id;
+    const stripeAccountId = user?.stripeAccountId;
 
-    if (!userId) {
+    if (!user) {
       throw new Error("User not authenticated");
     }
 
@@ -97,15 +93,17 @@ class TierService {
     tierAttributes.userId = userId;
     tierAttributes.features = undefined;
 
-    const tier = await prisma.tier.create({
-      data: tierAttributes as Tier,
-    });
-    
-    if(await StripeService.userCanSell(user)) {
-      await TierService.createStripePrice(tier, parseFloat(`${tierAttributes.price}`));
+    if(user.stripeAccountId){
+      const stripeService = new StripeService(user.stripeAccountId);
+      const product = await stripeService.createProduct(tierAttributes.name, tierAttributes.description || undefined);
+      const price = await stripeService.createPrice(product.id, tierAttributes.price);
+      tierAttributes.stripeProductId = product.id;
+      tierAttributes.stripePriceId = price.id;
     }
 
-    return tier;
+    return await prisma.tier.create({
+      data: tierAttributes as Tier,
+    });
   }
 
   static async updateTier(id: string, tierData: Partial<Tier>, newFeatureIds?: string[]) {
