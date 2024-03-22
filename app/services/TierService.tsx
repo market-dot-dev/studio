@@ -141,6 +141,8 @@ class TierService {
           await stripeService.destroyPrice(tier.stripePriceId);
         }
       }
+
+      await FeatureService.setFeatureCollection(id, newFeatureSetIds, 'tier');
     }
 
     if(stripeConnected && (createNewversion || priceChanged)) {
