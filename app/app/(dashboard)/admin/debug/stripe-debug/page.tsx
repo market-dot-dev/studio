@@ -5,7 +5,7 @@ import UserService from "@/app/services/UserService";
 import UserAccountWidget from "@/components/payments/user-account-widget";
 import TierService from "@/app/services/TierService";
 import { Card } from "@tremor/react";
-import TierPriceWidget from "@/components/payments/tier-price-widget";
+//import TierPriceWidget from "@/components/payments/tier-price-widget";
 
 const StripeDebug = async () => {
   const user = await UserService.getCurrentUser();
@@ -46,7 +46,7 @@ const StripeDebug = async () => {
         <div key={tier.id}>
           <Card>
             <h2>{tier.name} | {tier.price}</h2>
-            <TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } />
+            { /* <TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } /> */ }
           </Card>
         </div>
       ))}

@@ -13,36 +13,6 @@ export type TierWithFeatures = Tier & { features?: Feature[] };
 export type TierVersionWithFeatures = TierVersion & { features?: Feature[]};
 
 class TierService {
-  static async createStripePrice(tier: Tier, newPrice: number) {
-    let currentUser = await UserService.getCurrentUser();
-
-    if(!currentUser){
-      throw new Error('Not logged in');
-    }
-
-    const stripeService = new StripeService(currentUser.stripeAccountId!);
-
-    let stripeProductId = tier.stripeProductId;
-
-    if(!stripeProductId) {
-      const stripeProduct = await stripeService.createProduct(tier.name, tier.description || undefined);
-      stripeProductId = stripeProduct.id;
-            
-      await this.updateTier(tier.id, { stripeProductId: stripeProduct.id });
-    }
-
-    if(tier.published && !currentUser.stripeAccountId) {
-      throw new Error("Tried to update a tier to publish it, but maintainer's stripe account isn't connected.");
-    }
-    
-    const newStripePrice = await stripeService.createPrice(stripeProductId, newPrice);
-
-    await prisma?.tier.update({
-      where: { id: tier.id },
-      data: { stripePriceId: newStripePrice.id },
-    });
-  }
-
   static async destroyStripePrice(tier: Tier) {
     if(!tier.stripePriceId) {
       throw new Error('Tier does not have a Stripe price ID.');
@@ -70,7 +40,6 @@ class TierService {
   }
 
   static async createTier(tierData: Partial<Tier>) {
-    console.log('------------- create tier');
     // Ensure the current user is the owner of the tier or has permissions to create it
     const user = await UserService.getCurrentUser();
     const userId = user?.id;
@@ -84,71 +53,55 @@ class TierService {
       throw new Error('Tried to publish an existing tier, but the user has no connected stripe account.');
     }
 
-    const tierAttributes = newTier({
+    const attrs = newTier({
       ...tierData,
       userId,
     }) as any;
 
-    tierAttributes.price = parseFloat(`${tierAttributes.price}`);
-    tierAttributes.userId = userId;
-    tierAttributes.features = undefined;
+    attrs.price = parseFloat(`${attrs.price}`);
+    attrs.features = undefined;
 
     if(user.stripeAccountId){
       const stripeService = new StripeService(user.stripeAccountId);
-      const product = await stripeService.createProduct(tierAttributes.name, tierAttributes.description || undefined);
-      const price = await stripeService.createPrice(product.id, tierAttributes.price);
-      tierAttributes.stripeProductId = product.id;
-      tierAttributes.stripePriceId = price.id;
+      const product = await stripeService.createProduct(attrs.name, attrs.description || undefined);
+      const price = await stripeService.createPrice(product.id, attrs.price);
+      attrs.stripeProductId = product.id;
+      attrs.stripePriceId = price.id;
     }
 
     return await prisma.tier.create({
-      data: tierAttributes as Tier,
+      data: attrs as Tier,
     });
   }
 
   static async updateTier(id: string, tierData: Partial<Tier>, newFeatureIds?: string[]) {
     // Ensure the current user is the owner of the tier or has permissions to update it
-    const userId = await SessionService.getCurrentUserId();
+    const user = await UserService.getCurrentUser();
 
-    if (!userId) {
-      throw new Error("User not authenticated");
-    }
+    if (!user) throw new Error("User not authenticated");
 
-    const user = await UserService.findUser(userId);
+    const stripeService = new StripeService(user?.stripeAccountId!);
 
-    if (!user) {
-      throw new Error("User not found");
-    }
-
-    const tier = await prisma.tier.findUnique({
-      where: { id },
+    let tier = await prisma.tier.findUnique({
+      where: { id, userId: user.id},
+      include: { versions: true }
     });
 
-    if (!tier) {
-      throw new Error(`Tier with ID ${id} not found`);
-    }
-
-    if (tier.userId !== userId) {
-      throw new Error("User does not have permission to update this tier");
-    }
+    if (!tier) throw new Error(`Tier with ID ${id} not found`);
     
-    if(await StripeService.userCanSell(user) && !tier.stripePriceId) {
-      await TierService.createStripePrice(tier, tier.price);
+    if(user.stripeAccountId){
+      if(!tier.stripeProductId) {
+        const product = await stripeService.createProduct(tier.name, tier.description || undefined);
+        tier.stripeProductId = product.id;
+
+        await prisma.tier.update({
+          where: { id },
+          data: { stripeProductId: product.id },
+        });
+      }
     }
 
-    let newlyWrittenVersion: TierVersionWithFeatures | undefined;
-
-    let existingFeatureSetIds: string[] = [];
     let newFeatureSetIds: string[] = newFeatureIds || [];
-
-    const currentTier = await prisma.tier.findUnique({
-      where: { id },
-      include: { versions: true },
-    });
-
-    if (!currentTier) {
-      throw new Error(`Tier with ID ${id} not found`);
-    }
 
     const hasSubscribers = await SubscriptionService.hasSubscribers(id, tier.revision);
     const newPrice = parseFloat(`${tierData.price}`);
@@ -156,21 +109,22 @@ class TierService {
     const published = tierData.published === true;
     const featuresChanged = newFeatureSetIds ? (await FeatureService.haveFeatureIdsChanged(id, newFeatureSetIds)) : false;
     const materialChange = priceChanged || featuresChanged;
+    const createNewversion = hasSubscribers && published && materialChange;
+    const stripeConnected = !!user.stripeAccountId;
 
-    if(hasSubscribers && published && materialChange){
-      // create a new version and price
-      // copy existing state to a version
-      newlyWrittenVersion = await prisma.tierVersion.create({
+    if(createNewversion){
+      const newVersion = await prisma.tierVersion.create({
         data: {
           tierId: id,
-          price: currentTier.price,
-          stripePriceId: currentTier.stripePriceId,
-          revision: currentTier.revision,
+          price: tier.price,
+          stripePriceId: tier.stripePriceId,
+          revision: tier.revision,
         },
       });
 
-      // note the old feature ids so we can assign them (outside the transaction)
-      existingFeatureSetIds = (await FeatureService.findByTierId(id)).map(f => f.id);
+      const existingFeatureSetIds = (await FeatureService.findByTierId(id)).map(f => f.id);
+      await FeatureService.setFeatureCollection(newVersion.id, existingFeatureSetIds, 'tierVersion');
+      await FeatureService.setFeatureCollection(id, newFeatureSetIds, 'tier');
 
       // set the new price, and clear stripePriceId (as it belongs to version now)
       await prisma.tier.update({
@@ -178,42 +132,26 @@ class TierService {
         data: {
           price: Number(tierData.price),
           stripePriceId: null,
-          revision: currentTier.revision + 1
+          revision: tier.revision + 1
         },
       });
-
-      // generate a new price id on the tier
-      if (await StripeService.userCanSell(user)) {
-        await TierService.createStripePrice(tier, newPrice);
-      }
     } else {
       if(priceChanged) {
         if(tier.stripePriceId) {
-          const stripeService = new StripeService(user.stripeAccountId!);
           await stripeService.destroyPrice(tier.stripePriceId);
         }
-
-        console.log('~~updating with: ', {
-          where: { id },
-          data: {
-            price: newPrice,
-            stripePriceId: null,
-          },
-        });
-
-        await prisma.tier.update({
-          where: { id },
-          data: {
-            price: newPrice,
-            stripePriceId: null,
-          },
-        });
-
-        // generate a new price id on the tier
-        if (await StripeService.userCanSell(user)) {
-          await TierService.createStripePrice(tier, newPrice);
-        }
       }
+    }
+
+    if(stripeConnected && (createNewversion || priceChanged)) {
+      const price = await stripeService.createPrice(tier.stripeProductId!, newPrice);
+
+      await prisma.tier.update({
+        where: { id },
+        data: {
+          stripePriceId: price.id,
+        },
+      });
     }
 
     // update non-material columns
@@ -224,24 +162,12 @@ class TierService {
     delete tierAttributes.features;
     delete tierAttributes.stripePriceId;
 
-    const writtenTier = await prisma.tier.update({
+    return await prisma.tier.update({
       where: { id },
       data: {
         ...(tierAttributes as Tier),
       },
     });
-
-    if(!!newlyWrittenVersion){
-      if(existingFeatureSetIds) {
-        await FeatureService.setFeatureCollection(newlyWrittenVersion.id, existingFeatureSetIds, 'tierVersion');
-      }
-    }
-
-    if(!!newFeatureSetIds) {
-      await FeatureService.setFeatureCollection(tier.id, newFeatureSetIds, 'tier');
-    }
-
-    return writtenTier;
   }
 
   static shouldCreateNewVersion = async (tier: Tier, tierData: Partial<Tier>): Promise<boolean> => {
@@ -488,23 +414,5 @@ class TierService {
   }
 };
 
-export const createStripePriceById = async (id: string) => {
-  const tier = await TierService.findTier(id);
-  if(!tier) {
-    throw new Error('Tier not found.');
-  }
-
-  await TierService.createStripePrice(tier, tier.price);
-}
-
-export const destroyStripePriceById = async (id: string) => {
-  const tier = await TierService.findTier(id);
-  if(!tier) {
-    throw new Error('Tier not found.');
-  }
-
-  await TierService.destroyStripePrice(tier);
-}
-
 export default TierService;
-export const { findTier, updateTier, createTier, createStripePrice, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId, getTiersForUser } = TierService;
+export const { findTier, updateTier, createTier, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId, getTiersForUser } = TierService;

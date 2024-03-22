@@ -15,6 +15,19 @@ type TierCardProps = {
   features?: Feature[];
 };
 
+const GetStartedButton = ({ url, tierId, canEdit }: { url: string | null, tierId: string, canEdit: boolean }) => {
+  const linkUrl = url ? `${url ? url : ''}/checkout/${tierId}` : '';
+  const variant = canEdit ? "secondary" : "primary";
+
+  return (
+    <Link href={linkUrl}>
+      <Button variant={variant} className="w-full">
+        Get Started
+      </Button>
+    </Link>
+  );
+}
+
 const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, darkMode = false, features = [], children }) => {
   const containerClasses = darkMode
     ? "text-white bg-gray-800 border-gray-600"
@@ -43,11 +56,8 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
 
       <div className="flex flex-col gap-2 w-full mt-4">
         {canEdit && <Link href={`tiers/${tier.id}`}><Button variant="primary" className="w-full">Edit</Button></Link>}
-        { children ? children : <>
-          <Link href={`${url ? url : ''}/checkout/${tier.id}`}><Button variant={canEdit ? "secondary" : "primary"} className="w-full">Get Started</Button></Link>
-          </>}
+        { children ? children : <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} /> }
       </div>
-
     </Card>
   </>);
 };
