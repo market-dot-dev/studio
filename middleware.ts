@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
 import { getToken } from "next-auth/jwt";
-import RoleService from "./app/services/role-service";
+import RoleService, { Role } from "./app/services/role-service";
 import DomainService from "./app/services/domain-service";
+import { SessionUser } from "./app/models/Session";
 
 export const config = {
   matcher: [
@@ -23,7 +24,8 @@ export default withAuth(
   {
     callbacks: {
       authorized: async ({ token, req }) => {
-        return await RoleService.canViewPath(req.nextUrl.pathname, token?.user?.roleId);
+        const user = token?.user as SessionUser;
+        return await RoleService.canViewPath(req.nextUrl.pathname, user.roleId as Role);
       }
     },
   }
