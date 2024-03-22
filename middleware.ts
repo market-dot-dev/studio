@@ -23,7 +23,7 @@ export default withAuth(
   {
     callbacks: {
       authorized: async ({ token, req }) => {
-        return await RoleService.canViewPath(req.nextUrl.pathname, (token as any)?.user?.roleId);
+        return await RoleService.canViewPath(req.nextUrl.pathname, token?.user?.roleId);
       }
     },
   }
@@ -39,9 +39,9 @@ async function customMiddleware(req: NextRequest) {
   const hostname = DomainService.getHostnameFromRequest(req);
   const rootUrl = DomainService.getRootUrl();
 
-  const ghUsername = DomainService.getGhUsernameFromRequest(req);
+  const ghUsername = DomainService.getGhUsernameFromRequest(req);``
   const reservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);
-  const bareDomain = !ghUsername && !reservedSubdomain;
+  const bareDomain = !ghUsername && !reservedSubdomain;``
   const session = await getToken({ req }) as any;
   const signedIn = !!session;
   const roleId = session?.user?.roleId;
@@ -94,10 +94,8 @@ async function customMiddleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-
   // app.gitwallet.co
   if (reservedSubdomain === 'app') {
-
     // if customer, then lock to /app/c/
     if(roleId === 'customer' ) {
       return rewrite(`/app/c${path}`, req.url);
@@ -110,5 +108,4 @@ async function customMiddleware(req: NextRequest) {
     // else lock to /app/
     return rewrite(`/app${path}`, req.url);
   }
-  
 }

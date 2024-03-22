@@ -4,7 +4,6 @@ import CustomerSettings from "@/components/user/customer-settings";
 
 import { User } from "@prisma/client";
 
-
 export default async function SettingsPage() {
     const user = await UserService.getCurrentUser() as Partial<User>;
     
@@ -12,6 +11,7 @@ export default async function SettingsPage() {
         <div className="space-y-12 p-8">
             <PageHeading title="User Settings" />
             <CustomerSettings user={user} />
+
         </div>
     );
 }
