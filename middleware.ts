@@ -25,7 +25,7 @@ export default withAuth(
     callbacks: {
       authorized: async ({ token, req }) => {
         const user = token?.user as SessionUser;
-        return await RoleService.canViewPath(req.nextUrl.pathname, user.roleId as Role);
+        return await RoleService.canViewPath(req.nextUrl.pathname, user?.roleId as Role);
       }
     },
   }

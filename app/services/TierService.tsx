@@ -104,6 +104,8 @@ class TierService {
       ...tierData,
     });
 
+    console.debug("============= payload", { tierData, attrs });
+
     let newVersion: TierVersion | null = null;
 
     if(!attrs.name){
@@ -160,7 +162,7 @@ class TierService {
 
     await FeatureService.setFeatureCollection(id, newFeatureSetIds, 'tier');
 
-    if(stripeConnected) {
+    if(stripeConnected && attrs.published) {
       if(!attrs.stripeProductId) {
         const product = await stripeService.createProduct(attrs.name, attrs.description || attrs.tagline || undefined);
         attrs.stripeProductId = product.id;
