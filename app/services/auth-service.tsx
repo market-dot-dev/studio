@@ -48,12 +48,17 @@ class AuthService {
 
     if (trigger === "update") {
       if(token.id){
+        console.log('--------------- update');
         userData = await UserService.findUser(user.id);
       }
     } else if (trigger === "signIn") {
+      console.log('--------------- signIn');
       userData = await this.onSignIn(user);
     } else if (trigger === "signUp") {
+      console.log('--------------- signUp');
       userData = await this.onCreateUser(account, user);
+    } else {
+      console.log('----------------- default');
     }
 
     newToken.user = userData ? createSessionUser(userData) : token.user;
@@ -62,6 +67,7 @@ class AuthService {
   }
 
   static async sessionCallback({ session, token }: any) {
+    console.log('----------------- sessionCallback');
     session.user = token.user;
     return session;
   }

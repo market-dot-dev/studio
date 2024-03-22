@@ -8,10 +8,11 @@ const useCurrentSession = () => {
   const isSignedIn = () => status === "authenticated";
 
   const refreshSession = async () => {
-    await update();
+    console.log("Refreshing session..."); // Add this line
+    await update({ force: true });
   }
 
-  return { currentUser, refreshSession: update, isSignedIn } as const;
+  return { currentUser, refreshSession, isSignedIn } as const;
 }
 
 export default useCurrentSession;
