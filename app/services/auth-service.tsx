@@ -7,6 +7,31 @@ import { projectDescription, projectName } from "@/lib/constants/site-template";
 import { createSessionUser } from "../models/Session";
 import UserService from "./UserService";
 import EmailService from "./EmailService";
+import { JWT } from "next-auth/jwt";
+import { Account, User as NaUser } from "next-auth";
+import { AdapterUser } from "next-auth/adapters";
+import { User } from "@prisma/client";
+
+type JwtCallbackParams = {
+  token: JWT;
+  user: AdapterUser | NaUser;
+  account: Account | null;
+  //profile?: Profile | undefined;
+  trigger?: "signIn" | "update" | "signUp" | undefined;
+  isNewUser?: boolean | undefined;
+  session?: any;
+}
+
+/*
+const isAdmin = currentUser?.roleId === "admin";
+if (session?.roleId && isAdmin) {
+  token.user = {
+    foo: "bar",
+    ...token.user,
+    roleId: session.roleId,
+  };
+} else {
+*/
 
 class AuthService {
   static async jwtCallback({
@@ -16,71 +41,53 @@ class AuthService {
     trigger,
     session,
     isNewUser,
-  }: any) {
-    console.log(`------------ server session refreshed -- trigger: ${trigger}`);
-    // update the roleId if switched by the user from the frontend
+  }: JwtCallbackParams) {
+    let newToken = { ...token };
+
+    let userData: User | undefined | null = undefined;
+
     if (trigger === "update") {
-      const currentUser = await UserService.getCurrentUser();
-      const isAdmin = currentUser?.roleId === "admin";
-
-      if (session?.roleId && isAdmin) {
-        token.user = {
-          foo: "bar",
-          ...token.user,
-          roleId: session.roleId,
-        };
-      } else {
-        if (currentUser) {
-          token.user = {
-            ...token.user,
-            ...createSessionUser(currentUser),
-          };
-        }
+      if(token.id){
+        userData = await UserService.findUser(user.id);
       }
-
-      return token;
+    } else if (trigger === "signIn") {
+      userData = await this.onSignIn(user);
+    } else if (trigger === "signUp") {
+      userData = await this.onCreateUser(account, user);
     }
 
-    const userData = user ? { ...user } : null;
+    newToken.user = userData ? createSessionUser(userData) : token.user;
 
-    // if its a new user, then based on the provider, we can set the roleId
-    if (isNewUser) {
-      const signupName = cookies().get("signup_name") ?? null;
-      const name = (signupName?.value ?? null) as string | null;
+    return newToken;
+  }
 
-      const roleId = account.provider === "github" ? "maintainer" : "customer";
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          roleId,
-          projectName,
-          projectDescription,
-          ...(name ? { name } : {}),
-        },
-      });
-      // also update the roleId in the token
-      userData.roleId = roleId;
-      if (name) {
-        userData.name = name;
-      }
+  static async sessionCallback({ session, token }: any) {
+    session.user = token.user;
+    return session;
+  }
 
-      if (userData.roleId === "maintainer") {
-        await EmailService.sendNewMaintainerSignUpEmail({ ...userData });
-      } else {
-        await EmailService.sendNewCustomerSignUpEmail({ ...userData });
-      }
+  static async onSignIn(naUser: NaUser){
+    const user = await UserService.findUser(naUser.id);
 
-      if (signupName) {
-        cookies().delete("signup_name");
-      }
+    if(!user){
+      return null;
     }
 
-    // Store the refresh token in the database when the user logs in
+    // at this point, the user item in table does not have the onboarding data set. So, we can attach the default one to the first token being generated on signup.
+    if (!user.onboarding) {
+      user.onboarding = JSON.stringify(defaultOnboardingState);
+    }
+
+    return user;
+  }
+
+  static async onCreateUser(account: any, user: NaUser) {
+    const signupName = cookies().get("signup_name") ?? null;
+    const name = (signupName?.value ?? null) as string | null;
+
+    const roleId = account.provider === "github" ? "maintainer" : "customer";
+
     if (account && user) {
-      // at this point, the user item in table does not have the onboarding data set. So, we can attach the default one to the first token being generated on signup.
-      if (!user.onboarding) {
-        userData.onboarding = JSON.stringify(defaultOnboardingState);
-      }
       await prisma.account.upsert({
         where: {
           provider_providerAccountId: {
@@ -109,29 +116,27 @@ class AuthService {
       });
     }
 
-    if (userData) {
-      const sessionUser = createSessionUser(userData);
-      token.user = sessionUser;
+    const updatedUser = await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        roleId,
+        projectName,
+        projectDescription,
+        ...(name ? { name } : {}),
+      },
+    });
 
-      /*
-      if(token.user?.onboarding?.length) {
-        sessionUser.onboarding = true;
-      }
-
-      token.user = {
-        ...(filteredSession || {}),
-        // an empty token.user?.onboarding will signal that the user's onboarding is complete
-        ...(token.user?.onboarding?.length ? { onboarding: true } : {}),
-      };
-      */
+    if (updatedUser.roleId === "maintainer") {
+      await EmailService.sendNewMaintainerSignUpEmail({ ...updatedUser });
+    } else {
+      await EmailService.sendNewCustomerSignUpEmail({ ...updatedUser });
     }
 
-    return token;
-  }
+    if (signupName) {
+      cookies().delete("signup_name");
+    }
 
-  static async sessionCallback({ session, token }: any) {
-    session.user = token.user;
-    return session;
+    return updatedUser;
   }
 }
 

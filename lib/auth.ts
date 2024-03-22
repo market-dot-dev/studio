@@ -124,7 +124,6 @@ export const authOptions: NextAuthOptions = {
       });
       
       await RegistrationService.createSite(user);
-      
     },
   },
 };
