@@ -6,8 +6,6 @@ import { User } from '@prisma/client';
 import Customer from '../models/Customer';
 import { SessionUser } from '../models/Session';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_NOT_SET_IN_ENV');
-
 interface UseStripePaymentCollectorProps {
   user: User | SessionUser | null | undefined;
   setError: (error: string | null) => void;
@@ -46,7 +44,16 @@ export const StripeCardElement = () => {
   return <CardElement options={CARD_ELEMENT_OPTIONS} />
 }
 
-export const StripeCheckoutFormWrapper = ({ children, ...props }: { children: (props: any) => ReactNode; props?: any; }) => {
+export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId, ...props }: {
+  children: (props: any) => ReactNode;
+  maintainerStripeAccountId: string;
+  props?: any;
+}) => {
+  const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_NOT_SET_IN_ENV';
+  const stripePromise = loadStripe(pk, {
+    stripeAccount: maintainerStripeAccountId,
+  });
+
   return <Elements stripe={stripePromise}>
     { children({ ...props }) }
   </Elements>;
@@ -85,7 +92,7 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUs
       await attachPaymentMethod(paymentMethod.id, maintainerUserId, maintainerStripeAccountId);
       setSubmitting(false);
     }
-  }, [stripe, elements, setError, setSubmitting, user?.id, maintainerUserId]);
+  }, [stripe, elements, setError, setSubmitting, maintainerUserId, maintainerStripeAccountId]);
 
   const handleDetach = useCallback(async () => {
     if (!user || !maintainerUserId) {

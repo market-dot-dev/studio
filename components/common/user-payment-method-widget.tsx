@@ -81,13 +81,7 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUser
 };
 
 const UserPaymentMethodWidgetWrapper = (props: UserPaymentMethodWidgetProps) => {
-  return <StripeCheckoutFormWrapper>
-    {(innerProps: UserPaymentMethodWidgetProps) => <UserPaymentMethodWidget {...props} {...innerProps} />}
-  </StripeCheckoutFormWrapper>
-};
-
-export const UserPaymentMethodWidgetWrapperSSR = (props: UserPaymentMethodWidgetProps) => {
-  return <StripeCheckoutFormWrapper>
+  return <StripeCheckoutFormWrapper maintainerStripeAccountId={props.maintainerStripeAccountId}>
     {(innerProps: UserPaymentMethodWidgetProps) => <UserPaymentMethodWidget {...props} {...innerProps} />}
   </StripeCheckoutFormWrapper>
 };
