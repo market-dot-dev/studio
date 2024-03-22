@@ -3,6 +3,7 @@ import { User } from "@prisma/client";
 export type SessionUser = {
   id: string;
   name?: string;
+  company?: string;
   username?: string;
   email?: string;
   image?: string;
@@ -23,6 +24,7 @@ export const createSessionUser = (user: User): SessionUser => {
   return {
     id: user.id,
     name: user.name || undefined,
+    company: user.company || undefined,
     username: user.username || user.gh_username || undefined,
     email: user.email || undefined,
     roleId: user.roleId || 'anonymous',
