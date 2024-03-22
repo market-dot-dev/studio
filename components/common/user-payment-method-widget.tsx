@@ -33,20 +33,20 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUser
 
   useEffect(() => {
     if(user) {
-      const { stripePaymentMethodId } = getCustomerIds(user, maintainerUserId);
+      const { stripePaymentMethodId } = getCustomerIds(user, maintainerStripeAccountId);
       setStripePaymentMethodId(stripePaymentMethodId);
     }
-  }, []);
+  }, [user, maintainerStripeAccountId]);
   
   useEffect(() => {
-    if (loading && user?.id && stripePaymentMethodId) {
+    if (loading && user?.id && !stripePaymentMethodId) {
       handleSubmit().then(refreshSession);
     }
   }, [loading, user, handleSubmit, refreshSession]);
 
   useEffect(() => {
     if (stripePaymentMethodId && maintainerUserId) {
-      getPaymentMethod(stripePaymentMethodId, maintainerUserId).then((paymentMethod) => {
+      getPaymentMethod(maintainerUserId, maintainerStripeAccountId).then((paymentMethod) => {
         setCardInfo(paymentMethod);
       });
     }

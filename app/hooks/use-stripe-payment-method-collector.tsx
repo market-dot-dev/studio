@@ -99,7 +99,7 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUs
       return;
     }
 
-    const customer = new Customer(user, maintainerUserId, maintainerUserId);
+    const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
     await customer.detachPaymentMethod();
   }, [user, maintainerUserId]);
 

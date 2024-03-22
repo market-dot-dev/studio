@@ -45,7 +45,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintai
 
   useEffect(() => {
     if(!!user) {
-      const { stripeCustomerId, stripePaymentMethodId } = getCustomerIds(user, tier.userId);
+      const { stripeCustomerId, stripePaymentMethodId } = getCustomerIds(user, maintainer.stripeAccountId!);
       setStripeCustomerId(stripeCustomerId);
       setStripePaymentMethodId(stripePaymentMethodId);
       isSubscribedByTierId(user.id, tierId).then(setIsSubscribed);
@@ -57,12 +57,19 @@ const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintai
     setError(null);
     setPurchaseIntent(true);
 
-    if(stripeCustomerId && stripePaymentMethodId) {
+    if(!!user && !stripePaymentMethodId) {
       setSubmittingPaymentMethod(true);
       setLoading(false);
     }
-    
   }
+
+  useEffect(() => {
+    if(error){
+      setLoading(false);
+      setSubmittingPaymentMethod(false);
+      setPurchaseIntent(false);
+    }
+  }, [error]);
 
   useEffect(() => {
     if (purchaseIntent && user && stripePaymentMethodId) {
