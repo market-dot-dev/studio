@@ -16,7 +16,7 @@ type TierCardProps = {
 };
 
 const GetStartedButton = ({ url, tierId, canEdit }: { url: string | null, tierId: string, canEdit: boolean }) => {
-  const linkUrl = url ? `${url ? url : ''}/checkout/${tierId}` : '';
+  const linkUrl = (url || tierId) ? `${url ? url : ''}/checkout/${tierId}` : '';
   const variant = canEdit ? "secondary" : "primary";
 
   return (
