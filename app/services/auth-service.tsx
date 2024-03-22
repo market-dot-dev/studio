@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { defaultOnboardingState } from "./onboarding/onboarding-steps";
 import { cookies } from "next/headers";
 import { projectDescription, projectName } from "@/lib/constants/site-template";
-import { createSessionUser } from "../models/Session";
+import { SessionUser, createSessionUser } from "../models/Session";
 import UserService from "./UserService";
 import EmailService from "./EmailService";
 import { JWT } from "next-auth/jwt";
@@ -34,31 +34,29 @@ if (session?.roleId && isAdmin) {
 */
 
 class AuthService {
-  static async jwtCallback({
-    token,
-    user,
-    account,
-    trigger,
-    session,
-    isNewUser,
-  }: JwtCallbackParams) {
-    let newToken = { ...token };
+  static async jwtCallback(callbackParams: JwtCallbackParams) {
+    const {
+      token,
+      user,
+      account,
+      trigger,
+      session,
+      isNewUser,
+    } = callbackParams;
+    const sessionUser = token?.user as SessionUser | undefined | null;
 
+    let newToken = { ...token };
     let userData: User | undefined | null = undefined;
 
     if (trigger === "update") {
-      if(token.id){
-        console.log('--------------- update');
-        userData = await UserService.findUser(user.id);
+      if(sessionUser?.id){
+        userData = await UserService.findUser(sessionUser.id);
       }
     } else if (trigger === "signIn") {
-      console.log('--------------- signIn');
-      userData = await this.onSignIn(user);
+      userData = await AuthService.onSignIn(user || sessionUser);
     } else if (trigger === "signUp") {
-      console.log('--------------- signUp');
-      userData = await this.onCreateUser(account, user);
+      userData = await AuthService.onCreateUser(account, user || sessionUser);
     } else {
-      console.log('----------------- default');
     }
 
     newToken.user = userData ? createSessionUser(userData) : token.user;
@@ -67,7 +65,6 @@ class AuthService {
   }
 
   static async sessionCallback({ session, token }: any) {
-    console.log('----------------- sessionCallback');
     session.user = token.user;
     return session;
   }
