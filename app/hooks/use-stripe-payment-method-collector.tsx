@@ -72,6 +72,10 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUs
       return;
     }
 
+    if(!user) {
+      return;
+    }
+
     setSubmitting(true);
 
     const cardElement = elements.getElement(CardElement);
@@ -89,10 +93,11 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUs
       setSubmitting(false);
     } else if (paymentMethod && maintainerUserId) {
       console.log('Payment method attached: ', paymentMethod);
-      await attachPaymentMethod(paymentMethod.id, maintainerUserId, maintainerStripeAccountId);
+      const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
+      customer.attachPaymentMethod(paymentMethod.id);
       setSubmitting(false);
     }
-  }, [stripe, elements, setError, setSubmitting, maintainerUserId, maintainerStripeAccountId]);
+  }, [stripe, elements, setError, setSubmitting, maintainerUserId, maintainerStripeAccountId, user]);
 
   const handleDetach = useCallback(async () => {
     if (!user || !maintainerUserId) {
