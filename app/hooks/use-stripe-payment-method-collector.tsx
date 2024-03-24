@@ -101,7 +101,7 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUs
 
     const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
     await customer.detachPaymentMethod();
-  }, [user, maintainerUserId]);
+  }, [user, maintainerUserId, maintainerStripeAccountId]);
 
   return {
     CardElementComponent: StripeCardElement,

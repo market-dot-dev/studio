@@ -317,6 +317,16 @@ class StripeService {
     return oauthLink;
   }
 
+  static async isSubscribed(stripeCustomerId: string, stripePriceId: string, stripeAccountId: string) {
+    const subscriptions = await stripe.subscriptions.list({
+      customer: stripeCustomerId,
+      price: stripePriceId,
+      status: 'active',
+    });
+  
+    return subscriptions.data.length > 0;
+  }
+
   static async handleOAuthResponse(code: string, state: string) {
     // Verify the state parameter
     const user = await prisma.user.findUnique({ where: { stripeCSRF: state } });
@@ -356,8 +366,6 @@ interface StripeCheckoutComponentProps {
 }
 
 export const onClickSubscribe = async (userId: string, tierId: string) => {
-  let status = 'pending';
-  let error = null;
   let subscription = null;
 
   const tier = await TierService.findTier(tierId);
@@ -388,31 +396,35 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
   let stripeCustomerId = await customer.getOrCreateStripeCustomerId();
   const stripeService = new StripeService(maintainer.stripeAccountId);
   
+  if(!tier.stripePriceId) {
+    throw new Error('Tier does not have a stripe price id.');
+  }
 
-  try {
+  console.log('[purchase]: maintainer, product check');
+
+  if(await StripeService.isSubscribed(stripeCustomerId, tier.stripePriceId, maintainer.stripeAccountId)) {
+    console.log('[purchase]: FAIL already subscribed');
+    throw new Error('You are already subscribed to this product. If you dont see it in your dashboard, please contact support.');
+  } else {
     subscription = await stripeService.createSubscription(stripeCustomerId, tier.stripePriceId!, maintainer.stripeAccountId);
-  } catch (e: any) {
-    error = error ?? e.message;
   }
 
   if (!subscription) {
-    error = error ?? 'Error creating subscription.';
+    console.log('[purchase]: FAIL could not create stripe subscription');
+    throw new Error('Error creating subscription on stripe');
   } else {
-
+    console.log('[purchase]: stripe subscription created');
     const invoice = subscription.latest_invoice as Stripe.Invoice;
 
     if (invoice.status === 'paid') {
       await createLocalSubscription(userId, tierId);
-      status = 'success';
+      console.log('[purchase]: invoice paid');
     } else if (invoice.payment_intent) {
       throw new Error('Subscription attempt returned a payment intent, which should never happen.');
     } else {
-      status = 'error';
-      error = error ?? 'Unknown error occurred';
+      throw new Error(`Unknown error occurred: subscription status was ${subscription.status}`);
     }
   }
-
-  return { status, error /*, subscription*/ };
 };
 
 const getCustomer = async (maintainerId: string, maintainerStripeAccountId: string): Promise<Customer> => {

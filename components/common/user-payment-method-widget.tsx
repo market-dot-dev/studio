@@ -42,7 +42,7 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUser
     if (loading && user?.id && !stripePaymentMethodId) {
       handleSubmit().then(refreshSession);
     }
-  }, [loading, user, handleSubmit, refreshSession]);
+  }, [loading, user, handleSubmit, refreshSession, stripePaymentMethodId]);
 
   useEffect(() => {
     if (stripePaymentMethodId && maintainerUserId) {
@@ -50,7 +50,7 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError, maintainerUser
         setCardInfo(paymentMethod);
       });
     }
-  }, [stripePaymentMethodId, maintainerUserId]);
+  }, [stripePaymentMethodId, maintainerUserId, maintainerStripeAccountId]);
 
   return (
     <form onSubmit={handleSubmit}>

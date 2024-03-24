@@ -19,7 +19,6 @@ import { getCustomerIds } from "@/app/models/Customer";
 import useCurrentSession from "@/app/hooks/use-current-session";
 
 const checkoutCurrency = "USD";
-  "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
 
 const AlreadySubscribedCard = () => {
   return (<Card>
@@ -31,7 +30,6 @@ const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintai
   const { currentUser: user, refreshSession} = useCurrentSession();
   
   const tierId = tier?.id;
-  const [loading, setLoading] = useState(false);
   const [submittingPaymentMethod, setSubmittingPaymentMethod] = useState(false);
   const [purchaseIntent, setPurchaseIntent] = useState(false);
 
@@ -50,40 +48,35 @@ const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintai
       setStripePaymentMethodId(stripePaymentMethodId);
       isSubscribedByTierId(user.id, tierId).then(setIsSubscribed);
     }
-  }, [user?.id, tierId, tier.userId, user?.stripeCustomerIds, user?.stripePaymentMethodIds]);
+  }, [user, tierId, tier.userId, user?.stripeCustomerIds, user?.stripePaymentMethodIds, maintainer.stripeAccountId, isSubscribed]);
 
   const onSubmit = async () => {
-    setLoading(true);
     setError(null);
     setPurchaseIntent(true);
 
     if(!!user && !stripePaymentMethodId) {
       setSubmittingPaymentMethod(true);
-      setLoading(false);
     }
   }
 
   useEffect(() => {
     if(error){
-      setLoading(false);
       setSubmittingPaymentMethod(false);
       setPurchaseIntent(false);
     }
   }, [error]);
 
   useEffect(() => {
-    if (purchaseIntent && user && stripePaymentMethodId) {
+    if (purchaseIntent && !submittingPaymentMethod && user && stripePaymentMethodId) {
       onClickSubscribe(user.id, tierId).then((res) => {
         setPurchaseIntent(false);
-        if(res.error) {
-          setError(res.error);
-          setLoading(false);
-        } else {
-          window.location.href = "/success";
-        }
+        window.location.href = "/success";
+      }).catch((err) => {
+        setError(err.message);
+        setPurchaseIntent(false);
       });
     }
-  }, [purchaseIntent, user?.id, stripePaymentMethodId, tierId, user]);
+  }, [purchaseIntent, user?.id, stripePaymentMethodId, tierId, user, submittingPaymentMethod]);
 
   if(isSubscribed) {
     return <AlreadySubscribedCard />
