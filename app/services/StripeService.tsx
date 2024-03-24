@@ -317,8 +317,8 @@ class StripeService {
     return oauthLink;
   }
 
-  static async isSubscribed(stripeCustomerId: string, stripePriceId: string, stripeAccountId: string) {
-    const subscriptions = await stripe.subscriptions.list({
+  async isSubscribed(stripeCustomerId: string, stripePriceId: string) {
+    const subscriptions = await this.stripe.subscriptions.list({
       customer: stripeCustomerId,
       price: stripePriceId,
       status: 'active',
@@ -402,7 +402,7 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
 
   console.log('[purchase]: maintainer, product check');
 
-  if(await StripeService.isSubscribed(stripeCustomerId, tier.stripePriceId, maintainer.stripeAccountId)) {
+  if(await stripeService.isSubscribed(stripeCustomerId, tier.stripePriceId)) {
     console.log('[purchase]: FAIL already subscribed');
     throw new Error('You are already subscribed to this product. If you dont see it in your dashboard, please contact support.');
   } else {

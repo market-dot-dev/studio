@@ -27,15 +27,13 @@ const AlreadySubscribedCard = () => {
 }
 
 const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintainer: User }) => {
-  const { currentUser: user, refreshSession} = useCurrentSession();
+  const { currentUser: user, refreshSession } = useCurrentSession();
   
   const tierId = tier?.id;
   const [submittingPaymentMethod, setSubmittingPaymentMethod] = useState(false);
   const [purchaseIntent, setPurchaseIntent] = useState(false);
 
-  const [userAttributes, setUserAttributes] = useState<Partial<User>>({});
   const [error, setError] = useState<string | null>();
-
   
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
   const [stripePaymentMethodId, setStripePaymentMethodId] = useState<string | null>(null);
