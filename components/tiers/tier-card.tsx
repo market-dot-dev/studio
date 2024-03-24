@@ -10,12 +10,26 @@ type TierCardProps = {
   url?: string;
   tier: TierWithFeatures;
   canEdit?: boolean;
+  buttonDisabled?: boolean;
   darkMode?: boolean;
   children?: React.ReactNode;
   features?: Feature[];
 };
 
-const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, darkMode = false, features = [], children }) => {
+const GetStartedButton = ({ url, tierId, canEdit, disabled }: { url: string | null, tierId: string, canEdit: boolean, disabled: boolean }) => {
+  const linkUrl = (url || tierId) ? `${url ? url : ''}/checkout/${tierId}` : '';
+  const variant = canEdit ? "secondary" : "primary";
+
+  return (
+    <Link href={linkUrl}>
+      <Button variant={variant} className="w-full" disabled={disabled}>
+        Get Started
+      </Button>
+    </Link>
+  );
+}
+
+const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, buttonDisabled = false, darkMode = false, features = [], children }) => {
   const containerClasses = darkMode
     ? "text-white bg-gray-800 border-gray-600"
     : "text-gray-900 bg-white border-gray-100";
@@ -43,9 +57,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
 
       <div className="flex flex-col gap-2 w-full mt-4">
         {canEdit && <Link href={`tiers/${tier.id}`}><Button variant="primary" className="w-full">Edit</Button></Link>}
-        { children ? children : <>
-          <Link href={`${url ? url : ''}/checkout/${tier.id}`}><Button variant={canEdit ? "secondary" : "primary"} className="w-full">Get Started</Button></Link>
-          </>}
+        { children ? children : <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} disabled={buttonDisabled} /> }
       </div>
 
     </Card>
