@@ -1,9 +1,11 @@
 "use client";
 
 import { Service, Feature } from '@prisma/client';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { ReactPropTypes, useCallback, useEffect, useState } from 'react';
 import FeatureForm from '@/components/form/feature-form';
-import { Badge, Switch } from '@tremor/react';
+import { Badge, Button, Switch } from '@tremor/react';
+import { update, create } from '@/app/services/feature-service';
+import DrawerRight from '@/components/drawer-right';
 
 import {
   Mail,
@@ -29,6 +31,7 @@ import {
   UserCircle,
   ListTodoIcon,
 } from "lucide-react";
+import { getCurrentUser } from '@/app/services/UserService';
 
 type Category = {
   id: string;
@@ -104,54 +107,54 @@ type ServiceCardProps = {
   selectedService?: Service | null;
   setSelectedService: (service: Service) => void;
   currentFeatureEnabled: boolean;
+  isUpdating: boolean;
 };
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedService, setSelectedService, currentFeatureEnabled }) => {
+const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedService, setSelectedService, currentFeatureEnabled, isUpdating }) => {
   const isSelected = service.id === selectedService?.id;
   const selectedStyles = isSelected ? 'border-gray-600' : 'text-gray-700 hover:bg-gray-100';
+  
+  const [isEnabling, setIsEnabling] = useState(false);
 
   const handleToggle = () => {
     onUpdate({ ...service });
   };
 
+  
+  
   const handleClick = () => {
     setSelectedService(service);
   }
 
   return (
-    <div className={`flex items-center justify-between mb-2 p-4 border-2 ${currentFeatureEnabled ? `border-4 border-gray-800` : `border-gray-300`} rounded-md ${selectedStyles}`} onClick={handleClick}>
-      <div className="flex items-center">
-        <div className="ml-4">
+    <div className={`flex flex-col items-center justify-start mb-2 box-content p-4 border-2 ${currentFeatureEnabled ? `border-4 border-gray-800` : `border-gray-300`} rounded-md ${selectedStyles}`}>
+      <div className="flex flex-col justify-between items-start grow gap-4">
+        
+        <div className="flex flex-col justify-start items-start gap-2">
           <div className="flex flex-row justify-between">
             <h4 className="font-semibold"><Icon id={service.id} /> &nbsp;{service.name}</h4>
-            {currentFeatureEnabled && <Badge size="xs" color="green">Enabled</Badge>}
-            {/* <Switch
-              checked={currentFeatureEnabled}
-              onChange={handleToggle}
-              className={`${
-                currentFeatureEnabled ? '' : 'bg-gray-200'
-              } relative inline-flex items-center h-6 rounded-full w-11 focus:outline-none`}
-            >
-              <span
-                className={`${
-                  currentFeatureEnabled ? 'translate-x-6' : 'translate-x-1'
-                } inline-block w-4 h-4 transform bg-white rounded-full transition-transform`}
-              />
-            </Switch> */}
           </div>
-
           <p className="text-sm text-gray-600">{service.description}</p>
-          
         </div>
+        
+        {currentFeatureEnabled ? 
+          <Button size="xs" variant="secondary" onClick={handleClick}>Configure</Button> 
+          : 
+          <Button size="xs" variant="primary" loading={isEnabling} disabled={isEnabling} onClick={handleClick}>Enable</Button>
+        }
       </div>
       
     </div>
   );
 };
 
+
+
 const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ services, features }) => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [featuresList, setFeaturesList] = useState<Feature[]>(features);
+  const [isUpdating, setIsUpdating] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   const handleFeatureSuccess = (updatedFeature: Feature) => {
     setFeaturesList(prevFeatures => {
@@ -163,6 +166,49 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
   
   const currentFeature = featuresList.find((f) => f.serviceId === selectedService?.id);
 
+  const enableFeature = async (currentFeature: Feature | undefined) => {
+    
+    let returnedFeature: Feature;
+    const currentUser = await getCurrentUser();
+
+    if (!currentUser) {
+      throw new Error("User is required to create or update a feature.");
+    }
+    const serviceId = selectedService?.id;
+
+    const submissionData = Object.assign({}, { isEnabled: true }, { userId: currentUser.id, serviceId });
+    setIsUpdating(true);
+    try {
+      if( currentFeature?.id ) {
+        returnedFeature = await update(currentFeature.id, submissionData);
+      } else {
+        returnedFeature = await create(submissionData); 
+      }
+
+      handleFeatureSuccess(returnedFeature);
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsUpdating(false);
+    }
+    
+  }
+
+  useEffect(() => {
+    if (selectedService) {
+      const feature = featuresList.find((f) => f.serviceId === selectedService.id);
+      if (!feature || !feature.isEnabled ) {
+        enableFeature(feature).then(() => {
+          setIsDrawerOpen(true);
+        });
+      } else {
+        setIsDrawerOpen(true);
+      }
+    }
+  
+  }, [selectedService])
+
   
   const renderServices = (categoryId: string) => {
     return services.filter(service => service.category === categoryId).map(service => (
@@ -170,6 +216,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
         key={service.id}
         service={service} 
         onUpdate={() => {}} 
+        isUpdating={isUpdating && service.id === selectedService?.id}
         selectedService={selectedService}
         setSelectedService={setSelectedService}
         currentFeatureEnabled={featuresList.find((f) => f.serviceId === service.id)?.isEnabled || false}
@@ -178,21 +225,31 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
   };
 
   return (
-    <div className="flex flex-row gap-4 container mx-auto">
+    <div className="flex flex-row gap-4 container mx-auto mt-6">
       <main className="flex-1">
         {categories.map(category => (
           <div key={category.id} className="mb-8">
             <h3 className="text-xl font-bold mb-2">{category.name}</h3>
-            <div>{renderServices(category.id)}</div>
+            <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+              {renderServices(category.id)}
+            </div>
           </div>
         ))}
       </main>
       <aside className="w-1/4 sticky top-0" style={{ height: 'calc(100vh - 20px)', overflowY: 'auto' }}>
-        <div className="py-5 font-bold">
-          Details
-        </div>
-        {selectedService && 
-          <FeatureForm initialFeature={currentFeature} serviceId={selectedService.id} onSuccess={handleFeatureSuccess}/> }
+        <DrawerRight 
+          isOpen={isDrawerOpen} 
+          setIsOpen={(open) => {
+            setIsDrawerOpen(open);
+            setSelectedService(null);
+          }} 
+          title="Details">
+            
+          { selectedService &&
+            <FeatureForm initialFeature={currentFeature} serviceId={selectedService.id} onSuccess={handleFeatureSuccess}/> 
+          }
+        </DrawerRight>
+        
       </aside>
     </div>
   );
