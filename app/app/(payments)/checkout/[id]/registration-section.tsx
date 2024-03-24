@@ -39,14 +39,21 @@ const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintai
   const [stripePaymentMethodId, setStripePaymentMethodId] = useState<string | null>(null);
   const [isSubscribed, setIsSubscribed] = useState(false);
 
+  // when user changes, get customer & payment ids
   useEffect(() => {
     if(!!user) {
       const { stripeCustomerId, stripePaymentMethodId } = getCustomerIds(user, maintainer.stripeAccountId!);
       setStripeCustomerId(stripeCustomerId);
       setStripePaymentMethodId(stripePaymentMethodId);
+    }
+  }, [user, user?.stripeCustomerIds, user?.stripePaymentMethodIds, maintainer.stripeAccountId]);
+
+  // when user changes, check subscription
+  useEffect(() => {
+    if(!!user.id && !!tierId){
       isSubscribedByTierId(user.id, tierId).then(setIsSubscribed);
     }
-  }, [user, tierId, tier.userId, user?.stripeCustomerIds, user?.stripePaymentMethodIds, maintainer.stripeAccountId, isSubscribed]);
+  }, [user.id, tierId]);
 
   const onSubmit = async () => {
     setError(null);
