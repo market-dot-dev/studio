@@ -69,20 +69,16 @@ const useStripePaymentCollector = ({ user, setError, maintainerUserId, maintaine
     event?.preventDefault();
 
     if (!stripe || !elements) {
-      //console.log('Stripe not loaded');
-      setError('Stripe not loaded');
-      return;
+      return Promise.reject('Stripe not loaded')
     }
 
     if(!user) {
-      setError('User not found');
-      return;
+      return Promise.reject('User not found')
     }
 
     const cardElement = elements.getElement(CardElement);
     if (!cardElement) {
-      setError('Card element not found');
-      return;
+      return Promise.reject('Card element not found');
     }
 
     const { error, paymentMethod } = await stripe.createPaymentMethod({
@@ -92,6 +88,7 @@ const useStripePaymentCollector = ({ user, setError, maintainerUserId, maintaine
 
     if (error) {
       setError(error.message || '');
+      return Promise.reject(error || '');
     } else if (paymentMethod && maintainerUserId) {
       console.log('Payment method attached: ', paymentMethod);
       await attachPaymentMethod(paymentMethod.id, maintainerUserId, maintainerStripeAccountId);
