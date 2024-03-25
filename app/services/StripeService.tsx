@@ -345,6 +345,8 @@ class StripeService {
         destination: stripeAccountId,
       },
       on_behalf_of: stripeAccountId,
+    }, {
+      idempotencyKey: `${stripeCustomerId}-${stripePriceId}`,
     });
   }
 
@@ -381,6 +383,16 @@ class StripeService {
     const oauthLink = `https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.STRIPE_CLIENT_ID}&scope=read_write&state=${state}&redirect_uri=${redirectUri}`;
   
     return oauthLink;
+  }
+
+  static async isSubscribed(stripeCustomerId: string, stripePriceId: string, stripeAccountId: string) {
+    const subscriptions = await stripe.subscriptions.list({
+      customer: stripeCustomerId,
+      price: stripePriceId,
+      status: 'active',
+    });
+  
+    return subscriptions.data.length > 0;
   }
 
   static async handleOAuthResponse(code: string, state: string) {
@@ -422,8 +434,6 @@ interface StripeCheckoutComponentProps {
 }
 
 export const onClickSubscribe = async (userId: string, tierId: string) => {
-  let status = 'pending';
-  let error = null;
   let subscription = null;
 
   const tier = await TierService.findTier(tierId);
@@ -440,12 +450,16 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
     throw new Error('User not found');
   }
 
+  console.log('[purchase]: tier, user present');
+
   let stripeCustomerId = user.stripeCustomerId;
   
   if (!stripeCustomerId) {
     await UserService.createStripeCustomer(user);
+    console.log('[purchase]: attaching customer id');
     const updatedUser = await UserService.findUser(userId);
     stripeCustomerId = updatedUser?.stripeCustomerId!;
+    console.log('[purchase]: attached');
   }
 
   const maintainer = await UserService.findUser(tier.userId);
@@ -458,30 +472,36 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
     throw new Error("Maintainer hasn't connected stripe account.");
   }
 
-  try {
+  if(!tier.stripePriceId) {
+    throw new Error('Tier does not have a stripe price id.');
+  }
+
+  console.log('[purchase]: maintainer, product check');
+
+  if(await StripeService.isSubscribed(stripeCustomerId, tier.stripePriceId, maintainer.stripeAccountId)) {
+    console.log('[purchase]: FAIL already subscribed');
+    throw new Error('You are already subscribed to this product. If you dont see it in your dashboard, please contact support.');
+  } else {
+    console.log('[purchase]: subscribing');
     subscription = await StripeService.createSubscription(stripeCustomerId, tier.stripePriceId!, maintainer.stripeAccountId);
-  } catch (e: any) {
-    error = error ?? e.message;
   }
 
   if (!subscription) {
-    error = error ?? 'Error creating subscription.';
+    console.log('[purchase]: FAIL could not create stripe subscription');
+    throw new Error('Error creating subscription on stripe');
   } else {
-
+    console.log('[purchase]: stripe subscription created');
     const invoice = subscription.latest_invoice as Stripe.Invoice;
 
     if (invoice.status === 'paid') {
       await createLocalSubscription(userId, tierId);
-      status = 'success';
+      console.log('[purchase]: invoice paid');
     } else if (invoice.payment_intent) {
       throw new Error('Subscription attempt returned a payment intent, which should never happen.');
     } else {
-      status = 'error';
-      error = error ?? 'Unknown error occurred';
+      throw new Error(`Unknown error occurred: subscription status was ${subscription.status}`);
     }
   }
-
-  return { status, error /*, subscription*/ };
 };
 
 

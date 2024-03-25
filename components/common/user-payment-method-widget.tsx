@@ -32,7 +32,7 @@ const UserPaymentMethodWidget = ({ loading, setLoading, setError }: UserPaymentM
     if (loading && user?.id && !user?.stripePaymentMethodId) {
       handleSubmit().then(refreshCurrentSession);
     }
-  }, [loading, user, handleSubmit]);
+  }, [loading, user, handleSubmit, refreshCurrentSession]);
 
   useEffect(() => {
     if (user?.stripePaymentMethodId) {
