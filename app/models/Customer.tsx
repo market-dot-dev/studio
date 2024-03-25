@@ -21,13 +21,14 @@ class Customer {
     this.maintainerUserId = maintainerUserId;
     this.maintainerStripeAccountId = maintainerStripeAccountId;
 
+    
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { stripeAccount: maintainerStripeAccountId });
     this.stripeService = new StripeService(maintainerStripeAccountId);
   }
 
   // utility
   canBuy() {
-    !!this.stripeCustomerIds[this.maintainerStripeAccountId] 
+    return !!this.stripeCustomerIds[this.maintainerStripeAccountId] 
       && !!this.stripePaymentMethodIds[this.maintainerStripeAccountId];
   }
 
@@ -89,7 +90,11 @@ class Customer {
   }
 
   async detachPaymentMethod() {
-    await this.stripeService.detachPaymentMethod(await this.getStripePaymentMethodId(), await this.getStripeCustomerId());
+    try {
+      await this.stripeService.detachPaymentMethod(await this.getStripePaymentMethodId(), await this.getStripeCustomerId());
+    } catch (error: any) {
+      if(error.code !== 'resource_missing') throw error;
+    }
     delete this.stripePaymentMethodIds[this.maintainerStripeAccountId];
 
     return await this.updateUser({ stripePaymentMethodIds: this.stripePaymentMethodIds });

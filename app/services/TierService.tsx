@@ -166,6 +166,10 @@ class TierService {
       if(!attrs.stripeProductId) {
         const product = await stripeService.createProduct(attrs.name, attrs.description || attrs.tagline || undefined);
         attrs.stripeProductId = product.id;
+
+        if(!attrs.stripeProductId) {
+          throw new Error('Failed to create stripe product id.');
+        }
       }
 
       if(!attrs.stripePriceId) {

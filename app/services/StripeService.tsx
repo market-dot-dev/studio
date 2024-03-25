@@ -1,7 +1,6 @@
 "use server";
 
 import Stripe from 'stripe';
-import Product from '../models/Product';
 import UserService from './UserService';
 import TierService from './TierService';
 import { createSubscription as createLocalSubscription } from '@/app/services/SubscriptionService';
@@ -58,7 +57,7 @@ const connStripe = async () => {
 const platformStripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 class StripeService {
-  stripe: Stripe;
+  stripe: any;
   stripeAccountId: string;
 
   constructor(accountId: string) {
@@ -451,6 +450,10 @@ export const detachPaymentMethod = async (maintainerUserId: string, maintainerSt
 export const getPaymentMethod = async (maintainerUserId: string, maintainerStripeAccountId: string): Promise<StripeCard> => {
   const customer = await getCustomer(maintainerUserId, maintainerStripeAccountId);
   return await customer.getStripePaymentMethod();
+}
+
+export const canBuy = async (maintainerUserId: string, maintainerStripeAccountId: string) => {
+  return (await getCustomer(maintainerUserId, maintainerStripeAccountId)).canBuy();
 }
 
 export const { disconnectStripeAccount, userHasStripeAccountIdById, getAccountInfo } = StripeService

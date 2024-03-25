@@ -1,15 +1,13 @@
 import { useStripe, useElements, CardElement, Elements } from '@stripe/react-stripe-js';
 import { useState, useCallback, ReactElement, ReactNode } from 'react';
-import { attachPaymentMethod, detachPaymentMethod } from '@/app/services/StripeService';
 import { loadStripe } from '@stripe/stripe-js';
 import { User } from '@prisma/client';
-import Customer from '../models/Customer';
 import { SessionUser } from '../models/Session';
+import { attachPaymentMethod, detachPaymentMethod } from '../services/StripeService';
 
 interface UseStripePaymentCollectorProps {
   user: User | SessionUser | null | undefined;
   setError: (error: string | null) => void;
-  setSubmitting: (submitting: boolean) => void;
   maintainerUserId: string;
   maintainerStripeAccountId: string;
 }
@@ -52,6 +50,9 @@ export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId,
   const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_NOT_SET_IN_ENV';
   const stripePromise = loadStripe(pk, {
     stripeAccount: maintainerStripeAccountId,
+  }).catch((err) => {
+    console.error('Failed to load stripe', err);
+    return null;
   });
 
   return <Elements stripe={stripePromise}>
@@ -59,7 +60,7 @@ export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId,
   </Elements>;
 };
 
-const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUserId, maintainerStripeAccountId }: UseStripePaymentCollectorProps): UseStripePaymentCollectorReturns => {
+const useStripePaymentCollector = ({ user, setError, maintainerUserId, maintainerStripeAccountId }: UseStripePaymentCollectorProps): UseStripePaymentCollectorReturns => {
   const stripe = useStripe();
   const elements = useElements();
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
@@ -68,18 +69,19 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUs
     event?.preventDefault();
 
     if (!stripe || !elements) {
-      console.log('Stripe not loaded');
+      //console.log('Stripe not loaded');
+      setError('Stripe not loaded');
       return;
     }
 
     if(!user) {
+      setError('User not found');
       return;
     }
 
-    setSubmitting(true);
-
     const cardElement = elements.getElement(CardElement);
     if (!cardElement) {
+      setError('Card element not found');
       return;
     }
 
@@ -90,22 +92,18 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting, maintainerUs
 
     if (error) {
       setError(error.message || '');
-      setSubmitting(false);
     } else if (paymentMethod && maintainerUserId) {
       console.log('Payment method attached: ', paymentMethod);
-      const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
-      customer.attachPaymentMethod(paymentMethod.id);
-      setSubmitting(false);
+      await attachPaymentMethod(paymentMethod.id, maintainerUserId, maintainerStripeAccountId);
     }
-  }, [stripe, elements, setError, setSubmitting, maintainerUserId, maintainerStripeAccountId, user]);
+  }, [stripe, elements, setError, maintainerUserId, maintainerStripeAccountId, user]);
 
   const handleDetach = useCallback(async () => {
     if (!user || !maintainerUserId) {
       return;
     }
 
-    const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
-    await customer.detachPaymentMethod();
+    await detachPaymentMethod(maintainerUserId, maintainerStripeAccountId);
   }, [user, maintainerUserId, maintainerStripeAccountId]);
 
   return {
