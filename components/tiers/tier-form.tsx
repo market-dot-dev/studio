@@ -359,7 +359,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 				{/* Preview Section */}
 				<div className="md:w-[300px] text-center mb-auto" >
 					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
-					<TierCard tier={tier} features={featureObjs} />
+					<TierCard tier={tier} features={featureObjs} buttonDisabled={newRecord} />
 				</div>
 			</div>
 		</>
