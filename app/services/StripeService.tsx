@@ -345,6 +345,8 @@ class StripeService {
         destination: stripeAccountId,
       },
       on_behalf_of: stripeAccountId,
+    }, {
+      idempotencyKey: `${stripeCustomerId}-${stripePriceId}`,
     });
   }
 
