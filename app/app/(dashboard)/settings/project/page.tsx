@@ -23,8 +23,7 @@ export default async function ProjectSettingsPage() {
 
   return (    
     <div className="space-y-6">
-      <Title>Project Settings</Title>
       <ProjectSettings user={user} />
-  </div>
+    </div>
   );
 }
