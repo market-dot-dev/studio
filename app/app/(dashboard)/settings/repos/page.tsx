@@ -20,7 +20,6 @@ export default async function RepositorySettingsPage() {
 
   return (    
     <div className="space-y-6">
-      <Title>Your Github Repositories</Title>
       <RepositorySettings repos={repos}/>
   </div>
   );
