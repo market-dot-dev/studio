@@ -37,6 +37,7 @@ model User {
   features                    Feature[]
   subscriptions               Subscription[]
   repos                       Repo[]
+  githubAppInstallations            GithubAppInstallation[]
   onboarding                  String?
   company                     String?
 }
@@ -257,7 +258,6 @@ model Feature {
   @@index([userId])
 }
 
-
 model Media {
   id        String   @id @default(cuid())
   siteId  String
@@ -267,4 +267,14 @@ model Media {
   updatedAt DateTime @updatedAt
 
   @@index([siteId])
+}
+
+model GithubAppInstallation {
+  id        Int   @id
+  userId    String
+  token     String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
