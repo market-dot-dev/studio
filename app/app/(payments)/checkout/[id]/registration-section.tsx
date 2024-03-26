@@ -18,7 +18,6 @@ import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 
 const checkoutCurrency = "USD";
-  "Nokogiri is an HTML, XML, SAX, and Reader parser. Among Nokogiri's many features is the ability to search documents via XPath or CSS3 selectors. XML is like violence - if it doesn’t solve your problems, you are not using enough of it.";
 
 const AlreadySubscribedCard = () => {
   return (<Card>
@@ -28,7 +27,6 @@ const AlreadySubscribedCard = () => {
 
 const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   const tierId = tier?.id;
-  const [loading, setLoading] = useState(false);
   const [submittingPaymentMethod, setSubmittingPaymentMethod] = useState(false);
   const [purchaseIntent, setPurchaseIntent] = useState(false);
 
@@ -47,30 +45,32 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
   }, [user?.id, tierId]);
 
   const onSubmit = async () => {
-    setLoading(true);
     setError(null);
     setPurchaseIntent(true);
 
     if(user && !user.stripePaymentMethodId) {
       setSubmittingPaymentMethod(true);
-      setLoading(false);
     }
-    
   }
 
   useEffect(() => {
-    if (purchaseIntent && user && user.stripePaymentMethodId) {
+    if (purchaseIntent && !submittingPaymentMethod && user && user.stripePaymentMethodId) {
       onClickSubscribe(user.id, tierId).then((res) => {
         setPurchaseIntent(false);
-        if(res.error) {
-          setError(res.error);
-          setLoading(false);
-        } else {
-          window.location.href = "/success";
-        }
+        window.location.href = "/success";
+      }).catch((err) => {
+        setError(err.message);
+        setPurchaseIntent(false);
       });
     }
-  }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user]);
+  }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user, submittingPaymentMethod]);
+
+  useEffect(() => {
+    if(error){
+      setSubmittingPaymentMethod(false);
+      setPurchaseIntent(false);
+    }
+  }, [error]);
 
   if(isSubscribed) {
     return <AlreadySubscribedCard />
