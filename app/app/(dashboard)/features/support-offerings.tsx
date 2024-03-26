@@ -37,10 +37,10 @@ type Category = {
 };
 
 const categories: Category[] = [
-  { id: 'chat', name: 'Chat', icon: MessageCircle },
+  { id: 'chat', name: 'Chat Support', icon: MessageCircle },
   { id: 'voice', name: 'Live Support', icon: Phone },
   { id: 'email', name: 'Email Support', icon: Mail },
-  { id: 'sla', name: 'SLA', icon: Clock },
+  { id: 'sla', name: 'Service Level Agreements (SLA)', icon: Clock },
   { id: 'staff', name: 'Dedicated Staff', icon: Users },
   { id: 'ticketing', name: 'Custom Ticketing', icon: Ticket },
   { id: 'ads', name: 'Promotions and Ads', icon: Volume2Icon},
@@ -92,7 +92,9 @@ export const Icon = ({ id }: { id: string }) => {
     'advertising-social': Twitter,
     'custom': Pencil,
     'account-rep': UserCircle,
-    'custom-integration': Wrench
+    'custom-integration': Wrench,
+    'priority-features': Milestone,
+    'priority-bugs': Milestone
   }[id] || X;
 
   return <IconElement className="inline-block" />
@@ -122,7 +124,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
   }
 
   return (
-    <div className={`flex flex-col items-stretch justify-start mb-2 box-content p-4 border-2 border-gray-300 rounded-md ${selectedStyles}`}>
+    <div className={`flex flex-col items-stretch justify-start mb-2 box-content p-4 border border-gray-200 rounded-md ${selectedStyles}`}>
       <div className="flex flex-col justify-between items-start grow gap-4">
         
         <div className="flex flex-col justify-start items-start gap-2">
@@ -166,7 +168,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
       show(
         <div className="flex flex-col gap-4bg-white p-6 border bg-white shadow-2xl w-full md:w-2/3 lg:w-1/2">
           <div className="flex justify-between items-center">
-            <div className="font-bold">Details</div>
+            <div className="font-bold mb-2">Details</div>
             { feature?.isEnabled ? <Badge size="xs" color="green">Enabled</Badge> : null }
           </div>
           <FeatureForm initialFeature={feature} service={selectedService} onSuccess={handleFeatureSuccess} requiresUri={selectedService.requiresUri} hide={hide} />

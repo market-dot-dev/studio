@@ -5,6 +5,7 @@ import { TextArea } from "@radix-ui/themes";
 import { Feature, Service } from '@prisma/client'; // Assuming Service stays as is, importing it if needed
 import { update, create } from '@/app/services/feature-service';
 import { getCurrentUser } from '@/app/services/UserService';
+import { CheckSquare } from "lucide-react";
 
 
 type Props = {
@@ -16,8 +17,6 @@ type Props = {
 };
 
 type FeatureAttributes = Omit<Feature, 'id'> & { id?: string }; // Making `id` optional for new entries
-
-
 
 const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requiresUri, hide }) => {
   const serviceId = service.id;
@@ -87,10 +86,11 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 flex flex-col gap-4 items-start">
       <div className="flex flex-col w-full gap-2">
         <label htmlFor="name" className="text-sm text-gray-600 font-bold">Service Name</label>
+        <div className="text-gray-600 text-xs">This is the name that appears on the features list for a Tier.</div>
         <TextInput placeholder=""
               {...register("name", { required: "Service name is required" })}
         />
-        {errors.name ? <p className="text-red-500 text-xs">{errors.name.message}</p> : <div className="text-gray-600 text-xs">Service Name (Displayed on Tier)</div>}
+        {errors.name ? <p className="text-red-500 text-xs">{errors.name.message}</p> : <></>}
       </div>
       <div className="flex flex-col w-full gap-2">
         <label htmlFor="name" className="text-sm text-gray-600 font-bold">Relevant Link, Email, or Phone#</label>
