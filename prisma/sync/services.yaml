@@ -56,8 +56,8 @@ services:
     requiresUri: false
 
   - id: "github-issues"
-    name: "Github Issues"
-    description: "Create a dedicated Github issues project for prioritized requests from customers."
+    name: "Tracking via Github Issues"
+    description: "Track issues via Github issues (often a good benefit if you are also offering priority issue tracking)"
     category: "ticketing"
     requiresUri: true
 
@@ -72,6 +72,18 @@ services:
     description: "Other project or ticketing services for prioritized requests from customers."
     category: "ticketing"
     requiresUri: true
+
+  - id: "priority-features"
+    name: "Custom Feature Requests"
+    description: "Provide custom feature request for customers."
+    category: "ticketing"
+    requiresUri: false
+
+  - id: "priority-bugs"
+    name: "Prioritized Bugs"
+    description: "Provide priority bug fixes for customers."
+    category: "ticketing"
+    requiresUri: false
 
   - id: "sla"
     name: "General SLA"

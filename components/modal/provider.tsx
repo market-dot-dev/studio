@@ -1,10 +1,10 @@
 "use client";
 
 import Modal from ".";
-import { ReactNode, createContext, useContext, useState } from "react";
+import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 interface ModalContextProps {
-  show: (content: ReactNode) => void;
+  show: (content: ReactNode, onHideCallback?: () => void) => void;
   hide: () => void;
 }
 
@@ -13,11 +13,21 @@ const ModalContext = createContext<ModalContextProps | undefined>(undefined);
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [modalContent, setModalContent] = useState<ReactNode | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [onHideCallback, setOnHideCallback] = useState<(() => void) | undefined>(undefined);
 
-  const show = (content: ReactNode) => {
+  const show = (content: ReactNode,  onHideCallback?: () => void) => {
     setModalContent(content);
     setShowModal(true);
+    setOnHideCallback(() => onHideCallback);
   };
+
+  useEffect(() => {
+    if (!showModal && onHideCallback) {
+      onHideCallback();
+      setOnHideCallback(undefined);
+      
+    }
+  }, [showModal])
 
   const hide = () => {
     setShowModal(false);
