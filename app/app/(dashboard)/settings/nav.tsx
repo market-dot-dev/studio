@@ -15,22 +15,22 @@ export default function SettingsNav() {
       segment: null,
     },
     {
-      name: "Project",
+      name: "Project Info",
       href: `/settings/project`,
       segment: "project",
     },
     {
-      name: "Site",
+      name: "Your Site",
       href: `/settings/site`,
       segment: "site",
     },
     {
-        name: "Repositories",
+        name: "Connected Repositories",
         href: `/settings/repos`,
         segment: "repos",
     },
     {
-        name: "Payment",
+        name: "Payout Info",
         href: `/settings/payment`,
         segment: "payment",
     },
