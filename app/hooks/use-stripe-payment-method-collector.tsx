@@ -83,7 +83,7 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting }: UseStripeP
       setStripeCustomerId(await createStripeCustomerById(user?.id || ''));
       setSubmitting(false);
     }
-  }, [stripe, elements, setError, setSubmitting]);
+  }, [stripe, elements, setError, setSubmitting, user?.id]);
 
   const handleDetach = useCallback(async () => {
     if (user?.stripePaymentMethodId) {
