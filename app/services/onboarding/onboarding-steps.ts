@@ -49,14 +49,14 @@ export const onboardingSteps = [
     },
     {
         name: 'connectRepos',
-        description: 'Connect a Github repo.',
+        description: 'Connect repositories to Gitwallet to to quickly setup your Gitwallet site & workflows with existing details about your project.',
         urls: ['/settings/repos'],
         title: 'Connect Github Repo',
         icon: Github,
     },
     {
         name: 'setupProject',
-        description: 'Describe your project and link a Github repo. These settings apply in many places, from your website to checkout.',
+        description: 'Your project settings apply in many places, from your website to checkout.',
         urls: ['/settings/project'],
         title: 'Add Project Details',
         icon: Computer,
