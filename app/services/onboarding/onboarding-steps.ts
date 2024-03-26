@@ -2,9 +2,10 @@
 // ADD Setup project step
 // ADD 
 
-import { Computer, Banknote, Package, Globe } from "lucide-react"
+import { Computer, Banknote, Package, Globe, Github } from "lucide-react"
 
 export type OnboardingStepsType = {
+    connectRepos: boolean,
     setupProject: boolean,
     setupPayment: boolean,
     setupTiers: boolean,
@@ -23,6 +24,7 @@ export type onBoardingStepType = {
 }
 
 export const onboardingStepsIcons = {
+    connectRepos: Github,
     setupProject: Computer,
     setupPayment: Banknote,
     setupTiers: Package,
@@ -44,6 +46,13 @@ export const onboardingSteps = [
         urls: ['/features', '/tiers'],
         title: 'Define Services & Tiers',
         icon: Package,
+    },
+    {
+        name: 'connectRepos',
+        description: 'Connect a Github repo.',
+        urls: ['/settings/repos'],
+        title: 'Connect Github Repo',
+        icon: Github,
     },
     {
         name: 'setupProject',

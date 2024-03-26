@@ -74,6 +74,15 @@ class OnboardingService {
                         createdAt: 'asc'
                     },
                     take: 1
+                },
+                repos: {
+                    select: {
+                        id: true,
+                    },
+                    orderBy: {
+                        createdAt: 'asc'
+                    },
+                    take: 1
                 }
 
 
@@ -98,6 +107,11 @@ class OnboardingService {
             // Check if at least one tier exists
             if (result.tiers && result.tiers.length > 0) {
                 onboardingState.setupTiers = true;
+            }
+
+            // Check if at least one repo is connected
+            if (result.repos && result.repos.length > 0) {
+                onboardingState.connectRepos = true;
             }
 
             // Check if the site setup step is done
