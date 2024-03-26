@@ -1,11 +1,10 @@
 "use client";
 
 import { Service, Feature } from '@prisma/client';
-import React, { ReactPropTypes, useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import FeatureForm from '@/components/form/feature-form';
-import { Badge, Button, Switch } from '@tremor/react';
-import { update, create } from '@/app/services/feature-service';
-import DrawerRight from '@/components/drawer-right';
+import { Badge, Button } from '@tremor/react';
+import { useModal } from "@/components/modal/provider";
 
 import {
   Mail,
@@ -29,9 +28,7 @@ import {
   Wrench,
   Twitter,
   UserCircle,
-  ListTodoIcon,
 } from "lucide-react";
-import { getCurrentUser } from '@/app/services/UserService';
 
 type Category = {
   id: string;
@@ -107,14 +104,12 @@ type ServiceCardProps = {
   selectedService?: Service | null;
   setSelectedService: (service: Service) => void;
   currentFeatureEnabled: boolean;
-  isUpdating: boolean;
 };
 
-const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedService, setSelectedService, currentFeatureEnabled, isUpdating }) => {
+const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedService, setSelectedService, currentFeatureEnabled }) => {
   const isSelected = service.id === selectedService?.id;
   const selectedStyles = isSelected ? 'border-gray-600' : 'text-gray-700 hover:bg-gray-100';
   
-  const [isEnabling, setIsEnabling] = useState(false);
 
   const handleToggle = () => {
     onUpdate({ ...service });
@@ -127,7 +122,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
   }
 
   return (
-    <div className={`flex flex-col items-center justify-start mb-2 box-content p-4 border-2 ${currentFeatureEnabled ? `border-4 border-gray-800` : `border-gray-300`} rounded-md ${selectedStyles}`}>
+    <div className={`flex flex-col items-stretch justify-start mb-2 box-content p-4 border-2 border-gray-300 rounded-md ${selectedStyles}`}>
       <div className="flex flex-col justify-between items-start grow gap-4">
         
         <div className="flex flex-col justify-start items-start gap-2">
@@ -138,9 +133,12 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
         </div>
         
         {currentFeatureEnabled ? 
-          <Button size="xs" variant="secondary" onClick={handleClick}>Configure</Button> 
+          <div className="flex justify-between items-center w-full">
+            <Button size="xs" variant="secondary" onClick={handleClick}>Configure</Button> 
+            <Badge size="xs" color="green">Enabled</Badge>
+          </div>
           : 
-          <Button size="xs" variant="primary" loading={isEnabling} disabled={isEnabling} onClick={handleClick}>Enable</Button>
+          <Button size="xs" variant="primary" onClick={handleClick}>Enable</Button>
         }
       </div>
       
@@ -149,12 +147,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
 };
 
 
-
 const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ services, features }) => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [featuresList, setFeaturesList] = useState<Feature[]>(features);
-  const [isUpdating, setIsUpdating] = useState(false);
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  
+  const { show, hide } = useModal();
 
   const handleFeatureSuccess = (updatedFeature: Feature) => {
     setFeaturesList(prevFeatures => {
@@ -163,51 +160,22 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
     });
   };
 
-  
-  const currentFeature = featuresList.find((f) => f.serviceId === selectedService?.id);
-
-  const enableFeature = async (currentFeature: Feature | undefined) => {
-    
-    let returnedFeature: Feature;
-    const currentUser = await getCurrentUser();
-
-    if (!currentUser) {
-      throw new Error("User is required to create or update a feature.");
-    }
-    const serviceId = selectedService?.id;
-
-    const submissionData = Object.assign({}, { isEnabled: true }, { userId: currentUser.id, serviceId });
-    setIsUpdating(true);
-    try {
-      if( currentFeature?.id ) {
-        returnedFeature = await update(currentFeature.id, submissionData);
-      } else {
-        returnedFeature = await create(submissionData); 
-      }
-
-      handleFeatureSuccess(returnedFeature);
-
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsUpdating(false);
-    }
-    
-  }
-
   useEffect(() => {
     if (selectedService) {
       const feature = featuresList.find((f) => f.serviceId === selectedService.id);
-      if (!feature || !feature.isEnabled ) {
-        enableFeature(feature).then(() => {
-          setIsDrawerOpen(true);
-        });
-      } else {
-        setIsDrawerOpen(true);
-      }
+      show(
+        <div className="flex flex-col gap-4bg-white p-6 border bg-white shadow-2xl w-full md:w-2/3 lg:w-1/2">
+          <div className="flex justify-between items-center">
+            <div className="font-bold">Details</div>
+            { feature?.isEnabled ? <Badge size="xs" color="green">Enabled</Badge> : null }
+          </div>
+          <FeatureForm initialFeature={feature} service={selectedService} onSuccess={handleFeatureSuccess} requiresUri={selectedService.requiresUri} hide={hide} />
+        </div>
+        , () => setSelectedService(null));
+      
     }
   
-  }, [selectedService])
+  }, [selectedService, featuresList]);
 
   
   const renderServices = (categoryId: string) => {
@@ -216,7 +184,6 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
         key={service.id}
         service={service} 
         onUpdate={() => {}} 
-        isUpdating={isUpdating && service.id === selectedService?.id}
         selectedService={selectedService}
         setSelectedService={setSelectedService}
         currentFeatureEnabled={featuresList.find((f) => f.serviceId === service.id)?.isEnabled || false}
@@ -230,27 +197,13 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
         {categories.map(category => (
           <div key={category.id} className="mb-8">
             <h3 className="text-xl font-bold mb-2">{category.name}</h3>
-            <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {renderServices(category.id)}
             </div>
           </div>
         ))}
       </main>
-      <aside className="w-1/4 sticky top-0" style={{ height: 'calc(100vh - 20px)', overflowY: 'auto' }}>
-        <DrawerRight 
-          isOpen={isDrawerOpen} 
-          setIsOpen={(open) => {
-            setIsDrawerOpen(open);
-            setSelectedService(null);
-          }} 
-          title="Details">
-            
-          { selectedService &&
-            <FeatureForm initialFeature={currentFeature} serviceId={selectedService.id} onSuccess={handleFeatureSuccess}/> 
-          }
-        </DrawerRight>
-        
-      </aside>
+      
     </div>
   );
 };
