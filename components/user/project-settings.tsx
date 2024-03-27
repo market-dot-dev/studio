@@ -56,7 +56,7 @@ export default function ProjectSettings({ user }: { user: Partial<User> }) {
                 <Flex flexDirection="col" alignItems="start" className="space-y-6 w-1/2">
                     <Flex flexDirection="col" alignItems="start" className="w-full gap-2">
                         <label htmlFor="project-name" className="block text-sm font-medium text-gray-700">Project Name</label>
-                        <Text>The project you&apos;re offering support for.</Text>
+                        <Text>Your project name</Text>
                         <TextInput placeholder="" name="project-name" id="project-name" value={userData.projectName ?? ''} onChange={(e) => {
                             setUserData({ ...userData, projectName: e.target.value });
                         }} />
@@ -64,8 +64,8 @@ export default function ProjectSettings({ user }: { user: Partial<User> }) {
 
                     <Flex flexDirection="col" alignItems="start" className="w-full gap-2">
                         <label htmlFor="project-description" className="block text-sm font-medium text-gray-700">Project Description</label>
-                        <Text>Describe your project.</Text>
-                        <Textarea placeholder="" name="project-description" id="project-description" value={userData.projectDescription ?? ''} onChange={(e) => {
+                        <Text>Your project description is used in your site homepage (and other pages where you embed the {`<SiteDescription>`} component).</Text>
+                        <Textarea className="h-52" placeholder="" name="project-description" id="project-description" value={userData.projectDescription ?? ''} onChange={(e) => {
                             setUserData({ ...userData, projectDescription: e.target.value });
                         }} />
                     </Flex>
