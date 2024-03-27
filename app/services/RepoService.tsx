@@ -179,10 +179,6 @@ class RepoService {
     static async getInstallationsList() {
       const data = await RepoService.getInstallations() as any;
 
-      if( ! data?.installations ) {
-        throw new Error('No installations found.');
-      }
-
       const state = nanoid();
 
       // set a httpOnly cookie with the state
