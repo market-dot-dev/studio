@@ -21,7 +21,6 @@ export default async function GeneralSettingsPage() {
 
   return (    
     <div className="space-y-6">
-        <Title>User Settings</Title>
         <GeneralSettings user={user} />
     </div>
     

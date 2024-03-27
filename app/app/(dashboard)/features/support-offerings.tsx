@@ -28,6 +28,7 @@ import {
   Wrench,
   Twitter,
   UserCircle,
+  Bug,
 } from "lucide-react";
 
 type Category = {
@@ -94,7 +95,7 @@ export const Icon = ({ id }: { id: string }) => {
     'account-rep': UserCircle,
     'custom-integration': Wrench,
     'priority-features': Milestone,
-    'priority-bugs': Milestone
+    'priority-bugs': Bug
   }[id] || X;
 
   return <IconElement className="inline-block" />

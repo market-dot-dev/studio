@@ -21,7 +21,7 @@ export default function GeneralSettings({ user  }: {user : Partial<User> }) {
     }, [userData])
 
     return (
-        <Card>
+        <>
             <Flex flexDirection="col" alignItems="start" className="space-y-6 w-full">
                 <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -39,7 +39,7 @@ export default function GeneralSettings({ user  }: {user : Partial<User> }) {
         
                 <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>Save Changes</Button>
             </Flex>
-        </Card>
+        </>
 
     )
 }

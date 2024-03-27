@@ -76,7 +76,7 @@ export default function ProjectSettings({ user }: { user: Partial<User> }) {
                     <Card
                         className="mb-4 flex h-full flex-col justify-between bg-gray-100 border border-gray-400 px-4 py-4 text-gray-700"
                     >                        
-                        <Bold className="text-sm mb-2">Import Project Info from Github?</Bold>
+                        <Bold className="text-sm mb-2">Import Project Info from Github</Bold>
                         <Text className="mb-4">Auto populate your project info from one of your connected repositories. </Text>
                         {repos.length > 0 ?
                             <>
