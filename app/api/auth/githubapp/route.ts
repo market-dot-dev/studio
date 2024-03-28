@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { cookies } from 'next/headers'
 import RepoService from "@/app/services/RepoService";
 
+// github redirects to this route after the user has installed the github app
 export async function GET(req: NextRequest) {
 
 	const searchParams = req.nextUrl.searchParams;
