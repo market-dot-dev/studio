@@ -384,6 +384,7 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
   }
 
   const maintainer = await UserService.findUser(tier.userId);
+  
   if (!maintainer) {
     throw new Error('Maintainer not found.');
   }

@@ -21,8 +21,7 @@ export default async function SiteSettingsPage() {
 
   return (    
     <div className="space-y-6">
-      <Title>Site Settings</Title>
-        { site  ? <SiteSettings site={site} /> : null }
+      { site  ? <SiteSettings site={site} /> : null }
     </div>
     
   );

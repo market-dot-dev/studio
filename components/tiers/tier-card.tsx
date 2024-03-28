@@ -10,6 +10,7 @@ type TierCardProps = {
   url?: string;
   tier: TierWithFeatures;
   canEdit?: boolean;
+  buttonDisabled?: boolean;
   darkMode?: boolean;
   children?: React.ReactNode;
   features?: Feature[];

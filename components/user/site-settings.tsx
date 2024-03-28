@@ -1,6 +1,7 @@
 'use client'
-import { Flex, Card, TextInput, Button } from "@tremor/react";
+import { Flex, Text, TextInput, Button } from "@tremor/react";
 import { Site } from "@prisma/client";
+import Link from 'next/link'
 import { useState } from "react";
 import { updateCurrentSite } from "@/app/services/SiteService"; // Ensure this service is implemented correctly
 import Uploader from "../form/uploader";
@@ -27,14 +28,16 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
             setIsSaving(false);
         }
     };
+    const siteURL = `https://`+site.subdomain+`.gitwallet.co`;
 
     return (
-        <Card>
+        <>
             <form onSubmit={handleSubmit}>
                 <Flex flexDirection="col" alignItems="start" className="space-y-6 w-full">
                     <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
                         <label htmlFor="subdomain" className="block text-sm font-medium text-gray-700">Subdomain</label>
                         <TextInput placeholder="Your subdomain" name="subdomain" id="subdomain" defaultValue={site.subdomain ?? ''} />
+                        <Text>Your site will appear at <Link className="underline" href={siteURL}>{siteURL}.</Link></Text>
                     </Flex>
                     <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
@@ -42,12 +45,14 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
                     </Flex>
                     <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
                         <label htmlFor="logo" className="block text-sm font-medium text-gray-700">Logo</label>
+                        <Text>Your site logo is used in your site, for favicons and Open Graph images.</Text>
+
                         <Uploader defaultValue={site.logo ?? null} name="logo" setChanged={setChanged} />
                     </Flex>
                     
                     <Button type="submit" loading={isSaving} disabled={isSaving}>Save Changes</Button>
                 </Flex>
             </form>
-        </Card>
+        </>
     );
 }

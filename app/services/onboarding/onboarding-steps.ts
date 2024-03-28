@@ -2,9 +2,10 @@
 // ADD Setup project step
 // ADD 
 
-import { Computer, Banknote, Package, Globe } from "lucide-react"
+import { Computer, Banknote, Package, Globe, Github } from "lucide-react"
 
 export type OnboardingStepsType = {
+    connectRepos: boolean,
     setupProject: boolean,
     setupPayment: boolean,
     setupTiers: boolean,
@@ -23,6 +24,7 @@ export type onBoardingStepType = {
 }
 
 export const onboardingStepsIcons = {
+    connectRepos: Github,
     setupProject: Computer,
     setupPayment: Banknote,
     setupTiers: Package,
@@ -46,8 +48,15 @@ export const onboardingSteps = [
         icon: Package,
     },
     {
+        name: 'connectRepos',
+        description: 'Connect repositories to Gitwallet to to quickly setup your Gitwallet site & workflows with existing details about your project.',
+        urls: ['/settings/repos'],
+        title: 'Connect Github Repo',
+        icon: Github,
+    },
+    {
         name: 'setupProject',
-        description: 'Describe your project and link a Github repo. These settings apply in many places, from your website to checkout.',
+        description: 'Your project settings apply in many places, from your website to checkout.',
         urls: ['/settings/project'],
         title: 'Add Project Details',
         icon: Computer,

@@ -15,7 +15,7 @@ const OfferingsWrapper = async () => {
   return (<>
       <div className="flex flex-col">
         <PageHeading title="Your Services" />
-        <Text>Create and manage your support offerings</Text>
+        <Text>Define the support services and workflows you are providing to your customers.</Text>
       </div>
       <Offerings services={services} features={features} />
   </>);
