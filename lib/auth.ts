@@ -216,7 +216,7 @@ export const authOptions: NextAuthOptions = {
       if (!user) {
         return;
       }
-
+      
       // Add onboarding status to a new user
       await prisma.user.update({
         where: { id: user.id },
