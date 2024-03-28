@@ -278,6 +278,8 @@ class StripeService {
       items: [{ price: stripePriceId! }],
       payment_behavior: 'error_if_incomplete',
       expand: ['latest_invoice.payment_intent'],
+    },{
+      idempotencyKey: `${stripeCustomerId}-${stripePriceId}`,
     });
   }
 
