@@ -16,15 +16,18 @@ CREATE TABLE "LegacyProducts" (
     "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
     "tierId" TEXT NOT NULL,
     "subscriptionId" TEXT NOT NULL,
-    "stripeProductId" TEXT NOT NULL,
-
+    "stripeProductId" TEXT,
     CONSTRAINT "LegacyProducts_pkey" PRIMARY KEY ("id")
 );
 
 INSERT INTO "LegacyProducts" ("tierId", "subscriptionId", "stripeProductId")
-SELECT s."tierId", s.id AS "subscriptionId", t."stripeProductId"
+SELECT 
+  s."tierId",
+  s.id AS "subscriptionId",
+  u."stripeProductId"
 FROM "Subscription" s
-JOIN "Tier" t ON s."tierId" = t.id;
+JOIN "Tier" t ON s."tierId" = t.id
+JOIN "User" u ON t."userId" = u.id;
 
 -- AlterTable
 ALTER TABLE "User" DROP COLUMN "stripeProductId";
