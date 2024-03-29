@@ -1,0 +1,4 @@
+"use server";
+
+class ValidationService {
+};

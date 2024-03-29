@@ -8,7 +8,7 @@ import Link from "next/link";
 
 const StripeDebug = async () => {
   const user = await UserService.getCurrentUser();
-  if(!user) {
+  if(!user || !(user.roleId === "admin")) {
     return <div>Not logged in</div>;
   }
 
@@ -27,6 +27,7 @@ const StripeDebug = async () => {
         <Link href="/subscriptions">Your active subscriptions</Link> <br/>
         <Link href="/admin/debug/onboarding">Onboarding State</Link> <br/>
         <Link href="/admin/debug/session">Session Viewer</Link> <br/>
+        <Link href="/admin/debug/validation">Stripe Validation</Link> <br/>
         <RoleSwitcher />
       </div>
     </div>

@@ -6,13 +6,14 @@ const useCurrentSession = () => {
   const currentUser = data?.user as SessionUser;
   
   const isSignedIn = () => status === "authenticated";
+  const isAdmin = () => isSignedIn() && (currentUser?.roleId === "admin");
 
   const refreshSession = async () => {
     console.log("Refreshing session..."); // Add this line
     await update({ force: true });
   }
 
-  return { currentUser, refreshSession, isSignedIn } as const;
+  return { currentUser, refreshSession, isSignedIn, isAdmin } as const;
 }
 
 export default useCurrentSession;

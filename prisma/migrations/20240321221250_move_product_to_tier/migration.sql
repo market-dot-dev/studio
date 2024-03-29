@@ -12,19 +12,23 @@ DROP INDEX "User_stripeProductId_key";
 ALTER TABLE "Tier" ADD COLUMN     "stripeProductId" TEXT;
 
 -- CreateTable
-CREATE TABLE "LegacyProducts" (
+CREATE TABLE "LegacyProduct" (
     "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
+    "userId" TEXT NOT NULL,
     "tierId" TEXT NOT NULL,
     "subscriptionId" TEXT NOT NULL,
+    "maintainerUserId" TEXT NOT NULL,
     "stripeProductId" TEXT,
     CONSTRAINT "LegacyProducts_pkey" PRIMARY KEY ("id")
 );
 
-INSERT INTO "LegacyProducts" ("tierId", "subscriptionId", "stripeProductId")
+INSERT INTO "LegacyProduct" ("userId", "tierId", "subscriptionId", "stripeProductId", "maintainerUserId")
 SELECT 
+  s."userId",
   s."tierId",
   s.id AS "subscriptionId",
-  u."stripeProductId"
+  u."stripeProductId",
+  u.id AS "maintainerUserId"
 FROM "Subscription" s
 JOIN "Tier" t ON s."tierId" = t.id
 JOIN "User" u ON t."userId" = u.id;

@@ -39,6 +39,17 @@ class TierService {
     });
   }
 
+  static async findTierByUserId(userId: string): Promise<Tier[]> {
+    return prisma.tier.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        features: true,
+      },
+    });
+  }
+
   static async toTierRow(tier: TierWithFeatures | Tier | Partial<Tier>) {
     const result = { ...tier } as any;
     delete result.id;
