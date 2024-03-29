@@ -259,7 +259,7 @@ model Feature {
 }
 
 model LegacyProducts {
-  id  String @id
+  id  String @id @default(cuid())
   tierId String
   subscriptionId String
   stripeProductId String

@@ -13,7 +13,7 @@ ALTER TABLE "Tier" ADD COLUMN     "stripeProductId" TEXT;
 
 -- CreateTable
 CREATE TABLE "LegacyProducts" (
-    "id" TEXT NOT NULL,
+    "id" TEXT NOT NULL DEFAULT gen_random_uuid(),
     "tierId" TEXT NOT NULL,
     "subscriptionId" TEXT NOT NULL,
     "stripeProductId" TEXT NOT NULL,
