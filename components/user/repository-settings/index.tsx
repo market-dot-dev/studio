@@ -1,7 +1,7 @@
 'use client'
-import { getInstallationsList, getInstallationRepos } from "@/app/services/RepoService";
+import { getInstallationsList, getInstallationRepos, getGithubAppInstallState } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { Card, Flex, Text, TextInput, Button, Grid, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+import { Flex, Text, TextInput, Button, Grid, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
 
 import { Github, SearchIcon, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -25,7 +25,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     const [installationRepos, setInstallationRepos] = useState<Repo[]>([]);
     const [repos, setRepos] = useState<Partial<Repo>[]>(initialRepos);
     const [installations, setInstallations] = useState<Installation[]>([]);
-    const [stateVariable, setStateVariable] = useState<string>(''); // to store the state variable for the installation
+    const [stateVariable, setStateVariable] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>('');
     const [filteredInstallationRepos, setFilteredInstallationRepos] = useState<Repo[]>([]);
@@ -55,11 +55,15 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
 
     // get the installations list, and the state variable, ensuring that the state variable is unique for a set of installations among other things
     useEffect(() => {
-        getInstallationsList().then(({ state, data }: { state: string, data: Installation[] }) => {
+        getGithubAppInstallState().then((state: string) => {
             setStateVariable(state);
+        })
+        .catch(error => console.error("Failed to get state variable:", error))
+
+        getInstallationsList().then((data: Installation[]) => {
             setInstallations(data);
         })
-            .catch(error => console.error("Failed to get installations:", error))
+        .catch(error => console.error("Failed to get installations:", error))
 
     }, [])
 
@@ -69,12 +73,10 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
         if (appInstallationWindow) {
             const checkWindow = setInterval(function () {
                 if (appInstallationWindow.closed) {
-                    clearInterval(checkWindow); // Stop checking
-                    getInstallationsList().then(({ state, data }: { state: string, data: Installation[] }) => {
-                        setStateVariable(state);
+                    clearInterval(checkWindow); 
+                    getInstallationsList().then((data: Installation[]) => {
                         setInstallations(data);
                     }).catch(error => console.error("Failed to get installations:", error))
-
                 }
             }, 1000);
         }

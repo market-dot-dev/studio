@@ -169,6 +169,7 @@ class RepoService {
       let response = await RepoService.fetchAppInstallations(token);
 
       if (!response.ok) {
+
         if (response.status === 401) {
           // special case, the token might be invalidated because of changes in the app permissions, but system has no clue about it
           // so lets refresh the token and try again
@@ -195,22 +196,22 @@ class RepoService {
     }
   }
 
+  static async getGithubAppInstallState() {
+    const state = nanoid();
+    // set a httpOnly cookie with the state
+    cookies().set('ghstate', state, { httpOnly: true })
+    
+    return state;
+  }
+
   static async getInstallationsList() {
     const data = await RepoService.getInstallations() as any;
 
-    const state = nanoid();
-
-    // set a httpOnly cookie with the state
-    cookies().set('ghstate', state, { httpOnly: true })
-
-    return {
-      state: state,
-      data: (data?.installations ?? []).map((installation: any) => ({
-        id: installation.id,
-        account: installation.account.login,
-        accountType: installation.account.type,
-      }))
-    };
+    return (data?.installations ?? []).map((installation: any) => ({
+      id: installation.id,
+      account: installation.account.login,
+      accountType: installation.account.type,
+    }));
   }
 
   // get the repositories for a given installation
@@ -324,4 +325,4 @@ class RepoService {
 }
 
 export default RepoService;
-export const { getRepos, verifyAndConnectRepo, disconnectRepo, getInstallationsList, getInstallationRepos, getRepo } = RepoService;
+export const { getRepos, verifyAndConnectRepo, disconnectRepo, getInstallationsList, getInstallationRepos, getRepo, getGithubAppInstallState } = RepoService;
