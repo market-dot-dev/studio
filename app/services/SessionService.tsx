@@ -23,7 +23,7 @@ class SessionService {
   }
 
   // return a refreshed acccess token of github
-  static async getAccessToken() : Promise<string | null> {
+  static async getAccessToken( forceRefresh? : boolean) : Promise<string | null> {
     const session = await getSession();
     const userId = session?.user!.id;
 
@@ -33,8 +33,8 @@ class SessionService {
         where: { userId: userId, provider: 'github' },
       });
       
-      // if access token and not expired
-      if( currentAccount?.access_token && currentAccount?.expires_at && Date.now() < currentAccount?.expires_at * 1000 ) {
+      // if access token and not expired, return it unless forceRefresh is true
+      if( !forceRefresh && currentAccount?.access_token && currentAccount?.expires_at && Date.now() < currentAccount?.expires_at * 1000 ) {
         return currentAccount.access_token;
       }
   
