@@ -39,6 +39,7 @@ model User {
   githubAppInstallations      GithubAppInstallation[]
   onboarding                  String?
   company                     String?
+  legacyStripeProductId       String?
 
   subscribedLegacyProducts LegacyProduct[] @relation("UserAsUser")
   maintainedLegacyProducts LegacyProduct[] @relation("UserAsMaintainer")

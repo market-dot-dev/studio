@@ -43,6 +43,10 @@ const StripeDebug = async () => {
           Connected Account:{" "}
           {!!user.stripeAccountId ? <Check className="inline" /> : "X"}
         </div>
+        <div>
+          Legacy stripeProductId:{" "}
+          {!!user.legacyStripeProductId ? <Check className="inline" /> : "X"}
+        </div>
         <br />
 
         <h3>Tiers</h3>
@@ -65,6 +69,7 @@ const StripeDebug = async () => {
           ))}
         </table>
 
+        <br />
         <h3>Legacy Subscriptions</h3>
         <table>
           <tr>

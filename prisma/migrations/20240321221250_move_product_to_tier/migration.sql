@@ -34,7 +34,7 @@ JOIN "Tier" t ON s."tierId" = t.id
 JOIN "User" u ON t."userId" = u.id;
 
 -- AlterTable
-ALTER TABLE "User" DROP COLUMN "stripeProductId";
+ALTER TABLE "User" RENAME COLUMN "stripeProductId" TO "legacyStripeProductId";
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Tier_stripeProductId_key" ON "Tier"("stripeProductId");
