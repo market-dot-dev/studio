@@ -459,6 +459,16 @@ export const canBuy = async (maintainerUserId: string, maintainerStripeAccountId
   return (await getCustomer(maintainerUserId, maintainerStripeAccountId)).canBuy();
 }
 
+export const migrateCustomer = async (userId: string, stripeCustomerId: string, stripePaymentMethodId: string, maintainerUserId: string, maintainerStripeAccountId: string) => {
+  const user = await UserService.findUser(userId);
+  if (!user) {
+    throw new Error('User not found');
+  }
+  const customer =  new Customer(user, maintainerUserId, maintainerStripeAccountId);
+  await customer.setCustomerId(stripeCustomerId);
+  await customer.attachPaymentMethod(stripePaymentMethodId);
+}
+
 export const { disconnectStripeAccount, userHasStripeAccountIdById, getAccountInfo } = StripeService
 
 
