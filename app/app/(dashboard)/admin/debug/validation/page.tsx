@@ -4,6 +4,7 @@ import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
 import prisma from "@/lib/prisma";
 import ValidatorComponent from "./validator-component";
+import { Suspense } from "react";
 
 const StripeDebug = async () => {
   const user = await UserService.getCurrentUser();
@@ -28,7 +29,9 @@ const StripeDebug = async () => {
     }
   });
 
-  return <ValidatorComponent user={user} tiers={tiers} legacyProducts={legacyProducts} />;
+  return <Suspense>
+    <ValidatorComponent user={user} tiers={tiers} legacyProducts={legacyProducts} />
+    </Suspense>;
 };
 
 export default StripeDebug;

@@ -3,14 +3,17 @@
 import { Button } from "@tremor/react";
 import { useState } from "react";
 import stripe from "stripe";
-import { migrateCustomer } from "@/app/services/StripeService";
+import StripeService, { migrateCustomer } from "@/app/services/StripeService";
 
-const StripeCustomerMigrator = ({ userId, maintainerUserId, stripeCustomerId, stripeAccountId, stripeSecretKey }: { 
+const StripeCustomerMigrator = ({ userId, maintainerUserId, stripeCustomerId, stripeAccountId, stripeSecretKey, stripePaymentMethodId, userName, userEmail }: { 
   stripeCustomerId: string;
   stripeAccountId: string;
   maintainerUserId: string;
   userId: string;
   stripeSecretKey: string;
+  stripePaymentMethodId: string;
+  userName: string;
+  userEmail: string;
 }) => {
   const [disabled, setDisabled] = useState(false);
   const [output, setOutput] = useState<string | null>(null);
@@ -19,23 +22,32 @@ const StripeCustomerMigrator = ({ userId, maintainerUserId, stripeCustomerId, st
     setDisabled(true);
     const stripeApi = new stripe(stripeSecretKey);
 
-    const token = await stripeApi.tokens.create(
-      {
-        customer: stripeCustomerId,
-      },
-      {
-        stripeAccount: stripeAccountId,
-      }
-    );
+    const oldCustomer = await stripeApi.customers.retrieve(stripeCustomerId);
 
-    const customer = await stripeApi.customers.create(
-      {
-        source: token.id,
-      },
-      {
-        stripeAccount: stripeAccountId,
-      }
-    );
+    console.log('==== old customer', oldCustomer);
+
+    const paymentMethod = await stripeApi.paymentMethods.create({
+      customer: stripeCustomerId,
+      payment_method: stripePaymentMethodId,
+    }, {
+      stripeAccount: stripeAccountId,
+    });
+
+    const payload = {
+      email: userEmail,
+
+      ...(userName ? { name: userName } : {}),
+      ...(paymentMethod.id ? {
+        payment_method: paymentMethod.id,
+        invoice_settings: {
+          default_payment_method: paymentMethod.id,
+        },
+      } : {}),
+    };
+
+    const customer = await stripeApi.customers.create(payload, {
+      stripeAccount: stripeAccountId,
+    });
 
     const result = {
       stripeCustomerId: customer.id,

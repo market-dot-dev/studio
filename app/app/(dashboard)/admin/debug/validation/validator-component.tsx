@@ -6,15 +6,23 @@ import StripeCustomerMigrator from "./stripe-customer-migrator";
 import { LegacyProduct, Subscription, Tier, User } from "@prisma/client";
 import { useState } from "react";
 
-type LegacyProductWithExtra = LegacyProduct & { subscription: Subscription & { user: User }, tier: Tier, maintainer: User };
+type LegacyProductWithExtra = LegacyProduct & {
+  subscription: Subscription & { user: User };
+  tier: Tier;
+  maintainer: User;
+};
 
-const ValidatorComponent = ({ user, tiers, legacyProducts }: {
+const ValidatorComponent = ({
+  user,
+  tiers,
+  legacyProducts,
+}: {
   user: User;
   tiers: Tier[];
   legacyProducts: LegacyProductWithExtra[];
 }) => {
   const [password, setPassword] = useState("");
-  
+
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex w-full justify-between">
@@ -23,15 +31,16 @@ const ValidatorComponent = ({ user, tiers, legacyProducts }: {
         </div>
       </div>
       <div>
-      <input
+        <input
           id="password"
           name="password"
           type="password"
           required
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          placeholder="Enter the local auth password"
+          placeholder="Enter the stripe private key"
           value={password}
-          onChange={(e) => setPassword(e.target.value)}/>
+          onChange={(e) => setPassword(e.target.value)}
+        />
       </div>
       <div>
         <h2>{user.name}</h2>
@@ -84,41 +93,52 @@ const ValidatorComponent = ({ user, tiers, legacyProducts }: {
             const maintainer = lp.maintainer;
             const stripeAccountId = lp.maintainer.stripeAccountId;
 
-            const customerLookup = lp.subscription.user.stripeCustomerIds as Record<string, string> || {};
-            const stripeCustomerId = customerLookup[stripeAccountId || ''];
-            const gwCustomerId = customerLookup['gitwallet'];
+            const customerLookup =
+              (lp.subscription.user.stripeCustomerIds as Record<
+                string,
+                string
+              >) || {};
+            const stripeCustomerId = customerLookup[stripeAccountId || ""];
+            const gwCustomerId = customerLookup["gitwallet"];
 
-            const paymentLookup = lp.subscription.user.stripeCustomerIds as Record<string, string> || {};
-            const stripePaymentMethodId = paymentLookup[stripeAccountId || ''];
-            const gwPaymentMethodId = paymentLookup['gitwallet'];
+            const paymentLookup =
+              (lp.subscription.user.stripePaymentMethodIds as Record<
+                string,
+                string
+              >) || {};
+            const stripePaymentMethodId = paymentLookup[stripeAccountId || ""];
+            const gwPaymentMethodId = paymentLookup["gitwallet"];
 
-            return <tr key={lp.id}>
-              <td>{lp.subscription.user.email}</td>
-              <td>
-                {lp.tier.name}
-              </td>
-              <td>
-                {lp.stripeProductId}
-              </td>
-              <td>
-                {lp.subscription.stripeSubscriptionId}
-              </td>
-              <td>
-                {!!gwCustomerId ? <Check className="inline" /> : "X"}
-              </td>
-              <td>
-                {!!gwPaymentMethodId ? <Check className="inline" /> : "X"}
-              </td>
-              <td>
-                {!!stripeCustomerId ? <Check className="inline" /> : "X"}
-              </td>
-              <td>
-                {!!stripePaymentMethodId ? <Check className="inline" /> : "X"}
-              </td>
-              <td>
-                <StripeCustomerMigrator stripeCustomerId={gwCustomerId} stripeAccountId={maintainer.stripeAccountId!} maintainerUserId={maintainer.id} userId={user.id} stripeSecretKey={password} />
-              </td>
-            </tr>
+            return (
+              <tr key={lp.id}>
+                <td>{lp.subscription.user.email}</td>
+                <td>{lp.tier.name}</td>
+                <td>{lp.stripeProductId}</td>
+                <td>{lp.subscription.stripeSubscriptionId}</td>
+                <td>{!!gwCustomerId ? <Check className="inline" /> : "X"}</td>
+                <td>
+                  {!!gwPaymentMethodId ? <Check className="inline" /> : "X"}
+                </td>
+                <td>
+                  {!!stripeCustomerId ? <Check className="inline" /> : "X"}
+                </td>
+                <td>
+                  {!!stripePaymentMethodId ? <Check className="inline" /> : "X"}
+                </td>
+                <td>
+                  <StripeCustomerMigrator
+                    stripeCustomerId={gwCustomerId}
+                    stripeAccountId={maintainer.stripeAccountId!}
+                    maintainerUserId={maintainer.id}
+                    userId={user.id}
+                    stripeSecretKey={password}
+                    stripePaymentMethodId={gwPaymentMethodId}
+                    userName={user.name!}
+                    userEmail={user.email!}
+                  />
+                </td>
+              </tr>
+            );
           })}
         </table>
       </div>
