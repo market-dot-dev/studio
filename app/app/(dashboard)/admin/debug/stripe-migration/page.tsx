@@ -14,9 +14,6 @@ const StripeDebug = async () => {
 
   const tiers = await TierService.findByUserId(user.id);
   const legacyProducts = await prisma.legacyProduct.findMany({
-    where: {
-      maintainerUserId: user.id,
-    },
     include: {
       maintainer: true,
       tier: true,
