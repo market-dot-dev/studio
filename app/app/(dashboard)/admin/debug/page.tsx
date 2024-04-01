@@ -27,7 +27,8 @@ const StripeDebug = async () => {
         <Link href="/subscriptions">Your active subscriptions</Link> <br/>
         <Link href="/admin/debug/onboarding">Onboarding State</Link> <br/>
         <Link href="/admin/debug/session">Session Viewer</Link> <br/>
-        <Link href="/admin/debug/validation">Stripe Validation</Link> <br/>
+        <Link href={`/admin/debug/${user?.id}/validation`}>Stripe Validation</Link> <br/>
+        <Link href="/admin/debug/stripe-migration">Direct Payments Migration</Link> <br/>
         <RoleSwitcher />
       </div>
     </div>

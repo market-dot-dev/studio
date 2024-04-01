@@ -3,7 +3,7 @@
 import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
 import prisma from "@/lib/prisma";
-import ValidatorComponent from "./validator-component";
+import MigratorComponent from "./migrator-component";
 import { Suspense } from "react";
 
 const StripeDebug = async () => {
@@ -30,7 +30,7 @@ const StripeDebug = async () => {
   });
 
   return <Suspense>
-    <ValidatorComponent user={user} tiers={tiers} legacyProducts={legacyProducts} />
+    <MigratorComponent user={user} tiers={tiers} legacyProducts={legacyProducts} />
     </Suspense>;
 };
 
