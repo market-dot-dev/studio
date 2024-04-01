@@ -60,7 +60,7 @@ class SessionService {
   
       const refreshedTokens = await response.json();
       
-      if (!response.ok) {
+      if (!response.ok || refreshedTokens.error) {
         throw refreshedTokens;
       }
   

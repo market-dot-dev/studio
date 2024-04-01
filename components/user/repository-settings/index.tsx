@@ -10,6 +10,8 @@ import LoadingSpinner from "../../form/loading-spinner";
 import DashboardCard from "../../common/dashboard-card";
 import { RepoItem, SearchResultRepo } from "./repo-items";
 
+import { signOut } from "next-auth/react";
+
 const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
 
 type Installation = {
@@ -63,7 +65,10 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
         getInstallationsList().then((data: Installation[]) => {
             setInstallations(data);
         })
-        .catch(error => console.error("Failed to get installations:", error))
+        .catch(error => {
+            console.error("Failed to get installations:", error)
+            signOut({ redirect: true, callbackUrl: '/login'});
+        })
 
     }, [])
 
