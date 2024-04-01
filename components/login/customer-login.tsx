@@ -1,9 +1,9 @@
 'use client'
+import { useSession } from "next-auth/react";
 import { TextInput, Button, Text } from "@tremor/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
-import useCurrentSession, { CurrentSessionProvider } from "@/app/contexts/current-user-context";
 import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
 
@@ -11,29 +11,23 @@ import OTPInputElement from "./otp-input-element"
 let handlingVerification = false;
 
 export function CustomerLoginComponent({ redirect, signup = false } : { redirect?: string, signup?: boolean }) {
-    
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [verificationEmail, setVerificationEmail] = useState<string>('');
-    
+    const { data: session, status, update } = useSession();
+    const { user } = session || {};
     
     const [isSignUp, setIsSignUp] = useState(signup); 
     const [name, setName] = useState<string>('');
     
-
-    const { currentSession, refreshCurrentSession } = useCurrentSession();
-
-    const { user } = currentSession;
-
     const router = useRouter();
-
 
     const handleLogout = async () => {
         setIsSubmitting(true);
         try {
             await signOut({ redirect: false });
-            await refreshCurrentSession();
+            await update();
             setIsSubmitted(false);
             setIsSignUp(false);
 
@@ -137,7 +131,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                 if(redirect) {
                     router.push( redirect )
                 } else {
-                    refreshCurrentSession();
+                    await update();
                     setError(null);
                 }
             } else {
@@ -246,8 +240,6 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
 export default function CustomerLogin() {
     return (
-        <CurrentSessionProvider>
-            <CustomerLoginComponent redirect='/' />
-        </CurrentSessionProvider>
+        <CustomerLoginComponent redirect='/' />
     );
 }

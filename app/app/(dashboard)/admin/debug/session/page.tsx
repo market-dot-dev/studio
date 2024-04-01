@@ -1,20 +1,20 @@
 "use client";
 
+import useCurrentSession from "@/app/hooks/use-current-session";
 import PageHeading from "@/components/common/page-heading";
 import { Button, Card } from "@tremor/react";
-import { useSession } from "next-auth/react";
 
 export default function Page() {
-  const { data: session, status, update } = useSession();
+  const { refreshSession, currentUser, isSignedIn } = useCurrentSession();
 
-  if (status === "authenticated") {
+  if (isSignedIn()) {
     return (
       <Card>
         <PageHeading>Session Debug Tool</PageHeading>
         <br/>
-        <pre>{JSON.stringify(session, null, 2)}</pre>
+        <pre>{JSON.stringify(currentUser, null, 2)}</pre>
         <br/>
-        <Button onClick={() => update()}>Refresh session data</Button>
+        <Button onClick={async () => await refreshSession()}>Refresh session data</Button>
       </Card>
     )
   }

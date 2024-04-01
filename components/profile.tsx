@@ -20,7 +20,7 @@ export default async function Profile() {
           <Image
             src={
               session.user.image ??
-              `https://avatar.vercel.sh/${session.user.email}`
+              `https://avatar.vercel.sh/${session.user.id}`
             }
             width={40}
             height={40}

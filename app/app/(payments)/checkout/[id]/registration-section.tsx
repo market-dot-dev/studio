@@ -9,13 +9,13 @@ import {
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
-import useCurrentSession from "@/app/contexts/current-user-context";
 
 import { onClickSubscribe } from '@/app/services/StripeService';
 import { isSubscribedByTierId } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
+import useCurrentSession from "@/app/hooks/use-current-session";
 
 const checkoutCurrency = "USD";
 
@@ -25,54 +25,54 @@ const AlreadySubscribedCard = () => {
   </Card>);
 }
 
-const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
+const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintainer: User }) => {
+  const { currentUser: user, refreshSession } = useCurrentSession();
+  const userId = user?.id;
   const tierId = tier?.id;
-  const [submittingPaymentMethod, setSubmittingPaymentMethod] = useState(false);
-  const [purchaseIntent, setPurchaseIntent] = useState(false);
-
-  const [userAttributes, setUserAttributes] = useState<Partial<User>>({});
-  const [error, setError] = useState<string | null>();
-
-  const { currentSession, refreshCurrentSession } = useCurrentSession();
   
-  const [isSubscribed, setIsSubscribed] = useState(false);
-  const { user } = currentSession;
-
-  useEffect(() => {
-    if(user?.id) {
-      isSubscribedByTierId(user.id, tierId).then(setIsSubscribed);
-    }
-  }, [user?.id, tierId]);
-
-  const onSubmit = async () => {
-    setError(null);
-    setPurchaseIntent(true);
-
-    if(user && !user.stripePaymentMethodId) {
-      setSubmittingPaymentMethod(true);
-    }
-  }
-
-  useEffect(() => {
-    if (purchaseIntent && !submittingPaymentMethod && user && user.stripePaymentMethodId) {
-      onClickSubscribe(user.id, tierId).then((res) => {
-        setPurchaseIntent(false);
-        window.location.href = "/success";
-      }).catch((err) => {
-        setError(err.message);
-        setPurchaseIntent(false);
-      });
-    }
-  }, [purchaseIntent, user?.id, user?.stripePaymentMethodId, tierId, user, submittingPaymentMethod]);
+  const [error, setError] = useState<string | null>();
+  const [loading, setLoading] = useState(false);
+  const [submittingPayment, setSubmittingPayment] = useState(false);
+  const [submittingSubscription, setSubmittingSubscription] = useState(false);
+  const [paymentReady, setPaymentReady] = useState(false);
+  const [subscribed, setSubscribed] = useState(false);
 
   useEffect(() => {
     if(error){
-      setSubmittingPaymentMethod(false);
-      setPurchaseIntent(false);
+      console.log("error found, bailing");
+      setLoading(false);
+      setSubmittingPayment(false);
+      setSubmittingSubscription(false);
     }
   }, [error]);
 
-  if(isSubscribed) {
+  useEffect(() => {
+    if(loading){
+      setError(null);
+      if(!userId){
+        setError("Please register or sign in.");
+      } else if(!paymentReady){
+        setSubmittingPayment(true);
+      } else {
+        setSubmittingSubscription(true);
+        onClickSubscribe(userId, tierId).then((res) => {
+          setLoading(false);
+          window.location.href = "/success";
+        }).catch((err) => {
+          setError(err.message);
+        });
+      }
+    }
+  }, [loading, userId, paymentReady]);
+
+  // when user changes, check subscription
+  useEffect(() => {
+    if(!!userId && !!tierId){
+      isSubscribedByTierId(userId, tierId).then(setSubscribed);
+    }
+  }, [userId, tierId]);
+
+  if(subscribed) {
     return <AlreadySubscribedCard />
   } else return (
     <>
@@ -87,16 +87,20 @@ const RegistrationCheckoutSection = ({ tier }: { tier: Tier; }) => {
         { error && <div className="mb-4 text-red-500">{error}</div> }
         <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
           <div>
-            <UserPaymentMethodWidget
-              loading={submittingPaymentMethod}
-              setError={setError}
-            />
+            { maintainer.stripeAccountId  &&
+              <UserPaymentMethodWidget
+                loading={submittingPayment}
+                setError={setError}
+                setPaymentReady={setPaymentReady}
+                maintainerUserId={tier.userId}
+                maintainerStripeAccountId={maintainer.stripeAccountId}
+              /> }
           </div>
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Button onClick={onSubmit} disabled={purchaseIntent || !user?.id} className="w-full">
-          {purchaseIntent ? <LoadingDots color="#A8A29E" /> : "Checkout"}
+        <Button onClick={() => setLoading(true)} disabled={loading} className="w-full">
+          {loading ? <LoadingDots color="#A8A29E" /> : "Checkout"}
         </Button>
         <label className="my-2 block text-center text-sm text-slate-400">
           Your card will be charged {checkoutCurrency + " " + tier?.price}

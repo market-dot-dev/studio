@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { withAuth } from "next-auth/middleware";
 import { getToken } from "next-auth/jwt";
-import RoleService from "./app/services/role-service";
+import RoleService, { Role } from "./app/services/role-service";
 import DomainService from "./app/services/domain-service";
+import { SessionUser } from "./app/models/Session";
 
 export const config = {
   matcher: [
@@ -23,7 +24,8 @@ export default withAuth(
   {
     callbacks: {
       authorized: async ({ token, req }) => {
-        return await RoleService.canViewPath(req.nextUrl.pathname, (token as any)?.user?.roleId);
+        const user = token?.user as SessionUser;
+        return await RoleService.canViewPath(req.nextUrl.pathname, user?.roleId as Role);
       }
     },
   }
@@ -39,9 +41,9 @@ async function customMiddleware(req: NextRequest) {
   const hostname = DomainService.getHostnameFromRequest(req);
   const rootUrl = DomainService.getRootUrl();
 
-  const ghUsername = DomainService.getGhUsernameFromRequest(req);
+  const ghUsername = DomainService.getGhUsernameFromRequest(req);``
   const reservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);
-  const bareDomain = !ghUsername && !reservedSubdomain;
+  const bareDomain = !ghUsername && !reservedSubdomain;``
   const session = await getToken({ req }) as any;
   const signedIn = !!session;
   const roleId = session?.user?.roleId;
@@ -94,10 +96,8 @@ async function customMiddleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-
   // app.gitwallet.co
   if (reservedSubdomain === 'app') {
-
     // if customer, then lock to /app/c/
     if(roleId === 'customer' ) {
       return rewrite(`/app/c${path}`, req.url);
@@ -110,5 +110,4 @@ async function customMiddleware(req: NextRequest) {
     // else lock to /app/
     return rewrite(`/app${path}`, req.url);
   }
-  
 }

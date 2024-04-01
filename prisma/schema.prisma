@@ -9,25 +9,24 @@ datasource db {
 }
 
 model User {
-  id                          String         @id @default(cuid())
+  id                          String                  @id @default(cuid())
   name                        String?
   username                    String?
-  gh_username                 String?        @unique
-  email                       String?        @unique
-  stripeProductId             String?        @unique
-  stripeCustomerId            String?        @unique
-  stripePaymentMethodId       String?        @unique
-  stripeAccountId             String?        @unique
-  stripeCSRF                  String?        @unique
-  stripeAccountDisabled       Boolean        @default(false)
+  gh_username                 String?                 @unique
+  email                       String?                 @unique
+  stripeCustomerIds           Json                    @default("{}")
+  stripePaymentMethodIds      Json                    @default("{}")
+  stripeAccountId             String?                 @unique
+  stripeCSRF                  String?                 @unique
+  stripeAccountDisabled       Boolean                 @default(false)
   stripeAccountDisabledReason String?
   projectName                 String?
   projectDescription          String?
   emailVerified               DateTime?
   image                       String?
-  roleId                      String         @default("customer")
-  createdAt                   DateTime       @default(now())
-  updatedAt                   DateTime       @updatedAt
+  roleId                      String                  @default("customer")
+  createdAt                   DateTime                @default(now())
+  updatedAt                   DateTime                @updatedAt
   accounts                    Account[]
   pages                       Page[]
   posts                       Post[]
@@ -37,9 +36,13 @@ model User {
   features                    Feature[]
   subscriptions               Subscription[]
   repos                       Repo[]
-  githubAppInstallations            GithubAppInstallation[]
+  githubAppInstallations      GithubAppInstallation[]
   onboarding                  String?
   company                     String?
+  legacyStripeProductId       String?
+
+  subscribedLegacyProducts LegacyProduct[] @relation("UserAsUser")
+  maintainedLegacyProducts LegacyProduct[] @relation("UserAsMaintainer")
 }
 
 model Account {
@@ -155,9 +158,10 @@ model Example {
 }
 
 model Tier {
-  id            String  @id @default(cuid())
-  userId        String
-  stripePriceId String?
+  id              String  @id @default(cuid())
+  userId          String
+  stripeProductId String? @unique
+  stripePriceId   String?
 
   name        String
   description String?
@@ -172,8 +176,9 @@ model Tier {
   features      Feature[]      @relation("FeatureToTier")
   subscriptions Subscription[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  LegacyProduct LegacyProduct[]
 
   @@index([userId, stripePriceId])
 }
@@ -196,20 +201,21 @@ model TierVersion {
 }
 
 model Subscription {
-  id                   String   @id @default(cuid())
+  id                   String    @id @default(cuid())
   userId               String // Foreign key to reference User
   tierId               String
-  stripeSubscriptionId String   @unique
+  stripeSubscriptionId String    @unique
   tierVersionId        String? // Foreign key to reference TierVersion
   tierRevision         Int?
   activeUntil          DateTime?
   cancelledAt          DateTime?
-  createdAt            DateTime @default(now())
-  state       String @default("renewing")
+  createdAt            DateTime  @default(now())
+  state                String    @default("renewing")
 
-  user        User         @relation(fields: [userId], references: [id])
-  tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
-  tier        Tier         @relation(fields: [tierId], references: [id])
+  user          User            @relation(fields: [userId], references: [id])
+  tierVersion   TierVersion?    @relation(fields: [tierVersionId], references: [id])
+  tier          Tier            @relation(fields: [tierId], references: [id])
+  LegacyProduct LegacyProduct[]
 
   @@unique([userId, tierId])
 }
@@ -258,11 +264,25 @@ model Feature {
   @@index([userId])
 }
 
+model LegacyProduct {
+  id               String @id @default(cuid())
+  userId           String
+  tierId           String
+  maintainerUserId String
+  subscriptionId   String
+  stripeProductId  String
+
+  tier         Tier         @relation(fields: [tierId], references: [id])
+  user         User         @relation("UserAsUser", fields: [userId], references: [id])
+  maintainer   User         @relation("UserAsMaintainer", fields: [maintainerUserId], references: [id])
+  subscription Subscription @relation(fields: [subscriptionId], references: [id])
+}
+
 model Media {
   id        String   @id @default(cuid())
-  siteId  String
-  url      String
-  site    Site     @relation(fields: [siteId], references: [id], onDelete: Cascade) 
+  siteId    String
+  url       String
+  site      Site     @relation(fields: [siteId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -270,7 +290,7 @@ model Media {
 }
 
 model GithubAppInstallation {
-  id        Int   @id
+  id        Int      @id
   userId    String
   token     String
   expiresAt DateTime

@@ -1,16 +1,15 @@
 import { useStripe, useElements, CardElement, Elements } from '@stripe/react-stripe-js';
 import { useState, useCallback, ReactElement, ReactNode } from 'react';
-import { attachPaymentMethod, detachPaymentMethod } from '@/app/services/StripeService';
 import { loadStripe } from '@stripe/stripe-js';
 import { User } from '@prisma/client';
-import { createStripeCustomerById } from '@/app/services/UserService';
-
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_NOT_SET_IN_ENV');
+import { SessionUser } from '../models/Session';
+import { attachPaymentMethod, detachPaymentMethod } from '../services/StripeService';
 
 interface UseStripePaymentCollectorProps {
-  user: User | null | undefined;
+  user: User | SessionUser | null | undefined;
   setError: (error: string | null) => void;
-  setSubmitting: (submitting: boolean) => void;
+  maintainerUserId: string;
+  maintainerStripeAccountId: string;
 }
 
 const CARD_ELEMENT_OPTIONS = {
@@ -43,13 +42,25 @@ export const StripeCardElement = () => {
   return <CardElement options={CARD_ELEMENT_OPTIONS} />
 }
 
-export const StripeCheckoutFormWrapper = ({ children, ...props }: { children: (props: any) => ReactNode; props?: any; }) => {
+export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId, ...props }: {
+  children: (props: any) => ReactNode;
+  maintainerStripeAccountId: string;
+  props?: any;
+}) => {
+  const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_NOT_SET_IN_ENV';
+  const stripePromise = loadStripe(pk, {
+    stripeAccount: maintainerStripeAccountId,
+  }).catch((err) => {
+    console.error('Failed to load stripe', err);
+    return null;
+  });
+
   return <Elements stripe={stripePromise}>
     { children({ ...props }) }
   </Elements>;
 };
 
-const useStripePaymentCollector = ({ user, setError, setSubmitting }: UseStripePaymentCollectorProps): UseStripePaymentCollectorReturns => {
+const useStripePaymentCollector = ({ user, setError, maintainerUserId, maintainerStripeAccountId }: UseStripePaymentCollectorProps): UseStripePaymentCollectorReturns => {
   const stripe = useStripe();
   const elements = useElements();
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
@@ -58,15 +69,16 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting }: UseStripeP
     event?.preventDefault();
 
     if (!stripe || !elements) {
-      console.log('Stripe not loaded');
-      return;
+      return Promise.reject('Stripe not loaded')
     }
 
-    setSubmitting(true);
+    if(!user) {
+      return Promise.reject('User not found')
+    }
 
     const cardElement = elements.getElement(CardElement);
     if (!cardElement) {
-      return;
+      return Promise.reject('Card element not found');
     }
 
     const { error, paymentMethod } = await stripe.createPaymentMethod({
@@ -76,20 +88,20 @@ const useStripePaymentCollector = ({ user, setError, setSubmitting }: UseStripeP
 
     if (error) {
       setError(error.message || '');
-      setSubmitting(false);
-    } else if (paymentMethod) {
+      return Promise.reject(error || '');
+    } else if (paymentMethod && maintainerUserId) {
       console.log('Payment method attached: ', paymentMethod);
-      await attachPaymentMethod(paymentMethod.id);
-      setStripeCustomerId(await createStripeCustomerById(user?.id || ''));
-      setSubmitting(false);
+      await attachPaymentMethod(paymentMethod.id, maintainerUserId, maintainerStripeAccountId);
     }
-  }, [stripe, elements, setError, setSubmitting, user?.id]);
+  }, [stripe, elements, setError, maintainerUserId, maintainerStripeAccountId, user]);
 
   const handleDetach = useCallback(async () => {
-    if (user?.stripePaymentMethodId) {
-      await detachPaymentMethod(user?.stripePaymentMethodId);
+    if (!user || !maintainerUserId) {
+      return;
     }
-  }, [user]);
+
+    await detachPaymentMethod(maintainerUserId, maintainerStripeAccountId);
+  }, [user, maintainerUserId, maintainerStripeAccountId]);
 
   return {
     CardElementComponent: StripeCardElement,
