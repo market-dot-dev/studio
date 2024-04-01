@@ -43,7 +43,7 @@ const ValidatorComponent = ({
         />
       </div>
       <div>
-        <h2>{user.name}</h2>
+        <h2>Current user check: {user.name}</h2>
         <div>Email: {!!user.email ? <Check className="inline" /> : "X"}</div>
         <div>
           Connected Account:{" "}
@@ -91,6 +91,7 @@ const ValidatorComponent = ({
           </tr>
           {legacyProducts.map((lp) => {
             const maintainer = lp.maintainer;
+            const customer = lp.subscription.user;
             const stripeAccountId = lp.maintainer.stripeAccountId;
 
             const customerLookup =
@@ -130,11 +131,11 @@ const ValidatorComponent = ({
                     stripeCustomerId={gwCustomerId}
                     stripeAccountId={maintainer.stripeAccountId!}
                     maintainerUserId={maintainer.id}
-                    userId={user.id}
+                    userId={customer.id}
                     stripeSecretKey={password}
                     stripePaymentMethodId={gwPaymentMethodId}
-                    userName={user.name!}
-                    userEmail={user.email!}
+                    userName={customer.name!}
+                    userEmail={customer.email!}
                   />
                 </td>
               </tr>
