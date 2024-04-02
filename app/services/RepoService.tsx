@@ -103,7 +103,7 @@ class RepoService {
 
     if (!installation) {
       // verify the installation with github and create a new installation
-      const data = await RepoService.getInstallations() as any;
+      const { data } = await RepoService.getInstallations() as any;
 
       if (!data?.installations) {
         throw new Error('No installations found.');
@@ -161,7 +161,11 @@ class RepoService {
   static async getInstallations() {
     const token = await SessionService.getAccessToken();
     if (!token) {
-      throw new Error('No access token found.');
+      return {
+        status: 401,
+        data: [],
+        message: 'No access token found.'
+      }
     }
 
     try {
@@ -173,11 +177,14 @@ class RepoService {
         if (response.status === 401) {
           // special case, the token might be invalidated because of changes in the app permissions, but system has no clue about it
           // so lets refresh the token and try again
-          console.log('force refreshing the access token');
           const refreshedToken = await SessionService.getAccessToken(true);
 
           if (!refreshedToken) {
-            throw new Error('No access token found.');
+            return {
+              status: 401,
+              data: [],
+              message: 'Failed to refresh the token.'
+            }
           }
 
           response = await RepoService.fetchAppInstallations(refreshedToken);
@@ -188,11 +195,16 @@ class RepoService {
 
       const data = await response.json();
 
-      return data;
+      return {
+        status: 200,
+        data
+      }
 
     } catch (error) {
-      console.error('Failed to get app:', error);
-      throw error; // Re-throw the error to be handled by the caller
+      return {
+        status: 500,
+        data: []
+      }
     }
   }
 
@@ -205,13 +217,17 @@ class RepoService {
   }
 
   static async getInstallationsList() {
-    const data = await RepoService.getInstallations() as any;
+    const { status, data, message } = await RepoService.getInstallations() as any;
 
-    return (data?.installations ?? []).map((installation: any) => ({
-      id: installation.id,
-      account: installation.account.login,
-      accountType: installation.account.type,
-    }));
+    return {
+      status,
+      data: (data?.installations ?? []).map((installation: any) => ({
+        id: installation.id,
+        account: installation.account.login,
+        accountType: installation.account.type,
+      })),
+      message
+    }
   }
 
   // get the repositories for a given installation

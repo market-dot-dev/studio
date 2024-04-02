@@ -10,6 +10,8 @@ import LoadingSpinner from "../../form/loading-spinner";
 import DashboardCard from "../../common/dashboard-card";
 import { RepoItem, SearchResultRepo } from "./repo-items";
 
+import { signOut } from "next-auth/react";
+
 const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
 
 type Installation = {
@@ -29,11 +31,17 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     const [loading, setLoading] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>('');
     const [filteredInstallationRepos, setFilteredInstallationRepos] = useState<Repo[]>([]);
+    const [error, setError] = useState<string>('');
 
 
     const isRepoConnected = useCallback((repoId: string) => {
         return repos.some(repo => `${repo.repoId}` == repoId);
     }, [repos]);
+
+    const handleSignout = useCallback(() => {
+        setError("Github authentication failed. Please sign in again.")
+        signOut({ redirect: true, callbackUrl: '/login'});
+    }, [signOut, setError]);
 
     // filter the repos based on the filter value
     useEffect(() => {
@@ -60,10 +68,16 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
         })
         .catch(error => console.error("Failed to get state variable:", error))
 
-        getInstallationsList().then((data: Installation[]) => {
-            setInstallations(data);
+        getInstallationsList().then(({status, data}: { status: number, data: Installation[]}) => {
+            if ( status === 401 ) {
+                handleSignout();
+            } else if( status === 200 ) {
+                setInstallations(data);
+            }
         })
-        .catch(error => console.error("Failed to get installations:", error))
+        .catch(error => {
+            console.error("Failed to get installations:", error)
+        })
 
     }, [])
 
@@ -74,8 +88,12 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
             const checkWindow = setInterval(function () {
                 if (appInstallationWindow.closed) {
                     clearInterval(checkWindow); 
-                    getInstallationsList().then((data: Installation[]) => {
-                        setInstallations(data);
+                    getInstallationsList().then(({status, data}: { status: number, data: Installation[]}) => {
+                        if ( status === 401 ) {
+                            handleSignout();
+                        } else if( status === 200 ) {
+                            setInstallations(data);
+                        }
                     }).catch(error => console.error("Failed to get installations:", error))
                 }
             }, 1000);
@@ -98,67 +116,70 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
 
 
     return (
-        <div className="flex flex-row gap-4">
-            <div className="w-2/5 pt-2 ps-2">
-                <Flex flexDirection="col" alignItems="start" className="gap-4">
-                    <div className="w-full">
-                        <Bold>Github Accounts</Bold>
-                        <Text>Your Github accounts and organizations in which you are a member.</Text>
-                        <div className='mt-2 w-full relative'>
-                            <SearchSelect onValueChange={handleInstallationSelect}>
-                                <div key='add-github-account' className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
-                                    + Add Github Account
-                                </div>
-                                {installations.map((installation, index) => (
-                                    <SearchSelectItem value={installation.id} key={index}>
-                                        <Flex alignItems="center">
-                                            <Icon icon={Github} /> <Text>{installation.account}</Text>
-                                        </Flex>
-                                    </SearchSelectItem>
-                                ))}
+        <div className="flex flex-col items-stretch gap-4">
+            { error ? <Text className="text-red-500">{error}</Text> : null }
+            <div className="flex flex-row gap-4">
+                <div className="w-2/5 pt-2 ps-2">
+                    <Flex flexDirection="col" alignItems="start" className="gap-4">
+                        <div className="w-full">
+                            <Bold>Github Accounts</Bold>
+                            <Text>Your Github accounts and organizations in which you are a member.</Text>
+                            <div className='mt-2 w-full relative'>
+                                <SearchSelect onValueChange={handleInstallationSelect}>
+                                    <div key='add-github-account' className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
+                                        + Add Github Account
+                                    </div>
+                                    {installations.map((installation, index) => (
+                                        <SearchSelectItem value={installation.id} key={index}>
+                                            <Flex alignItems="center">
+                                                <Icon icon={Github} /> <Text>{installation.account}</Text>
+                                            </Flex>
+                                        </SearchSelectItem>
+                                    ))}
 
-                            </SearchSelect>
+                                </SearchSelect>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className='w-full relative'>
-                        <Bold>Repositories</Bold>
-                        <div className='mt-2 w-full relative'>
-                            <TextInput icon={SearchIcon} placeholder="Filter..." value={filter} onChange={(e) => setFilter(e.target.value)} />
-                            {filter?.length ?
-                                <div className="absolute right-2 top-2">
-                                    <Button variant="light" icon={XCircle} onClick={() => setFilter('')} />
-                                </div>
+                        <div className='w-full relative'>
+                            <Bold>Repositories</Bold>
+                            <div className='mt-2 w-full relative'>
+                                <TextInput icon={SearchIcon} placeholder="Filter..." value={filter} onChange={(e) => setFilter(e.target.value)} />
+                                {filter?.length ?
+                                    <div className="absolute right-2 top-2">
+                                        <Button variant="light" icon={XCircle} onClick={() => setFilter('')} />
+                                    </div>
+                                    : null
+                                }
+                            </div>
+                            {loading ?
+                                <div className="w-full text-center">
+                                    <LoadingSpinner />
+                                </div> : null
+                            }
+                            {installationRepos.length ?
+                                <Flex flexDirection="col" className="w-full gap-0">
+                                    {filteredInstallationRepos.map((repo: Repo, index: number) => (
+                                        <SearchResultRepo repo={repo} key={index} setRepos={setRepos} isConnected={isRepoConnected(repo.id)} />
+                                    ))}
+                                </Flex>
                                 : null
                             }
                         </div>
-                        {loading ?
-                            <div className="w-full text-center">
-                                <LoadingSpinner />
-                            </div> : null
-                        }
-                        {installationRepos.length ?
-                            <Flex flexDirection="col" className="w-full gap-0">
-                                {filteredInstallationRepos.map((repo: Repo, index: number) => (
-                                    <SearchResultRepo repo={repo} key={index} setRepos={setRepos} isConnected={isRepoConnected(repo.id)} />
-                                ))}
-                            </Flex>
-                            : null
-                        }
-                    </div>
-                </Flex>
-            </div>
+                    </Flex>
+                </div>
 
-            <DashboardCard className="w-4/5">
-                <Bold>Connected Github Repositories</Bold>
-                <Text className="mb-4"> A Connected repository is a loose connection, and are used to set up your Gitwallet Site.</Text>
-                {repos.length === 0 && <Text>No connected repositories. Connect a Github account on the left and select repositories to link.</Text>}
-                <Grid numItems={1} className="gap-2 mb-4">
-                    {repos.map((repo, index) => (
-                        <RepoItem repo={repo} key={index} setRepos={setRepos} />
-                    ))}
-                </Grid>
-            </DashboardCard>
+                <DashboardCard className="w-4/5">
+                    <Bold>Connected Github Repositories</Bold>
+                    <Text className="mb-4"> A Connected repository is a loose connection, and are used to set up your Gitwallet Site.</Text>
+                    {repos.length === 0 && <Text>No connected repositories. Connect a Github account on the left and select repositories to link.</Text>}
+                    <Grid numItems={1} className="gap-2 mb-4">
+                        {repos.map((repo, index) => (
+                            <RepoItem repo={repo} key={index} setRepos={setRepos} />
+                        ))}
+                    </Grid>
+                </DashboardCard>
+            </div>
         </div>
     )
 }
