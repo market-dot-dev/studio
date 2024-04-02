@@ -9,9 +9,14 @@ async function main() {
     
   for (const user of users) {
     console.log('Migrating user: ', user.email);
-    await MigrationService.migrateUser(user);
+
+    if(user.stripeAccountId) {
+      await MigrationService.migrateUser(user);  
+    } else {
+      console.log(`Skipping ${user.email}, does not have a connected stripe account`);
+    }    
   }
-  
+
   console.log('Migration complete');
 }
 
