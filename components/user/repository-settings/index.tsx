@@ -1,97 +1,41 @@
 'use client'
-import { verifyAndConnectRepo, disconnectRepo } from "@/app/services/RepoService";
+import { getInstallationsList, getInstallationRepos, getGithubAppInstallState } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { Card, Flex, Text, TextInput, Button, Grid, Col, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+import { Flex, Text, TextInput, Button, Grid, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
 
-import { Github, SearchIcon, XCircle, Plus } from "lucide-react";
+import { Github, SearchIcon, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-import { getInstallationsList, getInstallationRepos } from "@/app/services/RepoService";
 
-import LoadingSpinner from "../form/loading-spinner";
-import DashboardCard from "../common/dashboard-card";
+import LoadingSpinner from "../../form/loading-spinner";
+import DashboardCard from "../../common/dashboard-card";
+import { RepoItem, SearchResultRepo } from "./repo-items";
+
 const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
+
 type Installation = {
     id: string;
     account: string;
     accountType: string;
 }
 
-function SearchResultRepo({ repo, setRepos, isConnected }: { repo: any, setRepos: any, isConnected: boolean }) {
-
-    const [connecting, setConnecting] = useState<boolean>(false);
-
-    const connect = useCallback(() => {
-        setConnecting(true);
-        verifyAndConnectRepo(repo.id)
-            .then((newRepo: Partial<Repo>) => {
-                setRepos((currentRepos: Partial<Repo>[]) => [...currentRepos, newRepo]);
-
-            })
-            .catch(error => console.error("Failed to connect repo:", error))
-            .finally(() => setConnecting(false));
-    }, [repo.id, setRepos]);
-
-    const classNames = "p-2 border-bottom" + (isConnected ? " opacity-50" : "");
-
-    return (
-        <Flex className={classNames}>
-            <Flex justifyContent="start" className="grow">
-                <Github size={16} className="me-2" />
-                <Text className="text-sm">{repo.name}</Text>
-            </Flex>
-            <div className="text-right">
-                <Button size="xs" onClick={connect} loading={connecting} disabled={isConnected || connecting}>{isConnected ? 'Connected' : 'Connect'}</Button>
-            </div>
-        </Flex>
-    )
-}
-
-function RepoItem({ repo, setRepos }: { repo: Partial<Repo>, setRepos: any }) {
-    const [disconnecting, setDisconnecting] = useState<boolean>(false);
-
-    const disconnect = useCallback(() => {
-        if (!repo.repoId) return;
-
-        setDisconnecting(true);
-        disconnectRepo(repo.repoId)
-            .then(() => {
-                setRepos((currentRepos: Partial<Repo>[]) => currentRepos.filter(item => item.repoId !== repo.repoId));
-            })
-            .catch(error => console.error("Failed to disconnect repo:", error))
-            .finally(() => setDisconnecting(false));
-    }, [repo.repoId, setRepos]);
-
-    return (
-        <div className="flex flex-row justify-items-center text-center">
-                <Github size={16} className="me-2" />
-                <Text>{repo.name}</Text>
-                <div className='grow text-right'>
-                    <Button size='xs' onClick={disconnect} loading={disconnecting} disabled={disconnecting}>Disconnect</Button>
-                </div>
-        </div>
-    )
-}
-
+// timeout for throttling the filtering of repos
 let filterTimeout: any;
 
 export default function RepositorySettings({ repos: initialRepos }: { repos: Partial<Repo>[] }) {
-    const [installationRepos, setInstallationRepos] = useState<any[]>([]);
+    const [installationRepos, setInstallationRepos] = useState<Repo[]>([]);
     const [repos, setRepos] = useState<Partial<Repo>[]>(initialRepos);
     const [installations, setInstallations] = useState<Installation[]>([]);
     const [stateVariable, setStateVariable] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>('');
-    const [filteredInstallationRepos, setFilteredInstallationRepos] = useState<any[]>([]);
+    const [filteredInstallationRepos, setFilteredInstallationRepos] = useState<Repo[]>([]);
 
 
     const isRepoConnected = useCallback((repoId: string) => {
         return repos.some(repo => `${repo.repoId}` == repoId);
     }, [repos]);
 
-    useEffect(() => {
-        setRepos(initialRepos);
-    }, [initialRepos]);
-
+    // filter the repos based on the filter value
     useEffect(() => {
 
         if (filterTimeout) {
@@ -107,35 +51,38 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
             setFilteredInstallationRepos(installationRepos.filter(repo => repo.name.toLowerCase().includes(filter.toLowerCase())));
         }, 500);
 
-
     }, [filter])
 
+    // get the installations list, and the state variable, ensuring that the state variable is unique for a set of installations among other things
     useEffect(() => {
-
-        getInstallationsList().then(({ state, data }: { state: string, data: Installation[] }) => {
+        getGithubAppInstallState().then((state: string) => {
             setStateVariable(state);
+        })
+        .catch(error => console.error("Failed to get state variable:", error))
+
+        getInstallationsList().then((data: Installation[]) => {
             setInstallations(data);
         })
-            .catch(error => console.error("Failed to get installations:", error))
+        .catch(error => console.error("Failed to get installations:", error))
 
     }, [])
 
+    // handle installing of github app on a new account
     const handleAddAccount = useCallback(() => {
         const appInstallationWindow = window.open(`https://github.com/apps/${appName}/installations/select_target?state=${stateVariable}`, '_blank', 'width=800,height=600');
         if (appInstallationWindow) {
             const checkWindow = setInterval(function () {
                 if (appInstallationWindow.closed) {
-                    clearInterval(checkWindow); // Stop checking
-                    getInstallationsList().then(({ state, data }: { state: string, data: Installation[] }) => {
-                        setStateVariable(state);
+                    clearInterval(checkWindow); 
+                    getInstallationsList().then((data: Installation[]) => {
                         setInstallations(data);
                     }).catch(error => console.error("Failed to get installations:", error))
-
                 }
             }, 1000);
         }
     }, [stateVariable]);
 
+    // get repos of a given installation
     const handleInstallationSelect = useCallback((installationId: string) => {
         setLoading(true);
         setInstallationRepos([]);
@@ -159,7 +106,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                         <Text>Your Github accounts and organizations in which you are a member.</Text>
                         <div className='mt-2 w-full relative'>
                             <SearchSelect onValueChange={handleInstallationSelect}>
-                            <div key='add-github-account' className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
+                                <div key='add-github-account' className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
                                     + Add Github Account
                                 </div>
                                 {installations.map((installation, index) => (
@@ -192,7 +139,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                         }
                         {installationRepos.length ?
                             <Flex flexDirection="col" className="w-full gap-0">
-                                {filteredInstallationRepos.map((repo: any, index: number) => (
+                                {filteredInstallationRepos.map((repo: Repo, index: number) => (
                                     <SearchResultRepo repo={repo} key={index} setRepos={setRepos} isConnected={isRepoConnected(repo.id)} />
                                 ))}
                             </Flex>
