@@ -39,9 +39,8 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     }, [repos]);
 
     const handleSignout = useCallback(() => {
-        setError("Github authentication failed. Please sign in again.")
-        signOut({ redirect: true, callbackUrl: '/login'});
-    }, [signOut, setError]);
+        setError("There is an issue with your Github connection that is preventing you from accessing your repositories. Please sign out and sign in again.");
+    }, [setError]);
 
     // filter the repos based on the filter value
     useEffect(() => {
