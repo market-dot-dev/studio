@@ -1,6 +1,9 @@
 import { getSession } from '@/lib/auth';
 import prisma from "@/lib/prisma";
 import { SessionUser } from '../models/Session';
+import { authOptions } from '@/lib/auth';
+import { getServerSession as naGetServerSession, type NextAuthOptions } from "next-auth";
+import Session from "@/app/models/Session";
 
 class SessionService {
   static async getSession() {
@@ -15,6 +18,9 @@ class SessionService {
   static async getSessionUser(): Promise<SessionUser | undefined> {
     const session = await getSession();
     return session?.user;
+  }
+
+  static async fetchSessionUser() {
   }
 
   static async signedIn(){
@@ -83,5 +89,9 @@ class SessionService {
   }
 }
 
+export const getServerSession = async () => {
+  return naGetServerSession(authOptions) as Promise<Session>;
+};
+
 export default SessionService;
-export const { getAccessToken, getCurrentUserId } = SessionService;
+export const { getAccessToken, getCurrentUserId, getSessionUser, signedIn } = SessionService;

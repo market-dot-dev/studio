@@ -1,24 +1,39 @@
 'use client'
 import { Flex, Card, TextInput, Button } from "@tremor/react";
 import { User } from "@prisma/client";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
+import useCurrentSession from "@/app/hooks/use-current-session";
 
-export default function CustomerSettings({ user  }: {user : Partial<User> }) {
+export default function CustomerSettings() {
+    const { currentUser, refreshSession } = useCurrentSession();
+    type UserAttrs = Pick<User, 'name' | 'email' | 'company'>;
+
     const [isSaving, setIsSaving] = useState(false);
-    const [userData, setUserData ] = useState<Partial<User>>(user);
+    const [userData, setUserData ] = useState<UserAttrs>({} as UserAttrs);
+
+    useEffect(() => {
+        if (currentUser) {
+            setUserData({
+                name: currentUser.name || null,
+                email: currentUser.email || null,
+                company: currentUser.company || null,
+            });
+        }
+    }, [currentUser])
 
     const saveChanges = useCallback( async () => {
         setIsSaving(true);
         try {
-            await updateCurrentUser(userData);
+            await updateCurrentUser(userData as Partial<User>);
+            await refreshSession();
         } catch (error) {
             console.log(error);
         } finally {
             setIsSaving(false);
         }
 
-    }, [userData])
+    }, [userData, refreshSession])
 
     return (
         <Card>

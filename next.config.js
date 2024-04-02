@@ -21,6 +21,11 @@ const nextConfig = {
       { hostname: "illustrations.popsy.co" },
     ]
   },
+  logging: {
+    fetches: {
+      fullUrl: true,
+    },
+  },
 };
 
 

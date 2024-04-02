@@ -1,6 +1,6 @@
 "use server";
 
-type Role = 'anonymous' | 'customer' | 'maintainer' | 'admin';
+export type Role = 'anonymous' | 'customer' | 'maintainer' | 'admin';
 
 class RoleService {
   static anonymousPaths = [

@@ -1,16 +1,16 @@
 import { User } from "@prisma/client";
 
 export type SessionUser = {
-  id?: string;
+  id: string;
   name?: string;
+  company?: string;
   username?: string;
   email?: string;
   image?: string;
   onboarding?: string;
   roleId: string;
-  stripeCustomerId?: string;
-  stripePaymentMethodId?: string;
-  stripeProductId?: string;
+  stripeCustomerIds: Record<string, string>;
+  stripePaymentMethodIds: Record<string, string>;
   stripeAccountId?: string;
   stripeAccountDisabled?: boolean;
 };
@@ -22,15 +22,16 @@ export type Session = {
 
 export const createSessionUser = (user: User): SessionUser => {
   return {
+    id: user.id,
     name: user.name || undefined,
+    company: user.company || undefined,
     username: user.username || user.gh_username || undefined,
     email: user.email || undefined,
     roleId: user.roleId || 'anonymous',
     onboarding: user.onboarding || undefined,
     image: user.image || undefined,
-    stripeCustomerId: user.stripeCustomerId || undefined,
-    stripePaymentMethodId: user.stripePaymentMethodId || undefined,
-    stripeProductId: user.stripeProductId || undefined,
+    stripeCustomerIds: (user.stripeCustomerIds || {}) as Record<string, string>,
+    stripePaymentMethodIds: (user.stripePaymentMethodIds || {}) as Record<string, string>,
     stripeAccountId: user.stripeAccountId || undefined,
     stripeAccountDisabled: user.stripeAccountDisabled || false,
   }

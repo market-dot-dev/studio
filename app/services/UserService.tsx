@@ -3,18 +3,31 @@
 import { User } from '@prisma/client';
 import prisma from "@/lib/prisma";
 import { getSession } from '@/lib/auth';
-import StripeService from './StripeService';
-import ProductService from './ProductService';
-import TierService, { createStripePrice } from './TierService';
+import TierService from './TierService';
 import SessionService from './SessionService';
+import Customer from '../models/Customer';
+import { createSessionUser } from '../models/Session';
 
 class UserService {
+  static filterUserAttributes(user: User | Partial<User>) {
+    const attrs: Partial<User> = { ...user };
+
+    delete attrs.roleId;
+
+    return attrs;
+  }
+
   static async getCurrentUser() {
     const session = await getSession();
     const userId = session?.user.id;
     if (!userId) return null;
 
     return UserService.findUser(userId);
+  }
+
+  static async getCurrentSessionUser() {
+    const currentUser = await getCurrentUser();
+    return currentUser ? createSessionUser(currentUser) : null;
   }
 
   static async findUser(id: string): Promise<User | undefined | null> {
@@ -27,109 +40,66 @@ class UserService {
 
   static async updateCurrentUser(userData: Partial<User>) {
     const userId = await SessionService.getCurrentUserId()
-
     if(!userId) return null;
 
-    const result = await UserService.updateUser(userId, userData);
-    //await SessionService.refreshSession();
-    return result;
+    const attrs = UserService.filterUserAttributes(userData);
 
+    const result = await UserService.updateUser(userId, attrs);
+    return result;
   }
 
-  static async updateUser(id: string, userData: Partial<User>) {
+  static async updateUser(id: string, userData: any) {
     return prisma?.user.update({
       where: { id },
       data: userData,
     });
   }
 
-  static async createStripeCustomer(user: User) {
-    if(!user || !user.email) {
-      throw new Error('User does not have an email address.');
-    }
-
-    if(user.stripeCustomerId) {
-      return user.stripeCustomerId;
-    }
-
-    const customer = await StripeService.createCustomer(user.email, user.name ?? '', user.stripePaymentMethodId || undefined);
-    
-    await prisma?.user.update({
-      where: { id: user.id },
-      data: { stripeCustomerId: customer.id },
-    });
-
-    return customer.id;
+  static async getCustomerId(user: User, maintainerStripeAccountId: string) {
+    const lookup = user.stripeCustomerIds as Record<string, string>;
+    return lookup[maintainerStripeAccountId];
   }
 
-  static async clearStripeCustomer(user: User) {
-    if(!user.stripeCustomerId) {
-      return;
-    }
+  static async setCustomerId(user: User, maintainerStripeAccountId: string, customerId: string) {
+    const lookup = user.stripeCustomerIds as Record<string, string>;
+    lookup[maintainerStripeAccountId] = customerId;
 
     await prisma?.user.update({
       where: { id: user.id },
-      data: { stripeCustomerId: null },
+      data: { stripeCustomerIds: lookup },
     });
   }
-};
 
-export const createStripeCustomerById = async (userId: string) => {
-  const user = await UserService.findUser(userId);
-  if(!user) {
-    throw new Error('User not found.');
-  }
+  static async clearCustomerId(user: User, maintainerStripeAccountId: string) {
+    const lookup = user.stripeCustomerIds as Record<string, string>;
+    delete lookup[maintainerStripeAccountId];
 
-  return await UserService.createStripeCustomer(user);
-}
-
-export const clearStripeCustomerById = async (userId: string) => {
-  const user = await UserService.findUser(userId);
-  if(!user) {
-    throw new Error('User not found.');
-  }
-
-  return await UserService.clearStripeCustomer(user);
-}
-
-export const getStripeCustomerById = async (userId: string) => {
-  const user = await UserService.findUser(userId);
-
-  if(!user) {
-    throw new Error('User not found.');
-  }
-
-  return user.stripeCustomerId;
-}
-
-export const getStripePaymentMethodIdById = async (userId: string) => {
-  const user = await UserService.findUser(userId);
-
-  if(!user) {
-    throw new Error('User not found.');
-  }
-
-  return user.stripePaymentMethodId;
-}
-
-export const ensureMaintainerId = async (userId: string) => {
-  return new Promise((resolve, reject) => {
-    ProductService.createProduct(userId).then(() => {
-      return UserService.findUser(userId).then((user) => {
-
-        if(!user) {
-          reject('User not found.');
-        }
-
-        if(!StripeService.userCanSell(user!)) {
-          reject('Maintainer missing required stripe keys');
-        }
-        resolve(userId);
-      });
-    }).catch((error) => {
-      reject(error);
+    await prisma?.user.update({
+      where: { id: user.id },
+      data: { stripeCustomerIds: lookup },
     });
-  });
+  }
+}
+
+export const clearStripeCustomerById = async (userId: string, maintainerUserId: string, maintainerStripeAccountId: string) => {
+  const user = await UserService.findUser(userId);
+  if(!user) {
+    throw new Error('User not found.');
+  }
+
+  const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
+  return await customer.destroyCustomer();
+}
+
+export const createStripeCustomerById = async (userId: string, maintainerUserId: string, stripeAccountId: string) => {
+  
+  const user = await UserService.findUser(userId);
+  if(!user) {
+    throw new Error('User not found.');
+  }
+
+  const customer = new Customer(user, maintainerUserId, maintainerUserId);
+  return await customer.createStripeCustomer();
 }
 
 export const ensureTierId = async (tierId: string) => {
@@ -150,4 +120,4 @@ export const ensureTierId = async (tierId: string) => {
 }
 
 export default UserService;
-export const { createStripeCustomer, getCurrentUser, findUser, updateCurrentUser, clearStripeCustomer } = UserService;
+export const { getCurrentUser, findUser, updateCurrentUser, getCurrentSessionUser } = UserService;
