@@ -53,7 +53,7 @@ class AuthService {
         userData = await UserService.findUser(sessionUser.id);
       }
     } else if (trigger === "signIn") {
-      userData = await AuthService.onSignIn(user || sessionUser);
+      userData = await AuthService.onSignIn(account, user || sessionUser);
     } else if (trigger === "signUp") {
       userData = await AuthService.onCreateUser(account, user || sessionUser);
     } else {
@@ -69,7 +69,8 @@ class AuthService {
     return session;
   }
 
-  static async onSignIn(naUser: NaUser){
+  static async onSignIn(account: any, naUser: NaUser){
+    
     const user = await UserService.findUser(naUser.id);
 
     if(!user){
@@ -80,6 +81,22 @@ class AuthService {
     if (!user.onboarding) {
       user.onboarding = JSON.stringify(defaultOnboardingState);
     }
+    
+    // update refresh/access tokens
+    await prisma.account.update({
+      where: {
+        provider_providerAccountId: {
+          provider: account.provider,
+          providerAccountId: account.providerAccountId,
+        }
+      },
+      data: {
+        access_token: account.access_token,
+        expires_at: account.expires_at,
+        refresh_token: account.refresh_token,
+        refresh_token_expires_in: account.refresh_token_expires_in,
+      }
+    })
 
     return user;
   }
