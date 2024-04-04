@@ -21,8 +21,8 @@ export default function ReportsPage({ params }: { params: { id: string } }) {
                     </Card>
 
                     <div className="mb-4">
-                    <Bold>Organizations Using This Repository</Bold>
-                    <TextInput placeholder="Enter a Repo Name..." className="border-2 " />
+                    <Bold>Search for a Repo:</Bold>
+                    <TextInput placeholder="Enter a Repo Name..." className="border-2 text-lg p-1 border-slate-600" />
                     </div>
 
                     <Bold>Organizations Using This Repository</Bold>
