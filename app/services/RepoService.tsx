@@ -315,9 +315,9 @@ class RepoService {
 
     const repoDetails = await RepoService.getRepo(repoId);
 
-    if (!repoDetails.permissions.admin && !repoDetails.permissions.maintain) {
-      throw new Error('The current user does not own or maintain the repository with the provided ID.');
-    }
+    // if (!repoDetails.permissions.admin && !repoDetails.permissions.maintain) {
+    //   throw new Error('The current user does not own or maintain the repository with the provided ID.');
+    // }
 
     // Insert the repo information into the database
     return prisma.repo.create({
