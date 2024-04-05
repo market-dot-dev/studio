@@ -31,6 +31,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     const [loading, setLoading] = useState<boolean>(false);
     const [filter, setFilter] = useState<string>('');
     const [filteredInstallationRepos, setFilteredInstallationRepos] = useState<Repo[]>([]);
+    const [currentInstallationId, setCurrentInstallationId] = useState<string | null>(null);
     const [error, setError] = useState<string>('');
 
 
@@ -102,6 +103,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     // get repos of a given installation
     const handleInstallationSelect = useCallback((installationId: string) => {
         setLoading(true);
+        setCurrentInstallationId(installationId);
         setInstallationRepos([]);
         getInstallationRepos(parseInt(installationId))
             .then((repos) => {
@@ -159,7 +161,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                             {installationRepos.length ?
                                 <Flex flexDirection="col" className="w-full gap-0">
                                     {filteredInstallationRepos.map((repo: Repo, index: number) => (
-                                        <SearchResultRepo repo={repo} key={index} setRepos={setRepos} isConnected={isRepoConnected(repo.id)} />
+                                        <SearchResultRepo repo={repo} key={index} setRepos={setRepos} installationId={currentInstallationId} isConnected={isRepoConnected(repo.id)} />
                                     ))}
                                 </Flex>
                                 : null

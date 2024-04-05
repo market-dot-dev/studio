@@ -5,13 +5,15 @@ import { Flex, Text, Button } from "@tremor/react";
 import { Github } from "lucide-react";
 import { useState, useCallback } from "react";
 
-export function SearchResultRepo({ repo, setRepos, isConnected }: { repo: Repo, setRepos: any, isConnected: boolean }) {
+export function SearchResultRepo({ repo, setRepos, isConnected, installationId }: { repo: Repo, setRepos: any, isConnected: boolean, installationId: string | null}) {
 
     const [connecting, setConnecting] = useState<boolean>(false);
 
     const connect = useCallback(() => {
+        if (!repo.id || !installationId) return;
+        
         setConnecting(true);
-        verifyAndConnectRepo(repo.id)
+        verifyAndConnectRepo(repo.id, installationId)
             .then((newRepo: Partial<Repo>) => {
                 setRepos((currentRepos: Partial<Repo>[]) => [...currentRepos, newRepo]);
 

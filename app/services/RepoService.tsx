@@ -254,6 +254,8 @@ class RepoService {
 
   }
 
+  
+
   // get the connected (verified) repos for the current user
   static async getRepos() {
     // get repos of a given userId from the database
@@ -304,7 +306,7 @@ class RepoService {
   }
 
   // verify and connect a repo to the current user
-  static async verifyAndConnectRepo(repoId: string) {
+  static async verifyAndConnectRepo(repoId: string, installationId: string) {
 
     const userId = await SessionService.getCurrentUserId();
 
@@ -312,12 +314,13 @@ class RepoService {
       throw new Error('No user found.');
     }
 
+    const installationRepos = await RepoService.getInstallationRepos(parseInt(installationId));
+    // check if the repo is part of the installation
+    const repoDetails = installationRepos.find((repo: any) => repo.id === parseInt(repoId));
 
-    const repoDetails = await RepoService.getRepo(repoId);
-
-    // if (!repoDetails.permissions.admin && !repoDetails.permissions.maintain) {
-    //   throw new Error('The current user does not own or maintain the repository with the provided ID.');
-    // }
+    if (!repoDetails) {
+      throw new Error('The repository is not part of the installation.');
+    }
 
     // Insert the repo information into the database
     return prisma.repo.create({
