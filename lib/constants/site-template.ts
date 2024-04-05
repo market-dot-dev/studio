@@ -3,6 +3,7 @@ export const siteDescription = 'Your Site Description';
 export const projectName = 'Your Open Source Project';
 export const projectDescription = 'Your project description';
 export const homepageTitle = 'Welcome';
+
 export const homepageTemplate = `<Section size="3">
     <Container size="3">
         <Flex direction="column" gap="6" align="center">
