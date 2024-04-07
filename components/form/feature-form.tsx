@@ -34,7 +34,7 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
 
   useEffect(() => {
     setValue('id', initialFeature?.id || '');
-    setValue('name', initialFeature?.name || !initialFeature?.isEnabled ? service.name : '');
+    setValue('name', initialFeature?.name ? initialFeature.name : !initialFeature?.isEnabled ? service.name : '');
     setValue('uri', initialFeature?.uri || '');
     setValue('description', initialFeature?.description || '');
     setValue('serviceId', serviceId || '');
