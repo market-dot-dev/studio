@@ -15,7 +15,7 @@ class LeadsService {
 
     static async getDependentOwners(repoId: string) {
         // Add your logic here
-        const response = await fetch(`https://radar-api.ecosyste.ms/api/v1/repositories/${repoId}/dependent_owners?page=1&per_page=2`);
+        const response = await fetch(`https://radar-api.ecosyste.ms/api/v1/repositories/${repoId}/dependent_owners`);
         // if it is 404 return empty array
         if (response.status === 404) {
             return [];
