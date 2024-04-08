@@ -1,53 +1,27 @@
 'use client'
-import { Repo } from "@prisma/client";
+import { Lead, Repo } from "@prisma/client";
 import { Bold, Card, Text, Badge, MultiSelect, MultiSelectItem } from "@tremor/react";
-import mockData from "./mockdata"
+
 import { useCallback, useState } from "react";
-import { getDependentOwners } from "@/app/services/LeadsService";
 
+import { getRepoLeads } from "@/app/services/RepoService";
 
-type Lead = {
-    id: number;
-    host: string;
-    login: string;
-    name: string;
-    uuid: string;
-    kind: string;
-    description: string | null;
-    email: string | null;
-    website: string | null;
-    location: string | null;
-    twitter: string | null;
-    company: string | null;
-    icon_url: string;
-    repositories_count: number;
-    last_synced_at: string;
-    html_url: string;
-    total_stars: number | null;
-    dependent_repos_count: number;
-    followers: number | null;
-    following: number | null;
-    created_at: string;
-    updated_at: string;
-    maintainers: string[];
-
-}
 
 export default function LeadsSearch({ repos }: { repos: Repo[] }) {
-
+    
     const [leadsCache, setLeadsCache] = useState({} as Record<string, Lead[]>);
     const [selectedRepos, setSelectedRepos] = useState<string[]>([]);
 
     const fetchLeadDataForRepo = async (repoId : string) => {
-        return await getDependentOwners(repoId);
+        return await getRepoLeads(repoId);
     };
 
     const handleReposSelected = useCallback(async (selected: string[]) => {
-        for (const repoId of selected) {
-            if (!leadsCache[repoId]) {
+        for (const dbRepoId of selected) {
+            if (!leadsCache[dbRepoId]) {
                 // If data for this repoId is not cached, fetch it and update the cache
-                fetchLeadDataForRepo(repoId).then((fetchedLeads: Lead[]) => {
-                    setLeadsCache((prev) => ({...prev, [repoId]: fetchedLeads}));
+                fetchLeadDataForRepo(dbRepoId).then((fetchedLeads: Lead[]) => {
+                    setLeadsCache((prev) => ({...prev, [dbRepoId]: fetchedLeads}));
                 });
             }
         }
@@ -61,7 +35,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 { repos.length ?
                 <MultiSelect onValueChange={handleReposSelected}>
                     {repos.map((repo, index) => (
-                        <MultiSelectItem key={index} value={repo.repoId}>{repo.name}</MultiSelectItem>
+                        <MultiSelectItem key={index} value={repo.id}>{repo.name}</MultiSelectItem>
                     ))}
                 </MultiSelect>
 
@@ -80,47 +54,28 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
             <Bold>Organizations Using This Repository</Bold>
 
-             {/* {displayedLeads.map((lead, index) => (
-                <Card key={index} className="flex flex-col my-2">
-                    <Badge>{repo}</Badge>
-                    <div>
-                        <Bold>{lead.name}</Bold>
-                        <Badge>Organization</Badge>
-                    </div>
-                    <Text>{lead.description}</Text>
-                    <Text>Dependent Repositories: {lead.dependent_repos_count}</Text>
-                    <Text>Total Repositories: {lead.repositories_count}</Text>
-                    <Text>Website: {lead.website}</Text>
-                    <Text>Email: {lead.email}</Text>
-                    <Text>Twitter: {lead.twitter}</Text>
-                    <Text>Location: {lead.location}</Text>
-                    <Text>Company: {lead.company}</Text>
-                    <Text>Maintainers: {lead.maintainers.join(', ')}</Text>
-                </Card>
-            ))} */}
-
-            { selectedRepos.map((repoId, cacheIndex) => {
-                const repo = repos.find(repo => repo.repoId === repoId);
+            { selectedRepos.map((id, cacheIndex) => {
+                const repo = repos.find(repo => repo.id === id);
                 return (<div key={cacheIndex}>
-                        { leadsCache[repoId]?.map((lead, index) => (
-                            <Card key={index} className="flex flex-col my-2">
-                                <Badge>{repo?.name}</Badge>
-                                <div>
-                                    <Bold>{lead.name}</Bold>
-                                    <Badge>Organization</Badge>
-                                </div>
-                                <Text>{lead.description}</Text>
-                                <Text>Dependent Repositories: {lead.dependent_repos_count}</Text>
-                                <Text>Total Repositories: {lead.repositories_count}</Text>
-                                <Text>Website: {lead.website}</Text>
-                                <Text>Email: {lead.email}</Text>
-                                <Text>Twitter: {lead.twitter}</Text>
-                                <Text>Location: {lead.location}</Text>
-                                <Text>Company: {lead.company}</Text>
-                                <Text>Maintainers: {lead.maintainers.join(', ')}</Text>
-                            </Card>
-                        ))}
-                    </div>)
+                    { leadsCache[id]?.map((lead, index) => (
+                        <Card key={index} className="flex flex-col my-2">
+                            <Badge>{repo?.name}</Badge>
+                            <div>
+                                <Bold>{lead.name}</Bold>
+                                <Badge>Organization</Badge>
+                            </div>
+                            <Text>{lead.description}</Text>
+                            <Text>Dependent Repositories: {lead.dependentReposCount}</Text>
+                            <Text>Total Repositories: {lead.repositoriesCount}</Text>
+                            <Text>Website: {lead.website}</Text>
+                            <Text>Email: {lead.email}</Text>
+                            <Text>Twitter: {lead.twitter}</Text>
+                            <Text>Location: {lead.location}</Text>
+                            <Text>Company: {lead.company}</Text>
+                            <Text>Maintainers: {JSON.parse(lead.maintainers).join(', ')}</Text>
+                        </Card>
+                    ))}
+                </div>)
             })}
         </>
     )

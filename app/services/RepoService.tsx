@@ -4,7 +4,8 @@ import { nanoid } from 'nanoid';
 import prisma from "@/lib/prisma";
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers'
-import { GithubAppInstallation } from "@prisma/client";
+import { GithubAppInstallation, Lead } from "@prisma/client";
+import LeadsService from "./LeadsService";
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '';
 
 class RepoService {
@@ -322,26 +323,70 @@ class RepoService {
       throw new Error('The repository is not part of the installation.');
     }
 
+    // pull the dependendant owners of the repo id from radar API
+    const leads = await LeadsService.getDependentOwners(repoDetails.id.toString()) as any[];
+
+    const sanitizedLeads = leads.map(lead => ({
+      host: lead.host,
+      login: lead.login,
+      name: lead.name ?? '',
+      uuid: lead.uuid,
+      kind: lead.kind,
+      description: lead.description || null,
+      email: lead.email || null,
+      website: lead.website || null,
+      location: lead.location || null,
+      twitter: lead.twitter || null,
+      company: lead.company || null,
+      iconUrl: lead.icon_url,
+      repositoriesCount: lead.repositories_count || 0,
+      lastSyncedAt: new Date(lead.last_synced_at),
+      htmlUrl: lead.html_url,
+      totalStars: lead.total_stars || null,
+      dependentReposCount: lead.dependent_repos_count,
+      followers: lead.followers || null,
+      following: lead.following || null,
+      createdAt: new Date(lead.created_at), 
+      updatedAt: new Date(lead.updated_at),
+      maintainers: JSON.stringify(lead.maintainers || []),
+    }));
+
     // Insert the repo information into the database
     return prisma.repo.create({
       data: {
         repoId: repoDetails.id.toString(),
         name: repoDetails.name,
         url: repoDetails.html_url,
-        userId, // Assuming this is the ID in your own user table
-      },
+        userId, 
+        leads: {
+          create: sanitizedLeads
+        }
+      }
     });
-
   }
 
   static async disconnectRepo(repoId: string) {
+    const userId = await SessionService.getCurrentUserId();
     return prisma.repo.delete({
       where: {
         repoId: `${repoId}`,
+        userId,
+      },
+    });
+  }
+
+  static async getRepoLeads(dbRepoId: string) {
+    const userId = await SessionService.getCurrentUserId();
+    return prisma.lead.findMany({
+      where: {
+        dbRepoId,
+        repo: {
+          userId
+        }
       },
     });
   }
 }
 
 export default RepoService;
-export const { getRepos, verifyAndConnectRepo, disconnectRepo, getInstallationsList, getInstallationRepos, getRepo, getGithubAppInstallState } = RepoService;
+export const { getRepos, verifyAndConnectRepo, disconnectRepo, getInstallationsList, getInstallationRepos, getRepo, getGithubAppInstallState, getRepoLeads } = RepoService;
