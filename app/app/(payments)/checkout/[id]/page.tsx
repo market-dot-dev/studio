@@ -1,7 +1,5 @@
 "use client";
 
-import { useSession } from "next-auth/react";
-import Image from "next/image";
 import { Accordion, AccordionBody, AccordionHeader, Badge, Flex } from "@tremor/react";
 import RegistrationSection from "./registration-section";
 import useTier from "@/app/hooks/use-tier";
@@ -29,11 +27,12 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const [maintainer, isMaintainerLoading] = useUser(tier?.userId);
   const [features, isFeaturesLoading] = useFeatures(id);
 
-  const checkoutMaintainer = maintainer?.name;
   const checkoutProject = maintainer?.projectName || maintainer?.name;
   const projectDescription = maintainer?.projectDescription || projectDescriptionDefault;
   const checkoutPrice = tier?.price;
   const checkoutTier = tier?.name;
+  const trialDays = tier?.trialDays || 0;
+  const trialOffered = trialDays > 0;
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
@@ -79,7 +78,10 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                 <Bold>{checkoutProject}: {checkoutTier}</Bold>
               </div>
               <div className="mb-4 leading-6">
-                <Text>{checkoutCurrency + " " + checkoutPrice} per month</Text>
+                <Text>
+                  {checkoutCurrency + " " + checkoutPrice} per {tier?.cadence}
+                  { trialOffered && <>after {trialDays}d free trial</> }
+                </Text>
               </div>
             </div>
           }

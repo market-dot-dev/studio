@@ -1,11 +1,11 @@
 "use client";
 // tier-form.tsx
 
-import { ChangeEvent, use, useEffect, useState } from 'react';
-import { Flex, Text, Button, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab } from "@tremor/react"
+import { ChangeEvent, useEffect, useState } from 'react';
+import { Flex, Text, Button, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab, Card } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
-import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
+import { createTier, destroyTier, updateTier, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
@@ -16,6 +16,8 @@ import DashboardCard from '../common/dashboard-card';
 import { Feature } from '@prisma/client';
 import LoadingDots from "@/components/icons/loading-dots";
 import {
+	Select,
+	SelectItem,
 	Table,
 	TableHead,
 	TableHeaderCell,
@@ -23,6 +25,7 @@ import {
 	TableRow,
 	TableCell,
 } from "@tremor/react";
+import LinkButton from '../common/link-button';
 
 
 interface TierFormProps {
@@ -104,7 +107,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [isSaving, setIsSaving] = useState(false);
 
 	const handleInputChange = (
-		e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+		e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> | { target: { name: string; value: string } }
 	) => {
 		const { name, value } = e.target;
 		const updatedTier = { ...tier, [name]: value } as Tier;
@@ -240,6 +243,51 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						/>
 					</div>
 
+					<Card>
+						<div>WIP</div>
+
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Days</label>
+							<NumberInput
+								id="trialDays"
+								placeholder="Annual price (dollars)"
+								required
+								name="trialDays"
+								value={tier.trialDays || 0}
+								onChange={handleInputChange}
+							/>
+						</div>
+
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Annual Price</label>
+							<NumberInput
+								id="priceAnnual"
+								placeholder="Annual price (dollars)"
+								required
+								name="priceAnnual"
+								value={tier.priceAnnual || 0}
+								onChange={handleInputChange}
+							/>
+						</div>
+
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Billing Cadence month, year, quarter,once</label>
+							<Select
+								id="cadence"
+								placeholder="Billing cadence"
+								required
+								name="priceAnnual"
+								value={tier.cadence || 'month'}
+								onValueChange={(value: string) => handleInputChange({ target: { name: 'cadence', value } })}
+							>
+								<SelectItem value="month">month</SelectItem>
+								<SelectItem value="year">year</SelectItem>
+								<SelectItem value="quarter">quarter</SelectItem>
+								<SelectItem value="once">once</SelectItem>
+							</Select>
+						</div>
+					</Card>
+
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Description</label>
 						<Textarea
@@ -304,6 +352,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						</DashboardCard>
 					</div>
 
+					<Card>
+						<Button variant="secondary" className="w-full" onClick={() => destroyTier(tier.id as string)}>Delete Tier</Button>
+					</Card>
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Version History</label>

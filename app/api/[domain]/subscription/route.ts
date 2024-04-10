@@ -1,4 +1,4 @@
-import SubscriptionService from "@/app/services/SubscriptionService";
+import { onClickSubscribe } from "@/app/services/StripeService";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
@@ -25,7 +25,9 @@ export async function POST(req: Request, res: Response) {
         return new Response(JSON.stringify({ error: "Tier not found" }), { status: 404 });
     }
 
-    const response = SubscriptionService.createSubscription(session.user.id, latestTierVersion.id);
+    await onClickSubscribe(session.user.id, latestTierVersion.id);
+
+    const response = { success: true };
     
     return new Response(JSON.stringify(response), { status: 200 });
 }

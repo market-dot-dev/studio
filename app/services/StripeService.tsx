@@ -9,11 +9,14 @@ import prisma from "@/lib/prisma";
 import DomainService from './domain-service';
 import SessionService from './SessionService';
 import Customer from '../models/Customer';
+import { createLocalCharge } from './charge-service';
 
 export type StripeCard = {
   brand: string;
   last4: string;
 }
+
+export type SubscriptionCadence = 'month' | 'year' | 'quarter' | 'once';
 
 interface HealthCheckResult {
   canSell: boolean;
@@ -168,15 +171,28 @@ class StripeService {
     return true;
   }
 
-  async createPrice(stripeProductId: string, price: number) {
-    const newPrice = await this.stripe.prices.create({
+  
+
+  async createPrice(stripeProductId: string, price: number, cadence: SubscriptionCadence  = 'month') {
+    const attrs: any = {
       unit_amount: price * 100, // Stripe requires the price in cents
       currency: 'usd',
       product: stripeProductId,
-      recurring: { interval: 'month' },
-    });
+    };
 
-    return newPrice;
+    if(cadence === 'quarter') {
+      attrs['recurring'] = {
+        interval: 'month',
+        interval_count: 3
+      }
+    } else if(cadence !== 'once'){
+      attrs['recurring'] = {
+        interval: cadence
+      };
+    }
+
+
+    return await this.stripe.prices.create(attrs);
   }
 
   async destroyPrice(stripePriceId: string) {
@@ -272,15 +288,44 @@ class StripeService {
     await this.stripe.customers.del(customerId);
   }
 
-  async createSubscription(stripeCustomerId: string, stripePriceId: string, stripeAccountId: string) {
+  async createSubscription(stripeCustomerId: string, stripePriceId: string, trialDays: number = 0) {
     return await this.stripe.subscriptions.create({
       customer: stripeCustomerId,
       items: [{ price: stripePriceId! }],
       payment_behavior: 'error_if_incomplete',
       expand: ['latest_invoice.payment_intent'],
+      trial_period_days: trialDays,
     },{
       idempotencyKey: `${stripeCustomerId}-${stripePriceId}`,
     });
+  }
+
+  async createCharge(stripeCustomerId: string, stripePriceId: string, price: number, stripePaymentMethodId: string) {
+    const timestampMod10 = (Date.now() % 10000).toString().padStart(4, '0'); // Convert to string and pad with leading zeros if necessary
+
+    const invoice = await this.stripe.invoices.create({
+      customer: stripeCustomerId,
+      auto_advance: true,
+      currency: "usd",
+      collection_method: "charge_automatically",
+    });
+  
+    await this.stripe.invoiceItems.create({
+      customer: stripeCustomerId,
+      invoice: invoice.id,
+      price: stripePriceId,
+    });
+  
+    const finalInvoice = await this.stripe.invoices.finalizeInvoice(invoice.id);
+
+    const confirmedPaymentIntent = await this.stripe.paymentIntents.confirm(finalInvoice.payment_intent, {
+      payment_method: stripePaymentMethodId,
+    }, {
+      idempotencyKey: `${stripeCustomerId}-${stripePriceId}-${timestampMod10}`,
+    });
+
+    return confirmedPaymentIntent;
+
   }
 
   async updateSubscription(subscriptionId: string, priceId: string) {
@@ -404,27 +449,38 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
 
   console.log('[purchase]: maintainer, product check');
 
-  if(await stripeService.isSubscribed(stripeCustomerId, tier.stripePriceId)) {
-    console.log('[purchase]: FAIL already subscribed');
-    throw new Error('You are already subscribed to this product. If you dont see it in your dashboard, please contact support.');
-  } else {
-    subscription = await stripeService.createSubscription(stripeCustomerId, tier.stripePriceId!, maintainer.stripeAccountId);
-  }
+  if(tier.cadence === 'once') {
+    const charge = await stripeService.createCharge(stripeCustomerId, tier.stripePriceId!, tier.price, await customer.getStripePaymentMethodId());
 
-  if (!subscription) {
-    console.log('[purchase]: FAIL could not create stripe subscription');
-    throw new Error('Error creating subscription on stripe');
-  } else {
-    console.log('[purchase]: stripe subscription created');
-    const invoice = subscription.latest_invoice as Stripe.Invoice;
-
-    if (invoice.status === 'paid') {
-      await createLocalSubscription(userId, tierId);
-      console.log('[purchase]: invoice paid');
-    } else if (invoice.payment_intent) {
-      throw new Error('Subscription attempt returned a payment intent, which should never happen.');
+    if(charge.status === 'succeeded') {
+      await createLocalCharge(userId, tierId, charge.id);
     } else {
-      throw new Error(`Unknown error occurred: subscription status was ${subscription.status}`);
+      console.log('[purchase]: FAIL charge failed', charge);
+      throw new Error('Error creating charge on stripe: ' + charge.status);
+    }
+  } else {
+    if(await stripeService.isSubscribed(stripeCustomerId, tier.stripePriceId)) {
+      console.log('[purchase]: FAIL already subscribed');
+      throw new Error('You are already subscribed to this product. If you dont see it in your dashboard, please contact support.');
+    } else {
+      subscription = await stripeService.createSubscription(stripeCustomerId, tier.stripePriceId!, tier.trialDays);
+    }
+
+    if (!subscription) {
+      console.log('[purchase]: FAIL could not create stripe subscription');
+      throw new Error('Error creating subscription on stripe');
+    } else {
+      console.log('[purchase]: stripe subscription created');
+      const invoice = subscription.latest_invoice as Stripe.Invoice;
+
+      if (invoice.status === 'paid') {
+        await createLocalSubscription(userId, tierId, subscription.id);
+        console.log('[purchase]: invoice paid');
+      } else if (invoice.payment_intent) {
+        throw new Error('Subscription attempt returned a payment intent, which should never happen.');
+      } else {
+        throw new Error(`Unknown error occurred: subscription status was ${subscription.status}`);
+      }
     }
   }
 };

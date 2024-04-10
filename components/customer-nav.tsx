@@ -26,7 +26,7 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 export default function CustomerNav({ children }: { children: ReactNode  }) {
   const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
-
+  
   const tabs = useMemo(() => {
     return [
       {
@@ -39,6 +39,12 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
         name: "Subscriptions",
         href: "/subscriptions",
         isActive: urlSegments[0] === "subscriptions",
+        icon: <KanbanSquare width={18} />,
+      },
+      {
+        name: "Purchases",
+        href: "/charges",
+        isActive: urlSegments[0] === "charges",
         icon: <KanbanSquare width={18} />,
       },
       {

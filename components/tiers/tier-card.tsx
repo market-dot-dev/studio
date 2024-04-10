@@ -49,7 +49,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
         <div className="flex justify-center items-baseline my-4">
           <span className={`mr-1 text-4xl font-extrabold ${textClasses}`}>${tier.price}</span>
           /&nbsp;
-          <span className="text-gray-500 dark:text-gray-400">{'month' /*tier.frequency */}</span>
+          <span className="text-gray-500 dark:text-gray-400">{tier.cadence}</span>
         </div>
         <Text className="text-center text-xs text-gray-400">What&apos;s Included:</Text>
         <TierFeatureList features={tierFeatures}  darkMode={darkMode} />
