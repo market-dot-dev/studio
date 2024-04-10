@@ -229,6 +229,7 @@ model WaitlistUser {
 model Repo {
   id        String   @id @default(cuid())
   repoId    String   @unique
+  radarId   Int?
   name      String
   url       String?
   createdAt DateTime @default(now())
@@ -327,4 +328,6 @@ model Lead {
   
   dbRepoId                String
   repo                  Repo      @relation(fields: [dbRepoId], references: [id], onDelete: Cascade)
+  
+  @@unique([host, uuid], name: "host_uuid_unique")
 }

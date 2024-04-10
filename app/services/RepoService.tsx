@@ -323,44 +323,26 @@ class RepoService {
       throw new Error('The repository is not part of the installation.');
     }
 
-    // pull the dependendant owners of the repo id from radar API
-    const leads = await LeadsService.getDependentOwners(repoDetails.id.toString()) as any[];
+    let radarId = null;
+    try {
+      const repoLookupResult = await LeadsService.lookup('https://github.com/expressjs/express');
+      radarId = repoLookupResult.id;
+    } catch (error) {
+      console.error('Failed to lookup repository:', error);
+    }
 
-    const sanitizedLeads = leads.map(lead => ({
-      host: lead.host,
-      login: lead.login,
-      name: lead.name ?? '',
-      uuid: lead.uuid,
-      kind: lead.kind,
-      description: lead.description || null,
-      email: lead.email || null,
-      website: lead.website || null,
-      location: lead.location || null,
-      twitter: lead.twitter || null,
-      company: lead.company || null,
-      iconUrl: lead.icon_url,
-      repositoriesCount: lead.repositories_count || 0,
-      lastSyncedAt: new Date(lead.last_synced_at),
-      htmlUrl: lead.html_url,
-      totalStars: lead.total_stars || null,
-      dependentReposCount: lead.dependent_repos_count,
-      followers: lead.followers || null,
-      following: lead.following || null,
-      createdAt: new Date(lead.created_at), 
-      updatedAt: new Date(lead.updated_at),
-      maintainers: JSON.stringify(lead.maintainers || []),
-    }));
+    if (!radarId) {
+      throw new Error('Failed to lookup repository.');
+    }
 
     // Insert the repo information into the database
     return prisma.repo.create({
       data: {
         repoId: repoDetails.id.toString(),
+        radarId,
         name: repoDetails.name,
         url: repoDetails.html_url,
-        userId, 
-        leads: {
-          create: sanitizedLeads
-        }
+        userId
       }
     });
   }

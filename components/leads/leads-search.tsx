@@ -1,43 +1,72 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { Bold, Card, Text, Badge, MultiSelect, MultiSelectItem } from "@tremor/react";
+import { Bold, Card, Text, Badge, SearchSelect, SearchSelectItem, Button } from "@tremor/react";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-import { getRepoLeads } from "@/app/services/RepoService";
+import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList } from "@/app/services/LeadsService";
 
+type LeadKey = {
+    host: string;
+    uuid: string;
+}
 
 export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     
-    const [leadsCache, setLeadsCache] = useState({} as Record<string, Lead[]>);
-    const [selectedRepos, setSelectedRepos] = useState<string[]>([]);
+    const [selectedRepo, setSelectedRepo] = useState<Repo | null>(null);
+    const [shortListedLeads, setShortListedLeads] = useState<LeadKey[]>([]);
+    const [radarResults, setRadarResults] = useState<any[]>([]);
+    const [isAddingToShortlist, setIsAddingToShortlist] = useState<boolean>(false);
 
-    const fetchLeadDataForRepo = async (repoId : string) => {
-        return await getRepoLeads(repoId);
+    const fetchLeadDataForRepo = async (repoId : number) => {
+        return await getDependentOwners(repoId);
     };
 
-    const handleReposSelected = useCallback(async (selected: string[]) => {
-        for (const dbRepoId of selected) {
-            if (!leadsCache[dbRepoId]) {
-                // If data for this repoId is not cached, fetch it and update the cache
-                fetchLeadDataForRepo(dbRepoId).then((fetchedLeads: Lead[]) => {
-                    setLeadsCache((prev) => ({...prev, [dbRepoId]: fetchedLeads}));
-                });
-            }
+    const handleRepoSelected = useCallback((selectedIndex: string) => {
+        setSelectedRepo(repos[parseInt(selectedIndex)]);
+    }, [setSelectedRepo, setRadarResults]);
+
+    const addToShortlist = useCallback((lead : any) => {
+        
+        if( !selectedRepo ) {
+            return;
         }
-        setSelectedRepos(selected);
-    }, [leadsCache]);
+
+        // Add to shortlist
+        setIsAddingToShortlist(true);
+        addLeadToShortlist(lead, selectedRepo.id).then(res => {
+            setShortListedLeads((prev: LeadKey[]) => [...prev, { host: lead.host, uuid: lead.uuid }]);
+        })
+        .catch((err: any) => {
+            console.error('Failed to add to shortlist:', err);
+        })
+        .finally(() => {
+            setIsAddingToShortlist(false);
+        });
+    }, [selectedRepo])
+
+    useEffect(() => {
+        if( !selectedRepo?.radarId ) {
+            return;
+        }
+        fetchLeadDataForRepo(selectedRepo.radarId).then((fetchedLeads: any[]) => {
+            setRadarResults(fetchedLeads);
+        });
+        getShortlistedLeadsKeysList(selectedRepo.id).then((leads: LeadKey[]) => {
+            setShortListedLeads(leads);
+        });
+    }, [selectedRepo])
 
     return (
         <>
             <div className="mb-4">
                 <Bold>Search for a Repo:</Bold>
                 { repos.length ?
-                <MultiSelect onValueChange={handleReposSelected}>
+                <SearchSelect onValueChange={handleRepoSelected}>
                     {repos.map((repo, index) => (
-                        <MultiSelectItem key={index} value={repo.id}>{repo.name}</MultiSelectItem>
+                        <SearchSelectItem key={index} value={`${index}`}>{repo.name}</SearchSelectItem>
                     ))}
-                </MultiSelect>
+                </SearchSelect>
 
                 :
                     <Card
@@ -53,30 +82,35 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             </div>
 
             <Bold>Organizations Using This Repository</Bold>
-
-            { selectedRepos.map((id, cacheIndex) => {
-                const repo = repos.find(repo => repo.id === id);
-                return (<div key={cacheIndex}>
-                    { leadsCache[id]?.map((lead, index) => (
-                        <Card key={index} className="flex flex-col my-2">
-                            <Badge>{repo?.name}</Badge>
-                            <div>
-                                <Bold>{lead.name}</Bold>
-                                <Badge>Organization</Badge>
-                            </div>
-                            <Text>{lead.description}</Text>
-                            <Text>Dependent Repositories: {lead.dependentReposCount}</Text>
-                            <Text>Total Repositories: {lead.repositoriesCount}</Text>
-                            <Text>Website: {lead.website}</Text>
-                            <Text>Email: {lead.email}</Text>
-                            <Text>Twitter: {lead.twitter}</Text>
-                            <Text>Location: {lead.location}</Text>
-                            <Text>Company: {lead.company}</Text>
-                            <Text>Maintainers: {JSON.parse(lead.maintainers).join(', ')}</Text>
-                        </Card>
-                    ))}
-                </div>)
-            })}
+            
+            { radarResults?.map((lead, index) => {
+                const isShortlisted = shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
+                return (<Card key={index} className="flex flex-col my-2 relative">
+                    {/* <Badge>{repo?.name}</Badge> */}
+                    <div>
+                        <Bold>{lead.name}</Bold>
+                        <Badge>Organization</Badge>
+                    </div>
+                    <Text>{lead.description}</Text>
+                    <Text>Dependent Repositories: {lead.dependent_repos_count}</Text>
+                    <Text>Total Repositories: {lead.repositories_count}</Text>
+                    <Text>Website: {lead.website}</Text>
+                    <Text>Email: {lead.email}</Text>
+                    <Text>Twitter: {lead.twitter}</Text>
+                    <Text>Location: {lead.location}</Text>
+                    <Text>Company: {lead.company}</Text>
+                    <Text>Maintainers: {lead.maintainers.join(', ')}</Text>
+                    <div className="flex flex-col absolute top-10 right-10">
+                        {isShortlisted && <Badge>Shortlisted</Badge>}
+                        <Button
+                            loading={isAddingToShortlist}
+                            disabled={isShortlisted || isAddingToShortlist}
+                            onClick={() => addToShortlist(lead)} 
+                        >Add to Shortlist</Button>
+                    </div>
+                </Card>)
+                })}
+                
         </>
     )
 }
