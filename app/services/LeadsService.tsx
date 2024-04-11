@@ -44,16 +44,14 @@ class LeadsService {
             location: leadData.location || null,
             twitter: leadData.twitter || null,
             company: leadData.company || null,
-            iconUrl: leadData.icon_url,
-            repositoriesCount: leadData.repositories_count || 0,
-            lastSyncedAt: new Date(leadData.last_synced_at),
-            htmlUrl: leadData.html_url,
-            totalStars: leadData.total_stars || null,
-            dependentReposCount: leadData.dependent_repos_count,
+            icon_url: leadData.icon_url,
+            repositories_count: leadData.repositories_count || 0,
+            last_synced_at: new Date(leadData.last_synced_at),
+            html_url: leadData.html_url,
+            total_stars: leadData.total_stars || null,
+            dependent_repos_count: leadData.dependent_repos_count,
             followers: leadData.followers || null,
             following: leadData.following || null,
-            createdAt: new Date(leadData.created_at), 
-            updatedAt: new Date(leadData.updated_at),
             maintainers: JSON.stringify(leadData.maintainers || []),
         }
 
@@ -74,6 +72,18 @@ class LeadsService {
               },
             },
           },
+        });
+    }
+
+    static async removeLeadFromShortlist(leadId: number) {
+        const userId = await SessionService.getCurrentUserId();
+        return await prisma.lead.delete({
+            where: {
+                id: leadId,
+                repo: {
+                  userId,
+                }
+            }
         });
     }
 
@@ -119,9 +129,9 @@ class LeadsService {
         return response.json();
     }
 
-    static async getDependentOwners(radarId: number) {
+    static async getDependentOwners(radarId: number, page: number, perPage: number, showOnlyOrgs: boolean) {
         // Add your logic here
-        const response = await fetch(`https://radar-api.ecosyste.ms/api/v1/repositories/${radarId}/dependent_owners`);
+        const response = await fetch(`https://radar-api.ecosyste.ms/api/v1/repositories/${radarId}/dependent_owners?per_page=${perPage}&page=${page}` + (showOnlyOrgs ? '&kind=organization' : ''));
         // if it is 404 return empty array
         if (response.status === 404) {
             return [];
@@ -132,4 +142,4 @@ class LeadsService {
 }
 
 export default LeadsService;
-export const { getDependentOwners, addLeadToShortlist, getShortlistedLeads, getShortlistedLeadsKeysList } = LeadsService;
+export const { getDependentOwners, addLeadToShortlist, getShortlistedLeads, getShortlistedLeadsKeysList, lookup } = LeadsService;

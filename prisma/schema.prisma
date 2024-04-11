@@ -314,17 +314,17 @@ model Lead {
   location              String?
   twitter               String?
   company               String?
-  iconUrl               String?
-  repositoriesCount     Int
-  lastSyncedAt          DateTime
-  htmlUrl               String
-  totalStars            Int?
-  dependentReposCount   Int
+  icon_url               String?
+  repositories_count     Int
+  last_synced_at          DateTime
+  html_url               String
+  total_stars            Int?
+  dependent_repos_count   Int
   followers             Int?
   following             Int?
   maintainers           String
-  createdAt             DateTime
-  updatedAt             DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   
   dbRepoId                String
   repo                  Repo      @relation(fields: [dbRepoId], references: [id], onDelete: Cascade)

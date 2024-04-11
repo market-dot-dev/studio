@@ -325,7 +325,7 @@ class RepoService {
 
     let radarId = null;
     try {
-      const repoLookupResult = await LeadsService.lookup('https://github.com/expressjs/express');
+      const repoLookupResult = await LeadsService.lookup(repoDetails.html_url);
       radarId = repoLookupResult.id;
     } catch (error) {
       console.error('Failed to lookup repository:', error);
