@@ -237,6 +237,7 @@ model Subscription {
   cancelledAt          DateTime?
   createdAt            DateTime  @default(now())
   state                String    @default("renewing")
+  priceAnnual          Boolean   @default(false)
 
   user          User            @relation(fields: [userId], references: [id])
   tierVersion   TierVersion?    @relation(fields: [tierVersionId], references: [id])

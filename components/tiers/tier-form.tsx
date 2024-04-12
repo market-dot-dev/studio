@@ -1,7 +1,6 @@
 "use client";
-// tier-form.tsx
 
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Flex, Text, Button, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab, Card } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
@@ -25,7 +24,6 @@ import {
 	TableRow,
 	TableCell,
 } from "@tremor/react";
-import LinkButton from '../common/link-button';
 
 
 interface TierFormProps {
@@ -107,9 +105,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [isSaving, setIsSaving] = useState(false);
 
 	const handleInputChange = (
-		e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement> | { target: { name: string; value: string } }
+		name: string,
+		value: number | string | null
 	) => {
-		const { name, value } = e.target;
 		const updatedTier = { ...tier, [name]: value } as Tier;
 		setTier(updatedTier);
 	};
@@ -225,7 +223,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							required
 							name="name"
 							value={tier.name}
-							onChange={handleInputChange}
+							onValueChange={(v) => handleInputChange('name', v)}
 
 						/>
 						{errors['name'] ? <Text color="red" >{errors['name']}</Text> : null}
@@ -239,7 +237,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							required
 							name="tagline"
 							value={tier.tagline || ''}
-							onChange={handleInputChange}
+							onValueChange={(v) => handleInputChange('tagline', v)}
 						/>
 					</div>
 
@@ -254,7 +252,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								required
 								name="trialDays"
 								value={tier.trialDays || 0}
-								onChange={handleInputChange}
+								onValueChange={(v) => handleInputChange('trialDays', v)}
 							/>
 						</div>
 
@@ -266,7 +264,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								required
 								name="priceAnnual"
 								value={tier.priceAnnual || 0}
-								onChange={handleInputChange}
+								onValueChange={(v) => handleInputChange('priceAnnual', v)}
 							/>
 						</div>
 
@@ -278,7 +276,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								required
 								name="priceAnnual"
 								value={tier.cadence || 'month'}
-								onValueChange={(value: string) => handleInputChange({ target: { name: 'cadence', value } })}
+								onValueChange={(v) => handleInputChange('cadence', v)}
 							>
 								<SelectItem value="month">month</SelectItem>
 								<SelectItem value="year">year</SelectItem>
@@ -296,7 +294,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
 							name="description"
 							value={tier.description || ''}
-							onChange={handleInputChange}
+							onValueChange={(v) => handleInputChange('tierDescription', v)}
 						/>
 					</div>
 
@@ -336,7 +334,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price (USD)</label>
 						<Flex className='gap-2' justifyContent='start'>
-							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
+							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onValueChange={(v) => handleInputChange('price', v)} />
 						</Flex>
 					</div>
 

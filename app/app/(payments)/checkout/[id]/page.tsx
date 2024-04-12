@@ -8,6 +8,13 @@ import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
 import { Text, Bold } from "@tremor/react";
 
+import { useSearchParams } from 'next/navigation';
+
+interface QueryParams {
+  [key: string]: string | string[] | undefined;
+}
+
+
 const checkoutCurrency = "USD";
 const projectDescriptionDefault = "";
 const pathToDefaultMSA = "https://www.gitwallet.co/legal/standard-msa";
@@ -23,14 +30,19 @@ const SkeletonLoader = ({ className }: { className?: string }) => (
 const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const { id } = params;
 
+  const searchParams = useSearchParams();
+  const queryParams: QueryParams = Object.fromEntries(searchParams.entries());
+  const isAnnual = queryParams.annual === 'true';
+
   const [tier, isTierLoading] = useTier(id);
   const [maintainer, isMaintainerLoading] = useUser(tier?.userId);
   const [features, isFeaturesLoading] = useFeatures(id);
 
   const checkoutProject = maintainer?.projectName || maintainer?.name;
   const projectDescription = maintainer?.projectDescription || projectDescriptionDefault;
-  const checkoutPrice = tier?.price;
+  const checkoutPrice = isAnnual ? tier?.priceAnnual : tier?.price;
   const checkoutTier = tier?.name;
+  const checkoutCadence = isAnnual ? 'year' : tier?.cadence;
   const trialDays = tier?.trialDays || 0;
   const trialOffered = trialDays > 0;
 
@@ -75,12 +87,12 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
             :
             <div>
               <div className="mb-2 text-lg font-medium leading-6">
-                <Bold>{checkoutProject}: {checkoutTier}</Bold>
+                <Bold>{checkoutProject}: {checkoutTier} {isAnnual ? `(annual)` : ''}</Bold>
               </div>
               <div className="mb-4 leading-6">
                 <Text>
-                  {checkoutCurrency + " " + checkoutPrice} per {tier?.cadence}
-                  { trialOffered && <>after {trialDays}d free trial</> }
+                  {checkoutCurrency + " " + checkoutPrice} {checkoutCadence !== 'once' ? `per ${checkoutCadence}` : ''}
+                  { trialOffered && <>&nbsp;after {trialDays}d free trial</> }
                 </Text>
               </div>
             </div>
@@ -125,7 +137,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
 
           </> :
           <>
-            {tier && maintainer && <RegistrationSection tier={tier} maintainer={maintainer}/>}
+            {tier && maintainer && <RegistrationSection tier={tier} maintainer={maintainer} annual={isAnnual} />}
           </>
         }
       </div>

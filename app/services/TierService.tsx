@@ -8,7 +8,6 @@ import { Feature, TierVersion } from "@prisma/client";
 import SessionService from "./SessionService";
 import FeatureService from "./feature-service";
 import SubscriptionService from "./SubscriptionService";
-import { parse } from "path";
 
 export type TierWithFeatures = Tier & { features?: Feature[] };
 export type TierVersionWithFeatures = TierVersion & { features?: Feature[]};
@@ -72,6 +71,10 @@ class TierService {
       throw new Error('Tier name is required.');
     }
 
+    if(!tierData.price) {
+      throw new Error('Price is required.');
+    }
+
     if(tierData.published && !user.stripeAccountId) {
       throw new Error('Tried to publish an existing tier, but the user has no connected stripe account.');
     }
@@ -81,13 +84,10 @@ class TierService {
       userId,
     }) as Partial<Tier>;
 
-    attrs.price = parseFloat(`${attrs.price}`);
-    attrs.trialDays = parseInt(`${attrs.trialDays}`);
-
     if(user.stripeAccountId){
       const stripeService = new StripeService(user.stripeAccountId);
       const product = await stripeService.createProduct(tierData.name, attrs.description || undefined);
-      const price = await stripeService.createPrice(product.id, attrs.price, attrs.cadence as SubscriptionCadence);
+      const price = await stripeService.createPrice(product.id, attrs.price!, attrs.cadence as SubscriptionCadence);
       attrs.stripeProductId = product.id;
       attrs.stripePriceId = price.id;
     }
@@ -149,14 +149,6 @@ class TierService {
       throw new Error('Price is required.');
     }
 
-    if(typeof attrs.price === 'string'){
-      attrs.price = parseFloat(attrs.price);
-    }
-
-    if(typeof attrs.trialDays === 'string'){
-      attrs.trialDays = parseInt(attrs.trialDays);
-    }
-
     let newFeatureSetIds: string[] = newFeatureIds || [];
     const featuresChanged = newFeatureSetIds ? (await FeatureService.haveFeatureIdsChanged(id, newFeatureSetIds)) : false;
 
@@ -185,17 +177,25 @@ class TierService {
 
       // clear old price from tier and version
       attrs.revision = tier.revision + 1;
-      attrs.stripePriceId = null;
-      attrs.stripePriceIdAnnual = null;
       attrs.cadence = (attrs.cadence || 'month') as SubscriptionCadence;
+
+      const tierAttributes = {
+        revision: tier.revision + 1,
+      } as Partial<Tier>;
+
+      if(featuresChanged || priceChanged){
+        attrs.stripePriceId = null;
+        tierAttributes.stripePriceId = null;
+      }
+
+      if(featuresChanged || annualPriceChanged){
+        attrs.stripePriceIdAnnual = null;
+        tierAttributes.stripePriceIdAnnual = null;
+      }
 
       await prisma.tier.update({
         where: { id },
-        data: {
-          stripePriceId: null,
-          stripePriceIdAnnual: null,
-          revision: tier.revision + 1
-        },
+        data: tierAttributes,
       });
     } else {
       if(priceChanged && tier.stripePriceId) {

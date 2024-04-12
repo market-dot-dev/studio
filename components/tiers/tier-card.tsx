@@ -16,18 +16,19 @@ type TierCardProps = {
   features?: Feature[];
 };
 
-const GetStartedButton = ({ url, tierId, canEdit }: { url: string | null, tierId: string, canEdit: boolean }) => {
-  const linkUrl = (url || tierId) ? `${url ? url : ''}/checkout/${tierId}` : '';
+const GetStartedButton = ({ url, tierId, canEdit, annual = false }: { url: string | null, tierId: string, canEdit: boolean, annual?: boolean }) => {
+  const linkUrl = (url || tierId) ? `${url ? url : ''}/checkout/${tierId}${annual ? '?annual=true' : ''}` : '';
   const variant = canEdit ? "secondary" : "primary";
 
   return (
     <Link href={linkUrl}>
       <Button variant={variant} className="w-full">
-        Get Started
+        {annual ? `Purchase Annual` : `Get Started`}
       </Button>
     </Link>
   );
 }
+
 
 const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, darkMode = false, features = [], children }) => {
   const containerClasses = darkMode
@@ -57,7 +58,10 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
 
       <div className="flex flex-col gap-2 w-full mt-4">
         {canEdit && <Link href={`tiers/${tier.id}`}><Button variant="primary" className="w-full">Edit</Button></Link>}
-        { children ? children : <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} /> }
+        { children ? children : <>
+          <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} /> 
+          { tier.stripePriceIdAnnual ? <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} annual={true} /> : <></> }
+        </>}
       </div>
     </Card>
   </>);

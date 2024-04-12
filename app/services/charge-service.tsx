@@ -40,17 +40,19 @@ class ChargeService {
     return subscriptions.length > 0;
   }
 
-  static async findChargeByTierId(tierId: string): Promise<Charge | null> {
+  static async anyChargesByTierId(tierId: string): Promise<boolean> {
+    return !!(await ChargeService.findChargesByTierId(tierId));
+  }
+
+  static async findChargesByTierId(tierId: string): Promise<Charge[] | null> {
     const userId = await SessionService.getCurrentUserId();
     
     if(!userId) return null;
 
-    return prisma.charge.findUnique({
+    return prisma.charge.findMany({
       where: {
-        userId_tierId: {
-          tierId,
-          userId: userId,
-        },
+        tierId,
+        userId: userId,
       }
     });
   }
@@ -120,16 +122,7 @@ class ChargeService {
 
     return res;
   }
-
-  static async isChargedByTierId(userId: string, tierId: string): Promise<boolean> {
-    return !!(await ChargeService.findChargeByTierId(tierId));
-  }
-
-  // Check if a user can subscribe to a tier (e.g., not already subscribed)
-  static async canCharge(userId: string, tierId: string): Promise<boolean> {
-    return !(await ChargeService.isChargedByTierId(userId, tierId));
-  }
 };
 
-export const { createLocalCharge, findChargeByTierId, findCharge, findCharges, canCharge, isChargedByTierId, hasCharges, chargeCount } = ChargeService;
+export const { createLocalCharge, findChargesByTierId, findCharge, findCharges, anyChargesByTierId, hasCharges, chargeCount } = ChargeService;
 export default ChargeService;

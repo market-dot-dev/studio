@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 import UserService from './UserService';
 import TierService from './TierService';
 import { createSubscription as createLocalSubscription } from '@/app/services/SubscriptionService';
-import { User } from '@prisma/client';
+import { Tier, User } from '@prisma/client';
 import prisma from "@/lib/prisma";
 import DomainService from './domain-service';
 import SessionService from './SessionService';
@@ -363,6 +363,11 @@ class StripeService {
     return oauthLink;
   }
 
+  async isSubscribedToTier(stripeCustomerId: string, tier: Tier){
+    return (tier.stripePriceId ? await this.isSubscribed(stripeCustomerId, tier.stripePriceId) : false ) || 
+      (tier.stripePriceIdAnnual ? await this.isSubscribed(stripeCustomerId, tier.stripePriceIdAnnual) : false);
+  }
+
   async isSubscribed(stripeCustomerId: string, stripePriceId: string) {
     const subscriptions = await this.stripe.subscriptions.list({
       customer: stripeCustomerId,
@@ -411,7 +416,7 @@ interface StripeCheckoutComponentProps {
   tierId: string;
 }
 
-export const onClickSubscribe = async (userId: string, tierId: string) => {
+export const onClickSubscribe = async (userId: string, tierId: string, annual: boolean) => {
   let subscription = null;
 
   const tier = await TierService.findTier(tierId);
@@ -443,14 +448,16 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
   let stripeCustomerId = await customer.getOrCreateStripeCustomerId();
   const stripeService = new StripeService(maintainer.stripeAccountId);
   
-  if(!tier.stripePriceId) {
+  const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
+
+  if(!stripePriceId) {
     throw new Error('Tier does not have a stripe price id.');
   }
 
   console.log('[purchase]: maintainer, product check');
 
   if(tier.cadence === 'once') {
-    const charge = await stripeService.createCharge(stripeCustomerId, tier.stripePriceId!, tier.price, await customer.getStripePaymentMethodId());
+    const charge = await stripeService.createCharge(stripeCustomerId, stripePriceId, tier.price, await customer.getStripePaymentMethodId());
 
     if(charge.status === 'succeeded') {
       await createLocalCharge(userId, tierId, charge.id);
@@ -459,11 +466,11 @@ export const onClickSubscribe = async (userId: string, tierId: string) => {
       throw new Error('Error creating charge on stripe: ' + charge.status);
     }
   } else {
-    if(await stripeService.isSubscribed(stripeCustomerId, tier.stripePriceId)) {
+    if(await stripeService.isSubscribedToTier(stripeCustomerId, tier)) {
       console.log('[purchase]: FAIL already subscribed');
       throw new Error('You are already subscribed to this product. If you dont see it in your dashboard, please contact support.');
     } else {
-      subscription = await stripeService.createSubscription(stripeCustomerId, tier.stripePriceId!, tier.trialDays);
+      subscription = await stripeService.createSubscription(stripeCustomerId, stripePriceId, tier.trialDays);
     }
 
     if (!subscription) {

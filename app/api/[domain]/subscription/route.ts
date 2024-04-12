@@ -25,7 +25,7 @@ export async function POST(req: Request, res: Response) {
         return new Response(JSON.stringify({ error: "Tier not found" }), { status: 404 });
     }
 
-    await onClickSubscribe(session.user.id, latestTierVersion.id);
+    await onClickSubscribe(session.user.id, latestTierVersion.id, false);
 
     const response = { success: true };
     

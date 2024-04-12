@@ -25,10 +25,15 @@ const AlreadySubscribedCard = () => {
   </Card>);
 }
 
-const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintainer: User }) => {
+const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
+  tier: Tier;
+  maintainer: User;
+  annual?: boolean;
+}) => {
   const { currentUser: user, refreshSession } = useCurrentSession();
   const userId = user?.id;
   const tierId = tier?.id;
+  const checkoutPrice = annual ? tier?.priceAnnual : tier?.price;
   
   const [error, setError] = useState<string | null>();
   const [loading, setLoading] = useState(false);
@@ -55,7 +60,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintai
         setSubmittingPayment(true);
       } else {
         setSubmittingSubscription(true);
-        onClickSubscribe(userId, tierId).then((res) => {
+        onClickSubscribe(userId, tierId, annual).then((res) => {
           setLoading(false);
           window.location.href = "/success";
         }).catch((err) => {
@@ -103,7 +108,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer }: { tier: Tier; maintai
           {loading ? <LoadingDots color="#A8A29E" /> : "Checkout"}
         </Button>
         <label className="my-2 block text-center text-sm text-slate-400">
-          Your card will be charged {checkoutCurrency + " " + tier?.price}
+          Your card will be charged {checkoutCurrency} {checkoutPrice}
         </label>
       </section>
     </>
