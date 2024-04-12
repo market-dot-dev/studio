@@ -166,9 +166,12 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 	useEffect(() => {
 		if (tier && tierObj) {
-			shouldCreateNewVersion(tierObj as Tier, tier).then(ret => {
-				setVersionedAttributesChanged(ret);
-			});
+			if( tierObj.published === true && Number(tierObj.price) !== Number(tier.price)) {
+				setVersionedAttributesChanged(true);
+			}
+			// shouldCreateNewVersion(tierObj as Tier, tier).then(ret => {
+			// 	setVersionedAttributesChanged(ret);
+			// });
 		}
 	}, [tier, tierObj]);
 
