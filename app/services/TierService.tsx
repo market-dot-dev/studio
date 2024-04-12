@@ -154,7 +154,8 @@ class TierService {
 
     const hasSubscribers = await SubscriptionService.hasSubscribers(id, tier.revision);
     const priceChanged = attrs.price !== tier.price;
-    const annualPriceChanged = (attrs.priceAnnual !== tier.priceAnnual) || (attrs.cadence !== tier.cadence);
+    const cadenceChanged = (attrs.cadence !== tier.cadence);
+    const annualPriceChanged = (attrs.priceAnnual !== tier.priceAnnual) || cadenceChanged;
     const materialChange = priceChanged || annualPriceChanged || featuresChanged;
     const createNewversion = hasSubscribers && attrs.published && materialChange;
     const stripeConnected = !!user.stripeAccountId;
@@ -183,7 +184,7 @@ class TierService {
         revision: tier.revision + 1,
       } as Partial<Tier>;
 
-      if(featuresChanged || priceChanged){
+      if(featuresChanged || priceChanged || cadenceChanged){
         attrs.stripePriceId = null;
         tierAttributes.stripePriceId = null;
       }
