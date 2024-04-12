@@ -142,4 +142,4 @@ class LeadsService {
 }
 
 export default LeadsService;
-export const { getDependentOwners, addLeadToShortlist, getShortlistedLeads, getShortlistedLeadsKeysList, lookup } = LeadsService;
+export const { getDependentOwners, addLeadToShortlist, getShortlistedLeads, getShortlistedLeadsKeysList, lookup, removeLeadFromShortlist } = LeadsService;

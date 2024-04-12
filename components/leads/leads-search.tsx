@@ -78,13 +78,23 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         if( ! selectedRepo?.radarId ) {
             return;
         }
+        
         setIsSearching(true);
-        getDependentOwners(selectedRepo.radarId, page, perPage, showOnlyOrgs).then((fetchedLeads: any[]) => {
+        // determine total pages here, as based on perPage, this could change
+        const totalPages = Math.ceil(totalCount / perPage);
+
+        getDependentOwners(
+            selectedRepo.radarId, 
+            page > totalPages ? totalPages : page, 
+            perPage, 
+            showOnlyOrgs
+        ).then((fetchedLeads: any[]) => {
             setRadarResults(fetchedLeads);
         })
         .finally(() => {
             setIsSearching(false);
         });
+
     }, [perPage, showOnlyOrgs]);
 
     return (
@@ -197,7 +207,7 @@ function SearchResult( { selectedRepo, lead, isShortlisted, setShortListedLeads 
     return (
         <Card className="flex flex-col my-2 z-0 relative">
             <LeadItem lead={lead} />
-            <div className="flex flex-col absolute top-10 right-10">
+            <div className="flex flex-col absolute top-10 right-10 gap-4">
                 {isShortlisted && <Badge>Shortlisted</Badge>}
                 <Button
                     loading={isAddingToShortlist}
