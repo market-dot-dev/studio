@@ -1,10 +1,11 @@
 'use client';
 
 import { TierWithFeatures } from '@/app/services/TierService';
-import { Card, Button, Text } from '@tremor/react';
+import { Card, Button, Text, Switch } from '@tremor/react';
 import Link from 'next/link';
 import TierFeatureList from '@/components/features/tier-feature-list';
 import { Feature } from '@prisma/client';
+import { useState } from 'react';
 
 type TierCardProps = {
   url?: string;
@@ -34,6 +35,9 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
   const containerClasses = darkMode
     ? "text-white bg-gray-800 border-gray-600"
     : "text-gray-900 bg-white border-gray-100";
+  
+  const hasAnnual = (tier.priceAnnual || 0) > 0;
+  const [showAnnual, setShowAnnual] = useState(false);
 
   const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
   // check if this componenet has been called with features passed to it (e.g. when editing tier in preview)
@@ -47,16 +51,18 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
       <div>
         <h3 className={`mb-2 text-2xl font-bold ${textClasses}`}>{tier.name}</h3>
         <p className="font-light text-gray-500">{tier.tagline}</p>
+        <div>
+          {hasAnnual ? <>
+            Annual
+            <Switch checked={showAnnual} onChange={() => setShowAnnual(!showAnnual)} /> 
+          </>: null}
+        </div>
+
         <div className="flex justify-center items-baseline my-4">
-          <span className={`mr-1 text-4xl font-extrabold ${textClasses}`}>${tier.price}</span>
+          <span className={`mr-1 text-4xl font-extrabold ${textClasses}`}>${showAnnual ? tier.priceAnnual : tier.price}</span>
           /&nbsp;
-          <span className="text-gray-500 dark:text-gray-400">{tier.cadence}</span>
+          <span className="text-gray-500 dark:text-gray-400">{showAnnual ? 'per year' : tier.cadence}</span>
         </div>
-        { tier.priceAnnual ? <>
-        <div className="flex justify-center items-baseline my-4">
-          <span className="text-gray-500 dark:text-gray-400">or ${tier.priceAnnual} per year</span>
-        </div>
-        </> : null }
         <Text className="text-center text-xs text-gray-400">What&apos;s Included:</Text>
         <TierFeatureList features={tierFeatures}  darkMode={darkMode} />
       </div>
@@ -64,8 +70,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
       <div className="flex flex-col gap-2 w-full mt-4">
         {canEdit && <Link href={`tiers/${tier.id}`}><Button variant="primary" className="w-full">Edit</Button></Link>}
         { children ? children : <>
-          <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} /> 
-          { tier.priceAnnual ? <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} annual={true} /> : <></> }
+          <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} annual={showAnnual} />
         </>}
       </div>
     </Card>
