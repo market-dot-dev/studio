@@ -1,11 +1,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import SimpleEmailInputForm from "@/components/common/simple-email-input";
-import { Col, Grid, Badge, Divider } from "@tremor/react";
+import { Col, Grid, Badge, Button, Text } from "@tremor/react";
 import DashboardCard from "@/components/common/dashboard-card";
 import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
-
+import { Suspense } from "react";
+import DomainService from "../services/domain-service";
+import GithubLoginButton from "@/app/app/(auth)/login/github-login-button";
 const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
+const customerLoginUrl = DomainService.getRootUrl('app', '/customer-login');
+const maintainerLoginUrl = DomainService.getRootUrl('app', '/login');
 
 // Define a type for the testimonial props, including the logo
 type TestimonialProps = {
@@ -42,7 +46,6 @@ const logoPath = "/";
 // A simple component to display each testimonial with a logo
 const EcosystemLogo: React.FC<TestimonialProps> = ({ ecosystem, logoSrc }) => (
   <div className="flex flex-col items-center gap-4">
-    {/* <p className="text-xs">{ecosystem}</p> */}
     <Image alt={ecosystem} src={logoPath + logoSrc} width={80} height={50} />
   </div>
 );
@@ -63,10 +66,11 @@ export default function HomePage() {
         <div className="overflow-y-auto">
           <div className="w-7/8 lg:w-5/6">
             <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
-            <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for open source projects.</h1>
-            <p className="text-xl font-extralight leading-6 mb-6">Gitwallet is a toolkit to <b>build, sell and manage</b> robust support offerings for your repos and ecosystems.</p>
-            <div>
-              <SimpleEmailInputForm email={{}} placeholder="Enter Your Email" />
+            <h1 className="text-4xl font-light leading-8 mb-6">The commerce toolkit built for open source projects.</h1>
+            <p className="text-xl font-extralight leading-6 mb-6">Gitwallet to <b>build, sell and manage</b> robust commerce offerings for your repos and ecosystems.</p>
+            <div className="flex flex-col gap-1">
+              <Link href={maintainerLoginUrl}><Button className="w-full">Login with Github</Button></Link>
+              <p className="font-light mb-8">Already a customer? <a href={customerLoginUrl} className="underline underline-offset-2">Login here</a>.</p>
             </div>
           </div>
         </div>
