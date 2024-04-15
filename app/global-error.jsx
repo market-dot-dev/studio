@@ -6,7 +6,9 @@ import { useEffect } from "react";
 
 export default function GlobalError({ error }) {
   useEffect(() => {
-    Sentry.captureException(error);
+    if (process.env.NODE_ENV === "production") {
+      Sentry.captureException(error);
+    }
   }, [error]);
 
   return (
