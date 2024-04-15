@@ -1,11 +1,11 @@
 -- AlterTable
-ALTER TABLE "Tier" ADD COLUMN     "cadence" TEXT NOT NULL DEFAULT 'monthly',
+ALTER TABLE "Tier" ADD COLUMN     "cadence" TEXT NOT NULL DEFAULT 'month',
 ADD COLUMN     "priceAnnual" INTEGER,
 ADD COLUMN     "stripePriceIdAnnual" TEXT,
 ADD COLUMN     "trialDays" INTEGER NOT NULL DEFAULT 0;
 
 -- AlterTable
-ALTER TABLE "TierVersion" ADD COLUMN     "cadence" TEXT NOT NULL DEFAULT 'monthly',
+ALTER TABLE "TierVersion" ADD COLUMN     "cadence" TEXT NOT NULL DEFAULT 'month',
 ADD COLUMN     "priceAnnual" INTEGER,
 ADD COLUMN     "stripePriceIdAnnual" TEXT,
 ADD COLUMN     "trialDays" INTEGER NOT NULL DEFAULT 0;

@@ -52,6 +52,11 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
           /&nbsp;
           <span className="text-gray-500 dark:text-gray-400">{tier.cadence}</span>
         </div>
+        { tier.priceAnnual ? <>
+        <div className="flex justify-center items-baseline my-4">
+          <span className="text-gray-500 dark:text-gray-400">or ${tier.priceAnnual} per year</span>
+        </div>
+        </> : null }
         <Text className="text-center text-xs text-gray-400">What&apos;s Included:</Text>
         <TierFeatureList features={tierFeatures}  darkMode={darkMode} />
       </div>
@@ -60,7 +65,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
         {canEdit && <Link href={`tiers/${tier.id}`}><Button variant="primary" className="w-full">Edit</Button></Link>}
         { children ? children : <>
           <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} /> 
-          { tier.stripePriceIdAnnual ? <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} annual={true} /> : <></> }
+          { tier.priceAnnual ? <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} annual={true} /> : <></> }
         </>}
       </div>
     </Card>

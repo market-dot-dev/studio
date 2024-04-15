@@ -9,6 +9,7 @@ const newTier = (tierData: Partial<Tier> = {}): Partial<Tier> => {
     published: false,
     price: 0,
     revision: 0,
+    cadence: 'month',
     ...tierData,
   }
 }

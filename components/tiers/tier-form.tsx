@@ -85,8 +85,15 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 	}
 };
 
+const calcDiscount = (price: number, annualPrice: number) => {
+	if(price === 0) return 0;
+	if(annualPrice === 0) return 100;
+	return (price - annualPrice) / price * 100;
+}
+
 export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [tier, setTier] = useState<TierWithFeatures>((tierObj ? tierObj : newTier()) as Tier);
+
 	const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(new Set<string>());
 	const [versionedAttributesChanged, setVersionedAttributesChanged] = useState(false);
 	const [tierSubscriberCount, setTierSubscriberCount] = useState(0);
@@ -94,6 +101,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [versions, setVersions] = useState<TierVersionWithFeatures[]>([]);
 	const [featuresChanged, setFeaturesChanged] = useState(false);
 	const [featureObjs, setFeatureObjs] = useState<Feature[]>([]);
+	const [trialEnabled, setTrialEnabled] = useState(tier?.trialDays > 0);
+	const [annualPlanEnabled, setAnnualPlanEnabled] = useState(tier?.priceAnnual ? tier.priceAnnual > 0 : false);
+	const [annualDiscountPercent, setAnnualDiscountPercent] = useState(calcDiscount(tier.price, tier.priceAnnual || 0));
 
 	const newRecord = !tier?.id;
 	const tierHasSubscribers = currentRevisionSubscriberCount > 0;
@@ -106,7 +116,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 	const handleInputChange = (
 		name: string,
-		value: number | string | null
+		value: number | string | null,
+
 	) => {
 		const updatedTier = { ...tier, [name]: value } as Tier;
 		setTier(updatedTier);
@@ -242,48 +253,111 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 					</div>
 
 					<Card>
-						<div>WIP</div>
-
 						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Days</label>
-							<NumberInput
-								id="trialDays"
-								placeholder="Annual price (dollars)"
-								required
-								name="trialDays"
-								value={tier.trialDays || 0}
-								onValueChange={(v) => handleInputChange('trialDays', v)}
-							/>
-						</div>
-
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Annual Price</label>
-							<NumberInput
-								id="priceAnnual"
-								placeholder="Annual price (dollars)"
-								required
-								name="priceAnnual"
-								value={tier.priceAnnual || 0}
-								onValueChange={(v) => handleInputChange('priceAnnual', v)}
-							/>
-						</div>
-
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Billing Cadence month, year, quarter,once</label>
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Billing type</label>
 							<Select
 								id="cadence"
-								placeholder="Billing cadence"
+								placeholder="Billing type"
 								required
 								name="priceAnnual"
 								value={tier.cadence || 'month'}
 								onValueChange={(v) => handleInputChange('cadence', v)}
 							>
-								<SelectItem value="month">month</SelectItem>
+								<SelectItem value="month">Recurring</SelectItem>
+								{/*
 								<SelectItem value="year">year</SelectItem>
 								<SelectItem value="quarter">quarter</SelectItem>
-								<SelectItem value="once">once</SelectItem>
+								*/}
+								<SelectItem value="once">One Time</SelectItem>
 							</Select>
 						</div>
+
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Price (USD)</label>
+							<Flex className='gap-2' justifyContent='start'>
+								<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onValueChange={(v) => {
+
+									const updatedTier = {
+										...tier,
+										price: v,
+										
+									} as Tier;
+
+									if(annualPlanEnabled) {
+										updatedTier.priceAnnual = v - v * (annualDiscountPercent / 100)
+									}
+
+									setTier(updatedTier);
+								}} />
+							</Flex>
+						</div>
+
+						{ tier.cadence === 'month' && <>
+							<div className="mb-4">
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer annual discount</label>
+								<input type="checkbox" id="annualPlanEnabled" checked={annualPlanEnabled} onChange={(e) => {
+									setAnnualPlanEnabled(e.target.checked);
+
+									if(e.target.checked) {
+										handleInputChange('priceAnnual', tier.price);
+										setAnnualDiscountPercent(0);
+									} else {
+										handleInputChange('priceAnnual', 0);
+										setAnnualDiscountPercent(0);
+									}
+								}} />
+							</div>
+
+							<div className="mb-4">
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Annual Discount %</label>
+								<NumberInput
+									id="annualDiscountPercent"
+									placeholder="Annual Discount (%)"
+									disabled={!annualPlanEnabled}
+									required
+									name="annualDiscountPercent"
+									value={annualDiscountPercent}
+									onValueChange={(v) => {
+										handleInputChange('priceAnnual', tier.price - tier.price * (v / 100));
+										setAnnualDiscountPercent(v);
+									}}
+								/>
+							</div>
+
+							<div className="mb-4">
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Annual Price</label>
+								<NumberInput
+									id="priceAnnual"
+									placeholder="Annual price (dollars)"
+									required
+									name="priceAnnual"
+									disabled={!annualPlanEnabled}
+									value={tier.priceAnnual || 0}
+									onValueChange={(v) => {
+										handleInputChange('priceAnnual', v)
+										setAnnualDiscountPercent(calcDiscount(tier.price, v));
+									}}
+								/>
+							</div>
+
+							<div className="mb-4">
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer trial</label>
+								<input type="checkbox" id="trialEnabled" checked={trialEnabled} onChange={(e) => setTrialEnabled(e.target.checked)} />
+							</div>
+
+							<div className="mb-4">
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Days</label>
+								<NumberInput
+									id="trialDays"
+									placeholder="Annual price (dollars)"
+									required
+									name="trialDays"
+									disabled={!trialEnabled}
+									value={tier.trialDays || 0}
+									onValueChange={(v) => handleInputChange('trialDays', v)}
+								/>
+							</div>
+						</> }
 					</Card>
 
 					<div className="mb-4">
@@ -329,13 +403,6 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								<Callout className="my-2" title="Payment Setup Required" color="red">You need to connect your Stripe account to publish a tier. Visit <a href="/settings/payment" className="underline">Payment Settings</a> to get started.</Callout>
 							</>}
 						</label>
-					</div>
-
-					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price (USD)</label>
-						<Flex className='gap-2' justifyContent='start'>
-							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onValueChange={(v) => handleInputChange('price', v)} />
-						</Flex>
 					</div>
 
 					<div className="mb-4">

@@ -197,7 +197,7 @@ model TierVersion {
   price         Int
   trialDays     Int  @default(0)
   stripePriceId String?
-  cadence             String  @default("monthly")
+  cadence             String  @default("month")
   priceAnnual        Int?
   stripePriceIdAnnual String?
 
