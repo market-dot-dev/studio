@@ -8,7 +8,6 @@ import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lo
 import LoadingSpinner from "../form/loading-spinner";
 
 import LeadItem, { LeadItemType } from "./lead-item";
-import { set } from "date-fns";
 
 type LeadKey = {
     host: string;
@@ -42,17 +41,17 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             return [];
         }
         const cacheKey = `leads_${selectedRepo?.radarId}_${page}_${perPage}_${showOnlyOrgs}`;
-        const cachedData = sessionStorage.getItem(cacheKey);
+        const cachedData = localStorage.getItem(cacheKey);
         if (cachedData) {
             return JSON.parse(cachedData);
         } else {
             try {
                 const fetchedLeads = await getDependentOwners(selectedRepo?.radarId, page, perPage, showOnlyOrgs);
-                sessionStorage.setItem(cacheKey, JSON.stringify(fetchedLeads));
+                localStorage.setItem(cacheKey, JSON.stringify(fetchedLeads));
                 return fetchedLeads;
             } catch (error) {
                 console.error('Failed to fetch leads:', error);
-                return []; // Return an empty array or handle the error as you see fit
+                return []; 
             }
         }
     }, [selectedRepo?.radarId, page, perPage, showOnlyOrgs]);
