@@ -88,7 +88,8 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 const calcDiscount = (price: number, annualPrice: number) => {
 	if(price === 0) return 0;
 	if(annualPrice === 0) return 100;
-	return (price - annualPrice) / price * 100;
+	const twelveMonths = price * 12;
+	return Math.round(((twelveMonths - annualPrice) / twelveMonths * 100) * 10) / 10;
 }
 
 export default function TierForm({ tier: tierObj }: TierFormProps) {
@@ -284,7 +285,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 									} as Tier;
 
 									if(annualPlanEnabled) {
-										updatedTier.priceAnnual = v - v * (annualDiscountPercent / 100)
+										setAnnualDiscountPercent(calcDiscount(v, tier.priceAnnual || 0));
 									}
 
 									setTier(updatedTier);
@@ -299,7 +300,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 									setAnnualPlanEnabled(e.target.checked);
 
 									if(e.target.checked) {
-										handleInputChange('priceAnnual', tier.price);
+										handleInputChange('priceAnnual', tier.priceAnnual || tier.price * 12);
 										setAnnualDiscountPercent(0);
 									} else {
 										handleInputChange('priceAnnual', 0);
@@ -313,14 +314,11 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								<NumberInput
 									id="annualDiscountPercent"
 									placeholder="Annual Discount (%)"
+									readOnly={true}
 									disabled={!annualPlanEnabled}
 									required
 									name="annualDiscountPercent"
 									value={annualDiscountPercent}
-									onValueChange={(v) => {
-										handleInputChange('priceAnnual', tier.price - tier.price * (v / 100));
-										setAnnualDiscountPercent(v);
-									}}
 								/>
 							</div>
 
