@@ -83,12 +83,12 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 	} else {
 		return <></>;
 	}
-}
+};
 
 const calcDiscount = (price: number, annualPrice: number) => {
 	if(price === 0) return 0;
 	if(annualPrice === 0) return 100;
-	return (((price * 12) - annualPrice) / (price * 12)) * 100;
+	return (price - annualPrice) / price * 100;
 }
 
 export default function TierForm({ tier: tierObj }: TierFormProps) {
@@ -275,7 +275,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						<div className="mb-4">
 							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Price (USD)</label>
 							<Flex className='gap-2' justifyContent='start'>
-								<NumberInput value={tier.price} name="price" placeholder="Enter monthly price" enableStepper={false} onValueChange={(v) => {
+								<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onValueChange={(v) => {
 
 									const updatedTier = {
 										...tier,
@@ -286,34 +286,26 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 									if(annualPlanEnabled) {
 										updatedTier.priceAnnual = v - v * (annualDiscountPercent / 100)
 									}
-									handleInputChange('priceAnnual', tier.price * 12);
-									setAnnualDiscountPercent(0);
+
 									setTier(updatedTier);
 								}} />
 							</Flex>
 						</div>
 
 						{ tier.cadence === 'month' && <>
-							<div className="flex gap-2 mb-4">
-								<input 
-									type="checkbox" 
-									id="annualPlanEnabled" 
-									checked={annualPlanEnabled} 
-									disabled={!tier.price || tier.price === 0}
-									className="border-gray-600 rounded-md p-3 accent-green-400 disabled:border-gray-200 disabled:bg-gray-200"
-									onChange={(e) => {
-										setAnnualPlanEnabled(e.target.checked);
-
-										if(e.target.checked) {
-											handleInputChange('priceAnnual', tier.price * 12);
-											setAnnualDiscountPercent(0);
-										} else {
-											handleInputChange('priceAnnual', 0);
-											setAnnualDiscountPercent(0);
-										}
-								}} />
+							<div className="mb-4">
 								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer annual discount</label>
+								<input type="checkbox" id="annualPlanEnabled" checked={annualPlanEnabled} onChange={(e) => {
+									setAnnualPlanEnabled(e.target.checked);
 
+									if(e.target.checked) {
+										handleInputChange('priceAnnual', tier.price);
+										setAnnualDiscountPercent(0);
+									} else {
+										handleInputChange('priceAnnual', 0);
+										setAnnualDiscountPercent(0);
+									}
+								}} />
 							</div>
 
 							<div className="mb-4">
@@ -323,14 +315,10 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 									placeholder="Annual Discount (%)"
 									disabled={!annualPlanEnabled}
 									required
-									min={0}
-									max={100}
-									enableStepper={true}
-									error={annualDiscountPercent > 100 || annualDiscountPercent < 0}
 									name="annualDiscountPercent"
 									value={annualDiscountPercent}
 									onValueChange={(v) => {
-										handleInputChange('priceAnnual', tier.price * 12 - tier.price * 12 * (v / 100));
+										handleInputChange('priceAnnual', tier.price - tier.price * (v / 100));
 										setAnnualDiscountPercent(v);
 									}}
 								/>
@@ -343,11 +331,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 									placeholder="Annual price (dollars)"
 									required
 									name="priceAnnual"
-									enableStepper={false}
-									error={annualDiscountPercent > 100 || annualDiscountPercent < 0}
-									errorMessage='Your annual plan is more expensive than the Monthly Plan x 12. Please adjust.'
 									disabled={!annualPlanEnabled}
-									value={tier.priceAnnual ?? 0}
+									value={tier.priceAnnual || 0}
 									onValueChange={(v) => {
 										handleInputChange('priceAnnual', v)
 										setAnnualDiscountPercent(calcDiscount(tier.price, v));
