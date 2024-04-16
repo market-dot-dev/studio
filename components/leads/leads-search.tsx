@@ -41,13 +41,13 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             return [];
         }
         const cacheKey = `leads_${selectedRepo?.radarId}_${page}_${perPage}_${showOnlyOrgs}`;
-        const cachedData = localStorage.getItem(cacheKey);
+        const cachedData = sessionStorage.getItem(cacheKey);
         if (cachedData) {
             return JSON.parse(cachedData);
         } else {
             try {
                 const fetchedLeads = await getDependentOwners(selectedRepo?.radarId, page, perPage, showOnlyOrgs);
-                localStorage.setItem(cacheKey, JSON.stringify(fetchedLeads));
+                sessionStorage.setItem(cacheKey, JSON.stringify(fetchedLeads));
                 return fetchedLeads;
             } catch (error) {
                 console.error('Failed to fetch leads:', error);
@@ -125,6 +125,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         perPage={perPage}
                         totalCount={showOnlyOrgs ? orgsCount : totalCount}
                         onPageChange={handlePageChange}
+                        isLoading={isSearching}
                     />
                     
                     <div className="flex items-center justify-center gap-3">
@@ -133,6 +134,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                             name="switch"
                             checked={showOnlyOrgs}
                             onChange={setShowOnlyOrgs}
+                            disabled={isSearching}
                         />
                         <label htmlFor="switch" className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
                             Show only organizations
@@ -142,7 +144,9 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                     <div className="flex items-center justify-end gap-3 w-1/3">
                         <div className="text-sm">Results per Page</div>
                         <div>
-                            <Select className="w-24" value={`${perPage}`} onValueChange={(e: string) => {
+                            <Select 
+                                disabled={isSearching}
+                                className="w-24" value={`${perPage}`} onValueChange={(e: string) => {
                                 setPerPage(parseInt(e));
                             }}>
                                 <SelectItem value="20">20</SelectItem>
@@ -215,7 +219,7 @@ function SearchResult( { selectedRepo, lead, isShortlisted, setShortListedLeads 
 }
 
 
-function Pagination({ page, perPage, totalCount, onPageChange }: { page: number, perPage: number, totalCount: number, onPageChange: any }) {
+function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { page: number, perPage: number, totalCount: number, onPageChange: any, isLoading: boolean }) {
     const totalPages = Math.ceil(totalCount / perPage);
     const [inputPage, setInputPage] = useState<number>(page);
 
@@ -242,7 +246,7 @@ function Pagination({ page, perPage, totalCount, onPageChange }: { page: number,
                 <Button
                     size="xs"
                     onClick={() => changePage(page - 1)}
-                    disabled={page === 1}
+                    disabled={page === 1 || isLoading}
                     className={`${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     Prev
                 </Button>
@@ -251,7 +255,7 @@ function Pagination({ page, perPage, totalCount, onPageChange }: { page: number,
                 <Button
                     size="xs"
                     onClick={() => changePage(page + 1)}
-                    disabled={page === totalPages}
+                    disabled={page === totalPages || isLoading}
                     className={`${page === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     Next
                 </Button>
@@ -273,6 +277,7 @@ function Pagination({ page, perPage, totalCount, onPageChange }: { page: number,
                 
                 <Button
                     size="xs"
+                    disabled={isLoading}
                     onClick={handleGoClick} >
                     Go to Page
                 </Button>
