@@ -335,8 +335,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 									name="priceAnnual"
 									disabled={!annualPlanEnabled}
 									enableStepper={false}
-									error={!!tier.priceAnnual && tier.price * 12 > (tier.priceAnnual || 0)}
-									errorMessage={`Your annual plan is more expensive than the Monthly Plan x 12 (${tier.price * 12}). Please adjst.`}
+									error={!!tier.priceAnnual && tier.price * 12 <= (tier.priceAnnual || 0)}
+									errorMessage={`Your annual plan is equal to or more expensive than the Monthly Plan x 12 (${tier.price * 12}). Please adjst.`}
 									value={tier.priceAnnual || undefined}
 									onValueChange={(v) => {
 										handleInputChange('priceAnnual', v)
