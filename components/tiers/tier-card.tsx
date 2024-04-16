@@ -37,6 +37,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
     : "text-gray-900 bg-white border-gray-100";
   
   const hasAnnual = (tier.priceAnnual || 0) > 0;
+  const isntOnce = tier.cadence !== 'once'
   const [showAnnual, setShowAnnual] = useState(false);
 
   const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
@@ -52,7 +53,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
         <h3 className={`mb-2 text-2xl font-bold ${textClasses}`}>{tier.name}</h3>
         <p className="font-light text-gray-500">{tier.tagline}</p>
         <div>
-          {hasAnnual ? <>
+          {hasAnnual && isntOnce ? <>
             Annual
             <Switch checked={showAnnual} onChange={() => setShowAnnual(!showAnnual)} /> 
           </>: null}
@@ -70,7 +71,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
       <div className="flex flex-col gap-2 w-full mt-4">
         {canEdit && <Link href={`tiers/${tier.id}`}><Button variant="primary" className="w-full">Edit</Button></Link>}
         { children ? children : <>
-          <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} annual={showAnnual} />
+          <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} annual={showAnnual && isntOnce} />
         </>}
       </div>
     </Card>

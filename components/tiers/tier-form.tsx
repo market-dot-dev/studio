@@ -260,7 +260,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								id="cadence"
 								placeholder="Billing type"
 								required
-								name="priceAnnual"
+								name="cadence"
 								value={tier.cadence || 'month'}
 								onValueChange={(v) => handleInputChange('cadence', v)}
 							>
@@ -323,14 +323,21 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							</div>
 
 							<div className="mb-4">
-								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Annual Price</label>
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
+									Discounted Annual Price
+									&nbsp;
+									{ tier.price ? <>(Annualized: ${tier.price * 12})</> : null }
+								</label>
 								<NumberInput
 									id="priceAnnual"
 									placeholder="Annual price (dollars)"
 									required
 									name="priceAnnual"
 									disabled={!annualPlanEnabled}
-									value={tier.priceAnnual || 0}
+									enableStepper={false}
+									error={!!tier.priceAnnual && tier.price * 12 > (tier.priceAnnual || 0)}
+									errorMessage={`Your annual plan is more expensive than the Monthly Plan x 12 (${tier.price * 12}). Please adjst.`}
+									value={tier.priceAnnual || undefined}
 									onValueChange={(v) => {
 										handleInputChange('priceAnnual', v)
 										setAnnualDiscountPercent(calcDiscount(tier.price, v));
