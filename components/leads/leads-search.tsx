@@ -6,8 +6,9 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup } from "@/app/services/LeadsService";
 import LoadingSpinner from "../form/loading-spinner";
-import { set } from "date-fns";
+
 import LeadItem, { LeadItemType } from "./lead-item";
+import { set } from "date-fns";
 
 type LeadKey = {
     host: string;
@@ -28,34 +29,39 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
     const [showOnlyOrgs, setShowOnlyOrgs] = useState<boolean>(true);
 
-    // const pageRef = useRef(page);
-    // const perPageRef = useRef(perPage);
-    // const showOnlyOrgsRef = useRef(showOnlyOrgs);
-    // const selectedRepoRef = useRef(selectedRepo);
-
-
     const handleRepoSelected = useCallback((selectedIndex: string) => {
         setSelectedRepo(repos[parseInt(selectedIndex)]);
-    }, [setSelectedRepo, setRadarResults]);
+    }, [setSelectedRepo]);
 
     const handlePageChange = useCallback((newPage: number) => {
-        if( !selectedRepo?.radarId ) {
-            return;
-        }
-        setIsSearching(true);
-        getDependentOwners(selectedRepo.radarId, newPage, perPage, showOnlyOrgs).then((fetchedLeads: any[]) => {
-            setRadarResults(fetchedLeads);
-        }).finally(() => {
-            setIsSearching(false);
-        });
         setPage(newPage);
     }, [selectedRepo]);
 
+    const getDependentOwnersWithCache = useCallback(async () => {
+        if( ! selectedRepo?.radarId) {
+            return [];
+        }
+        const cacheKey = `leads_${selectedRepo?.radarId}_${page}_${perPage}_${showOnlyOrgs}`;
+        const cachedData = sessionStorage.getItem(cacheKey);
+        if (cachedData) {
+            return JSON.parse(cachedData);
+        } else {
+            try {
+                const fetchedLeads = await getDependentOwners(selectedRepo?.radarId, page, perPage, showOnlyOrgs);
+                sessionStorage.setItem(cacheKey, JSON.stringify(fetchedLeads));
+                return fetchedLeads;
+            } catch (error) {
+                console.error('Failed to fetch leads:', error);
+                return []; // Return an empty array or handle the error as you see fit
+            }
+        }
+    }, [selectedRepo?.radarId, page, perPage, showOnlyOrgs]);
+    
+
     useEffect(() => {
-        if( !selectedRepo?.radarId ) {
+        if( !selectedRepo?.url ) {
             return;
         }
-        
         setIsSearching(true);
         if( selectedRepo.url ) {
             lookup(selectedRepo.url).then((res: any) => {
@@ -63,11 +69,6 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 setOrgsCount(res.dependent_organizations_count ?? 0);
             });
         }
-        getDependentOwners(selectedRepo.radarId, 1, perPage, showOnlyOrgs).then((fetchedLeads: any[]) => {
-            setRadarResults(fetchedLeads);
-        }).finally(() => {
-            setIsSearching(false);
-        });
 
         getShortlistedLeadsKeysList(selectedRepo.id).then((leads: LeadKey[]) => {
             setShortListedLeads(leads);
@@ -75,27 +76,22 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     }, [selectedRepo])
 
     useEffect(() => {
-        if( ! selectedRepo?.radarId ) {
+        if( ! selectedRepo?.radarId || !totalCount) {
             return;
         }
         
         setIsSearching(true);
         // determine total pages here, as based on perPage, this could change
         const totalPages = Math.ceil(totalCount / perPage);
-
-        getDependentOwners(
-            selectedRepo.radarId, 
-            page > totalPages ? totalPages : page, 
-            perPage, 
-            showOnlyOrgs
-        ).then((fetchedLeads: any[]) => {
+        
+        getDependentOwnersWithCache().then((fetchedLeads: any[]) => {
             setRadarResults(fetchedLeads);
         })
         .finally(() => {
             setIsSearching(false);
         });
 
-    }, [perPage, showOnlyOrgs]);
+    }, [page, perPage, showOnlyOrgs, totalCount]);
 
     return (
         <>
