@@ -27,7 +27,7 @@ export default async function Tiers() {
         <section>
           <div className="max-w-screen-xl">
             {tiers.length === 0 && <div>You have no tiers. Create a new tier to get started.</div>}
-            <Grid numItemsSm={1} numItemsMd={2} numItemsLg={4} className="gap-8" >
+            <Grid numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-8" >
               {tiers.map((tier, index) => (
                 <>
                 <div key={index} className='text-center mb-8'>
