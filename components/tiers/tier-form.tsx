@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Flex, Text, Button, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab, Card } from "@tremor/react"
+import { Flex, Text, Button, Bold, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab, Card } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
 import { createTier, destroyTier, updateTier, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
@@ -86,8 +86,8 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 };
 
 const calcDiscount = (price: number, annualPrice: number) => {
-	if(price === 0) return 0;
-	if(annualPrice === 0) return 100;
+	if (price === 0) return 0;
+	if (annualPrice === 0) return 100;
 	const twelveMonths = price * 12;
 	return Math.round(((twelveMonths - annualPrice) / twelveMonths * 100) * 10) / 10;
 }
@@ -179,7 +179,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 	useEffect(() => {
 		if (tier && tierObj) {
-			if( tierObj.published === true && Number(tierObj.price) !== Number(tier.price)) {
+			if (tierObj.published === true && Number(tierObj.price) !== Number(tier.price)) {
 				setVersionedAttributesChanged(true);
 			}
 			// shouldCreateNewVersion(tierObj as Tier, tier).then(ret => {
@@ -253,117 +253,126 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						/>
 					</div>
 
-					<Card>
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Billing type</label>
-							<Select
-								id="cadence"
-								placeholder="Billing type"
-								required
-								name="cadence"
-								value={tier.cadence || 'month'}
-								onValueChange={(v) => handleInputChange('cadence', v)}
-							>
-								<SelectItem value="month">Recurring</SelectItem>
-								{/*
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Pricing</label>
+						<DashboardCard>
+							<div className="mb-4">
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Billing type</label>
+								<Select
+									id="cadence"
+									placeholder="Billing type"
+									required
+									name="cadence"
+									value={tier.cadence || 'month'}
+									onValueChange={(v) => handleInputChange('cadence', v)}
+								>
+									<SelectItem value="month">Recurring</SelectItem>
+									{/*
 								<SelectItem value="year">year</SelectItem>
 								<SelectItem value="quarter">quarter</SelectItem>
 								*/}
-								<SelectItem value="once">One Time</SelectItem>
-							</Select>
-						</div>
-
-						<div className="mb-4">
-							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Price (USD)</label>
-							<Flex className='gap-2' justifyContent='start'>
-								<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onValueChange={(v) => {
-
-									const updatedTier = {
-										...tier,
-										price: v,
-										
-									} as Tier;
-
-									if(annualPlanEnabled) {
-										setAnnualDiscountPercent(calcDiscount(v, tier.priceAnnual || 0));
-									}
-
-									setTier(updatedTier);
-								}} />
-							</Flex>
-						</div>
-
-						{ tier.cadence === 'month' && <>
-							<div className="mb-4">
-								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer annual discount</label>
-								<input type="checkbox" id="annualPlanEnabled" checked={annualPlanEnabled} onChange={(e) => {
-									setAnnualPlanEnabled(e.target.checked);
-
-									if(e.target.checked) {
-										handleInputChange('priceAnnual', tier.priceAnnual || tier.price * 12);
-										setAnnualDiscountPercent(0);
-									} else {
-										handleInputChange('priceAnnual', 0);
-										setAnnualDiscountPercent(0);
-									}
-								}} />
+									<SelectItem value="once">One Time</SelectItem>
+								</Select>
 							</div>
 
 							<div className="mb-4">
-								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Annual Discount %</label>
-								<NumberInput
-									id="annualDiscountPercent"
-									placeholder="Annual Discount (%)"
-									readOnly={true}
-									disabled={!annualPlanEnabled}
-									required
-									name="annualDiscountPercent"
-									value={annualDiscountPercent}
-								/>
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price (USD)</label>
+								<Flex className='gap-2' justifyContent='start'>
+									<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onValueChange={(v) => {
+
+										const updatedTier = {
+											...tier,
+											price: v,
+
+										} as Tier;
+
+										if (annualPlanEnabled) {
+											setAnnualDiscountPercent(calcDiscount(v, tier.priceAnnual || 0));
+										}
+
+										setTier(updatedTier);
+									}} />
+								</Flex>
 							</div>
 
-							<div className="mb-4">
-								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
-									Discounted Annual Price
-									&nbsp;
-									{ tier.price ? <>(Annualized: ${tier.price * 12})</> : null }
-								</label>
-								<NumberInput
-									id="priceAnnual"
-									placeholder="Annual price (dollars)"
-									required
-									name="priceAnnual"
-									disabled={!annualPlanEnabled}
-									enableStepper={false}
-									error={!!tier.priceAnnual && tier.price * 12 <= (tier.priceAnnual || 0)}
-									errorMessage={`Your annual plan is equal to or more expensive than the Monthly Plan x 12 (${tier.price * 12}). Please adjst.`}
-									value={tier.priceAnnual || undefined}
-									onValueChange={(v) => {
-										handleInputChange('priceAnnual', v)
-										setAnnualDiscountPercent(calcDiscount(tier.price, v));
-									}}
-								/>
-							</div>
+							{tier.cadence === 'month' && <>
+								<div className="flex gap-2 mb-4">
+									<input type="checkbox"
+										className="border-gray-600 rounded-md p-3 accent-green-400"
+										id="annualPlanEnabled" checked={annualPlanEnabled} onChange={(e) => {
+											setAnnualPlanEnabled(e.target.checked);
 
-							<div className="mb-4">
-								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer trial</label>
-								<input type="checkbox" id="trialEnabled" checked={trialEnabled} onChange={(e) => setTrialEnabled(e.target.checked)} />
-							</div>
+											if (e.target.checked) {
+												handleInputChange('priceAnnual', tier.priceAnnual || tier.price * 12);
+												setAnnualDiscountPercent(0);
+											} else {
+												handleInputChange('priceAnnual', 0);
+												setAnnualDiscountPercent(0);
+											}
+										}} />
+									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer Annual Plan</label>
+								</div>
 
-							<div className="mb-4">
-								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Days</label>
-								<NumberInput
-									id="trialDays"
-									placeholder="Annual price (dollars)"
-									required
-									name="trialDays"
-									disabled={!trialEnabled}
-									value={tier.trialDays || 0}
-									onValueChange={(v) => handleInputChange('trialDays', v)}
-								/>
-							</div>
-						</> }
-					</Card>
+								<div className="mb-4">
+									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
+										Annual Price
+										&nbsp;
+									</label>
+									<NumberInput
+										id="priceAnnual"
+										placeholder="Annual price (dollars)"
+										required
+										name="priceAnnual"
+										disabled={!annualPlanEnabled}
+										enableStepper={false}
+										error={!!tier.priceAnnual && tier.price * 12 < (tier.priceAnnual || 0)}
+										errorMessage={`Your annual plan is equal to or more expensive than the Monthly Plan x 12 (${tier.price * 12}). Please adjust.`}
+										value={tier.priceAnnual || undefined}
+										onValueChange={(v) => {
+											handleInputChange('priceAnnual', v)
+											setAnnualDiscountPercent(calcDiscount(tier.price, v));
+										}}
+									/>
+									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
+										Effective Discount Rate: {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"} (compared to Annualized monthly plan: {tier.price ? <>${tier.price * 12}</> : null})
+									</label>
+								</div>
+
+
+								<div className="mb-4">
+									{/* <NumberInput
+										id="annualDiscountPercent"
+										placeholder="Annual Discount (%)"
+										readOnly={true}
+										disabled={!annualPlanEnabled}
+										required
+										name="annualDiscountPercent"
+										value={annualDiscountPercent}
+									/> */}
+								</div>
+
+								<div className="flex gap-2 mb-4">
+									<input type="checkbox"
+										className="border-gray-600 rounded-md p-3 accent-green-400"
+										id="trialEnabled" checked={trialEnabled} onChange={(e) => setTrialEnabled(e.target.checked)} />
+									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer trial period</label>
+								</div>
+
+								<div className="mb-4">
+									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Days</label>
+									<NumberInput
+										id="trialDays"
+										placeholder="Annual price (dollars)"
+										required
+										name="trialDays"
+										disabled={!trialEnabled}
+										value={tier.trialDays || 0}
+										onValueChange={(v) => handleInputChange('trialDays', v)}
+									/>
+								</div>
+							</>}
+						</DashboardCard>
+					</div>
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Description</label>
@@ -422,9 +431,6 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						</DashboardCard>
 					</div>
 
-					<Card>
-						<Button variant="secondary" className="w-full" onClick={() => destroyTier(tier.id as string)}>Delete Tier</Button>
-					</Card>
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Version History</label>
@@ -449,7 +455,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 												<TableCell className="p-1 ps-0 m-0">
 													{tier.createdAt.toDateString()}
 													<Badge color="gray" size="xs" className="ms-1 text-xs font-medium uppercase">Current</Badge>
-												
+
 												</TableCell>
 												<TableCell className="p-1 ps-0 m-0">
 													{tier.features && tier.features.length > 0 ?
@@ -478,6 +484,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						}
 					</div>
 
+					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Admin</label>
+					<Button variant="secondary" disabled={tier.id ? false : true} className="w-full" onClick={() => destroyTier(tier.id as string)}>Delete Tier</Button>
 				</div>
 
 				{/* Preview Section */}
