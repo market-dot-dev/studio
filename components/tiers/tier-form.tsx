@@ -484,8 +484,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						}
 					</div>
 
-					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Admin</label>
-					<Button variant="secondary" disabled={tier.id ? false : true} className="w-full" onClick={() => destroyTier(tier.id as string)}>Delete Tier</Button>
+					{/* TODO: RE-ENABLE DELETING TIERS - CURRENT UX IS TRASH */}
+					{/* <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Admin</label>
+					<Button variant="secondary" disabled={tier.id ? false : true} className="w-full" onClick={() => destroyTier(tier.id as string)}>Delete Tier</Button> */}
 				</div>
 
 				{/* Preview Section */}
