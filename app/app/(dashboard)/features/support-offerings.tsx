@@ -23,12 +23,15 @@ import {
   Users,
   ListTodo,
   Github,
+  Brain,
   Milestone,
   Code,
   Wrench,
   Twitter,
   UserCircle,
   Bug,
+  GitBranch,
+  ShieldAlert,
 } from "lucide-react";
 
 type Category = {
@@ -44,6 +47,7 @@ const categories: Category[] = [
   { id: 'sla', name: 'Service Level Agreements (SLA)', icon: Clock },
   { id: 'staff', name: 'Dedicated Staff', icon: Users },
   { id: 'ticketing', name: 'Custom Ticketing', icon: Ticket },
+  { id: 'maintainence', name: 'Open Source Project Maintainence', icon: GitBranch},
   { id: 'ads', name: 'Promotions and Ads', icon: Volume2Icon},
   { id: 'custom', name: 'Custom Services', icon: Pencil}
 ];
@@ -93,9 +97,12 @@ export const Icon = ({ id }: { id: string }) => {
     'advertising-social': Twitter,
     'custom': Pencil,
     'account-rep': UserCircle,
+    'expert': Brain,
     'custom-integration': Wrench,
     'priority-features': Milestone,
-    'priority-bugs': Bug
+    'priority-bugs': Bug,
+    'project-maintainence': GitBranch,
+    'security-cve': ShieldAlert,
   }[id] || X;
 
   return <IconElement className="inline-block" />
