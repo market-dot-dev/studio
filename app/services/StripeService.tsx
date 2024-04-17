@@ -451,7 +451,7 @@ export const onClickSubscribe = async (userId: string, tierId: string, annual: b
   const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
 
   if(!stripePriceId) {
-    throw new Error('Tier does not have a stripe price id.');
+    throw new Error('Tier does not have a Stripe Price ID.');
   }
 
   console.log('[purchase]: maintainer, product check');
