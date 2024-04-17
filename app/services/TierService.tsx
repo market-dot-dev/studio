@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
-import StripeService from "./StripeService";
+import StripeService, { SubscriptionCadence } from "./StripeService";
 import UserService from "./UserService";
 import { Feature, TierVersion } from "@prisma/client";
 import SessionService from "./SessionService";
@@ -71,6 +71,10 @@ class TierService {
       throw new Error('Tier name is required.');
     }
 
+    if(!tierData.price) {
+      throw new Error('Price is required.');
+    }
+
     if(tierData.published && !user.stripeAccountId) {
       throw new Error('Tried to publish an existing tier, but the user has no connected stripe account.');
     }
@@ -80,18 +84,36 @@ class TierService {
       userId,
     }) as Partial<Tier>;
 
-    attrs.price = parseFloat(`${attrs.price}`);
-
     if(user.stripeAccountId){
       const stripeService = new StripeService(user.stripeAccountId);
       const product = await stripeService.createProduct(tierData.name, attrs.description || undefined);
-      const price = await stripeService.createPrice(product.id, attrs.price);
+      const price = await stripeService.createPrice(product.id, attrs.price!, attrs.cadence as SubscriptionCadence);
       attrs.stripeProductId = product.id;
       attrs.stripePriceId = price.id;
     }
 
     return await prisma.tier.create({
       data: attrs as Tier,
+    });
+  }
+
+  static async destroyTier(id: string) {
+    if(process.env.NODE_ENV !== 'development'){
+      throw new Error('This operation is not allowed in production');
+    }
+
+    const user = await UserService.getCurrentUser();
+
+    if (!user) throw new Error("User not authenticated");
+
+    const tier = await prisma.tier.findUnique({
+      where: { id },
+    });
+
+    if (!tier) throw new Error(`Tier with ID ${id} not found`);
+
+    return await prisma.tier.delete({
+      where: { id },
     });
   }
 
@@ -127,16 +149,14 @@ class TierService {
       throw new Error('Price is required.');
     }
 
-    if(typeof attrs.price === 'string'){
-      attrs.price = parseFloat(attrs.price);
-    }
-
     let newFeatureSetIds: string[] = newFeatureIds || [];
     const featuresChanged = newFeatureSetIds ? (await FeatureService.haveFeatureIdsChanged(id, newFeatureSetIds)) : false;
 
     const hasSubscribers = await SubscriptionService.hasSubscribers(id, tier.revision);
-    const priceChanged = attrs.price !== tier.price;
-    const materialChange = priceChanged || featuresChanged;
+    const cadenceChanged = (attrs.cadence !== tier.cadence);
+    const priceChanged = (attrs.price !== tier.price) || cadenceChanged;
+    const annualPriceChanged = (attrs.priceAnnual !== tier.priceAnnual);
+    const materialChange = priceChanged || annualPriceChanged || featuresChanged;
     const createNewversion = hasSubscribers && attrs.published && materialChange;
     const stripeConnected = !!user.stripeAccountId;
 
@@ -146,6 +166,9 @@ class TierService {
           tierId: id,
           price: tier.price,
           stripePriceId: tier.stripePriceId,
+          cadence: tier.cadence,
+          priceAnnual: tier.priceAnnual,
+          stripePriceIdAnnual: tier.stripePriceIdAnnual,
           revision: tier.revision,
         },
       });
@@ -155,19 +178,35 @@ class TierService {
 
       // clear old price from tier and version
       attrs.revision = tier.revision + 1;
-      attrs.stripePriceId = null;
+      attrs.cadence = (attrs.cadence || 'month') as SubscriptionCadence;
+
+      const tierAttributes = {
+        revision: tier.revision + 1,
+      } as Partial<Tier>;
+
+      if(featuresChanged || priceChanged){
+        attrs.stripePriceId = null;
+        tierAttributes.stripePriceId = null;
+      }
+
+      if(featuresChanged || annualPriceChanged){
+        attrs.stripePriceIdAnnual = null;
+        tierAttributes.stripePriceIdAnnual = null;
+      }
 
       await prisma.tier.update({
         where: { id },
-        data: {
-          stripePriceId: null,
-          revision: tier.revision + 1
-        },
+        data: tierAttributes,
       });
     } else {
       if(priceChanged && tier.stripePriceId) {
           attrs.stripePriceId = null;
           await stripeService.destroyPrice(tier.stripePriceId);
+      }
+
+      if(annualPriceChanged && tier.stripePriceIdAnnual) {
+        attrs.stripePriceIdAnnual = null;
+        await stripeService.destroyPrice(tier.stripePriceIdAnnual);
       }
     }
 
@@ -184,8 +223,13 @@ class TierService {
       }
 
       if(!attrs.stripePriceId) {
-        const price = await stripeService.createPrice(attrs.stripeProductId, attrs.price);
+        const price = await stripeService.createPrice(attrs.stripeProductId, attrs.price, attrs.cadence as SubscriptionCadence);
         attrs.stripePriceId = price.id;
+      }
+
+      if(!attrs.stripePriceIdAnnual && attrs.priceAnnual) {
+        const priceAnnual = await stripeService.createPrice(attrs.stripeProductId, attrs.priceAnnual, 'year');
+        attrs.stripePriceIdAnnual = priceAnnual.id;
       }
     }
 
@@ -200,7 +244,8 @@ class TierService {
 
   static shouldCreateNewVersion = async (tier: Tier, tierData: Partial<Tier>): Promise<boolean> => {
     return tierData.published === true && 
-      Number(tierData.price) !== Number(tier.price);
+      Number(tierData.price) !== Number(tier.price) || 
+      Number(tierData.priceAnnual) !== Number(tier.priceAnnual);
   }
 
   static async findByUserId( userId: string) {
@@ -261,6 +306,8 @@ class TierService {
         createdAt: true,
         features: true,
         price: true,
+        cadence: true,
+        priceAnnual: true,
         versions: {
           orderBy: {
             createdAt: 'desc' // Order by creation date in descending order
@@ -443,4 +490,4 @@ class TierService {
 };
 
 export default TierService;
-export const { findTier, updateTier, createTier, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId, getTiersForUser } = TierService;
+export const { findTier, updateTier, createTier, destroyTier, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId, getTiersForUser } = TierService;

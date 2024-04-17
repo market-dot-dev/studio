@@ -1,11 +1,10 @@
 "use client";
-// tier-form.tsx
 
-import { ChangeEvent, use, useEffect, useState } from 'react';
-import { Flex, Text, Button, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab } from "@tremor/react"
+import { useEffect, useState } from 'react';
+import { Flex, Text, Button, Bold, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab, Card } from "@tremor/react"
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
-import { createTier, updateTier, shouldCreateNewVersion, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
+import { createTier, destroyTier, updateTier, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
@@ -16,6 +15,8 @@ import DashboardCard from '../common/dashboard-card';
 import { Feature } from '@prisma/client';
 import LoadingDots from "@/components/icons/loading-dots";
 import {
+	Select,
+	SelectItem,
 	Table,
 	TableHead,
 	TableHeaderCell,
@@ -84,8 +85,16 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 	}
 };
 
+const calcDiscount = (price: number, annualPrice: number) => {
+	if (price === 0) return 0;
+	if (annualPrice === 0) return 100;
+	const twelveMonths = price * 12;
+	return Math.round(((twelveMonths - annualPrice) / twelveMonths * 100) * 10) / 10;
+}
+
 export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [tier, setTier] = useState<TierWithFeatures>((tierObj ? tierObj : newTier()) as Tier);
+
 	const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(new Set<string>());
 	const [versionedAttributesChanged, setVersionedAttributesChanged] = useState(false);
 	const [tierSubscriberCount, setTierSubscriberCount] = useState(0);
@@ -93,6 +102,9 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [versions, setVersions] = useState<TierVersionWithFeatures[]>([]);
 	const [featuresChanged, setFeaturesChanged] = useState(false);
 	const [featureObjs, setFeatureObjs] = useState<Feature[]>([]);
+	const [trialEnabled, setTrialEnabled] = useState(tier?.trialDays > 0);
+	const [annualPlanEnabled, setAnnualPlanEnabled] = useState(tier?.priceAnnual ? tier.priceAnnual > 0 : false);
+	const [annualDiscountPercent, setAnnualDiscountPercent] = useState(calcDiscount(tier.price, tier.priceAnnual || 0));
 
 	const newRecord = !tier?.id;
 	const tierHasSubscribers = currentRevisionSubscriberCount > 0;
@@ -104,9 +116,10 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [isSaving, setIsSaving] = useState(false);
 
 	const handleInputChange = (
-		e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
+		name: string,
+		value: number | string | null,
+
 	) => {
-		const { name, value } = e.target;
 		const updatedTier = { ...tier, [name]: value } as Tier;
 		setTier(updatedTier);
 	};
@@ -166,7 +179,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 	useEffect(() => {
 		if (tier && tierObj) {
-			if( tierObj.published === true && Number(tierObj.price) !== Number(tier.price)) {
+			if (tierObj.published === true && Number(tierObj.price) !== Number(tier.price)) {
 				setVersionedAttributesChanged(true);
 			}
 			// shouldCreateNewVersion(tierObj as Tier, tier).then(ret => {
@@ -189,13 +202,6 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							<PageHeading title={formTitle} />
 						</div>
 						<div>
-							<Button
-								disabled={isSaving}
-								loading={isSaving}
-								onClick={onSubmit}
-							>
-								{buttonLabel}
-							</Button>
 						</div>
 					</div>
 
@@ -222,7 +228,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							required
 							name="name"
 							value={tier.name}
-							onChange={handleInputChange}
+							onValueChange={(v) => handleInputChange('name', v)}
 
 						/>
 						{errors['name'] ? <Text color="red" >{errors['name']}</Text> : null}
@@ -236,7 +242,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							required
 							name="tagline"
 							value={tier.tagline || ''}
-							onChange={handleInputChange}
+							onValueChange={(v) => handleInputChange('tagline', v)}
 						/>
 					</div>
 
@@ -248,8 +254,130 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
 							name="description"
 							value={tier.description || ''}
-							onChange={handleInputChange}
+							onValueChange={(v) => handleInputChange('tierDescription', v)}
 						/>
+					</div>
+
+					<div className="mb-4">
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Billing type</label>
+							<Select
+								id="cadence"
+								placeholder="Billing type"
+								required
+								name="cadence"
+								value={tier.cadence || 'month'}
+								onValueChange={(v) => handleInputChange('cadence', v)}
+							>
+								<SelectItem value="month">Recurring</SelectItem>
+								{/*
+								<SelectItem value="year">year</SelectItem>
+								<SelectItem value="quarter">quarter</SelectItem>
+								*/}
+								<SelectItem value="once">One Time</SelectItem>
+							</Select>
+						</div>
+
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price (USD)</label>
+							<Flex className='gap-2' justifyContent='start'>
+								<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onValueChange={(v) => {
+
+									const updatedTier = {
+										...tier,
+										price: v,
+
+									} as Tier;
+
+									if (annualPlanEnabled) {
+										setAnnualDiscountPercent(calcDiscount(v, tier.priceAnnual || 0));
+									}
+
+									setTier(updatedTier);
+								}} />
+							</Flex>
+						</div>
+
+						{tier.cadence === 'month' && <>
+							<div className="flex gap-2 mb-4">
+								<input type="checkbox"
+									className="border-gray-600 rounded-md p-3 accent-green-400"
+									id="annualPlanEnabled" checked={annualPlanEnabled} onChange={(e) => {
+										setAnnualPlanEnabled(e.target.checked);
+
+										if (e.target.checked) {
+											handleInputChange('priceAnnual', tier.priceAnnual || tier.price * 12);
+											setAnnualDiscountPercent(0);
+										} else {
+											handleInputChange('priceAnnual', 0);
+											setAnnualDiscountPercent(0);
+										}
+									}} />
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer Annual Plan</label>
+							</div>
+
+							{annualPlanEnabled &&
+								<div className="mb-4">
+									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
+										Annual Price
+										&nbsp;
+									</label>
+									<NumberInput
+										id="priceAnnual"
+										placeholder="Annual price (dollars)"
+										required
+										name="priceAnnual"
+										disabled={!annualPlanEnabled}
+										enableStepper={false}
+										error={!!tier.priceAnnual && tier.price * 12 < (tier.priceAnnual || 0)}
+										errorMessage={`Your annual plan is equal to or more expensive than the Monthly Plan x 12 (${tier.price * 12}). Please adjust.`}
+										value={tier.priceAnnual || undefined}
+										onValueChange={(v) => {
+											handleInputChange('priceAnnual', v)
+											setAnnualDiscountPercent(calcDiscount(tier.price, v));
+										}}
+									/>
+									<label className="block my-1 text-sm font-medium text-gray-600">
+										Effective Discount Rate: {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"} (compared to annualized monthly {<>${tier.price * 12}</>})
+									</label>
+								</div>
+							}
+
+
+							<div className="mb-4">
+								{/* <NumberInput
+										id="annualDiscountPercent"
+										placeholder="Annual Discount (%)"
+										readOnly={true}
+										disabled={!annualPlanEnabled}
+										required
+										name="annualDiscountPercent"
+										value={annualDiscountPercent}
+									/> */}
+							</div>
+
+							<div className="flex gap-2 mb-4">
+								<input type="checkbox"
+									className="border-gray-600 rounded-md p-3 accent-green-400"
+									id="trialEnabled" checked={trialEnabled} onChange={(e) => setTrialEnabled(e.target.checked)} />
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer Trial Period</label>
+							</div>
+
+							{trialEnabled &&
+								<div className="mb-4">
+									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Length (Days)</label>
+									<NumberInput
+										id="trialDays"
+										placeholder="Annual price (dollars)"
+										required
+										name="trialDays"
+										disabled={!trialEnabled}
+										value={tier.trialDays || 0}
+										onValueChange={(v) => handleInputChange('trialDays', v)}
+									/>
+								</div>
+							}
+						</>}
 					</div>
 
 
@@ -273,7 +401,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 											setTier({ ...tier, published: e.target.checked } as Tier);
 										}} />
 									<span>
-										<label htmlFor="switch" className="text-sm text-gray-500 ms-2">
+										<label htmlFor="switch" className="text-sm text-gray-900">
 											Make this tier <span className="font-medium text-gray-700">available for sale.</span>
 										</label>
 									</span>
@@ -283,13 +411,6 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 								<Callout className="my-2" title="Payment Setup Required" color="red">You need to connect your Stripe account to publish a tier. Visit <a href="/settings/payment" className="underline">Payment Settings</a> to get started.</Callout>
 							</>}
 						</label>
-					</div>
-
-					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price (USD)</label>
-						<Flex className='gap-2' justifyContent='start'>
-							<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onChange={handleInputChange} />
-						</Flex>
 					</div>
 
 					<div className="mb-4">
@@ -328,7 +449,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 												<TableCell className="p-1 ps-0 m-0">
 													{tier.createdAt.toDateString()}
 													<Badge color="gray" size="xs" className="ms-1 text-xs font-medium uppercase">Current</Badge>
-												
+
 												</TableCell>
 												<TableCell className="p-1 ps-0 m-0">
 													{tier.features && tier.features.length > 0 ?
@@ -357,12 +478,25 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						}
 					</div>
 
+					{/* TODO: RE-ENABLE DELETING TIERS - CURRENT UX IS TRASH */}
+					{/* <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Admin</label>
+					<Button variant="secondary" disabled={tier.id ? false : true} className="w-full" onClick={() => destroyTier(tier.id as string)}>Delete Tier</Button> */}
+					<Button
+						disabled={isSaving}
+						loading={isSaving}
+						onClick={onSubmit}
+					>
+						{buttonLabel}
+					</Button>
+
 				</div>
 
 				{/* Preview Section */}
 				<div className="md:w-[300px] text-center mb-auto" >
 					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
 					<TierCard tier={tier} features={featureObjs} buttonDisabled={newRecord} />
+					{tier.id && tier.published ? <Text className="mt-2">This tier is currently published and available for sale.</Text>
+						: <Text className="mt-2">This tier is not published and is not available for sale.</Text>}
 				</div>
 			</div>
 		</>
