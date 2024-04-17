@@ -202,13 +202,6 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							<PageHeading title={formTitle} />
 						</div>
 						<div>
-							<Button
-								disabled={isSaving}
-								loading={isSaving}
-								onClick={onSubmit}
-							>
-								{buttonLabel}
-							</Button>
 						</div>
 					</div>
 
@@ -254,65 +247,76 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 					</div>
 
 					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Pricing</label>
-						<DashboardCard>
-							<div className="mb-4">
-								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Billing type</label>
-								<Select
-									id="cadence"
-									placeholder="Billing type"
-									required
-									name="cadence"
-									value={tier.cadence || 'month'}
-									onValueChange={(v) => handleInputChange('cadence', v)}
-								>
-									<SelectItem value="month">Recurring</SelectItem>
-									{/*
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Description</label>
+						<Textarea
+							id="tierDescription"
+							rows={4}
+							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
+							name="description"
+							value={tier.description || ''}
+							onValueChange={(v) => handleInputChange('tierDescription', v)}
+						/>
+					</div>
+
+					<div className="mb-4">
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Billing type</label>
+							<Select
+								id="cadence"
+								placeholder="Billing type"
+								required
+								name="cadence"
+								value={tier.cadence || 'month'}
+								onValueChange={(v) => handleInputChange('cadence', v)}
+							>
+								<SelectItem value="month">Recurring</SelectItem>
+								{/*
 								<SelectItem value="year">year</SelectItem>
 								<SelectItem value="quarter">quarter</SelectItem>
 								*/}
-									<SelectItem value="once">One Time</SelectItem>
-								</Select>
-							</div>
+								<SelectItem value="once">One Time</SelectItem>
+							</Select>
+						</div>
 
-							<div className="mb-4">
-								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price (USD)</label>
-								<Flex className='gap-2' justifyContent='start'>
-									<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onValueChange={(v) => {
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Monthly Price (USD)</label>
+							<Flex className='gap-2' justifyContent='start'>
+								<NumberInput value={tier.price} name="price" placeholder="Enter price" enableStepper={false} onValueChange={(v) => {
 
-										const updatedTier = {
-											...tier,
-											price: v,
+									const updatedTier = {
+										...tier,
+										price: v,
 
-										} as Tier;
+									} as Tier;
 
-										if (annualPlanEnabled) {
-											setAnnualDiscountPercent(calcDiscount(v, tier.priceAnnual || 0));
+									if (annualPlanEnabled) {
+										setAnnualDiscountPercent(calcDiscount(v, tier.priceAnnual || 0));
+									}
+
+									setTier(updatedTier);
+								}} />
+							</Flex>
+						</div>
+
+						{tier.cadence === 'month' && <>
+							<div className="flex gap-2 mb-4">
+								<input type="checkbox"
+									className="border-gray-600 rounded-md p-3 accent-green-400"
+									id="annualPlanEnabled" checked={annualPlanEnabled} onChange={(e) => {
+										setAnnualPlanEnabled(e.target.checked);
+
+										if (e.target.checked) {
+											handleInputChange('priceAnnual', tier.priceAnnual || tier.price * 12);
+											setAnnualDiscountPercent(0);
+										} else {
+											handleInputChange('priceAnnual', 0);
+											setAnnualDiscountPercent(0);
 										}
-
-										setTier(updatedTier);
 									}} />
-								</Flex>
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer Annual Plan</label>
 							</div>
 
-							{tier.cadence === 'month' && <>
-								<div className="flex gap-2 mb-4">
-									<input type="checkbox"
-										className="border-gray-600 rounded-md p-3 accent-green-400"
-										id="annualPlanEnabled" checked={annualPlanEnabled} onChange={(e) => {
-											setAnnualPlanEnabled(e.target.checked);
-
-											if (e.target.checked) {
-												handleInputChange('priceAnnual', tier.priceAnnual || tier.price * 12);
-												setAnnualDiscountPercent(0);
-											} else {
-												handleInputChange('priceAnnual', 0);
-												setAnnualDiscountPercent(0);
-											}
-										}} />
-									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer Annual Plan</label>
-								</div>
-
+							{annualPlanEnabled &&
 								<div className="mb-4">
 									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
 										Annual Price
@@ -333,14 +337,15 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 											setAnnualDiscountPercent(calcDiscount(tier.price, v));
 										}}
 									/>
-									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
-										Effective Discount Rate: {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"} (compared to Annualized monthly plan: {tier.price ? <>${tier.price * 12}</> : null})
+									<label className="block my-1 text-sm font-medium text-gray-600">
+										Effective Discount Rate: {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"} (compared to annualized monthly {<>${tier.price * 12}</>})
 									</label>
 								</div>
+							}
 
 
-								<div className="mb-4">
-									{/* <NumberInput
+							<div className="mb-4">
+								{/* <NumberInput
 										id="annualDiscountPercent"
 										placeholder="Annual Discount (%)"
 										readOnly={true}
@@ -349,17 +354,18 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 										name="annualDiscountPercent"
 										value={annualDiscountPercent}
 									/> */}
-								</div>
+							</div>
 
-								<div className="flex gap-2 mb-4">
-									<input type="checkbox"
-										className="border-gray-600 rounded-md p-3 accent-green-400"
-										id="trialEnabled" checked={trialEnabled} onChange={(e) => setTrialEnabled(e.target.checked)} />
-									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer trial period</label>
-								</div>
+							<div className="flex gap-2 mb-4">
+								<input type="checkbox"
+									className="border-gray-600 rounded-md p-3 accent-green-400"
+									id="trialEnabled" checked={trialEnabled} onChange={(e) => setTrialEnabled(e.target.checked)} />
+								<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Offer Trial Period</label>
+							</div>
 
+							{trialEnabled &&
 								<div className="mb-4">
-									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Days</label>
+									<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Trial Length (Days)</label>
 									<NumberInput
 										id="trialDays"
 										placeholder="Annual price (dollars)"
@@ -370,20 +376,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 										onValueChange={(v) => handleInputChange('trialDays', v)}
 									/>
 								</div>
-							</>}
-						</DashboardCard>
-					</div>
-
-					<div className="mb-4">
-						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Description</label>
-						<Textarea
-							id="tierDescription"
-							rows={4}
-							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
-							name="description"
-							value={tier.description || ''}
-							onValueChange={(v) => handleInputChange('tierDescription', v)}
-						/>
+							}
+						</>}
 					</div>
 
 
@@ -407,7 +401,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 											setTier({ ...tier, published: e.target.checked } as Tier);
 										}} />
 									<span>
-										<label htmlFor="switch" className="text-sm text-gray-500 ms-2">
+										<label htmlFor="switch" className="text-sm text-gray-900">
 											Make this tier <span className="font-medium text-gray-700">available for sale.</span>
 										</label>
 									</span>
@@ -487,12 +481,22 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 					{/* TODO: RE-ENABLE DELETING TIERS - CURRENT UX IS TRASH */}
 					{/* <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Admin</label>
 					<Button variant="secondary" disabled={tier.id ? false : true} className="w-full" onClick={() => destroyTier(tier.id as string)}>Delete Tier</Button> */}
+					<Button
+						disabled={isSaving}
+						loading={isSaving}
+						onClick={onSubmit}
+					>
+						{buttonLabel}
+					</Button>
+
 				</div>
 
 				{/* Preview Section */}
 				<div className="md:w-[300px] text-center mb-auto" >
 					<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
 					<TierCard tier={tier} features={featureObjs} buttonDisabled={newRecord} />
+					{tier.id && tier.published ? <Text className="mt-2">This tier is currently published and available for sale.</Text>
+						: <Text className="mt-2">This tier is not published and is not available for sale.</Text>}
 				</div>
 			</div>
 		</>
