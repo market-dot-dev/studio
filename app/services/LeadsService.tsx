@@ -3,6 +3,8 @@
 import SessionService from "./SessionService";
 import prisma from "@/lib/prisma";
 
+const radarAPIEndpoint = process.env.RADAR_API_ENDPOINT;
+
 class LeadsService {
     static async getDependentRepostories() {
         // Add your logic here
@@ -125,18 +127,25 @@ class LeadsService {
     }
 
     static async lookup(repoUrl: string) {
-        const response = await fetch(`https://radar-api.ecosyste.ms/api/v1/repositories/lookup?url=${repoUrl}`);
+        const response = await fetch(`${radarAPIEndpoint}repositories/lookup?url=${repoUrl}`);
         return response.json();
     }
 
     static async getDependentOwners(radarId: number, page: number, perPage: number, showOnlyOrgs: boolean) {
+
         // Add your logic here
-        const response = await fetch(`https://radar-api.ecosyste.ms/api/v1/repositories/${radarId}/dependent_owners?per_page=${perPage}&page=${page}` + (showOnlyOrgs ? '&kind=organization' : ''));
-        // if it is 404 return empty array
-        if (response.status === 404) {
-            return [];
+        try {
+            const response = await fetch(`${radarAPIEndpoint}repositories/${radarId}/dependent_owners?per_page=${perPage}&page=${page}` + (showOnlyOrgs ? '&kind=organization' : ''));
+            
+            // if it is 404 return empty array
+            if (response.status === 404) {
+                return [];
+            }
+            return response.json();
+        } catch (error: any) {
+            // rethrow the error
+            throw new Error(error);
         }
-        return response.json();
     }
 
 }
