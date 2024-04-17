@@ -1,8 +1,8 @@
 'use client'
 import {  Repo } from "@prisma/client";
-import { Bold, Card, Text, Badge, SearchSelect, SearchSelectItem, Button, TextInput, NumberInput, Switch, SelectItem, Select } from "@tremor/react";
+import { Bold, Card, Badge, SearchSelect, SearchSelectItem, Button, TextInput, NumberInput, Switch, SelectItem, Select } from "@tremor/react";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup } from "@/app/services/LeadsService";
 import LoadingSpinner from "../form/loading-spinner";
@@ -36,38 +36,77 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         setPage(newPage);
     }, [selectedRepo]);
 
-    const getDependentOwnersWithCache = useCallback(async () => {
-        if( ! selectedRepo?.radarId) {
-            return [];
-        }
-        const cacheKey = `leads_${selectedRepo?.radarId}_${page}_${perPage}_${showOnlyOrgs}`;
-        const cachedData = sessionStorage.getItem(cacheKey);
-        if (cachedData) {
-            return JSON.parse(cachedData);
-        } else {
-            try {
-                const fetchedLeads = await getDependentOwners(selectedRepo?.radarId, page, perPage, showOnlyOrgs);
-                sessionStorage.setItem(cacheKey, JSON.stringify(fetchedLeads));
-                return fetchedLeads;
-            } catch (error) {
-                console.error('Failed to fetch leads:', error);
-                return []; 
+    const clearLeadsCache = useCallback(() => {
+        console.log('clearing all cache');
+        Object.keys(sessionStorage).forEach(key => {
+            // Check if the key belongs to leads cache
+            if (key.startsWith('leads_')) {
+                sessionStorage.removeItem(key);
             }
-        }
-    }, [selectedRepo?.radarId, page, perPage, showOnlyOrgs]);
-    
+        });
+    }, [])
 
-    useEffect(() => {
-        if( !selectedRepo?.url ) {
-            return;
-        }
-        setIsSearching(true);
-        if( selectedRepo.url ) {
+    const lookupRepo = useCallback((initial?: boolean) => {
+        if( selectedRepo?.url ) {
             lookup(selectedRepo.url).then((res: any) => {
-                setTotalCount(res.dependent_owners_count ?? 0);
+                
+                setTotalCount( prev => {
+                    if( !initial ) {
+                        // if the count has changed
+                        if( prev !== res.dependent_owners_count ) {
+                            clearLeadsCache();
+                        }
+                    }
+                    return res.dependent_owners_count ?? 0
+                });
+                
                 setOrgsCount(res.dependent_organizations_count ?? 0);
             });
         }
+    }, [ selectedRepo?.url, setTotalCount, setOrgsCount, lookup ])
+
+    const getDependentOwnersWithCache = useCallback(async () => {
+        
+        if (!selectedRepo?.radarId) {
+            return [];
+        }
+
+        const cacheKey = `leads_${selectedRepo?.radarId}_${page}_${perPage}_${showOnlyOrgs}`;
+        const cachedData = sessionStorage.getItem(cacheKey);
+
+        if (cachedData) {
+            const { data, timestamp } = JSON.parse(cachedData);
+            const now = new Date().getTime();
+
+            // Check if the cached data is older than 5 minutes
+            if (now - timestamp < 300000) {
+                return data;
+            }
+        }
+        try {
+            const fetchedLeads = await getDependentOwners(selectedRepo?.radarId, page, perPage, showOnlyOrgs);
+            const itemToCache = {
+                data: fetchedLeads,
+                timestamp: new Date().getTime() // Save current time as timestamp
+            };
+            sessionStorage.setItem(cacheKey, JSON.stringify(itemToCache));
+            return fetchedLeads;
+        } catch (error) {
+            console.error('Failed to fetch leads:', error);
+            return [];
+        }
+    }, [selectedRepo?.radarId, page, perPage, showOnlyOrgs]);
+    
+    
+
+    useEffect(() => {
+        
+        if( !selectedRepo?.url ) {
+            return;
+        }
+
+        setIsSearching(true);
+        lookupRepo(true);
 
         getShortlistedLeadsKeysList(selectedRepo.id).then((leads: LeadKey[]) => {
             setShortListedLeads(leads);
@@ -75,13 +114,12 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     }, [selectedRepo])
 
     useEffect(() => {
-        if( ! selectedRepo?.radarId || !totalCount) {
+        if( !selectedRepo?.radarId || !totalCount) {
             return;
         }
         
         setIsSearching(true);
-        // determine total pages here, as based on perPage, this could change
-        const totalPages = Math.ceil(totalCount / perPage);
+        lookupRepo();
         
         getDependentOwnersWithCache().then((fetchedLeads: any[]) => {
             setRadarResults(fetchedLeads);

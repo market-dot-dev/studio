@@ -127,8 +127,13 @@ class LeadsService {
     }
 
     static async lookup(repoUrl: string) {
-        const response = await fetch(`${radarAPIEndpoint}repositories/lookup?url=${repoUrl}`);
-        return response.json();
+        try {
+            const response = await fetch(`${radarAPIEndpoint}repositories/lookup?url=${repoUrl}`);
+            return response.json();
+        } catch (error: any) {
+            // rethrow the error
+            throw new Error(error);
+        }
     }
 
     static async getDependentOwners(radarId: number, page: number, perPage: number, showOnlyOrgs: boolean) {
