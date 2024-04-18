@@ -1,22 +1,22 @@
 'use client'
 
 import { Lead } from "@prisma/client";
-import { Badge, Bold, Button, Card, Text } from "@tremor/react";
-import LeadItem, { LeadItemType } from "./lead-item";
+import { Button, Card } from "@tremor/react";
+import LeadItem from "./lead-item";
 import { useCallback, useState } from "react";
 import { removeLeadFromShortlist } from "@/app/services/LeadsService";
 
-export type ShortListedLead = {
-    repo: {
-        id: string;
-        name: string;
-        url: string | null;
-    };
-} & LeadItemType & Pick<Lead, 'maintainers'>;
+// export type ShortListedLead = {
+//     // repo: {
+//     //     id: string;
+//     //     name: string;
+//     //     url: string | null;
+//     // };
+// } & Lead;
 
-export default function ShortlistedLeads({ leads : loadedLeads }: { leads: ShortListedLead[]}) {
+export default function ShortlistedLeads({ leads : loadedLeads }: { leads: Lead[]}) {
     const [isRemoving, setIsRemoving] = useState(false);
-    const [leads, setLeads] = useState<ShortListedLead[]>(loadedLeads);
+    const [leads, setLeads] = useState<Lead[]>(loadedLeads);
 
     const removeLead = useCallback((leadId: number) => {
         setIsRemoving(true);
@@ -34,9 +34,9 @@ export default function ShortlistedLeads({ leads : loadedLeads }: { leads: Short
     
     return (
         <>
-            {leads.map((lead: ShortListedLead, index: number) => (
+            {leads.map((lead: Lead, index: number) => (
                 <Card className="flex flex-col my-2 z-0 relative" key="index">
-                    <LeadItem lead={{...lead, maintainers: JSON.parse(lead.maintainers)}} />
+                    <LeadItem lead={lead} />
                     <div className="flex flex-col absolute top-10 right-10">
                         
                         <Button

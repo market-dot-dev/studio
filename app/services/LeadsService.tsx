@@ -54,7 +54,7 @@ class LeadsService {
             dependent_repos_count: leadData.dependent_repos_count,
             followers: leadData.followers || null,
             following: leadData.following || null,
-            maintainers: JSON.stringify(leadData.maintainers || []),
+            maintainers: leadData.maintainers || [],
         }
 
         return await prisma.lead.upsert({
@@ -96,16 +96,6 @@ class LeadsService {
                 repo : {
                   userId,
                 }
-            },
-            include: {
-                repo: {
-                    select: {
-                        id: true,
-                        name: true,
-                        url: true,
-                    }
-                
-                }
             }
         });
     }
@@ -127,29 +117,39 @@ class LeadsService {
     }
 
     static async lookup(repoUrl: string) {
+        
         try {
             const response = await fetch(`${radarAPIEndpoint}repositories/lookup?url=${repoUrl}`);
-            return response.json();
+            return {
+                data: await response.json()
+            }
         } catch (error: any) {
-            // rethrow the error
-            throw new Error(error);
+            return {
+                error: 'Failed to lookup repository'
+            }
         }
     }
 
     static async getDependentOwners(radarId: number, page: number, perPage: number, showOnlyOrgs: boolean) {
-
+        
         // Add your logic here
         try {
             const response = await fetch(`${radarAPIEndpoint}repositories/${radarId}/dependent_owners?per_page=${perPage}&page=${page}` + (showOnlyOrgs ? '&kind=organization' : ''));
             
             // if it is 404 return empty array
             if (response.status === 404) {
-                return [];
+                return {
+                    error: 'No dependent owners found'
+                };
             }
-            return response.json();
+            return {
+                data: await response.json()
+            }
         } catch (error: any) {
             // rethrow the error
-            throw new Error(error);
+            return {
+                error: 'Failed to get dependent owners'
+            }
         }
     }
 

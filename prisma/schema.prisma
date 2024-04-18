@@ -322,7 +322,7 @@ model Lead {
   dependent_repos_count   Int
   followers             Int?
   following             Int?
-  maintainers           String
+  maintainers           Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   

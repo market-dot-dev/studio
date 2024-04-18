@@ -1,13 +1,14 @@
 'use client'
-import {  Repo } from "@prisma/client";
-import { Bold, Card, Badge, SearchSelect, SearchSelectItem, Button, TextInput, NumberInput, Switch, SelectItem, Select } from "@tremor/react";
+import {  Lead, Repo } from "@prisma/client";
+import { Bold, Card, Badge, SearchSelect, SearchSelectItem, Button, Text, NumberInput, Switch, SelectItem, Select } from "@tremor/react";
 
 import { useCallback, useEffect, useState } from "react";
 
 import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup } from "@/app/services/LeadsService";
 import LoadingSpinner from "../form/loading-spinner";
 
-import LeadItem, { LeadItemType } from "./lead-item";
+import LeadItem from "./lead-item";
+
 
 type LeadKey = {
     host: string;
@@ -28,6 +29,8 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
     const [showOnlyOrgs, setShowOnlyOrgs] = useState<boolean>(true);
 
+    const [searchError, setSearchError] = useState<string>('');
+
     const handleRepoSelected = useCallback((selectedIndex: string) => {
         setSelectedRepo(repos[parseInt(selectedIndex)]);
     }, [setSelectedRepo]);
@@ -37,7 +40,6 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     }, [selectedRepo]);
 
     const clearLeadsCache = useCallback(() => {
-        console.log('clearing all cache');
         Object.keys(sessionStorage).forEach(key => {
             // Check if the key belongs to leads cache
             if (key.startsWith('leads_')) {
@@ -48,56 +50,78 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
     const lookupRepo = useCallback((initial?: boolean) => {
         if( selectedRepo?.url ) {
-            lookup(selectedRepo.url).then((res: any) => {
-                
-                setTotalCount( prev => {
-                    if( !initial ) {
-                        // if the count has changed
-                        if( prev !== res.dependent_owners_count ) {
-                            clearLeadsCache();
+            try {
+                lookup(selectedRepo.url).then((res: any) => {
+                    
+                    if( res.error ) {
+                        if( initial ) {
+                            setSearchError(res.error);
+                            setIsSearching(false);
+                        } else {
+                            console.log('Failed to fetch updated dependent owners count');
                         }
+
+                        return;
                     }
-                    return res.dependent_owners_count ?? 0
+
+                    setTotalCount( prev => {
+                        if( !initial ) {
+                            // if the count has changed
+                            if( prev !== res.data.dependent_owners_count ) {
+                                clearLeadsCache();
+                            }
+                        }
+                        return res.data.dependent_owners_count ?? 0
+                    });
+                    
+                    setOrgsCount(res.data.dependent_organizations_count ?? 0);
                 });
-                
-                setOrgsCount(res.dependent_organizations_count ?? 0);
-            });
+            } catch (error) {
+                console.log('Failed to fetch dependent owners count:', error)
+                setIsSearching(false);
+            } 
         }
     }, [ selectedRepo?.url, setTotalCount, setOrgsCount, lookup ])
 
     const getDependentOwnersWithCache = useCallback(async () => {
-        
-        if (!selectedRepo?.radarId) {
-            return [];
-        }
 
-        const cacheKey = `leads_${selectedRepo?.radarId}_${page}_${perPage}_${showOnlyOrgs}`;
+        const cacheKey = `leads_${selectedRepo!.radarId!}_${page}_${perPage}_${showOnlyOrgs}`;
         const cachedData = sessionStorage.getItem(cacheKey);
 
         if (cachedData) {
-            const { data, timestamp } = JSON.parse(cachedData);
-            const now = new Date().getTime();
+            try {
+                const { data, timestamp } = JSON.parse(cachedData);
+                const now = new Date().getTime();
 
-            // Check if the cached data is older than 5 minutes
-            if (now - timestamp < 300000) {
-                return data;
+                // Check if the cached data is older than 5 minutes
+                if (now - timestamp < 300000) {
+                    return data;
+                }
+            } catch (error) {
+                console.error('Failed to parse cached data:', error);
             }
         }
         try {
-            const fetchedLeads = await getDependentOwners(selectedRepo?.radarId, page, perPage, showOnlyOrgs);
+            const res = await getDependentOwners(selectedRepo!.radarId!, page, perPage, showOnlyOrgs);
+            
+            if( res.error ) {
+                setSearchError(res.error);
+                return [];
+            }
+
             const itemToCache = {
-                data: fetchedLeads,
+                data: res.data,
                 timestamp: new Date().getTime() // Save current time as timestamp
             };
             sessionStorage.setItem(cacheKey, JSON.stringify(itemToCache));
-            return fetchedLeads;
+            return res.data;
+
         } catch (error) {
-            console.error('Failed to fetch leads:', error);
+            
+            setSearchError('Failed to fetch dependent owners.');
             return [];
         }
-    }, [selectedRepo?.radarId, page, perPage, showOnlyOrgs]);
-    
-    
+    }, [selectedRepo?.radarId, page, perPage, showOnlyOrgs, setSearchError]);
 
     useEffect(() => {
         
@@ -114,10 +138,19 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     }, [selectedRepo])
 
     useEffect(() => {
-        if( !selectedRepo?.radarId || !totalCount) {
+        
+        if( !selectedRepo?.radarId ) {
+            setIsSearching(false);
+            return;
+        }
+            
+        if(!totalCount) {
+            setSearchError("Selected Repsoitory has no dependent owners.");
+            setIsSearching(false);
             return;
         }
         
+        setSearchError('');
         setIsSearching(true);
         lookupRepo();
         
@@ -129,6 +162,23 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         });
 
     }, [page, perPage, showOnlyOrgs, totalCount]);
+
+    const resultsPerPage = (
+        <>
+        <div className="text-sm">Results per Page</div>
+        <div>
+            <Select 
+                disabled={isSearching}
+                className="w-24" value={`${perPage}`} onValueChange={(e: string) => {
+                setPerPage(parseInt(e));
+            }}>
+                <SelectItem value="20">20</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+                <SelectItem value="100">100</SelectItem>
+            </Select>
+        </div>
+        </>
+    )
 
     return (
         <>
@@ -155,8 +205,10 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             </div>
 
             <Bold>Organizations Using This Repository</Bold>
+            { searchError ? <Text className="text-red-500">{searchError}</Text> : null }
             { radarResults.length ?
-                <div className="flex justify-between items-cente bg-white p-4 sticky -top-1 z-10 shadow-sm border rounded-md -mr-1 -ml-1">
+            <div className="flex flex-col gap-4 items-stretch">
+                <div className="flex justify-between items-center bg-white p-4 sticky -top-1 z-10 shadow-sm border rounded-md -mr-1 -ml-1">
 
                     <Pagination
                         page={page}
@@ -166,6 +218,13 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         isLoading={isSearching}
                     />
                     
+                    
+                    <div className="hidden items-center justify-end gap-3 w-1/3 lg:flex">
+                        {resultsPerPage}
+                    </div>
+                    
+                </div>
+                <div className="flex justify-between items-center w-full">
                     <div className="flex items-center justify-center gap-3">
                         <Switch
                             id="switch"
@@ -178,23 +237,12 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                             Show only organizations
                         </label>
                     </div>
-                    
-                    <div className="flex items-center justify-end gap-3 w-1/3">
-                        <div className="text-sm">Results per Page</div>
-                        <div>
-                            <Select 
-                                disabled={isSearching}
-                                className="w-24" value={`${perPage}`} onValueChange={(e: string) => {
-                                setPerPage(parseInt(e));
-                            }}>
-                                <SelectItem value="20">20</SelectItem>
-                                <SelectItem value="50">50</SelectItem>
-                                <SelectItem value="100">100</SelectItem>
-                            </Select>
-                        </div>
+
+                    <div className="flex items-center justify-end gap-3 w-1/2 lg:hidden">
+                        {resultsPerPage}
                     </div>
-                    
                 </div>
+            </div>
                 :null
                 }
                 
@@ -220,7 +268,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
 
 
-function SearchResult( { selectedRepo, lead, isShortlisted, setShortListedLeads } : { selectedRepo: Repo | null, lead: LeadItemType, isShortlisted: boolean, setShortListedLeads: any}) {
+function SearchResult( { selectedRepo, lead, isShortlisted, setShortListedLeads } : { selectedRepo: Repo | null, lead: Lead, isShortlisted: boolean, setShortListedLeads: any}) {
     const [isAddingToShortlist, setIsAddingToShortlist] = useState<boolean>(false);
 
     const addToShortlist = useCallback((lead : any) => {
@@ -279,7 +327,7 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { pa
 
     return (
         
-        <div className="flex justify-start items-center gap-8">
+        <div className="flex justify-start items-center gap-8 w-full lg:w-2/3">
             <div className="flex justify-center items-center gap-2">
                 <Button
                     size="xs"
@@ -298,7 +346,7 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { pa
                     Next
                 </Button>
             </div>
-            <div className="flex justify-end items-center gap-2">
+            <div className="flex justify-end lg:justify-center items-center gap-2 grow">
                 
                 <input
                     type="number"
