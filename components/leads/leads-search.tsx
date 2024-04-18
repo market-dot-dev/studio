@@ -191,12 +191,11 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 <Bold>Search for a Repo:</Bold>
                 <Text>You can only search for connected repositories. To connect more repositories, go to your <Link href="/settings/repos" className="underline">Repository Settings</Link>.</Text>
                 { repos.length ?
-                <SearchSelect onValueChange={handleRepoSelected}>
-                    {repos.map((repo, index) => (
-                        <SearchSelectItem key={index} value={`${index}`}>{repo.name}</SearchSelectItem>
-                    ))}
-                </SearchSelect>
-
+                    <SearchSelect onValueChange={handleRepoSelected} className="relative z-[100]" >
+                        {repos.map((repo, index) => (
+                            <SearchSelectItem key={index} value={`${index}`}>{repo.name}</SearchSelectItem>
+                        ))}
+                    </SearchSelect>
                 :
                     <Card
                         className="my-4 w-full bg-gray-100 border border-gray-400 px-4 py-3 text-gray-700"
