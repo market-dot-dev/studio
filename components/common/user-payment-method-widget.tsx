@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card, Button, Text } from '@tremor/react';
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
-import { canBuy, getPaymentMethod, StripeCard } from '@/app/services/StripeService';
+import { canBuy, getPaymentMethod, StripePaymentMethod } from '@/app/services/StripeService';
 import useCurrentSession from '@/app/hooks/use-current-session';
 
 interface UserPaymentMethodWidgetProps {
@@ -17,7 +17,7 @@ interface UserPaymentMethodWidgetProps {
 const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintainerUserId, maintainerStripeAccountId }: UserPaymentMethodWidgetProps) => {
   const { currentUser: user, refreshSession } = useCurrentSession();
 
-  const [cardInfo, setCardInfo] = useState<StripeCard>();
+  const [cardInfo, setCardInfo] = useState<StripePaymentMethod>();
   const [invalidCard, setInvalidCard] = useState<boolean>(false);
 
   // detect if user has a payment method attached
@@ -72,7 +72,7 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
     return (
       <Card>
         <div className="flex flex-row justify-between items-center">
-          <Text>Use saved {cardInfo?.brand.toUpperCase()} ending in {cardInfo?.last4}</Text>
+          <Text>Use saved {cardInfo?.name.toUpperCase()} ending in {cardInfo?.last4}</Text>
           <br />
           <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshSession)}>
             Remove
