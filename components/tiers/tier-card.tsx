@@ -34,7 +34,6 @@ const GetStartedButton = ({ url, tierId, canEdit, annual = false }: { url: strin
   );
 }
 
-
 const calcDiscount = (price: number, annualPrice: number) => {
 	if (price === 0) return 0;
 	if (annualPrice === 0) return 100;
@@ -58,8 +57,6 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
 
   // if features are directly provided, use them, otherwise use the features from the tier
   const tierFeatures = (directlyProvidedFeatures ? features : tier.features) || [];
-
-
 
   return (<>
     <Card className={`flex flex-col p-6 mx-auto w-full h-full justify-between max-w-xs text-center rounded-lg border shadow ${containerClasses}`}>
