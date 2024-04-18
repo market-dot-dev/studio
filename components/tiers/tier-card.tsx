@@ -17,8 +17,12 @@ type TierCardProps = {
   features?: Feature[];
 };
 
+export const generateLink = (url: string | null, tierId: string, annual: boolean) => {
+  return `${url ? url : ''}/checkout/${tierId}${annual ? '?annual=true' : ''}`;
+}
+
 const GetStartedButton = ({ url, tierId, canEdit, annual = false }: { url: string | null, tierId: string, canEdit: boolean, annual?: boolean }) => {
-  const linkUrl = (url || tierId) ? `${url ? url : ''}/checkout/${tierId}${annual ? '?annual=true' : ''}` : '';
+  const linkUrl = generateLink(url, tierId, annual);
   const variant = canEdit ? "secondary" : "primary";
 
   return (
@@ -29,7 +33,6 @@ const GetStartedButton = ({ url, tierId, canEdit, annual = false }: { url: strin
     </Link>
   );
 }
-
 
 const calcDiscount = (price: number, annualPrice: number) => {
 	if (price === 0) return 0;
@@ -54,8 +57,6 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
 
   // if features are directly provided, use them, otherwise use the features from the tier
   const tierFeatures = (directlyProvidedFeatures ? features : tier.features) || [];
-
-
 
   return (<>
     <Card className={`flex flex-col p-6 mx-auto w-full h-full justify-between max-w-xs text-center rounded-lg border shadow ${containerClasses}`}>
