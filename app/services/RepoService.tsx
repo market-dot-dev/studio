@@ -326,7 +326,7 @@ class RepoService {
     let radarId = null;
     try {
       const repoLookupResult = await LeadsService.lookup(repoDetails.html_url);
-      radarId = repoLookupResult.id;
+      radarId = repoLookupResult.data.id;
     } catch (error) {
       console.error('Failed to lookup repository:', error);
     }

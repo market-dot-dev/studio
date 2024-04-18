@@ -63,7 +63,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
                         return;
                     }
-
+                    
                     setTotalCount( prev => {
                         if( !initial ) {
                             // if the count has changed
@@ -138,12 +138,17 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     }, [selectedRepo])
 
     useEffect(() => {
-        
-        if( !selectedRepo?.radarId ) {
+        if( !selectedRepo ) {
             setIsSearching(false);
             return;
         }
-            
+
+        if( !selectedRepo.radarId ) {
+            setSearchError("Selected Repository is not connected to Radar.");
+            setIsSearching(false);
+            return;
+        }
+
         if(!totalCount) {
             setSearchError("Selected Repsoitory has no dependent owners.");
             setIsSearching(false);
