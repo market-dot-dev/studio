@@ -247,7 +247,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 }
                 <div className="w-full min-h-[100vh]">
                     { isSearching ? 
-                    <div className="flex justify-center items-center">
+                    <div className="flex justify-center items-center sticky top-[200px] z-50">
                         <LoadingSpinner />
                     </div> 
                     : 
