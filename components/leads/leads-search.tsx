@@ -1,7 +1,7 @@
 'use client'
 import {  Lead, Repo } from "@prisma/client";
 import { Bold, Card, Badge, SearchSelect, SearchSelectItem, Button, Text, NumberInput, Switch, SelectItem, Select } from "@tremor/react";
-
+import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
 import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup } from "@/app/services/LeadsService";
@@ -189,6 +189,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         <>
             <div className="mb-4">
                 <Bold>Search for a Repo:</Bold>
+                <Text>You can only search for connected repositories. To connect more repositories, go to your <Link href="/settings/repos" className="underline">Repository Settings</Link>.</Text>
                 { repos.length ?
                 <SearchSelect onValueChange={handleRepoSelected}>
                     {repos.map((repo, index) => (
