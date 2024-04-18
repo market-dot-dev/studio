@@ -11,9 +11,10 @@ import SessionService from './SessionService';
 import Customer from '../models/Customer';
 import { createLocalCharge } from './charge-service';
 
-export type StripeCard = {
-  brand: string;
+export type StripePaymentMethod = {
+  name: string;
   last4: string;
+  kind: string;
 }
 
 export type SubscriptionCadence = 'month' | 'year' | 'quarter' | 'once';
@@ -263,16 +264,19 @@ class StripeService {
     });
   }
 
-  async getPaymentMethod(paymentMethodId: string, maintainerId: string): Promise<StripeCard> {
+  async getPaymentMethod(paymentMethodId: string, maintainerId: string): Promise<StripePaymentMethod> {
     const paymentMethod = await this.stripe.paymentMethods.retrieve(paymentMethodId);
     
     // Check if the retrieved payment method is of type 'card'
-    if (paymentMethod.type !== 'card' || !paymentMethod.card) {
-      throw new Error('Invalid payment method type or card details not available.');
+    if(paymentMethod.type === 'card' && !!paymentMethod.card){
+      const { brand, last4 } = paymentMethod.card;
+      return { name: brand, last4 } as StripePaymentMethod;
+    } else if(paymentMethod.type === 'us_bank_account' && !!paymentMethod.us_bank_account) {
+      const { bank_name, last4 } = paymentMethod.us_bank_account;
+      return { name: bank_name, last4 } as StripePaymentMethod;
+    } else {
+      throw new Error(`Unsupported payment type: ${paymentMethod.type}`);
     }
-
-    const { brand, last4 } = paymentMethod.card;
-    return { brand, last4 };
   }
 
   async detachPaymentMethod(paymentMethodId: string, stripeCustomerId: string) {
@@ -513,7 +517,7 @@ export const detachPaymentMethod = async (maintainerUserId: string, maintainerSt
   await customer.detachPaymentMethod();
 }
 
-export const getPaymentMethod = async (maintainerUserId: string, maintainerStripeAccountId: string): Promise<StripeCard> => {
+export const getPaymentMethod = async (maintainerUserId: string, maintainerStripeAccountId: string): Promise<StripePaymentMethod> => {
   const customer = await getCustomer(maintainerUserId, maintainerStripeAccountId);
   return await customer.getStripePaymentMethod();
 }
@@ -530,6 +534,41 @@ export const migrateCustomer = async (userId: string, stripeCustomerId: string, 
   const customer =  new Customer(user, maintainerUserId, maintainerStripeAccountId);
   await customer.setCustomerId(stripeCustomerId);
   await customer.attachPaymentMethod(stripePaymentMethodId);
+}
+
+export const getOrCreateStripeCustomerId = async (userId: string, maintainerUserId: string) => {
+  const user = await UserService.findUser(userId);
+  if(!user) throw new Error('User not found');
+  const maintainer = await UserService.findUser(maintainerUserId);
+  if(!maintainer) throw new Error('Maintainer not found');
+  if(!maintainer.stripeAccountId) throw new Error('Maintainer does not have a connected Stripe account');
+  const customer = new Customer(user, maintainerUserId, maintainer.stripeAccountId!);
+  return customer.getOrCreateStripeCustomerId();
+}
+
+export const getSetupIntent = async (userId: string, maintainerUserId: string) => {
+  const customerId = await getOrCreateStripeCustomerId(userId, maintainerUserId);
+
+  console.log('---- getting ach intent: ', { customerId, userId, maintainerUserId });
+  const maintainer = await UserService.findUser(maintainerUserId);
+  if(!maintainer) throw new Error('Maintainer not found');
+  if(!maintainer.stripeAccountId) throw new Error('Maintainer does not have a connected Stripe account');
+
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { stripeAccount: maintainer?.stripeAccountId  });
+
+  const setupIntent = await stripe.setupIntents.create({
+    customer: customerId,
+    payment_method_types: ['us_bank_account'],
+    payment_method_options: {
+      us_bank_account: {
+        financial_connections: {
+          permissions: ['payment_method', 'balances'],
+        },
+      },
+    },
+  });
+
+  return setupIntent?.client_secret;
 }
 
 export const { disconnectStripeAccount, userHasStripeAccountIdById, getAccountInfo } = StripeService
