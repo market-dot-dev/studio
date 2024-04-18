@@ -210,7 +210,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
             </div>
 
-            <Bold>Organizations Using This Repository</Bold>
+            <Bold>Search Results:</Bold>
             { searchError ? <Text className="text-red-500">{searchError}</Text> : null }
             { radarResults.length ?
                 <div className="flex flex-col gap-4 items-stretch sticky -top-1 z-10 bg-white p-4 shadow-sm border rounded-md -mr-1 -ml-1">
