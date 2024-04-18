@@ -207,45 +207,45 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             <Bold>Organizations Using This Repository</Bold>
             { searchError ? <Text className="text-red-500">{searchError}</Text> : null }
             { radarResults.length ?
-            <div className="flex flex-col gap-4 items-stretch">
-                <div className="flex justify-between items-center bg-white p-4 sticky -top-1 z-10 shadow-sm border rounded-md -mr-1 -ml-1">
+                <div className="flex flex-col gap-4 items-stretch sticky -top-1 z-10 bg-white p-4 shadow-sm border rounded-md -mr-1 -ml-1">
+                    <div className="flex justify-between items-center w-full">
 
-                    <Pagination
-                        page={page}
-                        perPage={perPage}
-                        totalCount={showOnlyOrgs ? orgsCount : totalCount}
-                        onPageChange={handlePageChange}
-                        isLoading={isSearching}
-                    />
-                    
-                    
-                    <div className="hidden items-center justify-end gap-3 w-1/3 lg:flex">
-                        {resultsPerPage}
-                    </div>
-                    
-                </div>
-                <div className="flex justify-between items-center w-full">
-                    <div className="flex items-center justify-center gap-3">
-                        <Switch
-                            id="switch"
-                            name="switch"
-                            checked={showOnlyOrgs}
-                            onChange={setShowOnlyOrgs}
-                            disabled={isSearching}
+                        <Pagination
+                            page={page}
+                            perPage={perPage}
+                            totalCount={showOnlyOrgs ? orgsCount : totalCount}
+                            onPageChange={handlePageChange}
+                            isLoading={isSearching}
                         />
-                        <label htmlFor="switch" className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-                            Show only organizations
-                        </label>
+                        
+                        
+                        <div className="hidden items-center justify-end gap-3 w-1/3 lg:flex">
+                            {resultsPerPage}
+                        </div>
+                        
                     </div>
+                    <div className="flex justify-between items-center w-full border border-t-1 border-b-0 border-l-0 border-r-0 pt-4">
+                        <div className="flex items-center justify-center gap-3">
+                            <Switch
+                                id="switch"
+                                name="switch"
+                                checked={showOnlyOrgs}
+                                onChange={setShowOnlyOrgs}
+                                disabled={isSearching}
+                            />
+                            <label htmlFor="switch" className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
+                                Show only organizations
+                            </label>
+                        </div>
 
-                    <div className="flex items-center justify-end gap-3 w-1/2 lg:hidden">
-                        {resultsPerPage}
+                        <div className="flex items-center justify-end gap-3 w-1/2 lg:hidden">
+                            {resultsPerPage}
+                        </div>
                     </div>
                 </div>
-            </div>
                 :null
                 }
-                
+                <div className="w-full min-h-[100vh]">
                     { isSearching ? 
                     <div className="flex justify-center items-center">
                         <LoadingSpinner />
@@ -258,7 +258,9 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         })}
                         
                     </>
-                }
+                
+                    }
+                </div>
 
             
                 
