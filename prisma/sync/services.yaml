@@ -138,3 +138,21 @@ services:
     description: "Provide a dedicated account rep for your customers."
     category: "staff"
     requiresUri: false
+
+  - id: "expert"
+    name: "Ask an Expert"
+    description: "Consulting / Meetings on a specific area of expertise related to your projects"
+    category: "staff"
+    requiresUri: false
+
+  - id: "project-maintainence"
+    name: "Open Source Project Maintainence"
+    description: "Offer consistent maintainence of your open source projects as a paid benefit."
+    category: "maintainence"
+    requiresUri: false
+
+  - id: "security-cve"
+    name: "Monitoring Security Vulnerabilities"
+    description: "Monitor security vulnerabilities in your open source packages."
+    category: "maintainence"
+    requiresUri: false

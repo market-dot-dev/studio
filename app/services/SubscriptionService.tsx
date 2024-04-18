@@ -129,7 +129,7 @@ class SubscriptionService {
   }
 
   // Create a subscription for a user
-  static async createSubscription(userId: string, tierId: string, tierVersionId?: string) {
+  static async createSubscription(userId: string, tierId: string, stripeSubscriptionId: string, tierVersionId?: string) {
     const user = await UserService.findUser(userId);
     if (!user) throw new Error('User not found');
 
@@ -144,9 +144,6 @@ class SubscriptionService {
     const stripeCustomerId = await UserService.getCustomerId(user, maintainer.stripeAccountId);
     if (!stripeCustomerId) throw new Error('Stripe customer ID not found for user');
 
-    const stripeService = new StripeService(maintainer.stripeAccountId);
-    const subscription = await stripeService.createSubscription(stripeCustomerId, tier.stripePriceId, maintainer.stripeAccountId);
-
     const existingSubscription = await SubscriptionService.findSubscriptionByTierId({ tierId });
 
     let res: SubscriptionSql | null = null;
@@ -156,7 +153,7 @@ class SubscriptionService {
       userId: userId,
       tierId: tierId,
       tierVersionId: tierVersionId,
-      stripeSubscriptionId: subscription.id,
+      stripeSubscriptionId,
       cancelledAt: null,
       activeUntil: null,
       tierRevision: tier.revision,

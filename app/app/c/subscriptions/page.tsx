@@ -26,6 +26,9 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
   const maintainer = await UserService.findUser(tier.userId);
   if (!maintainer) return null;
 
+  const actualCadence = subscription.priceAnnual ? 'year' : tier.cadence;
+  const actualPrice = subscription.priceAnnual ? tier.priceAnnual : tier.price;
+
   let status = '';
   if (subscription.state === SubscriptionStates.renewing) {
     status = 'Subscribed';
@@ -48,13 +51,13 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
         </div>
       </div>
 
-      <Bold>Tier: {tier.name}</Bold>
+      <Bold>Tier: {tier.name}{ subscription.priceAnnual ? ` (annual)` : ''}</Bold>
 
       <Text>Status:&nbsp;
         { status}
       </Text>
       <Text>Description: {tier.tagline}</Text>
-      <p>${tier.price} / month</p>
+      <p>${actualPrice} / {actualCadence}</p>
       <p>{subscription.tierVersionId}</p>
       <div className="flex flex-row space-x-2">
         <Link href={`/subscriptions/${subscription.id}`}>

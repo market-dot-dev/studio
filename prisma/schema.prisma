@@ -43,6 +43,7 @@ model User {
 
   subscribedLegacyProducts LegacyProduct[] @relation("UserAsUser")
   maintainedLegacyProducts LegacyProduct[] @relation("UserAsMaintainer")
+  Charge                   Charge[]
 }
 
 model Account {
@@ -161,7 +162,6 @@ model Tier {
   id              String  @id @default(cuid())
   userId          String
   stripeProductId String? @unique
-  stripePriceId   String?
 
   name        String
   description String?
@@ -170,7 +170,13 @@ model Tier {
   published Boolean @default(false)
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  price         Int
+  price               Int
+  stripePriceId       String?
+  trialDays           Int     @default(0)
+  cadence             String  @default("month")
+  priceAnnual         Int?
+  stripePriceIdAnnual String?
+
   revision      Int
   versions      TierVersion[]
   features      Feature[]      @relation("FeatureToTier")
@@ -179,6 +185,7 @@ model Tier {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   LegacyProduct LegacyProduct[]
+  Charge        Charge[]
 
   @@index([userId, stripePriceId])
 }
@@ -188,7 +195,11 @@ model TierVersion {
   tierId        String
   revision      Int
   price         Int
+  trialDays     Int  @default(0)
   stripePriceId String?
+  cadence             String  @default("month")
+  priceAnnual        Int?
+  stripePriceIdAnnual String?
 
   tier          Tier           @relation(fields: [tierId], references: [id])
   features      Feature[]      @relation("FeatureToTierVersion")
@@ -196,21 +207,37 @@ model TierVersion {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  Charge    Charge[]
 
   @@index([tierId])
 }
 
+model Charge {
+  id             String   @id @default(cuid())
+  userId         String
+  tierId         String
+  tierVersionId  String?
+  tierRevision   Int?
+  stripeChargeId String   @unique
+  createdAt      DateTime @default(now())
+
+  user        User         @relation(fields: [userId], references: [id])
+  tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
+  tier        Tier         @relation(fields: [tierId], references: [id])
+}
+
 model Subscription {
   id                   String    @id @default(cuid())
-  userId               String // Foreign key to reference User
+  userId               String
   tierId               String
   stripeSubscriptionId String    @unique
-  tierVersionId        String? // Foreign key to reference TierVersion
+  tierVersionId        String?
   tierRevision         Int?
   activeUntil          DateTime?
   cancelledAt          DateTime?
   createdAt            DateTime  @default(now())
   state                String    @default("renewing")
+  priceAnnual          Boolean   @default(false)
 
   user          User            @relation(fields: [userId], references: [id])
   tierVersion   TierVersion?    @relation(fields: [tierVersionId], references: [id])

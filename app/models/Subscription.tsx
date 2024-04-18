@@ -23,6 +23,7 @@ class Subscription implements SubscriptionType {
   cancelledAt: Date | null;
   user?: User;
   tier?: Tier;
+  priceAnnual: boolean;
 
   constructor(subscription: SubscriptionType) {
     this.id = subscription.id;
@@ -37,6 +38,7 @@ class Subscription implements SubscriptionType {
     this.cancelledAt = subscription.cancelledAt;
     this.user = subscription.user;
     this.tier = subscription.tier;
+    this.priceAnnual = subscription.priceAnnual;
   }
 
   isFinishingMonth() {
