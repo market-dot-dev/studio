@@ -1,7 +1,8 @@
 'use client'
 import {  Lead, Repo } from "@prisma/client";
-import { Bold, Card, Badge, SearchSelect, SearchSelectItem, Button, Text, NumberInput, Switch, SelectItem, Select } from "@tremor/react";
+import { Bold, Card, Badge, SearchSelect, SearchSelectItem, Button, Text, NumberInput, Switch, SelectItem, Select, TextInput } from "@tremor/react";
 import Link from "next/link";
+import { Search } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup } from "@/app/services/LeadsService";
@@ -207,6 +208,13 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         <>
             <div className="mb-4">
                 <Bold>Search for a Repo:</Bold>
+
+                <div className="flex flex-row gap-4">
+                <TextInput icon={Search} placeholder="Enter a Repo URL..." />
+                
+
+                </div>
+
                 <Text>You can only search for connected repositories. To connect more repositories, go to your <Link href="/settings/repos" className="underline">Repository Settings</Link>.</Text>
                 { repos.length ?
                     <SearchSelect onValueChange={handleRepoSelected} className="relative z-[100]" >
@@ -317,7 +325,7 @@ function SearchResult( { selectedRepo, lead, isShortlisted, setShortListedLeads 
     return (
         <Card className="flex flex-col my-2 z-0 relative">
             <LeadItem lead={lead} />
-            <div className="flex flex-col absolute top-10 right-10 gap-4">
+            <div className="flex flex-col absolute right-10 gap-4">
                 {isShortlisted && <Badge>Shortlisted</Badge>}
                 <Button
                     loading={isAddingToShortlist}

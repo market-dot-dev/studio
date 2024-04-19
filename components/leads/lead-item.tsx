@@ -17,7 +17,7 @@ function getWebsiteBadge(website: string) {
     try {
         const domain = new URL(website).hostname.split('.').pop();
         switch (domain) {
-            case 'com': 
+            case 'com':
                 return 'Company';
             case 'edu':
                 return 'Educational';
@@ -44,11 +44,12 @@ export default function LeadItem({ lead }: { lead: Lead }) {
     const dependencyPercentage = Math.round((lead.dependent_repos_count / lead.repositories_count) * 100);
     return (
         <>
+
             <div className="flex flex-row gap-8 mb-2">
-                { lead.icon_url ? <div>
-                        <img src={lead.icon_url} width={100} />
-                    </div>
-                    : null }
+                {lead.icon_url ? <div>
+                    <img src={lead.icon_url} width={100} />
+                </div>
+                    : null}
                 <div className="flex flex-col">
                     <div className="flex gap-4">
                         <Badge>{lead.kind && lead.kind.charAt(0).toUpperCase() + lead.kind.slice(1)}</Badge>
@@ -58,35 +59,39 @@ export default function LeadItem({ lead }: { lead: Lead }) {
                     <Text><a href={lead.html_url} target="_blank" className="underline">{lead.html_url}</a></Text>
                 </div>
             </div>
-            <div className="flex justify-start space-x-5 items-center">
-            <ProgressCircle value={dependencyPercentage} size="md">
-              <span className="text-xs font-medium text-slate-700">{dependencyPercentage}%</span>
-            </ProgressCircle>
-            <div>
-              <p className="text-tremor-default text-tremor-content-strong dark:text-dark-tremor-content-strong font-medium">
-                Used by {lead.dependent_repos_count} of {lead.repositories_count} repositories.
-              </p>
-              <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-                Dependency Score:
-                <Badge>{getDependencyScoreBadge(lead.dependent_repos_count)}</Badge>
-              </p>
+            <div className="flex flex-row gap-8 my-4">
+                <div className="w-1/2">
+                    <Bold>Contact Information</Bold>
+                    <Text>Website: {lead.website}</Text>
+                    <Text>Email: {lead.email}</Text>
+                    <Text>Twitter: {lead.twitter}</Text>
+                    <Text>Location: {lead.location}</Text>
+                    <Text>Company: {lead.company}</Text>
+                </div>
+
+                <div className="flex w-1/2 justify-start my-2">
+                    <div className="p-4 border-2 rounded-xl bg-gray h-full">
+                        <div>
+                            <p className="flex gap-2 items-center mb-3">
+                                <Bold>Dependency:</Bold>
+                                <Badge>{getDependencyScoreBadge(lead.dependent_repos_count)}</Badge>
+                            </p>
+
+                            <div className="flex gap-2 items-center">
+                                <ProgressCircle color="blue" value={dependencyPercentage} size="sm">
+                                    <span className="text-xs font-medium text-slate-700">{dependencyPercentage}%</span>
+                                </ProgressCircle>
+                                <Text>Used by {lead.dependent_repos_count} of {lead.repositories_count} repositories.</Text>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-
-            <Text>Dependent Repositories: {lead.dependent_repos_count}</Text>
-            <Text>Total Repositories: {lead.repositories_count}</Text>
-
-            <Bold>Contact Information</Bold>
-            <Text>Website: {lead.website}</Text>
-            <Text>Email: {lead.email}</Text>
-            <Text>Twitter: {lead.twitter}</Text>
-            <Text>Location: {lead.location}</Text>
-            <Text>Company: {lead.company}</Text>
-
-            <div className="flex gap-2 mb-2 items-start">
+            <div className="flex gap-2 mb-2 items-start pt-2">
                 <Text>Maintainers: </Text>
                 <div className="flex gap-2 flex-wrap items-center">
-                    {visibleMaintainers.map((maintainer : string) => <Badge key={maintainer}>{maintainer}</Badge>)}
+                    {visibleMaintainers.map((maintainer: string) => <Badge key={maintainer}>{maintainer}</Badge>)}
                     {(lead.maintainers as [])?.length > 10 && (
                         <Button size="xs" variant="light" onClick={toggleMaintainers}>
                             {showAllMaintainers ? 'Hide' : 'Show More...'}
@@ -95,7 +100,7 @@ export default function LeadItem({ lead }: { lead: Lead }) {
                 </div>
             </div>
 
-            
+
         </>
     );
 }
