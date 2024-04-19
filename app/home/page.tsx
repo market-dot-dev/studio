@@ -7,10 +7,11 @@ import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremo
 import { Suspense } from "react";
 import DomainService from "../services/domain-service";
 import GithubLoginButton from "@/app/app/(auth)/login/github-login-button";
+
 const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
 const customerLoginUrl = DomainService.getRootUrl('app', '/customer-login');
 const maintainerLoginUrl = DomainService.getRootUrl('app', '/login');
-
+const bookDemoUrl = "https://cal.com/tarunsachdeva/gitwallet-demo";
 // Define a type for the testimonial props, including the logo
 type TestimonialProps = {
   ecosystem: string;
@@ -67,10 +68,13 @@ export default function HomePage() {
           <div className="w-7/8 lg:w-5/6">
             <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
             <h1 className="text-4xl font-light leading-8 mb-6">The commerce toolkit built for open source projects.</h1>
-            <p className="text-xl font-extralight leading-6 mb-6">Gitwallet to <b>build, sell and manage</b> robust commerce offerings for your repos and ecosystems.</p>
-            <div className="flex flex-col gap-1">
-              <Link href={maintainerLoginUrl}><Button className="w-full">Login with Github</Button></Link>
-              <p className="font-light mb-8">Already a customer? <a href={customerLoginUrl} className="underline underline-offset-2">Login here</a>.</p>
+            <p className="text-xl font-extralight leading-6 mb-6">Setup support, professional services, and other paid products for your repos and ecosystems.</p>
+            <div className="flex flex-col gap-2">
+              <div className="flex flex-row gap-2">
+                <Link href={maintainerLoginUrl}><Button color="green" className="w-full">Get Started →</Button></Link>
+                <Link href={bookDemoUrl} target="_blank"><Button color="green" className="bg-gray-100 border-gray-100 text-slate-800 hover:bg-gray-300 hover:border-gray-400 items-center w-full">Book a Demo</Button></Link>
+              </div>
+              <p className="font-light mb-8 text-xs">Existing customer? <a href={customerLoginUrl} className="underline underline-offset-2">Login here</a>.</p>
             </div>
           </div>
         </div>
@@ -112,8 +116,8 @@ export default function HomePage() {
               <DashboardCard>
                 <div className="text-slate-800">
                   <Badge size="xs" className="me-2 mb-1.5">For Software Teams</Badge>
-                <p className="text-slate-800"><b>Manage OSS Relationships:</b> We help companies build and scale commercial relationships with the open source ecosystems most important to them.</p>
-                  </div>
+                  <p className="text-slate-800"><b>Manage OSS Relationships:</b> We help companies build and scale commercial relationships with the open source ecosystems most important to them.</p>
+                </div>
               </DashboardCard>
             </Col>
           </Grid>
