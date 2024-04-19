@@ -24,10 +24,11 @@ export default async function LoginPage() {
         src="/logo.png"
       />
       <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">
-        Gitwallet
+        Login to Gitwallet
       </h1>
       <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
-      Create & manage robust support tiers for your repos and ecosystems.<br />
+        Commerce tools for open source projects.
+      <br />
       </p>
 
       <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
