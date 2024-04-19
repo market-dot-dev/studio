@@ -9,6 +9,12 @@ import LoadingSpinner from "../form/loading-spinner";
 
 import LeadItem from "./lead-item";
 
+const errorMessages = {
+    NO_DEPENDENT_OWNERS: 'Selected repository has no dependent owners.',
+    FAILED_GET_OWNERS_COUNT: 'Failed to fetch updated dependent owners count.',
+    FAILED_GET_OWNERS: 'Failed to get dependent owners.',
+    HAS_NO_OWNERS: 'Selected repository has no dependent owners.'
+}
 
 type LeadKey = {
     host: string;
@@ -18,6 +24,7 @@ type LeadKey = {
 export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     
     const [selectedRepo, setSelectedRepo] = useState<Repo | null>(null);
+    const [radarId, setRadarId] = useState<number | null>(null);
     const [shortListedLeads, setShortListedLeads] = useState<LeadKey[]>([]);
     const [radarResults, setRadarResults] = useState<any[]>([]);
     
@@ -32,6 +39,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const [searchError, setSearchError] = useState<string>('');
 
     const handleRepoSelected = useCallback((selectedIndex: string) => {
+        setRadarId(null);
         setSelectedRepo(repos[parseInt(selectedIndex)]);
     }, [setSelectedRepo]);
 
@@ -52,40 +60,54 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         if( selectedRepo?.url ) {
             try {
                 lookup(selectedRepo.url).then((res: any) => {
-                    
+
                     if( res.error ) {
                         if( initial ) {
                             setSearchError(res.error);
                             setIsSearching(false);
                         } else {
-                            console.log('Failed to fetch updated dependent owners count');
+                            console.log( errorMessages.FAILED_GET_OWNERS_COUNT, res.error);
                         }
 
                         return;
                     }
                     
-                    setTotalCount( prev => {
-                        if( !initial ) {
-                            // if the count has changed
-                            if( prev !== res.data.dependent_owners_count ) {
-                                clearLeadsCache();
-                            }
+                    const newTotalCount = res.data.dependent_owners_count ?? 0;
+
+                    setTotalCount(newTotalCount);
+
+                    if( initial ) {
+                        if(!newTotalCount) {
+                            setSearchError( errorMessages.NO_DEPENDENT_OWNERS );
+                            setIsSearching(false);
                         }
-                        return res.data.dependent_owners_count ?? 0
-                    });
+                        // Reset page to 1 as it is the initial lookup for a new repo
+                        setPage(1);
+
+                        // this will trigger the useeffect hook to fetch the dependent owners
+                        setRadarId(selectedRepo.radarId);
+
+                    } else {
+                        // if the count has changed
+                        if( totalCount !== newTotalCount ) {
+                            clearLeadsCache();
+                        }
+
+                    }
+
                     
                     setOrgsCount(res.data.dependent_organizations_count ?? 0);
                 });
             } catch (error) {
-                console.log('Failed to fetch dependent owners count:', error)
+                console.log( errorMessages.FAILED_GET_OWNERS_COUNT, error)
                 setIsSearching(false);
             } 
         }
-    }, [ selectedRepo?.url, setTotalCount, setOrgsCount, lookup ])
+    }, [ selectedRepo, setTotalCount, setOrgsCount, lookup, totalCount, setSearchError, setIsSearching ])
 
     const getDependentOwnersWithCache = useCallback(async () => {
 
-        const cacheKey = `leads_${selectedRepo!.radarId!}_${page}_${perPage}_${showOnlyOrgs}`;
+        const cacheKey = `leads_${radarId!}_${page}_${perPage}_${showOnlyOrgs}`;
         const cachedData = sessionStorage.getItem(cacheKey);
 
         if (cachedData) {
@@ -102,7 +124,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             }
         }
         try {
-            const res = await getDependentOwners(selectedRepo!.radarId!, page, perPage, showOnlyOrgs);
+            const res = await getDependentOwners(radarId!, page, perPage, showOnlyOrgs);
             
             if( res.error ) {
                 setSearchError(res.error);
@@ -118,10 +140,10 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
         } catch (error) {
             
-            setSearchError('Failed to fetch dependent owners.');
+            setSearchError(errorMessages.FAILED_GET_OWNERS);
             return [];
         }
-    }, [selectedRepo?.radarId, page, perPage, showOnlyOrgs, setSearchError]);
+    }, [radarId, page, perPage, showOnlyOrgs, setSearchError]);
 
     useEffect(() => {
         
@@ -130,6 +152,8 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         }
 
         setIsSearching(true);
+        setRadarResults([]);
+        setSearchError('');
         lookupRepo(true);
 
         getShortlistedLeadsKeysList(selectedRepo.id).then((leads: LeadKey[]) => {
@@ -138,19 +162,13 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     }, [selectedRepo])
 
     useEffect(() => {
-        if( !selectedRepo ) {
-            setIsSearching(false);
-            return;
-        }
-
-        if( !selectedRepo.radarId ) {
-            setSearchError("Selected Repository is not connected to Radar.");
-            setIsSearching(false);
+        if( !radarId ) {
             return;
         }
 
         if(!totalCount) {
-            setSearchError("Selected Repsoitory has no dependent owners.");
+            setSearchError(errorMessages.HAS_NO_OWNERS);
+            setRadarResults([]);
             setIsSearching(false);
             return;
         }
@@ -166,7 +184,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             setIsSearching(false);
         });
 
-    }, [page, perPage, showOnlyOrgs, totalCount]);
+    }, [page, perPage, showOnlyOrgs, radarId]);
 
     const resultsPerPage = (
         <>
@@ -208,8 +226,8 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 }
 
             </div>
-
-            <Bold>Search Results:</Bold>
+            
+            <Bold>Search Results{ selectedRepo?.name ? ' for ' + selectedRepo.name : ''}:</Bold>
             { searchError ? <Text className="text-red-500">{searchError}</Text> : null }
             { radarResults.length ?
                 <div className="flex flex-col gap-4 items-stretch sticky -top-1 z-10 bg-white p-4 shadow-sm border rounded-md -mr-1 -ml-1">

@@ -68,7 +68,7 @@ export default function LeadItem({ lead }: { lead: Lead }) {
               </p>
               <p className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
                 Dependency Score:
-                <Badge>{<>getDependencyScoreBadge</>}</Badge>
+                <Badge>{getDependencyScoreBadge(lead.dependent_repos_count)}</Badge>
               </p>
             </div>
           </div>
