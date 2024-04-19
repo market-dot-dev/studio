@@ -81,7 +81,7 @@ export default function LeadItem({ lead }: { lead: Lead }) {
                                 <ProgressCircle color="blue" value={dependencyPercentage} size="sm">
                                     <span className="text-xs font-medium text-slate-700">{dependencyPercentage}%</span>
                                 </ProgressCircle>
-                                <Text>Used by {lead.dependent_repos_count} of {lead.repositories_count} repositories.</Text>
+                                <Text>Used by <b>{lead.dependent_repos_count} of {lead.repositories_count}</b> repositories.</Text>
                             </div>
 
                         </div>
