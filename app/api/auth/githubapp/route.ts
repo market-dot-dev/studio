@@ -14,11 +14,11 @@ export async function GET(req: NextRequest) {
     }
 
     // Check if the state is valid
-    // const savedState = cookies().get('ghstate');
+    const savedState = cookies().get('ghstate');
     
-    // if (!state || !savedState || state !== savedState?.value) {
-    //     return new Response('Invalid state', { status: 400 });
-    // }
+    if (!state || !savedState || state !== savedState?.value) {
+        return new Response('Invalid state', { status: 400 });
+    }
     
 
     // Handling setup_action 'request'
