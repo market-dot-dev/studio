@@ -14,15 +14,12 @@ export async function GET(req: NextRequest) {
     }
 
     // Check if the state is valid
-    const savedState = cookies().get('ghstate');
+    // const savedState = cookies().get('ghstate');
     
-    if (!state || !savedState || state !== savedState?.value) {
-        return new Response('Invalid state', { status: 400 });
-    }
+    // if (!state || !savedState || state !== savedState?.value) {
+    //     return new Response('Invalid state', { status: 400 });
+    // }
     
-    if (setup_action === 'install') {
-        await RepoService.createInstallation(parseInt(installation_id));
-    }
 
     // Handling setup_action 'request'
     if (setup_action === 'request') {
@@ -33,8 +30,10 @@ export async function GET(req: NextRequest) {
                     <title>Installation Request Sent</title>
                 </head>
                 <body>
-                    <p>The app installation has been sent to the owner of the organization, and you will have access once it is approved.</p>
-                    <button onclick="window.close()">Close Window</button>
+                    <div style="text-align: center;">
+                        <p>The app installation request has been sent to the owner of the organization, and you will have access once it is approved.</p>
+                        <a href="#" onclick="window.close()">Close Window</a>
+                    </div>
                 </body>
             </html>`,
             {
@@ -43,6 +42,11 @@ export async function GET(req: NextRequest) {
                 },
             }
         );
+    }
+
+
+    if (setup_action === 'install' && installation_id) {
+        await RepoService.createInstallation(parseInt(installation_id));
     }
 
     // Default close window message for other actions
