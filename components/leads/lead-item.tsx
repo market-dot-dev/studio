@@ -73,10 +73,10 @@ export default function LeadItem({ lead }: { lead: Lead }) {
                 <div className="flex w-1/2 justify-start">
                     <div>
                         <div>
-                            <p className="flex gap-2 items-center mb-3">
+                            <div className="flex gap-2 items-center mb-3">
                                 <Bold>Dependency:</Bold>
                                 <Badge>{getDependencyScoreBadge(lead.dependent_repos_count)}</Badge>
-                            </p>
+                            </div>
 
                             <div className="flex gap-2 items-center">
                                 <ProgressCircle color="blue" value={dependencyPercentage} size="sm">

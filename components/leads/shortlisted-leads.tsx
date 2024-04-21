@@ -35,7 +35,7 @@ export default function ShortlistedLeads({ leads : loadedLeads }: { leads: Lead[
     return (
         <>
             {leads.map((lead: Lead, index: number) => (
-                <Card className="flex flex-col my-2 z-0 relative" key="index">
+                <Card className="flex flex-col my-2 z-0 relative" key={index}>
                     <LeadItem lead={lead} />
                     <div className="flex flex-col absolute top-10 right-10">
                         
