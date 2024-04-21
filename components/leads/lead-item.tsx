@@ -1,6 +1,7 @@
 import { Lead } from "@prisma/client";
 import { Badge, Text, Bold, Button } from "@tremor/react";
 import { useState } from "react";
+import Link from "next/link";
 import { ProgressCircle } from '@tremor/react';
 
 
@@ -69,8 +70,8 @@ export default function LeadItem({ lead }: { lead: Lead }) {
                     <Text>Company: {lead.company}</Text>
                 </div>
 
-                <div className="flex w-1/2 justify-start my-2">
-                    <div className="p-4 border-2 rounded-xl bg-gray h-full">
+                <div className="flex w-1/2 justify-start">
+                    <div>
                         <div>
                             <p className="flex gap-2 items-center mb-3">
                                 <Bold>Dependency:</Bold>
@@ -91,7 +92,7 @@ export default function LeadItem({ lead }: { lead: Lead }) {
             <div className="flex gap-2 mb-2 items-start pt-2">
                 <Text>Maintainers: </Text>
                 <div className="flex gap-2 flex-wrap items-center">
-                    {visibleMaintainers.map((maintainer: string) => <Badge key={maintainer}>{maintainer}</Badge>)}
+                    {visibleMaintainers.map((maintainer: string) => <Badge key={maintainer}><Link href={`https://www.github.com/`+maintainer+`/`} target="_blank">{maintainer}</Link></Badge>)}
                     {(lead.maintainers as [])?.length > 10 && (
                         <Button size="xs" variant="light" onClick={toggleMaintainers}>
                             {showAllMaintainers ? 'Hide' : 'Show More...'}
