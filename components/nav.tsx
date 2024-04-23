@@ -2,22 +2,17 @@
 
 import Link from "next/link";
 import {
-  ArrowLeft,
-  BarChart3,
-  Edit3,
   Globe,
   LayoutDashboard,
   KanbanSquare,
   Menu,
   Users,
-  Newspaper,
   Settings,
   Github,
   BarChart4,
   Code2,
-  Cog,
+  Radar,
   Box,
-  AlertTriangle,
 } from "lucide-react";
 import {
   useParams,
@@ -51,6 +46,12 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         href: "/tiers",
         isActive: urlSegments[0] === "tiers",
         icon: <KanbanSquare width={18} />,
+      },
+      {
+        name: "Leads",
+        href: "/leads",
+        isActive: urlSegments[0] === "leads",
+        icon: <Radar width={18} />,
       },
       {
         name: "Customers",
@@ -169,7 +170,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
                   href={href}
                   target={target}
                   className={`flex items-center space-x-3 ${isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
-                    } rounded-lg px-1 py-0.5 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                    } rounded-lg px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                 >
                   {icon}
                   <span className="text-sm font-medium">{name}</span>

@@ -4,7 +4,8 @@ import { nanoid } from 'nanoid';
 import prisma from "@/lib/prisma";
 import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers'
-import { GithubAppInstallation } from "@prisma/client";
+import { GithubAppInstallation, Lead } from "@prisma/client";
+import LeadsService from "./LeadsService";
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '';
 
 class RepoService {
@@ -322,22 +323,36 @@ class RepoService {
       throw new Error('The repository is not part of the installation.');
     }
 
+    let radarId = null;
+    try {
+      const repoLookupResult = await LeadsService.lookup(repoDetails.html_url);
+      radarId = repoLookupResult.data.id;
+    } catch (error) {
+      console.error('Failed to lookup repository:', error);
+    }
+
+    if (!radarId) {
+      throw new Error('Failed to lookup repository.');
+    }
+
     // Insert the repo information into the database
     return prisma.repo.create({
       data: {
         repoId: repoDetails.id.toString(),
+        radarId,
         name: repoDetails.name,
         url: repoDetails.html_url,
-        userId, // Assuming this is the ID in your own user table
-      },
+        userId
+      }
     });
-
   }
 
   static async disconnectRepo(repoId: string) {
+    const userId = await SessionService.getCurrentUserId();
     return prisma.repo.delete({
       where: {
         repoId: `${repoId}`,
+        userId,
       },
     });
   }
