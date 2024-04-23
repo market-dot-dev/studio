@@ -58,25 +58,31 @@ type DynamicComponentProps = {
     
     if (tag in componentsMap) {
       const CustomComponent = isPreview && componentsMap[tag]['preview'] ? componentsMap[tag]['preview'] : componentsMap[tag]['element']
-      
-      const props = componentsMap[tag]['ui'] ? 
-          element.getAttributeNames().reduce((props : any, attr) => {
-            // sanitize attr as html attributes can be anything
-            const sanitizedAttr = sanitizeAttributeName(attr)
-            const val = element.getAttribute(sanitizedAttr);
-            if( val ) {
-              if('class' === sanitizedAttr || 'classname' === sanitizedAttr.toLowerCase()) {
-                props['className'] = val;
-              } else {
-                props[sanitizedAttr] = val;
-              }
-            }
-            return props;
+
+      // collect all props on elements
+      let props = element.getAttributeNames().reduce((props : any, attr) => {
+        // sanitize attr as html attributes can be anything
+        const sanitizedAttr = sanitizeAttributeName(attr)
+        
+        const val = element.getAttribute(sanitizedAttr);
+        
+        if( val ) {
+          if('class' === sanitizedAttr || 'classname' === sanitizedAttr.toLowerCase()) {
+            props['className'] = val;
+          } else {
+            props[sanitizedAttr] = val;
           }
-        , {})
-       : {
-        ...( site? {site} : {}),
-        ...( page? {page} : {}),
+        }
+        return props;
+      }
+    , {})
+      // if it is not just a ui, pass site and page as props too
+      if(! componentsMap[tag]['ui']) {
+        props = {
+          ...props, 
+          ...( site? {site} : {}),
+          ...( page? {page} : {})
+        }
       }
       
       const children = Array.from(element.childNodes).map((child, index) => {

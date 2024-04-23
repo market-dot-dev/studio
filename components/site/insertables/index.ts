@@ -1,5 +1,6 @@
 import TiersServer from "./tiers/teirs-server";
 import TiersClient from "./tiers/tiers-client";
+import TiersInsert from "./tiers/tiers-insert";
 
 import MenuServer from "./menu/menu-server";
 import MenuClient from "./menu/menu-client";
@@ -46,7 +47,8 @@ export const siteComponents = {
         name: 'Tiers',
         tag: 'Tiers',
         element: TiersServer,
-        preview: TiersClient
+        preview: TiersClient,
+        insert: TiersInsert
     },
     // userinfo: {
     //     name: 'User Info',

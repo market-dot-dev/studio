@@ -292,11 +292,12 @@ class TierService {
   }
 
   // this pulls published tiers to display on the front end site for customers to subscribe to
-  static async getTiersForUser( userId: string) {
+  static async getTiersForUser( userId: string, tierIds: string[] = []) {
     return prisma.tier.findMany({
       where: {
         userId,
-        published: true
+        published: true,
+        ...( tierIds.length > 0 && { id: { in: tierIds } } )
       },
       select: {
         id: true,
@@ -324,6 +325,16 @@ class TierService {
         },
       ],
     }); 
+  }
+  // published tiers of the current admin
+  static async getPublishedTiers(tierIds: string[] = []) {
+    const userId = await SessionService.getCurrentUserId();
+
+    if (!userId) {
+      throw new Error("User not authenticated");
+    }
+
+    return TierService.getTiersForUser(userId, tierIds);
   }
 
   // this pulls all tiers for the admin to manage
@@ -490,4 +501,4 @@ class TierService {
 };
 
 export default TierService;
-export const { findTier, updateTier, createTier, destroyTier, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId, getTiersForUser } = TierService;
+export const { findTier, updateTier, createTier, destroyTier, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId, getTiersForUser, getPublishedTiers } = TierService;
