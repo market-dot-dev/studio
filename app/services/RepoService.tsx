@@ -356,19 +356,7 @@ class RepoService {
       },
     });
   }
-
-  static async getRepoLeads(dbRepoId: string) {
-    const userId = await SessionService.getCurrentUserId();
-    return prisma.lead.findMany({
-      where: {
-        dbRepoId,
-        repo: {
-          userId
-        }
-      },
-    });
-  }
 }
 
 export default RepoService;
-export const { getRepos, verifyAndConnectRepo, disconnectRepo, getInstallationsList, getInstallationRepos, getRepo, getGithubAppInstallState, getRepoLeads } = RepoService;
+export const { getRepos, verifyAndConnectRepo, disconnectRepo, getInstallationsList, getInstallationRepos, getRepo, getGithubAppInstallState } = RepoService;
