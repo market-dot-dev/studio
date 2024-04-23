@@ -67,7 +67,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const trialDays = tier?.trialDays || 0;
   const trialOffered = trialDays > 0;
 
-  if(!tier?.published) {
+  if(tier?.id && !tier?.published) {
     return TierNotAvailable();
   }
 
