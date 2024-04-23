@@ -101,7 +101,13 @@ async function customMiddleware(req: NextRequest) {
     // if customer, then lock to /app/c/
     if(roleId === 'customer' ) {
       return rewrite(`/app/c${path}`, req.url);
-    } 
+    } else {
+      if(url.pathname.startsWith('/charges') || url.pathname.startsWith('/subscriptions')) {
+        return NextResponse.redirect(
+          `${rootUrl}/c${path}`,
+        );
+      }
+    }
 
     if( url.pathname.startsWith('/api')) {
       return NextResponse.next();

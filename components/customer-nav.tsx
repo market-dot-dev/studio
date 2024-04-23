@@ -26,7 +26,7 @@ import { ReactNode, useEffect, useMemo, useState } from "react";
 export default function CustomerNav({ children }: { children: ReactNode  }) {
   const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
-  
+
   const tabs = useMemo(() => {
     return [
       {

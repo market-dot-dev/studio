@@ -9,6 +9,7 @@ import TierFeatureList from "@/components/features/tier-feature-list";
 import { Text, Bold } from "@tremor/react";
 
 import { useSearchParams } from 'next/navigation';
+import NotFound from "@/app/maintainer-site/[domain]/[slug]/not-found";
 
 interface QueryParams {
   [key: string]: string | string[] | undefined;
@@ -22,6 +23,26 @@ const pathToDefaultMSA = "https://www.gitwallet.co/legal/standard-msa";
 const renderSectionHeading = (text: string) => {
   return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
 };
+
+import Image from "next/image";
+
+const TierNotAvailable = () => {
+  return (
+    <div className="mt-20 flex flex-col items-center space-x-4">
+      <h1 className="font-cal text-4xl">404</h1>
+      <Image
+        alt="tier not active"
+        src="https://illustrations.popsy.co/gray/falling.svg"
+        width={400}
+        height={400}
+      />
+      <p className="text-lg text-stone-500">
+        Tier not available
+      </p>
+    </div>
+  );
+}
+
 
 const SkeletonLoader = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-slate-300 ${className}`}></div>
@@ -45,6 +66,10 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const checkoutCadence = isAnnual ? 'year' : tier?.cadence;
   const trialDays = tier?.trialDays || 0;
   const trialOffered = trialDays > 0;
+
+  if(tier?.id && !tier?.published) {
+    return TierNotAvailable();
+  }
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
