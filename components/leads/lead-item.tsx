@@ -43,6 +43,10 @@ export default function LeadItem({ lead }: { lead: Lead }) {
 
     const visibleMaintainers = showAllMaintainers ? lead.maintainers as [] : (lead.maintainers as []).slice(0, 10);
     const dependencyPercentage = Math.round((lead.dependent_repos_count / lead.repositories_count) * 100);
+
+    const formattedWebsite = lead.website ? !lead.website.startsWith('http://') && !lead.website.startsWith('https://') 
+        ? 'http://' + lead.website 
+        : lead.website : null;
     return (
         <>
 
@@ -63,11 +67,11 @@ export default function LeadItem({ lead }: { lead: Lead }) {
             <div className="flex flex-row gap-8 my-4">
                 <div className="w-1/2">
                     <Bold>Contact Information</Bold>
-                    <Text>Website: {lead.website}</Text>
-                    <Text>Email: {lead.email}</Text>
+                    <Text>Website: {formattedWebsite ? <a href={formattedWebsite} target="_blank" rel="noopener noreferrer" className="underline">{formattedWebsite}</a> : null }</Text>
+                    <Text>Email: {lead.email ? <a href={`mailto:${lead.email}`} className="underline">{lead.email}</a> : null }</Text>
                     <Text>Twitter: {lead.twitter}</Text>
                     <Text>Location: {lead.location}</Text>
-                    <Text>Company: {lead.company}</Text>
+                    { 'organization' !== lead.kind.toLowerCase() && <Text>Company: {lead.company}</Text> }
                 </div>
 
                 <div className="flex w-1/2 justify-start">
@@ -92,12 +96,18 @@ export default function LeadItem({ lead }: { lead: Lead }) {
             <div className="flex gap-2 mb-2 items-start pt-2">
                 <Text>Maintainers: </Text>
                 <div className="flex gap-2 flex-wrap items-center">
-                    {visibleMaintainers.map((maintainer: string) => <Badge key={maintainer}><Link href={`https://www.github.com/`+maintainer+`/`} target="_blank">{maintainer}</Link></Badge>)}
-                    {(lead.maintainers as [])?.length > 10 && (
-                        <Button size="xs" variant="light" onClick={toggleMaintainers}>
-                            {showAllMaintainers ? 'Hide' : 'Show More...'}
-                        </Button>
-                    )}
+                    { (lead.maintainers as []).length === 0 ? 
+                        <Text>No maintainers found</Text>
+                        :
+                        <>
+                        {visibleMaintainers.map((maintainer: string) => <Badge key={maintainer}><Link href={`https://www.github.com/`+maintainer+`/`} target="_blank">{maintainer}</Link></Badge>)}
+                        {(lead.maintainers as [])?.length > 10 && (
+                            <Button size="xs" variant="light" onClick={toggleMaintainers}>
+                                {showAllMaintainers ? 'Hide' : 'Show More...'}
+                            </Button>
+                        )}
+                        </>
+                }
                 </div>
             </div>
 

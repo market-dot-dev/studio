@@ -9,6 +9,8 @@ import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lo
 import LoadingSpinner from "../form/loading-spinner";
 
 import LeadItem from "./lead-item";
+import { gitHubRepoOrgAndName } from "@/lib/utils";
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 
 const errorMessages = {
     NO_DEPENDENT_OWNERS: 'Selected repository has no dependent owners.',
@@ -24,29 +26,88 @@ type LeadKey = {
 
 export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
-    const [selectedRepo, setSelectedRepo] = useState<Repo | null>(null);
+    const router = useRouter();
+    const pathname = usePathname();
+    const searchParams = useSearchParams();
+
+    const [repoUrl, setRepoUrl] = useState<string>(searchParams.get('repoUrl') || '');
+    const [inputRepoUrl, setInputRepoUrl] = useState<string>(searchParams.get('repoUrl') || '');
+    const [page, setPage] = useState<number>(parseInt(searchParams.get('page') || '1'));
+    const [perPage, setPerPage] = useState<number>(parseInt(searchParams.get('perPage') || '20'));
+    const [showOnlyOrgs, setShowOnlyOrgs] = useState<boolean>(searchParams.get('showOnlyOrgs') === 'true' || false);
+
     const [radarId, setRadarId] = useState<number | null>(null);
     const [shortListedLeads, setShortListedLeads] = useState<LeadKey[]>([]);
     const [radarResults, setRadarResults] = useState<any[]>([]);
 
     const [isSearching, setIsSearching] = useState<boolean>(false);
-    const [page, setPage] = useState<number>(1);
-    const [perPage, setPerPage] = useState<number>(20);
+    
     const [totalCount, setTotalCount] = useState<number>(0);
     const [orgsCount, setOrgsCount] = useState<number>(0);
-
-    const [showOnlyOrgs, setShowOnlyOrgs] = useState<boolean>(true);
+    
 
     const [searchError, setSearchError] = useState<string>('');
 
-    const handleRepoSelected = useCallback((selectedIndex: string) => {
+    const createQueryString = useCallback((params: any) => {
+        const newParams = new URLSearchParams(searchParams.toString());
+        Object.entries(params).forEach(([key, value]) => {
+            if (value) {
+                newParams.set(key, value.toString());
+            }
+        });
+        return newParams.toString();
+    }, [searchParams]);
+
+    const updateSearchParameters = useCallback(() => {
+        const params = {
+            repoUrl: repoUrl,
+            page: page.toString(),
+            perPage: perPage.toString(),
+            showOnlyOrgs: showOnlyOrgs.toString()
+        };
+        const queryString = createQueryString(params);
+        const newUrl = `${pathname}?${queryString}`;
+        router.push(newUrl, undefined);
+    }, [repoUrl, page, perPage, showOnlyOrgs, createQueryString, pathname, router]);
+
+    const validateAndModifyUrl = useCallback((url: string) => {
+        // If the URL starts with "http://", replace it with "https://"
+        if (url.startsWith('http://')) {
+            url = url.replace('http://', 'https://');
+        }
+        // If the URL does not start with any protocol, prepend "https://"
+        else if (!url.startsWith('https://')) {
+            url = 'https://' + url;
+        }
+        
+        if (!url.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)$/)) {
+            setSearchError('Please enter a valid GitHub repository URL.');
+            return null;
+        }
+
+        setInputRepoUrl(url);
+        return url;
+    }, [setInputRepoUrl]);
+
+    const handleUrlSearch = useCallback(() => {
+        const validUrl = validateAndModifyUrl(inputRepoUrl);
+        setPage(1);
+        if (validUrl) {
+            console.log('Searching for:', validUrl);
+            setRepoUrl(validUrl);
+        }
+    }, [inputRepoUrl, setRepoUrl]);
+
+    const handleRepoSelected = useCallback((selectedIndex: number) => {
         setRadarId(null);
-        setSelectedRepo(repos[parseInt(selectedIndex)]);
-    }, [setSelectedRepo]);
+        setPage(1);
+        setInputRepoUrl(repos[selectedIndex]?.url || '');
+        setRepoUrl(repos[selectedIndex]?.url || '');
+    }, [setInputRepoUrl, setRepoUrl]);
 
     const handlePageChange = useCallback((newPage: number) => {
         setPage(newPage);
-    }, [selectedRepo]);
+    }, [repoUrl]);
 
     const clearLeadsCache = useCallback(() => {
         Object.keys(sessionStorage).forEach(key => {
@@ -58,53 +119,48 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     }, [])
 
     const lookupRepo = useCallback((initial?: boolean) => {
-        if (selectedRepo?.url) {
-            try {
-                lookup(selectedRepo.url).then((res: any) => {
-
-                    if (res.error) {
-                        if (initial) {
-                            setSearchError(res.error);
-                            setIsSearching(false);
-                        } else {
-                            console.log(errorMessages.FAILED_GET_OWNERS_COUNT, res.error);
-                        }
-
-                        return;
-                    }
-
-                    const newTotalCount = res.data.dependent_owners_count ?? 0;
-
-                    setTotalCount(newTotalCount);
-
+        if (repoUrl) {
+            lookup(repoUrl).then((res: any) => {
+                
+                if (res.error) {
                     if (initial) {
-                        if (!newTotalCount) {
-                            setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
-                            setIsSearching(false);
-                        }
-                        // Reset page to 1 as it is the initial lookup for a new repo
-                        setPage(1);
-
-                        // this will trigger the useeffect hook to fetch the dependent owners
-                        setRadarId(selectedRepo.radarId);
-
+                        setSearchError(res.error);
+                        setIsSearching(false);
                     } else {
-                        // if the count has changed
-                        if (totalCount !== newTotalCount) {
-                            clearLeadsCache();
-                        }
-
+                        console.log(errorMessages.FAILED_GET_OWNERS_COUNT, res.error);
                     }
 
+                    return;
+                }
 
-                    setOrgsCount(res.data.dependent_organizations_count ?? 0);
-                });
-            } catch (error) {
+                const newTotalCount = res.data.dependent_owners_count ?? 0;
+
+                setTotalCount(newTotalCount);
+
+                if (initial) {
+                    if (!newTotalCount) {
+                        setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
+                        setIsSearching(false);
+                    }
+
+                    // this will trigger the useeffect hook to fetch the dependent owners
+                    setRadarId(res.data.id);
+
+                } else {
+                    // if the count has changed
+                    if (totalCount !== newTotalCount) {
+                        clearLeadsCache();
+                    }
+
+                }
+                setOrgsCount(res.data.dependent_organizations_count ?? 0);
+
+            }).catch(error => {
                 console.log(errorMessages.FAILED_GET_OWNERS_COUNT, error)
                 setIsSearching(false);
-            }
+            }); 
         }
-    }, [selectedRepo, setTotalCount, setOrgsCount, lookup, totalCount, setSearchError, setIsSearching])
+    }, [repoUrl, setTotalCount, setOrgsCount, lookup, totalCount, setSearchError, setIsSearching])
 
     const getDependentOwnersWithCache = useCallback(async () => {
 
@@ -146,47 +202,6 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         }
     }, [radarId, page, perPage, showOnlyOrgs, setSearchError]);
 
-    useEffect(() => {
-
-        if (!selectedRepo?.url) {
-            return;
-        }
-
-        setIsSearching(true);
-        setRadarResults([]);
-        setSearchError('');
-        lookupRepo(true);
-
-        getShortlistedLeadsKeysList(selectedRepo.id).then((leads: LeadKey[]) => {
-            setShortListedLeads(leads);
-        });
-    }, [selectedRepo])
-
-    useEffect(() => {
-        if (!radarId) {
-            return;
-        }
-
-        if (!totalCount) {
-            setSearchError(errorMessages.HAS_NO_OWNERS);
-            setRadarResults([]);
-            setIsSearching(false);
-            return;
-        }
-
-        setSearchError('');
-        setIsSearching(true);
-        lookupRepo();
-
-        getDependentOwnersWithCache().then((fetchedLeads: any[]) => {
-            setRadarResults(fetchedLeads);
-        })
-            .finally(() => {
-                setIsSearching(false);
-            });
-
-    }, [page, perPage, showOnlyOrgs, radarId]);
-
     const resultsPerPage = (
         <>
             <div className="text-sm">Results per Page</div>
@@ -204,32 +219,100 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         </>
     )
 
+    const repoOrgName = gitHubRepoOrgAndName(repoUrl);
+
+    useEffect(() => {
+
+        if (!repoUrl) {
+            return;
+        }
+
+        setIsSearching(true);
+        setRadarResults([]);
+        setSearchError('');
+        
+        lookupRepo(true);
+
+        getShortlistedLeadsKeysList().then((leads: LeadKey[]) => {
+            setShortListedLeads(leads);
+        });
+
+    }, [repoUrl])
+
+    
+
+    useEffect(() => {
+        
+        if (!radarId) {
+            return;
+        }
+
+        updateSearchParameters();
+
+        if (!totalCount) {
+            setSearchError(errorMessages.HAS_NO_OWNERS);
+            setRadarResults([]);
+            setIsSearching(false);
+            return;
+        }
+
+        // if page is higher than the total number of pages
+        const lastPage = Math.ceil((showOnlyOrgs ? orgsCount : totalCount) / perPage);
+        if (page > lastPage) {
+            // set page to the last page
+            setPage(lastPage);
+            return;
+        }
+
+        setSearchError('');
+        setIsSearching(true);
+        lookupRepo();
+        
+        getDependentOwnersWithCache().then((fetchedLeads: any[]) => {
+            setRadarResults(fetchedLeads);
+        })
+        .finally(() => {
+            setIsSearching(false);
+        });
+
+    }, [page, perPage, showOnlyOrgs, radarId]);
+
+    
+
     return (
         <>
             <div className="mb-4">
 
-                <div className="flex flex-row gap-4">
-                    <TextInput icon={Search} placeholder="Enter a Repo URL..." />
+                <div className="relative">
+                    <TextInput icon={Search} value={inputRepoUrl} placeholder="Enter a Repo URL..." onInput={ (e: any) => {
+                        setSearchError('');
+                        setInputRepoUrl(e.target.value);
+                    }}
+                    onKeyDown={(e: any) => {
+                        if (e.key === 'Enter') {
+                            handleUrlSearch();
+                        }
+                    }}
+
+                    />
+                    <div className="absolute right-0 top-0 h-full inline-block">
+                        <Button className="rounded-l-none" onClick={handleUrlSearch} disabled={isSearching} loading={isSearching}>Search</Button>
+                    </div>
                 </div>
-                {/* <Text>You can only search for connected repositories. To connect more repositories, go to your <Link href="/settings/repos" className="underline">Repository Settings</Link>.</Text> */}
+                
 
                 {repos.length ?
-                    <>
-                        {/* <SearchSelect onValueChange={handleRepoSelected} className="relative z-[100]" >
-                            {repos.map((repo, index) => (
-                                <SearchSelectItem key={index} value={`${index}`}>{repo.name}</SearchSelectItem>
-                            ))}
-                        </SearchSelect> */}
-                        <div className="flex-col gap-2 mt-2 md:flex-row">
-                            <Text>Search for your connected repos: (<Link href="/settings/repos" className="underline">Connect More</Link>)</Text>
-                            <div className="flex gap-2 mt-2">
-                                {repos.map((repo, index) => (
-                                    // <SearchSelectItem key={index} value={`${index}`}>{repo.name}</SearchSelectItem>
-                                    <Button size="xs" className="rounded-xl py-0 px-2">{repo.name}</Button>
-                                ))}
-                            </div>
+                    <div className="flex-col gap-2 mt-2 md:flex-row">
+                        <Text>Search for your connected repos: (<Link href="/settings/repos" className="underline">Connect More</Link>)</Text>
+                        <div className="flex gap-2 mt-2 flex-wrap w-full">
+                            {repos.map((repo, index) => {
+                                const repoOrgName = gitHubRepoOrgAndName(repo.url);
+                                return (
+                                    <Button size="xs" key={index} className={'rounded-xl py-0 px-2' + (radarId && repo.radarId === radarId ? ' bg-black' : ' bg-gray-600')} onClick={() => handleRepoSelected(index)}>{repoOrgName || repo.name}</Button>
+                                )
+                            })}
                         </div>
-                    </>
+                    </div>
                     :
                     <Card
                         className="my-4 w-full bg-gray-100 border border-gray-400 px-4 py-3 text-gray-700"
@@ -243,7 +326,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
             </div>
 
-            <Bold>Search Results{selectedRepo?.name ? ' for ' + selectedRepo.name : ''}:</Bold>
+            <Bold>Search Results{ repoOrgName ? ' for ' + repoOrgName : ''}:</Bold>
             {searchError ? <Text className="text-red-500">{searchError}</Text> : null}
             {radarResults.length ?
                 <div className="flex flex-col gap-4 items-stretch sticky -top-1 z-10 bg-white p-4 shadow-sm border rounded-md -mr-1 -ml-1">
@@ -293,7 +376,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                     <>
                         {radarResults?.map((lead, index) => {
                             const isShortlisted = shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
-                            return <SearchResult key={index} lead={lead} isShortlisted={isShortlisted} setShortListedLeads={setShortListedLeads} selectedRepo={selectedRepo} />
+                            return <SearchResult key={index} lead={lead} isShortlisted={isShortlisted} setShortListedLeads={setShortListedLeads} />
                         })}
 
                     </>
@@ -309,18 +392,13 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
 
 
-function SearchResult({ selectedRepo, lead, isShortlisted, setShortListedLeads }: { selectedRepo: Repo | null, lead: Lead, isShortlisted: boolean, setShortListedLeads: any }) {
+function SearchResult({ lead, isShortlisted, setShortListedLeads }: { lead: Lead, isShortlisted: boolean, setShortListedLeads: any }) {
     const [isAddingToShortlist, setIsAddingToShortlist] = useState<boolean>(false);
 
-    const addToShortlist = useCallback((lead: any) => {
-
-        if (!selectedRepo) {
-            return;
-        }
-
+    const addToShortlist = useCallback(() => {
         // Add to shortlist
         setIsAddingToShortlist(true);
-        addLeadToShortlist(lead, selectedRepo.id).then(res => {
+        addLeadToShortlist(lead).then(res => {
             setShortListedLeads((prev: LeadKey[]) => [...prev, { host: lead.host, uuid: lead.uuid }]);
         })
             .catch((err: any) => {
@@ -329,7 +407,8 @@ function SearchResult({ selectedRepo, lead, isShortlisted, setShortListedLeads }
             .finally(() => {
                 setIsAddingToShortlist(false);
             });
-    }, [selectedRepo])
+    }, [lead])
+
     return (
         <Card className="flex flex-col my-2 z-0 relative">
             <LeadItem lead={lead} />
@@ -338,7 +417,7 @@ function SearchResult({ selectedRepo, lead, isShortlisted, setShortListedLeads }
                 <Button
                     loading={isAddingToShortlist}
                     disabled={isShortlisted || isAddingToShortlist}
-                    onClick={() => addToShortlist(lead)}
+                    onClick={addToShortlist}
                 >Add to Shortlist</Button>
             </div>
         </Card>
@@ -397,6 +476,11 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { pa
                     value={inputPage}
                     onChange={(e) => {
                         setInputPage(e.target.valueAsNumber)
+                    }}
+                    onKeyDown={(e: any) => {
+                        if (e.key === 'Enter') {
+                            handleGoClick();
+                        }
                     }}
                     className="border rounded-md text-xs w-20 border-gray-300"
                     placeholder="Go to page..."

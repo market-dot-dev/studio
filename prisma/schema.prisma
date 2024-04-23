@@ -36,6 +36,7 @@ model User {
   features                    Feature[]
   subscriptions               Subscription[]
   repos                       Repo[]
+  leads                       Lead[]
   githubAppInstallations      GithubAppInstallation[]
   onboarding                  String?
   company                     String?
@@ -262,7 +263,6 @@ model Repo {
   createdAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  leads    Lead[]
 }
 
 model Service {
@@ -352,9 +352,8 @@ model Lead {
   maintainers           Json
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  dbRepoId                String
-  repo                  Repo      @relation(fields: [dbRepoId], references: [id], onDelete: Cascade)
+  userId                String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   @@unique([host, uuid], name: "host_uuid_unique")
 }

@@ -18,21 +18,10 @@ class LeadsService {
         // Add your logic here
     }
 
-    static async addLeadToShortlist(leadData: any, repoId: string) {
+    static async addLeadToShortlist(leadData: any) {
       
         const userId = await SessionService.getCurrentUserId();
         
-        // check if the user owns the repo
-        const repo = await prisma.repo.findFirst({
-            where: {
-                id: repoId,
-                userId,
-            }
-        });
-
-        if (!repo) {
-            throw new Error('The repository is not part of the installation.');
-        }
         
         const sanitizedLeads = {
             host: leadData.host,
@@ -68,10 +57,10 @@ class LeadsService {
           },
           create: {
             ...sanitizedLeads,
-            repo: {
+            user: {
               connect: {
-                id: repoId,
-              },
+                id: userId,
+            },
             },
           },
         });
@@ -82,9 +71,8 @@ class LeadsService {
         return await prisma.lead.delete({
             where: {
                 id: leadId,
-                repo: {
-                  userId,
-                }
+                userId,
+                
             }
         });
     }
@@ -93,21 +81,16 @@ class LeadsService {
         const userId = await SessionService.getCurrentUserId();
         return await prisma.lead.findMany({
             where: {
-                repo : {
-                  userId,
-                }
+                userId
             }
         });
     }
 
-    static async getShortlistedLeadsKeysList(dbRepoId: string) {
+    static async getShortlistedLeadsKeysList() {
         const userId = await SessionService.getCurrentUserId();
         return prisma.lead.findMany({
             where: {
-                dbRepoId,
-                repo : {
-                  userId,
-                }
+                userId
             },
             select: {
                 host: true,
@@ -117,7 +100,6 @@ class LeadsService {
     }
 
     static async lookup(repoUrl: string) {
-        
         try {
             const response = await fetch(`${radarAPIEndpoint}repositories/lookup?url=${repoUrl}`);
             return {

@@ -1,5 +1,6 @@
 'use client'
 import { verifyAndConnectRepo, disconnectRepo } from "@/app/services/RepoService";
+import { extractGitHubRepoInfo, gitHubRepoOrgAndName } from "@/lib/utils";
 import { Repo } from "@prisma/client";
 import { Flex, Text, Button } from "@tremor/react";
 import { Github } from "lucide-react";
@@ -52,10 +53,11 @@ export function RepoItem({ repo, setRepos }: { repo: Partial<Repo>, setRepos: an
             .finally(() => setDisconnecting(false));
     }, [repo.repoId, setRepos]);
 
+    const repoOrgName = gitHubRepoOrgAndName(repo.url);
     return (
         <div className="flex flex-row justify-items-center text-center">
             <Github size={16} className="me-2" />
-            <Text>{repo.name}</Text>
+            <Text>{repoOrgName || repo.name}</Text>
             <div className='grow text-right'>
                 <Button size='xs' onClick={disconnect} loading={disconnecting} disabled={disconnecting}>Disconnect</Button>
             </div>

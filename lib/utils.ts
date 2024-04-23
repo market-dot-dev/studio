@@ -57,3 +57,25 @@ export const toDateString = (date: Date) => {
 export const random = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
+
+export const extractGitHubRepoInfo = (url: string | null | undefined) => {
+  if (!url) {
+      return null;
+  }
+  const pattern = /https:\/\/github\.com\/([^\/]+)\/([^\/]+)/;
+  const match = url.match(pattern);
+
+  if (match) {
+      return {
+          usernameOrOrg: match[1],
+          repoName: match[2]
+      };
+  } else {
+      return null;
+  }
+}
+
+export const gitHubRepoOrgAndName = (url : string | null | undefined) => {
+  const repoInfo = extractGitHubRepoInfo(url);
+  return repoInfo ? `${repoInfo.usernameOrOrg}/${repoInfo.repoName}` : "";
+}
