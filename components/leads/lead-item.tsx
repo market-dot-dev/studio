@@ -71,7 +71,7 @@ export default function LeadItem({ lead }: { lead: Lead }) {
                     <Text>Email: {lead.email ? <a href={`mailto:${lead.email}`} className="underline">{lead.email}</a> : null }</Text>
                     <Text>Twitter: {lead.twitter}</Text>
                     <Text>Location: {lead.location}</Text>
-                    { 'organization' !== lead.kind.toLowerCase() && <Text>Company: {lead.company}</Text> }
+                    { lead.kind && 'organization' !== lead.kind.toLowerCase() && <Text>Company: {lead.company}</Text> }
                 </div>
 
                 <div className="flex w-1/2 justify-start">
