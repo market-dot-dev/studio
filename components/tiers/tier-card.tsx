@@ -17,8 +17,12 @@ type TierCardProps = {
   features?: Feature[];
 };
 
+export const generateLink = (url: string | null, tierId: string, annual: boolean) => {
+  return `${url ? url : ''}/checkout/${tierId}${annual ? '?annual=true' : ''}`;
+}
+
 const GetStartedButton = ({ url, tierId, canEdit, annual = false }: { url: string | null, tierId: string, canEdit: boolean, annual?: boolean }) => {
-  const linkUrl = (url || tierId) ? `${url ? url : ''}/checkout/${tierId}${annual ? '?annual=true' : ''}` : '';
+  const linkUrl = generateLink(url, tierId, annual);
   const variant = canEdit ? "secondary" : "primary";
 
   return (
