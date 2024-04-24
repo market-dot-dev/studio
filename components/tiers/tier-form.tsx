@@ -85,6 +85,47 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 	}
 };
 
+const TierLinkCopier = ({ tier }: { tier: Tier }) => {
+  const [isCopied, setIsCopied] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+	const link = `${window.location.origin}/checkout/${tier.id}`;
+
+  const copyToClipboard = async () => {
+    if (window.location.protocol !== 'https:') {
+      setErrorMessage('Copying to clipboard is only supported on HTTPS sites.');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(link);
+      setIsCopied(true);
+      setErrorMessage('');
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      setErrorMessage('Failed to copy the link. Please try again.');
+    }
+  };
+
+  return (
+    <div className="flex flex-col justify-center items-center">
+			<Text>
+				{ link }
+			</Text>
+      <Button
+        onClick={copyToClipboard}
+        disabled={isCopied}
+        className={`${isCopied ? 'opacity-50 cursor-not-allowed' : ''}`}
+      >
+        {isCopied ? 'Copied!' : 'Copy Checkout Link'}
+      </Button>
+      {errorMessage && (
+        <Text className="text-red-500 mt-2">{errorMessage}</Text>
+      )}
+    </div>
+  );
+};
+
 const calcDiscount = (price: number, annualPrice: number) => {
 	if (price === 0) return 0;
 	if (annualPrice === 0) return 100;
@@ -497,6 +538,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 					<TierCard tier={tier} features={featureObjs} buttonDisabled={newRecord} />
 					{tier.id && tier.published ? <Text className="mt-2">This tier is currently published and available for sale.</Text>
 						: <Text className="mt-2">This tier is not published and is not available for sale.</Text>}
+					<TierLinkCopier tier={tier} />
 				</div>
 			</div>
 		</>
