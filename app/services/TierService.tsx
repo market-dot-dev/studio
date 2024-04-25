@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService, { SubscriptionCadence } from "./StripeService";
-import UserService from "./UserService";
+import UserService, { getCurrentUser } from "./UserService";
 import { Feature, TierVersion } from "@prisma/client";
 import SessionService from "./SessionService";
 import FeatureService from "./feature-service";
@@ -25,6 +25,18 @@ class TierService {
     await prisma?.tier.update({
       where: { id: tier.id },
       data: { stripePriceId: null },
+    });
+  }
+
+  static async updateApplicationFee(tierId: string, applicationFeePercent?: number, applicationFeePrice?: number) {
+    const user = await getCurrentUser();
+    if(!user?.roleId || user.roleId !== 'admin') {
+      throw new Error('User does not have permission to update application fee percent.');
+    }
+
+    return await prisma?.tier.update({
+      where: { id: tierId },
+      data: { applicationFeePercent, applicationFeePrice },
     });
   }
 
@@ -490,4 +502,4 @@ class TierService {
 };
 
 export default TierService;
-export const { findTier, updateTier, createTier, destroyTier, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId, getTiersForUser } = TierService;
+export const { findTier, updateTier, createTier, destroyTier, destroyStripePrice, getCustomersOfUserTiers, getTiersForMatrix, shouldCreateNewVersion, getVersionsByTierId, getTiersForUser, updateApplicationFee } = TierService;
