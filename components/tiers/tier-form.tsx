@@ -28,6 +28,7 @@ import useCurrentSession from '@/app/hooks/use-current-session';
 import LinkButton from '../common/link-button';
 import { getRootUrl } from '@/app/services/domain-service';
 import { findUser } from '@/app/services/UserService';
+import { Copy } from 'lucide-react';
 
 
 interface TierFormProps {
@@ -122,28 +123,34 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
     }
   };
 
-  return (
-		<div>
-			<div className="flex flex-row justify-center items-center">
-				<TextInput
-					id="checkoutLink"
-					readOnly
-					value={link}
-				/>
-				<Button
-					onClick={copyToClipboard}
-					disabled={isCopied}
-					className={`${isCopied ? 'opacity-50 cursor-not-allowed' : ''}`}
-				>
-					{isCopied ? 'Copied!' : 'Copy'}
-				</Button>
-				
-			</div>
-			{errorMessage && (
-        <Text className="text-red-500 mt-2">{errorMessage}</Text>
-      )}
+return (
+	<div className="mt-4 flex flex-col bg-gray-100 rounded-lg border border-gray-400 px-2 py-4 text-gray-700">
+		<Bold>Checkout Link</Bold>
+		<Text>You can send this link directly to any potential customers.</Text>
+		<div className="mt-4 flex flex-row justify-center items-center">
+			
+			<TextInput
+				id="checkoutLink"
+				className="rounded-r-none"
+				readOnly
+				defaultValue=''
+				value={link}
+			/>
+			<Button
+				icon={Copy}
+				onClick={copyToClipboard}
+				disabled={isCopied}
+				className={`rounded-l-none`+`${isCopied ? 'opacity-50 cursor-not-allowed' : ''}`}
+			>
+				{isCopied ? 'Copied!' : ''}
+			</Button>
+			
 		</div>
-  );
+		{errorMessage && (
+			<Text className="text-red-500 mt-2">{errorMessage}</Text>
+		)}
+	</div>
+);
 };
 
 const calcDiscount = (price: number, annualPrice: number) => {
