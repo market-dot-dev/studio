@@ -24,6 +24,11 @@ import {
 	TableRow,
 	TableCell,
 } from "@tremor/react";
+import useCurrentSession from '@/app/hooks/use-current-session';
+import LinkButton from '../common/link-button';
+import { getRootUrl } from '@/app/services/domain-service';
+import { findUser } from '@/app/services/UserService';
+import { Copy } from 'lucide-react';
 
 
 interface TierFormProps {
@@ -85,6 +90,69 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 	}
 };
 
+const TierLinkCopier = ({ tier }: { tier: Tier }) => {
+  const [isCopied, setIsCopied] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+	const [link, setLink] = useState('');
+
+	useEffect(() => {
+		findUser(tier.userId).then(user => {
+			const rootUrlPromise = getRootUrl(user?.gh_username || 'app', `/checkout/${tier.id}`) as unknown as Promise<string>;
+			return rootUrlPromise.then(val => {
+				setLink(val);
+			})
+		}).catch(err => {
+			setErrorMessage(err.message);
+		})
+	}, [tier.id, tier.userId])
+	
+
+  const copyToClipboard = async () => {
+    if (window.location.protocol !== 'https:') {
+      setErrorMessage('Copying to clipboard is only supported on HTTPS sites.');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(link);
+      setIsCopied(true);
+      setErrorMessage('');
+    } catch (err) {
+      console.error('Failed to copy text: ', err);
+      setErrorMessage('Failed to copy the link. Please try again.');
+    }
+  };
+
+return (
+	<div className="mt-4 flex flex-col bg-gray-100 rounded-lg border border-gray-400 px-2 py-4 text-gray-700">
+		<Bold>Checkout Link</Bold>
+		<Text>You can send this link directly to any potential customers.</Text>
+		<div className="mt-4 flex flex-row justify-center items-center">
+			
+			<TextInput
+				id="checkoutLink"
+				className="rounded-r-none"
+				readOnly
+				defaultValue=''
+				value={link}
+			/>
+			<Button
+				icon={Copy}
+				onClick={copyToClipboard}
+				disabled={isCopied}
+				className={`rounded-l-none`+`${isCopied ? 'opacity-50 cursor-not-allowed' : ''}`}
+			>
+				{isCopied ? 'Copied!' : ''}
+			</Button>
+			
+		</div>
+		{errorMessage && (
+			<Text className="text-red-500 mt-2">{errorMessage}</Text>
+		)}
+	</div>
+);
+};
+
 const calcDiscount = (price: number, annualPrice: number) => {
 	if (price === 0) return 0;
 	if (annualPrice === 0) return 100;
@@ -114,6 +182,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
+
+	const { isAdmin } = useCurrentSession();
 
 	const handleInputChange = (
 		name: string,
@@ -425,6 +495,16 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 						</DashboardCard>
 					</div>
 
+					{ isAdmin() && tier?.id && <>
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Admin Panel</label>
+							<DashboardCard>
+								View admin-only options: <LinkButton href={`/admin/tiers/${tier.id}`}>Go</LinkButton>
+							</DashboardCard>
+						</div>
+					</>}
+
+
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Version History</label>
@@ -497,6 +577,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 					<TierCard tier={tier} features={featureObjs} buttonDisabled={newRecord} />
 					{tier.id && tier.published ? <Text className="mt-2">This tier is currently published and available for sale.</Text>
 						: <Text className="mt-2">This tier is not published and is not available for sale.</Text>}
+					<TierLinkCopier tier={tier} />
 				</div>
 			</div>
 		</>

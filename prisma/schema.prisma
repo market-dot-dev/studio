@@ -172,6 +172,8 @@ model Tier {
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   price               Int
+  applicationFeePercent Int?
+  applicationFeePrice Int?
   stripePriceId       String?
   trialDays           Int     @default(0)
   cadence             String  @default("month")

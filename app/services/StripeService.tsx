@@ -171,8 +171,6 @@ class StripeService {
     return true;
   }
 
-  
-
   async createPrice(stripeProductId: string, price: number, cadence: SubscriptionCadence  = 'month') {
     const attrs: any = {
       unit_amount: price * 100, // Stripe requires the price in cents
@@ -300,14 +298,25 @@ class StripeService {
     });
   }
 
-  async createCharge(stripeCustomerId: string, stripePriceId: string, price: number, stripePaymentMethodId: string) {
+  async createCharge(stripeCustomerId: string, stripePriceId: string, price: number, stripePaymentMethodId: string, applicationFeePercent?: number, applicationFeePrice?: number) {
     const timestampMod10 = (Date.now() % 10000).toString().padStart(4, '0'); // Convert to string and pad with leading zeros if necessary
+
+    let applicationFee = undefined;
+
+    if(applicationFeePercent) {
+      applicationFee = Math.round(price * (applicationFeePercent / 100) * 100);
+    }
+
+    if(applicationFeePrice){
+      applicationFee = (applicationFee || 0) + applicationFeePrice * 100;
+    }
 
     const invoice = await this.stripe.invoices.create({
       customer: stripeCustomerId,
       auto_advance: true,
       currency: "usd",
       collection_method: "charge_automatically",
+      application_fee_amount: applicationFee,
     });
   
     await this.stripe.invoiceItems.create({
@@ -457,7 +466,7 @@ export const onClickSubscribe = async (userId: string, tierId: string, annual: b
   console.log('[purchase]: maintainer, product check');
 
   if(tier.cadence === 'once') {
-    const charge = await stripeService.createCharge(stripeCustomerId, stripePriceId, tier.price, await customer.getStripePaymentMethodId());
+    const charge = await stripeService.createCharge(stripeCustomerId, stripePriceId, tier.price, await customer.getStripePaymentMethodId(), tier.applicationFeePercent || 0, tier.applicationFeePrice || 0);
 
     if(charge.status === 'succeeded') {
       await createLocalCharge(userId, tierId, charge.id);
