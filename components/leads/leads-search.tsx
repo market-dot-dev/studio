@@ -5,12 +5,13 @@ import Link from "next/link";
 import { Search } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup } from "@/app/services/LeadsService";
+import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup, getFacets } from "@/app/services/LeadsService";
 import LoadingSpinner from "../form/loading-spinner";
 
 import LeadItem from "./lead-item";
 import { gitHubRepoOrgAndName } from "@/lib/utils";
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import FiltersPanel, { FiltersState, emptyFilters, hashFiltersState } from "./filters-panel";
 
 const errorMessages = {
     NO_DEPENDENT_OWNERS: 'Selected repository has no dependent owners.',
@@ -34,7 +35,8 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const [inputRepoUrl, setInputRepoUrl] = useState<string>(searchParams.get('repoUrl') || '');
     const [page, setPage] = useState<number>(parseInt(searchParams.get('page') || '1'));
     const [perPage, setPerPage] = useState<number>(parseInt(searchParams.get('perPage') || '20'));
-    const [showOnlyOrgs, setShowOnlyOrgs] = useState<boolean>(searchParams.get('showOnlyOrgs') === 'true' || false);
+    const [facets, setFacets] = useState<any>();
+    // const [showOnlyOrgs, setShowOnlyOrgs] = useState<boolean>(searchParams.get('showOnlyOrgs') === 'true' || false);
 
     const [radarId, setRadarId] = useState<number | null>(null);
     const [shortListedLeads, setShortListedLeads] = useState<LeadKey[]>([]);
@@ -44,6 +46,14 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     
     const [totalCount, setTotalCount] = useState<number>(0);
     const [orgsCount, setOrgsCount] = useState<number>(0);
+
+    const [filters, setFilters] = useState<FiltersState>((() => {
+        let initialFilters: FiltersState = {} as FiltersState;
+        Object.keys(emptyFilters).forEach((key: string) => {
+            initialFilters[key as keyof FiltersState] = searchParams.get(key) || '';
+        });
+        return initialFilters;
+    })());
     
 
     const [searchError, setSearchError] = useState<string>('');
@@ -51,8 +61,11 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const createQueryString = useCallback((params: any) => {
         const newParams = new URLSearchParams(searchParams.toString());
         Object.entries(params).forEach(([key, value]) => {
+            
             if (value) {
                 newParams.set(key, value.toString());
+            } else {
+                newParams.delete(key);
             }
         });
         return newParams.toString();
@@ -63,12 +76,19 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             repoUrl: repoUrl,
             page: page.toString(),
             perPage: perPage.toString(),
-            showOnlyOrgs: showOnlyOrgs.toString()
-        };
+            // showOnlyOrgs: showOnlyOrgs.toString()
+        } as any;
+
+        Object.entries(filters).forEach(([key, value]) => {
+            params[key as keyof FiltersState] = value;
+        });
+
         const queryString = createQueryString(params);
+        
         const newUrl = `${pathname}?${queryString}`;
-        router.push(newUrl, undefined);
-    }, [repoUrl, page, perPage, showOnlyOrgs, createQueryString, pathname, router]);
+        
+        router.replace(newUrl, { scroll : false});
+    }, [repoUrl, page, perPage, createQueryString, pathname, router, filters]);
 
     const validateAndModifyUrl = useCallback((url: string) => {
         // If the URL starts with "http://", replace it with "https://"
@@ -164,7 +184,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
     const getDependentOwnersWithCache = useCallback(async () => {
 
-        const cacheKey = `leads_${radarId!}_${page}_${perPage}_${showOnlyOrgs}`;
+        const cacheKey = `leads_${radarId!}_${page}_${perPage}_` + hashFiltersState(filters);
         const cachedData = sessionStorage.getItem(cacheKey);
 
         if (cachedData) {
@@ -181,7 +201,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             }
         }
         try {
-            const res = await getDependentOwners(radarId!, page, perPage, showOnlyOrgs);
+            const res = await getDependentOwners(radarId!, page, perPage, filters);
 
             if (res.error) {
                 setSearchError(res.error);
@@ -200,7 +220,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             setSearchError(errorMessages.FAILED_GET_OWNERS);
             return [];
         }
-    }, [radarId, page, perPage, showOnlyOrgs, setSearchError]);
+    }, [radarId, page, perPage, setSearchError, filters]);
 
     const resultsPerPage = (
         <>
@@ -257,7 +277,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         }
 
         // if page is higher than the total number of pages
-        const lastPage = Math.ceil((showOnlyOrgs ? orgsCount : totalCount) / perPage);
+        const lastPage = Math.ceil( totalCount / perPage);
         if (page > lastPage) {
             // set page to the last page
             setPage(lastPage);
@@ -275,9 +295,23 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             setIsSearching(false);
         });
 
-    }, [page, perPage, showOnlyOrgs, radarId]);
+    }, [page, perPage, radarId, filters]);
 
-    
+    useEffect(() => {
+
+        if(!radarId) {
+            return;
+        }
+
+        getFacets(radarId, filters.kind).then((res: any) => {
+            if (res.error) {
+                console.error('Failed to get facets:', res.error);
+                return;
+            }
+            setFacets(res.data);
+        });
+
+    }, [radarId, filters.kind])
 
     return (
         <>
@@ -335,7 +369,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         <Pagination
                             page={page}
                             perPage={perPage}
-                            totalCount={showOnlyOrgs ? orgsCount : totalCount}
+                            totalCount={totalCount}
                             onPageChange={handlePageChange}
                             isLoading={isSearching}
                         />
@@ -347,18 +381,6 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
                     </div>
                     <div className="flex justify-between items-center w-full border border-t-1 border-b-0 border-l-0 border-r-0 pt-4">
-                        <div className="flex items-center justify-center gap-3">
-                            <Switch
-                                id="switch"
-                                name="switch"
-                                checked={showOnlyOrgs}
-                                onChange={setShowOnlyOrgs}
-                                disabled={isSearching}
-                            />
-                            <label htmlFor="switch" className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-                                Show only organizations
-                            </label>
-                        </div>
 
                         <div className="flex items-center justify-end gap-3 w-1/2 lg:hidden">
                             {resultsPerPage}
@@ -367,21 +389,29 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 </div>
                 : null
             }
-            <div className="w-full min-h-[100vh]">
-                {isSearching ?
-                    <div className="flex justify-center items-center sticky top-[200px] z-50">
-                        <LoadingSpinner />
-                    </div>
-                    :
-                    <>
-                        {radarResults?.map((lead, index) => {
-                            const isShortlisted = shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
-                            return <SearchResult key={index} lead={lead} isShortlisted={isShortlisted} setShortListedLeads={setShortListedLeads} />
-                        })}
+            <div className="grid grid-cols-4 w-full min-h-[100vh]">
+                <div className="col-span-1">
+                    { facets ?
+                        <FiltersPanel facets={facets} filters={filters} setFilters={setFilters} />
+                        : null
+                    }
+                </div>
+                <div className="col-span-3">
+                    {isSearching ?
+                        <div className="flex justify-center items-center sticky top-[200px] z-50">
+                            <LoadingSpinner />
+                        </div>
+                        :
+                        <>
+                            {radarResults?.map((lead, index) => {
+                                const isShortlisted = shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
+                                return <SearchResult key={index} lead={lead} isShortlisted={isShortlisted} setShortListedLeads={setShortListedLeads} />
+                            })}
 
-                    </>
+                        </>
 
-                }
+                    }
+                </div>
             </div>
 
 
