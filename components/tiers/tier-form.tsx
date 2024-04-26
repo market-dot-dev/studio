@@ -24,6 +24,10 @@ import {
 	TableRow,
 	TableCell,
 } from "@tremor/react";
+import useCurrentSession from '@/app/hooks/use-current-session';
+import LinkButton from '../common/link-button';
+import { getRootUrl } from '@/app/services/domain-service';
+import { findUser } from '@/app/services/UserService';
 
 
 interface TierFormProps {
@@ -88,8 +92,18 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 const TierLinkCopier = ({ tier }: { tier: Tier }) => {
   const [isCopied, setIsCopied] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+	const [link, setLink] = useState('');
 
-	const link = `${window.location.origin}/checkout/${tier.id}`;
+	useEffect(() => {
+		findUser(tier.userId).then(user => {
+			getRootUrl(user?.gh_username || 'app', `/checkout/${tier.id}`).then((val: string) => {
+				setLink(val);
+			});
+		}).catch(err => {
+			setErrorMessage(err.message);
+		})
+	}, [tier.id, tier.userId])
+	
 
   const copyToClipboard = async () => {
     if (window.location.protocol !== 'https:') {
@@ -108,21 +122,26 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center">
-			<Text>
-				{ link }
-			</Text>
-      <Button
-        onClick={copyToClipboard}
-        disabled={isCopied}
-        className={`${isCopied ? 'opacity-50 cursor-not-allowed' : ''}`}
-      >
-        {isCopied ? 'Copied!' : 'Copy Checkout Link'}
-      </Button>
-      {errorMessage && (
+		<div>
+			<div className="flex flex-row justify-center items-center">
+				<TextInput
+					id="checkoutLink"
+					readOnly
+					value={link}
+				/>
+				<Button
+					onClick={copyToClipboard}
+					disabled={isCopied}
+					className={`${isCopied ? 'opacity-50 cursor-not-allowed' : ''}`}
+				>
+					{isCopied ? 'Copied!' : 'Copy'}
+				</Button>
+				
+			</div>
+			{errorMessage && (
         <Text className="text-red-500 mt-2">{errorMessage}</Text>
       )}
-    </div>
+		</div>
   );
 };
 
@@ -155,6 +174,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
+
+	const { isAdmin } = useCurrentSession();
 
 	const handleInputChange = (
 		name: string,
@@ -465,6 +486,16 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 
 						</DashboardCard>
 					</div>
+
+					{ isAdmin() && tier?.id && <>
+						<div className="mb-4">
+							<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Admin Panel</label>
+							<DashboardCard>
+								View admin-only options: <LinkButton href={`/admin/tiers/${tier.id}`}>Go</LinkButton>
+							</DashboardCard>
+						</div>
+					</>}
+
 
 
 					<div className="mb-4">
