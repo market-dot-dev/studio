@@ -28,7 +28,7 @@ import useCurrentSession from '@/app/hooks/use-current-session';
 import LinkButton from '../common/link-button';
 import { getRootUrl } from '@/app/services/domain-service';
 import { findUser } from '@/app/services/UserService';
-import { Copy } from 'lucide-react';
+import { Check, Copy } from 'lucide-react';
 
 
 interface TierFormProps {
@@ -121,12 +121,17 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
     }
   };
 
+if (!link) {
+	return null;
+}
+
 return (
 	<div className="mt-4 flex flex-col bg-gray-100 rounded-lg border border-gray-400 px-2 py-4 text-gray-700">
 		<Bold>Checkout Link</Bold>
+		{tier.published ?
+		<>
 		<Text>You can send this link directly to any potential customers.</Text>
 		<div className="mt-4 flex flex-row justify-center items-center">
-			
 			<TextInput
 				id="checkoutLink"
 				className="rounded-r-none"
@@ -135,15 +140,19 @@ return (
 				value={link}
 			/>
 			<Button
-				icon={Copy}
+				icon={isCopied ? Check : Copy}
 				onClick={copyToClipboard}
 				disabled={isCopied}
-				className={`rounded-l-none`+`${isCopied ? 'opacity-50 cursor-not-allowed' : ''}`}
+				className={`rounded-l-none `+`${isCopied ? 'opacity-50 cursor-not-allowed' : ''}`}
 			>
 				{isCopied ? 'Copied!' : ''}
 			</Button>
-			
 		</div>
+		</>
+		:
+		<Text>To create a checkout link, this tier needs to be marked as available for sale.</Text>
+	
+		}
 		{errorMessage && (
 			<Text className="text-red-500 mt-2">{errorMessage}</Text>
 		)}
