@@ -3,6 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { getSiteData } from "@/lib/fetchers";
 import { Metadata } from "next";
 import { getRootUrl } from "@/app/services/domain-service";
+
 export async function generateMetadata({
   params,
 }: {
@@ -13,8 +14,7 @@ export async function generateMetadata({
   if (!data) {
     return null;
   }
-  const image = getRootUrl(data?.subdomain ?? 'app', `/api/og/${data.id}`);
-
+  const image = await getRootUrl(data?.subdomain ?? 'app', `/api/og/${data.id}`);
   
   const {
     logo,

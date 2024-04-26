@@ -96,9 +96,10 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
 
 	useEffect(() => {
 		findUser(tier.userId).then(user => {
-			getRootUrl(user?.gh_username || 'app', `/checkout/${tier.id}`).then((val: string) => {
+			const rootUrlPromise = getRootUrl(user?.gh_username || 'app', `/checkout/${tier.id}`) as unknown as Promise<string>;
+			return rootUrlPromise.then(val => {
 				setLink(val);
-			});
+			})
 		}).catch(err => {
 			setErrorMessage(err.message);
 		})
