@@ -96,15 +96,13 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
 	const [link, setLink] = useState('');
 
 	useEffect(() => {
-		findUser(tier.userId).then(user => {
-			const rootUrlPromise = getRootUrl(user?.gh_username || 'app', `/checkout/${tier.id}`) as unknown as Promise<string>;
-			return rootUrlPromise.then(val => {
-				setLink(val);
-			})
+		const rootUrlPromise = getRootUrl('app', `/checkout/${tier.id}`) as unknown as Promise<string>;
+		rootUrlPromise.then(val => {
+			setLink(val);
 		}).catch(err => {
 			setErrorMessage(err.message);
 		})
-	}, [tier.id, tier.userId])
+	}, [tier.id])
 	
 
   const copyToClipboard = async () => {
