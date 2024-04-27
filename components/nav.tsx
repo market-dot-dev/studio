@@ -157,7 +157,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg py-1.5">
             <div className="text-md font-medium">
-              <img src="/wordmark.png" className="h-8" />
+              <Link href="/" ><img src="/gw-logo-nav.png" className="h-8 hover:scale-110" /></Link>
             </div>
           </div>
           <div className="grid gap-0.5">
