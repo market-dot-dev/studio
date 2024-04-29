@@ -1,4 +1,7 @@
 'use client'
+
+import { useEffect, useState } from "react";
+
 type OptionType = {
   label: string;
   value: string;
@@ -47,12 +50,27 @@ export function hashFiltersState(filters: FiltersState): string {
   return hash.toString(16);
 }
 
-export default function FiltersPanel({facets, filters, setFilters}: { facets: DataDictionary, filters: FiltersState, setFilters: React.Dispatch<React.SetStateAction<FiltersState>>}) {
+export default function FiltersPanel({facets, filters, setFilters, setItemsCount}: { facets: DataDictionary, filters: FiltersState, setFilters: React.Dispatch<React.SetStateAction<FiltersState>>, setItemsCount: React.Dispatch<React.SetStateAction<number>>}) {
 
   const handleCheckboxChange = (key: keyof FiltersState, value: string) => {
-    setFilters((prev: FiltersState) => {
-      return { ...prev, [key]: prev[key] === value ? '' : value };
+
+    const newFilters = { ...filters, [key]: filters[key] === value ? '' : value };
+    
+    // based on the new filters, find the minimum count of items
+    let itemsCount = Infinity;
+
+    Object.keys(newFilters).forEach((key) => {
+      const facet = facets[key];
+      const filterValue = newFilters[key as keyof FiltersState];
+      
+      if(filterValue && facet[filterValue] && facet[filterValue] < itemsCount) {
+        itemsCount = facet[filterValue];
+      }
     });
+    
+    setItemsCount(itemsCount);
+
+    setFilters(newFilters);
   };
 
   const renderOptions = (key: keyof FiltersState) => {
@@ -84,6 +102,9 @@ export default function FiltersPanel({facets, filters, setFilters}: { facets: Da
     );
   };
 
+useEffect(() => {
+  console.log(facets)
+}, [facets])
   return (
     <div className="p-4 sticky top-[100px] z-50 overflow-auto" style={{maxHeight:"calc(100vh - 100px)"}}>
       <div className="flex flex-col gap-4">

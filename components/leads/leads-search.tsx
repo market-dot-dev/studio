@@ -30,7 +30,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-
+    
     const [repoUrl, setRepoUrl] = useState<string>(searchParams.get('repoUrl') || '');
     const [inputRepoUrl, setInputRepoUrl] = useState<string>(searchParams.get('repoUrl') || '');
     const [page, setPage] = useState<number>(parseInt(searchParams.get('page') || '1'));
@@ -45,7 +45,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const [isSearching, setIsSearching] = useState<boolean>(false);
     
     const [totalCount, setTotalCount] = useState<number>(0);
-    const [orgsCount, setOrgsCount] = useState<number>(0);
+    // const [orgsCount, setOrgsCount] = useState<number>(0);
 
     const [filters, setFilters] = useState<FiltersState>((() => {
         let initialFilters: FiltersState = {} as FiltersState;
@@ -158,29 +158,29 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 setTotalCount(newTotalCount);
 
                 if (initial) {
-                    if (!newTotalCount) {
-                        setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
-                        setIsSearching(false);
-                    }
+                    // if (!newTotalCount) {
+                    //     setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
+                    //     setIsSearching(false);
+                    // }
 
                     // this will trigger the useeffect hook to fetch the dependent owners
                     setRadarId(res.data.id);
 
                 } else {
                     // if the count has changed
-                    if (totalCount !== newTotalCount) {
-                        clearLeadsCache();
-                    }
+                    // if (totalCount !== newTotalCount) {
+                    //     clearLeadsCache();
+                    // }
 
                 }
-                setOrgsCount(res.data.dependent_organizations_count ?? 0);
+                // setOrgsCount(res.data.dependent_organizations_count ?? 0);
 
             }).catch(error => {
                 console.log(errorMessages.FAILED_GET_OWNERS_COUNT, error)
                 setIsSearching(false);
             }); 
         }
-    }, [repoUrl, setTotalCount, setOrgsCount, lookup, totalCount, setSearchError, setIsSearching])
+    }, [repoUrl, lookup, setSearchError, setIsSearching])
 
     const getDependentOwnersWithCache = useCallback(async () => {
 
@@ -286,7 +286,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
         setSearchError('');
         setIsSearching(true);
-        lookupRepo();
+        // lookupRepo();
         
         getDependentOwnersWithCache().then((fetchedLeads: any[]) => {
             setRadarResults(fetchedLeads);
@@ -392,7 +392,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             <div className="grid grid-cols-4 w-full min-h-[100vh]">
                 <div className="col-span-1">
                     { facets ?
-                        <FiltersPanel facets={facets} filters={filters} setFilters={setFilters} />
+                        <FiltersPanel facets={facets} filters={filters} setFilters={setFilters} setItemsCount={setTotalCount} />
                         : null
                     }
                 </div>
