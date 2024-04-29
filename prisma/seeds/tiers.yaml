@@ -1,6 +1,5 @@
 objects:
-  - id: 'tier-1'
-    name: 'Basic'
+  - name: 'Basic'
     description: 'Basic tier with essential features'
     tagline: 'Get started with our basic plan'
     price: 1000
@@ -8,8 +7,7 @@ objects:
     trialDays: 14
     cadence: 'month'
     priceAnnual: 10000
-  - id: 'tier-2'
-    name: 'Pro'
+  - name: 'Pro'
     description: 'Professional tier with advanced features'
     tagline: 'Unlock the full potential with our pro plan'
     price: 2500
@@ -17,8 +15,7 @@ objects:
     trialDays: 30
     cadence: 'month'
     priceAnnual: 25000
-  - id: 'tier-3'
-    name: 'Enterprise'
+  - name: 'Enterprise'
     description: 'Enterprise tier with premium support'
     tagline: 'Scale your business with our enterprise plan'
     price: 5000

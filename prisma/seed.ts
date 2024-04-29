@@ -18,10 +18,15 @@ async function main() {
     console.log('This script cannot be run on a Vercel production instance.');
     process.exit(1);
   }
-  
+
+  console.log('[seed] Loading users, tiers, and features...');
+  console.log('[seed] * users');
   const users = await loadUsers();
+  console.log('[seed] * tiers');
   await loadTiers(users);
+  console.log('[seed] * features');
   await loadFeatures(users);
+  console.log('[seed] done');
 }
 
 const loadUsers = async () => {
