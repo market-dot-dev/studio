@@ -16,6 +16,8 @@ export type StripeCard = {
   last4: string;
 }
 
+import { GLOBAL_APPLICATION_FEE_DOLLARS, GLOBAL_APPLICATION_FEE_PCT } from '@/app/config/stripe-fees';
+
 export type SubscriptionCadence = 'month' | 'year' | 'quarter' | 'once';
 
 interface HealthCheckResult {
@@ -298,25 +300,22 @@ class StripeService {
     });
   }
 
+  static async calculateApplicationFee(price: number, applicationFeePercent: number = 0, applicationFeePrice: number = 0) {
+    const totalPercent = 1 + ((applicationFeePercent + (GLOBAL_APPLICATION_FEE_PCT || 0)) / 100);
+    const totalFee = applicationFeePrice + (GLOBAL_APPLICATION_FEE_DOLLARS || 0);
+
+    return Math.round(price * totalPercent) + totalFee;
+  }
+
   async createCharge(stripeCustomerId: string, stripePriceId: string, price: number, stripePaymentMethodId: string, applicationFeePercent?: number, applicationFeePrice?: number) {
     const timestampMod10 = (Date.now() % 10000).toString().padStart(4, '0'); // Convert to string and pad with leading zeros if necessary
-
-    let applicationFee = undefined;
-
-    if(applicationFeePercent) {
-      applicationFee = Math.round(price * (applicationFeePercent / 100) * 100);
-    }
-
-    if(applicationFeePrice){
-      applicationFee = (applicationFee || 0) + applicationFeePrice * 100;
-    }
 
     const invoice = await this.stripe.invoices.create({
       customer: stripeCustomerId,
       auto_advance: true,
       currency: "usd",
       collection_method: "charge_automatically",
-      application_fee_amount: applicationFee,
+      application_fee_amount: await StripeService.calculateApplicationFee(price, applicationFeePercent, applicationFeePrice),
     });
   
     await this.stripe.invoiceItems.create({
@@ -541,7 +540,7 @@ export const migrateCustomer = async (userId: string, stripeCustomerId: string, 
   await customer.attachPaymentMethod(stripePaymentMethodId);
 }
 
-export const { disconnectStripeAccount, userHasStripeAccountIdById, getAccountInfo } = StripeService
+export const { disconnectStripeAccount, userHasStripeAccountIdById, getAccountInfo, calculateApplicationFee } = StripeService
 
 
 export default StripeService;
