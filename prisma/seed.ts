@@ -1,0 +1,97 @@
+import { Feature, PrismaClient, Tier, User } from '@prisma/client';
+import fs from 'fs';
+import path from 'path';
+import yaml from 'js-yaml';
+
+const prisma = new PrismaClient();
+
+const loadYaml = <T>(type: string) => {
+  const filePath = path.join(__dirname, `./seeds/${type}.yaml`);
+  const fileContents = fs.readFileSync(filePath, 'utf8');
+
+  const parsedFile = yaml.load(fileContents) as { objects: Array<T>; }
+  return parsedFile.objects;
+}
+
+async function main() {
+  if (process.env.VERCEL_ENV === 'production') {
+    console.log('This script cannot be run on a Vercel production instance.');
+    process.exit(1);
+  }
+  
+  const users = await loadUsers();
+  await loadTiers(users);
+  await loadFeatures(users);
+}
+
+const loadUsers = async () => {
+  const users = loadYaml<User>('users');
+  const createdUsers: User[] = [];
+
+  for (const user of users) {
+    const createdUser = await prisma.user.create({
+      data: {
+        ...user,
+        id: user.id,
+        stripeCustomerIds: '{}',
+        stripePaymentMethodIds: '{}',
+        emailVerified: (new Date()).toISOString(),
+        roleId: 'admin',
+        company: user.company || "Gitwallet"
+      },
+    });
+    createdUsers.push(createdUser);
+  }
+
+  return createdUsers;
+}
+
+const loadTiers = async (users: User[]) => {
+  const tiers = loadYaml<Tier>('tiers');
+
+  for (const user of users) {
+    for (const tier of tiers) {
+      await prisma.tier.create({
+        data: {
+          ...tier,
+          userId: user.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          revision: 1,
+          applicationFeePercent: tier.applicationFeePercent || 0,
+          applicationFeePrice: tier.applicationFeePrice || 0,
+          trialDays: tier.trialDays || 0,
+          cadence: tier.cadence || 'month',
+          priceAnnual: tier.priceAnnual || null,
+        },
+      });
+    }
+  }
+}
+
+const loadFeatures = async (users: User[]) => {
+  const features = loadYaml<Feature>('features');
+
+  for (const user of users) {
+    for (const feature of features) {
+      await prisma.feature.create({
+        data: {
+          ...feature,
+          userId: user.id,
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          isEnabled: feature.isEnabled || false,
+        },
+      });
+    }
+  }
+}
+
+main()
+  .catch((e) => {
+    console.error(e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });

@@ -1,0 +1,6 @@
+objects:
+  - id: 'dev-ag'
+    email: 'aaron@gitwallet.co'
+    name: 'Aaron Graves'
+    gh_username: 'agraves'
+    
