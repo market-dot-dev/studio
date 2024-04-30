@@ -5,8 +5,13 @@ import SessionService from "./SessionService";
 import prisma from "@/lib/prisma";
 
 const radarAPIEndpoint = process.env.RADAR_API_ENDPOINT;
+const radarAPIKey = process.env.RADAR_API_KEY;
 
 class LeadsService {
+    static commonHeaders = {
+        'Authorization': `Token token="${radarAPIKey}"`
+    };
+
     static async getDependentRepostories() {
         // Add your logic here
     }
@@ -115,7 +120,7 @@ class LeadsService {
 
     static async lookup(repoUrl: string) {
         try {
-            const response = await fetch(`${radarAPIEndpoint}repositories/lookup?url=${repoUrl}`);
+            const response = await fetch(`${radarAPIEndpoint}repositories/lookup?url=${repoUrl}`, { headers: LeadsService.commonHeaders });
             return {
                 data: await response.json()
             }
@@ -138,8 +143,7 @@ class LeadsService {
 
         // Add your logic here
         try {
-            console.log(url);
-            const response = await fetch(url);
+            const response = await fetch(url, { headers: LeadsService.commonHeaders });
             
             // if it is 404 return empty array
             if (response.status === 404) {
