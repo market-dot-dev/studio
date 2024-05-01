@@ -2,7 +2,7 @@
 import { Lead, Repo } from "@prisma/client";
 import { Bold, Card, Badge, SearchSelect, SearchSelectItem, Button, Text, NumberInput, Switch, SelectItem, Select, TextInput } from "@tremor/react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup, getFacets } from "@/app/services/LeadsService";
@@ -17,7 +17,6 @@ const errorMessages = {
     NO_DEPENDENT_OWNERS: 'Selected repository has no dependent owners.',
     FAILED_GET_OWNERS_COUNT: 'Failed to fetch updated dependent owners count.',
     FAILED_GET_OWNERS: 'Failed to get dependent owners.',
-    HAS_NO_OWNERS: 'Selected repository has no dependent owners.'
 }
 
 type LeadKey = {
@@ -228,7 +227,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             <div>
                 <Select
                     disabled={isSearching}
-                    className="w-24" value={`${perPage}`} onValueChange={(e: string) => {
+                    value={`${perPage}`} onValueChange={(e: string) => {
                         setPerPage(parseInt(e));
                     }}>
                     <SelectItem value="20">20</SelectItem>
@@ -270,7 +269,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         updateSearchParameters();
 
         if (!totalCount) {
-            setSearchError(errorMessages.HAS_NO_OWNERS);
+            setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
             setRadarResults([]);
             setIsSearching(false);
             return;
@@ -302,16 +301,38 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         if(!radarId) {
             return;
         }
-
+        
         getFacets(radarId, filters.kind).then((res: any) => {
             if (res.error) {
                 console.error('Failed to get facets:', res.error);
                 return;
             }
+            
             setFacets(res.data);
         });
 
     }, [radarId, filters.kind])
+
+    const filterBadges = Object.keys(filters).map((key: string) => {
+        if (filters[key as keyof FiltersState]) {
+            return (
+                <Badge key={key} className="pr-1 mr-1 mb-1">
+                    <div className="flex flex-nowrap gap-1">
+                        <Text>{key}: {filters[key as keyof FiltersState]}</Text>
+                        <div className="text-red-500 cursor-pointer" 
+                            onClick={() => {
+                                setFilters((prev: FiltersState) => {
+                                    let newFilters = { ...prev };
+                                    newFilters[key as keyof FiltersState] = '';
+                                    return newFilters;
+                                });
+                            }}
+                        ><XCircle className="h-5 w-5 flex-shrink-0" /></div>
+                    </div>
+                </Badge>
+            )
+        }
+    }).filter(Boolean);
 
     return (
         <>
@@ -364,29 +385,29 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             {searchError ? <Text className="text-red-500">{searchError}</Text> : null}
             {radarResults.length ?
                 <div className="flex flex-col gap-4 items-stretch sticky -top-1 z-10 bg-white p-4 shadow-sm border rounded-md -mr-1 -ml-1">
-                    <div className="flex justify-between items-center w-full">
-
-                        <Pagination
-                            page={page}
-                            perPage={perPage}
-                            totalCount={totalCount}
-                            onPageChange={handlePageChange}
-                            isLoading={isSearching}
-                        />
-
-
-                        <div className="hidden items-center justify-end gap-3 w-1/3 lg:flex">
-                            {resultsPerPage}
+                    <div className="flex w-full items-start">
+                        <div className="flex flex-col justify-between items-start w-1/2 gap-4 lg:w-2/3 lg:flex-row lg:items-center">
+                            <Pagination
+                                page={page}
+                                perPage={perPage}
+                                totalCount={totalCount}
+                                onPageChange={handlePageChange}
+                                isLoading={isSearching}
+                            />
                         </div>
 
-                    </div>
-                    <div className="flex justify-between items-center w-full border border-t-1 border-b-0 border-l-0 border-r-0 pt-4">
-
-                        <div className="flex items-center justify-end gap-3 w-1/2 lg:hidden">
+                        <div className="flex items-center justify-end gap-3 w-1/2 lg:w-1/3">
                             {resultsPerPage}
                         </div>
                     </div>
+                    { filterBadges.length ?
+                    <div>
+                        {filterBadges}
+                    </div>
+                    : null}
+
                 </div>
+                
                 : null
             }
             <div className="grid grid-cols-4 w-full min-h-[100vh]">
@@ -477,8 +498,8 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { pa
 
     return (
 
-        <div className="flex justify-start items-center gap-8 w-full lg:w-2/3">
-            <div className="flex justify-center items-center gap-2">
+        <>
+            <div className="flex justify-start items-center gap-2">
                 <Button
                     size="xs"
                     onClick={() => changePage(page - 1)}
@@ -523,7 +544,7 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { pa
                     Go to Page
                 </Button>
             </div>
-        </div>
+        </>
 
 
     );

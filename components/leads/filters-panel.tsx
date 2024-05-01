@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 type OptionType = {
   label: string;
   value: string;
+  count: number;
 }
 
 type DataDictionary = {
@@ -50,75 +52,153 @@ export function hashFiltersState(filters: FiltersState): string {
   return hash.toString(16);
 }
 
+function FacetItem({title, options}: {title: string, options: JSX.Element}) {
+  const [collapsed, setCollapsed] = useState<boolean>(false);
+
+  const toggleCollapse = () => {
+    setCollapsed(!collapsed);
+  };
+
+  const displayTitle = title.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Converts to title case
+  
+  return (
+    <div className="mb-4 flex flex-col gap-3 border border-x-0 border-t-0 pb-2">
+      <h3 className="font-semibold text-md mb-2 cursor-pointer flex justify-between items-center" onClick={toggleCollapse}>
+        {displayTitle}
+        { collapsed ? 
+        <ChevronDown className="h-5 w-5 flex-shrink-0" aria-hidden="true" /> :
+        <ChevronUp className="h-5 w-5 flex-shrink-0" aria-hidden="true" />
+        }
+      </h3>
+      {!collapsed &&
+        <>
+        {options}
+        </>
+      }
+    </div>
+  );
+}
+
+function debounce(func: any, wait: number) {
+  let timeout: NodeJS.Timeout;
+  return function executedFunction(...args : any[]) {
+    const later = () => {
+      clearTimeout(timeout);
+      func(...args);
+    };
+    clearTimeout(timeout);
+    timeout = setTimeout(later, wait);
+  };
+}
+
+function OptionsList({options, filters, handleCheckboxChange, itemKey}: {options: OptionType[], filters: FiltersState, handleCheckboxChange: (key: keyof FiltersState, value: string) => void, itemKey: keyof FiltersState}) {
+  const [collapsed, setCollapsed] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const debouncedSearch = useCallback(debounce((value: string) => {
+    setSearchTerm(value);
+  }, 300), []);
+
+  // Filter options based on search term
+  const filteredOptions = options.filter(option =>
+    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Determine visible options based on collapsed state and the filtered list
+  const visibleOptions = collapsed ? filteredOptions.slice(0, 8) : filteredOptions;
+
+  const toggleCollapse = () => {
+    setCollapsed(!collapsed);
+  };
+
+  return (
+    <div className="flex flex-col gap-2">
+      {options.length > 8 && (
+        <input
+          type="text"
+          placeholder="Search..."
+          onChange={(e) => debouncedSearch(e.target.value)}
+          className="mb-2 p-2 border rounded"
+        />
+      )}
+      {visibleOptions.map((option) => (
+        <div key={option.value} className="mb-1 flex justify-between w-full items-center">
+          <label className="flex items-center space-x-2 text-sm grow">
+            <input type="checkbox"
+              checked={filters[itemKey] === option.value}
+              onChange={() => handleCheckboxChange(itemKey, option.value)}
+            />
+            <span>{option.label}</span>
+          </label>
+          <span className="text-sm text-gray-400 pr-2">{option.count}</span>
+        </div>
+      ))}
+      {filteredOptions.length > 8 && (
+        <div className="cursor-pointer text-blue-600 flex justify-center items-center text-sm" onClick={toggleCollapse}>
+          {collapsed ? 
+            <ChevronDown className="h-5 w-5 mr-2" aria-hidden="true" />
+            : <ChevronUp className="h-5 w-5 mr-2" aria-hidden="true" />
+          }
+          {collapsed ? "More" : "Less"}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 export default function FiltersPanel({facets, filters, setFilters, setItemsCount}: { facets: DataDictionary, filters: FiltersState, setFilters: React.Dispatch<React.SetStateAction<FiltersState>>, setItemsCount: React.Dispatch<React.SetStateAction<number>>}) {
 
-  const handleCheckboxChange = (key: keyof FiltersState, value: string) => {
+  const handleCheckboxChange = useCallback((key: keyof FiltersState, value: string) => {
 
     const newFilters = { ...filters, [key]: filters[key] === value ? '' : value };
+    let itemsCount = facets['kind']['organization'] + facets['kind']['user'];
     
-    // based on the new filters, find the minimum count of items
-    let itemsCount = Infinity;
-
     Object.keys(newFilters).forEach((key) => {
       const facet = facets[key];
       const filterValue = newFilters[key as keyof FiltersState];
-      
+    
       if(filterValue && facet[filterValue] && facet[filterValue] < itemsCount) {
         itemsCount = facet[filterValue];
       }
     });
     
     setItemsCount(itemsCount);
-
     setFilters(newFilters);
-  };
+  }, [facets, filters, setFilters, setItemsCount]);
 
-  const renderOptions = (key: keyof FiltersState) => {
-    const options: OptionType[] = Object.entries(facets[key]).map(([value, count]) => ({
-      label: `${value} (${count})`,
+  const renderOptions = (itemKey: keyof FiltersState) => {
+    if (['founded', 'city', 'state'].includes(itemKey)) return null; // Hides specified filter panels
+
+    const options: OptionType[] = Object.entries(facets[itemKey]).map(([value, count]) => ({
+      label: `${value}`,
       value,
+      count,
     }));
-  
-    // Add an "All" option with an empty value
-    options.unshift({
-      label: 'All',
-      value: '',
-    });
-  
-    if (options.length === 1 && options[0].value === '') return null; // Return null if only "All" option is available
+    
+    if ( ! options.length ) return null; // Return null if only "All" option is available
   
     return (
-      <div className="flex flex-col">
-        {options.map((option) => (
-          <label key={option.value} className="flex items-center space-x-2">
-            <input type="checkbox"
-              checked={filters[key] === option.value}
-              onChange={() => handleCheckboxChange(key, option.value)}
-            />
-            <span>{option.label}</span>
-          </label>
-        ))}
-      </div>
+      <OptionsList
+        itemKey={itemKey}
+        options={options}
+        filters={filters}
+        handleCheckboxChange={handleCheckboxChange}
+        />
     );
   };
 
-useEffect(() => {
-  console.log(facets)
-}, [facets])
   return (
-    <div className="p-4 sticky top-[100px] z-50 overflow-auto" style={{maxHeight:"calc(100vh - 100px)"}}>
-      <div className="flex flex-col gap-4">
+    <div className="p-4">
+      <div className="flex flex-col gap-1">
         {Object.keys(facets).map((key) => {
           const options = renderOptions(key as keyof FiltersState);
           if (!options) return null; // Don't render the facet if no options available
           return (
-            <div key={key}>
-              <h3 className="text-lg font-semibold">{key}</h3>
-              {options}
-            </div>
+            <FacetItem key={key} title={key} options={options} />
           );
         })}
       </div>
     </div>
   );
-};
+}

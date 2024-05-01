@@ -107,7 +107,7 @@ class LeadsService {
 
     static async getFacets(radarId: number, kind?: string) {
         try {
-            const response = await fetch(`${radarAPIEndpoint}repositories/${radarId}/dependent_owners/facets` + (kind ? `?kind=${kind}` : ''));
+            const response = await fetch(`${radarAPIEndpoint}repositories/${radarId}/dependent_owners/facets` + (kind ? `?kind=${kind}` : ''), { headers: LeadsService.commonHeaders });
             return {
                 data: await response.json()
             }
