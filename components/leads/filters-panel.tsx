@@ -149,14 +149,13 @@ function OptionsList({options, filters, handleCheckboxChange, itemKey}: {options
 
 export default function FiltersPanel({facets, filters, setFilters, setItemsCount}: { facets: DataDictionary, filters: FiltersState, setFilters: React.Dispatch<React.SetStateAction<FiltersState>>, setItemsCount: React.Dispatch<React.SetStateAction<number>>}) {
 
-  const handleCheckboxChange = useCallback((key: keyof FiltersState, value: string) => {
 
-    const newFilters = { ...filters, [key]: filters[key] === value ? '' : value };
+  const determineItemsCount = useCallback(() => {
     let itemsCount = facets['kind']['organization'] + facets['kind']['user'];
     
-    Object.keys(newFilters).forEach((key) => {
+    Object.keys(filters).forEach((key) => {
       const facet = facets[key];
-      const filterValue = newFilters[key as keyof FiltersState];
+      const filterValue = filters[key as keyof FiltersState];
     
       if(filterValue && facet[filterValue] && facet[filterValue] < itemsCount) {
         itemsCount = facet[filterValue];
@@ -164,6 +163,12 @@ export default function FiltersPanel({facets, filters, setFilters, setItemsCount
     });
     
     setItemsCount(itemsCount);
+  }, [facets, filters, setItemsCount]);
+
+  const handleCheckboxChange = useCallback((key: keyof FiltersState, value: string) => {
+
+    const newFilters = { ...filters, [key]: filters[key] === value ? '' : value };
+
     setFilters(newFilters);
   }, [facets, filters, setFilters, setItemsCount]);
 
@@ -187,6 +192,11 @@ export default function FiltersPanel({facets, filters, setFilters, setItemsCount
         />
     );
   };
+
+  useEffect(() => {
+    if( ! facets ) return;
+    determineItemsCount();
+  }, [filters, facets, determineItemsCount])
 
   return (
     <div className="p-4">

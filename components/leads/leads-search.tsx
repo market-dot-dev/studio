@@ -13,6 +13,7 @@ import { gitHubRepoOrgAndName } from "@/lib/utils";
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import FiltersPanel, { FiltersState, emptyFilters, hashFiltersState } from "./filters-panel";
 
+
 const errorMessages = {
     NO_DEPENDENT_OWNERS: 'Selected repository has no dependent owners.',
     FAILED_GET_OWNERS_COUNT: 'Failed to fetch updated dependent owners count.',
@@ -44,7 +45,9 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const [isSearching, setIsSearching] = useState<boolean>(false);
     
     const [totalCount, setTotalCount] = useState<number>(0);
-    // const [orgsCount, setOrgsCount] = useState<number>(0);
+    
+    // lookup count is used to determine if the lookup count has changed, in order to invalidate the cache
+    const [lookupCount, setLookupCount] = useState<number>(0);
 
     const [filters, setFilters] = useState<FiltersState>((() => {
         let initialFilters: FiltersState = {} as FiltersState;
@@ -75,7 +78,6 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             repoUrl: repoUrl,
             page: page.toString(),
             perPage: perPage.toString(),
-            // showOnlyOrgs: showOnlyOrgs.toString()
         } as any;
 
         Object.entries(filters).forEach(([key, value]) => {
@@ -152,27 +154,28 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                     return;
                 }
 
-                const newTotalCount = res.data.dependent_owners_count ?? 0;
-
-                setTotalCount(newTotalCount);
+                const newLookupCount = res.data.dependent_owners_count ?? 0;
+                setLookupCount(newLookupCount);
+                setTotalCount(newLookupCount)
+                
 
                 if (initial) {
-                    // if (!newTotalCount) {
-                    //     setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
-                    //     setIsSearching(false);
-                    // }
+                    if (!newLookupCount) {
+                        setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
+                        setIsSearching(false);
+                    }
 
                     // this will trigger the useeffect hook to fetch the dependent owners
                     setRadarId(res.data.id);
 
                 } else {
                     // if the count has changed
-                    // if (totalCount !== newTotalCount) {
-                    //     clearLeadsCache();
-                    // }
+                    if (lookupCount !== newLookupCount) {
+                        clearLeadsCache();
+                    }
 
                 }
-                // setOrgsCount(res.data.dependent_organizations_count ?? 0);
+                
 
             }).catch(error => {
                 console.log(errorMessages.FAILED_GET_OWNERS_COUNT, error)
@@ -248,6 +251,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
         setIsSearching(true);
         setRadarResults([]);
+        setFacets(null);
         setSearchError('');
         
         lookupRepo(true);
@@ -268,15 +272,15 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
         updateSearchParameters();
 
-        if (!totalCount) {
+        if (!lookupCount) {
             setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
             setRadarResults([]);
             setIsSearching(false);
             return;
         }
 
-        // if page is higher than the total number of pages
-        const lastPage = Math.ceil( totalCount / perPage);
+        // if page is higher than the total number of pages, but only if the total count has already been set
+        const lastPage = totalCount && Math.ceil( totalCount / perPage);
         if (page > lastPage) {
             // set page to the last page
             setPage(lastPage);
@@ -391,6 +395,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                                 page={page}
                                 perPage={perPage}
                                 totalCount={totalCount}
+                                facets={facets}
                                 onPageChange={handlePageChange}
                                 isLoading={isSearching}
                             />
@@ -414,7 +419,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 <div className="col-span-1">
                     { facets ?
                         <FiltersPanel facets={facets} filters={filters} setFilters={setFilters} setItemsCount={setTotalCount} />
-                        : null
+                        : radarId ? <LoadingSpinner /> : null
                     }
                 </div>
                 <div className="col-span-3">
@@ -476,7 +481,7 @@ function SearchResult({ lead, isShortlisted, setShortListedLeads }: { lead: Lead
 }
 
 
-function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { page: number, perPage: number, totalCount: number, onPageChange: any, isLoading: boolean }) {
+function Pagination({ page, perPage, totalCount, onPageChange, isLoading, facets }: { page: number, perPage: number, totalCount: number, onPageChange: any, isLoading: boolean, facets: any }) {
     const totalPages = Math.ceil(totalCount / perPage);
     const [inputPage, setInputPage] = useState<number>(page);
 
@@ -507,7 +512,7 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { pa
                     className={`${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     Prev
                 </Button>
-                <span className="text-sm font-medium">Page {page} of {totalPages}</span>
+                <span className="text-sm font-medium">Page {page} of {facets ? totalPages : '-'}</span>
 
                 <Button
                     size="xs"

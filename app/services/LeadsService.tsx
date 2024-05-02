@@ -137,9 +137,12 @@ class LeadsService {
         
         Object.keys(filters).forEach((key) => {
             if (filters[key as keyof FiltersState]) {
-                url += `&${key}=${filters[key as keyof FiltersState]}`;
+                const encodedValue = encodeURIComponent(filters[key as keyof FiltersState] as string);
+                url += `&${key}=${encodedValue}`;
             }
         });
+
+        console.log('urllo', url)
 
         // Add your logic here
         try {
