@@ -323,7 +323,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 <Badge key={key} className="pr-1 mr-1 mb-1">
                     <div className="flex flex-nowrap gap-1">
                         <Text>{key}: {filters[key as keyof FiltersState]}</Text>
-                        <div className="text-red-500 cursor-pointer" 
+                        <div className="cursor-pointer" 
                             onClick={() => {
                                 setFilters((prev: FiltersState) => {
                                     let newFilters = { ...prev };

@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { TextInput } from "@tremor/react"
+import countryCodes from "@/lib/constants/country-codes" ;
 
 type OptionType = {
   label: string;
@@ -59,7 +61,9 @@ function FacetItem({title, options}: {title: string, options: JSX.Element}) {
     setCollapsed(!collapsed);
   };
 
-  const displayTitle = title.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Converts to title case
+  const isCountry = title === "country_code";
+
+  const displayTitle = isCountry ? "Country" : title.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Converts to title case
   
   return (
     <div className="mb-4 flex flex-col gap-3 border border-x-0 border-t-0 pb-2">
@@ -114,11 +118,11 @@ function OptionsList({options, filters, handleCheckboxChange, itemKey}: {options
   return (
     <div className="flex flex-col gap-2">
       {options.length > 8 && (
-        <input
-          type="text"
+        <TextInput
+          
           placeholder="Search..."
           onChange={(e) => debouncedSearch(e.target.value)}
-          className="mb-2 p-2 border rounded"
+          className="mb-2"
         />
       )}
       {visibleOptions.map((option) => (
@@ -128,7 +132,7 @@ function OptionsList({options, filters, handleCheckboxChange, itemKey}: {options
               checked={filters[itemKey] === option.value}
               onChange={() => handleCheckboxChange(itemKey, option.value)}
             />
-            <span>{option.label}</span>
+            <span>{option.label[0].toUpperCase() + option.label.substring(1)}</span>
           </label>
           <span className="text-sm text-gray-400 pr-2">{option.count}</span>
         </div>
@@ -175,8 +179,10 @@ export default function FiltersPanel({facets, filters, setFilters, setItemsCount
   const renderOptions = (itemKey: keyof FiltersState) => {
     if (['founded', 'city', 'state'].includes(itemKey)) return null; // Hides specified filter panels
 
+    const isCountry = itemKey === "country_code";
+
     const options: OptionType[] = Object.entries(facets[itemKey]).map(([value, count]) => ({
-      label: `${value}`,
+      label: `${ isCountry ? countryCodes[value] ?? value : value }`,
       value,
       count,
     }));
