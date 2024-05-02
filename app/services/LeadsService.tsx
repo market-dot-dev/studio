@@ -1,5 +1,6 @@
 "use server";
 
+import { FiltersState } from "@/components/leads/filters-panel";
 import SessionService from "./SessionService";
 import prisma from "@/lib/prisma";
 
@@ -104,6 +105,19 @@ class LeadsService {
         });
     }
 
+    static async getFacets(radarId: number, kind?: string) {
+        try {
+            const response = await fetch(`${radarAPIEndpoint}repositories/${radarId}/dependent_owners/facets` + (kind ? `?kind=${kind}` : ''), { headers: LeadsService.commonHeaders });
+            return {
+                data: await response.json()
+            }
+        } catch (error: any) {
+            return {
+                error: 'Failed to get facets'
+            }
+        }
+    }
+
     static async lookup(repoUrl: string) {
         try {
             const response = await fetch(`${radarAPIEndpoint}repositories/lookup?url=${repoUrl}`, { headers: LeadsService.commonHeaders });
@@ -117,11 +131,22 @@ class LeadsService {
         }
     }
 
-    static async getDependentOwners(radarId: number, page: number, perPage: number, showOnlyOrgs: boolean) {
+    static async getDependentOwners(radarId: number, page: number, perPage: number, filters: FiltersState) {
         
+        let url = `${radarAPIEndpoint}repositories/${radarId}/dependent_owners?per_page=${perPage}&page=${page}`;
+        
+        Object.keys(filters).forEach((key) => {
+            if (filters[key as keyof FiltersState]) {
+                const encodedValue = encodeURIComponent(filters[key as keyof FiltersState] as string);
+                url += `&${key}=${encodedValue}`;
+            }
+        });
+
+        console.log('urllo', url)
+
         // Add your logic here
         try {
-            const response = await fetch(`${radarAPIEndpoint}repositories/${radarId}/dependent_owners?per_page=${perPage}&page=${page}` + (showOnlyOrgs ? '&kind=organization' : ''), { headers: LeadsService.commonHeaders });
+            const response = await fetch(url, { headers: LeadsService.commonHeaders });
             
             // if it is 404 return empty array
             if (response.status === 404) {
@@ -143,4 +168,4 @@ class LeadsService {
 }
 
 export default LeadsService;
-export const { getDependentOwners, addLeadToShortlist, getShortlistedLeads, getShortlistedLeadsKeysList, lookup, removeLeadFromShortlist } = LeadsService;
+export const { getDependentOwners, addLeadToShortlist, getShortlistedLeads, getShortlistedLeadsKeysList, lookup, removeLeadFromShortlist, getFacets } = LeadsService;

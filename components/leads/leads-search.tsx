@@ -2,21 +2,22 @@
 import { Lead, Repo } from "@prisma/client";
 import { Bold, Card, Badge, SearchSelect, SearchSelectItem, Button, Text, NumberInput, Switch, SelectItem, Select, TextInput } from "@tremor/react";
 import Link from "next/link";
-import { Search } from "lucide-react";
+import { Search, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup } from "@/app/services/LeadsService";
+import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup, getFacets } from "@/app/services/LeadsService";
 import LoadingSpinner from "../form/loading-spinner";
 
 import LeadItem from "./lead-item";
 import { gitHubRepoOrgAndName } from "@/lib/utils";
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import FiltersPanel, { FiltersState, emptyFilters, hashFiltersState } from "./filters-panel";
+
 
 const errorMessages = {
     NO_DEPENDENT_OWNERS: 'Selected repository has no dependent owners.',
     FAILED_GET_OWNERS_COUNT: 'Failed to fetch updated dependent owners count.',
     FAILED_GET_OWNERS: 'Failed to get dependent owners.',
-    HAS_NO_OWNERS: 'Selected repository has no dependent owners.'
 }
 
 type LeadKey = {
@@ -29,12 +30,13 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-
+    
     const [repoUrl, setRepoUrl] = useState<string>(searchParams.get('repoUrl') || '');
     const [inputRepoUrl, setInputRepoUrl] = useState<string>(searchParams.get('repoUrl') || '');
     const [page, setPage] = useState<number>(parseInt(searchParams.get('page') || '1'));
     const [perPage, setPerPage] = useState<number>(parseInt(searchParams.get('perPage') || '20'));
-    const [showOnlyOrgs, setShowOnlyOrgs] = useState<boolean>(searchParams.get('showOnlyOrgs') === 'true' || false);
+    const [facets, setFacets] = useState<any>();
+    // const [showOnlyOrgs, setShowOnlyOrgs] = useState<boolean>(searchParams.get('showOnlyOrgs') === 'true' || false);
 
     const [radarId, setRadarId] = useState<number | null>(null);
     const [shortListedLeads, setShortListedLeads] = useState<LeadKey[]>([]);
@@ -43,7 +45,17 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const [isSearching, setIsSearching] = useState<boolean>(false);
     
     const [totalCount, setTotalCount] = useState<number>(0);
-    const [orgsCount, setOrgsCount] = useState<number>(0);
+    
+    // lookup count is used to determine if the lookup count has changed, in order to invalidate the cache
+    const [lookupCount, setLookupCount] = useState<number>(0);
+
+    const [filters, setFilters] = useState<FiltersState>((() => {
+        let initialFilters: FiltersState = {} as FiltersState;
+        Object.keys(emptyFilters).forEach((key: string) => {
+            initialFilters[key as keyof FiltersState] = searchParams.get(key) || '';
+        });
+        return initialFilters;
+    })());
     
 
     const [searchError, setSearchError] = useState<string>('');
@@ -51,8 +63,11 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const createQueryString = useCallback((params: any) => {
         const newParams = new URLSearchParams(searchParams.toString());
         Object.entries(params).forEach(([key, value]) => {
+            
             if (value) {
                 newParams.set(key, value.toString());
+            } else {
+                newParams.delete(key);
             }
         });
         return newParams.toString();
@@ -63,12 +78,18 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             repoUrl: repoUrl,
             page: page.toString(),
             perPage: perPage.toString(),
-            showOnlyOrgs: showOnlyOrgs.toString()
-        };
+        } as any;
+
+        Object.entries(filters).forEach(([key, value]) => {
+            params[key as keyof FiltersState] = value;
+        });
+
         const queryString = createQueryString(params);
+        
         const newUrl = `${pathname}?${queryString}`;
-        router.push(newUrl, undefined);
-    }, [repoUrl, page, perPage, showOnlyOrgs, createQueryString, pathname, router]);
+        
+        router.replace(newUrl, { scroll : false});
+    }, [repoUrl, page, perPage, createQueryString, pathname, router, filters]);
 
     const validateAndModifyUrl = useCallback((url: string) => {
         // If the URL starts with "http://", replace it with "https://"
@@ -133,12 +154,13 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                     return;
                 }
 
-                const newTotalCount = res.data.dependent_owners_count ?? 0;
-
-                setTotalCount(newTotalCount);
+                const newLookupCount = res.data.dependent_owners_count ?? 0;
+                setLookupCount(newLookupCount);
+                setTotalCount(newLookupCount)
+                
 
                 if (initial) {
-                    if (!newTotalCount) {
+                    if (!newLookupCount) {
                         setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
                         setIsSearching(false);
                     }
@@ -148,23 +170,23 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
                 } else {
                     // if the count has changed
-                    if (totalCount !== newTotalCount) {
+                    if (lookupCount !== newLookupCount) {
                         clearLeadsCache();
                     }
 
                 }
-                setOrgsCount(res.data.dependent_organizations_count ?? 0);
+                
 
             }).catch(error => {
                 console.log(errorMessages.FAILED_GET_OWNERS_COUNT, error)
                 setIsSearching(false);
             }); 
         }
-    }, [repoUrl, setTotalCount, setOrgsCount, lookup, totalCount, setSearchError, setIsSearching])
+    }, [repoUrl, lookup, setSearchError, setIsSearching])
 
     const getDependentOwnersWithCache = useCallback(async () => {
 
-        const cacheKey = `leads_${radarId!}_${page}_${perPage}_${showOnlyOrgs}`;
+        const cacheKey = `leads_${radarId!}_${page}_${perPage}_` + hashFiltersState(filters);
         const cachedData = sessionStorage.getItem(cacheKey);
 
         if (cachedData) {
@@ -181,7 +203,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             }
         }
         try {
-            const res = await getDependentOwners(radarId!, page, perPage, showOnlyOrgs);
+            const res = await getDependentOwners(radarId!, page, perPage, filters);
 
             if (res.error) {
                 setSearchError(res.error);
@@ -200,7 +222,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             setSearchError(errorMessages.FAILED_GET_OWNERS);
             return [];
         }
-    }, [radarId, page, perPage, showOnlyOrgs, setSearchError]);
+    }, [radarId, page, perPage, setSearchError, filters]);
 
     const resultsPerPage = (
         <>
@@ -208,7 +230,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             <div>
                 <Select
                     disabled={isSearching}
-                    className="w-24" value={`${perPage}`} onValueChange={(e: string) => {
+                    value={`${perPage}`} onValueChange={(e: string) => {
                         setPerPage(parseInt(e));
                     }}>
                     <SelectItem value="20">20</SelectItem>
@@ -229,6 +251,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
         setIsSearching(true);
         setRadarResults([]);
+        setFacets(null);
         setSearchError('');
         
         lookupRepo(true);
@@ -249,15 +272,15 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
         updateSearchParameters();
 
-        if (!totalCount) {
-            setSearchError(errorMessages.HAS_NO_OWNERS);
+        if (!lookupCount) {
+            setSearchError(errorMessages.NO_DEPENDENT_OWNERS);
             setRadarResults([]);
             setIsSearching(false);
             return;
         }
 
-        // if page is higher than the total number of pages
-        const lastPage = Math.ceil((showOnlyOrgs ? orgsCount : totalCount) / perPage);
+        // if page is higher than the total number of pages, but only if the total count has already been set
+        const lastPage = totalCount && Math.ceil( totalCount / perPage);
         if (page > lastPage) {
             // set page to the last page
             setPage(lastPage);
@@ -266,7 +289,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
         setSearchError('');
         setIsSearching(true);
-        lookupRepo();
+        // lookupRepo();
         
         getDependentOwnersWithCache().then((fetchedLeads: any[]) => {
             setRadarResults(fetchedLeads);
@@ -275,9 +298,45 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             setIsSearching(false);
         });
 
-    }, [page, perPage, showOnlyOrgs, radarId]);
+    }, [page, perPage, radarId, filters]);
 
-    
+    useEffect(() => {
+
+        if(!radarId) {
+            return;
+        }
+        
+        getFacets(radarId, filters.kind).then((res: any) => {
+            if (res.error) {
+                console.error('Failed to get facets:', res.error);
+                return;
+            }
+            
+            setFacets(res.data);
+        });
+
+    }, [radarId, filters.kind])
+
+    const filterBadges = Object.keys(filters).map((key: string) => {
+        if (filters[key as keyof FiltersState]) {
+            return (
+                <Badge key={key} className="pr-1 mr-1 mb-1">
+                    <div className="flex flex-nowrap gap-1">
+                        <Text>{key}: {filters[key as keyof FiltersState]}</Text>
+                        <div className="cursor-pointer" 
+                            onClick={() => {
+                                setFilters((prev: FiltersState) => {
+                                    let newFilters = { ...prev };
+                                    newFilters[key as keyof FiltersState] = '';
+                                    return newFilters;
+                                });
+                            }}
+                        ><XCircle className="h-5 w-5 flex-shrink-0" /></div>
+                    </div>
+                </Badge>
+            )
+        }
+    }).filter(Boolean);
 
     return (
         <>
@@ -330,58 +389,55 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             {searchError ? <Text className="text-red-500">{searchError}</Text> : null}
             {radarResults.length ?
                 <div className="flex flex-col gap-4 items-stretch sticky -top-1 z-10 bg-white p-4 shadow-sm border rounded-md -mr-1 -ml-1">
-                    <div className="flex justify-between items-center w-full">
-
-                        <Pagination
-                            page={page}
-                            perPage={perPage}
-                            totalCount={showOnlyOrgs ? orgsCount : totalCount}
-                            onPageChange={handlePageChange}
-                            isLoading={isSearching}
-                        />
-
-
-                        <div className="hidden items-center justify-end gap-3 w-1/3 lg:flex">
-                            {resultsPerPage}
-                        </div>
-
-                    </div>
-                    <div className="flex justify-between items-center w-full border border-t-1 border-b-0 border-l-0 border-r-0 pt-4">
-                        <div className="flex items-center justify-center gap-3">
-                            <Switch
-                                id="switch"
-                                name="switch"
-                                checked={showOnlyOrgs}
-                                onChange={setShowOnlyOrgs}
-                                disabled={isSearching}
+                    <div className="flex w-full items-start">
+                        <div className="flex flex-col justify-between items-start w-1/2 gap-4 lg:w-2/3 lg:flex-row lg:items-center">
+                            <Pagination
+                                page={page}
+                                perPage={perPage}
+                                totalCount={totalCount}
+                                facets={facets}
+                                onPageChange={handlePageChange}
+                                isLoading={isSearching}
                             />
-                            <label htmlFor="switch" className="text-tremor-default text-tremor-content dark:text-dark-tremor-content">
-                                Show only organizations
-                            </label>
                         </div>
 
-                        <div className="flex items-center justify-end gap-3 w-1/2 lg:hidden">
+                        <div className="flex items-center justify-end gap-3 w-1/2 lg:w-1/3">
                             {resultsPerPage}
                         </div>
                     </div>
+                    { filterBadges.length ?
+                    <div>
+                        {filterBadges}
+                    </div>
+                    : null}
+
                 </div>
+                
                 : null
             }
-            <div className="w-full min-h-[100vh]">
-                {isSearching ?
-                    <div className="flex justify-center items-center sticky top-[200px] z-50">
-                        <LoadingSpinner />
-                    </div>
-                    :
-                    <>
-                        {radarResults?.map((lead, index) => {
-                            const isShortlisted = shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
-                            return <SearchResult key={index} lead={lead} isShortlisted={isShortlisted} setShortListedLeads={setShortListedLeads} />
-                        })}
+            <div className="grid grid-cols-4 w-full min-h-[100vh]">
+                <div className="col-span-1">
+                    { facets ?
+                        <FiltersPanel facets={facets} filters={filters} setFilters={setFilters} setItemsCount={setTotalCount} />
+                        : radarId ? <LoadingSpinner /> : null
+                    }
+                </div>
+                <div className="col-span-3">
+                    {isSearching ?
+                        <div className="flex justify-center items-center sticky top-[200px] z-50">
+                            <LoadingSpinner />
+                        </div>
+                        :
+                        <>
+                            {radarResults?.map((lead, index) => {
+                                const isShortlisted = shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
+                                return <SearchResult key={index} lead={lead} isShortlisted={isShortlisted} setShortListedLeads={setShortListedLeads} />
+                            })}
 
-                    </>
+                        </>
 
-                }
+                    }
+                </div>
             </div>
 
 
@@ -425,7 +481,7 @@ function SearchResult({ lead, isShortlisted, setShortListedLeads }: { lead: Lead
 }
 
 
-function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { page: number, perPage: number, totalCount: number, onPageChange: any, isLoading: boolean }) {
+function Pagination({ page, perPage, totalCount, onPageChange, isLoading, facets }: { page: number, perPage: number, totalCount: number, onPageChange: any, isLoading: boolean, facets: any }) {
     const totalPages = Math.ceil(totalCount / perPage);
     const [inputPage, setInputPage] = useState<number>(page);
 
@@ -447,8 +503,8 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { pa
 
     return (
 
-        <div className="flex justify-start items-center gap-8 w-full lg:w-2/3">
-            <div className="flex justify-center items-center gap-2">
+        <>
+            <div className="flex justify-start items-center gap-2">
                 <Button
                     size="xs"
                     onClick={() => changePage(page - 1)}
@@ -456,7 +512,7 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { pa
                     className={`${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}>
                     Prev
                 </Button>
-                <span className="text-sm font-medium">Page {page} of {totalPages}</span>
+                <span className="text-sm font-medium">Page {page} of {facets ? totalPages : '-'}</span>
 
                 <Button
                     size="xs"
@@ -493,7 +549,7 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading }: { pa
                     Go to Page
                 </Button>
             </div>
-        </div>
+        </>
 
 
     );
