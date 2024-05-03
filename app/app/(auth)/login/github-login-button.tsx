@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect, ReactNode, MouseEventHandler, FC } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
 import LoginButton from "@/components/common/login-button";
@@ -13,6 +13,7 @@ const GithubLoginButton = () => {
   const error = searchParams?.get("error");
 
   useEffect(() => {
+    if(error) console.log("gh error", error);
     const errorMessage = Array.isArray(error) ? error.pop() : error;
     errorMessage && toast.error(errorMessage);
   }, [error]);
