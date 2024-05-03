@@ -21,12 +21,12 @@ const ChargeCard = ({ charge }: { charge: Charge }) => {
   const [maintainer, setMaintainer] = useState<User | undefined>(undefined);
   const [tier, setTier] = useState<any | undefined>(undefined);
   
-  if (!charge || !charge.tierId) return null;
-
   useEffect(() => {
     findTier(charge.tierId).then(setTier);
     findUser(charge.userId).then(user => user && setMaintainer(user));
   }, [charge.tierId, charge.userId]);
+
+  if (!charge || !charge.tierId) return null;
 
   if (!tier) return null;
   if (!maintainer) return null;
