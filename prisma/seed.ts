@@ -2,6 +2,7 @@ import { Feature, PrismaClient, Tier, User } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
+import RegistrationService from '@/app/services/registration-service';
 
 const prisma = new PrismaClient();
 
@@ -22,6 +23,8 @@ async function main() {
   console.log('[seed] Loading users, tiers, and features...');
   console.log('[seed] * users');
   const users = await loadUsers();
+  console.log('[seed] * sites');
+  users.forEach(user => RegistrationService.createSite(user));
   console.log('[seed] * tiers');
   await loadTiers(users);
   console.log('[seed] * features');

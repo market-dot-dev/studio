@@ -1,10 +1,10 @@
 objects:
   - id: 'dev-ag'
-    email: 'aaron@gitwallet.co'
+    email: 'aaron.graves@gmail.com'
     name: 'Aaron Graves'
     gh_username: 'agraves'
   - id: 'dev-ts'
-    email: 'tarun@gitwallet.co'
+    email: 'tarun@lab0324.xyz'
     name: 'Tarun Sachdeva'
     gh_username: 'tarunsachdeva'
   - id: 'dev-gg'

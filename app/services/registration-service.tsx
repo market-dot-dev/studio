@@ -43,7 +43,7 @@ class RegistrationService {
     const existingUser = await prisma.user.findUnique({
       where: { gh_username }, // Assuming gh_username is unique
     });
-  
+
     if (existingUser) {
       // If the user exists, conditionally update their information
       const user = await prisma.user.update({
