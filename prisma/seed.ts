@@ -38,8 +38,8 @@ const loadUsers = async () => {
       data: {
         ...user,
         id: user.id,
-        stripeCustomerIds: '{}',
-        stripePaymentMethodIds: '{}',
+        stripeCustomerIds: {},
+        stripePaymentMethodIds: {},
         emailVerified: (new Date()).toISOString(),
         roleId: 'admin',
         company: user.company || "Gitwallet"
