@@ -56,13 +56,6 @@ async function customMiddleware(req: NextRequest) {
   }`;
   path = path === "/" ? "" : path;
 
-  // vercel.pub
-  if (hostname === "vercel.pub") {
-    return NextResponse.redirect(
-      "https://vercel.com/blog/platforms-starter-kit",
-    );
-  }
-
   // exempt from middleware rewrites
   if( url.pathname.startsWith('/monitoring')) {
     return NextResponse.next();
@@ -97,7 +90,7 @@ async function customMiddleware(req: NextRequest) {
   }
 
   // app.gitwallet.co
-  if (reservedSubdomain === 'app') {
+  if (reservedSubdomain === 'app' || DomainService.isVercelPreview(req)) {
     // if customer, then lock to /app/c/
     if(roleId === 'customer' ) {
       return rewrite(`/app/c${path}`, req.url);
