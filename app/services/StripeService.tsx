@@ -358,7 +358,7 @@ class StripeService {
     const stripeCharge =  await this.stripe.paymentIntents.retrieve(charge?.stripeChargeId as string);
     
     if(stripeCharge.status === 'succeeded') {
-      ChargeService.update(chargeId, { stripeStatus: 'succeeded' });
+      return ChargeService.update(chargeId, { stripeStatus: 'succeeded' });
     }
   }
 
@@ -592,6 +592,15 @@ export const getSetupIntent = async (userId: string, maintainerUserId: string) =
   });
 
   return setupIntent?.client_secret;
+}
+
+export const refreshPaymentStatus = async (chargeId: string, maintainerUerId: string) => {
+  const maintainer = await UserService.findUser(maintainerUerId);
+  if(!maintainer) return null;
+  if(!maintainer.stripeAccountId) return null;
+  const stripeService = new StripeService(maintainer.stripeAccountId);
+  const status = await stripeService.updateCharge(chargeId);
+  console.log(status);
 }
 
 export const {

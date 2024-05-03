@@ -1,7 +1,9 @@
-import TierService from "@/app/services/TierService";
-import UserService from "@/app/services/UserService";
+"use client";
+
+import { findTier } from "@/app/services/TierService";
+import { findUser } from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
-import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
+import { refreshPaymentStatus } from "@/app/services/StripeService";
 
 import {
   Card,
@@ -10,16 +12,23 @@ import {
   Bold,
 } from "@tremor/react";
 import Link from "next/link";
-import ChargeService from "@/app/services/charge-service";
-import { Charge } from "@prisma/client";
+import { findCharges } from "@/app/services/charge-service";
+import { Charge, User } from "@prisma/client";
+import { useEffect, useState } from "react";
 
-const ChargeCard = async ({ charge }: { charge: Charge }) => {
+
+const ChargeCard = ({ charge }: { charge: Charge }) => {
+  const [maintainer, setMaintainer] = useState<User | undefined>(undefined);
+  const [tier, setTier] = useState<any | undefined>(undefined);
+  
   if (!charge || !charge.tierId) return null;
 
-  const tier = await TierService.findTier(charge.tierId!);
-  if (!tier) return null;
+  useEffect(() => {
+    findTier(charge.tierId).then(setTier);
+    findUser(charge.userId).then(user => user && setMaintainer(user));
+  }, [charge.tierId, charge.userId]);
 
-  const maintainer = await UserService.findUser(tier.userId);
+  if (!tier) return null;
   if (!maintainer) return null;
 
   let status = {
@@ -48,12 +57,17 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
           <Button>Purchase Details</Button>
         </Link>
       </div>
+      <div className="flex flex-row space-x-2">
+        <Button onClick={() => refreshPaymentStatus(charge.id, maintainer.id)}>Check payment status</Button>
+      </div>
     </div>
   </Card>)
 }
 
-export default async function SubscriptionsList({ params }: { params: { id: string } }) {
-  const charges = await ChargeService.findCharges() || [];
+export default function SubscriptionsList({ params }: { params: { id: string } }) {
+  const [charges, setCharges] = useState<Charge[]>([]);
+
+  useEffect(() => { findCharges().then(setCharges) }, []);
   const anyCharges = charges.length > 0;
 
   return (
