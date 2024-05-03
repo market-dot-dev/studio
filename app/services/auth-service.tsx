@@ -80,26 +80,26 @@ class AuthService {
     if (!user.onboarding) {
       user.onboarding = JSON.stringify(defaultOnboardingState);
     }
-    
-    const existingAccount = await prisma.account.findFirst({
-      where: {
-        provider: account.provider,
-        providerAccountId: account.providerAccountId,
-      }
-    })
-
-    // FIXME
-    if(!existingAccount) return user;
 
     // update refresh/access tokens
-    await prisma.account.update({
+    await prisma.account.upsert({
       where: {
         provider_providerAccountId: {
           provider: account.provider,
           providerAccountId: account.providerAccountId,
         }
       },
-      data: {
+      create: {
+        type: "oauth",
+        userId: user.id,
+        provider: account.provider,
+        providerAccountId: account.providerAccountId,
+        access_token: account.access_token,
+        expires_at: account.expires_at,
+        refresh_token: account.refresh_token,
+        refresh_token_expires_in: account.refresh_token_expires_in,
+      },
+      update: {
         access_token: account.access_token,
         expires_at: account.expires_at,
         refresh_token: account.refresh_token,
