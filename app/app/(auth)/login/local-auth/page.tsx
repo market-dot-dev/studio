@@ -3,8 +3,10 @@ import DevLoginButton from "../local-auth-button";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
+import { LOCAL_AUTH_AVAILABLE } from "@/app/config/local-auth";
+
 export default function LoginPage() {
-  if(process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development') {
+  if(!LOCAL_AUTH_AVAILABLE) {
     notFound();
   }
 
