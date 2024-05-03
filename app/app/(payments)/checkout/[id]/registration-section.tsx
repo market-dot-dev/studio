@@ -103,6 +103,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
               useBankAccount ?
               <>
                 <UserAchWidget
+                  paymentReady={paymentReady}
                   setError={setError}
                   setPaymentReady={setPaymentReady}
                   maintainerUserId={tier.userId}

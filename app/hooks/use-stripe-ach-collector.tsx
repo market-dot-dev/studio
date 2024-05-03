@@ -187,7 +187,7 @@ const useStripeAchCollector = ({
     if (!user || !maintainerUserId) {
       return;
     }
-    await detachPaymentMethod(maintainerUserId, maintainerStripeAccountId);
+    return await detachPaymentMethod(maintainerUserId, maintainerStripeAccountId);
   }, [user, maintainerUserId, maintainerStripeAccountId]);
 
   return {

@@ -12,6 +12,7 @@ import { findUser } from "@/app/services/UserService";
 
 interface UserPaymentMethodWidgetProps {
   loading?: boolean;
+  paymentReady: boolean;
   setError: (error: string | null) => void;
   setPaymentReady: (submitting: boolean) => void;
   maintainerUserId: string;
@@ -20,6 +21,7 @@ interface UserPaymentMethodWidgetProps {
 
 const UserAchWidget = ({
   loading,
+  paymentReady,
   setPaymentReady,
   setError,
   maintainerUserId,
@@ -30,6 +32,7 @@ const UserAchWidget = ({
   const [invalidAccount, setInvalidAccount] = useState<boolean>(false);
   const [showConfirm, setShowConfirm] = useState<boolean>(false);
   const [maintainer, setMaintainer] = useState<User>();
+  const [attachedPayment, setAttachedPayment] = useState<boolean>(false);
 
   useEffect(() => {
     if (maintainerUserId) {
@@ -62,6 +65,7 @@ const UserAchWidget = ({
     user?.stripePaymentMethodIds,
     maintainerStripeAccountId,
     maintainerUserId,
+    paymentReady,
     setPaymentReady,
     setError,
   ]);
@@ -93,6 +97,21 @@ const UserAchWidget = ({
     return handleConfirm()
       .then(() => {
         console.log("succeeded");
+        if (user && maintainerUserId && maintainerStripeAccountId) {
+          canBuy(maintainerUserId, maintainerStripeAccountId).then((canBuy) => {
+            if (canBuy) {
+              getPaymentMethod(maintainerUserId, maintainerStripeAccountId)
+                .then((paymentMethod) => {
+                  setAccountInfo(paymentMethod);
+                  setPaymentReady(true);
+                })
+                .catch((error) => {
+                  setError(error.message);
+                  setInvalidAccount(true);
+                });
+            }
+          });
+        }
         setPaymentReady(true);
       })
       .catch((error: any) => {
@@ -135,7 +154,12 @@ const UserAchWidget = ({
             type="button"
             variant="secondary"
             className="p-1"
-            onClick={() => handleDetach().then(refreshSession)}
+            onClick={() => handleDetach().
+              then(() => setPaymentReady(false)).
+              then(() => setAccountInfo(undefined)).
+              then(() => setShowConfirm(false)).
+              then(refreshSession)
+            }
           >
             Remove
           </Button>
@@ -148,7 +172,7 @@ const UserAchWidget = ({
     return (
       <form onSubmit={onSubmit}>
         <Card>
-          Click to securely onnect your bank account via stripe.
+          Click to securely connect your bank account via stripe.
           <br/>
           <Button type="submit">Connect</Button>
         </Card>
