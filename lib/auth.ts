@@ -15,7 +15,7 @@ const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
 const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_VERCEL_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
 
-const cookieDomain = isPreview ? process.env.VERCEL_BRANCH_URL : `.${process.env.NEXT_PUBLIC_ROOT_HOST}}`;
+const cookieDomain = isPreview ? process.env.VERCEL_BRANCH_URL : `.${process.env.NEXT_PUBLIC_ROOT_HOST}`;
 
 export const authOptions: NextAuthOptions = {
   providers: [
