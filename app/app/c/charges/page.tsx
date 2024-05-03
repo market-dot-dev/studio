@@ -22,7 +22,10 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
   const maintainer = await UserService.findUser(tier.userId);
   if (!maintainer) return null;
 
-  let status = 'paid';
+  let status = {
+    'succeeded': 'Paid',
+    'processing': 'Processing',
+  }[charge.stripeStatus] || charge.stripeStatus;
 
   return (<Card>
     <div className="flex flex-col space-y-2">
@@ -35,14 +38,14 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
       <Bold>Tier: {tier.name}</Bold>
 
       <Text>Status:&nbsp;
-        { status}
+        { status }
       </Text>
       <Text>Description: {tier.tagline}</Text>
       <p>${tier.price} / {tier.cadence}</p>
       <p>{charge.tierVersionId}</p>
       <div className="flex flex-row space-x-2">
         <Link href={`/charges/${charge.id}`}>
-          <Button>Tier Details</Button>
+          <Button>Purchase Details</Button>
         </Link>
       </div>
     </div>

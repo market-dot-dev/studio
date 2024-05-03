@@ -68,15 +68,29 @@ const UserAchWidget = ({
 
   const onSubmit = async (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
-    return await handleSubmit()
+    return handleSubmit()
       .then((clientSecret: IntentReturn) => {
         if (clientSecret) {
           console.log("result: ", clientSecret);
           setShowConfirm(true);
         } else {
-          console.log("no client secret");
+          console.log("no client secret", clientSecret);
         }
       })
+      .then(() => {
+        console.log("succeeded");
+        setPaymentReady(true);
+      })
+      .catch((error: any) => {
+        console.log("failed", error.message);
+        setError(error.message);
+        setPaymentReady(false);
+      });
+  }
+
+  const onConfirm = async (event?: React.FormEvent<HTMLFormElement>) => {
+    event?.preventDefault();
+    return handleConfirm()
       .then(() => {
         console.log("succeeded");
         setPaymentReady(true);
@@ -134,25 +148,9 @@ const UserAchWidget = ({
     return (
       <form onSubmit={onSubmit}>
         <Card>
-          <pre>{JSON.stringify({ maintainerStripeAccountId, showConfirm }, null, 2)}</pre>
-          <Text>Account Holder Name</Text>
-          <TextInput
-            id="account-holder-name"
-            name="account_holder_name"
-            required
-            value="aaron graves"
-          />
-
-          <Text>Account Holder Email</Text>
-          <TextInput
-            id="account-holder-email"
-            name="account_holder_email"
-            value="aaron@gitwallet.co"
-            required
-          />
-
-          <br />
-          <Button type="submit">Connect Bank Account</Button>
+          Click to securely onnect your bank account via stripe.
+          <br/>
+          <Button type="submit">Connect</Button>
         </Card>
       </form>
     );
@@ -162,9 +160,8 @@ const UserAchWidget = ({
     const maintainerName = maintainer?.company || maintainer?.name;
 
     return (
-      <form onSubmit={handleConfirm}>
+      <form onSubmit={onConfirm}>
         <Card>
-          <pre>{JSON.stringify({ maintainerStripeAccountId }, null, 2)}</pre>
           <Text>Confirm Attach Account</Text>
 
           <div>

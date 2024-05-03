@@ -7,6 +7,7 @@ import {
   Button,
 } from "@tremor/react";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
+import UserAchWidget from "@/components/payments/user-ach-widget";
 import { useEffect, useState } from "react";
 import { User } from "@prisma/client";
 
@@ -41,6 +42,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
   const [submittingSubscription, setSubmittingSubscription] = useState(false);
   const [paymentReady, setPaymentReady] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
+  const [useBankAccount, setUseBankAccount] = useState(false);
 
   useEffect(() => {
     if(error){
@@ -65,6 +67,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
           window.location.href = "/success";
         }).catch((err) => {
           setError(err.message);
+          throw err;
         });
       }
     }
@@ -92,14 +95,30 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
         { error && <div className="mb-4 text-red-500">{error}</div> }
         <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
           <div>
-            { maintainer.stripeAccountId  &&
+            { !maintainer.stripeAccountId  && <>
+              <div>This maintainer&apos;s account is not ready to receive payments yet. Contact the maintainer or try again later.</div>
+            </> }
+
+            { maintainer.stripeAccountId && (
+              useBankAccount ?
+              <>
+                <UserAchWidget
+                  setError={setError}
+                  setPaymentReady={setPaymentReady}
+                  maintainerUserId={tier.userId}
+                  maintainerStripeAccountId={maintainer.stripeAccountId} 
+                />
+              </> : 
               <UserPaymentMethodWidget
                 loading={submittingPayment}
                 setError={setError}
                 setPaymentReady={setPaymentReady}
                 maintainerUserId={tier.userId}
                 maintainerStripeAccountId={maintainer.stripeAccountId}
-              /> }
+              /> 
+            ) }
+            
+            { !paymentReady && <div onClick={() => setUseBankAccount(!useBankAccount)}>Pay with { useBankAccount ? 'card' : 'bank account' }</div> }
           </div>
       </section>
 

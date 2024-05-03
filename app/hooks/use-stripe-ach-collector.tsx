@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { SetupIntent, loadStripe } from "@stripe/stripe-js";
+import { SetupIntent, SetupIntentResult, StripeError, loadStripe } from "@stripe/stripe-js";
 import { User } from "@prisma/client";
 import { SessionUser } from "../models/Session";
 import {
@@ -22,7 +22,7 @@ interface UseStripePaymentCollectorReturns {
   handleSubmit: (
     event?: React.FormEvent<HTMLFormElement>,
   ) => Promise<IntentReturn>;
-  handleConfirm: (ev: React.FormEvent<HTMLFormElement>) => void;
+  handleConfirm: () => Promise<{ setupIntent: SetupIntent; error?: undefined; } | { setupIntent?: undefined; error: StripeError; } | undefined>;
   handleDetach: () => Promise<void>;
 }
 
@@ -49,17 +49,15 @@ const useStripeAchCollector = ({
   const [stripeCustomerId, setStripeCustomerId] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
 
-  const handleConfirm = async (ev: React.FormEvent<HTMLFormElement>) => {
-    ev.preventDefault();
+  const handleConfirm = async (): Promise<{ setupIntent: SetupIntent; error?: undefined; } | { setupIntent?: undefined; error: StripeError; } | undefined> => {
     const stripe = await stripePromise;
     
-    if (!clientSecret) {
-      console.error("Client secret not found");
-      return;
-    }
     if (!stripe) {
-      console.error("Stripe not loaded");
-      return;
+      throw "Stripe not loaded";
+    }
+
+    if (!clientSecret) {
+      throw "Client secret not found";
     }
 
     return stripe
@@ -130,25 +128,18 @@ const useStripeAchCollector = ({
       
       setClientSecret(clientSecret);
 
-      const accountHolderNameField = document.getElementById(
-        "account-holder-name",
-      ) as HTMLInputElement;
-      const accountHolderEmailField = document.getElementById(
-        "account-holder-email",
-      ) as HTMLInputElement;
-
-      if (!accountHolderNameField || !accountHolderEmailField) {
-        return Promise.reject("Account fields not found");
+      if (!user.name || !user.email) {
+        return Promise.reject("User is missing either name or email.");
       }
 
-      stripe.collectBankAccountForSetup({
+      return stripe.collectBankAccountForSetup({
           clientSecret,
           params: {
             payment_method_type: "us_bank_account",
             payment_method_data: {
               billing_details: {
-                name: accountHolderNameField.value,
-                email: accountHolderEmailField.value,
+                name: user.name,
+                email: user.email,
               },
             },
           },
@@ -158,7 +149,7 @@ const useStripeAchCollector = ({
           if (error) {
             console.error(error.message);
             // PaymentMethod collection failed for some reason.
-            return Promise.reject(error.message);
+            throw error?.message;
           } else if (setupIntent.status === "requires_payment_method") {
             // Customer canceled the hosted verification modal. Present them with other
             // payment method type options.
@@ -169,8 +160,6 @@ const useStripeAchCollector = ({
             // manually-entered. Display payment method details and mandate text
             // to the customer and confirm the intent once they accept
             // the mandate.
-
-            //confirmationForm.show();
             console.log("Requires confirmation", setupIntent);
             return setupIntent?.status;
           } else if (setupIntent.status === "requires_action") {
@@ -178,8 +167,6 @@ const useStripeAchCollector = ({
             // manually-entered. Display payment method details and mandate text
             // to the customer and confirm the intent once they accept
             // the mandate.
-
-            //confirmationForm.show();
             console.log("Requires action", setupIntent);
             return setupIntent?.status;
           } else if (setupIntent.status === "succeeded") {
