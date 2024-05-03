@@ -120,6 +120,11 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
           isDivider: true,
         },
         {
+          name: "Admin",
+          href: `/admin`,
+          icon: <GearIcon width={18} />,
+        },
+        {
           name: "Debug",
           href: `/admin/debug`,
           icon: <GearIcon width={18} />,

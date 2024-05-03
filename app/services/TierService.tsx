@@ -51,6 +51,10 @@ class TierService {
     });
   }
 
+  static async allTiers(): Promise<Tier[]> {
+    return prisma.tier.findMany();
+  }
+
   static async findTierByUserId(userId: string): Promise<Tier[]> {
     return prisma.tier.findMany({
       where: {
@@ -514,6 +518,7 @@ class TierService {
 
 export default TierService;
 export const {
+  allTiers,
   createTier,
   destroyStripePrice,
   destroyTier,

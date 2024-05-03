@@ -1,7 +1,17 @@
+import PageHeading from "@/components/common/page-heading";
+import { Card } from "flowbite-react";
+
 const AdminIndex = () => {
   return (
     <div>
-      <h1>Admin</h1>
+      <PageHeading title="Admin" />
+      <Card>
+      <ul>
+        <li>
+          <a href="/admin/tiers">Tiers</a>
+        </li>
+      </ul>
+      </Card>
     </div>
   );
 };

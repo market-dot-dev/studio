@@ -9,7 +9,7 @@ import prisma from "@/lib/prisma";
 import DomainService from './domain-service';
 import SessionService from './SessionService';
 import Customer from '../models/Customer';
-import { createLocalCharge } from './charge-service';
+import ChargeService, { createLocalCharge } from './charge-service';
 
 export type StripePaymentMethod = {
   name: string;
@@ -63,7 +63,7 @@ const connStripe = async () => {
 const platformStripe = new Stripe(process.env.STRIPE_SECRET_KEY || '');
 
 class StripeService {
-  stripe: any;
+  stripe: Stripe;
   stripeAccountId: string;
 
   constructor(accountId: string) {
@@ -330,7 +330,11 @@ class StripeService {
   
     const finalInvoice = await this.stripe.invoices.finalizeInvoice(invoice.id);
 
-    const confirmedPaymentIntent = await this.stripe.paymentIntents.confirm(finalInvoice.payment_intent, {
+    if(!finalInvoice.payment_intent) {
+      throw new Error('Payment intent not found');
+    }
+
+    const confirmedPaymentIntent = await this.stripe.paymentIntents.confirm(finalInvoice.payment_intent as string, {
       payment_method: stripePaymentMethodId,
     }, {
       idempotencyKey: `${stripeCustomerId}-${stripePriceId}-${timestampMod10}`,
@@ -347,6 +351,15 @@ class StripeService {
     });
 
     return subscription;
+  }
+
+  async updateCharge(chargeId: string) {
+    const charge = await ChargeService.findCharge(chargeId);
+    const stripeCharge =  await this.stripe.paymentIntents.retrieve(charge?.stripeChargeId as string);
+    
+    if(stripeCharge.status === 'succeeded') {
+      ChargeService.update(chargeId, { stripeStatus: 'succeeded' });
+    }
   }
 
   static async cancelSubscription(subscriptionId: string) {
@@ -472,7 +485,9 @@ export const onClickSubscribe = async (userId: string, tierId: string, annual: b
     const charge = await stripeService.createCharge(stripeCustomerId, stripePriceId, tier.price, await customer.getStripePaymentMethodId(), tier.applicationFeePercent || 0, tier.applicationFeePrice || 0);
 
     if(charge.status === 'succeeded') {
-      await createLocalCharge(userId, tierId, charge.id);
+      await createLocalCharge(userId, tierId, charge.id, "succeeded");
+    } else if(charge.status === 'processing') {
+      await createLocalCharge(userId, tierId, charge.id, "processing");
     } else {
       console.log('[purchase]: FAIL charge failed', charge);
       throw new Error('Error creating charge on stripe: ' + charge.status);

@@ -223,6 +223,7 @@ model Charge {
   tierRevision   Int?
   stripeChargeId String   @unique
   createdAt      DateTime @default(now())
+  stripeStatus   String
 
   user        User         @relation(fields: [userId], references: [id])
   tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])

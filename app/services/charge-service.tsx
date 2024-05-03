@@ -28,6 +28,15 @@ class ChargeService {
     });
   }
 
+  static async update(chargeId: string, data: { stripeStatus: string }): Promise<Charge> {
+    return prisma.charge.update({
+      where: {
+        id: chargeId,
+      },
+      data: data,
+    });
+  }
+
   static async hasCharges(tierId: string, revision?: number): Promise<boolean> {
     const subscriptions = await prisma.charge.findMany({
       where: {
@@ -79,7 +88,7 @@ class ChargeService {
     });
   }
 
-  static async createLocalCharge(userId: string, tierId: string, paymentIntentId: string, tierVersionId?: string): Promise<Charge> {
+  static async createLocalCharge(userId: string, tierId: string, paymentIntentId: string, stripeStatus: string, tierVersionId?: string): Promise<Charge> {
     const user = await UserService.findUser(userId);
     if (!user) throw new Error('User not found');
 
@@ -103,11 +112,12 @@ class ChargeService {
 
     let res = await prisma.charge.create({
       data: {
-      userId: userId,
-      tierId: tierId,
-      tierVersionId: tierVersionId,
-      stripeChargeId: paymentIntentId,
-      tierRevision: tier.revision,
+        userId: userId,
+        tierId: tierId,
+        tierVersionId: tierVersionId,
+        stripeChargeId: paymentIntentId,
+        tierRevision: tier.revision,
+        stripeStatus
       }
     });
 
