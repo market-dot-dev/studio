@@ -9,6 +9,7 @@ import useStripeAchCollector from "@/app/hooks/use-stripe-ach-collector";
 import { IntentReturn } from "@/app/hooks/use-stripe-ach-collector";
 import { User } from "@prisma/client";
 import { findUser } from "@/app/services/UserService";
+import { SetupIntent } from "@stripe/stripe-js";
 
 interface UserPaymentMethodWidgetProps {
   loading?: boolean;
@@ -73,17 +74,23 @@ const UserAchWidget = ({
   const onSubmit = async (event?: React.FormEvent<HTMLFormElement>) => {
     event?.preventDefault();
     return handleSubmit()
-      .then((clientSecret: IntentReturn) => {
-        if (clientSecret) {
-          console.log("result: ", clientSecret);
+      .then((setupIntent: SetupIntent) => {
+        if (setupIntent.status === "requires_confirmation") {
           setShowConfirm(true);
+        } else if (setupIntent.status === "requires_payment_method") {
+          console.log("User cancelled dialogue (requires_payment_method)");
+          setError("User cancelled dialogue (requires_payment_method)");
+          setPaymentReady(false);
+        } else if (setupIntent.status === "requires_action") {
+          setError("Your bank account requires action of some sort. Please check your balance and contact support.");
+          setPaymentReady(false);
+        } else if (setupIntent.status === "succeeded" || setupIntent.status === "processing") {
+          console.log("Payment method attached");
+          setPaymentReady(true);
         } else {
-          console.log("no client secret", clientSecret);
+          setError("Received unrecognized payment method status from Stripe: " + setupIntent.status);
+          console.log("Received unrecognized status: ", setupIntent.status);
         }
-      })
-      .then(() => {
-        console.log("succeeded");
-        setPaymentReady(true);
       })
       .catch((error: any) => {
         console.log("failed", error.message);
@@ -131,7 +138,7 @@ const UserAchWidget = ({
   if (invalidAccount) {
     return (
       <Card>
-        <Text>Invalid payment method. Please update your payment method.</Text>
+        <Text>Invalid payment method attached. Please update your payment method.</Text>
         <Button
           type="button"
           variant="secondary"
@@ -172,7 +179,7 @@ const UserAchWidget = ({
     return (
       <form onSubmit={onSubmit}>
         <Card>
-          Click to securely connect your bank account via stripe.
+          Click to securely connect your bank account via Stripe.
           <br/>
           <Button type="submit">Connect</Button>
         </Card>

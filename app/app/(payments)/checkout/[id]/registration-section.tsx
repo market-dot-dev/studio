@@ -93,7 +93,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
 
       <section className="w-7/8 mb-8 lg:w-5/6">
         { error && <div className="mb-4 text-red-500">{error}</div> }
-        <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
+        <Divider className={user?.id ? "font-bold text-lg" : ""}>{ useBankAccount ? 'Bank Account' : 'Credit Card' } Information</Divider>
           <div>
             { !maintainer.stripeAccountId  && <>
               <div>This maintainer&apos;s account is not ready to receive payments yet. Contact the maintainer or try again later.</div>

@@ -21,7 +21,7 @@ interface UseStripePaymentCollectorReturns {
   stripeCustomerId: string | null;
   handleSubmit: (
     event?: React.FormEvent<HTMLFormElement>,
-  ) => Promise<IntentReturn>;
+  ) => Promise<SetupIntent>;
   handleConfirm: () => Promise<{ setupIntent: SetupIntent; error?: undefined; } | { setupIntent?: undefined; error: StripeError; } | undefined>;
   handleDetach: () => Promise<void>;
 }
@@ -108,7 +108,7 @@ const useStripeAchCollector = ({
   const handleSubmit = useCallback(
     async (
       event?: React.FormEvent<HTMLFormElement>,
-    ): Promise<IntentReturn> => {
+    ): Promise<SetupIntent> => {
       event?.preventDefault();
       const stripe = await stripePromise;
 
@@ -145,39 +145,13 @@ const useStripeAchCollector = ({
           },
           expand: ["payment_method"],
         })
-        .then(({ setupIntent, error }) => {
+        .then(async ({ setupIntent, error }): Promise<SetupIntent> => {
           if (error) {
             console.error(error.message);
-            // PaymentMethod collection failed for some reason.
             throw error?.message;
-          } else if (setupIntent.status === "requires_payment_method") {
-            // Customer canceled the hosted verification modal. Present them with other
-            // payment method type options.
-            console.log("Requires payment method", setupIntent);
-            return setupIntent?.status;
-          } else if (setupIntent.status === "requires_confirmation") {
-            // We collected an account - possibly instantly verified, but possibly
-            // manually-entered. Display payment method details and mandate text
-            // to the customer and confirm the intent once they accept
-            // the mandate.
-            console.log("Requires confirmation", setupIntent);
-            return setupIntent?.status;
-          } else if (setupIntent.status === "requires_action") {
-            // We collected an account - possibly instantly verified, but possibly
-            // manually-entered. Display payment method details and mandate text
-            // to the customer and confirm the intent once they accept
-            // the mandate.
-            console.log("Requires action", setupIntent);
-            return setupIntent?.status;
-          } else if (setupIntent.status === "succeeded") {
-            return setupIntent.status;
-          } else {
-            console.error(
-              "Unexpected setupIntent status: ",
-              setupIntent.status,
-            );
-            return Promise.reject("Unexpected setupIntent status");
           }
+
+          return setupIntent;
         });
     },
     [stripePromise, user, maintainerUserId],

@@ -7,6 +7,9 @@ const useFeatures = (tierId: string) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    if(!tierId){
+      return;
+    }
     findByTierId(tierId)
       .then((features) => {
         if (features) {

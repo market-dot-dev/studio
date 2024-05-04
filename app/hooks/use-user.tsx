@@ -7,6 +7,10 @@ const useUser = (id?: string) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    if(!id){
+      return;
+    }
+    
     if (id) {
       findUser(id)
         .then((user) => {

@@ -7,6 +7,10 @@ const useTier = (id: string) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
+    if (!id) {
+      return;
+    }
+    
     findTier(id)
       .then((tier) => {
         if (tier) {

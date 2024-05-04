@@ -27,21 +27,15 @@ class FeatureService {
   }
 
   static async findByTierId(tierId: string): Promise<Feature[]> {
-    const tierWithFeatures = await prisma.tier.findUnique({
+    return await prisma.feature.findMany({
       where: {
-        id: tierId,
-      },
-      include: {
-        features: true,
+        tiers: {
+          some: {
+            id: tierId,
+          }
+        },
       },
     });
-
-    // If the tier is not found or it has no features, return an empty array
-    if (!tierWithFeatures || !tierWithFeatures.features) {
-      return [];
-    }
-
-    return tierWithFeatures.features;
   }
 
   static async findByTierVersionId(tierVersionId: string): Promise<Feature[]> {

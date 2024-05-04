@@ -35,7 +35,7 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
         }
       });
     }
-  }, [user, user?.stripeCustomerIds, user?.stripePaymentMethodIds, maintainerStripeAccountId, maintainerUserId]);
+  }, [user, user.stripeCustomerIds, user.stripePaymentMethodIds, maintainerStripeAccountId, maintainerUserId, setPaymentReady, setError]);
 
   useEffect(() => {
     if(loading && !cardInfo){
