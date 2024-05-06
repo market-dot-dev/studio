@@ -40,7 +40,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
+        {/* <link href="https://cdn.tailwindcss.com" rel="stylesheet" /> */}
+        <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script>
       </head>
       <body className={cn(cal.variable, inter.variable)}>
         <Providers>

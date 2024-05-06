@@ -6,7 +6,7 @@ type DynamicComponentProps = {
     children?: React.ReactNode;
   };
   
-  const ignoreElements = ["html", "head", "body", "script", "style", "title", "meta", "link", "noscript", "svg", "path"];
+  const ignoreElements = ["html", "head", "body", "script", "style", "title", "meta", "link", "noscript"];
   
   const voidElements = [
     "area", 
