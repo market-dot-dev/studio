@@ -19,7 +19,7 @@ export type FiltersState = {
   country_code: string;
   state: string;
   industry: string;
-  company_size: string;
+  size: string;
   company_type: string;
   founded: string;
   city: string;
@@ -30,13 +30,61 @@ export const emptyFilters: FiltersState = {
   country_code: '',
   state: '',
   industry: '',
-  company_size: '',
+  size: '',
   company_type: '',
   founded: '',
   city: '',
   kind: '',
 }
 
+export const filtersMeta = {
+  "kind": {
+    "key": "kind",
+    "label": "Type of Entity"
+  },
+  "industry": {
+    "key": "industry",
+    "label": "Industry"
+  },
+  "company_size": {
+    "key": "size",
+    "label": "Company Size"
+  },
+  "company_type": {
+    "key": "company_type",
+    "label": "Company Type"
+  },
+  "founded": {
+    "key": "founded",
+    "label": "Founded in",
+    "disabled": true
+  },
+  "city": {
+    "key": "city",
+    "label": "City",
+    "disabled": true
+  },
+  "state": {
+    "key": "state",
+    "label": "State",
+    "disabled": true
+  },
+  "country_code": {
+    "key": "country_code",
+    "label": "Country"
+  }
+} as any;
+
+const filtersToFacetMap = {
+  "kind": "kind",
+  "industry": "industry",
+  "size": "company_size",
+  "company_type": "company_type",
+  "founded": "founded",
+  "city": "city",
+  "state": "state",
+  "country_code": "country_code"
+} as any;
 
 export function hashFiltersState(filters: FiltersState): string {
   // Concatenate all values to form a single string
@@ -61,9 +109,10 @@ function FacetItem({title, options}: {title: string, options: JSX.Element}) {
     setCollapsed(!collapsed);
   };
 
-  const isCountry = title === "country_code";
+  // const isCountry = title === "country_code";
 
-  const displayTitle = isCountry ? "Country" : title.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Converts to title case
+  const displayTitle = filtersMeta[title]?.label ?? title;
+  // isCountry ? "Country" : title.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()); // Converts to title case
   
   return (
     <div className="mb-4 flex flex-col gap-3 border border-x-0 border-t-0 pb-2">
@@ -95,7 +144,7 @@ function debounce(func: any, wait: number) {
   };
 }
 
-function OptionsList({options, filters, handleCheckboxChange, itemKey}: {options: OptionType[], filters: FiltersState, handleCheckboxChange: (key: keyof FiltersState, value: string) => void, itemKey: keyof FiltersState}) {
+function OptionsList({options, filters, handleCheckboxChange, filterName}: {options: OptionType[], filters: FiltersState, handleCheckboxChange: (key: keyof FiltersState, value: string) => void, filterName: keyof FiltersState}) {
   const [collapsed, setCollapsed] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -115,6 +164,8 @@ function OptionsList({options, filters, handleCheckboxChange, itemKey}: {options
     setCollapsed(!collapsed);
   };
 
+  const itemKey = filtersMeta[filterName]?.key ?? filterName;
+
   return (
     <div className="flex flex-col gap-2">
       {options.length > 8 && (
@@ -125,18 +176,20 @@ function OptionsList({options, filters, handleCheckboxChange, itemKey}: {options
           className="mb-2"
         />
       )}
-      {visibleOptions.map((option) => (
-        <div key={option.value} className="mb-1 flex justify-between w-full items-center">
-          <label className="flex items-center space-x-2 text-sm grow">
-            <input type="checkbox"
-              checked={filters[itemKey] === option.value}
-              onChange={() => handleCheckboxChange(itemKey, option.value)}
-            />
-            <span>{option.label[0].toUpperCase() + option.label.substring(1)}</span>
-          </label>
-          <span className="text-sm text-gray-400 pr-2">{option.count}</span>
-        </div>
-      ))}
+      {visibleOptions.map((option) => {
+        return (
+          <div key={option.value} className="mb-1 flex justify-between w-full items-center">
+            <label className="flex items-center space-x-2 text-sm grow">
+              <input type="checkbox"
+                checked={filters[itemKey as keyof FiltersState] === option.value}
+                onChange={() => handleCheckboxChange(itemKey, option.value)}
+              />
+              <span>{option.label[0].toUpperCase() + option.label.substring(1)}</span>
+            </label>
+            <span className="text-sm text-gray-400 pr-2">{option.count}</span>
+          </div>
+        )
+      })}
       {filteredOptions.length > 8 && (
         <div className="cursor-pointer text-blue-600 flex justify-center items-center text-sm" onClick={toggleCollapse}>
           {collapsed ? 
@@ -153,11 +206,12 @@ function OptionsList({options, filters, handleCheckboxChange, itemKey}: {options
 
 export default function FiltersPanel({facets, filters, setFilters, setItemsCount}: { facets: DataDictionary, filters: FiltersState, setFilters: React.Dispatch<React.SetStateAction<FiltersState>>, setItemsCount: React.Dispatch<React.SetStateAction<number>>}) {
 
-
+  
   const determineItemsCount = useCallback(() => {
-    let itemsCount = facets['kind']['organization'] + facets['kind']['user'];
+    let itemsCount = (facets['kind']['organization'] ?? 0) + (facets['kind']['user'] ?? 0);
     
-    Object.keys(filters).forEach((key) => {
+    Object.keys(filters).forEach((filterName) => {
+      const key = filtersToFacetMap[filterName] ?? filterName;
       const facet = facets[key];
       const filterValue = filters[key as keyof FiltersState];
     
@@ -169,19 +223,20 @@ export default function FiltersPanel({facets, filters, setFilters, setItemsCount
     setItemsCount(itemsCount);
   }, [facets, filters, setItemsCount]);
 
-  const handleCheckboxChange = useCallback((key: keyof FiltersState, value: string) => {
-
-    const newFilters = { ...filters, [key]: filters[key] === value ? '' : value };
+  const handleCheckboxChange = useCallback((filterName: keyof FiltersState, value: string) => {
+    const key = filtersMeta[filterName]?.key ?? filterName;
+    const newFilters = { ...filters, [key]: filters[key as keyof FiltersState] === value ? '' : value };
 
     setFilters(newFilters);
   }, [facets, filters, setFilters, setItemsCount]);
 
-  const renderOptions = (itemKey: keyof FiltersState) => {
-    if (['founded', 'city', 'state'].includes(itemKey)) return null; // Hides specified filter panels
+  const renderOptions = (filterName: keyof FiltersState) => {
+    
+    if( filtersMeta[filterName]?.disabled ) return null; // Hides disabled filter panels
 
-    const isCountry = itemKey === "country_code";
+    const isCountry = filterName === "country_code";
 
-    const options: OptionType[] = Object.entries(facets[itemKey]).map(([value, count]) => ({
+    const options: OptionType[] = Object.entries(facets[filterName]).map(([value, count]) => ({
       label: `${ isCountry ? countryCodes[value] ?? value : value }`,
       value,
       count,
@@ -191,7 +246,7 @@ export default function FiltersPanel({facets, filters, setFilters, setItemsCount
   
     return (
       <OptionsList
-        itemKey={itemKey}
+        filterName={filterName}
         options={options}
         filters={filters}
         handleCheckboxChange={handleCheckboxChange}
