@@ -7,6 +7,17 @@ import prisma from "@/lib/prisma";
 const radarAPIEndpoint = process.env.RADAR_API_ENDPOINT;
 const radarAPIKey = process.env.RADAR_API_KEY;
 
+const appendFiltersToUrl = (url: string, filters: FiltersState) => {
+    Object.keys(filters).forEach((key) => {
+        if (filters[key as keyof FiltersState]) {
+            const encodedValue = encodeURIComponent(filters[key as keyof FiltersState] as string);
+            url += `&${key}=${encodedValue}`;
+        }
+    });
+
+    return url;
+}
+
 class LeadsService {
     static commonHeaders = {
         'Authorization': `Token token="${radarAPIKey}"`
@@ -105,9 +116,11 @@ class LeadsService {
         });
     }
 
-    static async getFacets(radarId: number, kind?: string) {
+    static async getFacets(radarId: number, filters: FiltersState) {
+        let url = `${radarAPIEndpoint}repositories/${radarId}/dependent_owners/facets/?`;
+        url = appendFiltersToUrl(url, filters);
         try {
-            const response = await fetch(`${radarAPIEndpoint}repositories/${radarId}/dependent_owners/facets` + (kind ? `?kind=${kind}` : ''), { headers: LeadsService.commonHeaders });
+            const response = await fetch(url, { headers: LeadsService.commonHeaders });
             return {
                 data: await response.json()
             }
@@ -135,14 +148,7 @@ class LeadsService {
         
         let url = `${radarAPIEndpoint}repositories/${radarId}/dependent_owners?per_page=${perPage}&page=${page}`;
         
-        Object.keys(filters).forEach((key) => {
-            if (filters[key as keyof FiltersState]) {
-                const encodedValue = encodeURIComponent(filters[key as keyof FiltersState] as string);
-                url += `&${key}=${encodedValue}`;
-            }
-        });
-
-        console.log('urllo', url)
+        url = appendFiltersToUrl(url, filters)
 
         // Add your logic here
         try {
