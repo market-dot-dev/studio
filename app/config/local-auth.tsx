@@ -1,0 +1,1 @@
+export const LOCAL_AUTH_AVAILABLE = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development' || process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview';

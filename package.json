@@ -7,9 +7,13 @@
     "format": "prettier \"**/*.{css,js,json,jsx,ts,tsx}\"",
     "start": "next start",
     "sync:services": "tsx prisma/sync.ts",
+    "db:reset": "./scripts/reset-db.sh",
+    "seed": "./scripts/reset-db.sh && tsx prisma/seed.ts",
     "migrate:debug": "tsx scripts/migrate-user.ts",
     "dump:load": "./scripts/dump-load.sh",
-    "lint": "next lint"
+    "lint": "next lint",
+    "vercel-build": "prisma generate && next build && npm run db:reset:preview && tsx prisma/sync.ts",
+    "db:reset:preview": "if [ \"$VERCEL_ENV\" = \"preview\" ]; then npm run db:reset && tsx prisma/seed.ts; fi"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.6.0",

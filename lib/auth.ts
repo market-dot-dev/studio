@@ -12,7 +12,10 @@ import Session from "@/app/models/Session";
 import AuthService from "@/app/services/auth-service";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
-const isDevelopment = process.env.NODE_ENV === "development";
+const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_VERCEL_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+
+const cookieDomain = isPreview ? process.env.VERCEL_BRANCH_URL : `.${process.env.NEXT_PUBLIC_ROOT_HOST}`;
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -39,6 +42,7 @@ export const authOptions: NextAuthOptions = {
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
       clientSecret: process.env.AUTH_GITHUB_SECRET as string,
+      allowDangerousEmailAccountLinking: isDevelopment,
       profile(profile) {
         return {
           id: profile.id.toString(),
@@ -98,7 +102,7 @@ export const authOptions: NextAuthOptions = {
         httpOnly: true,
         sameSite: "lax",
         path: "/",
-        domain: `.${process.env.NEXT_PUBLIC_ROOT_HOST}`,
+        domain: cookieDomain,
         secure: VERCEL_DEPLOYMENT,
       },
     },

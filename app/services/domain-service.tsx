@@ -3,12 +3,12 @@
 import { NextRequest } from "next/server";
 
 const RESERVED_SUBDOMAINS = ['app', 'alpha'];
+const PROTOCOL = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development' ? 'http' : 'https';
 
 class DomainService {
   static getRootUrl(subdomain: string = 'app', path: string = '/') {
-    const protocol = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development' ? 'http' : 'https';
     const host = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
-    const uri = `${protocol}://${subdomain}.${host}`;
+    const uri = `${PROTOCOL}://${subdomain}.${host}`;
 
     const url = new URL(path, uri);
     
@@ -25,6 +25,10 @@ class DomainService {
   }
 
   static getReservedSubdomainFromRequest(req: NextRequest) {
+    if(this.isVercelPreview(req)) {
+      return 'app';
+    }
+
     const subdomain = this.getSubdomainFromRequest(req);
     
     console.log("Subdomain: ", subdomain);
@@ -38,8 +42,9 @@ class DomainService {
 
   static getGhUsernameFromRequest(req: NextRequest) {
     const subdomain = this.getSubdomainFromRequest(req);
+    const isPreview = DomainService.isVercelPreview(req);
 
-    if(!!subdomain && RESERVED_SUBDOMAINS.includes(subdomain)) {
+    if(isPreview || (!!subdomain && RESERVED_SUBDOMAINS.includes(subdomain))) {
       return null;
     } else {
       return subdomain;
@@ -48,21 +53,17 @@ class DomainService {
 
   static getHostnameFromRequest(req: NextRequest) {
     return req.headers.get('host') || '';
-    //return req.nextUrl.host;
+  }
+
+  static isVercelPreview(req: NextRequest) {
+    let host = DomainService.getHostnameFromRequest(req);
+    const vercelPreviewUrlPattern = /^gitwallet-web-git-[\w-]+-lab0324\.(?:vercel\.local|vercel\.app)(?::\d+)?$/;
+
+    return vercelPreviewUrlPattern.test(host);
   }
 
   static getSubdomainFromRequest(req: NextRequest) {
     let host = DomainService.getHostnameFromRequest(req);
-
-    // special case for Vercel preview deployment URLs
-    if (
-      host.includes("---") &&
-      host.endsWith(`.${process.env.NEXT_PUBLIC_VERCEL_DEPLOYMENT_SUFFIX}`)
-    ) {
-      host = `${host.split("---")[0]}.${
-        process.env.NEXT_PUBLIC_ROOT_DOMAIN
-      }`;
-    }
 
     const parts = host.split('.');
 

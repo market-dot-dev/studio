@@ -1,19 +1,15 @@
-import { cookies } from 'next/headers';
 import { Metadata } from "next";
-import { ReactNode } from "react";
 import Image from "next/image";
 import LoginButton from "@/components/common/login-button";
 import { Suspense } from "react";
 import CustomerLogin from "@/components/login/customer-login";
-
+import { LOCAL_AUTH_AVAILABLE } from "@/app/config/local-auth";
 
 export const metadata: Metadata = {
   title: "Login | Gitwallet",
 };
 
 export default async function LoginPage() {
-  const localAuthAvailable = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development';
-
   return (
     <>
         <Image
@@ -37,7 +33,7 @@ export default async function LoginPage() {
             <CustomerLogin />
             
           </Suspense>
-          {localAuthAvailable &&
+          {LOCAL_AUTH_AVAILABLE &&
             <Suspense>
               <LoginButton href={'/login/local-auth'} isLoading={false} >
                 <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
