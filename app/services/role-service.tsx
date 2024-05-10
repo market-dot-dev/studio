@@ -9,6 +9,7 @@ class RoleService {
     /^\/embed\//,
     /^\/api\/og\//,
     /^\/api\/tiers\//,
+    /^\/api\/stripe\//,
     /^\/home$/,
     /^\/alpha\/login$/,
     /^\/login$/,

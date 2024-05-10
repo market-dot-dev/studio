@@ -360,3 +360,11 @@ model Lead {
   
   @@unique([host, uuid], name: "host_uuid_unique")
 }
+
+model StripeEvent {
+  id        String   @id @default(cuid())
+  eventId   String   @unique
+  type      String
+  data      Json
+  createdAt DateTime @default(now())
+}
