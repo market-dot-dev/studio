@@ -64,7 +64,11 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
         setSubmittingSubscription(true);
         onClickSubscribe(userId, tierId, annual).then((res) => {
           setLoading(false);
-          window.location.href = "/success";
+          if(tier.cadence === 'once') {
+            window.location.href = "/charges";
+          } else {
+            window.location.href = "/subscriptions";
+          }
         }).catch((err) => {
           setError(err.message);
           throw err;
