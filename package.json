@@ -12,6 +12,7 @@
     "migrate:debug": "tsx scripts/migrate-user.ts",
     "dump:load": "./scripts/dump-load.sh",
     "lint": "next lint",
+    "events:process": "tsx scripts/process-events.ts",
     "vercel-build": "prisma generate && next build && npm run db:reset:preview && tsx prisma/sync.ts",
     "db:reset:preview": "if [ \"$VERCEL_ENV\" = \"preview\" ]; then npm run db:reset && tsx prisma/seed.ts; fi"
   },

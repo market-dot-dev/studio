@@ -224,6 +224,7 @@ model Charge {
   stripeChargeId String   @unique
   createdAt      DateTime @default(now())
   stripeStatus   String
+  error          String?
 
   user        User         @relation(fields: [userId], references: [id])
   tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
@@ -242,6 +243,7 @@ model Subscription {
   createdAt            DateTime  @default(now())
   state                String    @default("renewing")
   priceAnnual          Boolean   @default(false)
+  error                String?
 
   user          User            @relation(fields: [userId], references: [id])
   tierVersion   TierVersion?    @relation(fields: [tierVersionId], references: [id])
@@ -366,5 +368,7 @@ model StripeEvent {
   eventId   String   @unique
   type      String
   data      Json
+  processed Boolean @default(false)
   createdAt DateTime @default(now())
+  error String?
 }

@@ -182,6 +182,50 @@ class SubscriptionService {
     return res;
   }
 
+  static async onCancelSubscription(stripeSubscriptionId: string) {
+    const subscription = await prisma.subscription.findFirst({
+      where: {
+        stripeSubscriptionId,
+        state: {
+          not: SubscriptionStates.cancelled,
+        }
+      },
+      include: {
+        user: true, // customer
+        tier: {
+          select: {
+            name: true,
+            user: true, // tier owner
+          },
+        },
+      },
+    });
+
+    if (!subscription) return;
+
+    await prisma.subscription.update({
+      where: {
+        id: subscription.id,
+      },
+      data: {
+        state: SubscriptionStates.cancelled,
+        cancelledAt: new Date(),
+      },
+    });
+
+    await Promise.all([
+      // inform the tier owner
+      subscription?.tier?.user ? EmailService.subscriptionCancelledInfo(subscription?.tier?.user, subscription.user, subscription?.tier?.name) : null,
+      // inform the customer
+      subscription.user ? EmailService.subscriptionCancelledConfirmation(subscription.user,  subscription?.tier?.name ?? '') : null,
+    ])
+  }
+
+
+  static async handleStripeCancelledSubscription(stripeSubscriptionId: string) {
+    await SubscriptionService.onCancelSubscription(stripeSubscriptionId);
+  }
+
   // Cancel or destroy a subscription
   static async cancelSubscription(subscriptionId: string) {
     const subscription = await prisma.subscription.findUnique({
@@ -200,24 +244,7 @@ class SubscriptionService {
     if (!subscription) throw new Error('Subscription not found');
 
     const stripeSubscription = await StripeService.cancelSubscription(subscription.stripeSubscriptionId);
-
-    await prisma.subscription.update({
-      data: {
-        state: SubscriptionStates.cancelled,
-        cancelledAt: new Date(),
-        activeUntil: new Date(stripeSubscription.current_period_end * 1000),
-      },
-      where: {
-        id: subscriptionId
-      }
-    });
-    
-    await Promise.all([
-      // inform the tier owner
-      subscription?.tier?.user ? EmailService.subscriptionCancelledInfo(subscription?.tier?.user, subscription.user, subscription?.tier?.name) : null,
-      // inform the customer
-      subscription.user ? EmailService.subscriptionCancelledConfirmation(subscription.user,  subscription?.tier?.name ?? '') : null,
-    ])
+    await SubscriptionService.onCancelSubscription(subscription.stripeSubscriptionId);
   }
 
   static async updateSubscription(subscriptionId: string, attributes: Partial<SubscriptionSql>) {

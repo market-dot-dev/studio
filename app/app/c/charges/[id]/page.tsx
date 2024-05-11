@@ -59,10 +59,14 @@ export default async function ChargeDetail({ params }: { params: { id: string } 
       <div className="flex flex-col space-y-6">
         <PageHeading title={`${maintainer!.name}: ${tier?.name}`} />
         <div>{ tier?.description }</div>
+        <div>Cost: ${tier.price}</div>
+        <div>Created: {new Date(charge.createdAt).toLocaleDateString()}</div>
+        <div>Charge status: {charge.stripeStatus}</div>
+        { charge.error && <div>Error: {charge.error}</div> }
         <div className="flex flex-col space-y-2">
           { features.map(f => <FeatureAction feature={f} key={f.id} />) }
         </div>
-        <div>Paid ${tier.price} on {new Date(charge.createdAt).toLocaleDateString()}</div>
+        
       </div>
     </div>
   );

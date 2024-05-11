@@ -19,6 +19,18 @@ class ChargeService {
     });
   }
 
+  static async findChargeByStripeId(stripeChargeId: string): Promise<Charge | null> {
+    return prisma.charge.findUnique({
+      where: {
+        stripeChargeId: stripeChargeId,
+      },
+      include: {
+        user: true,
+        tier: true,
+      },
+    });
+  }
+
   static async chargeCount(tierId: string, revision?: number): Promise<number> {
     return prisma.charge.count({
       where: {
@@ -27,8 +39,9 @@ class ChargeService {
       }
     });
   }
+  
 
-  static async update(chargeId: string, data: { stripeStatus: string }): Promise<Charge> {
+  static async update(chargeId: string, data: { stripeStatus?: string, error?: string }): Promise<Charge> {
     return prisma.charge.update({
       where: {
         id: chargeId,

@@ -341,7 +341,6 @@ class StripeService {
     });
 
     return confirmedPaymentIntent;
-
   }
 
   async updateSubscription(subscriptionId: string, priceId: string) {

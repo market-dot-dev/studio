@@ -23,3 +23,11 @@ objects:
     trialDays: 60
     cadence: 'month'
     priceAnnual: 50000
+  - name: 'Buy me a beer'
+    description: 'Enterprise tier with premium support'
+    tagline: 'Great for thirsty programmers'
+    price: 5
+    applicationFeePercent: 0
+    trialDays: 0
+    cadence: 'once'
+    priceAnnual: 0
