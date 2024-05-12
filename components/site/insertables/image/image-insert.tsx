@@ -184,12 +184,12 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     )
 }
 
-export default function ImageInsert({ insertAtCursor }: { insertAtCursor: (prop: any) => void }) {
+export default function ImageInsert({ insertAtCursor, children }: { insertAtCursor: (prop: any) => void, children: any }) {
     const { show, hide } = useModal();
     const showModal = () => {
         show(<ImageInsertModal insertAtCursor={insertAtCursor} hide={hide} />);
     };
     return (
-        <div className="p-2 py-4" onClick={showModal}>Image</div>
+        <div className="p-2 py-4" onClick={showModal}>{children}</div>
     )
 }
