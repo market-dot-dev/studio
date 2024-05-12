@@ -1,6 +1,6 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { Bold, Card, Badge, SearchSelect, SearchSelectItem, Button, Text, NumberInput, Switch, SelectItem, Select, TextInput } from "@tremor/react";
+import { Bold, Card, Badge, Button, Text, SelectItem, Select, TextInput } from "@tremor/react";
 import Link from "next/link";
 import { Search, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
@@ -44,7 +44,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
     const [isSearching, setIsSearching] = useState<boolean>(false);
     
-    const [totalCount, setTotalCount] = useState<number>(0);
+    const [totalCount, setTotalCount] = useState<number>(1);
     
     // lookup count is used to determine if the lookup count has changed, in order to invalidate the cache
     const [lookupCount, setLookupCount] = useState<number>(0);
@@ -156,7 +156,6 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
                 const newLookupCount = res.data.dependent_owners_count ?? 0;
                 setLookupCount(newLookupCount);
-                setTotalCount(newLookupCount)
                 
 
                 if (initial) {
@@ -306,7 +305,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             return;
         }
         
-        getFacets(radarId, filters.kind).then((res: any) => {
+        getFacets(radarId, filters).then((res: any) => {
             if (res.error) {
                 console.error('Failed to get facets:', res.error);
                 return;
@@ -315,7 +314,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             setFacets(res.data);
         });
 
-    }, [radarId, filters.kind])
+    }, [radarId, filters])
 
     const filterBadges = Object.keys(filters).map((key: string) => {
         if (filters[key as keyof FiltersState]) {
