@@ -8,7 +8,7 @@ import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 import renderElement from "./site/page-renderer";
 import { useRouter } from "next/navigation";
 
-import { Flex, Grid, Col, Badge, Callout, Button, Bold, TextInput } from "@tremor/react";
+import { Flex, Grid, Col, Badge, Callout, Button, Bold, TextInput, Card } from "@tremor/react";
 import DashboardCard from "./common/dashboard-card";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import {
@@ -505,19 +505,21 @@ export default function PageEditor({
           </DashboardCard>
         </Col>
         <Col numColSpanMd={12}>
-        <DashboardCard>
+        <Card className="p-0">
             <TabGroup
               defaultIndex={PREVIEW_INDEX}
               onIndexChange={(index) => setIsPreview(index === PREVIEW_INDEX)}
             >
-              <TabList variant="solid" className="font-bold">
-                <Tab className={isPreview ? "bg-white" : ""} icon={EyeOpenIcon}>
-                  Preview
-                </Tab>
-                <Tab className={isPreview ? "" : "bg-white"} icon={CodeIcon}>
-                  Code
-                </Tab>
-              </TabList>
+              <div className="p-4 border border-x-0 border-t-0">
+                <TabList variant="solid" className="font-bold">
+                  <Tab className={isPreview ? "bg-white" : ""} icon={EyeOpenIcon}>
+                    Preview
+                  </Tab>
+                  <Tab className={isPreview ? "" : "bg-white"} icon={CodeIcon}>
+                    Code
+                  </Tab>
+                </TabList>
+              </div>
               <TabPanels>
                 <TabPanel>
                   <PreviewFrame>
@@ -533,8 +535,8 @@ export default function PageEditor({
                       : null}
                   </PreviewFrame>
                 </TabPanel>
-                <TabPanel>
-                  <Grid numItems={4} className="gap-4">
+                <TabPanel className="mt-0">
+                  <Grid numItems={4} className="gap-4 pt-0">
                     <Col numColSpan={1}>
                       <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
                     </Col>
@@ -562,7 +564,7 @@ export default function PageEditor({
                 </TabPanel>
               </TabPanels>
             </TabGroup>
-          </DashboardCard>
+          </Card>
         </Col>
       </Grid>
     </>
@@ -583,7 +585,7 @@ function PreviewFrame({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="w-full overflow-x-hidden" ref={wrappingDiv}>
-      <div className="w-[1600px] border" style={{transform: `scale(${scale})`, transformOrigin: 'top left'}}>
+      <div className="w-[1600px]" style={{transform: `scale(${scale})`, transformOrigin: 'top left'}}>
         {children}
       </div>
     </div>

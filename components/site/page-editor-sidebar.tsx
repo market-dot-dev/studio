@@ -47,7 +47,7 @@ export default function PageEditorSidebar({editorRef, monacoRef}: {editorRef: an
     }, [editorRef, monacoRef]);
 
     return (
-        <>
+        <div className="pl-4">
           <div className="text-md font-bold py-2">
             <span>Add Content</span>
           </div>
@@ -62,6 +62,6 @@ export default function PageEditorSidebar({editorRef, monacoRef}: {editorRef: an
               <ThemesPanel insertAtCursor={insertAtCursor} />
             </div>
           </div>      
-        </>
+        </div>
     )
 }
