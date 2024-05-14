@@ -325,14 +325,14 @@ class RepoService {
 
     let radarId = null;
     try {
-      const repoLookupResult = await LeadsService.lookup(repoDetails.html_url);
-      radarId = repoLookupResult.data.id;
+      const repoSetupResult = await LeadsService.setup(repoDetails.html_url);
+      radarId = repoSetupResult.data.id;
     } catch (error) {
-      console.error('Failed to lookup repository:', error);
+      console.error('Failed to setup repository:', error);
     }
 
     if (!radarId) {
-      throw new Error('Failed to lookup repository.');
+      throw new Error('Failed to setup repository.');
     }
 
     // Insert the repo information into the database
