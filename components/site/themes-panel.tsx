@@ -1,6 +1,4 @@
-
 import { useCallback } from "react";
-
 import PreviewSection from "./preview-section";
 import siteTemplates from "@/lib/constants/site-templates";
 
@@ -14,18 +12,17 @@ ${section.template}
 `);
     }, [insertAtCursor]);
 
-
     return (
         <div className="flex flex-col gap-6">
             { siteTemplates.map((section, index) => (
                 <div key={index} className="p-0 cursor-pointer text-sm align-middle text-center shadow-sm rounded-md border">
-                    <div className="w-full h-full overflow-hidden rounded-md relative"
+                    <div className="relative w-full h-full overflow-hidden rounded-md group"
                         onClick={() => {
                             insertSection(section)
                         }}
                         >
                             <PreviewSection content={section.template} />
-                        <div className="p-2 absolute bottom-0 left-0 w-full bg-black bg-opacity-70 text-white font-bold rounded-b-md">
+                        <div className="absolute bottom-0 left-0 w-full p-2 text-white font-bold bg-black bg-opacity-50 rounded-b-md transform translate-y-full opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
                             { section.name }
                         </div>
                     </div>
@@ -34,4 +31,3 @@ ${section.template}
         </div>
     )
 }
-

@@ -11,3 +11,9 @@ export default [
     SectionImageText,
     SectionTextImage,
 ]
+
+export const defaultPageTemplate = 
+    SectionHero.template +
+    SectionTiers.template +
+    SectionImageText.template +
+    SectionCTA.template;

@@ -1,4 +1,9 @@
-import componentsMap from '@/components/site/insertables';
+import allComponents from '@/components/site/insertables';
+import { deprecatedComponents } from '@/components/site/insertables';
+const componentsMap = {
+    ...allComponents,
+    ...deprecatedComponents
+} as any;
 
 type DynamicComponentProps = {
     tag: keyof JSX.IntrinsicElements;
