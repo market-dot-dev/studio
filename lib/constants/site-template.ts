@@ -1,4 +1,4 @@
-import { defaultPageTemplate } from "./site-templates";
+import { defaultPageTemplate, newPageTemplate as defaultBlankPageTemplate } from "./site-templates";
 
 export const siteName = 'Your Site';
 export const siteDescription = 'Your Site Description';
@@ -8,3 +8,4 @@ export const homepageTitle = 'Welcome';
 
 
 export const homepageTemplate = defaultPageTemplate;
+export const newPageTemplate = defaultBlankPageTemplate;

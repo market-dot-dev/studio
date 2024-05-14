@@ -17,3 +17,8 @@ export const defaultPageTemplate =
     SectionTiers.template +
     SectionImageText.template +
     SectionCTA.template;
+
+export const newPageTemplate =
+    SectionHero.template +
+    SectionCTA.template
+    
