@@ -144,6 +144,20 @@ class LeadsService {
         }
     }
 
+    static async setup(repoUrl: string) {
+        try {
+            const response = await fetch(`${radarAPIEndpoint}repositories/setup?url=${repoUrl}`, { headers: LeadsService.commonHeaders });
+            return {
+                data: await response.json()
+            }
+        } catch (error: any) {
+            return {
+                error: 'Failed to setup repository'
+            }
+        }
+    }
+
+
     static async getDependentOwners(radarId: number, page: number, perPage: number, filters: FiltersState) {
         
         let url = `${radarAPIEndpoint}repositories/${radarId}/dependent_owners?per_page=${perPage}&page=${page}`;
