@@ -24,7 +24,8 @@ import {
 	TableRow,
 	TableCell,
 } from "@tremor/react";
-import useCurrentSession from '@/app/hooks/use-current-session';
+// import useCurrentSession from '@/app/hooks/use-current-session';
+import { useSession } from '@/app/hooks/session-context';
 import LinkButton from '../common/link-button';
 import { getRootUrl } from '@/app/services/domain-service';
 import { findUser } from '@/app/services/UserService';
@@ -190,7 +191,8 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 	const [errors, setErrors] = useState<any>({});
 	const [isSaving, setIsSaving] = useState(false);
 
-	const { isAdmin } = useCurrentSession();
+	// const { isAdmin } = useCurrentSession();
+	const { isAdmin } = useSession();
 
 	const handleInputChange = (
 		name: string,

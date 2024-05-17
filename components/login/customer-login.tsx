@@ -1,11 +1,13 @@
 'use client'
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
 import { TextInput, Button, Text } from "@tremor/react";
 import { useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
 import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
+// import useCurrentSession from "@/app/hooks/use-current-session";
+import { useSession } from '@/app/hooks/session-context';
 
 // usign a local variable to avoid state update delays
 let handlingVerification = false;
@@ -15,8 +17,11 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [verificationEmail, setVerificationEmail] = useState<string>('');
-    const { data: session, status, update } = useSession();
-    const { user } = session || {};
+    // const { data: session, status, update } = useSession();
+    // const { user } = session || {};
+    // const { currentUser: user, refreshSession } = useCurrentSession();
+    const { currentUser: user, refreshSession } = useSession();
+    
     
     const [isSignUp, setIsSignUp] = useState(signup); 
     const [name, setName] = useState<string>('');
@@ -27,7 +32,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
         setIsSubmitting(true);
         try {
             await signOut({ redirect: false });
-            await update();
+            await refreshSession();
             setIsSubmitted(false);
             setIsSignUp(false);
 
@@ -131,7 +136,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                 if(redirect) {
                     router.push( redirect )
                 } else {
-                    await update();
+                    await refreshSession();
                     setError(null);
                 }
             } else {
