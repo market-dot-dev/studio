@@ -6,6 +6,7 @@ const useCurrentSession = () => {
   const currentUser = data?.user as SessionUser;
   
   const isSignedIn = () => status === "authenticated";
+  const notSignedIn = () => status === "unauthenticated";
   const isAdmin = () => isSignedIn() && (currentUser?.roleId === "admin");
   const isCustomer = () => isSignedIn() && (currentUser?.roleId === "customer");
 
@@ -14,7 +15,7 @@ const useCurrentSession = () => {
     await update({ force: true });
   }
 
-  return { currentUser, refreshSession, isSignedIn, isAdmin } as const;
+  return { currentUser, refreshSession, isSignedIn, isAdmin, notSignedIn } as const;
 }
 
 export default useCurrentSession;

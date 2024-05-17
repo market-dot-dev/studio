@@ -3,22 +3,25 @@ import { Flex, Card, TextInput, Button } from "@tremor/react";
 import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
+import useCurrentSession from "@/app/hooks/use-current-session";
 
 export default function GeneralSettings({ user  }: {user : Partial<User> }) {
     const [isSaving, setIsSaving] = useState(false);
     const [ userData, setUserData ] = useState<Partial<User>>(user);
+    const { refreshSession, currentUser, isSignedIn } = useCurrentSession();
 
     const saveChanges = useCallback( async () => {
         setIsSaving(true);
         try {
             await updateCurrentUser(userData);
+            await refreshSession();
         } catch (error) {
             console.log(error);
         } finally {
             setIsSaving(false);
         }
 
-    }, [userData])
+    }, [refreshSession, userData])
 
     return (
         <>
