@@ -174,7 +174,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
     if (selectedService) {
       const feature = featuresList.find((f) => f.serviceId === selectedService.id);
       show(
-        <div className="flex flex-col gap-4bg-white p-6 border bg-white shadow-2xl w-full md:w-2/3 lg:w-1/2">
+        <div className="flex flex-col gap-4bg-white p-6 border bg-white shadow-2xl w-full md:w-2/3 lg:w-1/2 rounded-md">
           <div className="flex justify-between items-center">
             <div className="font-bold mb-2">Details</div>
             { feature?.isEnabled ? <Badge size="xs" color="green">Enabled</Badge> : null }
