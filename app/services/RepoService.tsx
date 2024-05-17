@@ -275,6 +275,9 @@ class RepoService {
       where: {
         userId,
       },
+      orderBy: {
+        createdAt: 'asc'
+      }
     });
   }
 

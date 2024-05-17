@@ -23,18 +23,7 @@ class LeadsService {
         'Authorization': `Token token="${radarAPIKey}"`
     };
 
-    static async getDependentRepostories() {
-        // Add your logic here
-    }
-
-    static async getDependentUsers(id: string) {
-        // Add your logic here
-    }
-
-    static async getDependentPackages() {
-        // Add your logic here
-    }
-
+    
     static async addLeadToShortlist(leadData: any) {
       
         const userId = await SessionService.getCurrentUserId();
@@ -157,6 +146,47 @@ class LeadsService {
         }
     }
 
+    static async getPackages(radarId: number) {
+        try {
+            const response = await fetch(`${radarAPIEndpoint}repositories/${radarId}/packages`, { headers: LeadsService.commonHeaders });
+            return {
+                data: await response.json()
+            }
+        } catch (error: any) {
+            return {
+                error: 'Failed to get packages'
+            }
+        }
+    }
+
+    static async getDependentPackages(packageId: number, filters?: any) {
+        
+        const queryParams = Object.keys(filters).map((key) => `${key}=${filters[key]}`).join('&');
+
+        try {
+            const response = await fetch(`${radarAPIEndpoint}packages/${packageId}/dependent_packages${ queryParams ? '?'+queryParams : ''}`, { headers: LeadsService.commonHeaders });
+            return {
+                data: await response.json()
+            }
+        } catch (error: any) {
+            return {
+                error: 'Failed to get dependent packages'
+            }
+        }
+    }
+
+    static async getDependentPackagesFacets(packageId: number) {
+        try {
+            const response = await fetch(`${radarAPIEndpoint}packages/${packageId}/dependent_packages/facets`, { headers: LeadsService.commonHeaders });
+            return {
+                data: await response.json()
+            }
+        } catch (error: any) {
+            return {
+                error: 'Failed to get dependent packages facets'
+            }
+        }
+    }
 
     static async getDependentOwners(radarId: number, page: number, perPage: number, filters: FiltersState) {
         
@@ -188,4 +218,4 @@ class LeadsService {
 }
 
 export default LeadsService;
-export const { getDependentOwners, addLeadToShortlist, getShortlistedLeads, getShortlistedLeadsKeysList, lookup, removeLeadFromShortlist, getFacets } = LeadsService;
+export const { getDependentOwners, addLeadToShortlist, getShortlistedLeads, getShortlistedLeadsKeysList, lookup, removeLeadFromShortlist, getFacets, getDependentPackages, getDependentPackagesFacets, getPackages } = LeadsService;

@@ -3,6 +3,7 @@ import LatestCustomersList from "@/components/dashboard/latest-customer-list";
 import OnboardingGuide from "@/components/onboarding/onboarding-guide";
 import PageHeading from "@/components/common/page-heading";
 import SessionService from "@/app/services/SessionService";
+import DependentPackages from "@/components/packages/dependent-packages";
 
 export default async function Overview() {
   const user = await SessionService.getSessionUser();
@@ -18,6 +19,7 @@ export default async function Overview() {
           <PageHeading title={title} />
           <div className="flex flex-col gap-8">
             <LatestCustomersList numRecords={3} previewMode={true} />
+            <DependentPackages />
             <DashboardCharts />
           </div>
         </div>
