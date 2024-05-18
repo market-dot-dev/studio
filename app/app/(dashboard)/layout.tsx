@@ -24,9 +24,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       <SessionRefresher />
       <div>
         <Nav siteId={site?.id ?? null} roleId={user.roleId || 'anonymous'}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <Profile />
-          </Suspense>
+          <Profile />
         </Nav>
         <div className="min-h-screen sm:pl-60">
           <Flex alignItems="stretch" className="w-full">

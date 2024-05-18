@@ -1,13 +1,20 @@
-import { getSession } from "@/lib/auth";
+'use client';
+
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import LogoutButton from "./logout-button";
+import useCurrentSession from "@/app/hooks/use-current-session";
 
-export default async function Profile() {
-  const session = await getSession();
-  if (!session?.user) {
+export default function Profile() {
+  const { currentUser, isNotSignedIn } = useCurrentSession();
+
+  if (isNotSignedIn()) {
     redirect("/login");
+  }
+
+  if (!currentUser) {
+    return null;
   }
 
   return (
@@ -19,19 +26,19 @@ export default async function Profile() {
         >
           <Image
             src={
-              session.user.image ??
-              `https://avatar.vercel.sh/${session.user.id}`
+              currentUser.image ??
+              `https://avatar.vercel.sh/${currentUser.id}`
             }
             width={40}
             height={40}
-            alt={session.user.name ?? "User avatar"}
+            alt={currentUser.name ?? "User avatar"}
             className="h-6 w-6 rounded-full"
           />
           <span className="truncate text-sm font-medium">
-            {session.user.name}
+            {currentUser.name}
           </span>
         </Link>
-        <LogoutButton redirect={ session.user.roleId === 'maintainer' ? '/login' : '/customer-login'} />
+        <LogoutButton redirect={ currentUser.roleId === 'maintainer' ? '/login' : '/customer-login'} />
       </div>
       
     </>
