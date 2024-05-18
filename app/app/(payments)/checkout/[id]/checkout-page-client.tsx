@@ -1,0 +1,166 @@
+"use client";
+
+import { Accordion, AccordionBody, AccordionHeader, Badge, Flex } from "@tremor/react";
+import RegistrationSection from "./registration-section";
+import useUser from "@/app/hooks/use-user";
+import useFeatures from "@/app/hooks/use-features";
+import TierFeatureList from "@/components/features/tier-feature-list";
+import { Text, Bold } from "@tremor/react";
+
+import { useSearchParams } from 'next/navigation';
+
+interface QueryParams {
+  [key: string]: string | string[] | undefined;
+}
+
+const checkoutCurrency = "USD";
+const projectDescriptionDefault = "";
+const pathToDefaultMSA = "https://www.gitwallet.co/legal/standard-msa";
+
+const renderSectionHeading = (text: string) => {
+  return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
+};
+
+import Image from "next/image";
+import Tier from "@/app/models/Tier";
+import { Feature, User } from "@prisma/client";
+
+const TierNotAvailable = () => {
+  return (
+    <div className="mt-20 flex flex-col items-center space-x-4">
+      <h1 className="font-cal text-4xl">404</h1>
+      <Image
+        alt="tier not active"
+        src="https://illustrations.popsy.co/gray/falling.svg"
+        width={400}
+        height={400}
+      />
+      <p className="text-lg text-stone-500">
+        Tier not available
+      </p>
+    </div>
+  );
+}
+
+
+const SkeletonLoader = ({ className }: { className?: string }) => (
+  <div className={`animate-pulse bg-slate-300 ${className}`}></div>
+);
+
+const CheckoutPage = ({ id, tier, maintainer, features, isSubscribed }: { id: string, tier: Tier, maintainer: User, features: Feature[], isSubscribed: boolean }) => {
+  const searchParams = useSearchParams();
+  const queryParams: QueryParams = Object.fromEntries(searchParams.entries());
+  const isAnnual = queryParams.annual === 'true';
+
+  const checkoutProject = maintainer?.projectName || maintainer?.name;
+  const projectDescription = maintainer?.projectDescription || projectDescriptionDefault;
+  const checkoutPrice = isAnnual ? tier?.priceAnnual : tier?.price;
+  const checkoutTier = tier?.name;
+  const checkoutCadence = isAnnual ? 'year' : tier?.cadence;
+  const trialDays = tier?.trialDays || 0;
+  const trialOffered = trialDays > 0;
+
+  if(tier?.id && !tier?.published) {
+    return TierNotAvailable();
+  }
+
+  return (
+    <div className="flex min-h-screen flex-col md:flex-row">
+      {/* Left Column */}
+      <div
+        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 p-8 text-slate-50 md:fixed md:w-1/2 lg:py-32 xl:px-32"
+        style={{ backgroundImage: "url(/voronoi.png)" }}
+      >
+        <div className="overflow-y-auto">
+          <div className="w-7/8 lg:w-5/6">
+            {!maintainer ?
+              <Flex flexDirection="col" alignItems="start" className='gap-10 mb-6 opacity-50'>
+                <SkeletonLoader className="h-6 w-3/4 rounded-xl" />
+                <Flex flexDirection="col" alignItems="start" className='gap-2'>
+                  <SkeletonLoader className="h-4 w-full rounded-full" />
+                  <SkeletonLoader className="h-4 w-1/2 rounded-full" />
+                </Flex>
+              </Flex>
+              :
+              <>
+                <h1 className="mb-8 text-4xl font-semibold">{checkoutProject}</h1>
+                <p className="mb-8 text-xl font-extralight leading-6">
+                  {projectDescription}
+                </p>
+              </>
+            }
+            <div></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Right Column */}
+      <div className="ml-auto w-full overflow-y-auto bg-slate-100 p-8 text-slate-800 md:w-1/2 md:p-16">
+        <section className="w-7/8 mb-8 lg:w-5/6">
+          {!tier ?
+            <div className="opacity-50">
+              <SkeletonLoader className="h-4 w-3/5 rounded-full leading-6 mb-2" />
+              <SkeletonLoader className="h-4 w-1/2 rounded-full leading-6 mb-4" />
+            </div>
+            :
+            <div>
+              <div className="mb-2 text-lg font-medium leading-6">
+                <Bold>{checkoutProject}: {checkoutTier} {isAnnual ? `(annual)` : ''}</Bold>
+              </div>
+              <div className="mb-4 leading-6">
+                <Text>
+                  {checkoutCurrency + " " + checkoutPrice} {checkoutCadence !== 'once' ? `per ${checkoutCadence}` : ''}
+                  { trialOffered && <>&nbsp;after {trialDays}d free trial</> }
+                </Text>
+              </div>
+            </div>
+          }
+
+          {!features ?
+            <SkeletonLoader className="h-8 w-full rounded-xl my-2" /> 
+            :
+            <Accordion className="my-2">
+              <AccordionHeader className="my-0 py-1">
+                Expand for Tier Details
+              </AccordionHeader>
+              <AccordionBody>
+                <TierFeatureList features={features || []} />
+              </AccordionBody>
+            </Accordion>
+          }
+
+          {/* accept terms of service */}
+          <div className="flex flex-row items-center gap-2">
+            {!features ?
+              <SkeletonLoader className="h-4 w-3/4 rounded-full mb-4" /> :
+
+              <Text className="mb-4 leading-6">
+                {checkoutProject} uses the{" "}
+                <a href={pathToDefaultMSA} className="underline" target="_blank">
+                  Standard Gitwallet MSA
+                </a>
+                .
+              </Text>
+            }
+          </div>
+        </section>
+
+        {!tier ? 
+          <>
+            <Flex flexDirection="col" alignItems="start" className='gap-12 opacity-50'>
+              <SkeletonLoader className="h-16 w-5/6 rounded-xl" />
+              <SkeletonLoader className="h-36 w-5/6 rounded-xl" />
+              <SkeletonLoader className="h-12 w-5/6 rounded-xl" />
+            </Flex>
+
+          </> :
+          <>
+            {tier && maintainer && <RegistrationSection tier={tier} maintainer={maintainer} annual={isAnnual} />}
+          </>
+        }
+      </div>
+    </div>
+  );
+}
+
+export default CheckoutPage;

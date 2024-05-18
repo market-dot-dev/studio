@@ -30,7 +30,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
   maintainer: User;
   annual?: boolean;
 }) => {
-  const { currentUser: user, refreshSession } = useCurrentSession();
+  const { currentUser: user } = useCurrentSession();
   const userId = user?.id;
   const tierId = tier?.id;
   const checkoutPrice = annual ? tier?.priceAnnual : tier?.price;
