@@ -92,8 +92,8 @@ async function customMiddleware(req: NextRequest) {
   // app.gitwallet.co
   if (reservedSubdomain === 'app' || DomainService.isVercelPreview(req)) {
     // if customer, then lock to /app/c/
-    if(roleId === 'customer' ) {
-      return rewrite(`/app/c${path}`, req.url);
+    if(roleId === 'customer') {
+        return rewrite(`/app/c${path}`, req.url);
     } else {
       if(url.pathname.startsWith('/charges') || url.pathname.startsWith('/subscriptions')) {
         return NextResponse.redirect(

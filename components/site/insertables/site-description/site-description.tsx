@@ -1,5 +1,5 @@
 export default function SiteDescription({site, page}: { site : any, page : any}) {
-    const lines = site?.user?.projectDescription.split('\n') ?? [];
+    const lines = (site?.user?.projectDescription || '').split('\n') ?? [];
     const html = lines.join('<br />');
     
     return (

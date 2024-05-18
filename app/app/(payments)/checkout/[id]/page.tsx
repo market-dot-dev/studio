@@ -9,12 +9,10 @@ import TierFeatureList from "@/components/features/tier-feature-list";
 import { Text, Bold } from "@tremor/react";
 
 import { useSearchParams } from 'next/navigation';
-import NotFound from "@/app/maintainer-site/[domain]/[slug]/not-found";
 
 interface QueryParams {
   [key: string]: string | string[] | undefined;
 }
-
 
 const checkoutCurrency = "USD";
 const projectDescriptionDefault = "";
