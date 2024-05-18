@@ -6,8 +6,6 @@ import { useRouter } from 'next/navigation'
 import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
 import useCurrentSession from "@/app/hooks/use-current-session";
-import { SessionUser } from "@/app/models/Session";
-import { getCurrentSessionUser } from "@/app/services/UserService";
 
 // usign a local variable to avoid state update delays
 
