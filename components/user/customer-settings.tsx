@@ -3,12 +3,11 @@ import { Flex, Card, TextInput, Button } from "@tremor/react";
 import { User } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
-// import useCurrentSession from "@/app/hooks/use-current-session";
-import { useSession } from '@/app/hooks/session-context';
+import useCurrentSession from "@/app/hooks/use-current-session";
 
 export default function CustomerSettings() {
-    // const { currentUser, refreshSession } = useCurrentSession();
-    const { currentUser, refreshSession } = useSession();
+    const { currentUser, refreshSession } = useCurrentSession();
+    // const { currentUser, refreshSession } = useSession();
     type UserAttrs = Pick<User, 'name' | 'email' | 'company'>;
 
     const [isSaving, setIsSaving] = useState(false);

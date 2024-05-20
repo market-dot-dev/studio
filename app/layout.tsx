@@ -5,7 +5,7 @@ import { Providers } from "./providers";
 import { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import '@radix-ui/themes/styles.css';
-
+import { getServerSession } from "next-auth/next";
 
 const title =
   "Gitwallet";
@@ -32,11 +32,13 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://gitwallet.co"),
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
+  const session = await getServerSession();
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -44,8 +46,8 @@ export default function RootLayout({
         {/* <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script> */}
       </head>
       <body className={cn(cal.variable, inter.variable)}>
-        <Providers>
-          {children}
+        <Providers session={session}>
+            {children}
           <Analytics />
         </Providers>
       </body>

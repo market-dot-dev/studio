@@ -1,13 +1,12 @@
 "use client";
 
-// import useCurrentSession from "@/app/hooks/use-current-session";
-import { useSession } from '@/app/hooks/session-context';
+import useCurrentSession from "@/app/hooks/use-current-session";
+import { useSession } from "next-auth/react";
 import PageHeading from "@/components/common/page-heading";
 import { Button, Card } from "@tremor/react";
 
 export default function Page() {
-  // const { refreshSession, currentUser, isSignedIn } = useCurrentSession();
-  const { refreshSession, currentUser, isSignedIn } = useSession();
+  const { refreshSession, currentUser, isSignedIn } = useCurrentSession();
 
   if (isSignedIn()) {
     return (

@@ -1,29 +1,28 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { SessionUser } from '../models/Session';
-import { getCurrentSessionUser } from '../services/UserService';
+import { getSession } from 'next-auth/react';
 
 interface SessionContextType {
   currentUser: SessionUser | null;
   refreshSession: () => void;
-  isSignedIn: () => boolean;
-  isAdmin: () => boolean;
-  isCustomer: () => boolean;
 }
 
 const SessionContext = createContext<SessionContextType | undefined>(undefined);
 
-export const SessionProvider = ({ children } : {children: any}) => {
+export const ProvisionalSessionProvider = ({ children } : {children: any}) => {
   const [currentUser, setCurrentUser] = useState<SessionUser | null>(null);
 
-  const isSignedIn = () => currentUser !== null;
-  const isAdmin = () => isSignedIn() && currentUser?.roleId === 'admin';
-  const isCustomer = () => isSignedIn() && currentUser?.roleId === 'customer';
 
   const refreshSession = async () => {
     console.log('Refreshing session...');
-    getCurrentSessionUser().then((user) => {
-      setCurrentUser(user);
+    getSession().then((session) => {
+      if (session?.user) {
+          setCurrentUser(session.user as any);
+      } else {
+          setCurrentUser(null);
+      }
     });
+    
   };
 
   useEffect(() => {
@@ -32,7 +31,7 @@ export const SessionProvider = ({ children } : {children: any}) => {
 
   return (
     <SessionContext.Provider
-      value={{ currentUser, refreshSession, isSignedIn, isAdmin, isCustomer }}
+      value={{ currentUser, refreshSession }}
     >
       {children}
     </SessionContext.Provider>

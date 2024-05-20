@@ -5,8 +5,7 @@ import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
 import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
-// import useCurrentSession from "@/app/hooks/use-current-session";
-import { useSession } from '@/app/hooks/session-context';
+import useCurrentSession from '@/app/hooks/use-current-session';
 
 // usign a local variable to avoid state update delays
 
@@ -17,10 +16,10 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [verificationEmail, setVerificationEmail] = useState<string>('');
-    // const { data: session, status, update } = useSession();
-    // const { user } = session || {};
-    // const { currentUser: user, refreshSession } = useCurrentSession();
-    const { currentUser: user, refreshSession } = useSession();
+    
+    // const { currentUser, refreshSession } = useSession();
+    
+    const { currentUser, refreshSession } = useCurrentSession();
     
     
     const [isSignUp, setIsSignUp] = useState(signup); 
@@ -58,7 +57,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
         }
 
         setIsSubmitting(true);
-
+        setError(null)
         // check if user exists
         const exists = await userExists(verificationEmail);
 
@@ -129,19 +128,21 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
         setIsSubmitting(true);
 
         const verificationUrl = `/api/auth/callback/email?email=${encodeURIComponent(verificationEmail)}&token=${verificationCode}`;
-
-        fetch(verificationUrl, { redirect: 'manual' }).then(async (res) => {
-            if(res.status === 200 || res.status === 302 || res.status === 0) {
-                if(redirect) {
-                    router.push( redirect )
-                } else {
-                    await refreshSession();
-                }
-                setError(null);
-            } else {
-                console.log(`Error verifying code. Please try again. ${res.status}`);
-                console.log(res);
+        
+        fetch(verificationUrl).then(async (res) => {
+            
+            // 0 might be the case, if the authentication is happening on a different subdomain than app
+            if(res.status !== 0 && res.status !== 200) { 
+                throw new Error('Invalid code');
             }
+
+            if(redirect) {
+                router.push( redirect )
+            } else {
+                await refreshSession();
+            }
+            setError(null);
+            
         }).catch(err => {
             console.error('Error verifying code:', err);
             setError('Error verifying code. Please try again.');

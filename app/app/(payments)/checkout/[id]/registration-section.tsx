@@ -15,8 +15,7 @@ import { isSubscribedByTierId } from '@/app/services/SubscriptionService';
 import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
-// import useCurrentSession from "@/app/hooks/use-current-session";
-import { useSession } from '@/app/hooks/session-context';
+import useCurrentSession from "@/app/hooks/use-current-session";
 
 const checkoutCurrency = "USD";
 
@@ -31,9 +30,9 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
   maintainer: User;
   annual?: boolean;
 }) => {
-  // const { currentUser: user, refreshSession } = useCurrentSession();
-  const { currentUser: user, refreshSession } = useSession();
-  console.log("user", user)
+  const { currentUser: user, refreshSession } = useCurrentSession();
+  // const { currentUser: user, refreshSession } = useSession();
+  
   const userId = user?.id;
   const tierId = tier?.id;
   const checkoutPrice = annual ? tier?.priceAnnual : tier?.price;

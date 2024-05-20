@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { Card, Button, Text } from '@tremor/react';
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
 import { canBuy, getPaymentMethod, StripeCard } from '@/app/services/StripeService';
-// import useCurrentSession from '@/app/hooks/use-current-session';
-import { useSession } from '@/app/hooks/session-context';
+import useCurrentSession from '@/app/hooks/use-current-session';
 
 interface UserPaymentMethodWidgetProps {
   loading?: boolean;
@@ -16,8 +15,8 @@ interface UserPaymentMethodWidgetProps {
 }
 
 const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintainerUserId, maintainerStripeAccountId }: UserPaymentMethodWidgetProps) => {
-  // const { currentUser: user, refreshSession } = useCurrentSession();
-  const { currentUser: user, refreshSession } = useSession();
+  const { currentUser: user, refreshSession } = useCurrentSession();
+  // const { currentUser: user, refreshSession } = useSession();
 
   const [cardInfo, setCardInfo] = useState<StripeCard>();
   const [invalidCard, setInvalidCard] = useState<boolean>(false);
@@ -36,6 +35,9 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
           });
         }
       });
+    } else {
+      setCardInfo(undefined);
+      setPaymentReady(false);
     }
   }, [user, user?.stripeCustomerIds, user?.stripePaymentMethodIds, maintainerStripeAccountId, maintainerUserId]);
 

@@ -1,11 +1,9 @@
 "use client"
 
-// import useCurrentSession from "@/app/hooks/use-current-session";
-import { useSession } from '@/app/hooks/session-context';
+import useCurrentSession from "@/app/hooks/use-current-session";
 
 export default function DebugPage() {
-  //  const { currentUser, refreshSession, isSignedIn  } = useCurrentSession();
-   const { currentUser, refreshSession, isSignedIn  } = useSession();
+   const { currentUser, refreshSession, isSignedIn  } = useCurrentSession();
     
   return (
       <div className="space-y-12 p-8">
