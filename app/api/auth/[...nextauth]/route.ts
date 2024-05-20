@@ -11,8 +11,12 @@ const handler = async (req: NextRequest, res: NextResponse) => {
     if( req.nextUrl.pathname === '/api/auth/callback/email') {
         
         const referer = req.headers.get('referer') as string;    
+        let subdomain = 'app';
         
-        const subdomain = referer.split('.')[0].split('://')[1];
+        try {
+            subdomain = referer.split('.')[0].split('://')[1];
+        } catch {
+        }
         
         const options = {...authOptions, callbacks: {
             ...authOptions.callbacks,

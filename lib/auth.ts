@@ -31,7 +31,14 @@ export const authOptions: NextAuthOptions = {
       from: process.env.SENDGRID_FROM_EMAIL,
       // the following configuration of EmailProvider makes it use a 6 digit token number instead of a magic link
       maxAge: 5 * 60,
-      generateVerificationToken: async () => Math.floor(100000 + Math.random() * 900000).toString(),
+      generateVerificationToken: async () => {
+        // Gagan: Commenting it out for now because it causes some code validation issues
+        // if(isDevelopment) {
+        //   return "123456";
+        // } else {
+          return Math.floor(100000 + Math.random() * 900000).toString();
+        // }
+      },
       sendVerificationRequest: ({ identifier: email, token }) => {
         const html = `<p>Your verification code for signing in to Gitwallet.co is <strong>${token}</strong></p>`;
         const text = `Your verification code for signing in to Gitwallet.co is ${token}`;

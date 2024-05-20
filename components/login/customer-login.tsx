@@ -1,7 +1,6 @@
 'use client'
-// import { useSession } from "next-auth/react";
 import { TextInput, Button, Text } from "@tremor/react";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
 import { userExists, setSignUp } from "@/app/services/registration-service";
@@ -10,9 +9,10 @@ import OTPInputElement from "./otp-input-element"
 import { useSession } from '@/app/hooks/session-context';
 
 // usign a local variable to avoid state update delays
-let handlingVerification = false;
 
 export function CustomerLoginComponent({ redirect, signup = false } : { redirect?: string, signup?: boolean }) {
+    let handlingVerificationRef = useRef(false);
+
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -106,17 +106,16 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                 setIsSubmitted(true);
             }
             if(res.error) {
+                console.log('res', res)
                 setError('Error submitting form. Please try again.');
             }
         }).catch(err => {
-            
-            console.error('Error signing in:', err);
-            setError('Error submitting form. Please try again.');
+            setError(`There was an error beginning registration. ${err}`);
+            setIsSubmitted(false);
 
         }).finally(() => {
             setIsSubmitting(false);
         });
-
     };
 
     const handleVerification = async (verificationCode: string) => {
@@ -124,45 +123,45 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
         
         if (!verificationEmail || !verificationCode) return;
         
-        if(handlingVerification) return;
-        handlingVerification = true;
+        if(handlingVerificationRef.current || isSubmitting) return;
+        handlingVerificationRef.current = true;
 
         setIsSubmitting(true);
 
-        try {
-            const res = await fetch(`/api/auth/callback/email?email=${encodeURIComponent(verificationEmail)}&token=${verificationCode}`);
-            
-            if(res.status === 200) {
+        const verificationUrl = `/api/auth/callback/email?email=${encodeURIComponent(verificationEmail)}&token=${verificationCode}`;
+
+        fetch(verificationUrl, { redirect: 'manual' }).then(async (res) => {
+            if(res.status === 200 || res.status === 302 || res.status === 0) {
                 if(redirect) {
                     router.push( redirect )
                 } else {
                     await refreshSession();
-                    setError(null);
                 }
+                setError(null);
             } else {
-                setError('Error verifying code. Please try again.');
+                console.log(`Error verifying code. Please try again. ${res.status}`);
+                console.log(res);
             }
-    
-        } catch(err) {
+        }).catch(err => {
             console.error('Error verifying code:', err);
             setError('Error verifying code. Please try again.');
-        } finally {
+        }).finally(() => {
             setIsSubmitting(false);
-            handlingVerification = false;
-        }
-
+            handlingVerificationRef.current = false;
+        });
     }
 
     const toggleSignUp = () => setIsSignUp(!isSignUp);
 
     return (
         <>
+            
             {error ? <div className="flex justify-center w-full text-sm">
                 <p className="text-red-500">{error}</p>
                 </div> : null}
-            {user ? (
+            {currentUser ? (
                 <div className="flex flex-row justify-between w-full">
-                    <Text>You are logged in as {user.name} ({user.email}).</Text>
+                    <Text>You are logged in as {currentUser.name} ({currentUser.email}).</Text>
                     <Button variant="secondary" onClick={handleLogout} loading={isSubmitting} disabled={isSubmitting} className="p-1 h-min">Logout</Button>
                 </div>
             ) : !isSubmitted ? (
