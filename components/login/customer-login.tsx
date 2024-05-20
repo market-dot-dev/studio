@@ -6,8 +6,7 @@ import { useRouter } from 'next/navigation'
 import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
 import useCurrentSession from "@/app/hooks/use-current-session";
-import { SessionUser } from "@/app/models/Session";
-import { getCurrentSessionUser } from "@/app/services/UserService";
+
 
 // usign a local variable to avoid state update delays
 
@@ -103,6 +102,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                 setIsSubmitted(true);
             }
             if(res.error) {
+                console.log('res', res)
                 setError('Error submitting form. Please try again.');
             }
         }).catch(err => {
@@ -128,11 +128,15 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
         fetch(verificationUrl, { redirect: 'manual' }).then(async (res) => {
             if(res.status === 200 || res.status === 302 || res.status === 0) {
-                await signIn('email', {
-                    email: verificationEmail,
-                    redirect: false,
-                })
-                await refreshSession();
+                if(redirect) {
+                    router.push( redirect )
+                } else {
+                    await signIn('email', {
+                        email: verificationEmail,
+                        redirect: false,
+                    })
+                    await refreshSession();
+                }
                 setError(null);
             } else {
                 console.log(`Error verifying code. Please try again. ${res.status}`);
