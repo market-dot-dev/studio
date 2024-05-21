@@ -83,7 +83,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
         <div className="mb-2 text-lg">
           <Bold className="text-gray-800">{checkoutProject}: {checkoutTier} {isAnnual ? `(annual)` : ''}</Bold>
         </div>
-        <div className="mb-4 leading-6">
+        <div className="mb-2 text-lg leading-6">
           <Text>
             {checkoutCurrency + " " + checkoutPrice} {checkoutCadence !== 'once' ? `per ${checkoutCadence}` : ''}
             {trialOffered && <>&nbsp;with {trialDays}d free trial</>}
@@ -126,7 +126,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Left Column */}
       <div
-        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 p-8 text-slate-50 md:fixed md:w-2/5"
+        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 px-8 md:fixed md:w-2/5"
         // style={{ backgroundImage: "url(/voronoi.png)" }}
       >
         <div className="overflow-y-auto">
@@ -141,7 +141,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               </Flex>
               :
               <>
-                <h1 className="mb-8 text-4xl font-semibold">{checkoutProject}</h1>
+                <h1 className="mb-8 text-4xl text-slate-50 font-semibold">{checkoutProject}</h1>
                 {tierInfo}
               </>
             }
