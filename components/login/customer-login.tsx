@@ -28,10 +28,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
         setIsSubmitting(true);
         try {
             await signOut({ redirect: false });
-            await refreshSession();
-            setIsSubmitted(false);
-            setIsSignUp(false);
-
+            window.location.reload();
         } catch(err) {
             console.error('Error logging out:', err);
         } finally {
@@ -126,19 +123,16 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
         const verificationUrl = `/api/auth/callback/email?email=${encodeURIComponent(verificationEmail)}&token=${verificationCode}`;
 
-        fetch(verificationUrl, { redirect: 'manual' }).then(async (res) => {
+        fetch(verificationUrl).then(async (res) => {
             if(res.status === 200 || res.status === 302 || res.status === 0) {
                 if(redirect) {
                     router.push( redirect )
                 } else {
-                    await signIn('email', {
-                        email: verificationEmail,
-                        redirect: false,
-                    })
-                    await refreshSession();
+                    window.location.reload();
                 }
                 setError(null);
             } else {
+                setError(`The code you entered is invalid. Please check your email and try again.`);
                 console.log(`Error verifying code. Please try again. ${res.status}`);
                 console.log(res);
             }
