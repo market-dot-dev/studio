@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Box, Text, TextField, Checkbox } from "@radix-ui/themes";
-import { Button, Bold, TextInput, Card } from "@tremor/react";
+import { Box, Text } from "@radix-ui/themes";
 import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
-import {siteComponents, layoutComponents, textComponents, standardComponents} from "./site/insertables";
+
 import renderElement from "./site/page-renderer";
 import { useRouter } from "next/navigation";
-import type { Insertable } from "./site/insertables";
-import { Flex, Grid, Col, Badge, Callout } from "@tremor/react";
+
+import { Flex, Grid, Col, Badge, Callout, Button, Bold, TextInput, Card } from "@tremor/react";
 import DashboardCard from "./common/dashboard-card";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import {
@@ -18,6 +17,7 @@ import {
   updatePage,
 } from "@/app/services/PageService";
 import { Page, Site } from "@prisma/client";
+import PageEditorSidebar from "./site/page-editor-sidebar";
 
 let debounceTimeout: any;
 
@@ -119,32 +119,7 @@ const DraftSelectBox = ({
   );
 };
 
-function ComponentsBlock({components, insertAtCursor} : { components : Insertable[], insertAtCursor: (prop: string) => void} ) : JSX.Element {
-  return (
-    <Grid numItems={2} className="gap-2 w-full">
-      {Object.values(components).filter((item: any) => !item.hidden).map(
-        (component: Insertable, index: number) => {
-          return (
-            <Col key={index}>
-                <div
-                  className="cursor-pointer bg-gray-200 hover:bg-gray-600 hover:text-white hover:font-bold rounded-md h-full text-xs align-middle text-center">
-                    { component.insert ? <component.insert insertAtCursor={insertAtCursor} /> :
-                      <div className="p-2 py-4" onClick={() => {
-                        insertAtCursor(
-                          `<${component.tag}${component.attributes ? ' ' + Object.keys(component.attributes).map((key) => `${key}="${component.attributes[key]}"`).join(' ') : ''}></${component.tag}>`,
-                        )
-                    }}>
-                      {component.name}
-                    </div>
-                  }
-                </div>
-            </Col>
-          );
-        },
-      )}
-    </Grid>
-  )
-} 
+
 
 export default function PageEditor({
   site,
@@ -164,6 +139,7 @@ export default function PageEditor({
   const [slugVirgin, setSlugVirgin] = useState<boolean>(!data.slug);
 
   const [editorRef, setEditorRef] = useState<any>(null);
+  const [monacoRef, setMonacoRef] = useState<any>(null);
 
   const [inProgress, setInprogress] = useState<boolean>(false);
   const [isMakingHomepage, setIsMakingHomepage] = useState<boolean>(false);
@@ -183,27 +159,11 @@ export default function PageEditor({
   const [slugError, setSlugError] = useState<string | null>(null);
 
   const router = useRouter();
-
+  
   function handleEditorDidMount(editor: any, monaco: any) {
+    setMonacoRef(monaco);
     setEditorRef(editor);
   }
-
-  const insertAtCursor = useCallback(
-    (textToInsert: string) => {
-      if (!editorRef) return;
-
-      const selection = editorRef.getSelection();
-      const id = { major: 1, minor: 1 };
-      const op = {
-        identifier: id,
-        range: selection,
-        text: textToInsert,
-        forceMoveMarkers: true,
-      };
-      editorRef.executeEdits("my-source", [op]);
-    },
-    [editorRef],
-  );
 
   useEffect(() => {
     if (!slugVirgin) return;
@@ -214,8 +174,10 @@ export default function PageEditor({
       .toLowerCase()
       .replace(/ /g, "-")
       .replace(/[^a-z0-9-]/g, "") : "";
-    setData({ ...data, slug });
-    setSlugError(null);
+    
+      setData({ ...data, slug });
+      setSlugError(null);
+
   }, [data.title]);
 
   // useEffect(() => {
@@ -543,75 +505,89 @@ export default function PageEditor({
           </DashboardCard>
         </Col>
         <Col numColSpanMd={12}>
-        <DashboardCard>
+        <Card className="p-0">
             <TabGroup
               defaultIndex={PREVIEW_INDEX}
               onIndexChange={(index) => setIsPreview(index === PREVIEW_INDEX)}
             >
-              <TabList variant="solid" className="font-bold">
-                <Tab className={isPreview ? "bg-white" : ""} icon={EyeOpenIcon}>
-                  Preview
-                </Tab>
-                <Tab className={isPreview ? "" : "bg-white"} icon={CodeIcon}>
-                  Code
-                </Tab>
-              </TabList>
+              <div className="p-4 border border-x-0 border-t-0">
+                <TabList variant="solid" className="font-bold">
+                  <Tab className={isPreview ? "bg-white" : ""} icon={EyeOpenIcon}>
+                    Preview
+                  </Tab>
+                  <Tab className={isPreview ? "" : "bg-white"} icon={CodeIcon}>
+                    Code
+                  </Tab>
+                </TabList>
+              </div>
               <TabPanels>
                 <TabPanel>
-                  {previewElement
-                    ? 
-                    renderElement(
-                          previewElement as Element,
-                          0,
-                          site,
-                          page,
-                          true,
-                        )
-                    : null}
+                  <PreviewFrame>
+                    {previewElement
+                      ? 
+                      renderElement(
+                            previewElement as Element,
+                            0,
+                            site,
+                            page,
+                            true,
+                          )
+                      : null}
+                  </PreviewFrame>
                 </TabPanel>
-                <TabPanel>
-                  <Grid numItems={4} className="gap-4">
+                <TabPanel className="mt-0">
+                  <Grid numItems={4} className="gap-4 pt-0">
                     <Col numColSpan={1}>
-                      <Flex flexDirection="col" className="gap-4">
-                        <Flex flexDirection="col" className="gap-2">
-                          <Bold>Layout Components</Bold>
-                          <ComponentsBlock components={{...standardComponents, ...layoutComponents}} insertAtCursor={insertAtCursor} />
-                        </Flex>
-                        <Flex flexDirection="col" className="gap-2">
-                          <Bold>Dynamic Components</Bold>
-                          <ComponentsBlock components={siteComponents} insertAtCursor={insertAtCursor} />
-                        </Flex>
-                        <Flex flexDirection="col" className="gap-2">
-                          <Bold>Text Components</Bold>
-                          <ComponentsBlock components={textComponents} insertAtCursor={insertAtCursor} />
-                        </Flex>
-                      </Flex>
+                      <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
                     </Col>
                     <Col numColSpan={3}>
-                      <Editor
-                        height="90vh" // By default, it does not have a size
-                        defaultLanguage="html"
-                        defaultValue=""
-                        theme="vs-dark"
-                        value={data.content}
-                        onChange={(value) =>
-                          setData((data: any) => ({ ...data, content: value }))
-                        }
-                        onMount={handleEditorDidMount}
-                        options={{
-                          minimap: {
-                            enabled: false,
-                          },
-                        }}
-                      />
+                      <div className="w-full sticky top-0 h-[100vh]">
+                        <Editor                        
+                          height="max(100%, 90vh)" // By default, it does not have a size
+                          defaultLanguage="html"
+                          defaultValue=""
+                          theme="vs-dark"
+                          value={data.content}
+                          onChange={(value) =>
+                            setData((data: any) => ({ ...data, content: value }))
+                          }
+                          onMount={handleEditorDidMount}
+                          options={{
+                            minimap: {
+                              enabled: false,
+                            },
+                          }}
+                        />
+                      </div>
                     </Col>
                   </Grid>
                 </TabPanel>
               </TabPanels>
             </TabGroup>
-          </DashboardCard>
+          </Card>
         </Col>
       </Grid>
     </>
+  );
+}
+
+function PreviewFrame({ children }: { children: React.ReactNode }) {
+  
+  const wrappingDiv = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState<number>(1);
+  useEffect(() => {
+    if (wrappingDiv.current) {
+      const frame = wrappingDiv.current;
+      const width = frame.clientWidth;
+      setScale(width / 1600)
+    }
+  }, [children]);
+
+  return (
+    <div className="w-full overflow-x-hidden" ref={wrappingDiv}>
+      <div className="w-[1600px]" style={{transform: `scale(${scale})`, transformOrigin: 'top left'}}>
+        {children}
+      </div>
+    </div>
   );
 }

@@ -84,12 +84,12 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     )
 }
 
-export default function TiersInsert({ insertAtCursor }: { insertAtCursor: (prop: any) => void }) {
+export default function TiersInsert({ insertAtCursor, children }: { insertAtCursor: (prop: any) => void, children: any}) {
     const { show, hide } = useModal();
     const showModal = () => {
         show(<TiersInsertModal insertAtCursor={insertAtCursor} hide={hide} />);
     };
     return (
-        <div className="p-2 py-4" onClick={showModal}>Tiers</div>
+        <div className="p-2 py-4" onClick={showModal}>{children}</div>
     )
 }

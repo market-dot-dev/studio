@@ -1,4 +1,9 @@
-import componentsMap from '@/components/site/insertables';
+import allComponents from '@/components/site/insertables';
+import { deprecatedComponents } from '@/components/site/insertables';
+const componentsMap = {
+    ...allComponents,
+    ...deprecatedComponents
+} as any;
 
 type DynamicComponentProps = {
     tag: keyof JSX.IntrinsicElements;
@@ -6,7 +11,7 @@ type DynamicComponentProps = {
     children?: React.ReactNode;
   };
   
-  const ignoreElements = ["html", "head", "body", "script", "style", "title", "meta", "link", "noscript", "svg", "path"];
+  const ignoreElements = ["html", "head", "body", "script", "style", "title", "meta", "link", "noscript"];
   
   const voidElements = [
     "area", 

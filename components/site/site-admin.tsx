@@ -14,6 +14,7 @@ import { getSiteAndPages } from "@/app/services/SiteService";
 import { getRootUrl } from "@/app/services/domain-service";
 import { Page, Site } from "@prisma/client";
 import { useEffect, useState } from "react";
+import PreviewSection from "./preview-section";
 
 type SiteData = Partial<Site> & {
     pages: Page[];
@@ -41,7 +42,7 @@ export default function SiteAdmin({id} : { id: string}) {
     }, [])
 
     const homepage = siteData?.pages?.find((page : Page) => page.id === siteData.homepageId) ?? null;
-
+    
     if(!siteData) {
         return (
             <div>
@@ -66,17 +67,9 @@ export default function SiteAdmin({id} : { id: string}) {
             <Card>
                 <div className="flex justify-between w-full">
                     <div className="absolute bottom-0 left-4">
-                        <Image
-                            src="/site-preview.png"
-                            alt="Site Preview"
-                            width={843} // Original width
-                            height={596} // Original height to maintain the aspect ratio
-                            layout="responsive"
-                            style={{ maxWidth: '300px', width: '100%' }}
-                        />
+                        <PreviewSection content={homepage?.content ?? ''} width={280} height={220} screenWidth={1600} screenHeight={1250} className="border rounded-t-lg" />
                     </div>
                     <div className="flex-column ms-[300px]">
-
                         <div className="mb-2">
                             <Bold className="me-2">
                                 Site Homepage
@@ -87,7 +80,6 @@ export default function SiteAdmin({id} : { id: string}) {
                                 <Badge color="green" size="xs">Live</Badge>
                             }
                         </div>
-
                         <div>
                             { url ? <ExternalLinkChip href={url} label={url + ' ↗'} /> : null }
                         </div>
