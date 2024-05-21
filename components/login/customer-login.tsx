@@ -149,7 +149,6 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
     return (
         <>
-            
             {error ? <div className="flex justify-center w-full text-sm">
                 <p className="text-red-500">{error}</p>
                 </div> : null}

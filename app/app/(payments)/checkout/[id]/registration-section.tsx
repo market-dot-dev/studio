@@ -81,17 +81,25 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
     return <AlreadySubscribedCard />
   } else return (
     <>
+      {/* <div className="text-md mb-8 text-gray-400 font-semibold">
+        <span>Package</span>
+        <span className="mx-2">{'>'}</span>
+        <span className={!userId ? "text-blue-500" : ""}>Your Details</span>
+        <span className="mx-2">{'>'}</span>
+        <span className={userId ? "text-blue-500" : ""}>Payment</span>
+      </div> */}
+      
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Divider className={!user?.id ? "font-bold text-lg" : ""}>Login / Signup</Divider>
-        <Card>
+        <Divider className={userId ? "font-bold text-lg" : ""}>Your Details</Divider>
+        <Card className={userId ? "" : "border-2"}>
           <CustomerLoginComponent signup={true} />
         </Card>
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
         { error && <div className="mb-4 text-red-500">{error}</div> }
-        <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
-          <div>
+        <Divider className={userId ? "font-bold text-lg" : ""}>Payment Information</Divider>
+          <Card className={userId ? "border-2" : ""}>
             { maintainer.stripeAccountId  &&
               <UserPaymentMethodWidget
                 loading={submittingPayment}
@@ -100,11 +108,11 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
                 maintainerUserId={tier.userId}
                 maintainerStripeAccountId={maintainer.stripeAccountId}
               /> }
-          </div>
+          </Card>
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Button onClick={() => setLoading(true)} disabled={loading} className="w-full">
+        <Button onClick={() => setLoading(true)} disabled={loading} color="green" className="w-full">
           {loading ? <LoadingDots color="#A8A29E" /> : "Checkout"}
         </Button>
         <label className="my-2 block text-center text-sm text-slate-400">
