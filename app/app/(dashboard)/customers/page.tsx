@@ -1,5 +1,4 @@
 "use client";
-
 import { useState, useEffect } from 'react';
 import { User, Subscription, Charge } from '@prisma/client';
 import { customersOfMaintainer } from '@/app/services/UserService';
@@ -49,12 +48,13 @@ const SubscriptionRow = ({ user, subscription }: SubscriptionRowProps) => {
   return (
     <tr>
       <td>{user.name}</td>
-      <td>{user.email}</td>
+      <td>{user.company || '-'}</td>
+      <td><a href={`mailto:${user.email}`}>{user.email}</a></td>
       <td>{subscription.tier.name}</td>
       <td>{subscription.state}</td>
       <td>{formatDate(subscription.createdAt)}</td>
       <td>
-        <button onClick={() => { window.location.href = `/customers/${user.id}`}}>Details</button>
+        <button onClick={() => { window.location.href = `/customers/${user.id}` }}>View</button>
       </td>
     </tr>
   );
@@ -62,7 +62,7 @@ const SubscriptionRow = ({ user, subscription }: SubscriptionRowProps) => {
 
 type ChargeRowProps = {
   user: User;
-  charge: Charge  & { tier: Tier };
+  charge: Charge & { tier: Tier };
 };
 
 const ChargeRow = ({ user, charge }: ChargeRowProps) => {
@@ -74,12 +74,13 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
   return (
     <tr>
       <td>{user.name}</td>
-      <td>{user.email}</td>
+      <td>{user.company || '-'}</td>
+      <td><a href={`mailto:${user.email}`}>{user.email}</a></td>
       <td>{charge.tier.name}</td>
-      <td>{formatCurrency(charge.tier.price)}</td>
+      <td>Purchased</td>
       <td>{formatDate(charge.createdAt)}</td>
       <td>
-      <button onClick={() => { window.location.href = `/customers/${user.id}`}}>Details</button>
+        <button onClick={() => { window.location.href = `/customers/${user.id}` }}>View</button>
       </td>
     </tr>
   );
@@ -88,7 +89,6 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
 const CustomersPage = async () => {
   const { currentUser } = useCurrentSession();
   const userId = currentUser?.id;
-
   const [customers, setCustomers] = useState<CustomerWithChargesAndSubscriptions[]>([]);
 
   const fetchCustomers = async () => {
@@ -108,11 +108,12 @@ const CustomersPage = async () => {
       <table>
         <thead>
           <tr>
-            <th>Customer</th>
+            <th>Customer Name</th>
+            <th>Company</th>
             <th>Email</th>
-            <th>Subscription/Charge</th>
-            <th>Status/Amount</th>
-            <th>Created</th>
+            <th>Tier (Subscription or Purchase)</th>
+            <th>Status</th>
+            <th>Customer Since</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -120,11 +121,7 @@ const CustomersPage = async () => {
           {customers.map((customer) => (
             <React.Fragment key={customer.id}>
               {customer.subscriptions.map((subscription) => (
-                <SubscriptionRow
-                  key={subscription.id}
-                  user={customer}
-                  subscription={subscription}
-                />
+                <SubscriptionRow key={subscription.id} user={customer} subscription={subscription} />
               ))}
               {customer.charges.map((charge) => (
                 <ChargeRow key={charge.id} user={customer} charge={charge} />
