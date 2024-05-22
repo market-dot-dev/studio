@@ -44,7 +44,7 @@ model User {
 
   subscribedLegacyProducts LegacyProduct[] @relation("UserAsUser")
   maintainedLegacyProducts LegacyProduct[] @relation("UserAsMaintainer")
-  Charge                   Charge[]
+  charges                   Charge[]
 }
 
 model Account {
