@@ -2,7 +2,7 @@ import DashboardCharts from "@/components/dashboard/dashboard-charts";
 import OnboardingGuide from "@/components/onboarding/onboarding-guide";
 import PageHeading from "@/components/common/page-heading";
 import SessionService from "@/app/services/SessionService";
-import { CustomersTable } from "./customers/page";
+import { CustomersTable } from "./customers/customer-table";
 import { Bold } from "@tremor/react";
 import Link from "next/link";
 
