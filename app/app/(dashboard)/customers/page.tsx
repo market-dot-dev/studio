@@ -19,25 +19,7 @@ import LinkButton from '@/components/common/link-button';
 import DashboardCard from '@/components/common/dashboard-card';
 import SubscriptionStatusBadge from './subscription-state';
 import PurchaseStatusBadge from './purchase-state';
-import { Link } from 'lucide-react';
-
-const formatDate = (date: Date | string): string => {
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  };
-  return new Date(date).toLocaleDateString('en-US', options);
-};
-
-const formatCurrency = (amount: number, currency: string = 'USD'): string => {
-  const options: Intl.NumberFormatOptions = {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  };
-  return amount.toLocaleString('en-US', options);
-};
+import { formatDate } from '@/lib/utils';
 
 type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
@@ -90,7 +72,7 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
   );
 };
 
-const CustomersPage = async () => {
+export const CustomersTable = async ({ maxInitialRows }: { maxInitialRows?: number }) => {
   const { currentUser } = useCurrentSession();
   const userId = currentUser?.id;
   const [customers, setCustomers] = useState<CustomerWithChargesAndSubscriptions[]>([]);
@@ -107,6 +89,38 @@ const CustomersPage = async () => {
   }, [userId]);
 
   return (
+    <DashboardCard>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableHeaderCell>Name</TableHeaderCell>
+            <TableHeaderCell className="text-left">Company</TableHeaderCell>
+            <TableHeaderCell className="text-left">Email</TableHeaderCell>
+            <TableHeaderCell className="text-left">Tier</TableHeaderCell>
+            <TableHeaderCell className="text-center">Status</TableHeaderCell>
+            <TableHeaderCell className="text-center">Customer Since</TableHeaderCell>
+            <TableHeaderCell className="text-right"></TableHeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {customers.map((customer) => (
+            <React.Fragment key={customer.id}>
+              {customer.subscriptions.map((subscription) => (
+                <SubscriptionRow key={subscription.id} user={customer} subscription={subscription} />
+              ))}
+              {customer.charges.map((charge) => (
+                <ChargeRow key={charge.id} user={customer} charge={charge} />
+              ))}
+            </React.Fragment>
+          ))}
+        </TableBody>
+      </Table>
+    </DashboardCard>
+  );
+}
+
+const CustomersPage = async () => {
+  return (
     <div className="flex max-w-screen-xl flex-col space-y-12">
       <div className="flex w-full justify-between">
         <div className="flex flex-col">
@@ -114,33 +128,7 @@ const CustomersPage = async () => {
           <Text>Manage your customers and their tiers here.</Text>
         </div>
       </div>
-      <DashboardCard>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell className="text-left">Company</TableHeaderCell>
-              <TableHeaderCell className="text-left">Email</TableHeaderCell>
-              <TableHeaderCell className="text-left">Tier</TableHeaderCell>
-              <TableHeaderCell className="text-center">Status</TableHeaderCell>
-              <TableHeaderCell className="text-center">Customer Since</TableHeaderCell>
-              <TableHeaderCell className="text-right"></TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {customers.map((customer) => (
-              <React.Fragment key={customer.id}>
-                {customer.subscriptions.map((subscription) => (
-                  <SubscriptionRow key={subscription.id} user={customer} subscription={subscription} />
-                ))}
-                {customer.charges.map((charge) => (
-                  <ChargeRow key={charge.id} user={customer} charge={charge} />
-                ))}
-              </React.Fragment>
-            ))}
-          </TableBody>
-        </Table>
-      </DashboardCard>
+      <CustomersTable />
     </div>
   );
 };

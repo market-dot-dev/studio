@@ -8,24 +8,7 @@ import DashboardCard from "@/components/common/dashboard-card";
 import LinkButton from "@/components/common/link-button";
 import SubscriptionStatusBadge from "../subscription-state";
 import UserService from "@/app/services/UserService";
-
-const formatDate = (date: Date | string): string => {
-  const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  };
-  return new Date(date).toLocaleDateString('en-US', options);
-};
-
-const formatCurrency = (amount: number, currency: string = 'USD'): string => {
-  const options: Intl.NumberFormatOptions = {
-    style: 'currency',
-    currency,
-    minimumFractionDigits: 2,
-  };
-  return amount.toLocaleString('en-US', options);
-};
+import { formatCurrency, formatDate } from "@/lib/utils";
 
 const CustomerDetailPage = async ({ params }: { params: { maintainerId: string, userId: string } }) => {
   const customer = await UserService.customerOfMaintainer(params.maintainerId, params.userId);

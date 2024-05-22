@@ -79,3 +79,21 @@ export const gitHubRepoOrgAndName = (url : string | null | undefined) => {
   const repoInfo = extractGitHubRepoInfo(url);
   return repoInfo ? `${repoInfo.usernameOrOrg}/${repoInfo.repoName}` : "";
 }
+
+export const formatDate = (date: Date | string): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  };
+  return new Date(date).toLocaleDateString('en-US', options);
+};
+
+export const formatCurrency = (amount: number, currency: string = 'USD'): string => {
+  const options: Intl.NumberFormatOptions = {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+  };
+  return amount.toLocaleString('en-US', options);
+};
