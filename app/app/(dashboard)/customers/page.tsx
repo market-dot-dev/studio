@@ -21,6 +21,7 @@ import DashboardCard from '@/components/common/dashboard-card';
 import SubscriptionStatusBadge from './subscription-state';
 import PurchaseStatusBadge from './purchase-state';
 import { formatDate } from '@/lib/utils';
+import Link from 'next/link';
 
 type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
@@ -39,7 +40,7 @@ const SubscriptionRow = ({ user, subscription }: SubscriptionRowProps) => {
       <TableCell className="m-0 p-2 text-left">{user.company || '(unknown)'}</TableCell>
       <TableCell className="m-0 p-2 text-left"><a href={`mailto:${user.email}`}>{user.email}</a></TableCell>
       <TableCell className="m-0 p-2 text-left">{subscription.tier.name}</TableCell>
-      <TableCell className="m-0 p-2 text-center"><SubscriptionStatusBadge subscription={subscription}/></TableCell>
+      <TableCell className="m-0 p-2 text-center"><SubscriptionStatusBadge subscription={subscription} /></TableCell>
       <TableCell className="m-0 p-2 text-center">{formatDate(subscription.createdAt)}</TableCell>
       <TableCell className="m-0 p-2 text-right">
         <div className="flex flex-row justify-end gap-1">
@@ -62,7 +63,7 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
       <TableCell className="m-0 p-2 text-left">{user.company || '(unknown)'}</TableCell>
       <TableCell className="m-0 p-2 text-left"><a href={`mailto:${user.email}`}>{user.email}</a></TableCell>
       <TableCell className="m-0 p-2 text-left">{charge.tier.name}</TableCell>
-      <TableCell className="m-0 p-2 text-center"><PurchaseStatusBadge charge={charge}/></TableCell>
+      <TableCell className="m-0 p-2 text-center"><PurchaseStatusBadge charge={charge} /></TableCell>
       <TableCell className="m-0 p-2 text-center">{formatDate(charge.createdAt)}</TableCell>
       <TableCell className="m-0 p-2 text-right">
         <div className="flex flex-row justify-end gap-1">
@@ -102,29 +103,35 @@ export const CustomersTable = async ({ maxInitialRows }: { maxInitialRows?: numb
   const visibleRows = showAll ? rows : rows.slice(0, maxInitialRows);
 
   return (
-    <DashboardCard>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableHeaderCell>Name</TableHeaderCell>
-            <TableHeaderCell className="text-left">Company</TableHeaderCell>
-            <TableHeaderCell className="text-left">Email</TableHeaderCell>
-            <TableHeaderCell className="text-left">Tier</TableHeaderCell>
-            <TableHeaderCell className="text-center">Status</TableHeaderCell>
-            <TableHeaderCell className="text-center">Customer Since</TableHeaderCell>
-            <TableHeaderCell className="text-right"></TableHeaderCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {visibleRows}
-        </TableBody>
-      </Table>
+    <>
+      <DashboardCard>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Name</TableHeaderCell>
+              <TableHeaderCell className="text-left">Company</TableHeaderCell>
+              <TableHeaderCell className="text-left">Email</TableHeaderCell>
+              <TableHeaderCell className="text-left">Tier</TableHeaderCell>
+              <TableHeaderCell className="text-center">Status</TableHeaderCell>
+              <TableHeaderCell className="text-center">Customer Since</TableHeaderCell>
+              <TableHeaderCell className="text-right"></TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {visibleRows}
+          </TableBody>
+        </Table>
+      </DashboardCard>
       {!showAll && maxInitialRows && rows.length > maxInitialRows && (
-        <div className="flex justify-center mt-4">
-          <Button onClick={() => setShowAll(true)}>Show More</Button>
+        <div className="grid justify-items-end">
+          <Link href='/customers'>
+            <Button size="xs" className="h-6" variant="secondary">
+              View All Customers →
+            </Button>
+          </Link>
         </div>
       )}
-    </DashboardCard>
+    </>
   );
 }
 
