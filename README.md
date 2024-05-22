@@ -1,4 +1,4 @@
-Gitwallet: A toolkit for maintainers to build, sell and manage support tiers. 
+Gitwallet is a commerce platform for open source projects. 
 
 ## Getting Started
 
