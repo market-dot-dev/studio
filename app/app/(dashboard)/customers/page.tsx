@@ -19,6 +19,7 @@ import LinkButton from '@/components/common/link-button';
 import DashboardCard from '@/components/common/dashboard-card';
 import SubscriptionStatusBadge from './subscription-state';
 import PurchaseStatusBadge from './purchase-state';
+import { Link } from 'lucide-react';
 
 const formatDate = (date: Date | string): string => {
   const options: Intl.DateTimeFormatOptions = {
@@ -52,7 +53,8 @@ const SubscriptionRow = ({ user, subscription }: SubscriptionRowProps) => {
   return (
     <TableRow className="m-0 p-2" key={subscription.id}>
       <TableCell className="m-0 p-2">{user.name}</TableCell>
-      <TableCell className="m-0 p-2 text-right">{user.company || '(unknown)'}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{user.company || '(unknown)'}</TableCell>
+      <TableCell className="m-0 p-2 text-left"><a href={`mailto:${user.email}`}>{user.email}</a></TableCell>
       <TableCell className="m-0 p-2 text-left">{subscription.tier.name}</TableCell>
       <TableCell className="m-0 p-2 text-center"><SubscriptionStatusBadge subscription={subscription}/></TableCell>
       <TableCell className="m-0 p-2 text-center">{formatDate(subscription.createdAt)}</TableCell>
@@ -74,7 +76,8 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
   return (
     <TableRow className="m-0 p-2" key={charge.id}>
       <TableCell className="m-0 p-2">{user.name}</TableCell>
-      <TableCell className="m-0 p-2 text-right">{user.company || '(unknown)'}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{user.company || '(unknown)'}</TableCell>
+      <TableCell className="m-0 p-2 text-left"><a href={`mailto:${user.email}`}>{user.email}</a></TableCell>
       <TableCell className="m-0 p-2 text-left">{charge.tier.name}</TableCell>
       <TableCell className="m-0 p-2 text-center"><PurchaseStatusBadge charge={charge}/></TableCell>
       <TableCell className="m-0 p-2 text-center">{formatDate(charge.createdAt)}</TableCell>
@@ -116,7 +119,8 @@ const CustomersPage = async () => {
           <TableHead>
             <TableRow>
               <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell className="text-right">Company</TableHeaderCell>
+              <TableHeaderCell className="text-left">Company</TableHeaderCell>
+              <TableHeaderCell className="text-left">Email</TableHeaderCell>
               <TableHeaderCell className="text-left">Tier</TableHeaderCell>
               <TableHeaderCell className="text-center">Status</TableHeaderCell>
               <TableHeaderCell className="text-center">Customer Since</TableHeaderCell>
