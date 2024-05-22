@@ -96,7 +96,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
       :
       <Accordion className="my-2">
         <AccordionHeader className="my-0 py-1">
-          Package Details
+          Package Benefits
         </AccordionHeader>
         <AccordionBody>
           {features ? 
