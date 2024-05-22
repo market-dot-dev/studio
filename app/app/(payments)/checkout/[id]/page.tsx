@@ -100,8 +100,8 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
         </AccordionHeader>
         <AccordionBody>
           {features ? 
-            <Text>No features have been listed in this package.</Text> :
-            <TierFeatureList features={features || []} /> 
+            <TierFeatureList features={features || []} /> :
+            <Text>No features have been listed in this package.</Text>
           }
         </AccordionBody>
       </Accordion>}
