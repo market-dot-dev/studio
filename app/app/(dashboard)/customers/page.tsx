@@ -10,6 +10,7 @@ import {
   TableHeaderCell,
   TableRow,
   Text,
+  Button,
 } from '@tremor/react';
 import React from 'react';
 import Tier from '@/app/models/Tier';
@@ -76,6 +77,7 @@ export const CustomersTable = async ({ maxInitialRows }: { maxInitialRows?: numb
   const { currentUser } = useCurrentSession();
   const userId = currentUser?.id;
   const [customers, setCustomers] = useState<CustomerWithChargesAndSubscriptions[]>([]);
+  const [showAll, setShowAll] = useState(false);
 
   const fetchCustomers = async () => {
     if (typeof userId === 'string') {
@@ -87,6 +89,17 @@ export const CustomersTable = async ({ maxInitialRows }: { maxInitialRows?: numb
   useEffect(() => {
     fetchCustomers();
   }, [userId]);
+
+  const rows = customers.flatMap((customer) => [
+    ...customer.subscriptions.map((subscription) => (
+      <SubscriptionRow key={subscription.id} user={customer} subscription={subscription} />
+    )),
+    ...customer.charges.map((charge) => (
+      <ChargeRow key={charge.id} user={customer} charge={charge} />
+    )),
+  ]);
+
+  const visibleRows = showAll ? rows : rows.slice(0, maxInitialRows);
 
   return (
     <DashboardCard>
@@ -103,18 +116,14 @@ export const CustomersTable = async ({ maxInitialRows }: { maxInitialRows?: numb
           </TableRow>
         </TableHead>
         <TableBody>
-          {customers.map((customer) => (
-            <React.Fragment key={customer.id}>
-              {customer.subscriptions.map((subscription) => (
-                <SubscriptionRow key={subscription.id} user={customer} subscription={subscription} />
-              ))}
-              {customer.charges.map((charge) => (
-                <ChargeRow key={charge.id} user={customer} charge={charge} />
-              ))}
-            </React.Fragment>
-          ))}
+          {visibleRows}
         </TableBody>
       </Table>
+      {!showAll && maxInitialRows && rows.length > maxInitialRows && (
+        <div className="flex justify-center mt-4">
+          <Button onClick={() => setShowAll(true)}>Show More</Button>
+        </div>
+      )}
     </DashboardCard>
   );
 }
