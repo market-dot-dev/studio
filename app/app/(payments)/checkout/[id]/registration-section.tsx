@@ -117,7 +117,11 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
           {loading ? <LoadingDots color="#A8A29E" /> : "Checkout"}
         </Button>
         <Text className="my-2 text-center">
-          Your card will be charged {checkoutCurrency} {checkoutPrice}
+          {
+            tier.trialDays ? 
+            "You will not be charged now. After your " + tier.trialDays + " day trial, your card will be charged " + checkoutCurrency + " " + checkoutPrice + "." :
+            "Your card will be charged " + checkoutCurrency + " " + checkoutPrice + "."
+          } 
         </Text>
       </section>
     </>
