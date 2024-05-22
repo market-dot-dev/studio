@@ -15,6 +15,7 @@ import {
 import SessionService from "@/app/services/SessionService";
 import SubscriptionStatusBadge from "./subscription-state";
 import Link from "next/link";
+import ChargeService from "@/app/services/charge-service";
 
 export default async function CustomersList({
   params,
@@ -23,6 +24,9 @@ export default async function CustomersList({
 }) {
   const currentUserId = await SessionService.getCurrentUserId();
   const subscriptions = await SubscriptionService.subscribedToUser(currentUserId!);
+  const purchases = await ChargeService.chargedToUser(currentUserId!);
+  console.log("Purchases:"+JSON.stringify(purchases));
+
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12">
@@ -87,6 +91,14 @@ export default async function CustomersList({
           </TableBody>
         </Table>
       </DashboardCard>
+
+      <DashboardCard>
+        {purchases}
+      </DashboardCard>
+
+      
     </div>
+
+
   );
 }

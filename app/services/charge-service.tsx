@@ -29,6 +29,45 @@ class ChargeService {
     });
   }
 
+  static async chargedToUser(userId: string): Promise<Charge[] | null> {
+    return prisma.charge.findMany({
+      where: {
+        userId: userId,
+      },
+      include: {
+        user: true,
+        tier: true,
+      },
+    });
+  
+    // return prisma.subscription.findMany({
+    //   where: {
+    //     OR: [
+    //       {
+    //         state: SubscriptionStates.renewing,
+    //         tier: {
+    //           userId: userId,
+    //         },
+    //       },
+    //       {
+    //         state: SubscriptionStates.cancelled,
+    //         activeUntil: {
+    //           gt: currentDate,
+    //         },
+    //         tier: {
+    //           userId: userId,
+    //         },
+    //       },
+    //     ],
+    //   },
+    //   include: {
+    //     user: true,
+    //     tier: true,
+    //   },
+    // });
+  }
+
+
   static async hasCharges(tierId: string, revision?: number): Promise<boolean> {
     const subscriptions = await prisma.charge.findMany({
       where: {
