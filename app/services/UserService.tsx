@@ -7,10 +7,11 @@ import TierService from './TierService';
 import SessionService from './SessionService';
 import Customer from '../models/Customer';
 import { createSessionUser } from '../models/Session';
+import Tier from '../models/Tier';
 
 type CustomerWithChargesAndSubscriptions = User & {
-  charges: Charge[];
-  subscriptions: Subscription[];
+  charges: (Charge & { tier: Tier })[];
+  subscriptions: (Subscription & { tier: Tier })[];
 };
 
 class UserService {
@@ -74,6 +75,9 @@ class UserService {
               userId: maintainerId,
             },
           },
+          include: {
+            tier: true,
+          },
         },
         subscriptions: {
           where: {
@@ -81,12 +85,16 @@ class UserService {
               userId: maintainerId,
             },
           },
+          include: {
+            tier: true,
+          },
         },
       },
     });
   
     return customers as CustomerWithChargesAndSubscriptions[];
   }
+
   static async updateCurrentUser(userData: Partial<User>) {
     const userId = await SessionService.getCurrentUserId()
     if(!userId) return null;
@@ -166,6 +174,10 @@ export const ensureTierId = async (tierId: string) => {
       reject(error);
     });
   });
+}
+
+export const customersOfMaintainer = async (maintainerId: string): Promise<CustomerWithChargesAndSubscriptions[]> => {
+  return UserService.customersOfMaintainer(maintainerId);
 }
 
 export default UserService;

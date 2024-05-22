@@ -1,92 +1,141 @@
-import SubscriptionService from "@/app/services/SubscriptionService";
-import LinkButton from "@/components/common/link-button";
-import DashboardCard from "@/components/common/dashboard-card";
-import PageHeading from "@/components/common/page-heading";
-import {
-  Badge,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeaderCell,
-  TableRow,
-  Text,
-} from "@tremor/react";
-import SessionService from "@/app/services/SessionService";
-import SubscriptionStatusBadge from "./subscription-state";
-import Link from "next/link";
+"use client";
 
-export default async function CustomersList({
-  params,
-}: {
-  params: { id: string };
-}) {
-  const currentUserId = await SessionService.getCurrentUserId();
-  const subscriptions = await SubscriptionService.subscribedToUser(currentUserId!);
+import { useState, useEffect } from 'react';
+import { User, Subscription, Charge } from '@prisma/client';
+import { customersOfMaintainer, getCurrentSessionUser } from '@/app/services/UserService';
+import React from 'react';
+import Tier from '@/app/models/Tier';
+import useCurrentSession from '@/app/hooks/use-current-session';
+
+export const formatDate = (date: Date | string): string => {
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  };
+  return new Date(date).toLocaleDateString('en-US', options);
+};
+
+export const formatCurrency = (amount: number, currency: string = 'USD'): string => {
+  const options: Intl.NumberFormatOptions = {
+    style: 'currency',
+    currency,
+    minimumFractionDigits: 2,
+  };
+  return amount.toLocaleString('en-US', options);
+};
+
+type CustomerWithChargesAndSubscriptions = User & {
+  charges: (Charge & { tier: Tier })[];
+  subscriptions: (Subscription & { tier: Tier })[];
+};
+
+type SubscriptionRowProps = {
+  user: User;
+  subscription: Subscription & { tier: Tier };
+};
+
+const SubscriptionRow = ({ user, subscription }: SubscriptionRowProps) => {
+  const handleCancelSubscription = async () => {
+    // Implement the logic to cancel the subscription
+    console.log('Canceling subscription:', subscription.id);
+  };
+
+  const handleUpdateSubscription = async () => {
+    // Implement the logic to update the subscription
+    console.log('Updating subscription:', subscription.id);
+  };
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12">
-      <div className="flex w-full justify-between">
-        <div className="flex flex-col">
-          <PageHeading title="All Customers" />
-          <Text>Manage your customers and their tiers here. </Text>
-        </div>
-      </div>
+    <tr>
+      <td>{user.name}</td>
+      <td>{user.email}</td>
+      <td>{subscription.tier.name}</td>
+      <td>{subscription.state}</td>
+      <td>{formatDate(subscription.createdAt)}</td>
+      <td>
+        <button onClick={handleCancelSubscription}>Cancel</button>
+        <button onClick={handleUpdateSubscription}>Update</button>
+      </td>
+    </tr>
+  );
+};
 
-      <DashboardCard>
-        <Table className="">
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell className="text-right">Company</TableHeaderCell>
-              <TableHeaderCell className="text-left">Tier</TableHeaderCell>
-              <TableHeaderCell className="text-center">Status</TableHeaderCell>
-              <TableHeaderCell className="text-center">
-                Customer Since
-              </TableHeaderCell>
-              <TableHeaderCell className="text-right"></TableHeaderCell>
-            </TableRow>
-          </TableHead>
+type ChargeRowProps = {
+  user: User;
+  charge: Charge  & { tier: Tier };
+};
 
-          <TableBody>
-            {subscriptions.map((subscription) => {
-              const user = subscription.user;
-              return (
-                <>
-                  <TableRow className="m-0 p-2" key={subscription.id}>
-                    <TableCell className="m-0 p-2">
-                      <Link href={`/customers/${subscription.id}`}>
-                      {user.name}
-                      </Link>
-                    
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      {user.company ? user.company : "(Unknown)"}
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-left">
-                      {subscription.tier!.name}
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-center">
-                      <SubscriptionStatusBadge subscription={subscription}/>
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-center">
-                      {new Date(subscription.createdAt).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell className="m-0 p-2 text-right">
-                      <div className="flex flex-row justify-end gap-1">
-                        <LinkButton
-                          label="View"
-                          href={`/customers/${subscription.id}`}
-                        />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                </>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </DashboardCard>
+const ChargeRow = ({ user, charge }: ChargeRowProps) => {
+  const handleRefundCharge = async () => {
+    // Implement the logic to refund the charge
+    console.log('Refunding charge:', charge.id);
+  };
+
+  return (
+    <tr>
+      <td>{user.name}</td>
+      <td>{user.email}</td>
+      <td>{charge.tier.name}</td>
+      <td>{formatCurrency(charge.tier.price)}</td>
+      <td>{formatDate(charge.createdAt)}</td>
+      <td>
+        <button onClick={handleRefundCharge}>Refund</button>
+      </td>
+    </tr>
+  );
+};
+
+const CustomersPage = async () => {
+  const { currentUser } = useCurrentSession();
+  const userId = currentUser?.id;
+
+  const [customers, setCustomers] = useState<CustomerWithChargesAndSubscriptions[]>([]);
+
+  const fetchCustomers = async () => {
+    if (typeof userId === 'string') {
+      const fetchedCustomers = await customersOfMaintainer(userId);
+      setCustomers(fetchedCustomers);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, [userId]);
+
+  return (
+    <div>
+      <h1>Customers</h1>
+      <table>
+        <thead>
+          <tr>
+            <th>Customer</th>
+            <th>Email</th>
+            <th>Subscription/Charge</th>
+            <th>Status/Amount</th>
+            <th>Created</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {customers.map((customer) => (
+            <React.Fragment key={customer.id}>
+              {customer.subscriptions.map((subscription) => (
+                <SubscriptionRow
+                  key={subscription.id}
+                  user={customer}
+                  subscription={subscription}
+                />
+              ))}
+              {customer.charges.map((charge) => (
+                <ChargeRow key={charge.id} user={customer} charge={charge} />
+              ))}
+            </React.Fragment>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
-}
+};
+
+export default CustomersPage;
