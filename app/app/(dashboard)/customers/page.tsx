@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { User, Subscription, Charge } from '@prisma/client';
-import { customersOfMaintainer, getCurrentSessionUser } from '@/app/services/UserService';
+import { customersOfMaintainer } from '@/app/services/UserService';
 import React from 'react';
 import Tier from '@/app/models/Tier';
 import useCurrentSession from '@/app/hooks/use-current-session';
@@ -54,8 +54,7 @@ const SubscriptionRow = ({ user, subscription }: SubscriptionRowProps) => {
       <td>{subscription.state}</td>
       <td>{formatDate(subscription.createdAt)}</td>
       <td>
-        <button onClick={handleCancelSubscription}>Cancel</button>
-        <button onClick={handleUpdateSubscription}>Update</button>
+        <button onClick={() => { window.location.href = `/customers/${user.id}`}}>Details</button>
       </td>
     </tr>
   );
@@ -80,7 +79,7 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
       <td>{formatCurrency(charge.tier.price)}</td>
       <td>{formatDate(charge.createdAt)}</td>
       <td>
-        <button onClick={handleRefundCharge}>Refund</button>
+      <button onClick={() => { window.location.href = `/customers/${user.id}`}}>Details</button>
       </td>
     </tr>
   );

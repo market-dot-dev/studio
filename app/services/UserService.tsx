@@ -44,6 +44,59 @@ class UserService {
     });
   }
   
+  static async customerOfMaintainer(maintainerId: string, userId: string): Promise<CustomerWithChargesAndSubscriptions | null> {
+    const customer = await prisma.user.findFirst({
+      where: {
+        id: userId,
+        OR: [
+          {
+            charges: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+          {
+            subscriptions: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        charges: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+          include: {
+            tier: true,
+          },
+        },
+        subscriptions: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+          include: {
+            tier: true,
+          },
+        },
+      },
+    });
+
+    return customer as CustomerWithChargesAndSubscriptions | null;
+  }
+
+
   static async customersOfMaintainer(maintainerId: string): Promise<CustomerWithChargesAndSubscriptions[]> {
     const customers = await prisma.user.findMany({
       where: {
