@@ -1,5 +1,5 @@
 'use client'
-import { TextInput, Button, Text } from "@tremor/react";
+import { TextInput, Button, Text, Bold } from "@tremor/react";
 import { useRef, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
@@ -28,10 +28,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
         setIsSubmitting(true);
         try {
             await signOut({ redirect: false });
-            await refreshSession();
-            setIsSubmitted(false);
-            setIsSignUp(false);
-
+            window.location.reload();
         } catch(err) {
             console.error('Error logging out:', err);
         } finally {
@@ -113,7 +110,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
             setIsSubmitting(false);
         });
     };
-
+ 
     const handleVerification = async (verificationCode: string) => {
         // e.preventDefault();
         
@@ -126,19 +123,16 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
         const verificationUrl = `/api/auth/callback/email?email=${encodeURIComponent(verificationEmail)}&token=${verificationCode}`;
 
-        fetch(verificationUrl, { redirect: 'manual' }).then(async (res) => {
+        fetch(verificationUrl).then(async (res) => {
             if(res.status === 200 || res.status === 302 || res.status === 0) {
                 if(redirect) {
                     router.push( redirect )
                 } else {
-                    await signIn('email', {
-                        email: verificationEmail,
-                        redirect: false,
-                    })
-                    await refreshSession();
+                    window.location.reload();
                 }
                 setError(null);
             } else {
+                setError(`The code you entered is invalid. Please check your email and try again.`);
                 console.log(`Error verifying code. Please try again. ${res.status}`);
                 console.log(res);
             }
@@ -155,21 +149,22 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
     return (
         <>
-            
-            {error ? <div className="flex justify-center w-full text-sm">
+            {error ? <div className="flex justify-center w-full text-md">
                 <p className="text-red-500">{error}</p>
                 </div> : null}
             {currentUser ? (
-                <div className="flex flex-row justify-between w-full">
-                    <Text>You are logged in as {currentUser.name} ({currentUser.email}).</Text>
+                <div className="flex flex-row justify-between w-full items-center">
+                    <span>You are logged in as {currentUser.name} ({currentUser.email}).</span>
                     <Button variant="secondary" onClick={handleLogout} loading={isSubmitting} disabled={isSubmitting} className="p-1 h-min">Logout</Button>
                 </div>
             ) : !isSubmitted ? (
                 <div>
                     {isSignUp ? (
                         <>
-                        <label className="block text-sm text-slate-400 text-center mb-4">Enter your name and email to sign up.</label>
                         <div className="mb-4">
+                            <div className="mb-4">Please provide your details to create a Gitwallet account.</div>
+
+                            <Bold>Name:</Bold>
                             <TextInput placeholder="Enter your name" value={name} onChange={(e) => {
                                 setName(e.target.value)
                                 setError(null);
@@ -177,13 +172,16 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                         </div>
                         </>
                     ) :
-                    <label className="block text-sm text-slate-400 text-center mb-4">Enter your email to receive a verification code.</label>
+                    <div className="mb-4">Please enter your email to receive a verification code.</div>
                     }
                     
-                    <div className="flex flex-row gap-4 w-full">
+                    <div className="flex flex-col gap-4 w-full">
                         <div className="items-center w-full">
+                            <Bold>Email Address:</Bold>
+
                             <TextInput 
-                                placeholder="Enter your email" 
+                                placeholder="Enter your email"
+                                autoFocus={!isSignUp}
                                 value={verificationEmail} 
                                 onChange={(e) => {
                                     setVerificationEmail(e.target.value)
@@ -194,18 +192,18 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                                         handleEmail(e);
                                     }
                                 }}  />
-                        </div>
+                        </div> 
                         <div className="items-center">
-                            <Button onClick={handleEmail} loading={isSubmitting} disabled={isSubmitting}>Get Code</Button>
+                            <Button onClick={handleEmail} loading={isSubmitting} disabled={isSubmitting} className="w-full">Continue →</Button>
                         </div>
                     </div>
-                    <p className="mt-4 text-center text-sm text-slate-500 cursor-pointer" onClick={toggleSignUp}>
+                    <p className="mt-4 text-center text-md text-slate-500 cursor-pointer underline" onClick={toggleSignUp}>
                         {isSignUp ? "Already have an account? Sign in here" : "Don't have an account? Sign up here"}
                     </p>
                 </div>
             ) : (
                 <div>
-                    <label className="block text-sm text-slate-400 text-center mb-4">A verification code has been sent to your email. Please enter the value here.</label>
+                    <label className="block text-md text-slate-500 text-center mb-4">A verification code has been sent to your email. Please enter the value here.</label>
                     <div className="flex flex-col gap-4 w-full items-center">
                         <div className="items-center w-full">
 

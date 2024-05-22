@@ -5,6 +5,7 @@ import {
   Divider,
   Text,
   Button,
+  Bold,
 } from "@tremor/react";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
@@ -77,21 +78,29 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
     }
   }, [userId, tierId]);
 
+  const tierInfo = tier?.name  || "Package";
+
   if(subscribed) {
     return <AlreadySubscribedCard />
   } else return (
     <>
-      <section className="w-7/8 mb-8 lg:w-5/6">
-        <Divider className={!user?.id ? "font-bold text-lg" : ""}>Login / Signup</Divider>
+      <section className="w-7/8 mb-8 lg:w-5/6 text-md mb-8 text-slate-600">
+        {sectionHeader(userId, "Purchase " + tierInfo )}
+        <span>To purchase this package, please provide your account & payment information below.</span>
+      </section>
+      
+      <section className="w-7/8 mb-8 lg:w-5/6 text-md mb-8 text-slate-600">
+        {sectionHeader(userId, "Your Account")}
         <Card>
           <CustomerLoginComponent signup={true} />
         </Card>
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
-        { error && <div className="mb-4 text-red-500">{error}</div> }
-        <Divider className={user?.id ? "font-bold text-lg" : ""}>Credit Card Information</Divider>
-          <div>
+      {sectionHeader(userId, "Payment Information")}
+
+          <Card>
+            { error && <div className="mb-4 text-red-500">{error}</div> }
             { maintainer.stripeAccountId  &&
               <UserPaymentMethodWidget
                 loading={submittingPayment}
@@ -100,19 +109,30 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
                 maintainerUserId={tier.userId}
                 maintainerStripeAccountId={maintainer.stripeAccountId}
               /> }
-          </div>
+          </Card>
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Button onClick={() => setLoading(true)} disabled={loading} className="w-full">
+        <Button onClick={() => setLoading(true)} disabled={loading || !userId} color="green" className="w-full">
           {loading ? <LoadingDots color="#A8A29E" /> : "Checkout"}
         </Button>
-        <label className="my-2 block text-center text-sm text-slate-400">
-          Your card will be charged {checkoutCurrency} {checkoutPrice}
-        </label>
+        <Text className="my-2 text-center">
+          {
+            tier.trialDays ? 
+            "You will not be charged now. After your " + tier.trialDays + " day trial, your card will be charged " + checkoutCurrency + " " + checkoutPrice + "." :
+            "Your card will be charged " + checkoutCurrency + " " + checkoutPrice + "."
+          } 
+        </Text>
       </section>
     </>
   );
 };
 
+function sectionHeader(userId: string, headerName: string) {
+  return <div className="mb-4">
+    <Bold className="mb-2 text-slate-600">{headerName}</Bold>
+  </div>
+}
+
 export default RegistrationCheckoutSection;
+
