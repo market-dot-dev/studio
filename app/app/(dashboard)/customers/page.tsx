@@ -2,9 +2,13 @@
 import { useState, useEffect } from 'react';
 import { User, Subscription, Charge } from '@prisma/client';
 import { customersOfMaintainer } from '@/app/services/UserService';
+import {
+  Text,
+} from '@tremor/react';
 import React from 'react';
 import Tier from '@/app/models/Tier';
 import useCurrentSession from '@/app/hooks/use-current-session';
+import PageHeading from '@/components/common/page-heading';
 
 const formatDate = (date: Date | string): string => {
   const options: Intl.DateTimeFormatOptions = {
@@ -48,7 +52,7 @@ const SubscriptionRow = ({ user, subscription }: SubscriptionRowProps) => {
   return (
     <tr>
       <td>{user.name}</td>
-      <td>{user.company || '-'}</td>
+      <td>{user.company || '(unknown)'}</td>
       <td><a href={`mailto:${user.email}`}>{user.email}</a></td>
       <td>{subscription.tier.name}</td>
       <td>{subscription.state}</td>
@@ -72,9 +76,16 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
   };
 
   return (
+    <div className="flex max-w-screen-xl flex-col space-y-12">
+    <div className="flex w-full justify-between">
+      <div className="flex flex-col">
+        <PageHeading title="All Customers" />
+        <Text>Manage your customers and their tiers here. </Text>
+      </div>
+    </div>
     <tr>
       <td>{user.name}</td>
-      <td>{user.company || '-'}</td>
+      <td>{user.company || '(unknown)'}</td>
       <td><a href={`mailto:${user.email}`}>{user.email}</a></td>
       <td>{charge.tier.name}</td>
       <td>Purchased</td>
@@ -83,6 +94,7 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
         <button onClick={() => { window.location.href = `/customers/${user.id}` }}>View</button>
       </td>
     </tr>
+    </div>
   );
 };
 
