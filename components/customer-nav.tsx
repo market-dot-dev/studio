@@ -36,15 +36,9 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
         icon: <LayoutDashboard width={18} />,
       },
       {
-        name: "Subscriptions",
-        href: "/subscriptions",
-        isActive: urlSegments[0] === "subscriptions",
-        icon: <KanbanSquare width={18} />,
-      },
-      {
-        name: "Purchases",
-        href: "/charges",
-        isActive: urlSegments[0] === "charges",
+        name: "Packages",
+        href: "/packages",
+        isActive: urlSegments[0] === "packages",
         icon: <KanbanSquare width={18} />,
       },
       {
@@ -86,7 +80,7 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
               <div className="text-md font-medium">
-                Gitwallet
+                <Link href="/" ><img src="/gw-logo-nav.png" className="h-8 hover:scale-110" /></Link>
               </div>
           </div>
           <div className="grid gap-0.5">
