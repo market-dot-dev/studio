@@ -100,7 +100,7 @@ async function customMiddleware(req: NextRequest) {
         return rewrite(`/app/c${path}`, req.url);
       }
     } else {
-      if(url.pathname.startsWith('/charges') || url.pathname.startsWith('/subscriptions')) {
+      if(url.pathname.startsWith('/charges') || url.pathname.startsWith('/subscriptions') || url.pathname.startsWith('/packages')) {
         return NextResponse.redirect(
           `${rootUrl}/c${path}`,
         );

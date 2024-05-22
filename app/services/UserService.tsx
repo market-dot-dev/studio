@@ -1,12 +1,17 @@
 "use server";
 
-import { User } from '@prisma/client';
+import { Charge, Subscription, User } from '@prisma/client';
 import prisma from "@/lib/prisma";
 import { getSession } from '@/lib/auth';
 import TierService from './TierService';
 import SessionService from './SessionService';
 import Customer from '../models/Customer';
 import { createSessionUser } from '../models/Session';
+
+type CustomerWithChargesAndSubscriptions = User & {
+  charges: Charge[];
+  subscriptions: Subscription[];
+};
 
 class UserService {
   static filterUserAttributes(user: User | Partial<User>) {
@@ -37,7 +42,51 @@ class UserService {
       },
     });
   }
-
+  
+  static async customersOfMaintainer(maintainerId: string): Promise<CustomerWithChargesAndSubscriptions[]> {
+    const customers = await prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            charges: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+          {
+            subscriptions: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        charges: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+        },
+        subscriptions: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+        },
+      },
+    });
+  
+    return customers as CustomerWithChargesAndSubscriptions[];
+  }
   static async updateCurrentUser(userData: Partial<User>) {
     const userId = await SessionService.getCurrentUserId()
     if(!userId) return null;
