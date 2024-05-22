@@ -6,16 +6,18 @@ import UserService from './UserService';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || '');
 
-
 type RequiredUserProps = {
-    name: User['name'];
-    email: User['email'];
-  } & Partial<User>;
+  name: User['name'];
+  email: User['email'];
+} & Partial<User>;
 
 class EmailService {
+  static headerImage = '<img src="https://gitwallet.co/gw-logo.png" alt="Gitwallet" style="width:50px; height:auto;"><br /><br />';
+  static footerMessage = '<p>Thank you,<br>The Gitwallet Team</p>';
+
   static async sendEmail(email: string | null, subject: string, text: string, html: string) {
-    console.log('sending email', email, subject, html)
-    if( !email ) {
+    console.log('sending email', email, subject, html);
+    if (!email) {
       console.error('Invalid email address');
       return;
     }
@@ -27,7 +29,7 @@ class EmailService {
       },
       subject: subject,
       text: text,
-      html: html,
+      html: EmailService.headerImage + html + EmailService.footerMessage,
     } as any;
 
     try {
@@ -43,13 +45,31 @@ class EmailService {
   }
 
   static async newSubscriptionInformation(userId: string, customer: RequiredUserProps, tierName: string) {
-
     const subject = `You have a new customer for ${tierName}!`;
     const text = `Congratulations! ${customer.name} has purchased your ${tierName} tier.`;
     const html = `Congratulations! <b>${customer.name}</b> has purchased your <b>${tierName}</b> tier. You can contact them at ${customer.email} to provide them with the benefits of this tier.`;
     const user = await UserService.findUser(userId);
-    
-    if(!user) {
+
+    if (!user) {
+      console.error(`User not found with id: ${userId}`);
+      return;
+    }
+
+    try {
+      await this.sendEmail(user.email, subject, text, html);
+      console.log("Email sent successfully");
+    } catch (error) {
+      console.error("Failed to send email:", error);
+    }
+  }
+
+  static async newPurchaseInformation(userId: string, customer: RequiredUserProps, tierName: string) {
+    const subject = `You have a new customer for ${tierName}!`;
+    const text = `Congratulations! ${customer.name} has purchased your ${tierName} package.`;
+    const html = `Congratulations! <b>${customer.name}</b> has purchased your <b>${tierName}</b> tier. You can contact them at ${customer.email} to provide them with the benefits of this package.`;
+    const user = await UserService.findUser(userId);
+
+    if (!user) {
       console.error(`User not found with id: ${userId}`);
       return;
     }
@@ -64,8 +84,21 @@ class EmailService {
 
   static async newSubscriptionConfirmation(customer: RequiredUserProps, tierName: string) {
     const subject = `Thank you for purchasing ${tierName}!`;
-    const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at https://app.gitwallet.co to view your benefits.`;
-    const html = `Thank you for purchasing the <b>${tierName}</b> tier.  You now have access to all the benefits of this tier. Please visit your <a href=\"https://app.gitwallet.co/customer-login\">dashboard</a> to view your benefits.`;
+    const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at https://app.gitwallet.co to manage your subscription & benefits.`;
+    const html = `Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier. Please visit your <a href="https://app.gitwallet.co/customer-login">dashboard</a> to manage your subscription & benefits.`;
+
+    try {
+      await this.sendEmail(customer.email, subject, text, html);
+      console.log("Email sent successfully");
+    } catch (error) {
+      console.error("Failed to send email:", error);
+    }
+  }
+
+  static async newPurchaseConfirmation(customer: RequiredUserProps, tierName: string) {
+    const subject = `Thank you for purchasing ${tierName}!`;
+    const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at https://app.gitwallet.co. to view your package benefits`;
+    const html = `Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier. Please visit your <a href="https://app.gitwallet.co/customer-login">dashboard</a> to view your package benefits.`;
 
     try {
       await this.sendEmail(customer.email, subject, text, html);
@@ -79,7 +112,7 @@ class EmailService {
     const subject = `Subscription Cancelled by ${customer.name}`;
     const text = `${customer.name} has cancelled their subscription to your ${tierName} tier.`;
     const html = `<b>${customer.name}</b> has cancelled their subscription to your <b>${tierName}</b> tier.`;
-    
+
     try {
       await this.sendEmail(user.email, subject, text, html);
       console.log("Email sent successfully");
@@ -105,9 +138,9 @@ class EmailService {
     const subject = 'Welcome to gitwallet.co!';
     const text = `Hello ${user.name},\n\nThank you for registering with gitwallet.co! The next steps are to set up your payment information and offerings at app.gitwallet.co in order to start selling your services.\n\nGet started here: app.gitwallet.co`;
     const html = `
-        <p>Hello <strong>${user.name}</strong>,</p>
-        <p>Thank you for registering with <strong>gitwallet.co</strong>! The next steps are to set up your payment information and offerings at <a href="https://app.gitwallet.co">app.gitwallet.co</a> in order to start selling your services.</p>
-        <p>Get started here: <a href="https://app.gitwallet.co">app.gitwallet.co</a></p>
+      <p>Hello <strong>${user.name}</strong>,</p>
+      <p>Thank you for registering with <strong>gitwallet.co</strong>! The next steps are to set up your payment information and offerings at <a href="https://app.gitwallet.co">app.gitwallet.co</a> in order to start selling your services.</p>
+      <p>Get started here: <a href="https://app.gitwallet.co">app.gitwallet.co</a></p>
     `;
 
     await this.sendEmail(user.email, subject, text, html);
@@ -117,9 +150,9 @@ class EmailService {
     const subject = 'Welcome to gitwallet.co!';
     const text = `Hello ${user.name},\n\nThank you for registering with gitwallet.co!\n\nGet started here: gitwallet.co`;
     const html = `
-        <p>Hello <strong>${user.name}</strong>,</p>
-        <p>Thank you for registering with <strong>gitwallet.co</strong>!</p>
-        <p>Get started here: <a href="https://gitwallet.co">gitwallet.co</a></p>
+      <p>Hello <strong>${user.name}</strong>,</p>
+      <p>Thank you for registering with <strong>gitwallet.co</strong>!</p>
+      <p>Get started here: <a href="https://gitwallet.co">gitwallet.co</a></p>
     `;
 
     await this.sendEmail(user.email, subject, text, html);
