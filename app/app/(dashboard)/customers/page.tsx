@@ -6,7 +6,7 @@ import React from 'react';
 import Tier from '@/app/models/Tier';
 import useCurrentSession from '@/app/hooks/use-current-session';
 
-export const formatDate = (date: Date | string): string => {
+const formatDate = (date: Date | string): string => {
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'short',
@@ -15,7 +15,7 @@ export const formatDate = (date: Date | string): string => {
   return new Date(date).toLocaleDateString('en-US', options);
 };
 
-export const formatCurrency = (amount: number, currency: string = 'USD'): string => {
+const formatCurrency = (amount: number, currency: string = 'USD'): string => {
   const options: Intl.NumberFormatOptions = {
     style: 'currency',
     currency,
