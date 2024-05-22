@@ -59,18 +59,17 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
 
   if(invalidCard){
     return (
-      <Card>
+      <div className="flex flex-row justify-between items-center">
         <Text>Invalid payment method. Please update your payment method.</Text>
         <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshSession).then(() => setCardInfo(undefined))}>
           Remove
         </Button>
-      </Card>
+      </div>
     );
   }
 
   if(!!cardInfo){
     return (
-      <Card>
         <div className="flex flex-row justify-between items-center">
           <Text>Use saved {cardInfo?.brand.toUpperCase()} ending in {cardInfo?.last4}</Text>
           <br />
@@ -78,7 +77,6 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
             Remove
           </Button>
         </div>
-      </Card>
     );
   }
 

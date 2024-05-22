@@ -126,7 +126,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Left Column */}
       <div
-        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 px-8 md:fixed md:w-2/5"
+        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 px-8 sm:py-8 md:fixed md:w-2/5"
         // style={{ backgroundImage: "url(/voronoi.png)" }}
       >
         <div className="overflow-y-auto">
