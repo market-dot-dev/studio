@@ -10,8 +10,15 @@ import SubscriptionStatusBadge from "../subscription-state";
 import UserService from "@/app/services/UserService";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-const CustomerDetailPage = async ({ params }: { params: { maintainerId: string, userId: string } }) => {
-  const customer = await UserService.customerOfMaintainer(params.maintainerId, params.userId);
+const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
+  const userId = params.id;
+  const maintainerUserId = (await UserService.getCurrentSessionUser())?.id;
+
+  if(!maintainerUserId || !userId) {
+    return <div>Customer not found</div>;
+  }
+
+  const customer = await UserService.customerOfMaintainer(maintainerUserId, userId);
 
   if (!customer) {
     return <div>Customer not found</div>;
