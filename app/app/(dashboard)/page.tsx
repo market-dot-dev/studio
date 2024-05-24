@@ -32,7 +32,9 @@ export default async function Overview() {
           <div className="flex flex-col gap-8">
             <h3 className="text-xl font-bold">Latest Customers</h3>
             <CustomersTable maxInitialRows={5} />
+            <h3 className="text-xl font-bold">Repos and Packages</h3>
             <DependentPackagesWidget repos={repos} />
+            <h3 className="text-xl font-bold">Reports</h3>
             <DashboardCharts />
           </div>
         </div>
