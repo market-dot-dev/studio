@@ -1,12 +1,18 @@
 "use server";
 
-import { User } from '@prisma/client';
+import { Charge, Subscription, User } from '@prisma/client';
 import prisma from "@/lib/prisma";
 import { getSession } from '@/lib/auth';
 import TierService from './TierService';
 import SessionService from './SessionService';
 import Customer from '../models/Customer';
 import { createSessionUser } from '../models/Session';
+import Tier from '../models/Tier';
+
+type CustomerWithChargesAndSubscriptions = User & {
+  charges: (Charge & { tier: Tier })[];
+  subscriptions: (Subscription & { tier: Tier })[];
+};
 
 class UserService {
   static filterUserAttributes(user: User | Partial<User>) {
@@ -36,6 +42,110 @@ class UserService {
         id,
       },
     });
+  }
+  
+  static async customerOfMaintainer(maintainerId: string, userId: string): Promise<CustomerWithChargesAndSubscriptions | null> {
+    const customer = await prisma.user.findFirst({
+      where: {
+        id: userId,
+        OR: [
+          {
+            charges: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+          {
+            subscriptions: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        charges: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+          include: {
+            tier: true,
+          },
+        },
+        subscriptions: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+          include: {
+            tier: true,
+          },
+        },
+      },
+    });
+
+    return customer as CustomerWithChargesAndSubscriptions | null;
+  }
+
+
+  static async customersOfMaintainer(maintainerId: string): Promise<CustomerWithChargesAndSubscriptions[]> {
+    const customers = await prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            charges: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+          {
+            subscriptions: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        charges: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+          include: {
+            tier: true,
+          },
+        },
+        subscriptions: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+          include: {
+            tier: true,
+          },
+        },
+      },
+    });
+  
+    return customers as CustomerWithChargesAndSubscriptions[];
   }
 
   static async updateCurrentUser(userData: Partial<User>) {
@@ -117,6 +227,10 @@ export const ensureTierId = async (tierId: string) => {
       reject(error);
     });
   });
+}
+
+export const customersOfMaintainer = async (maintainerId: string): Promise<CustomerWithChargesAndSubscriptions[]> => {
+  return UserService.customersOfMaintainer(maintainerId);
 }
 
 export default UserService;

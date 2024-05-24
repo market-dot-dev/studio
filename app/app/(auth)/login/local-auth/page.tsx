@@ -17,7 +17,7 @@ export default function LoginPage() {
         width={100}
         height={100}
         className="relative mx-auto h-12 w-auto dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
-        src="/logo.png"
+        src="/gw-logo.png"
       />
       <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">
         Gitwallet

@@ -1,12 +1,12 @@
 "use client";
 
-import { Accordion, AccordionBody, AccordionHeader, Badge, Flex } from "@tremor/react";
+import { Accordion, AccordionBody, AccordionHeader, Divider, Flex } from "@tremor/react";
 import RegistrationSection from "./registration-section";
 import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
-import { Text, Bold } from "@tremor/react";
+import { Text, Bold, Card } from "@tremor/react";
 
 import { useSearchParams } from 'next/navigation';
 
@@ -65,19 +65,72 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const trialDays = tier?.trialDays || 0;
   const trialOffered = trialDays > 0;
 
-  if(tier?.id && !tier?.published) {
+  if (tier?.id && !tier?.published) {
     return TierNotAvailable();
   }
+
+  const tierInfo = 
+  
+    <Card>
+    <Text>Package Details</Text>
+    {isTierLoading ?
+      <div className="opacity-50">
+        <SkeletonLoader className="h-4 w-3/5 rounded-full leading-6 mb-2" />
+        <SkeletonLoader className="h-4 w-1/2 rounded-full leading-6 mb-4" />
+      </div>
+      :
+      <div>
+        <div className="mb-2 text-lg">
+          <Bold className="text-gray-800">{checkoutProject}: {checkoutTier} {isAnnual ? `(annual)` : ''}</Bold>
+        </div>
+        <div className="mb-2 text-lg leading-6">
+          <Text>
+            {checkoutCurrency + " " + checkoutPrice} {checkoutCadence !== 'once' ? `per ${checkoutCadence}` : ''}
+            {trialOffered && <>&nbsp;with {trialDays}d free trial</>}
+          </Text>
+        </div>
+      </div>}
+
+    {isFeaturesLoading ?
+      <SkeletonLoader className="h-8 w-full rounded-xl my-2" />
+      :
+      <Accordion className="my-2">
+        <AccordionHeader className="my-0 py-1">
+          Package Benefits
+        </AccordionHeader>
+        <AccordionBody>
+          {features ? 
+            <TierFeatureList features={features || []} /> :
+            <Text>No features have been listed in this package.</Text>
+          }
+        </AccordionBody>
+      </Accordion>}
+
+    {/* accept terms of service */}
+    <div className="flex flex-row items-center gap-2">
+      {isFeaturesLoading ?
+        <SkeletonLoader className="h-4 w-3/4 rounded-full mb-4" /> :
+
+        <Text className="mb-4 leading-6">
+          {checkoutProject} uses the{" "}
+          <a href={pathToDefaultMSA} className="underline" target="_blank">
+            Standard Gitwallet MSA
+          </a>
+          .
+        </Text>}
+    </div>
+  </Card>;
+
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
       {/* Left Column */}
       <div
-        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 p-8 text-slate-50 md:fixed md:w-1/2 lg:py-32 xl:px-32"
-        style={{ backgroundImage: "url(/voronoi.png)" }}
+        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 px-8 sm:py-8 md:fixed md:w-2/5"
+        // style={{ backgroundImage: "url(/voronoi.png)" }}
       >
         <div className="overflow-y-auto">
-          <div className="w-7/8 lg:w-5/6">
+          <div className="w-7/8">
             {isMaintainerLoading ?
               <Flex flexDirection="col" alignItems="start" className='gap-10 mb-6 opacity-50'>
                 <SkeletonLoader className="h-6 w-3/4 rounded-xl" />
@@ -88,68 +141,16 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               </Flex>
               :
               <>
-                <h1 className="mb-8 text-4xl font-semibold">{checkoutProject}</h1>
-                <p className="mb-8 text-xl font-extralight leading-6">
-                  {projectDescription}
-                </p>
+                <h1 className="mb-8 text-4xl text-slate-50 font-semibold">{checkoutProject}</h1>
+                {tierInfo}
               </>
             }
-            <div></div>
           </div>
         </div>
       </div>
 
       {/* Right Column */}
-      <div className="ml-auto w-full overflow-y-auto bg-slate-100 p-8 text-slate-800 md:w-1/2 md:p-16">
-        <section className="w-7/8 mb-8 lg:w-5/6">
-          {isTierLoading ?
-            <div className="opacity-50">
-              <SkeletonLoader className="h-4 w-3/5 rounded-full leading-6 mb-2" />
-              <SkeletonLoader className="h-4 w-1/2 rounded-full leading-6 mb-4" />
-            </div>
-            :
-            <div>
-              <div className="mb-2 text-lg font-medium leading-6">
-                <Bold>{checkoutProject}: {checkoutTier} {isAnnual ? `(annual)` : ''}</Bold>
-              </div>
-              <div className="mb-4 leading-6">
-                <Text>
-                  {checkoutCurrency + " " + checkoutPrice} {checkoutCadence !== 'once' ? `per ${checkoutCadence}` : ''}
-                  { trialOffered && <>&nbsp;after {trialDays}d free trial</> }
-                </Text>
-              </div>
-            </div>
-          }
-
-          {isFeaturesLoading ?
-            <SkeletonLoader className="h-8 w-full rounded-xl my-2" /> 
-            :
-            <Accordion className="my-2">
-              <AccordionHeader className="my-0 py-1">
-                Expand for Tier Details
-              </AccordionHeader>
-              <AccordionBody>
-                <TierFeatureList features={features || []} />
-              </AccordionBody>
-            </Accordion>
-          }
-
-          {/* accept terms of service */}
-          <div className="flex flex-row items-center gap-2">
-            {isFeaturesLoading ?
-              <SkeletonLoader className="h-4 w-3/4 rounded-full mb-4" /> :
-
-              <Text className="mb-4 leading-6">
-                {checkoutProject} uses the{" "}
-                <a href={pathToDefaultMSA} className="underline" target="_blank">
-                  Standard Gitwallet MSA
-                </a>
-                .
-              </Text>
-            }
-          </div>
-        </section>
-
+      <div className="ml-auto w-full overflow-y-auto bg-white p-8 text-slate-800 md:w-3/5 md:p-16">
         {isTierLoading ?
           <>
             <Flex flexDirection="col" alignItems="start" className='gap-12 opacity-50'>
@@ -157,7 +158,6 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               <SkeletonLoader className="h-36 w-5/6 rounded-xl" />
               <SkeletonLoader className="h-12 w-5/6 rounded-xl" />
             </Flex>
-
           </> :
           <>
             {tier && maintainer && <RegistrationSection tier={tier} maintainer={maintainer} annual={isAnnual} />}
