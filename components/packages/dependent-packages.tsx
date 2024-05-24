@@ -22,7 +22,7 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 	const [dependentPackages, setDependentPackages] = useState<any[]>([]);
 	//   const [selectedVersion, setSelectedVersion] = useState<string | null>();
 	const [allData, setAlldata] = useState<any>(null);
-	const [tabIndex, setTabIndex] = useState<number>(0);
+	const [tabIndex, setTabIndex] = useState<number>(1); // minor_versions
 
 	const [isPendingDependents, startDependentsTransition] = useTransition();
 	const [isPendingPackages, startPackagesTransition] = useTransition();
@@ -104,14 +104,24 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 		}
 	}, [repos])
 
+	useEffect(() => {
+		const el = document.querySelector(".myElement")
+	// const observer = new IntersectionObserver( 
+	// ([e]) => e.target.classList.toggle("is-pinned", e.intersectionRatio < 1),
+	// { threshold: [1] }
+	// );
+
+	// observer.observe(el);
+	}, [])
+
 	const chartSection = (
 		<>
 		{ isPendingPackages ?
 			<div className="flex w-full justify-center items-center"><LoadingSpinner /></div>
 			: 
 			<BarChart
-				className="h-72 mt-4 mx-auto pt-0"
-				style={{ width: `max(30%, min(${chartData.length * 100}px, 100%))`}}
+				className="h-72 mt-4 mx-auto pt-0 w-full"
+				// style={{ width: `max(100%, min(${chartData.length * 100}px, 100%))`}}
 				data={chartData}
 				index="version"
 				categories={["Dependent Packages"]}
@@ -155,9 +165,10 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 						))}
 					</Select>
 				</div>
-				<div>
+				<div className="grow">
 					{allData ?
 						<TabGroup
+							className="ml-auto flex justify-end"
 							defaultIndex={tabIndex}
 							onIndexChange={(index: number) => {
 								setDependentPackages([]);

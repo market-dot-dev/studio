@@ -5,10 +5,10 @@ import Link from "next/link";
 export default function DependentPackagesWidget({ repos }: { repos: RepoItem[] }) {
 	return (
 		<div className="flex flex-col gap-4">
-			<Card className="py-0">
+			<Card className="pt-0">
 				<DependentPackages repos={repos} compact={true} />
 			</Card>
-			<Link href='/reports/packages' className="ml-auto">
+			<Link href='/reports' className="ml-auto">
 				<Button size="xs" className="h-6" variant="secondary">
 				More Details →
 				</Button>
