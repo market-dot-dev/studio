@@ -1,11 +1,12 @@
 'use client'
-
+import Link from "next/link";
 import { getDependentPackages, getDependentPackagesFacets, getPackages } from "@/app/services/LeadsService";
 import { Repo } from "@prisma/client";
-import { Badge, BarChart, Button, Card, Select, SelectItem, Tab, TabGroup, TabList } from "@tremor/react";
+import { Badge, BarChart, Button, Card, Select, SelectItem, Tab, TabGroup, TabList, Text } from "@tremor/react";
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react"
 import LoadingSpinner from "../form/loading-spinner";
-
+import demoData, { dummyFacetsData } from "./demo-data";
+import { useSearchParams } from "next/navigation";
 export type RepoItem = Partial<Repo>;
 
 const versionLabels = {
@@ -13,6 +14,8 @@ const versionLabels = {
 	"resolved_minor_versions": "Minor",
 	"resolved_patch_versions": "Patch"
 } as any
+
+const useDemoData = true;
 
 // compact means that we do not fetch and display list of dependent packags when a version is selected on the chart
 export default function DependentPackages({ repos, compact = false }: { repos: RepoItem[], compact?: boolean}) {
@@ -27,7 +30,10 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 	const [isPendingDependents, startDependentsTransition] = useTransition();
 	const [isPendingPackages, startPackagesTransition] = useTransition();
 
-	const chartData = useMemo(() => {
+	const searchParams = useSearchParams();
+
+
+	const chartData = searchParams.get('dummydata') || !repos.length ? demoData : useMemo(() => {
 		if (!allData) return [];
 		const versionType = Object.keys(allData)[tabIndex];
 		const versionData = allData[versionType];
@@ -39,12 +45,9 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 			}
 		});
 
-		// repeat data 3 times
-		// return [...data, ...data, ...data, ...data, ...data, ...data, ...data, ...data];
-
 		return data;
 	}, [allData, tabIndex]);
-
+	
 	const getPackagesForRadarId = useCallback((e: string) => {
 		
 		// clear the dropdowns
@@ -74,7 +77,7 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 	const getDependentsForPackageId = useCallback((e: string) => {
 		if( selectedPackage === e ) return;
 		
-		console.log('getting dependent package facets for', e)
+		// console.log('getting dependent package facets for', e)
 		setSelectedPackage(e);
 
 		startDependentsTransition(() => {
@@ -86,7 +89,7 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 
 	const getVersionDependents = useCallback((e: any) => {
 		if (compact || !e || !selectedPackage) return;
-		console.log('getting version dependents for', e)
+		// console.log('getting version dependents for', e)
 		setDependentPackages([]);
 		const key = Object.keys(allData)[tabIndex];
 		const value = e.version;
@@ -138,18 +141,23 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 
 	return (
 		<div className="mt-6 flex flex-col items-stretch gap-6">
-			
+			{ !repos.length ?
+				<Text>Below is the demo data. Connect repositories to see the actual data: (<Link href="/settings/repos" className="underline">Connect More</Link>)</Text>
+				: null
+			}
 			<div className="grid gap-6 grid-cols-3 relative z-20">
-				
 				<div className="flex gap-2 items-center">
 					<label>Repo</label>
 					<Select
 						defaultValue={`${repos[0]?.radarId ?? ''}`}
 						onValueChange={getPackagesForRadarId}
+						disabled={! repos?.length}
 					>
-						{repos.map((repo: RepoItem) => (
+						{ repos.length ? repos.map((repo: RepoItem) => (
 							<SelectItem key={repo.radarId} value={`${repo.radarId}`}>{repo.name}</SelectItem>
-						))}
+							))
+							: <SelectItem value="0">Select a Repo</SelectItem>
+						}
 					</Select>
 				</div>
 				
@@ -159,30 +167,35 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 					<Select
 						value={selectedPackage ?? (packages.length ? packages[0].id : '')}
 						onValueChange={getDependentsForPackageId}
+						disabled={! packages?.length}
 					>
-						{packages.map(pkg => (
+						{packages.length ? packages.map(pkg => (
 							<SelectItem key={pkg.id} value={`${pkg.id}`}>{pkg.name}</SelectItem>
-						))}
+						)) 
+						: <SelectItem value="0">Select a Package</SelectItem>
+					}
 					</Select>
 				</div>
 				<div className="grow">
-					{allData ?
-						<TabGroup
-							className="ml-auto flex justify-end"
-							defaultIndex={tabIndex}
-							onIndexChange={(index: number) => {
-								setDependentPackages([]);
-								setTabIndex(index);
-							}}
-						>
-							<TabList variant="solid">
-								{Object.keys(allData).map((key: string, index: number) => (
-									<Tab value={key} key={index} className={tabIndex === index ? "bg-white" : ""} >{versionLabels[key]}</Tab>
-								))}
-							</TabList>
-						</TabGroup>
-						: null
-					}
+					
+					<TabGroup
+						className="ml-auto flex justify-end"
+						defaultIndex={tabIndex}
+						onIndexChange={(index: number) => {
+							
+							if( ! allData ) return;
+
+							setDependentPackages([]);
+							setTabIndex(index);
+						}}
+					>
+						<TabList variant="solid">
+							{Object.keys(allData ?? dummyFacetsData).map((key: string, index: number) => (
+								<Tab value={key} key={index} className={tabIndex === index ? "bg-white" : ""} >{versionLabels[key]}</Tab>
+							))}
+						</TabList>
+					</TabGroup>
+						
 				</div>
 			</div>
 

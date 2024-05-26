@@ -11,24 +11,24 @@ export default function ReportsTabs({repos} : {repos: RepoItem[]}) {
 
 	return (
 		<TabGroup defaultIndex={tabIndex} onIndexChange={setTabIndex}>
-		<TabList variant="solid" className="bg-white font-medium flex space-x-4 border-b border-stone-200 pb-4 pt-2 dark:border-stone-700">
-			<Tab className={ "py-1 text-stone-600 " + (tabIndex === 0 ? "bg-stone-100" : "")}>Repos</Tab>
-			<Tab className={ "py-1 text-stone-600 " + (tabIndex === 1 ? "bg-stone-100" : "")}>Revenue</Tab>
-		</TabList>
-		<TabPanels className="pt-6">
-			<TabPanel>
-			<DependentPackages repos={repos} />
-			</TabPanel>
-			<TabPanel>
-			<div className="flex flex-col gap-4">
-				<div className="flex flex-col gap-2">
-					<Text>Your revenue & customer reports.</Text>
-					<Badge>Coming Soon</Badge>
+			<TabList variant="solid" className="bg-white font-medium flex space-x-4 border-b border-stone-200 pb-4 pt-2 dark:border-stone-700">
+				<Tab className={ "py-1 text-stone-600 " + (tabIndex === 0 ? "bg-stone-100" : "")}>Repos</Tab>
+				<Tab className={ "py-1 text-stone-600 " + (tabIndex === 1 ? "bg-stone-100" : "")}>Revenue</Tab>
+			</TabList>
+			<TabPanels className="pt-6">
+				<TabPanel>
+				<DependentPackages repos={repos} />
+				</TabPanel>
+				<TabPanel>
+				<div className="flex flex-col gap-4">
+					<div className="flex flex-col gap-2">
+						<Text>Your revenue & customer reports.</Text>
+						<Badge>Coming Soon</Badge>
+					</div>
+					<AllCharts />
 				</div>
-				<AllCharts />
-			</div>
-			</TabPanel>
-		</TabPanels>
+				</TabPanel>
+			</TabPanels>
 		</TabGroup>
 	)
 }
