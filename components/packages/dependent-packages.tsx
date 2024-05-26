@@ -15,7 +15,6 @@ const versionLabels = {
 	"resolved_patch_versions": "Patch"
 } as any
 
-const useDemoData = true;
 
 // compact means that we do not fetch and display list of dependent packags when a version is selected on the chart
 export default function DependentPackages({ repos, compact = false }: { repos: RepoItem[], compact?: boolean}) {
@@ -31,9 +30,12 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 	const [isPendingPackages, startPackagesTransition] = useTransition();
 
 	const searchParams = useSearchParams();
+	const useDummyData = searchParams.get('dummydata');
 
-
-	const chartData = searchParams.get('dummydata') || !repos.length ? demoData : useMemo(() => {
+	const chartData = useMemo(() => {
+		if( useDummyData || !repos.length) {
+			return demoData
+		}
 		if (!allData) return [];
 		const versionType = Object.keys(allData)[tabIndex];
 		const versionData = allData[versionType];
@@ -46,7 +48,7 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 		});
 
 		return data;
-	}, [allData, tabIndex]);
+	}, [allData, tabIndex, useDummyData]);
 	
 	const getPackagesForRadarId = useCallback((e: string) => {
 		
