@@ -144,7 +144,7 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 	return (
 		<div className="mt-6 flex flex-col items-stretch gap-6">
 			{ !repos.length ?
-				<Text>Demo data shown. Connect repositories to see usage data: (<Link href="/settings/repos" className="underline">Connect More</Link>)</Text>
+				<Text>This is demo data. <Link href="/settings/repos" className="underline">Connect a repository</Link> to see real usage data for your repos & packages.</Text>
 				: null
 			}
 			<div className="grid gap-6 grid-cols-3 relative z-20">
