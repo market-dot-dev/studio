@@ -7,19 +7,19 @@ import DependentPackagesWidget from "@/components/packages/dependent-packages-wi
 import { CustomersTable } from "./customers/customer-table";
 
 export default async function Overview() {
-  
+
   const [user, repoResults] = await Promise.all([
     SessionService.getSessionUser(),
     RepoService.getRepos()
   ]);
-  
+
   const title = user?.name ? `Welcome, ${user.name}!` : "Your Dashboard";
   const onboarding = user?.onboarding;
-  
-	const repos = repoResults.map(repo => ({
-		radarId: repo.radarId,
-		name: repo.name
-	}));
+
+  const repos = repoResults.map(repo => ({
+    radarId: repo.radarId,
+    name: repo.name
+  }));
 
   return (
     <>
@@ -30,10 +30,10 @@ export default async function Overview() {
         <div className="flex flex-col space-y-6">
           <PageHeading title={title} />
           <div className="flex flex-col gap-8">
+            <h3 className="text-xl font-bold">Repo & Package Analytics</h3>
+            <DependentPackagesWidget repos={repos} />
             <h3 className="text-xl font-bold">Latest Customers</h3>
             <CustomersTable maxInitialRows={5} />
-            <h3 className="text-xl font-bold">Repos and Packages</h3>
-            <DependentPackagesWidget repos={repos} />
             <h3 className="text-xl font-bold">Reports</h3>
             <DashboardCharts />
           </div>
