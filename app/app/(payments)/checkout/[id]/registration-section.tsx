@@ -113,7 +113,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
       </section>
 
       <section className="w-7/8 mb-8 lg:w-5/6">
-        <Button onClick={() => setLoading(true)} disabled={loading || !userId} color="green" className="w-full">
+        <Button onClick={() => setLoading(true)} disabled={loading || !userId} color="green" className="w-full" data-cy="checkout-button">
           {loading ? <LoadingDots color="#A8A29E" /> : "Checkout"}
         </Button>
         <Text className="my-2 text-center">
