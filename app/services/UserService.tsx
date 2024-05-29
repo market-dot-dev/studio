@@ -43,6 +43,14 @@ class UserService {
       },
     });
   }
+
+  static async findUserByGithubId(gh_username: string): Promise<User | undefined | null> {
+    return prisma?.user.findFirst({
+      where: {
+        gh_username,
+      },
+    });
+  }
   
   static async customerOfMaintainer(maintainerId: string, userId: string): Promise<CustomerWithChargesAndSubscriptions | null> {
     const customer = await prisma.user.findFirst({

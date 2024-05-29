@@ -323,6 +323,7 @@ model Media {
 model GithubAppInstallation {
   id        Int      @id
   userId    String
+  login     String?
   token     String
   expiresAt DateTime
   createdAt DateTime @default(now())

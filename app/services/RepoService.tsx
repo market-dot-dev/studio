@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers'
 import { GithubAppInstallation, Lead } from "@prisma/client";
 import LeadsService from "./LeadsService";
+import UserService from "./UserService";
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '';
 
 class RepoService {
@@ -26,21 +27,23 @@ class RepoService {
     return jwt.sign(payload, privateKey, { algorithm: 'RS256' });
   }
 
-  static async createInstallation(id: number) {
-    const userId = await SessionService.getCurrentUserId();
+  static async createInstallation(id: number, login: string, gh_username: string ) {
 
-    if (!userId) {
+    const user = await UserService.findUserByGithubId(gh_username);
+    if (!user) {
       throw new Error('No user found.');
     }
 
-    const res = await RepoService.generateInstallationToken(id);
+    const userId = user.id!;
 
+    const res = await RepoService.generateInstallationToken(id);
+    console.log('installation Token', res);
     if (!res) {
       throw new Error('Failed to create installation token');
     }
 
     const { token, expiresAt } = res;
-
+    console.log('token', token, 'login', login)
     // save the installation information in the database
     return prisma.githubAppInstallation.create({
       data: {
@@ -48,6 +51,7 @@ class RepoService {
         userId,
         token,
         expiresAt,
+        login
       },
     });
 
@@ -67,6 +71,30 @@ class RepoService {
         id,
       },
     });
+  }
+  
+  static async getGithubAppInstallation(id: number) {
+    const jwtToken = RepoService.getJWT();
+
+    try {
+      const res = await fetch(`https://api.github.com/app/installations/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      const data = await res.json();
+
+      if (res.status !== 200) {
+        return false;
+      }
+
+      return data;
+    } catch (error) {
+      throw new Error("unable to get installation.");
+    }
   }
 
   static async generateInstallationToken(id: number) {
@@ -102,24 +130,24 @@ class RepoService {
   static async getInstallationToken(id: number) {
     let installation = await RepoService.getInstallation(id) as GithubAppInstallation;
 
-    if (!installation) {
-      // verify the installation with github and create a new installation
-      const { data } = await RepoService.getInstallations() as any;
+    // if (!installation) {
+    //   // verify the installation with github and create a new installation
+    //   const { data } = await RepoService.getInstallations() as any;
 
-      if (!data?.installations) {
-        throw new Error('No installations found.');
-      }
+    //   if (!data?.installations) {
+    //     throw new Error('No installations found.');
+    //   }
 
-      const verifiedInstallation = data.installations.find((installation: any) => installation.id === id);
+    //   const verifiedInstallation = data.installations.find((installation: any) => installation.id === id);
 
-      if (!verifiedInstallation) {
-        throw new Error('No installation found.');
-      }
+    //   if (!verifiedInstallation) {
+    //     throw new Error('No installation found.');
+    //   }
 
-      await RepoService.createInstallation(id);
+    //   await RepoService.createInstallation(id);
 
-      installation = await RepoService.getInstallation(id) as GithubAppInstallation;
-    }
+    //   installation = await RepoService.getInstallation(id) as GithubAppInstallation;
+    // }
 
     // check if the token is still valid
     const expiresAt = new Date(installation.expiresAt).getTime();
@@ -147,67 +175,67 @@ class RepoService {
   }
 
   // helper function to fetch the app installations from github
-  static async fetchAppInstallations(token: string) {
-    const url = 'https://api.github.com/user/installations';
-    return await fetch(url, {
-      method: "GET",
-      headers: {
-        "Accept": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
-    });
-  }
+  // static async fetchAppInstallations(token: string) {
+  //   const url = 'https://api.github.com/user/installations';
+  //   return await fetch(url, {
+  //     method: "GET",
+  //     headers: {
+  //       "Accept": "application/json",
+  //       "Authorization": `Bearer ${token}`
+  //     }
+  //   });
+  // }
 
   // get the app installations for the current user from github 
-  static async getInstallations() {
-    const token = await SessionService.getAccessToken();
-    if (!token) {
-      return {
-        status: 401,
-        data: [],
-        message: 'No access token found.'
-      }
-    }
+  // static async getInstallations() {
+  //   const token = await SessionService.getAccessToken();
+  //   if (!token) {
+  //     return {
+  //       status: 401,
+  //       data: [],
+  //       message: 'No access token found.'
+  //     }
+  //   }
 
-    try {
+  //   try {
 
-      let response = await RepoService.fetchAppInstallations(token);
+  //     let response = await RepoService.fetchAppInstallations(token);
 
-      if (!response.ok) {
+  //     if (!response.ok) {
 
-        if (response.status === 401) {
-          // special case, the token might be invalidated because of changes in the app permissions, but system has no clue about it
-          // so lets refresh the token and try again
-          const refreshedToken = await SessionService.getAccessToken(true);
+  //       if (response.status === 401) {
+  //         // special case, the token might be invalidated because of changes in the app permissions, but system has no clue about it
+  //         // so lets refresh the token and try again
+  //         const refreshedToken = await SessionService.getAccessToken(true);
 
-          if (!refreshedToken) {
-            return {
-              status: 401,
-              data: [],
-              message: 'Failed to refresh the token.'
-            }
-          }
+  //         if (!refreshedToken) {
+  //           return {
+  //             status: 401,
+  //             data: [],
+  //             message: 'Failed to refresh the token.'
+  //           }
+  //         }
 
-          response = await RepoService.fetchAppInstallations(refreshedToken);
-        } else {
-          throw new Error(`GitHub API responded with status code ${response.status}`);
-        }
-      }
+  //         response = await RepoService.fetchAppInstallations(refreshedToken);
+  //       } else {
+  //         throw new Error(`GitHub API responded with status code ${response.status}`);
+  //       }
+  //     }
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      return {
-        status: 200,
-        data
-      }
+  //     return {
+  //       status: 200,
+  //       data
+  //     }
 
-    } catch (error) {
-      return {
-        status: 500,
-        data: []
-      }
-    }
-  }
+  //   } catch (error) {
+  //     return {
+  //       status: 500,
+  //       data: []
+  //     }
+  //   }
+  // }
 
   static async getGithubAppInstallState() {
     const state = nanoid();
@@ -218,17 +246,40 @@ class RepoService {
   }
 
   static async getInstallationsList() {
-    const { status, data, message } = await RepoService.getInstallations() as any;
+    const userId = await SessionService.getCurrentUserId();
+    const installations = await prisma.githubAppInstallation.findMany({
+      where: {
+        userId,
+      },
+      select: {
+        id: true,
+        login: true,
+      }
+    });
 
-    return {
-      status,
-      data: (data?.installations ?? []).map((installation: any) => ({
-        id: installation.id,
-        account: installation.account.login,
-        accountType: installation.account.type,
-      })),
-      message
+    // for backward compatibility, lets check if 'login' is missing for any installation
+    // if so, lets fetch the login from github
+    for (let i = 0; i < installations.length; i++) {
+      if (!installations[i].login) {
+        const installation = await RepoService.getGithubAppInstallation(installations[i].id);
+
+        if (installation) {
+          const { account: { login } } = installation;
+          installations[i].login = login;
+          // lets update the login in the database
+          await prisma.githubAppInstallation.update({
+            where: {
+              id: installations[i].id,
+            },
+            data: {
+              login,
+            }
+          });
+        }
+      }
     }
+
+    return installations;
   }
 
   // get the repositories for a given installation
