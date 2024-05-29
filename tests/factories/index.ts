@@ -8,6 +8,8 @@ export const createUser = async (overrides?: Partial<User>): Promise<User> => {
       roleId: 'customer',
       stripeAccountDisabled: false,
       ...overrides,
+      stripeCustomerIds: {},
+      stripePaymentMethodIds: {},
     },
   });
 };

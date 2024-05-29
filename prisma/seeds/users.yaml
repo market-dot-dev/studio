@@ -3,6 +3,7 @@ objects:
     email: 'aaron.graves@gmail.com'
     name: 'Aaron Graves'
     gh_username: 'agraves'
+    stripeAccountId: 'acct_1PMFxnAfDjiGFAtF'
   - id: 'dev-ts'
     email: 'tarun@lab0324.xyz'
     name: 'Tarun Sachdeva'
