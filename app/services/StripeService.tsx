@@ -301,7 +301,7 @@ class StripeService {
   }
 
   static async calculateApplicationFee(price: number, applicationFeePercent: number = 0, applicationFeePrice: number = 0) {
-    const totalPercent = 1 + ((applicationFeePercent + (GLOBAL_APPLICATION_FEE_PCT || 0)) / 100);
+    const totalPercent = ((applicationFeePercent + (GLOBAL_APPLICATION_FEE_PCT || 0)) / 100);
     const totalFee = applicationFeePrice + (GLOBAL_APPLICATION_FEE_DOLLARS || 0);
 
     return Math.round(price * totalPercent) + totalFee;
