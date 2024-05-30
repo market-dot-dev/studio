@@ -130,25 +130,6 @@ class RepoService {
   static async getInstallationToken(id: number) {
     let installation = await RepoService.getInstallation(id) as GithubAppInstallation;
 
-    // if (!installation) {
-    //   // verify the installation with github and create a new installation
-    //   const { data } = await RepoService.getInstallations() as any;
-
-    //   if (!data?.installations) {
-    //     throw new Error('No installations found.');
-    //   }
-
-    //   const verifiedInstallation = data.installations.find((installation: any) => installation.id === id);
-
-    //   if (!verifiedInstallation) {
-    //     throw new Error('No installation found.');
-    //   }
-
-    //   await RepoService.createInstallation(id);
-
-    //   installation = await RepoService.getInstallation(id) as GithubAppInstallation;
-    // }
-
     // check if the token is still valid
     const expiresAt = new Date(installation.expiresAt).getTime();
     const now = new Date().getTime();
@@ -173,69 +154,6 @@ class RepoService {
 
     return installation.token;
   }
-
-  // helper function to fetch the app installations from github
-  // static async fetchAppInstallations(token: string) {
-  //   const url = 'https://api.github.com/user/installations';
-  //   return await fetch(url, {
-  //     method: "GET",
-  //     headers: {
-  //       "Accept": "application/json",
-  //       "Authorization": `Bearer ${token}`
-  //     }
-  //   });
-  // }
-
-  // get the app installations for the current user from github 
-  // static async getInstallations() {
-  //   const token = await SessionService.getAccessToken();
-  //   if (!token) {
-  //     return {
-  //       status: 401,
-  //       data: [],
-  //       message: 'No access token found.'
-  //     }
-  //   }
-
-  //   try {
-
-  //     let response = await RepoService.fetchAppInstallations(token);
-
-  //     if (!response.ok) {
-
-  //       if (response.status === 401) {
-  //         // special case, the token might be invalidated because of changes in the app permissions, but system has no clue about it
-  //         // so lets refresh the token and try again
-  //         const refreshedToken = await SessionService.getAccessToken(true);
-
-  //         if (!refreshedToken) {
-  //           return {
-  //             status: 401,
-  //             data: [],
-  //             message: 'Failed to refresh the token.'
-  //           }
-  //         }
-
-  //         response = await RepoService.fetchAppInstallations(refreshedToken);
-  //       } else {
-  //         throw new Error(`GitHub API responded with status code ${response.status}`);
-  //       }
-  //     }
-
-  //     const data = await response.json();
-
-  //     return {
-  //       status: 200,
-  //       data
-  //     }
-
-  //   } catch (error) {
-  //     return {
-  //       status: 500,
-  //       data: []
-  //     }
-  //   }
-  // }
 
   static async getGithubAppInstallState() {
     const state = nanoid();
