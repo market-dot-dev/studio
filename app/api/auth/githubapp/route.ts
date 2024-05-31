@@ -8,6 +8,11 @@ const Actions = {
   // ADDED: 'added', // added repositories
 };
 
+const AccountTypes = {
+  USER: 'User',
+  ORG: 'Organization'
+}
+
 export async function POST(req: NextRequest) {
   try {
     const chunks = [];
@@ -17,11 +22,11 @@ export async function POST(req: NextRequest) {
     }
     const body = Buffer.concat(chunks).toString('utf-8');
     const parsedBody = JSON.parse(body);
-
-    const { action, installation: { id: installationId, account: { login } }, sender: { login: senderLogin } } = parsedBody;
-
+    
+    const { action, installation: { id: installationId, account: { login, id, type } }} = parsedBody;
+    
     if (Actions.CREATED === action) {
-      await RepoService.createInstallation(installationId, login, senderLogin);
+      await RepoService.createInstallation(installationId, login, type === AccountTypes.ORG ? null : id);
     } else if (Actions.DELETED === action) {
       await RepoService.removeInstallation(installationId);
     }

@@ -27,31 +27,31 @@ class RepoService {
     return jwt.sign(payload, privateKey, { algorithm: 'RS256' });
   }
 
-  static async createInstallation(id: number, login: string, gh_username: string ) {
-
-    const user = await UserService.findUserByGithubId(gh_username);
-    if (!user) {
-      throw new Error('No user found.');
-    }
-
-    const userId = user.id!;
+  static async createInstallation(id: number, login: string, maybeUserId: number | null) {
 
     const res = await RepoService.generateInstallationToken(id);
-    console.log('installation Token', res);
+    
     if (!res) {
       throw new Error('Failed to create installation token');
     }
 
     const { token, expiresAt } = res;
-    console.log('token', token, 'login', login)
+    
+    // if its not an org, then we just have one member i.e., the user himself
+    const members = maybeUserId ? [{ id: maybeUserId }] : await RepoService.getGithubAppOrgMembers(login, token);
+    
     // save the installation information in the database
     return prisma.githubAppInstallation.create({
       data: {
         id,
-        userId,
         token,
         expiresAt,
-        login
+        login,
+        members: {
+          create: members.map((member: any) => ({
+            gh_id: member.id,
+          })),
+        },
       },
     });
 
@@ -73,6 +73,29 @@ class RepoService {
     });
   }
   
+  static async getGithubAppOrgMembers(org: string, installationToken: string) {
+
+    try {
+      const res = await fetch(`https://api.github.com/orgs/${org}/members`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${installationToken}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      const data = await res.json();
+
+      if (res.status !== 200) {
+        return false;
+      }
+
+      return data;
+    } catch (error) {
+      throw new Error("unable to get org members.");
+    }
+  }
+
   static async getGithubAppInstallation(id: number) {
     const jwtToken = RepoService.getJWT();
 
@@ -128,6 +151,7 @@ class RepoService {
 
 
   static async getInstallationToken(id: number) {
+    
     let installation = await RepoService.getInstallation(id) as GithubAppInstallation;
 
     // check if the token is still valid
@@ -165,24 +189,49 @@ class RepoService {
 
   static async getInstallationsList() {
     const userId = await SessionService.getCurrentUserId();
+
+    const account = await prisma.account.findFirst({
+      where: { 
+        userId,
+        provider: 'github',
+      },
+      select: { providerAccountId: true },
+    });
+  
+    if (!account || !account.providerAccountId) {
+      return [];
+    }
+  
     const installations = await prisma.githubAppInstallation.findMany({
       where: {
-        userId,
+        members: {
+          some: {
+            gh_id: parseInt(account.providerAccountId),
+          },
+        },
       },
       select: {
         id: true,
         login: true,
-      }
+      },
     });
 
+    if( !installations?.length ) {
+      return [];
+    }
+   
+
     // for backward compatibility, lets check if 'login' is missing for any installation
-    // if so, lets fetch the login from github
+    // If so, that would mean, this is old data. So need to fetch the login and members too
     for (let i = 0; i < installations.length; i++) {
       if (!installations[i].login) {
         const installation = await RepoService.getGithubAppInstallation(installations[i].id);
-
+        
         if (installation) {
+          const installationToken = await RepoService.getInstallationToken(installations[i].id);
           const { account: { login } } = installation;
+          const members = await RepoService.getGithubAppOrgMembers(login, installationToken);
+
           installations[i].login = login;
           // lets update the login in the database
           await prisma.githubAppInstallation.update({
@@ -191,6 +240,11 @@ class RepoService {
             },
             data: {
               login,
+              members: {
+                create: members.map((member: any) => ({
+                  gh_id: member.id,
+                })),
+              },
             }
           });
         }
