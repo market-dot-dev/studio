@@ -12,6 +12,18 @@ Gitwallet is a commerce platform for open source projects.
 1. merge to `main`
 1. CD will automatically run migrations (even destructive ones! for now)
 
+## Tests
+
+To run the cypress integration tests:
+
+NB: tests run in local dev and will reset your db
+
+1. $ pnpm cypress open
+1. choose "e2e" -> "chrome"
+1. click the name of the test to run e.g. "smoke-test.cy.js"
+
+Tests are located under `cypress/e2e/`.
+
 ## Preview branches
 
 NB preview builds use their own db, so it does not affect prod
