@@ -1,12 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import SimpleEmailInputForm from "@/components/common/simple-email-input";
-import { Col, Grid, Badge, Button, Text } from "@tremor/react";
+import { Col, Bold, Badge, Button, Text } from "@tremor/react";
 import DashboardCard from "@/components/common/dashboard-card";
 import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
 import { Suspense } from "react";
 import DomainService from "../services/domain-service";
 import GithubLoginButton from "@/app/app/(auth)/login/github-login-button";
+import CurvedUnderline from "@/components/common/curved-underline";
 
 const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
 const customerLoginUrl = DomainService.getRootUrl('app', '/customer-login');
@@ -53,7 +54,7 @@ const EcosystemLogo: React.FC<TestimonialProps> = ({ ecosystem, logoSrc }) => (
 
 const renderSectionHeading = (text: string) => {
   return (
-    <h3 className="text-2xl font-semibold mb-4">{text}</h3>
+    <h3 className="text-2xl font-bold leading-tight tracking-tight mb-2">{text}</h3>
   );
 };
 
@@ -64,11 +65,11 @@ export default function HomePage() {
 
       {/* Left Column */}
       <div className="md:fixed top-0 left-0 w-full md:w-1/2 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 lg:py-32 xl:px-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
-        <div className="overflow-y-auto">
-          <div className="w-7/8 lg:w-5/6">
+        <div className="">
+          <div className="w-7/8">
             <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
-            <h1 className="text-4xl font-light leading-8 mb-6">The commerce toolkit built for open source projects.</h1>
-            <p className="text-xl font-extralight leading-6 mb-6">Setup support, professional services, and other paid products for your repos and ecosystems.</p>
+            <h1 className="text-4xl font-bold leading-none tracking-tight mb-6"><CurvedUnderline>Commerce & analytics</CurvedUnderline><br/> made for open source projects.</h1>
+            <p className="text-xl font-extralight leading-6 mb-6">Gitwallet is an OS for open source businesses. Get better insight into open source usage, sell products and services across channels, and grow your business. </p>
             <div className="flex flex-col gap-2">
               <div className="flex flex-row gap-2">
                 <Link href={maintainerLoginUrl}><Button color="green" className="w-full">Get Started →</Button></Link>
@@ -82,45 +83,30 @@ export default function HomePage() {
 
       {/* Right Column */}
       <div className="w-full md:w-1/2 ml-auto bg-slate-100 text-slate-800 overflow-y-auto p-8 md:p-16">
-        <section className="mb-8 w-7/8 lg:w-5/6">
-          {renderSectionHeading("Purpose built for Maintainers")}
-          <p className="mb-4">Gitwallet is a toolkit for open source maintainers to commercialize their services for their repos and ecosystems. We help leading maintainers create robust support offerings, sell across channels, and grow their business.</p>
+        <section className="mb-2 w-7/8 lg:w-5/6">
+          <Badge className="mb-4" size="md"><Bold>Features</Bold></Badge>
         </section>
 
-        <section className="mb-8">
-          {renderSectionHeading("A Complete Toolkit")}
 
-          <Grid numItems={1} numItemsLg={3} className="text-sm text-slate-50 w-7/8 lg:w-5/6 gap-4">
-            <Col>
-              <DashboardCard className="bg-emerald-600 hover:shadow-lg hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-t hover:from-emerald-600 hover:to-emerald-800">
-                <h2 className="font-bold mb-2">Setup Support Tiers</h2>
-                <p className="font-light mb-8">Quickly build robust support offerings that work for you and your customers.</p>
-              </DashboardCard>
-            </Col>
+        <section className="mb-8 w-7/8 lg:w-5/6">
+          <h3 className="text-2xl font-bold leading-tight tracking-tight mb-2">Quickly setup commercial services & paid products.</h3>
+          <p className="mb-4">Easily setup robust paid support channels, consulting services, paid downloads and (soon) courses, and dual license distributions for your open source.</p>
+          <img src="https://placehold.co/600x400" alt="Placeholder" className="mt-4 w-full rounded-xl" />
+        </section>
 
-            <Col>
-              <DashboardCard className="bg-emerald-700 hover:shadow-lg hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-b hover:from-emerald-600 hover:to-emerald-700">
-                <h2 className="font-bold mb-2">Sell Across Channels</h2>
-                <p className="font-light mb-8">Setup a hosted site, customizable embeds, and direct sales to market and sell your services.</p>
-              </DashboardCard>
-            </Col>
+        <section className="mb-8 w-7/8 lg:w-5/6">
+          {renderSectionHeading("New insights into open source usage.")}
+          <p className="mb-4">Gitwallet helps open source projects get better insight into open source usage, setup commercial services & products, and grow their community & business.</p>
+        </section>
 
-            <Col>
-              <DashboardCard className="bg-emerald-800 hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-b hover:from-emerald-700 hover:to-emerald-600">
-                <h2 className="font-bold mb-2">Manage Your Business</h2>
-                <p className="font-light mb-8">All your reports, customers, payments and contract information in one place.</p>
-              </DashboardCard>
-            </Col>
+        <section className="mb-8 w-7/8 lg:w-5/6">
+          {renderSectionHeading("Sell across channels.")}
+          <p className="mb-4">Gitwallet helps open source projects get better insight into open source usage, setup commercial services & products, and grow their community & business.</p>
+        </section>
 
-            <Col numColSpan={1} numColSpanLg={3}>
-              <DashboardCard>
-                <div className="text-slate-800">
-                  <Badge size="xs" className="me-2 mb-1.5">For Software Teams</Badge>
-                  <p className="text-slate-800"><b>Manage OSS Relationships:</b> We help companies build and scale commercial relationships with the open source ecosystems most important to them.</p>
-                </div>
-              </DashboardCard>
-            </Col>
-          </Grid>
+        <section className="mb-8 w-7/8 lg:w-5/6">
+          {renderSectionHeading("Manage an open source business.")}
+          <p className="mb-4">Gitwallet helps open source projects get better insight into open source usage, setup commercial services & products, and grow their community & business.</p>
         </section>
 
         <section className="mb-8  w-7/8 lg:w-5/6">

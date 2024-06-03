@@ -131,5 +131,3 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
     </div>
   );
 };
-
-export default CustomerDetailPage;
