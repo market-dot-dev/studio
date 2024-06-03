@@ -57,6 +57,24 @@ class RepoService {
 
   }
 
+  static async removeGithubOrgMember(githubAppInstallationId: number, gh_id: number) {
+    return await prisma.githubOrgMember.deleteMany({
+      where: {
+        githubAppInstallationId,
+        gh_id,
+      },
+    });
+  }
+
+  static async addGithubOrgMember(githubAppInstallationId: number, gh_id: number) {
+    return await prisma.githubOrgMember.create({
+      data: {
+        githubAppInstallationId,
+        gh_id,
+      },
+    });
+  }
+
   static async removeInstallation(id: number) {
     return prisma.githubAppInstallation.delete({
       where: {

@@ -4,8 +4,9 @@ import RepoService from "@/app/services/RepoService";
 const Actions = {
   CREATED: 'created',
   DELETED: 'deleted',
-  // REMOVED: 'removed', // removed repositories
-  // ADDED: 'added', // added repositories
+  // INSTALLATION: 'installation_target',
+  MEMBER_REMOVED: 'member_removed', // member removed from organization
+  MEMBER_ADDED: 'member_added', // member added to organization
 };
 
 const AccountTypes = {
@@ -22,14 +23,28 @@ export async function POST(req: NextRequest) {
     }
     const body = Buffer.concat(chunks).toString('utf-8');
     const parsedBody = JSON.parse(body);
+
+    // console.log(parsedBody);
     
-    const { action, installation: { id: installationId, account: { login, id, type } }} = parsedBody;
+    const { action, installation : { id: installationId }} = parsedBody;
     
-    if (Actions.CREATED === action) {
-      await RepoService.createInstallation(installationId, login, type === AccountTypes.ORG ? null : id);
-    } else if (Actions.DELETED === action) {
-      await RepoService.removeInstallation(installationId);
-    }
+    switch (action) {
+      case Actions.CREATED :
+        const {account: { login, id, type } } = parsedBody.installation;
+        await RepoService.createInstallation(installationId, login, type === AccountTypes.ORG ? null : id);
+        break;
+      case Actions.DELETED:
+        await RepoService.removeInstallation(installationId);
+        break;
+      case Actions.MEMBER_REMOVED:
+        const { membership: { user : { id : removedId }} } = parsedBody;
+        await RepoService.removeGithubOrgMember(installationId, removedId);
+        break;
+      case Actions.MEMBER_ADDED:
+        const { membership: { user : { id : addedId }} } = parsedBody;
+        await RepoService.addGithubOrgMember(installationId, addedId);
+        break;
+    } 
 
     return new Response('ok', { status: 200 });
   } catch (error) {
