@@ -2,9 +2,9 @@ import { NextRequest } from "next/server";
 import RepoService from "@/app/services/RepoService";
 
 const Actions = {
-  CREATED: 'created',
-  DELETED: 'deleted',
-  // INSTALLATION: 'installation_target',
+  CREATED: 'created', // app installed
+  DELETED: 'deleted', // app uninstalled
+  ACCOUNT_RENAMED: 'renamed', // account/org renamed, on which the app is installed
   MEMBER_REMOVED: 'member_removed', // member removed from organization
   MEMBER_ADDED: 'member_added', // member added to organization
 };
@@ -24,9 +24,10 @@ export async function POST(req: NextRequest) {
     const body = Buffer.concat(chunks).toString('utf-8');
     const parsedBody = JSON.parse(body);
 
-    // console.log(parsedBody);
+    // the parsedBody is an array when org/account is renamed;
+    const payload = Array.isArray(parsedBody) ? parsedBody.find(item => item.action && item.account) : parsedBody;
     
-    const { action, installation : { id: installationId }} = parsedBody;
+    const { action, installation : { id: installationId }} = payload;
     
     switch (action) {
       case Actions.CREATED :
@@ -43,6 +44,10 @@ export async function POST(req: NextRequest) {
       case Actions.MEMBER_ADDED:
         const { membership: { user : { id : addedId }} } = parsedBody;
         await RepoService.addGithubOrgMember(installationId, addedId);
+        break;
+      case Actions.ACCOUNT_RENAMED:
+        const { account: { login : newLogin } } = payload;
+        await RepoService.renameInstallation(installationId, newLogin);
         break;
     } 
 

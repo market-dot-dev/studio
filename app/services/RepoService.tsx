@@ -6,7 +6,7 @@ import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers'
 import { GithubAppInstallation, Lead } from "@prisma/client";
 import LeadsService from "./LeadsService";
-import UserService from "./UserService";
+
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '';
 
 class RepoService {
@@ -71,6 +71,17 @@ class RepoService {
       data: {
         githubAppInstallationId,
         gh_id,
+      },
+    });
+  }
+
+  static async renameInstallation(id: number, login: string) {
+    return prisma.githubAppInstallation.update({
+      where: {
+        id,
+      },
+      data: {
+        login,
       },
     });
   }
