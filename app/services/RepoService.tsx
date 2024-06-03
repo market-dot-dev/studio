@@ -231,7 +231,7 @@ class RepoService {
       return [];
     }
   
-    const installations = await prisma.githubAppInstallation.findMany({
+    return await prisma.githubAppInstallation.findMany({
       where: {
         members: {
           some: {
@@ -244,43 +244,6 @@ class RepoService {
         login: true,
       },
     });
-
-    if( !installations?.length ) {
-      return [];
-    }
-   
-
-    // for backward compatibility, lets check if 'login' is missing for any installation
-    // If so, that would mean, this is old data. So need to fetch the login and members too
-    for (let i = 0; i < installations.length; i++) {
-      if (!installations[i].login) {
-        const installation = await RepoService.getGithubAppInstallation(installations[i].id);
-        
-        if (installation) {
-          const installationToken = await RepoService.getInstallationToken(installations[i].id);
-          const { account: { login } } = installation;
-          const members = await RepoService.getGithubAppOrgMembers(login, installationToken);
-
-          installations[i].login = login;
-          // lets update the login in the database
-          await prisma.githubAppInstallation.update({
-            where: {
-              id: installations[i].id,
-            },
-            data: {
-              login,
-              members: {
-                create: members.map((member: any) => ({
-                  gh_id: member.id,
-                })),
-              },
-            }
-          });
-        }
-      }
-    }
-
-    return installations;
   }
 
   // get the repositories for a given installation
