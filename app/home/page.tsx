@@ -54,7 +54,7 @@ const EcosystemLogo: React.FC<TestimonialProps> = ({ ecosystem, logoSrc }) => (
 
 const renderSectionHeading = (text: string) => {
   return (
-    <h3 className="text-2xl font-bold leading-tight tracking-tight mb-2">{text}</h3>
+    <h3 className="text-2xl font-bold leading-none tracking-tight mb-2">{text}</h3>
   );
 };
 
@@ -89,24 +89,29 @@ export default function HomePage() {
 
 
         <section className="mb-8 w-7/8 lg:w-5/6">
-          <h3 className="text-2xl font-bold leading-tight tracking-tight mb-2">Quickly setup commercial services & paid products.</h3>
+          {renderSectionHeading("Quickly setup commercial services & paid products.")}
           <p className="mb-4">Easily setup robust paid support channels, consulting services, paid downloads and (soon) courses, and dual license distributions for your open source.</p>
           <img src="https://placehold.co/600x400" alt="Placeholder" className="mt-4 w-full rounded-xl" />
         </section>
 
         <section className="mb-8 w-7/8 lg:w-5/6">
-          {renderSectionHeading("New insights into open source usage.")}
-          <p className="mb-4">Gitwallet helps open source projects get better insight into open source usage, setup commercial services & products, and grow their community & business.</p>
+          {renderSectionHeading("Get new insights into your open source usage.")}
+          <p className="mb-4">
+            Gitwallet provides powerful analytics tools to help you understand how your open source projects are being used. 
+          </p>
+          <img src="https://placehold.co/600x400" alt="Placeholder" className="mt-4 w-full rounded-xl" />
         </section>
 
         <section className="mb-8 w-7/8 lg:w-5/6">
-          {renderSectionHeading("Sell across channels.")}
+          {renderSectionHeading("Find customers & sell across channels.")}
           <p className="mb-4">Gitwallet helps open source projects get better insight into open source usage, setup commercial services & products, and grow their community & business.</p>
+          <img src="https://placehold.co/600x400" alt="Placeholder" className="mt-4 w-full rounded-xl" />
         </section>
 
         <section className="mb-8 w-7/8 lg:w-5/6">
           {renderSectionHeading("Manage an open source business.")}
           <p className="mb-4">Gitwallet helps open source projects get better insight into open source usage, setup commercial services & products, and grow their community & business.</p>
+          <img src="https://placehold.co/600x400" alt="Placeholder" className="mt-4 w-full rounded-xl" />
         </section>
 
         <section className="mb-8  w-7/8 lg:w-5/6">
