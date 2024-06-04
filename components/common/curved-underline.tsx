@@ -39,7 +39,7 @@ const CurvedUnderline: React.FC<CurvedUnderlineProps> = ({ children, borderColor
         {children}
       </span>
       <svg
-        viewBox={`0 0 ${textRef.current ? textRef.current.offsetWidth : 200} 20`}
+        viewBox={`0 0 ${textRef.current ? textRef.current.offsetWidth : 220} 20`}
         xmlns="http://www.w3.org/2000/svg"
         style={{
           position: 'absolute',
