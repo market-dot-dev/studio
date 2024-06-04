@@ -257,13 +257,15 @@ model WaitlistUser {
 
 model Repo {
   id        String   @id @default(cuid())
-  repoId    String   @unique
+  repoId    String   
   radarId   Int?
   name      String
   url       String?
   createdAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([repoId, userId])
 }
 
 model Service {

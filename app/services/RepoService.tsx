@@ -384,7 +384,7 @@ class RepoService {
 
   static async disconnectRepo(repoId: string) {
     const userId = await SessionService.getCurrentUserId();
-    return prisma.repo.delete({
+    return prisma.repo.deleteMany({
       where: {
         repoId: `${repoId}`,
         userId,
