@@ -1,6 +1,52 @@
 import { NextRequest } from "next/server";
 import RepoService from "@/app/services/RepoService";
 
+const encoder = new TextEncoder();
+const secret = process.env.GITHUB_APP_WEBHOOK_SECRET ?? '';
+
+async function verifySignature(secret: string, header: any, payload: any) {
+  let parts = header.split("=");
+  let sigHex = parts[1];
+
+  let algorithm = { name: "HMAC", hash: { name: 'SHA-256' } };
+
+  let keyBytes = encoder.encode(secret);
+  let extractable = false;
+  let key = await crypto.subtle.importKey(
+      "raw",
+      keyBytes,
+      algorithm,
+      extractable,
+      [ "sign", "verify" ],
+  );
+
+  let sigBytes = hexToBytes(sigHex);
+  let dataBytes = encoder.encode(payload);
+  let equal = await crypto.subtle.verify(
+      algorithm.name,
+      key,
+      sigBytes,
+      dataBytes,
+  );
+
+  return equal;
+}
+
+function hexToBytes(hex: string) {
+  let len = hex.length / 2;
+  let bytes = new Uint8Array(len);
+
+  let index = 0;
+  for (let i = 0; i < hex.length; i += 2) {
+      let c = hex.slice(i, i + 2);
+      let b = parseInt(c, 16);
+      bytes[index] = b;
+      index += 1;
+  }
+
+  return bytes;
+}
+
 const Actions = {
   CREATED: 'created', // app installed
   DELETED: 'deleted', // app uninstalled
@@ -16,6 +62,10 @@ const AccountTypes = {
 
 export async function POST(req: NextRequest) {
   try {
+    // Verify the request signature
+    const signature = req.headers.get('X-Hub-Signature-256');
+    
+    
     const chunks = [];
 
     for await (const chunk of req.body as any) {
@@ -23,6 +73,10 @@ export async function POST(req: NextRequest) {
     }
     const body = Buffer.concat(chunks).toString('utf-8');
     const parsedBody = JSON.parse(body);
+
+    if (!signature || !(await verifySignature(secret, signature, body))) {
+      return new Response('Bad Request', { status: 400 });
+    } 
 
     // the parsedBody is an array when org/account is renamed;
     const payload = Array.isArray(parsedBody) ? parsedBody.find(item => item.action && item.account) : parsedBody;
