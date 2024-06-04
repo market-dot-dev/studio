@@ -64,7 +64,7 @@ export default function HomePage() {
     <div className="flex flex-col md:flex-row min-h-screen">
 
       {/* Left Column */}
-      <div className="md:fixed top-0 left-0 w-full md:w-1/2 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 lg:py-32 xl:px-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
+      <div className="md:fixed top-0 left-0 w-full md:w-5/12 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 lg:py-32 xl:px-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
         <div className="">
           <div className="w-7/8">
             <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
@@ -82,7 +82,7 @@ export default function HomePage() {
       </div>
 
       {/* Right Column */}
-      <div className="w-full md:w-1/2 ml-auto bg-slate-100 text-slate-800 overflow-y-auto p-8 md:p-16">
+      <div className="w-full md:w-7/12 ml-auto bg-slate-100 text-slate-800 overflow-y-auto p-8 md:p-16">
         <section className="mb-2 w-7/8 lg:w-5/6">
           <Badge className="mb-4" size="md"><Bold>Features</Bold></Badge>
         </section>
