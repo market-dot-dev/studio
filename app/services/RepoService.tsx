@@ -66,6 +66,23 @@ class RepoService {
     });
   }
 
+  static async addGithubOrgMembers(installationId: number, org: string) {
+      
+      const token = await RepoService.getInstallationToken(installationId);
+      
+      const members = await RepoService.getGithubAppOrgMembers(org, token);
+
+      if(members?.length) {
+        await prisma.githubOrgMember.createMany({
+          data: members.map((member: any) => ({
+            githubAppInstallationId: installationId,
+            gh_id: member.id,
+          })),
+        });
+      }
+    
+  }
+
   static async addGithubOrgMember(githubAppInstallationId: number, gh_id: number) {
     return await prisma.githubOrgMember.create({
       data: {

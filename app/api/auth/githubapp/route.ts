@@ -53,6 +53,7 @@ const Actions = {
   ACCOUNT_RENAMED: 'renamed', // account/org renamed, on which the app is installed
   MEMBER_REMOVED: 'member_removed', // member removed from organization
   MEMBER_ADDED: 'member_added', // member added to organization
+  NEW_PERMISSIONS_ACCEPTED: 'new_permissions_accepted',
 };
 
 const AccountTypes = {
@@ -85,23 +86,29 @@ export async function POST(req: NextRequest) {
     
     switch (action) {
       case Actions.CREATED :
-        const {account: { login, id, type } } = parsedBody.installation;
+        const {account: { login, id, type } } = payload.installation;
         await RepoService.createInstallation(installationId, login, type === AccountTypes.ORG ? null : id);
         break;
       case Actions.DELETED:
         await RepoService.removeInstallation(installationId);
         break;
       case Actions.MEMBER_REMOVED:
-        const { membership: { user : { id : removedId }} } = parsedBody;
+        const { membership: { user : { id : removedId }} } = payload;
         await RepoService.removeGithubOrgMember(installationId, removedId);
         break;
       case Actions.MEMBER_ADDED:
-        const { membership: { user : { id : addedId }} } = parsedBody;
+        const { membership: { user : { id : addedId }} } = payload;
         await RepoService.addGithubOrgMember(installationId, addedId);
         break;
       case Actions.ACCOUNT_RENAMED:
         const { account: { login : newLogin } } = payload;
         await RepoService.renameInstallation(installationId, newLogin);
+        break;
+      case Actions.NEW_PERMISSIONS_ACCEPTED:
+        const { account: { type: accountType, login: accountLogin } } = payload.installation;
+        if( accountType === AccountTypes.ORG) {
+          await RepoService.addGithubOrgMembers(installationId, accountLogin);
+        }
         break;
     } 
 
