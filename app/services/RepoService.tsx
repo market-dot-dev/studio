@@ -6,6 +6,7 @@ import jwt from 'jsonwebtoken';
 import { cookies } from 'next/headers'
 import { GithubAppInstallation, Lead } from "@prisma/client";
 import LeadsService from "./LeadsService";
+
 const privateKey = process.env.GITHUB_APP_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '';
 
 class RepoService {
@@ -26,31 +27,63 @@ class RepoService {
     return jwt.sign(payload, privateKey, { algorithm: 'RS256' });
   }
 
-  static async createInstallation(id: number) {
-    const userId = await SessionService.getCurrentUserId();
-
-    if (!userId) {
-      throw new Error('No user found.');
-    }
+  static async createInstallation(id: number, login: string, maybeUserId: number | null) {
 
     const res = await RepoService.generateInstallationToken(id);
-
+    
     if (!res) {
       throw new Error('Failed to create installation token');
     }
 
     const { token, expiresAt } = res;
-
+    
+    // if its not an org, then we just have one member i.e., the user himself
+    const members = maybeUserId ? [{ id: maybeUserId }] : await RepoService.getGithubAppOrgMembers(login, token);
+    
     // save the installation information in the database
     return prisma.githubAppInstallation.create({
       data: {
         id,
-        userId,
         token,
         expiresAt,
+        login,
+        members: {
+          create: members.map((member: any) => ({
+            gh_id: member.id,
+          })),
+        },
       },
     });
 
+  }
+
+  static async removeGithubOrgMember(githubAppInstallationId: number, gh_id: number) {
+    return await prisma.githubOrgMember.deleteMany({
+      where: {
+        githubAppInstallationId,
+        gh_id,
+      },
+    });
+  }
+
+  static async addGithubOrgMember(githubAppInstallationId: number, gh_id: number) {
+    return await prisma.githubOrgMember.create({
+      data: {
+        githubAppInstallationId,
+        gh_id,
+      },
+    });
+  }
+
+  static async renameInstallation(id: number, login: string) {
+    return prisma.githubAppInstallation.update({
+      where: {
+        id,
+      },
+      data: {
+        login,
+      },
+    });
   }
 
   static async removeInstallation(id: number) {
@@ -67,6 +100,53 @@ class RepoService {
         id,
       },
     });
+  }
+  
+  static async getGithubAppOrgMembers(org: string, installationToken: string) {
+
+    try {
+      const res = await fetch(`https://api.github.com/orgs/${org}/members`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${installationToken}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      const data = await res.json();
+
+      if (res.status !== 200) {
+        return false;
+      }
+
+      return data;
+    } catch (error) {
+      throw new Error("unable to get org members.");
+    }
+  }
+
+  static async getGithubAppInstallation(id: number) {
+    const jwtToken = RepoService.getJWT();
+
+    try {
+      const res = await fetch(`https://api.github.com/app/installations/${id}`, {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${jwtToken}`,
+          'Accept': 'application/vnd.github.v3+json'
+        }
+      });
+
+      const data = await res.json();
+
+      if (res.status !== 200) {
+        return false;
+      }
+
+      return data;
+    } catch (error) {
+      throw new Error("unable to get installation.");
+    }
   }
 
   static async generateInstallationToken(id: number) {
@@ -100,26 +180,8 @@ class RepoService {
 
 
   static async getInstallationToken(id: number) {
+    
     let installation = await RepoService.getInstallation(id) as GithubAppInstallation;
-
-    if (!installation) {
-      // verify the installation with github and create a new installation
-      const { data } = await RepoService.getInstallations() as any;
-
-      if (!data?.installations) {
-        throw new Error('No installations found.');
-      }
-
-      const verifiedInstallation = data.installations.find((installation: any) => installation.id === id);
-
-      if (!verifiedInstallation) {
-        throw new Error('No installation found.');
-      }
-
-      await RepoService.createInstallation(id);
-
-      installation = await RepoService.getInstallation(id) as GithubAppInstallation;
-    }
 
     // check if the token is still valid
     const expiresAt = new Date(installation.expiresAt).getTime();
@@ -146,69 +208,6 @@ class RepoService {
     return installation.token;
   }
 
-  // helper function to fetch the app installations from github
-  static async fetchAppInstallations(token: string) {
-    const url = 'https://api.github.com/user/installations';
-    return await fetch(url, {
-      method: "GET",
-      headers: {
-        "Accept": "application/json",
-        "Authorization": `Bearer ${token}`
-      }
-    });
-  }
-
-  // get the app installations for the current user from github 
-  static async getInstallations() {
-    const token = await SessionService.getAccessToken();
-    if (!token) {
-      return {
-        status: 401,
-        data: [],
-        message: 'No access token found.'
-      }
-    }
-
-    try {
-
-      let response = await RepoService.fetchAppInstallations(token);
-
-      if (!response.ok) {
-
-        if (response.status === 401) {
-          // special case, the token might be invalidated because of changes in the app permissions, but system has no clue about it
-          // so lets refresh the token and try again
-          const refreshedToken = await SessionService.getAccessToken(true);
-
-          if (!refreshedToken) {
-            return {
-              status: 401,
-              data: [],
-              message: 'Failed to refresh the token.'
-            }
-          }
-
-          response = await RepoService.fetchAppInstallations(refreshedToken);
-        } else {
-          throw new Error(`GitHub API responded with status code ${response.status}`);
-        }
-      }
-
-      const data = await response.json();
-
-      return {
-        status: 200,
-        data
-      }
-
-    } catch (error) {
-      return {
-        status: 500,
-        data: []
-      }
-    }
-  }
-
   static async getGithubAppInstallState() {
     const state = nanoid();
     // set a httpOnly cookie with the state
@@ -218,17 +217,33 @@ class RepoService {
   }
 
   static async getInstallationsList() {
-    const { status, data, message } = await RepoService.getInstallations() as any;
+    const userId = await SessionService.getCurrentUserId();
 
-    return {
-      status,
-      data: (data?.installations ?? []).map((installation: any) => ({
-        id: installation.id,
-        account: installation.account.login,
-        accountType: installation.account.type,
-      })),
-      message
+    const account = await prisma.account.findFirst({
+      where: { 
+        userId,
+        provider: 'github',
+      },
+      select: { providerAccountId: true },
+    });
+  
+    if (!account || !account.providerAccountId) {
+      return [];
     }
+  
+    return await prisma.githubAppInstallation.findMany({
+      where: {
+        members: {
+          some: {
+            gh_id: parseInt(account.providerAccountId),
+          },
+        },
+      },
+      select: {
+        id: true,
+        login: true,
+      },
+    });
   }
 
   // get the repositories for a given installation
