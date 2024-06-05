@@ -4,20 +4,17 @@ import { Repo } from "@prisma/client";
 import { Flex, Text, TextInput, Button, Grid, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
 
 import { Github, SearchIcon, XCircle } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useTransition } from "react";
 
 import LoadingSpinner from "../../form/loading-spinner";
 import DashboardCard from "../../common/dashboard-card";
 import { RepoItem, SearchResultRepo } from "./repo-items";
 
-import { signOut } from "next-auth/react";
-
 const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
 
 type Installation = {
-    id: string;
-    account: string;
-    accountType: string;
+    id: number;
+    login: string | null; // null because of backward compatibility
 }
 
 // timeout for throttling the filtering of repos
@@ -28,20 +25,62 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
     const [repos, setRepos] = useState<Partial<Repo>[]>(initialRepos);
     const [installations, setInstallations] = useState<Installation[]>([]);
     const [stateVariable, setStateVariable] = useState<string>('');
-    const [loading, setLoading] = useState<boolean>(false);
+    
     const [filter, setFilter] = useState<string>('');
     const [filteredInstallationRepos, setFilteredInstallationRepos] = useState<Repo[]>([]);
     const [currentInstallationId, setCurrentInstallationId] = useState<string | null>(null);
-    const [error, setError] = useState<string>('');
+    // const [error, setError] = useState<string>('');
+    const [isPendingInstallationsList, startTransitionInstallationsList] = useTransition();
+    const [isPendingInstallationRepos, startTransitionInstallationRepos] = useTransition();
 
 
     const isRepoConnected = useCallback((repoId: string) => {
         return repos.some(repo => `${repo.repoId}` == repoId);
     }, [repos]);
 
-    const handleSignout = useCallback(() => {
-        setError("There is an issue with your Github connection that is preventing you from accessing your repositories. Please sign out and sign in again.");
-    }, [setError]);
+
+    const handleGetInstallations = useCallback(() => {
+        startTransitionInstallationsList(() => {
+            getInstallationsList()
+                .then((data) => {
+                    setInstallations(data);
+                })
+                .catch(error => {
+                    console.error("Failed to get installations:", error);
+                });
+        });
+    }, [getInstallationsList, setInstallations, startTransitionInstallationsList]);
+
+
+    // handle installing of github app on a new account
+    const handleAddAccount = useCallback(() => {
+        const appInstallationWindow = window.open(`https://github.com/apps/${appName}/installations/select_target?state=${stateVariable}`, '_blank', 'width=800,height=600');
+        if (appInstallationWindow) {
+            const checkWindow = setInterval(function () {
+                if (appInstallationWindow.closed) {
+                    clearInterval(checkWindow); 
+                    handleGetInstallations();
+                }
+            }, 1000);
+        }
+    }, [stateVariable]);
+
+    // get repos of a given installation
+    const handleInstallationSelect = useCallback((installationId: string) => {
+        
+        setCurrentInstallationId(installationId);
+        setInstallationRepos([]);
+        startTransitionInstallationRepos(() => {
+            getInstallationRepos(parseInt(installationId))
+            .then((repos) => {
+                setInstallationRepos(repos);
+                setFilter('');
+                setFilteredInstallationRepos(repos);
+            })
+            .catch(error => console.error("Failed to get installation repos:", error))
+        });
+            
+    }, [setCurrentInstallationId, setInstallationRepos, startTransitionInstallationRepos, getInstallationRepos]);
 
     // filter the repos based on the filter value
     useEffect(() => {
@@ -68,77 +107,37 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
         })
         .catch(error => console.error("Failed to get state variable:", error))
 
-        getInstallationsList().then(({status, data}: { status: number, data: Installation[]}) => {
-            if ( status === 401 ) {
-                handleSignout();
-            } else if( status === 200 ) {
-                setInstallations(data);
-            }
-        })
-        .catch(error => {
-            console.error("Failed to get installations:", error)
-        })
+       handleGetInstallations();
 
     }, [])
-
-    // handle installing of github app on a new account
-    const handleAddAccount = useCallback(() => {
-        const appInstallationWindow = window.open(`https://github.com/apps/${appName}/installations/select_target?state=${stateVariable}`, '_blank', 'width=800,height=600');
-        if (appInstallationWindow) {
-            const checkWindow = setInterval(function () {
-                if (appInstallationWindow.closed) {
-                    clearInterval(checkWindow); 
-                    getInstallationsList().then(({status, data}: { status: number, data: Installation[]}) => {
-                        if ( status === 401 ) {
-                            handleSignout();
-                        } else if( status === 200 ) {
-                            setInstallations(data);
-                        }
-                    }).catch(error => console.error("Failed to get installations:", error))
-                }
-            }, 1000);
-        }
-    }, [stateVariable]);
-
-    // get repos of a given installation
-    const handleInstallationSelect = useCallback((installationId: string) => {
-        setLoading(true);
-        setCurrentInstallationId(installationId);
-        setInstallationRepos([]);
-        getInstallationRepos(parseInt(installationId))
-            .then((repos) => {
-                setInstallationRepos(repos);
-                setFilter('');
-                setFilteredInstallationRepos(repos);
-            })
-            .catch(error => console.error("Failed to get installation repos:", error))
-            .finally(() => setLoading(false));
-    }, []);
 
 
     return (
         <div className="flex flex-col items-stretch gap-4">
-            { error ? <Text className="text-red-500">{error}</Text> : null }
+            {/* { error ? <Text className="text-red-500">{error}</Text> : null } */}
             <div className="flex flex-row gap-4">
                 <div className="w-2/5 pt-2 ps-2">
                     <Flex flexDirection="col" alignItems="start" className="gap-4">
                         <div className="w-full">
                             <Bold>Github Accounts</Bold>
                             <Text>Your Github accounts and organizations in which you are a member.</Text>
-                            <div className='mt-2 w-full relative'>
-                                <SearchSelect onValueChange={handleInstallationSelect}>
-                                    <div key='add-github-account' className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
-                                        + Add Github Account
-                                    </div>
-                                    {installations.map((installation, index) => (
-                                        <SearchSelectItem value={installation.id} key={index}>
-                                            <Flex alignItems="center">
-                                                <Icon icon={Github} /> <Text>{installation.account}</Text>
-                                            </Flex>
-                                        </SearchSelectItem>
-                                    ))}
+                            <div className='mt-2 flex items-center w-full relative'>
+                                    <SearchSelect onValueChange={handleInstallationSelect}>
+                                        <div key='add-github-account' className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
+                                            + Add Github Account
+                                        </div>
+                                        {installations.map((installation, index) => (
+                                            <SearchSelectItem value={`${installation.id}`} key={index}>
+                                                <Flex alignItems="center">
+                                                    <Icon icon={Github} /> <Text>{installation.login}</Text>
+                                                </Flex>
+                                            </SearchSelectItem>
+                                        ))}
+                                        
 
-                                </SearchSelect>
+                                    </SearchSelect>
+                                    { isPendingInstallationsList ? <LoadingSpinner/> : null }
+                                
                             </div>
                         </div>
 
@@ -153,12 +152,11 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                                     : null
                                 }
                             </div>
-                            {loading ?
-                                <div className="w-full text-center">
-                                    <LoadingSpinner />
-                                </div> : null
+                            {isPendingInstallationRepos ?   
+                                <LoadingSpinner className="mx-auto" />
+                                 : null
                             }
-                            {installationRepos.length ?
+                            {installations.find(({id}) => `${id}` === currentInstallationId) && installationRepos?.length ?
                                 <Flex flexDirection="col" className="w-full gap-0">
                                     {filteredInstallationRepos.map((repo: Repo, index: number) => (
                                         <SearchResultRepo repo={repo} key={index} setRepos={setRepos} installationId={currentInstallationId} isConnected={isRepoConnected(repo.id)} />

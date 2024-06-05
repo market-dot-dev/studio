@@ -1,10 +1,15 @@
+.container {
+  overflow: hidden;
+  width: 40px;
+  height: 40px;
+}
 .spinner {
   color: gray;
   display: inline-block;
   position: relative;
-  width: 70px;
-  height: 70px;
-  transform: scale(0.3) translateX(76px) translateY(-5px);
+  width: 80px;
+  height: 80px;
+  transform: scale(0.4) translateX(-50px) translateY(-50px);
 }
 .spinner div {
   transform-origin: 40px 40px;

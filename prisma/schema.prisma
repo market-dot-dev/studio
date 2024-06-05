@@ -9,24 +9,24 @@ datasource db {
 }
 
 model User {
-  id                          String                  @id @default(cuid())
+  id                          String         @id @default(cuid())
   name                        String?
   username                    String?
-  gh_username                 String?                 @unique
-  email                       String?                 @unique
-  stripeCustomerIds           Json                    @default("{}")
-  stripePaymentMethodIds      Json                    @default("{}")
-  stripeAccountId             String?                 @unique
-  stripeCSRF                  String?                 @unique
-  stripeAccountDisabled       Boolean                 @default(false)
+  gh_username                 String?        @unique
+  email                       String?        @unique
+  stripeCustomerIds           Json           @default("{}")
+  stripePaymentMethodIds      Json           @default("{}")
+  stripeAccountId             String?        @unique
+  stripeCSRF                  String?        @unique
+  stripeAccountDisabled       Boolean        @default(false)
   stripeAccountDisabledReason String?
   projectName                 String?
   projectDescription          String?
   emailVerified               DateTime?
   image                       String?
-  roleId                      String                  @default("customer")
-  createdAt                   DateTime                @default(now())
-  updatedAt                   DateTime                @updatedAt
+  roleId                      String         @default("customer")
+  createdAt                   DateTime       @default(now())
+  updatedAt                   DateTime       @updatedAt
   accounts                    Account[]
   pages                       Page[]
   posts                       Post[]
@@ -37,14 +37,13 @@ model User {
   subscriptions               Subscription[]
   repos                       Repo[]
   leads                       Lead[]
-  githubAppInstallations      GithubAppInstallation[]
   onboarding                  String?
   company                     String?
   legacyStripeProductId       String?
 
   subscribedLegacyProducts LegacyProduct[] @relation("UserAsUser")
   maintainedLegacyProducts LegacyProduct[] @relation("UserAsMaintainer")
-  charges                   Charge[]
+  charges                  Charge[]
 }
 
 model Account {
@@ -171,14 +170,14 @@ model Tier {
   published Boolean @default(false)
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  price               Int
+  price                 Int
   applicationFeePercent Int?
-  applicationFeePrice Int?
-  stripePriceId       String?
-  trialDays           Int     @default(0)
-  cadence             String  @default("month")
-  priceAnnual         Int?
-  stripePriceIdAnnual String?
+  applicationFeePrice   Int?
+  stripePriceId         String?
+  trialDays             Int     @default(0)
+  cadence               String  @default("month")
+  priceAnnual           Int?
+  stripePriceIdAnnual   String?
 
   revision      Int
   versions      TierVersion[]
@@ -194,14 +193,14 @@ model Tier {
 }
 
 model TierVersion {
-  id            String  @id @default(cuid())
-  tierId        String
-  revision      Int
-  price         Int
-  trialDays     Int  @default(0)
-  stripePriceId String?
+  id                  String  @id @default(cuid())
+  tierId              String
+  revision            Int
+  price               Int
+  trialDays           Int     @default(0)
+  stripePriceId       String?
   cadence             String  @default("month")
-  priceAnnual        Int?
+  priceAnnual         Int?
   stripePriceIdAnnual String?
 
   tier          Tier           @relation(fields: [tierId], references: [id])
@@ -258,13 +257,15 @@ model WaitlistUser {
 
 model Repo {
   id        String   @id @default(cuid())
-  repoId    String   @unique
+  repoId    String   
   radarId   Int?
   name      String
   url       String?
   createdAt DateTime @default(now())
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([repoId, userId])
 }
 
 model Service {
@@ -322,16 +323,27 @@ model Media {
 
 model GithubAppInstallation {
   id        Int      @id
-  userId    String
+  login     String?
   token     String
   expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  members GithubOrgMember[]
+}
+
+model GithubOrgMember {
+  id                      Int @id @default(autoincrement())
+  gh_id                   Int
+  githubAppInstallationId Int
+
+  githubAppInstallation GithubAppInstallation @relation(fields: [githubAppInstallationId], references: [id], onDelete: Cascade)
+
+  @@unique([githubAppInstallationId, gh_id])
 }
 
 model Lead {
-  id                    Int       @id @default(autoincrement())
+  id                    Int      @id @default(autoincrement())
   host                  String
   login                 String
   name                  String
@@ -343,19 +355,19 @@ model Lead {
   location              String?
   twitter               String?
   company               String?
-  icon_url               String?
-  repositories_count     Int
-  last_synced_at          DateTime
-  html_url               String
-  total_stars            Int?
-  dependent_repos_count   Int
+  icon_url              String?
+  repositories_count    Int
+  last_synced_at        DateTime
+  html_url              String
+  total_stars           Int?
+  dependent_repos_count Int
   followers             Int?
   following             Int?
   maintainers           Json
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
   userId                String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([host, uuid], name: "host_uuid_unique")
 }
