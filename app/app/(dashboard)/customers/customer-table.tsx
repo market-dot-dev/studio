@@ -74,7 +74,7 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
   );
 };
 
-export const CustomersTable = async ({ maxInitialRows }: { maxInitialRows?: number }) => {
+export const CustomersTable = ({ maxInitialRows }: { maxInitialRows?: number }) => {
   const { currentUser } = useCurrentSession();
   const userId = currentUser?.id;
   const [customers, setCustomers] = useState<CustomerWithChargesAndSubscriptions[]>([]);
