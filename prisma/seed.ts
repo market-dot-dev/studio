@@ -1,4 +1,4 @@
-import { Feature, PrismaClient, Tier, User } from '@prisma/client';
+import { Contract, Feature, PrismaClient, Tier, User } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
@@ -29,6 +29,8 @@ async function main() {
   await loadTiers(users);
   console.log('[seed] * features');
   await loadFeatures(users);
+  console.log('[seed] * contracts');
+  await loadContracts(users);
   console.log('[seed] done');
 }
 
@@ -94,6 +96,22 @@ const loadFeatures = async (users: User[]) => {
     }
   }
 }
+
+const loadContracts = async (users: User[]) => {
+  const contracts = loadYaml<Contract>('contracts');
+
+  for (const user of users) {
+    for (const contract of contracts) {
+      await prisma.contract.create({
+        data: {
+          ...contract,
+          id: `${contract.id}-${user.id}`,
+          maintainerId: user.id,
+        },      
+      });
+    }
+  }
+};
 
 main()
   .catch((e) => {

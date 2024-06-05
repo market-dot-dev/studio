@@ -48,6 +48,12 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         icon: <KanbanSquare width={18} />,
       },
       {
+        name: "Contracts",
+        href: "/maintainer/contracts",
+        isActive: urlSegments[1] === "contracts",
+        icon: <KanbanSquare width={18} />,
+      },
+      {
         name: "Leads",
         href: "/leads",
         isActive: urlSegments[0] === "leads",

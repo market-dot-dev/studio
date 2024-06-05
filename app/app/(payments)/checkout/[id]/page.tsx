@@ -16,13 +16,15 @@ interface QueryParams {
 
 const checkoutCurrency = "USD";
 const projectDescriptionDefault = "";
-const pathToDefaultMSA = "https://www.gitwallet.co/legal/standard-msa";
 
 const renderSectionHeading = (text: string) => {
   return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
 };
 
 import Image from "next/image";
+import useContract from "@/app/hooks/use-contract";
+import LoadingDots from "@/components/icons/loading-dots";
+import { Contract } from "@prisma/client";
 
 const TierNotAvailable = () => {
   return (
@@ -41,6 +43,30 @@ const TierNotAvailable = () => {
   );
 }
 
+const ContractText = ({ checkoutProject, contract }: { checkoutProject: string, contract?: Contract }) => {
+  const pathToDefaultMSA = "/legal/standard-msa";
+
+  if (!contract) {
+    return <>
+      {checkoutProject} uses the{" "}
+      <a href={pathToDefaultMSA} className="underline" target="_blank">
+        Standard Gitwallet MSA
+      </a>
+      .
+    </>
+  }
+
+  const url = `/contracts/${contract.id}`;
+
+  return <>
+    {checkoutProject} uses the{" "}
+    <a href={url} className="underline" target="_blank">
+      { contract?.name }
+    </a>
+    .
+  </>
+}
+
 
 const SkeletonLoader = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-slate-300 ${className}`}></div>
@@ -54,6 +80,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const isAnnual = queryParams.annual === 'true';
 
   const [tier, isTierLoading] = useTier(id);
+  const [contract, isContractLoading] = useContract(tier?.contractId || undefined);
   const [maintainer, isMaintainerLoading] = useUser(tier?.userId);
   const [features, isFeaturesLoading] = useFeatures(id);
 
@@ -112,11 +139,8 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
         <SkeletonLoader className="h-4 w-3/4 rounded-full mb-4" /> :
 
         <Text className="mb-4 leading-6">
-          {checkoutProject} uses the{" "}
-          <a href={pathToDefaultMSA} className="underline" target="_blank">
-            Standard Gitwallet MSA
-          </a>
-          .
+          
+          { isContractLoading && !(tier?.id && !tier.contractId)? <LoadingDots /> : <ContractText checkoutProject={checkoutProject || ''} contract={contract}/> }
         </Text>}
     </div>
   </Card>;
