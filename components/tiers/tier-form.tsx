@@ -474,6 +474,7 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 										checked={tier.published}
 										className="border-gray-600 rounded-md p-3 accent-green-400"
 										disabled={canPublishDisabled}
+										data-cy="available-for-sale"
 										onChange={(e) => {
 											setTier({ ...tier, published: e.target.checked } as Tier);
 										}} />

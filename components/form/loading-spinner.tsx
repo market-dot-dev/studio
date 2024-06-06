@@ -1,20 +1,22 @@
 import styles from "./loading-spinner.module.css";
 
-export default function LoadingSpinner() {
+export default function LoadingSpinner({className}: {className?: string}) {
   return (
-    <div className={styles.spinner}>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
+    <div className={className + ' ' + styles.container}>
+      <div className={styles.spinner}>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
     </div>
   );
 }
