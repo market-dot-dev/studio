@@ -37,9 +37,12 @@ export default function EmbedItem({site, index} : any) {
                   
                 { previewProps ? <Component site={site} settings={settings} {...previewProps} /> : null }
               
-                <CodeSnippet code={`<script data-domain='${domain}' data-widget='${index}'`
-                  + (Object.keys(settings)?.length ? ` data-settings='${JSON.stringify(settings)}'` : '')
-                  + ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} 
+                <CodeSnippet code={`<script 
+  data-domain='${domain}' 
+  data-widget='${index}'
+  `
+    + (Object.keys(settings)?.length ? `data-settings='${JSON.stringify(settings, null, 6)}'` : '')
+    + ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`} 
                   />
                 </Flex>  
             </DashboardCard>

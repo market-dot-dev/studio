@@ -24,7 +24,7 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 	const [dependentPackages, setDependentPackages] = useState<any[]>([]);
 	//   const [selectedVersion, setSelectedVersion] = useState<string | null>();
 	const [allData, setAlldata] = useState<any>(null);
-	const [tabIndex, setTabIndex] = useState<number>(1); // minor_versions
+	const [tabIndex, setTabIndex] = useState<number>(0); // major_versions
 
 	const [isPendingDependents, startDependentsTransition] = useTransition();
 	const [isPendingPackages, startPackagesTransition] = useTransition();
