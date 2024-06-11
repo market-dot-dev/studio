@@ -1,85 +1,103 @@
-"use client";
+import { Metric, Card, Text, Flex, BarChart, LineChart } from "@tremor/react";
+import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 
-// import { random } from "@/lib/utils";
-import { Metric, Card, Text, AreaChart, BadgeDelta, Flex, BarChart, LineChart, Button, Badge } from "@tremor/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
-// import DashboardCard from "../common/dashboard-card";
-// import Link from "next/link";
-import { getSubscriptionsCreated } from "@/app/services/ReportingService";
-import LoadingSpinner from "../form/loading-spinner";
+export default function DashboardCharts({ customers }: { customers: CustomerWithChargesAndSubscriptions[] }) {
 
+  const getRenewalMonth = (createdAt: Date, cadence: string) => {
+    const creationDate = new Date(createdAt);
+    let renewalDate;
 
-export default function DashboardCharts() {
-  
-  const [customerTotals, setCustomerTotals] = useState<any[]>([])
-  const [revenueData, setRevenueData] = useState<any[]>([])
-  const [loading, setLoading] = useState<boolean>(true);
+    if (cadence === 'month') {
+      renewalDate = new Date(creationDate.setMonth(creationDate.getMonth() + 1));
+    } else if (cadence === 'year') {
+      renewalDate = new Date(creationDate.setFullYear(creationDate.getFullYear() + 1));
+    }
 
-  const processNewCustomers = useCallback((subscriptions: any[]) => {
+    return renewalDate?.getMonth();
+  };
+
+  const processCustomers = (customers: CustomerWithChargesAndSubscriptions[]) => {
+    const currentYear = new Date().getFullYear();
     const subscriptionCounts = {} as any;
 
-      // Fill the subscriptionCounts with months
-      for (let i = 0; i < 12; i++) {
-        subscriptionCounts[i] = {
-          date: new Date(0, i).toLocaleString('default', { month: 'short' }) + ' 23',
-          'New Subscriptions': 0,
-          'Cancellations': 0, 
-          'Renewals': 0, 
-        };
-      }
+    for (let i = 0; i < 12; i++) {
+      subscriptionCounts[i] = {
+        date: new Date(currentYear, i).toLocaleString('default', { month: 'short', year: 'numeric' }),
+        'New Subscriptions': 0,
+        'Cancellations': 0,
+        'Renewals': 0,
+        'One-time Charges': 0,
+      };
+    }
 
-      // Count the subscriptions for each month
-      subscriptions.forEach(subscription => {
-        const month = subscription.createdAt.getMonth();
-        subscriptionCounts[month]['New Subscriptions']++;
+    customers.forEach(customer => {
+      customer.subscriptions.forEach(subscription => {
+        const createdMonth = new Date(subscription.createdAt).getMonth();
+        subscriptionCounts[createdMonth]['New Subscriptions']++;
+
+        if (subscription.cancelledAt) {
+          const cancelledMonth = new Date(subscription.cancelledAt).getMonth();
+          subscriptionCounts[cancelledMonth]['Cancellations']++;
+        }
+
+        if (!subscription.cancelledAt) {
+          const renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
+          if(renewalMonth !== undefined) {
+            subscriptionCounts[renewalMonth]['Renewals']++;
+          }
+        }
       });
 
-      const processedData = Object.values(subscriptionCounts)
-      
-      setCustomerTotals(processedData);
-  }, [])
+      customer.charges.forEach(charge => {
+        const month = new Date(charge.createdAt).getMonth();
+        subscriptionCounts[month]['One-time Charges']++;
+      });
+    });
 
-  const processRevenueData = useCallback((subscriptions: any[]) => {
-    
-    const yearStart = new Date(new Date().getFullYear(), 0, 1);
+    const processedData = Object.values(subscriptionCounts);
+    return processedData;
+  };
+
+  const processRevenueData = (customers: CustomerWithChargesAndSubscriptions[]) => {
+    const currentYear = new Date().getFullYear();
+    const yearStart = new Date(currentYear, 0, 1);
 
     const revenueData = Array.from({ length: 12 }, (_, i) => ({
-      date: new Date(yearStart.getFullYear(), i).toLocaleString('default', { month: 'short' }) + ' 23',
+      date: new Date(currentYear, i).toLocaleString('default', { month: 'short', year: 'numeric' }),
       'New Subscriptions': 0,
       'Renewals': 0,
+      'One-time Charges': 0,
     }));
 
-    subscriptions.forEach(subscription => {
-      const monthIndex = subscription.createdAt.getMonth();
-      const price = subscription.tier.price; 
+    customers.forEach(customer => {
+      customer.subscriptions.forEach(subscription => {
+        const monthIndex = new Date(subscription.createdAt).getMonth();
+        const price = subscription.tier.price;
+        revenueData[monthIndex]['New Subscriptions'] += price;
 
-      revenueData[monthIndex]['New Subscriptions'] += price;
+        if (!subscription.cancelledAt) {
+          const renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
+          if(renewalMonth !== undefined) {
+            revenueData[renewalMonth]['Renewals'] += price;
+          }
+        }
+      });
+
+      customer.charges.forEach(charge => {
+        const monthIndex = new Date(charge.createdAt).getMonth();
+        const price = charge.tier.price;
+        revenueData[monthIndex]['One-time Charges'] += price;
+      });
     });
 
-    setRevenueData(revenueData);
-  }, []);
+    return revenueData;
+  };
 
-  useEffect(() => {
-    setLoading(true);
-    getSubscriptionsCreated().then((subscriptions) => {
-      processNewCustomers(subscriptions);
-      processRevenueData(subscriptions);
-    }).catch((e) => {
-      console.log('Error fetching data', e.message);
+  const customerTotals = processCustomers(customers);
+  const revenueData = processRevenueData(customers);
 
-    }).finally(() => {
-      setLoading(false);
-    });
-  }, [])
-
-  const totalNewSubscriptions = useMemo(() => {
-    return customerTotals.reduce((acc, cur) => acc + cur['New Subscriptions'], 0);
-  }, [customerTotals]);
-
-  const totalRevenue = useMemo(() => {
-    return revenueData.reduce((acc, cur) => acc + cur['New Subscriptions'], 0); 
-  }, [revenueData]);
-
+  const totalNewCustomers = customerTotals.reduce((acc, cur: any) => acc + cur['New Subscriptions'] + cur['One-time Charges'], 0) as number;
+  const totalRevenue = revenueData.reduce((acc, cur) => acc + cur['New Subscriptions'] + cur['Renewals'] + cur['One-time Charges'], 0);
 
   return (
     <>
@@ -88,45 +106,27 @@ export default function DashboardCharts() {
           <Card>
             <div className="flex flex-row justify-between">
               <Text>Customers</Text>
-              {/* <Badge className="z-100">Example Data Shown</Badge> */}
             </div>
             <Flex
               className="space-x-3 truncate"
               justifyContent="start"
               alignItems="baseline"
             >
-              <Metric className="font-cal">{totalNewSubscriptions}</Metric>
-              {/* <BadgeDelta
-                deltaType="moderateIncrease"
-                className="dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400"
-              >
-                34.3%
-              </BadgeDelta> */}
+              <Metric className="font-cal">{totalNewCustomers}</Metric>
             </Flex>
-            { loading ? 
-              <div className="h-72 mt-4 w-full flex justify-center items-center">
-                <LoadingSpinner />
-              </div> 
-              : 
-              <BarChart
-                className="h-72 mt-4"
-                data={customerTotals}
-                index="date"
-                categories={["New Subscriptions", 
-                  // "Renewals"
-                ]}
-                colors={["gray-400", 
-                  // "gray-200"
-                ]}
-                yAxisWidth={30}
-              />
-            }
+            <BarChart
+              className="h-72 mt-4"
+              data={customerTotals}
+              index="date"
+              categories={["New Subscriptions", "Cancellations", "Renewals", "One-time Charges"]}
+              colors={["gray-400", "red-400", "green-400", "blue-400"]}
+              yAxisWidth={30}
+            />
           </Card>
 
           <Card>
             <div className="flex flex-row justify-between">
               <Text>Revenue</Text>
-              {/* <Badge className="z-100">Example Data Shown</Badge> */}
             </div>
             <Flex
               className="space-x-3 truncate"
@@ -134,42 +134,18 @@ export default function DashboardCharts() {
               alignItems="baseline"
             >
               <Metric className="font-cal">${totalRevenue}</Metric>
-              {/* <BadgeDelta
-                deltaType="moderateIncrease"
-                className="dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400"
-              >
-                34.3%
-              </BadgeDelta> */}
             </Flex>
-            { loading ? 
-              <div className="h-72 mt-4 w-full flex justify-center items-center">
-                <LoadingSpinner />
-              </div> 
-              :           
-              <LineChart
-                className="h-72 mt-4"
-                data={revenueData}
-                index="date"
-                categories={["New Subscriptions",
-                //  "Renewals"
-                ]}
-                colors={["gray-500", 
-                // "gray-300"
-                ]}
-                yAxisWidth={30}
-                connectNulls={true}
-              />
-              }
+            <LineChart
+              className="h-72 mt-4"
+              data={revenueData}
+              index="date"
+              categories={["New Subscriptions", "Renewals", "One-time Charges"]}
+              colors={["gray-500", "blue-300", "yellow-300"]}
+              yAxisWidth={80}
+              connectNulls={true}
+            />
           </Card>
         </div>
-
-        {/* <div className="grid justify-items-end mt-4">
-          <Link href='/reports'>
-            <Button size="xs" className="h-6" variant="secondary">
-              All Reports →
-            </Button>
-          </Link>
-        </div> */}
       </div>
     </>
   );
