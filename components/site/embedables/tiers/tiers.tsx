@@ -1,14 +1,19 @@
 'use client'
 import { Grid, Col, Button } from '@tremor/react';
-import { useEffect } from 'react';
+import { use, useEffect, useRef, useState } from 'react';
 import { TiersEmbedSettingsProps } from './tiers-embed-settings';
 import SkeletonTiers from '../../skeleton-tiers';
 import TierCard from '@/components/tiers/tier-card';
 import Link from 'next/link';
+import { set } from 'date-fns';
 const transparentBody = 'body {background: transparent}';
 // This renders the actual component for both server and client sides.
 export default function Tiers({tiers, subdomain, settings}: { tiers : any[], subdomain: string, settings: TiersEmbedSettingsProps}) : JSX.Element {
-    
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [alteredStyle, setAlteredStyle] = useState<any>({
+        transformOrigin: 'top left',
+    });
+    const [containerHeight, setContainerHeight] = useState<number>(0);
     useEffect(() => {
         function postHeight() {
             const height = document.body.scrollHeight;
@@ -19,14 +24,41 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
         postHeight();
 
     }, []); 
+
+    useEffect(() => {
+            
+        if(containerRef.current) {
+            // get width of container
+            const width = containerRef.current.getBoundingClientRect().width;
+            
+            // window width
+            const windowWidth = 1600;
+            const scale = width / windowWidth;
+            
+            // set the scale
+            if(scale < 1) {
+                setAlteredStyle({
+                    transform: `scale(${scale})`,
+                    transformOrigin: 'top left',
+                })
+            }
+
+            setContainerHeight(containerRef.current.children[0].getBoundingClientRect().height);
+            
+        }
+        
+    }, [containerRef.current])
     
     return (
         <>
-            <div className="flex flex-col space-y-6">
-                <section>
-                    <div className="mx-auto max-w-screen-xl lg:py-4">
+            <div className="flex flex-col space-y-6 w-full">
+                
+                <div ref={containerRef} style={{height: containerHeight+'px'}} >
+                    
+                { alteredStyle.scale !== null ?
+                    <div className="mx-auto lg:py-4 w-[100vw]" style={alteredStyle}>
                         { tiers.length ? 
-                            <Grid numItems={1} numItemsSm={1} numItemsMd={tiers.length < 2 ? tiers.length : 2} numItemsLg={tiers.length < 3 ? tiers.length : 3}  className="gap-4 sm:gap-8 md:gap-12 w-full">
+                            <Grid numItems={1} numItemsSm={1} numItemsMd={tiers.length < 2 ? tiers.length : 2} numItemsLg={tiers.length < 4 ? tiers.length : 4}  className="gap-4 sm:gap-8 md:gap-12">
                                 {tiers.map((tier: any, index: number) => (
                                     <Col key={index} className="flex flex-col p-4 sm:p-5 md:p-6 mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
                                         <TierCard tier={tier} url={subdomain} darkMode={settings.darkmode}>
@@ -38,7 +70,10 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
                             <SkeletonTiers  />
                         }
                     </div>
-                </section>
+                    : null
+                }
+                </div>
+                
             </div>
 
             <style dangerouslySetInnerHTML={{__html: transparentBody}}></style>

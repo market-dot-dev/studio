@@ -180,9 +180,25 @@ export default function PageEditor({
 
   }, [data.title]);
 
-  // useEffect(() => {
-  //   if (!page.content) setIsPreview(false);
-  // }, [page.content]);
+
+  useEffect(() => {
+    const handleSaveShortcut = (e: KeyboardEvent) => {
+      if (
+        (e.ctrlKey || e.metaKey) &&
+        e.key === "s"
+      ) {
+        e.preventDefault();
+        clearTimeout(debounceTimeout);
+        saveContent(data);
+      }
+    };
+
+    document.addEventListener("keydown", handleSaveShortcut);
+
+    return () => {
+      document.removeEventListener("keydown", handleSaveShortcut);
+    };
+  }, [data])
 
   useEffect(() => {
     if (isPreview) {
@@ -249,11 +265,7 @@ export default function PageEditor({
       }
       // setStatus({ message: "The page was succesfully saved", timeout: 3000 });
     } catch (error) {
-      // setStatus({
-      //   message: "An error occured while saving the page",
-      //   color: "error",
-      //   timeout: 3000,
-      // });
+      console.log(error);
     } finally {
       setForceStatusRefresh(!forceStatusRefresh);
     }

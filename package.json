@@ -58,6 +58,7 @@
     "novel": "^0.1.22",
     "openai-edge": "^1.2.2",
     "react": "^18.2.0",
+    "react-code-blocks": "^0.1.6",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-hook-form": "^7.50.1",

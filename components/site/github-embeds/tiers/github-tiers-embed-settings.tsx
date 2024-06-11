@@ -47,6 +47,7 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
             <Flex className="gap-2">
               <input
                 type="checkbox"
+                className="border-gray-600 rounded-md p-3 accent-green-400"
                 checked={settings.darkmode}
                 onChange={(e) => {
                   setSettings((prev: any) => {
@@ -69,6 +70,7 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
               <Flex key={tier.id} className="gap-2" justifyContent="start">
                 <input
                   type="checkbox"
+                  className="border-gray-600 rounded-md p-3 accent-green-400"
                   checked={settings.tiers?.includes(tier.id)}
                   onChange={(e) => {
                     setSettings((prev: any) => {
