@@ -1,7 +1,5 @@
 "use client";
-import { useState, useEffect } from 'react';
 import { User, Subscription, Charge } from '@prisma/client';
-import { customersOfMaintainer } from '@/app/services/UserService';
 import {
   Table,
   TableBody,
@@ -9,13 +7,10 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Text,
   Button,
 } from '@tremor/react';
 import React from 'react';
 import Tier from '@/app/models/Tier';
-import useCurrentSession from '@/app/hooks/use-current-session';
-import PageHeading from '@/components/common/page-heading';
 import LinkButton from '@/components/common/link-button';
 import DashboardCard from '@/components/common/dashboard-card';
 import SubscriptionStatusBadge from './subscription-state';
@@ -23,7 +18,7 @@ import PurchaseStatusBadge from './purchase-state';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 
-type CustomerWithChargesAndSubscriptions = User & {
+export type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
   subscriptions: (Subscription & { tier: Tier })[];
 };
@@ -74,22 +69,9 @@ const ChargeRow = ({ user, charge }: ChargeRowProps) => {
   );
 };
 
-export const CustomersTable = async ({ maxInitialRows }: { maxInitialRows?: number }) => {
-  const { currentUser } = useCurrentSession();
-  const userId = currentUser?.id;
-  const [customers, setCustomers] = useState<CustomerWithChargesAndSubscriptions[]>([]);
-  const [showAll, setShowAll] = useState(false);
-
-  const fetchCustomers = async () => {
-    if (typeof userId === 'string') {
-      const fetchedCustomers = await customersOfMaintainer(userId);
-      setCustomers(fetchedCustomers);
-    }
-  };
-
-  useEffect(() => {
-    fetchCustomers();
-  }, [userId]);
+export const CustomersTable = ({ customers , maxInitialRows }: { customers: CustomerWithChargesAndSubscriptions[], maxInitialRows?: number }) => {
+  
+  const showAll = false;
 
   const rows = customers.flatMap((customer) => [
     ...customer.subscriptions.map((subscription) => (
