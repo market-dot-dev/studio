@@ -4,7 +4,7 @@ import PageHeading from "@/components/common/page-heading";
 import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
 import ChargeService from "@/app/services/charge-service";
 import SubscriptionService from "@/app/services/SubscriptionService";
-import { Charge } from "@prisma/client";
+import { Charge, Feature } from "@prisma/client";
 
 import {
   Card,
@@ -20,17 +20,23 @@ import {
 } from "@tremor/react";
 import Link from "next/link";
 import LinkButton from "@/components/common/link-button";
+import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
+import Tier from "@/app/models/Tier";
+
+type TierWithFeatures = Tier & { features: Feature[] } | null;
+
 
 const ChargeCard = async ({ charge }: { charge: Charge }) => {
   if (!charge || !charge.tierId) return null;
 
-  const tier = await TierService.findTier(charge.tierId!);
+  const tier = await TierService.findTier(charge.tierId!) as TierWithFeatures;
   if (!tier) return null;
 
   const maintainer = await UserService.findUser(tier.userId);
   if (!maintainer) return null;
 
   let status = 'paid';
+  
 
   return (
     <Card className="mb-4">
@@ -60,10 +66,12 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
               (On {charge.createdAt.toDateString()})
             </Text>
         </div>
-
-        <LinkButton href={"mailto:"+maintainer?.email}>
-            Contact Maintainers
-        </LinkButton>
+        <div className="flex gap-4">
+          <LinkButton href={"mailto:"+maintainer?.email}>
+              Contact Maintainers
+          </LinkButton>
+          <CustomerPackageFeatures features={tier.features} />
+        </div>
  
         {/* Commenting out Tier Version ID */}
         {/* <Text>{charge.tierVersionId}</Text> */}
