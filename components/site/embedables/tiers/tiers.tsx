@@ -32,7 +32,7 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
             const width = containerRef.current.getBoundingClientRect().width;
             
             // window width
-            const windowWidth = 1600;
+            const windowWidth = window.innerWidth;
             const scale = width / windowWidth;
             
             // set the scale
@@ -52,7 +52,6 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
     return (
         <>
             <div className="flex flex-col space-y-6 w-full">
-                
                 <div ref={containerRef} style={{height: containerHeight+'px'}} >
                     
                 { alteredStyle.scale !== null ?
@@ -73,7 +72,6 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
                     : null
                 }
                 </div>
-                
             </div>
 
             <style dangerouslySetInnerHTML={{__html: transparentBody}}></style>
