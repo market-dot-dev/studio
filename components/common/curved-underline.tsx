@@ -49,6 +49,7 @@ const CurvedUnderline: React.FC<CurvedUnderlineProps> = ({ children, borderColor
           height: '20px',
           pointerEvents: 'none',
         }}
+        className='xs:hidden sm:inline'
       >
         <path
           d={pathD}
