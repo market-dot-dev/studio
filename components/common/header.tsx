@@ -3,8 +3,6 @@ import Dropdown from './dropdown'
 import MobileMenu from './mobile-menu'
 import Image from 'next/image'
 import { Button } from '@tremor/react'
-import DomainService from '@/app/services/domain-service'
-const maintainerLoginUrl = DomainService.getRootUrl('app', '/login');
 
 
 export default function Header() {
@@ -74,7 +72,7 @@ export default function Header() {
             {/* Desktop sign in links */}
             <ul className="flex grow justify-end flex-wrap items-center">
               <li>
-                <Link href={maintainerLoginUrl}><Button color="gray" variant="secondary" className="w-full">Login →</Button></Link>
+                <Link href="https://www.google.com"><Button color="gray" variant="secondary" className="w-full">Login →</Button></Link>
               </li>
             </ul>
           </nav>
