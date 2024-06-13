@@ -259,7 +259,6 @@ model Repo {
   id        String   @id @default(cuid())
   repoId    String   
   radarId   Int?
-  githubAppInstallationId Int?
   name      String
   url       String?
   createdAt DateTime @default(now())
