@@ -7,7 +7,7 @@ interface CurvedUnderlineProps {
   borderColor?: string;
 }
 
-const CurvedUnderline: React.FC<CurvedUnderlineProps> = ({ children, borderColor = '#000' }) => {
+const CurvedUnderline: React.FC<CurvedUnderlineProps> = ({ children, borderColor = '#111827' }) => {
   const textRef = useRef<HTMLSpanElement>(null);
   const [pathD, setPathD] = useState('');
 
