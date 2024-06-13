@@ -9,6 +9,10 @@ import DomainService from "../services/domain-service";
 import CurvedUnderline from "@/components/common/curved-underline";
 import PageIllustration from "@/components/common/page-illustration";
 import Header from "@/components/common/header";
+import Tabs from "@/components/home/tabs";
+import AOS from 'aos'
+import 'aos/dist/aos.css'
+
 
 const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
 const customerLoginUrl = DomainService.getRootUrl('app', '/customer-login');
@@ -117,6 +121,8 @@ export default function HomePage() {
 
             </div>
           </section>
+
+          <Tabs />
         </div>
       </div>
     </>
