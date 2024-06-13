@@ -5,12 +5,14 @@ import SessionService from "@/app/services/SessionService";
 import RepoService from "@/app/services/RepoService";
 import DependentPackagesWidget from "@/components/packages/dependent-packages-widget";
 import { CustomersTable } from "./customers/customer-table";
+import { customers as getCustomersData } from "@/app/services/UserService";
 
 export default async function Overview() {
 
-  const [user, repoResults] = await Promise.all([
+  const [user, repoResults, customers] = await Promise.all([
     SessionService.getSessionUser(),
-    RepoService.getRepos()
+    RepoService.getRepos(),
+    getCustomersData()
   ]);
 
   const title = user?.name ? `Welcome, ${user.name}!` : "Your Dashboard";
@@ -33,9 +35,9 @@ export default async function Overview() {
             <h3 className="text-xl font-bold">Repo & Package Analytics</h3>
             <DependentPackagesWidget repos={repos} />
             <h3 className="text-xl font-bold">Latest Customers</h3>
-            <CustomersTable maxInitialRows={5} />
+            <CustomersTable customers={customers} maxInitialRows={5} />
             <h3 className="text-xl font-bold">Reports</h3>
-            <DashboardCharts />
+            <DashboardCharts customers={customers} />
           </div>
         </div>
       </div>

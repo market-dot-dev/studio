@@ -241,5 +241,13 @@ export const customersOfMaintainer = async (maintainerId: string): Promise<Custo
   return UserService.customersOfMaintainer(maintainerId);
 }
 
+export const customers = async (): Promise<CustomerWithChargesAndSubscriptions[]> => {
+  const sessionUser = await SessionService.getSessionUser();
+  if(!sessionUser) {
+    throw new Error('User not found.');
+  }
+  return UserService.customersOfMaintainer(sessionUser.id);
+}
+
 export default UserService;
 export const { getCurrentUser, findUser, updateCurrentUser, getCurrentSessionUser } = UserService;

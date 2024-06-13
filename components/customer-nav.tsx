@@ -36,12 +36,6 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
         icon: <LayoutDashboard width={18} />,
       },
       {
-        name: "Packages",
-        href: "/packages",
-        isActive: urlSegments[0] === "packages",
-        icon: <KanbanSquare width={18} />,
-      },
-      {
         name: "Settings",
         href: "/settings",
         isActive: urlSegments[0] === "settings",
