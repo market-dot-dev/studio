@@ -67,11 +67,9 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
             </Text>
         </div>
         <div className="flex gap-4">
-          <LinkButton href={"mailto:"+maintainer?.email}>
-              Contact Maintainers
-          </LinkButton>
-          <CustomerPackageFeatures features={tier.features} />
+          <CustomerPackageFeatures features={tier.features} maintainerEmail={maintainer?.email} />
         </div>
+        
  
         {/* Commenting out Tier Version ID */}
         {/* <Text>{charge.tierVersionId}</Text> */}
