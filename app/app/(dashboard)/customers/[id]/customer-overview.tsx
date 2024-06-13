@@ -1,9 +1,11 @@
 "use client";
 
-import { Table, TableBody, TableCell, TableRow, LinkButton } from "@tremor/react";
+import LinkButton from "@/components/common/link-button";
+import { User } from "@prisma/client";
+import { Table, TableBody, TableCell, TableRow } from "@tremor/react";
 import Link from "next/link";
 
-const CustomerOverview = ({ customer }) => (
+const CustomerOverview = ({ customer }: { customer: User; }) => (
   <div className="p-1">
     <h2 className="text-xl font-semibold mb-4">Customer Overview</h2>
     <Table className="mb-8">
