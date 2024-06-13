@@ -18,6 +18,7 @@
     "test:prepare": "dotenv -e .env.test pnpm prisma migrate reset"
   },
   "dependencies": {
+    "@headlessui/react": "^1.7.17",
     "@faker-js/faker": "^8.4.1",
     "@monaco-editor/react": "^4.6.0",
     "@next-auth/prisma-adapter": "^1.0.7",
