@@ -377,7 +377,6 @@ class RepoService {
       data: {
         repoId: repoDetails.id.toString(),
         radarId,
-        githubAppInstallationId,
         name: repoDetails.name,
         url: repoDetails.html_url,
         userId
