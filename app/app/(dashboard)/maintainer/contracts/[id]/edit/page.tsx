@@ -6,7 +6,11 @@ import ContractEdit from "./contract-edit";
 import { getContractById } from "@/app/services/contract-service";
 import { notFound } from "next/navigation";
 
-export default async function ContractEditPage({ params }: { params?: { id: string } }) {
+export default async function ContractEditPage({
+  params,
+}: {
+  params?: { id: string };
+}) {
   const session = await getSession();
 
   if (!session) {

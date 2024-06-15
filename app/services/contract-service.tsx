@@ -21,11 +21,13 @@ class ContractService {
   static async getContractsByCurrentMaintainer(): Promise<Contract[]> {
     const currentUser = await getCurrentUser();
 
-    if(!currentUser) return [];
+    if (!currentUser) return [];
     return ContractService.getContractsByMaintainerId(currentUser.id);
   }
 
-  static async getContractsByMaintainerId(maintainerId: string | null): Promise<Contract[]> {
+  static async getContractsByMaintainerId(
+    maintainerId: string | null,
+  ): Promise<Contract[]> {
     return prisma.contract.findMany({
       where: {
         OR: [{ maintainerId: null }, { maintainerId: maintainerId }],
@@ -68,11 +70,13 @@ class ContractService {
     return { url, type: file.type };
   }
 
-  private static async uploadAttachment(contract: ContractWithUploadData): Promise<Prisma.ContractCreateInput> {
+  private static async uploadAttachment(
+    contract: ContractWithUploadData,
+  ): Promise<Prisma.ContractCreateInput> {
     let data: Partial<Prisma.ContractCreateInput> = {};
 
     console.log("~~~~~~~~~~~~~~ uploading");
-    if(contract.uploadData) {
+    if (contract.uploadData) {
       const file = contract.uploadData as any as File;
       const { url, type } = await this.uploadFile(file);
       console.log("~~~~~~~~~~~~~~ uploading: ", { url, type });
@@ -81,13 +85,13 @@ class ContractService {
       contract.attachmentType = type;
     }
 
-    if(contract.attachmentUrl) {
+    if (contract.attachmentUrl) {
       contract.storage = "upload";
     } else {
       contract.attachmentType = null;
       contract.storage = "link";
     }
-  
+
     return contract as Prisma.ContractCreateInput;
   }
 
@@ -96,7 +100,9 @@ class ContractService {
     contractAttributes: ContractWithUploadData,
   ): Promise<Contract> {
     const currentUser = await getCurrentUser();
-    const existingContract = await prisma.contract.findUnique({ where: { id } });
+    const existingContract = await prisma.contract.findUnique({
+      where: { id },
+    });
 
     if (!existingContract) {
       throw new Error("Contract not found");
@@ -114,20 +120,24 @@ class ContractService {
     return prisma.contract.update({ where: { id }, data: updateData });
   }
 
-  static async createContract(contractAttributes: ContractWithUploadData): Promise<Contract> {
+  static async createContract(
+    contractAttributes: ContractWithUploadData,
+  ): Promise<Contract> {
     const maintainerId = (await getCurrentUser())?.id;
 
-    if(!maintainerId) {
+    if (!maintainerId) {
       throw new Error("Unauthorized");
     }
 
     const contract = await this.uploadAttachment(contractAttributes);
 
-    return await prisma.contract.create({ data: {
-      ...contract,
-      maintainer: undefined,
-      maintainerId,
-    }});
+    return await prisma.contract.create({
+      data: {
+        ...contract,
+        maintainer: undefined,
+        maintainerId,
+      },
+    });
   }
 }
 
@@ -137,7 +147,10 @@ export const getContractById = async (id: string) => {
   return ContractService.getContractById(id);
 };
 
-export const updateContract = async (id: string, contract: ContractWithUploadData) => {
+export const updateContract = async (
+  id: string,
+  contract: ContractWithUploadData,
+) => {
   return ContractService.updateContract(id, contract);
 };
 

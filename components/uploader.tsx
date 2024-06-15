@@ -8,40 +8,47 @@ import { Button } from "@tremor/react";
 export type Attachment = {
   attachmentType: string;
   attachmentUrl: string;
-}
+};
 
 type UploadPreviewProps = {
   uploadData: string | null | undefined;
   file: File | null | undefined;
   attachmentUrl: string | null | undefined;
   attachmentType: string | null | undefined;
-}
+};
 
-const UploadPreview = ({ uploadData, file, attachmentUrl, attachmentType }: UploadPreviewProps) => {
-  if((file?.type || attachmentType) === 'application/pdf') {
-    return <>
-      <div className="absolute z-[4] flex h-full w-full flex-col items-center justify-center rounded-md bg-white/80 px-10 backdrop-blur-md">
-        <svg
-          className="h-7 w-7 text-gray-500"
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-          <polyline points="13 2 13 9 20 9"></polyline>
-        </svg>
-        <p className="mt-2 text-center text-sm text-gray-500">{file!.name}</p>
-      </div>
-    </>
+const UploadPreview = ({
+  uploadData,
+  file,
+  attachmentUrl,
+  attachmentType,
+}: UploadPreviewProps) => {
+  if ((file?.type || attachmentType) === "application/pdf") {
+    return (
+      <>
+        <div className="absolute z-[4] flex h-full w-full flex-col items-center justify-center rounded-md bg-white/80 px-10 backdrop-blur-md">
+          <svg
+            className="h-7 w-7 text-gray-500"
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+            <polyline points="13 2 13 9 20 9"></polyline>
+          </svg>
+          <p className="mt-2 text-center text-sm text-gray-500">{file!.name}</p>
+        </div>
+      </>
+    );
   } else {
     const imageUrl = uploadData || attachmentUrl || undefined;
-    if(!uploadData && !attachmentUrl) return <></>;
+    if (!uploadData && !attachmentUrl) return <></>;
     return (
       // eslint-disable-next-line @next/next/no-img-element
       <img
@@ -49,30 +56,32 @@ const UploadPreview = ({ uploadData, file, attachmentUrl, attachmentType }: Uplo
         alt="Preview"
         className="h-full w-full rounded-md object-cover"
       />
-    )
+    );
   }
-}
+};
 
 type UploaderProps = {
   allowedTypes?: string[];
   attachmentUrl: string | null;
   attachmentType: string | null;
   onChange?: (attachment: Partial<Attachment>) => void;
-}
+};
 
-const defaultAllowedTypes = ['png', 'jpg', 'gif', 'mp4'];
+const defaultAllowedTypes = ["png", "jpg", "gif", "mp4"];
 
 export default function Uploader({
   allowedTypes = defaultAllowedTypes,
   attachmentUrl,
   attachmentType,
-  onChange
+  onChange,
 }: UploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploadData, setUploadData] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [dragActive, setDragActive] = useState(false);
-  const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(attachmentUrl || null);
+  const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(
+    attachmentUrl || null,
+  );
 
   const onChangePicture = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -84,7 +93,7 @@ export default function Uploader({
           setFile(file);
           const reader = new FileReader();
           reader.onload = (e) => {
-            setUploadData((prev) => (e.target?.result as string));
+            setUploadData((prev) => e.target?.result as string);
           };
           reader.readAsDataURL(file);
         }
@@ -112,7 +121,7 @@ export default function Uploader({
         </div>
       </div>,
     );
-  }
+  };
 
   const onDropEvent = (e: any) => {
     const file = e?.dataTransfer?.files && e.dataTransfer.files[0];
@@ -124,25 +133,23 @@ export default function Uploader({
         setFile(file);
         const reader = new FileReader();
         reader.onload = (e) => {
-          setUploadData((prev) => 
-            e.target?.result as string,
-          );
+          setUploadData((prev) => e.target?.result as string);
         };
         reader.readAsDataURL(file);
       }
     }
-  }
+  };
 
   const onRemove = () => {
     setFile(null);
     setUploadData(null);
     setUploadedFilePath(null);
     onChange?.({ attachmentUrl: "", attachmentType: "" });
-  }
+  };
 
   const onSubmit = async (file: File) => {
     setSaving(true);
-  
+
     fetch("/api/upload", {
       method: "POST",
       headers: { "content-type": file?.type || "application/octet-stream" },
@@ -151,14 +158,14 @@ export default function Uploader({
       if (res.status === 200) {
         const { url } = await res.json();
         setUploadedFilePath(url);
-        onChange?.({ attachmentUrl: url, attachmentType: file.type});
+        onChange?.({ attachmentUrl: url, attachmentType: file.type });
         toastUploadSuccess(url);
       } else {
         const error = await res.text();
         toast.error(error);
       }
       setSaving(false);
-    })
+    });
   };
 
   const saveDisabled = useMemo(() => {
@@ -166,14 +173,13 @@ export default function Uploader({
   }, [uploadData, saving, file]);
 
   return (
-    <form
-      className="grid gap-6 w-full"
-    >
+    <form className="grid w-full gap-6">
       <div>
         <div className="mb-4 space-y-1">
           <h2 className="text-xl font-semibold">Upload a file</h2>
           <p className="text-sm text-gray-500">
-            Accepted formats: {allowedTypes.map((type) => `.${type}`).join(", ")}
+            Accepted formats:{" "}
+            {allowedTypes.map((type) => `.${type}`).join(", ")}
           </p>
         </div>
         <label
@@ -209,7 +215,7 @@ export default function Uploader({
             className={`${
               dragActive ? "border-2 border-black" : ""
             } absolute z-[3] flex h-full w-full flex-col items-center justify-center rounded-md px-10 transition-all ${
-              (uploadData || uploadedFilePath)
+              uploadData || uploadedFilePath
                 ? "bg-white/80 opacity-0 hover:opacity-100 hover:backdrop-blur-md"
                 : "bg-white opacity-100 hover:bg-gray-50"
             }`}
@@ -240,9 +246,16 @@ export default function Uploader({
             </p>
             <span className="sr-only">Photo upload</span>
           </div>
-          {((file && uploadData) || attachmentUrl) && <>
-            <UploadPreview file={file} attachmentType={attachmentType || file?.type} uploadData={uploadData} attachmentUrl={attachmentUrl} />
-          </>}
+          {((file && uploadData) || attachmentUrl) && (
+            <>
+              <UploadPreview
+                file={file}
+                attachmentType={attachmentType || file?.type}
+                uploadData={uploadData}
+                attachmentUrl={attachmentUrl}
+              />
+            </>
+          )}
         </label>
         <div className="mt-1 flex rounded-md shadow-sm">
           <input
@@ -255,29 +268,39 @@ export default function Uploader({
           />
         </div>
       </div>
-      
-      { uploadedFilePath && <div>
-        <Button
-          onClick={onRemove}
-          className="border-black bg-black text-white hover:bg-white hover:text-black flex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none"
-        >Remove</Button>
-      </div> }
-      { !uploadedFilePath && <>
-        <Button
-          disabled={saveDisabled}
-          onClick={(e) => {
-            e.preventDefault();
-            onSubmit(file!);
-          }}
-          className={`${
-            saveDisabled
-              ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
-              : "border-black bg-black text-white hover:bg-white hover:text-black"
-          } flex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none`}
-        >
-          { saving ? <LoadingDots color="#808080" /> : <p className="text-sm">Confirm upload</p> }
-        </Button>
-      </> }
+
+      {uploadedFilePath && (
+        <div>
+          <Button
+            onClick={onRemove}
+            className="flex h-10 w-full items-center justify-center rounded-md border border-black bg-black text-sm text-white transition-all hover:bg-white hover:text-black focus:outline-none"
+          >
+            Remove
+          </Button>
+        </div>
+      )}
+      {!uploadedFilePath && (
+        <>
+          <Button
+            disabled={saveDisabled}
+            onClick={(e) => {
+              e.preventDefault();
+              onSubmit(file!);
+            }}
+            className={`${
+              saveDisabled
+                ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
+                : "border-black bg-black text-white hover:bg-white hover:text-black"
+            } flex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none`}
+          >
+            {saving ? (
+              <LoadingDots color="#808080" />
+            ) : (
+              <p className="text-sm">Confirm upload</p>
+            )}
+          </Button>
+        </>
+      )}
     </form>
   );
 }

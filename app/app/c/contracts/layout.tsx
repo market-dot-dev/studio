@@ -3,12 +3,10 @@ import { cal, inter } from "@/styles/fonts";
 import { Analytics } from "@vercel/analytics/react";
 import { Metadata } from "next";
 import { cn } from "@/lib/utils";
-import '@radix-ui/themes/styles.css';
+import "@radix-ui/themes/styles.css";
 import { Providers } from "@/app/providers";
 
-
-const title =
-  "Gitwallet";
+const title = "Gitwallet";
 const description =
   "Gitwallet: The business builder made for open source projects.";
 const image = "https://gitwallet.co/thumbnail.png";

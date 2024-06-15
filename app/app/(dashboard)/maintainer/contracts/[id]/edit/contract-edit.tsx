@@ -3,14 +3,25 @@
 import { Flex, Text, TextInput, Button } from "@tremor/react";
 import { Contract } from "@prisma/client";
 import { useState } from "react";
-import { updateContract, createContract, ContractWithUploadData } from "@/app/services/contract-service";
+import {
+  updateContract,
+  createContract,
+  ContractWithUploadData,
+} from "@/app/services/contract-service";
 import { useRouter } from "next/navigation";
 import Uploader, { Attachment } from "@/components/uploader";
 
-export default function ContractEdit({ contract: contractObj }: { contract: Contract | null }) {
-  const [contract, setContract] = useState<ContractWithUploadData>(contractObj || ({
-    storage: 'upload',
-  } as ContractWithUploadData));
+export default function ContractEdit({
+  contract: contractObj,
+}: {
+  contract: Contract | null;
+}) {
+  const [contract, setContract] = useState<ContractWithUploadData>(
+    contractObj ||
+      ({
+        storage: "upload",
+      } as ContractWithUploadData),
+  );
 
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<{ message: string } | null>(null);
@@ -18,13 +29,13 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
   const router = useRouter();
   const editing = !!contract?.id;
 
-  const handleInputChange = (
-		name: string,
-		value: number | string | null,
-	) => {
-		const updatedContract = { ...contract, [name]: value } as ContractWithUploadData;
-		setContract(updatedContract);
-	};
+  const handleInputChange = (name: string, value: number | string | null) => {
+    const updatedContract = {
+      ...contract,
+      [name]: value,
+    } as ContractWithUploadData;
+    setContract(updatedContract);
+  };
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -43,13 +54,13 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
         await updateContract(contract.id, contract);
         setInfo("Contract updated successfully");
         setIsSaving(false);
-        
+
         //router.push("/maintainer/contracts");
       } else {
         const newContract = await createContract(contract);
         setContract(newContract);
         setIsSaving(false);
-        
+
         router.replace(`/maintainer/contracts/${newContract.id}/edit`);
         setInfo("Contract created successfully");
       }
@@ -63,12 +74,12 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
 
   const onAttachmentChange = (attachment: Partial<Attachment>) => {
     setContract((contract) => {
-        return {
-          ...contract,
-          storage: "upload",
-          attachmentUrl: attachment.attachmentUrl,
-          attachmentType: attachment.attachmentType,
-        } as Contract
+      return {
+        ...contract,
+        storage: "upload",
+        attachmentUrl: attachment.attachmentUrl,
+        attachmentType: attachment.attachmentType,
+      } as Contract;
     });
   };
 
@@ -78,9 +89,9 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
         ...contract,
         storage: "upload",
         uploadData,
-      } as ContractWithUploadData
+      } as ContractWithUploadData;
     });
-  }
+  };
 
   return (
     <>
@@ -90,9 +101,16 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
       <form>
         {error && <Text className="text-red-500">{error?.message}</Text>}
         {info && <Text className="text-green-500">{info}</Text>}
-        <Flex flexDirection="col" alignItems="start" className="w-full space-y-6">
+        <Flex
+          flexDirection="col"
+          alignItems="start"
+          className="w-full space-y-6"
+        >
           <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700"
+            >
               Name
             </label>
             <TextInput
@@ -104,7 +122,10 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
             />
           </Flex>
           <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700"
+            >
               Description
             </label>
             <TextInput
@@ -125,7 +146,9 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
                 onChange={() => handleInputChange("storage", "upload")}
                 className="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
               />
-              <span className="ml-2 text-sm font-medium text-gray-700">Upload File</span>
+              <span className="ml-2 text-sm font-medium text-gray-700">
+                Upload File
+              </span>
             </label>
             <label className="flex items-center">
               <input
@@ -136,16 +159,25 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
                 onChange={() => handleInputChange("storage", "link")}
                 className="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
               />
-              <span className="ml-2 text-sm font-medium text-gray-700">Specify URL</span>
+              <span className="ml-2 text-sm font-medium text-gray-700">
+                Specify URL
+              </span>
             </label>
           </div>
           {contract.storage === "upload" && (
-            <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-              <label htmlFor="attachment" className="block text-sm font-medium text-gray-700">
+            <Flex
+              flexDirection="col"
+              alignItems="start"
+              className="w-1/2 gap-2"
+            >
+              <label
+                htmlFor="attachment"
+                className="block text-sm font-medium text-gray-700"
+              >
                 Attachment
               </label>
               <Uploader
-                allowedTypes={['pdf']}
+                allowedTypes={["pdf"]}
                 attachmentType={contract.attachmentType}
                 attachmentUrl={contract.attachmentUrl}
                 onChange={onAttachmentChange}
@@ -153,8 +185,15 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
             </Flex>
           )}
           {contract.storage === "link" && (
-            <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-              <label htmlFor="url" className="block text-sm font-medium text-gray-700">
+            <Flex
+              flexDirection="col"
+              alignItems="start"
+              className="w-1/2 gap-2"
+            >
+              <label
+                htmlFor="url"
+                className="block text-sm font-medium text-gray-700"
+              >
                 URL
               </label>
               <TextInput

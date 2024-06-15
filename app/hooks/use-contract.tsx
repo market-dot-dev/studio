@@ -22,6 +22,6 @@ const useContract = (id: string | undefined) => {
   }, [id]);
 
   return [contract, isLoading] as const;
-}
+};
 
 export default useContract;
