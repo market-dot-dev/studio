@@ -97,7 +97,7 @@ export default function CommerceFeatures() {
                   <article className="relative max-w-md mx-auto md:max-w-none">
                     <figure className="md:absolute md:inset-y-0 md:right-0 md:w-1/2">
                       {/* <Image className="w-full h-full object-cover" src={TabsImage01} width={516} height={387} alt="Tabs 01" /> */}
-                      <img src="https://placehold.co/516x200" alt="Placeholder" className="w-full rounded-xl" />
+                      <img src="https://placehold.co/600x400" alt="Placeholder" className="w-full rounded-xl" />
 
                     </figure>
                     <div className="relative bg-gray-800 py-8 md:py-16 px-6 md:pr-16 md:max-w-lg lg:max-w-xl">
