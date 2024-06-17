@@ -2,9 +2,6 @@
 import { useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import SimpleEmailInputForm from "@/components/common/simple-email-input";
-import { Col, Bold, Badge, Button, Text } from "@tremor/react";
-import DashboardCard from "@/components/common/dashboard-card";
 import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
 import { Suspense } from "react";
 import PageIllustration from "@/components/common/page-illustration";
@@ -18,6 +15,7 @@ import FeatureMarketplace from "@/components/home/feature-marketplace";
 import FeatureInsights from "@/components/home/feature-insights";
 import FeatureProducts from "@/components/home/feature-products";
 import Logos from "@/components/home/project-logos";
+import Footer from "@/components/home/footer";
 
 
 const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
@@ -96,9 +94,10 @@ export default function HomePage() {
           <Logos />
           <BuiltFor />
           <CommerceFeatures />
-          <FeatureInsights />
           <FeatureProducts />
           <FeatureMarketplace />
+          <FeatureInsights />
+          <Footer />
         </div>
       </div>
     </>

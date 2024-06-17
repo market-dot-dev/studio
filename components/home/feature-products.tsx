@@ -21,8 +21,8 @@ export default function FeatureProducts() {
               <div className="max-w-xl md:max-w-none md:w-full mx-auto md:col-span-7 lg:col-span-6" data-aos="fade-right" data-aos-anchor="[data-aos-id-features-home]">
                 <div className="md:pr-4 lg:pr-12 xl:pr-16">
                   <div className="font-architects-daughter text-xl text-purple-600 mb-2">Lighting fast workflow</div>
-                  <h1 className="mb-4 text-2xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Sell services, courses, file downloads & more.</h1>
-                  <p className="text-xl text-gray-400 mb-4">Creating open source feels like a black box sometimes. We're fixing that. </p>
+                  <h1 className="mb-4 text-2xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Sell products, services and more.</h1>
+                  <p className="text-xl text-gray-400 mb-4">Gitwallet is made for open source projects to sell services, products and much more. </p>
                   <ul className="flex flex-wrap text-lg text-gray-400 -mx-2 -my-1">
                     <li className="flex items-center mx-2 my-1">
                       <svg className="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">

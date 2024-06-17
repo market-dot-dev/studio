@@ -30,8 +30,9 @@ export default function HeroHome() {
 
         {/* Section header */}
         <div className="max-w-3xl mx-auto text-center pb-12 md:pb-16">
-        <h1 className="mb-4 text-4xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white"><CurvedUnderline>Commerce & analytics</CurvedUnderline> tools<br/> for serious open source projects.</h1>
-        <p className="mb-6 font-light text-gray-200 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">Gitwallet is an OS for open source businesses. Get better insight into open source usage, sell products and services across channels, and grow your business.</p>
+        <h1 className="mb-4 text-4xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Commerce tools built for<CurvedUnderline>open source projects</CurvedUnderline>.</h1>
+        {/* <h1 className="mb-4 text-4xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Get paid for your <br/><CurvedUnderline>open source expertise.</CurvedUnderline></h1> */}
+        <p className="mb-6 font-light text-gray-200 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">Gitwallet helps you build a business from an open source project. Manage products & services, sell across channels, and grow your business - all in one place.</p>
 
           <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center">
             <div data-aos="fade-up">
@@ -48,7 +49,7 @@ export default function HeroHome() {
     video="/videos/video.mp4"
     videoWidth={1920}
     videoHeight={1080} /> */}
-        <img src="https://placehold.co/600x400" alt="Placeholder" className="w-full rounded-xl" />
+        <img src="/gitwallet-screenshot.png" alt="Gitwallet Screenshot" className="w-full rounded-xl md:rounded-3xl" />
 
       </div>
 

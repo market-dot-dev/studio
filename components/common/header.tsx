@@ -34,17 +34,12 @@ export default function Header() {
                 </Link>
               </li>
               <li>
-                <Link href="/pricing" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
-                  Pricing
-                </Link>
-              </li>
-              <li>
                 <Link href="/blog" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
                   Updates
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
+                <Link href="#about" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
                   About Us
                 </Link>
               </li>
@@ -52,27 +47,27 @@ export default function Header() {
               <Dropdown title="Support">
                 {/* 2nd level: hover */}
                 <li>
-                  <Link href="/contact" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
+                  <Link href="https://discord.gg/ZdSpS4BuGd" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
                     Join the Discord
                   </Link>
                 </li>
                 <li>
-                  <Link href="/help/frequently-asked-questions" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
-                    Help Center
+                  <Link href="#" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
+                    Documentation
                   </Link>
                 </li>
                 <li>
-                  <Link href="/404" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
-                    Contact Founders
+                  <Link href="mailto:contact@gitwallet.co" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
+                    Email Us
                   </Link>
-                </li>
+                </li> 
               </Dropdown>
             </ul>
 
             {/* Desktop sign in links */}
             <ul className="flex grow justify-end flex-wrap items-center">
               <li>
-                <Link href="https://www.google.com"><Button color="gray" variant="secondary" className="w-full">Login →</Button></Link>
+                <Link href="https://app.gitwallet.co/login"><Button color="green" variant="primary" size="xs" className="w-full">Login →</Button></Link>
               </li>
             </ul>
           </nav>
