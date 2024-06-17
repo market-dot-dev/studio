@@ -22,7 +22,7 @@ export default function FeatureInsights() {
                 <div className="md:pr-4 lg:pr-12 xl:pr-16">
                   <div className="font-architects-daughter text-xl text-purple-600 mb-2">Lighting fast workflow</div>
                   <h1 className="mb-4 text-2xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Get new insights for your project.</h1>
-                  <p className="text-xl text-gray-400 mb-4">Creating open source feels like a black box sometimes. We're fixing that. </p>
+                  <p className="text-xl text-gray-400 mb-4">Creating open source feels like a black box sometimes.</p>
                   <ul className="flex flex-wrap text-lg text-gray-400 -mx-2 -my-1">
                     <li className="flex items-center mx-2 my-1">
                       <svg className="w-3 h-3 fill-current text-green-500 mr-2 shrink-0" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">

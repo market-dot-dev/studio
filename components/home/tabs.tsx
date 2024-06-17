@@ -31,7 +31,7 @@ export default function CommerceFeatures() {
           {/* Section header */}
           <div className="max-w-3xl mx-auto text-center pb-12" data-aos-id-tabs>
             <h2 className="mb-4 text-2xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Setup and <CurvedUnderline>start selling today.</CurvedUnderline></h2>
-            <p className="text-xl text-gray-400" data-aos="fade-up" data-aos-delay="200" data-aos-anchor="[data-aos-id-tabs]">Get up and running quickly with a paid offering. We'll help you define, sell and find your first customers.</p>
+            <p className="text-xl text-gray-400" data-aos="fade-up" data-aos-delay="200" data-aos-anchor="[data-aos-id-tabs]">Get up and running quickly with a paid offering. Gitwallet helps you define, sell and find your first customers.</p>
           </div>
 
           {/* Section content */}
