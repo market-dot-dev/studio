@@ -61,43 +61,33 @@ export default function MobileMenu() {
       >
         <ul className="bg-gray-800 px-4 py-2">
           <li>
-            <Link href="/features" className="flex text-gray-300 hover:text-gray-200 py-2" onClick={() => setMobileNavOpen(false)}>
-              Features
+            <Link href="#features" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
+              Product
             </Link>
           </li>
           <li>
-            <Link href="/pricing" className="flex text-gray-300 hover:text-gray-200 py-2" onClick={() => setMobileNavOpen(false)}>
-              Pricing
-            </Link>
-          </li>
-          <li>
-            <Link href="/blog" className="flex text-gray-300 hover:text-gray-200 py-2" onClick={() => setMobileNavOpen(false)}>
-              Blog
-            </Link>
-          </li>
-          <li>
-            <Link href="/about" className="flex text-gray-300 hover:text-gray-200 py-2" onClick={() => setMobileNavOpen(false)}>
-              About us
+            <Link href="https://discord.gg/Wnkhzbb7vD" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
+              Changelog
             </Link>
           </li>
           <li className="py-2 my-2 border-t border-b border-gray-700">
             <span className="flex text-gray-300 py-2">Support</span>
             <ul className="pl-4">
-              <li>
-                <Link href="/contact" className="text-sm flex font-medium text-gray-400 hover:text-gray-200 py-2" onClick={() => setMobileNavOpen(false)}>
-                  Contact us
-                </Link>
-              </li>
-              <li>
-                <Link href="/help/frequently-asked-questions" className="text-sm flex font-medium text-gray-400 hover:text-gray-200 py-2" onClick={() => setMobileNavOpen(false)}>
-                  Help center
-                </Link>
-              </li>
-              <li>
-                <Link href="/404" className="text-sm flex font-medium text-gray-400 hover:text-gray-200 py-2" onClick={() => setMobileNavOpen(false)}>
-                  404
-                </Link>
-              </li>
+            <li>
+                  <Link href="https://discord.gg/ZdSpS4BuGd" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
+                    Join the Discord
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
+                    Documentation
+                  </Link>
+                </li>
+                <li>
+                  <Link href="mailto:contact@gitwallet.co" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
+                    Email Us
+                  </Link>
+                </li> 
             </ul>
           </li>
           <li>
