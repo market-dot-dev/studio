@@ -14,6 +14,7 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
         transformOrigin: 'top left',
     });
     const [containerHeight, setContainerHeight] = useState<number>(0);
+
     useEffect(() => {
         function postHeight() {
             const height = document.body.scrollHeight;
@@ -25,34 +26,50 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
 
     }, []); 
 
-    useEffect(() => {
-            
-        if(containerRef.current) {
+    const handleResize = () => {
+        if (containerRef.current) {
             // get width of container
             const width = containerRef.current.getBoundingClientRect().width;
             
             // window width
-            const windowWidth = 1600;
+            const windowWidth = window.innerWidth;
             const scale = width / windowWidth;
             
             // set the scale
-            if(scale < 1) {
+            if (scale < 1) {
                 setAlteredStyle({
                     transform: `scale(${scale})`,
                     transformOrigin: 'top left',
-                })
+                });
+            } else {
+                setAlteredStyle({
+                    transform: 'none',
+                });
             }
 
             setContainerHeight(containerRef.current.children[0].getBoundingClientRect().height);
-            
         }
+    };
+
+    useEffect(() => {
         
-    }, [containerRef.current])
+        if(!containerRef.current) return;
+
+        // Initial call
+        handleResize();
+        
+        // Add resize event listener
+        window.addEventListener('resize', handleResize);
+
+        // Cleanup event listener on component unmount
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, [containerRef.current]);
     
     return (
         <>
             <div className="flex flex-col space-y-6 w-full">
-                
                 <div ref={containerRef} style={{height: containerHeight+'px'}} >
                     
                 { alteredStyle.scale !== null ?
@@ -73,7 +90,6 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
                     : null
                 }
                 </div>
-                
             </div>
 
             <style dangerouslySetInnerHTML={{__html: transparentBody}}></style>
