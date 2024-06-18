@@ -6,7 +6,6 @@ import { Metadata } from "next";
 import { cn } from "@/lib/utils";
 import '@radix-ui/themes/styles.css';
 
-
 const title =
   "Gitwallet";
 const description =
