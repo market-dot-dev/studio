@@ -12,8 +12,6 @@ const maintainerLoginUrl = process.env.NODE_ENV === 'development'
   ? "http://app.gitwallet.local:3000/login"
   : "https://app.gitwallet.co/login";
 
-
-
 export default function CommerceFeatures() {
 
   const [tab, setTab] = useState<number>(1)
@@ -21,12 +19,20 @@ export default function CommerceFeatures() {
   const tabs = useRef<HTMLDivElement>(null)
 
   const heightFix = () => {
-	  if ( tabs.current && tabs.current.parentElement ) tabs.current.parentElement.style.height = `${tabs.current.clientHeight}px`
+    if (tabs.current && tabs.current.parentElement) {
+      tabs.current.parentElement.style.height = `${tabs.current.clientHeight}px`
+    }
   }
 
   useEffect(() => {
     heightFix()
-  }, [])    
+    window.addEventListener('resize', heightFix)
+    return () => window.removeEventListener('resize', heightFix)
+  }, [])
+
+  useEffect(() => {
+    setTimeout(heightFix, 500)
+  }, [tab])
 
   return (
     <section id="features" >
@@ -72,7 +78,7 @@ export default function CommerceFeatures() {
                 <span className="text-gray-400 group-hover:text-gray-200 transition-colors duration-150 ease-in-out">Grow Your Business</span>
               </button>
               <button
-                className={`flex items-center font-medium py-2 px-4 m-2 bg-gray-800 rounded-full group transition duration-500 ${tab !== 3 && 'opacity-50'}`}
+                className={`flex items-center font-medium py-2 px-4 m-2 bg-gray-800 rounded-full group transition duration-500 ${tab !== 4 && 'opacity-50'}`}
                 onClick={() => setTab(4)}
               >
                 <svg className="w-4 h-4 fill-current text-gray-200 mr-2" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
@@ -97,7 +103,7 @@ export default function CommerceFeatures() {
                   leave="transition ease-out duration-300 transform absolute"
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-100"
-                  beforeEnter={() => heightFix()}
+                  beforeEnter={() => setTimeout(heightFix, 500)}
                 >
                   <article className="relative max-w-md mx-auto md:max-w-none">
                   <figure className="md:absolute md:inset-y-0 md:right-0 md:w-1/2">
@@ -127,7 +133,7 @@ export default function CommerceFeatures() {
                   leave="transition ease-out duration-300 transform absolute"
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-98"
-                  beforeEnter={() => heightFix()}
+                  beforeEnter={() => setTimeout(heightFix, 500)}
                 >
                   <article className="relative max-w-md mx-auto md:max-w-none">
                     <figure className="md:absolute md:inset-y-0 md:left-0 md:w-1/2">
@@ -151,7 +157,7 @@ export default function CommerceFeatures() {
                   leave="transition ease-out duration-300 transform absolute"
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-98"
-                  beforeEnter={() => heightFix()}
+                  beforeEnter={() => setTimeout(heightFix, 500)}
                 >
                   <article className="relative max-w-md mx-auto md:max-w-none">
                   <figure className="md:absolute md:inset-y-0 md:right-0 md:w-1/2">
@@ -182,7 +188,7 @@ export default function CommerceFeatures() {
                   leave="transition ease-out duration-300 transform absolute"
                   leaveFrom="opacity-100 scale-100"
                   leaveTo="opacity-0 scale-98"
-                  beforeEnter={() => heightFix()}
+                  beforeEnter={() => setTimeout(heightFix, 500)}
                 >
                   <article className="relative max-w-md mx-auto md:max-w-none">
                     <figure className="md:absolute md:inset-y-0 md:left-0 md:w-1/2">
