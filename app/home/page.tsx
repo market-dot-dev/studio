@@ -94,9 +94,9 @@ export default function HomePage() {
           <Logos />
           <BuiltFor />
           <CommerceFeatures />
-          <FeatureProducts />
+          {/* <FeatureProducts />
           <FeatureMarketplace />
-          <FeatureInsights />
+          <FeatureInsights /> */}
           <Footer />
         </div>
       </div>

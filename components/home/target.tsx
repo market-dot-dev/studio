@@ -11,8 +11,8 @@ export default function BuiltFor() {
 
           {/* Section header */}
           <div className="max-w-3xl mx-auto text-center pb-12 md:pb-20">
-          <h2 className="mb-4 text-2xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">We help open source projects become <CurvedUnderline>sustainable businesses</CurvedUnderline>.</h2>
-            <p className="text-xl text-gray-400" data-aos="fade-up" data-aos-delay="200" data-aos-anchor="[data-aos-id-tabs]"></p>
+          <h2 className="mb-4 text-2xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Made for the unique needs of <CurvedUnderline>open source businesses</CurvedUnderline>.</h2>
+            <p className="text-xl text-gray-400" data-aos="fade-up" data-aos-delay="200" data-aos-anchor="[data-aos-id-tabs]">Building a business around an open source project isn&apos;t easy. We give you new tools to launch paid offerings, find customers, and grow your business.</p>
           </div>
 
           {/* Items */}
@@ -39,7 +39,7 @@ export default function BuiltFor() {
                   </div>
 
                   <div className="mt-6" data-aos="fade-left" data-aos-delay="400" data-aos-anchor="[data-aos-id-target]">
-                  <Link href="https://app.gitwallet.co/login"><h4 className="h4 font-bold text-lg mb-2">For open source businesses →</h4>
+                  <Link href="https://app.gitwallet.co/login"><h4 className="h4 font-bold text-lg mb-2">For existing businesses →</h4>
                   <p className="text-lg text-gray-400">Find potential customers from your depdendency graph, conduct competitive research, and grow your business!</p></Link>
                   </div>
                 </div>
