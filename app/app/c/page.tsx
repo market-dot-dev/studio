@@ -22,6 +22,7 @@ import Link from "next/link";
 import LinkButton from "@/components/common/link-button";
 import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
 import Tier from "@/app/models/Tier";
+import CancelSubscriptionButton from "./subscriptions/cancel-subscription-button";
 
 type TierWithFeatures = Tier & { features: Feature[] } | null;
 
@@ -88,7 +89,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
 const SubscriptionCard = async ({ subscription }: { subscription: Subscription }) => {
   if (!subscription || !subscription.tierId) return null;
 
-  const tier = await TierService.findTier(subscription.tierId!);
+  const tier = await TierService.findTier(subscription.tierId!) as TierWithFeatures;
   if (!tier) return null;
 
   const maintainer = await UserService.findUser(tier.userId);
@@ -145,10 +146,12 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
         <Text>{subscription.tierVersionId}</Text>
       </div> */}
 
-      <div className="flex flex-row space-x-2">
-        <Link href={`/subscriptions/${subscription.id}`}>
+      <div className="flex flex-row space-x-2 justify-between">
+        <CustomerPackageFeatures features={tier.features} maintainerEmail={maintainer?.email} />
+        <CancelSubscriptionButton subscriptionId={subscription.id} />
+        {/* <Link href={`/subscriptions/${subscription.id}`}>
           <Button>Tier Details</Button>
-        </Link>
+        </Link> */}
       </div>
     </div>
   </Card>
