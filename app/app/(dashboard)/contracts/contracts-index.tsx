@@ -35,7 +35,7 @@ export default function ContractSettings({
   };
 
   const handleView = (contract: Contract) => {
-    window.location.href = `/maintainer/contracts/${contract.id}`;
+    window.location.href = `/contracts/${contract.id}`;
   };
 
   const ownsContract = selectedContract?.maintainerId === currentUser?.id;
@@ -44,7 +44,7 @@ export default function ContractSettings({
     <>
       <div className="mb-4 flex items-center justify-between">
         <h2 className="text-xl font-semibold">Available Contracts</h2>
-        <Link href="/maintainer/contracts/create">
+        <Link href="/contracts/create">
           <Button>Create Contract</Button>
         </Link>
       </div>
@@ -70,7 +70,7 @@ export default function ContractSettings({
                 <>
                   <Button
                     onClick={() =>
-                      (window.location.href = `/maintainer/contracts/${contract.id}/edit`)
+                      (window.location.href = `/contracts/${contract.id}/edit`)
                     }
                   >
                     Edit

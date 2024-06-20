@@ -74,7 +74,7 @@ export default async function ContractPage({
       </div>
 
       <Link
-        href="/maintainer/contracts"
+        href="/contracts"
         className="text-blue-500 hover:underline"
       >
         Back to Contracts

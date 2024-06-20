@@ -21,7 +21,7 @@ import {
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
-import { FaDiscord, FaTelegram, FaTelegramPlane } from "react-icons/fa";
+import { FaDiscord, FaTelegramPlane } from "react-icons/fa";
 
 export default function Nav({ children, siteId, roleId }: { children: ReactNode, siteId: string | null, roleId: string | null }) {
   const urlSegments = useSelectedLayoutSegments();
@@ -49,7 +49,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
       },
       {
         name: "Contracts",
-        href: "/maintainer/contracts",
+        href: "/contracts",
         isActive: urlSegments[1] === "contracts",
         icon: <KanbanSquare width={18} />,
       },

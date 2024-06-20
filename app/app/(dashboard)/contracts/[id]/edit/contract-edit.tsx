@@ -54,14 +54,12 @@ export default function ContractEdit({
         await updateContract(contract.id, contract);
         setInfo("Contract updated successfully");
         setIsSaving(false);
-
-        //router.push("/maintainer/contracts");
       } else {
         const newContract = await createContract(contract);
         setContract(newContract);
         setIsSaving(false);
 
-        router.replace(`/maintainer/contracts/${newContract.id}/edit`);
+        router.replace(`/contracts/${newContract.id}/edit`);
         setInfo("Contract created successfully");
       }
     } catch (error) {
