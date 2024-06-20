@@ -2,7 +2,7 @@
 
 import { Flex, Text, TextInput, Button } from "@tremor/react";
 import { Contract } from "@prisma/client";
-import { useState } from "react";
+import { startTransition, useState } from "react";
 import {
   updateContract,
   createContract,
@@ -50,6 +50,11 @@ export default function ContractEdit({
     }
 
     try {
+      // nextjs will aggressively cache the index page if we don't trigger this refresh
+      startTransition(() => {
+        router.refresh();
+      });
+
       if (editing) {
         await updateContract(contract.id, contract);
         setInfo("Contract updated successfully");
