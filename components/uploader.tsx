@@ -62,15 +62,18 @@ const UploadPreview = ({
 
 type UploaderProps = {
   allowedTypes?: string[];
+  acceptTypes?: string;
   attachmentUrl: string | null;
   attachmentType: string | null;
   onChange?: (attachment: Partial<Attachment>) => void;
 };
 
 const defaultAllowedTypes = ["png", "jpg", "gif", "mp4"];
+const defaultAcceptTypes = "image/*"
 
 export default function Uploader({
   allowedTypes = defaultAllowedTypes,
+  acceptTypes = defaultAcceptTypes,
   attachmentUrl,
   attachmentType,
   onChange,
@@ -262,7 +265,7 @@ export default function Uploader({
             id="image-upload"
             name="image"
             type="file"
-            accept="image/*"
+            accept={acceptTypes}
             className="sr-only"
             onChange={onChangePicture}
           />

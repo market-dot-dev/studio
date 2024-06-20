@@ -178,6 +178,7 @@ export default function ContractEdit({
               </label>
               <Uploader
                 allowedTypes={["pdf"]}
+                acceptTypes="application/pdf"
                 attachmentType={contract.attachmentType}
                 attachmentUrl={contract.attachmentUrl}
                 onChange={onAttachmentChange}
