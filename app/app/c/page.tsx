@@ -8,21 +8,14 @@ import { Charge, Feature } from "@prisma/client";
 
 import {
   Card,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Button,
   Text,
   Bold,
   Badge,
 } from "@tremor/react";
-import Link from "next/link";
-import LinkButton from "@/components/common/link-button";
 import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
 import Tier from "@/app/models/Tier";
 import CancelSubscriptionButton from "./subscriptions/cancel-subscription-button";
+import CustomerPurchasesTabs from "../../../components/customer/customer-purchases-tabs";
 
 type TierWithFeatures = Tier & { features: Feature[] } | null;
 
@@ -169,38 +162,39 @@ export default async function SubscriptionsAndChargesList({ params }: { params: 
   const anyActive = activeSubscriptions.length > 0;
   const anyPast = pastSubscriptions.length > 0;
 
+  const tabOneTimePurchases = (
+    <>
+    {charges.map(element => <ChargeCard charge={element} key={element.id} />)}
+      {!anyCharges && <div className="flex flex-col space-y-2">
+        <h2>No purchases</h2>
+      </div>}
+    </>
+  )
+
+  const tabActiveSubscriptions = (
+    <>
+    {activeSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
+      {!anyActive && <div className="flex flex-col space-y-2">
+        <h2>No active subscriptions</h2>
+      </div>}
+    </>
+  )
+
+  const tabPastSubscriptions = (
+    <>
+    {pastSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
+      {!anyPast && <div className="flex flex-col space-y-2">
+        <h2>No past subscriptions</h2>
+      </div>}
+    </>
+  )
+
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
         <PageHeading title="Packages" />
         <Text>Your one time purchases and subscription packages.</Text>
-        <TabGroup defaultIndex={0}>
-          <TabList>
-            <Tab>One Time Purchases</Tab>
-            <Tab>Active Subscriptions</Tab>
-            <Tab>Past Subscriptions</Tab>
-          </TabList>
-          <TabPanels className="pt-6">
-            <TabPanel>
-              {charges.map(element => <ChargeCard charge={element} key={element.id} />)}
-              {!anyCharges && <div className="flex flex-col space-y-2">
-                <h2>No purchases</h2>
-              </div>}
-            </TabPanel>
-            <TabPanel>
-              {activeSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
-              {!anyActive && <div className="flex flex-col space-y-2">
-                <h2>No active subscriptions</h2>
-              </div>}
-            </TabPanel>
-            <TabPanel>
-              {pastSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
-              {!anyPast && <div className="flex flex-col space-y-2">
-                <h2>No past subscriptions</h2>
-              </div>}
-            </TabPanel>
-          </TabPanels>
-        </TabGroup>
+        <CustomerPurchasesTabs tabOneTimePurchases={tabOneTimePurchases} tabActiveSubscriptions={tabActiveSubscriptions} tabPastSubscriptions={tabPastSubscriptions} />
       </div>
     </div>
   );
