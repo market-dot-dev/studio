@@ -4,33 +4,33 @@ import PageHeading from "@/components/common/page-heading";
 import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
 import ChargeService from "@/app/services/charge-service";
 import SubscriptionService from "@/app/services/SubscriptionService";
-import { Charge } from "@prisma/client";
+import { Charge, Feature } from "@prisma/client";
 
 import {
   Card,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Button,
   Text,
   Bold,
   Badge,
 } from "@tremor/react";
-import Link from "next/link";
-import LinkButton from "@/components/common/link-button";
+import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
+import Tier from "@/app/models/Tier";
+import CancelSubscriptionButton from "./subscriptions/cancel-subscription-button";
+import CustomerPurchasesTabs from "../../../components/customer/customer-purchases-tabs";
+
+type TierWithFeatures = Tier & { features: Feature[] } | null;
+
 
 const ChargeCard = async ({ charge }: { charge: Charge }) => {
   if (!charge || !charge.tierId) return null;
 
-  const tier = await TierService.findTier(charge.tierId!);
+  const tier = await TierService.findTier(charge.tierId!) as TierWithFeatures;
   if (!tier) return null;
 
   const maintainer = await UserService.findUser(tier.userId);
   if (!maintainer) return null;
 
   let status = 'paid';
+  
 
   return (
     <Card className="mb-4">
@@ -60,10 +60,10 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
               (On {charge.createdAt.toDateString()})
             </Text>
         </div>
-
-        <LinkButton href={"mailto:"+maintainer?.email}>
-            Contact Maintainers
-        </LinkButton>
+        <div className="flex gap-4">
+          <CustomerPackageFeatures features={tier.features} maintainerEmail={maintainer?.email} />
+        </div>
+        
  
         {/* Commenting out Tier Version ID */}
         {/* <Text>{charge.tierVersionId}</Text> */}
@@ -82,7 +82,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
 const SubscriptionCard = async ({ subscription }: { subscription: Subscription }) => {
   if (!subscription || !subscription.tierId) return null;
 
-  const tier = await TierService.findTier(subscription.tierId!);
+  const tier = await TierService.findTier(subscription.tierId!) as TierWithFeatures;
   if (!tier) return null;
 
   const maintainer = await UserService.findUser(tier.userId);
@@ -139,10 +139,12 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
         <Text>{subscription.tierVersionId}</Text>
       </div> */}
 
-      <div className="flex flex-row space-x-2">
-        <Link href={`/subscriptions/${subscription.id}`}>
+      <div className="flex flex-row space-x-2 justify-between">
+        <CustomerPackageFeatures features={tier.features} maintainerEmail={maintainer?.email} />
+        <CancelSubscriptionButton subscriptionId={subscription.id} />
+        {/* <Link href={`/subscriptions/${subscription.id}`}>
           <Button>Tier Details</Button>
-        </Link>
+        </Link> */}
       </div>
     </div>
   </Card>
@@ -160,38 +162,39 @@ export default async function SubscriptionsAndChargesList({ params }: { params: 
   const anyActive = activeSubscriptions.length > 0;
   const anyPast = pastSubscriptions.length > 0;
 
+  const tabOneTimePurchases = (
+    <>
+    {charges.map(element => <ChargeCard charge={element} key={element.id} />)}
+      {!anyCharges && <div className="flex flex-col space-y-2">
+        <h2>No purchases</h2>
+      </div>}
+    </>
+  )
+
+  const tabActiveSubscriptions = (
+    <>
+    {activeSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
+      {!anyActive && <div className="flex flex-col space-y-2">
+        <h2>No active subscriptions</h2>
+      </div>}
+    </>
+  )
+
+  const tabPastSubscriptions = (
+    <>
+    {pastSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
+      {!anyPast && <div className="flex flex-col space-y-2">
+        <h2>No past subscriptions</h2>
+      </div>}
+    </>
+  )
+
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
         <PageHeading title="Packages" />
         <Text>Your one time purchases and subscription packages.</Text>
-        <TabGroup defaultIndex={0}>
-          <TabList>
-            <Tab>One Time Purchases</Tab>
-            <Tab>Active Subscriptions</Tab>
-            <Tab>Past Subscriptions</Tab>
-          </TabList>
-          <TabPanels className="pt-6">
-            <TabPanel>
-              {charges.map(element => <ChargeCard charge={element} key={element.id} />)}
-              {!anyCharges && <div className="flex flex-col space-y-2">
-                <h2>No purchases</h2>
-              </div>}
-            </TabPanel>
-            <TabPanel>
-              {activeSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
-              {!anyActive && <div className="flex flex-col space-y-2">
-                <h2>No active subscriptions</h2>
-              </div>}
-            </TabPanel>
-            <TabPanel>
-              {pastSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
-              {!anyPast && <div className="flex flex-col space-y-2">
-                <h2>No past subscriptions</h2>
-              </div>}
-            </TabPanel>
-          </TabPanels>
-        </TabGroup>
+        <CustomerPurchasesTabs tabOneTimePurchases={tabOneTimePurchases} tabActiveSubscriptions={tabActiveSubscriptions} tabPastSubscriptions={tabPastSubscriptions} />
       </div>
     </div>
   );

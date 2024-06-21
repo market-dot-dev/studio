@@ -4,7 +4,7 @@ import Modal from ".";
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 
 interface ModalContextProps {
-  show: (content: ReactNode, onHideCallback?: () => void) => void;
+  show: (content: ReactNode, onHideCallback?: () => void, ignoreFocusTrap? : boolean) => void;
   hide: () => void;
 }
 
@@ -14,11 +14,13 @@ export function ModalProvider({ children }: { children: ReactNode }) {
   const [modalContent, setModalContent] = useState<ReactNode | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [onHideCallback, setOnHideCallback] = useState<(() => void) | undefined>(undefined);
+  const [ignoreFocusTrap, setIgnoreFocusTrap] = useState(false);
 
-  const show = (content: ReactNode,  onHideCallback?: () => void) => {
+  const show = (content: ReactNode,  onHideCallback?: () => void, ignoreFocusTrap?:boolean) => {
     setModalContent(content);
     setShowModal(true);
     setOnHideCallback(() => onHideCallback);
+    setIgnoreFocusTrap(ignoreFocusTrap || false);
   };
 
   useEffect(() => {
@@ -40,7 +42,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     <ModalContext.Provider value={{ show, hide }}>
       {children}
       {showModal && (
-        <Modal showModal={showModal} setShowModal={setShowModal}>
+        <Modal showModal={showModal} setShowModal={setShowModal} ignoreFocusTrap={ignoreFocusTrap}>
           {modalContent}
         </Modal>
       )}

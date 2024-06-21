@@ -1,327 +1,130 @@
-"use client";
+import { Metric, Card, Text, Flex, LineChart } from "@tremor/react";
+import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 
-import { random } from "@/lib/utils";
-import { Metric, Text, AreaChart, BadgeDelta, Flex, BarChart } from "@tremor/react";
-import { useMemo } from "react";
-import DashboardCard from "./common/dashboard-card";
+export default function DashboardCharts({ customers }: { customers: CustomerWithChargesAndSubscriptions[] }) {
 
-export default function AllCharts() {
-  const data = useMemo(() => {
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct",  "Nov", "Dec"];
-    return [
-      ...months.map((month) => ({
-        Month: `${month} 23`,
-        "Total Visitors": random(20000, 170418),
-      })),
-      {
-        Month: "Jul 23",
-        "Total Visitors": 170418,
-      },
-    ];
-  }, []);
+  const getRenewalMonth = (createdAt: Date, cadence: string) => {
+    const creationDate = new Date(createdAt);
+    let renewalDate;
 
+    if (cadence === 'month') {
+      renewalDate = new Date(creationDate.setMonth(creationDate.getMonth() + 1));
+    } else if (cadence === 'year') {
+      renewalDate = new Date(creationDate.setFullYear(creationDate.getFullYear() + 1));
+    }
 
-  const chartdata4 = [
-    {
-      date: "Jan 23",
-      "New Subscriptions": 167,
-      "Cancellations": 145,
-      "Renewals": 135,
-    },
-    {
-      date: "Feb 23",
-      "New Subscriptions": 125,
-      "Cancellations": 110,
-      "Renewals": 155,
-    },
-    {
-      date: "Mar 23",
-      "New Subscriptions": 156,
-      "Cancellations": 149,
-      "Renewals": 145,
-    },
-    {
-      date: "Apr 23",
-      "New Subscriptions": 165,
-      "Cancellations": 112,
-      "Renewals": 125,
-    },
-    {
-      date: "May 23",
-      "New Subscriptions": 153,
-      "Cancellations": 138,
-      "Renewals": 165,
-    },
-    {
-      date: "Jun 23",
-      "New Subscriptions": 124,
-      "Cancellations": 145,
-      "Renewals": 175,
-    },
-    {
-      date: "Jul 23",
-      "New Subscriptions": 167,
-      "Cancellations": 145,
-      "Renewals": 135,
-    },
-    {
-      date: "Aug 23",
-      "New Subscriptions": 125,
-      "Cancellations": 110,
-      "Renewals": 155,
-    },
-    {
-      date: "Sep 23",
-      "New Subscriptions": 156,
-      "Cancellations": 149,
-      "Renewals": 145,
-    },
-    {
-      date: "Oct 23",
-      "New Subscriptions": 165,
-      "Cancellations": 112,
-      "Renewals": 125,
-    },
-    {
-      date: "Nov 23",
-      "New Subscriptions": 153,
-      "Cancellations": 138,
-      "Renewals": 165,
-    },
-    {
-      date: "Dec 23",
-      "New Subscriptions": 124,
-      "Cancellations": 145,
-      "Renewals": 175,
-    },
-  ];
+    return renewalDate?.getMonth();
+  };
 
+  const processCustomers = (customers: CustomerWithChargesAndSubscriptions[]) => {
+    const currentYear = new Date().getFullYear();
+    const data = {
+      newSubscriptions: [] as any[],
+      cancellations: [] as any[],
+      renewals: [] as any[],
+      oneTimeCharges: [] as any[],
+      activeSubscriptions: [] as any[],
+      newSubscriptionsRevenue: [] as any[],
+      renewedSubscriptionsRevenue: [] as any[],
+      oneTimeChargesRevenue: [] as any[],
+      monthlyRecurringRevenue: [] as any[],
+      orders: [] as any[],
+      averageOrderValue: [] as any[],
+    };
+
+    for (let i = 0; i < 12; i++) {
+      const monthLabel = new Date(currentYear, i).toLocaleString('default', { month: 'short', year: 'numeric' });
+      data.newSubscriptions.push({ date: monthLabel, value: 0 });
+      data.cancellations.push({ date: monthLabel, value: 0 });
+      data.renewals.push({ date: monthLabel, value: 0 });
+      data.oneTimeCharges.push({ date: monthLabel, value: 0 });
+      data.activeSubscriptions.push({ date: monthLabel, value: 0 });
+      data.newSubscriptionsRevenue.push({ date: monthLabel, value: 0 });
+      data.renewedSubscriptionsRevenue.push({ date: monthLabel, value: 0 });
+      data.oneTimeChargesRevenue.push({ date: monthLabel, value: 0 });
+      data.monthlyRecurringRevenue.push({ date: monthLabel, value: 0 });
+      data.orders.push({ date: monthLabel, value: 0 });
+      data.averageOrderValue.push({ date: monthLabel, value: 0 });
+    }
+
+    let totalOneTimeCharges = 0;
+    let totalOrders = 0;
+
+    customers.forEach(customer => {
+      customer.subscriptions.forEach(subscription => {
+        const createdMonth = new Date(subscription.createdAt).getMonth();
+        const price = subscription.tier.price;
+        
+        data.newSubscriptions[createdMonth].value++;
+        data.newSubscriptionsRevenue[createdMonth].value += price;
+
+        if (subscription.cancelledAt) {
+          const cancelledMonth = new Date(subscription.cancelledAt).getMonth();
+          data.cancellations[cancelledMonth].value++;
+        } else {
+          data.activeSubscriptions[createdMonth].value++;
+          const renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
+          if (renewalMonth !== undefined) {
+            data.renewals[renewalMonth].value++;
+            data.renewedSubscriptionsRevenue[renewalMonth].value += price;
+            data.monthlyRecurringRevenue[renewalMonth].value += price;
+          }
+        }
+      });
+
+      customer.charges.forEach(charge => {
+        const month = new Date(charge.createdAt).getMonth();
+        const price = charge.tier.price;
+
+        data.oneTimeCharges[month].value++;
+        data.oneTimeChargesRevenue[month].value += price;
+        data.orders[month].value++;
+        totalOneTimeCharges += price;
+        totalOrders++;
+      });
+    });
+
+    const averageOrderValue = totalOrders ? totalOneTimeCharges / totalOrders : 0;
+    data.averageOrderValue.forEach(d => d.value = averageOrderValue);
+
+    return data;
+  };
+
+  const data = processCustomers(customers);
+
+  const renderChart = (title: string, data: any[], category: string, color: string) => (
+    <Card>
+      <div className="flex flex-row justify-between">
+        <Text>{title}</Text>
+      </div>
+      <LineChart
+        className="h-72 mt-4"
+        data={data}
+        index="date"
+        categories={[category]}
+        colors={[color]}
+        yAxisWidth={80}
+        connectNulls={true}
+      />
+    </Card>
+  );
 
   return (
     <>
-      <div className="grid gap-6 sm:grid-cols-1">
-        <DashboardCard>
-        <Text>Total Monthly Revenue</Text>
-          <Flex
-            className="space-x-3 truncate"
-            justifyContent="start"
-            alignItems="baseline"
-          >
-            <Metric className="font-cal">$4,500</Metric>
-            <BadgeDelta
-              deltaType="moderateIncrease"
-              className="dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400"
-            >
-              34.3%
-            </BadgeDelta>
-          </Flex>
-
-          <BarChart
-            className="h-72 mt-4"
-            data={chartdata4}
-            index="date"
-            categories={["New Subscriptions", "Renewals"]}
-            stack={true}
-            yAxisWidth={30}
-          />
-        </DashboardCard>
-      </div>
-      <div className="grid gap-6 sm:grid-cols-3">
-        <DashboardCard>
-          <Text>Visitors Across Channels</Text>
-          <Flex
-            className="space-x-3 truncate"
-            justifyContent="start"
-            alignItems="baseline"
-          >
-            <Metric className="font-cal">170,418</Metric>
-            <BadgeDelta
-              deltaType="moderateIncrease"
-              className="dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400"
-            >
-              34.3%
-            </BadgeDelta>
-          </Flex>
-          <AreaChart
-            className="mt-6 h-28"
-            data={data}
-            index="Month"
-            valueFormatter={(number: number) =>
-              `${Intl.NumberFormat("us").format(number).toString()}`
-            }
-            categories={["Total Visitors"]}
-            colors={["blue"]}
-            showXAxis={true}
-            showGridLines={false}
-            startEndOnly={true}
-            showYAxis={false}
-            showLegend={false}
-          />
-        </DashboardCard>
-
-        <DashboardCard>
-          <Text>Website Visitors</Text>
-          <Flex
-            className="space-x-3 truncate"
-            justifyContent="start"
-            alignItems="baseline"
-          >
-            <Metric className="font-cal">170,418</Metric>
-            <BadgeDelta
-              deltaType="moderateIncrease"
-              className="dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400"
-            >
-              34.3%
-            </BadgeDelta>
-          </Flex>
-          <AreaChart
-            className="mt-6 h-28"
-            data={data}
-            index="Month"
-            valueFormatter={(number: number) =>
-              `${Intl.NumberFormat("us").format(number).toString()}`
-            }
-            categories={["Total Visitors"]}
-            colors={["blue"]}
-            showXAxis={true}
-            showGridLines={false}
-            startEndOnly={true}
-            showYAxis={false}
-            showLegend={false}
-          />
-        </DashboardCard>
-
-
-        <DashboardCard>
-          <Text>New Subscriptions</Text>
-          <Flex
-            className="space-x-3 truncate"
-            justifyContent="start"
-            alignItems="baseline"
-          >
-            <Metric className="font-cal">170,418</Metric>
-            <BadgeDelta
-              deltaType="moderateIncrease"
-              className="dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400"
-            >
-              40%
-            </BadgeDelta>
-          </Flex>
-          <BarChart
-            className="mt-6 h-28"
-            data={data}
-            index="Month"
-            valueFormatter={(number: number) =>
-              `${Intl.NumberFormat("us").format(number).toString()}`
-            }
-            categories={["Total Visitors"]}
-            colors={["blue"]}
-            showXAxis={true}
-            showGridLines={false}
-            startEndOnly={true}
-            showYAxis={false}
-            showLegend={false}
-          />
-        </DashboardCard>
-
-        <DashboardCard>
-          <Text>Total Revenue</Text>
-          <Flex
-            className="space-x-3 truncate"
-            justifyContent="start"
-            alignItems="baseline"
-          >
-            <Metric className="font-cal">170,418</Metric>
-            <BadgeDelta
-              deltaType="moderateIncrease"
-              className="dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400"
-            >
-              10%
-            </BadgeDelta>
-          </Flex>
-          <AreaChart
-            className="mt-6 h-28"
-            data={data}
-            index="Month"
-            valueFormatter={(number: number) =>
-              `${Intl.NumberFormat("us").format(number).toString()}`
-            }
-            categories={["Total Visitors"]}
-            colors={["blue"]}
-            showXAxis={true}
-            showGridLines={false}
-            startEndOnly={true}
-            showYAxis={false}
-            showLegend={false}
-          />
-        </DashboardCard>
-
-
-        <DashboardCard>
-          <Text>Monthly Churn</Text>
-          <Flex
-            className="space-x-3 truncate"
-            justifyContent="start"
-            alignItems="baseline"
-          >
-            <Metric className="font-cal">10%</Metric>
-            <BadgeDelta
-              deltaType="moderateIncrease"
-              isIncreasePositive={false}
-            >
-              2%
-            </BadgeDelta>
-          </Flex>
-          <AreaChart
-            className="mt-6 h-28"
-            data={data}
-            index="Month"
-            valueFormatter={(number: number) =>
-              `${Intl.NumberFormat("us").format(number).toString()}`
-            }
-            categories={["Total Visitors"]}
-            colors={["blue"]}
-            showXAxis={true}
-            showGridLines={false}
-            startEndOnly={true}
-            showYAxis={false}
-            showLegend={false}
-          />
-        </DashboardCard>
-
-
-        <DashboardCard>
-          <Text>Renewals</Text>
-          <Flex
-            className="space-x-3 truncate"
-            justifyContent="start"
-            alignItems="baseline"
-          >
-            <Metric className="font-cal">170,418</Metric>
-            <BadgeDelta
-              deltaType="moderateIncrease"
-              className="dark:bg-green-900 dark:bg-opacity-50 dark:text-green-400"
-            >
-              40%
-            </BadgeDelta>
-          </Flex>
-          <BarChart
-            className="mt-6 h-28"
-            data={data}
-            index="Month"
-            valueFormatter={(number: number) =>
-              `${Intl.NumberFormat("us").format(number).toString()}`
-            }
-            categories={["Total Visitors"]}
-            colors={["blue"]}
-            showXAxis={true}
-            showGridLines={false}
-            startEndOnly={true}
-            showYAxis={false}
-            showLegend={false}
-          />
-        </DashboardCard>
-
+      <div className="flex max-w-screen-xl flex-col mt-4 space-y-4">
+        <div className="grid gap-6 sm:grid-cols-2">
+          {renderChart('New Subscriptions', data.newSubscriptions, 'value', 'gray-500')}
+          {renderChart('New Subscriptions Revenue', data.newSubscriptionsRevenue, 'value', 'blue-500')}
+          {renderChart('Renewed Subscriptions', data.renewals, 'value', 'green-500')}
+          {renderChart('Renewed Subscriptions Revenue', data.renewedSubscriptionsRevenue, 'value', 'yellow-500')}
+          {renderChart('Active Subscriptions', data.activeSubscriptions, 'value', 'purple-500')}
+          {renderChart('Monthly Recurring Revenue', data.monthlyRecurringRevenue, 'value', 'red-500')}
+          {renderChart('One-time Charges', data.oneTimeCharges, 'value', 'orange-500')}
+          {renderChart('One-time Charges Revenue', data.oneTimeChargesRevenue, 'value', 'cyan-500')}
+          {renderChart('Orders', data.orders, 'value', 'green-500')}
+          {renderChart('Average Order Value', data.averageOrderValue, 'value', 'teal-500')}
+          {renderChart('Cancellations', data.cancellations, 'value', 'pink-500')}
+        </div>
       </div>
     </>
   );

@@ -2,11 +2,19 @@
 import Link from "next/link";
 import { getDependentPackages, getDependentPackagesFacets, getPackages } from "@/app/services/LeadsService";
 import { Repo } from "@prisma/client";
-import { Badge, BarChart, Button, Card, Select, SelectItem, Tab, TabGroup, TabList, Text } from "@tremor/react";
+import { Badge, BarChart, Button, Card, Select, SelectItem, Tab, TabGroup, TabList, Text, Table,
+	TableBody,
+	TableCell,
+	TableRow,
+	TableHead,
+	TableHeaderCell,
+	Title,
+   } from "@tremor/react";
 import { useCallback, useEffect, useMemo, useState, useTransition } from "react"
 import LoadingSpinner from "../form/loading-spinner";
 import demoData, { dummyFacetsData } from "./demo-data";
 import { useSearchParams } from "next/navigation";
+
 export type RepoItem = Partial<Repo>;
 
 const versionLabels = {
@@ -203,18 +211,47 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 
 			{/* on home page, dont use card */}
 			{ compact ? chartSection :
-				<Card className={"bg-white z-10 min-h-12 w-full" + ( chartData.length ? ' sticky top-0' : '')}>
+				<Card className="bg-white z-10 min-h-12 w-full">
 					{chartSection}
 				</Card>
 			}
 			{ chartData.length ?
-				<div className="flex flex-col gap-4 mt-6">
+				<div className="flex flex-col items-center gap-4 mt-6 w-full">
 					{isPendingDependents &&
 						<div className="mx-auto"><LoadingSpinner /></div>
 					}
-					{dependentPackages.map((data) => (
-						<PackageCard key={data.id} data={data} />
-					))}
+					{ dependentPackages.length ?
+						<>
+							<Title className="mr-auto">Dependent Packages</Title>
+							<Table className="w-full">
+								<TableHead>
+									<TableRow>
+									<TableHeaderCell>
+										Name
+									</TableHeaderCell>
+									<TableHeaderCell>
+										Description
+									</TableHeaderCell>
+									<TableHeaderCell>
+										Latest Release
+									</TableHeaderCell>
+									<TableHeaderCell>
+										Downloads
+									</TableHeaderCell>
+									<TableHeaderCell>
+										Resolved Versions
+									</TableHeaderCell>
+									</TableRow>
+								</TableHead>
+								<TableBody>
+									{dependentPackages.map((data) => (
+										<PackageRow key={data.id} data={data} />
+									))}
+								</TableBody>
+							</Table>
+						</>
+						: null
+					}
 				</div>
 				: null
 			}
@@ -222,38 +259,32 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 	)
 }
 
-function PackageCard({ data }: { data: any }) {
-	const [showAllVersions, setShowAllVersions] = useState(false);
-
-	const toggleVersions = () => {
-		setShowAllVersions(!showAllVersions);
-	};
-
+function PackageRow({ data }: { data: any }) {
+	
 	const versions = Object.keys(data.versions) || [];
-	const displayVersions = showAllVersions ? versions : versions.slice(0, 10);
-
+	
 	return (
-		<Card key={data.id}>
-			<a href={data.registry_url ?? ''} className="text-blue-600 text-lg font-bold mb-2 block">
-				{data.name}
-			</a>
-			<p className="text-gray-700 mb-2">{data.description ?? ''}</p>
-			<p className="text-gray-700 mb-2">
-				Latest release: {data.latest_release_number ?? ''} ({new Date(data.latest_release_published_at).toLocaleDateString()})
-			</p>
-			<p className="text-gray-700 mb-2">Downloads: {data.downloads ?? 0}</p>
-			<p className="text-gray-700 mb-2">Resolved versions: {versions.length > 0 ? versions[0] : "N/A"}</p>
-			<p className="text-gray-700">
-				Versions: {displayVersions.map((version: string, index: number) => (
-					<Badge key={index} className="m-1">{version}</Badge>
-				))}
-				{versions.length > 10 && (
-					<Button size="xs" variant="light" onClick={toggleVersions}>
-						{showAllVersions ? 'Hide' : 'Read more...'}
-					</Button>
-				)}
-			</p>
-		</Card>
+		
+		<TableRow key={data.id} className="text-gray-700">
+			<TableCell>
+				<p>{data.name}</p>
+			</TableCell>
+			<TableCell>
+				<p className="text-wrap">{data.package_fields.description ?? ''}</p>
+			</TableCell>
+			<TableCell>
+				<p>
+					{data.package_fields.latest_release_number ?? ''} ({new Date(data.package_fields.latest_release_published_at).toLocaleDateString()})
+				</p>
+			</TableCell>
+			
+			<TableCell>
+				<p>{data.package_fields.downloads ?? 0}</p>
+			</TableCell>
+			<TableCell>
+				<p>{versions.length > 0 ? versions[0] : "N/A"}</p>
+			</TableCell>
+		</TableRow>
 	);
 };
 
