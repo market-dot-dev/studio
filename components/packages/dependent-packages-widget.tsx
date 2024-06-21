@@ -8,7 +8,7 @@ export default function DependentPackagesWidget({ repos }: { repos: RepoItem[] }
 			<Card className="pt-0">
 				<DependentPackages repos={repos} compact={true} />
 			</Card>
-			<Link href='/reports' className="ml-auto">
+			<Link href='/reports?tab=repos' className="ml-auto">
 				<Button size="xs" className="h-6" variant="secondary">
 				More Details →
 				</Button>

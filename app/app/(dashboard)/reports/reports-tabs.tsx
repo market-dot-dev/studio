@@ -5,10 +5,12 @@ import DependentPackages, { RepoItem } from "@/components/packages/dependent-pac
 import { TabGroup, TabList, Tab, TabPanels, TabPanel, Text, Badge } from "@tremor/react"
 import { useState } from "react";
 import { CustomerWithChargesAndSubscriptions } from "../customers/customer-table";
+import { useSearchParams } from "next/navigation";
 
 export default function ReportsTabs({repos, customers} : {repos: RepoItem[], customers: CustomerWithChargesAndSubscriptions[] }) {
-	
-	const [tabIndex, setTabIndex] = useState<number>(0);
+	const searchParams = useSearchParams();
+	const defaultTab = searchParams.get("tab") === "repos" ? 1 : 0;
+	const [tabIndex, setTabIndex] = useState<number>(defaultTab);
 
 	return (
 		<TabGroup defaultIndex={tabIndex} onIndexChange={setTabIndex}>

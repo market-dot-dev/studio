@@ -4,12 +4,13 @@ import RepoService from "@/app/services/RepoService";
 import ReportsTabs from "./reports-tabs";
 import { customers as getCustomersData } from "@/app/services/UserService";
 
-export default async function ReportsPage({ params }: { params: { id: string } }) {
-  
+export default async function ReportsPage() {
+
   const [reposResult, customers] = await Promise.all([
     RepoService.getRepos(),
     getCustomersData()
   ]);
+
 	const repos = reposResult.map(repo => ({
 		radarId: repo.radarId,
 		name: repo.name
