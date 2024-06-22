@@ -416,7 +416,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         }}
                         onInput={ (e: any) => {
                             setSearchError('');
-                            console.log('this is also called')
+                            
                             setInputRepoUrl(e.target.value);
                         }}
                         onKeyDown={(e: any) => {
