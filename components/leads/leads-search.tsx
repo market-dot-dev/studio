@@ -2,7 +2,8 @@
 import { Lead, Repo } from "@prisma/client";
 import { Bold, Card, Badge, Button, Text, SelectItem, Select, TextInput } from "@tremor/react";
 import Link from "next/link";
-import { Search, XCircle } from "lucide-react";
+import { Search, XCircle, Trash2 } from "lucide-react";
+
 import { useCallback, useEffect, useState } from "react";
 
 import { getDependentOwners, addLeadToShortlist, getShortlistedLeadsKeysList, lookup, getFacets } from "@/app/services/LeadsService";
@@ -25,19 +26,23 @@ type LeadKey = {
     uuid: string;
 }
 
+const MAX_HISTORY_SIZE = 6;
+let canSearchOnInputUrlChangeEffect = false;
+
 export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
     const router = useRouter();
     const pathname = usePathname();
     const searchParams = useSearchParams();
-    
+    const [isUrlInputFocused, setIsUrlInputFocused] = useState<boolean>(false);
     const [repoUrl, setRepoUrl] = useState<string>(searchParams.get('repoUrl') || '');
     const [inputRepoUrl, setInputRepoUrl] = useState<string>(searchParams.get('repoUrl') || '');
     const [page, setPage] = useState<number>(parseInt(searchParams.get('page') || '1'));
     const [perPage, setPerPage] = useState<number>(parseInt(searchParams.get('perPage') || '20'));
     const [facets, setFacets] = useState<any>();
+    const [urlsHistory, setUrlsHistory] = useState<string[]>([]);
     // const [showOnlyOrgs, setShowOnlyOrgs] = useState<boolean>(searchParams.get('showOnlyOrgs') === 'true' || false);
-
+    
     const [radarId, setRadarId] = useState<number | null>(null);
     const [shortListedLeads, setShortListedLeads] = useState<LeadKey[]>([]);
     const [radarResults, setRadarResults] = useState<any[]>([]);
@@ -114,16 +119,54 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         const validUrl = validateAndModifyUrl(inputRepoUrl);
         setPage(1);
         if (validUrl) {
-            console.log('Searching for:', validUrl);
             setRepoUrl(validUrl);
+            // save it to the history
+            saveSearchURL(validUrl); 
+            setIsUrlInputFocused(false);
         }
     }, [inputRepoUrl, setRepoUrl]);
+
+    // save search url to the history
+    const saveSearchURL = useCallback((url: string) => {
+        let searchHistory = JSON.parse(localStorage.getItem('searchHistory') ?? "[]") || [];
+    
+        // Remove the URL if it already exists
+        searchHistory = searchHistory.filter((historyUrl: string) => historyUrl !== url);
+    
+        // Add the URL to the front
+        searchHistory.unshift(url);
+    
+        // Limit the history size
+        if (searchHistory.length > MAX_HISTORY_SIZE) {
+            searchHistory = searchHistory.slice(0, MAX_HISTORY_SIZE);
+        }
+    
+        // Save the updated history to localStorage
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        setUrlsHistory(searchHistory);
+    }, []);
+    
+    const deleteSearchURL = useCallback((url: string) => {
+        let searchHistory = JSON.parse(localStorage.getItem('searchHistory') ?? "[]") || [];
+        
+        // Remove the URL from the history
+        searchHistory = searchHistory.filter((historyUrl: string) => historyUrl !== url);
+        
+        // Save the updated history to localStorage
+        localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+        setUrlsHistory(searchHistory);
+    }, []);
+    
 
     const handleRepoSelected = useCallback((selectedIndex: number) => {
         setRadarId(null);
         setPage(1);
         setInputRepoUrl(repos[selectedIndex]?.url || '');
         setRepoUrl(repos[selectedIndex]?.url || '');
+        // save it to the history
+        if( repos[selectedIndex]?.url ) {
+            saveSearchURL(repos[selectedIndex]?.url!); 
+        }
     }, [setInputRepoUrl, setRepoUrl]);
 
     const handlePageChange = useCallback((newPage: number) => {
@@ -316,6 +359,18 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
     }, [radarId, filters])
 
+    useEffect(() => {
+        const storedHistory = JSON.parse(localStorage.getItem('searchHistory') ?? '[]') || [];
+        setUrlsHistory(storedHistory);
+    }, []);
+
+    useEffect(() => {
+        if(canSearchOnInputUrlChangeEffect) {
+            handleUrlSearch();
+            canSearchOnInputUrlChangeEffect = false;
+        }
+    }, [inputRepoUrl])
+
     const filterBadges = Object.keys(filters).map((key: string) => {
         if (filters[key as keyof FiltersState]) {
             return (
@@ -342,17 +397,48 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             <div className="mb-4">
 
                 <div className="relative">
-                    <TextInput icon={Search} value={inputRepoUrl} placeholder="Enter a Repo URL..." onInput={ (e: any) => {
-                        setSearchError('');
-                        setInputRepoUrl(e.target.value);
-                    }}
-                    onKeyDown={(e: any) => {
-                        if (e.key === 'Enter') {
-                            handleUrlSearch();
-                        }
-                    }}
-
+                    <TextInput icon={Search} value={inputRepoUrl} placeholder="Enter a Repo URL..." 
+                        onFocus={() => {
+                            setIsUrlInputFocused(true);
+                        }}
+                        onClick={() => {
+                            setIsUrlInputFocused(true);
+                        
+                        }}
+                        onBlur={() => {
+                            setTimeout(() => {
+                                setIsUrlInputFocused(false);
+                            }, 0);
+                        }}
+                        onInput={ (e: any) => {
+                            setSearchError('');
+                            console.log('this is also called')
+                            setInputRepoUrl(e.target.value);
+                        }}
+                        onKeyDown={(e: any) => {
+                            if (e.key === 'Enter') {
+                                handleUrlSearch();
+                            }
+                        }}
                     />
+                    <div className={ "w-full relative " + (!isUrlInputFocused || !urlsHistory?.length ? "hidden" : "" )}>
+                        <div className="absolute left-0 top-0 w-full flex flex-col bg-white text-sm py-2 z-50 border border-t-0 shadow-lg rounded-b-md">
+                            {urlsHistory.map((url: string, index: number) => {
+                                return (
+                                    <div key={index} className="flex items-center justify-between cursor-pointer hover:bg-gray-200 py-2 px-4 group">
+                                        <div onClick={() => {
+                                            canSearchOnInputUrlChangeEffect = true;
+                                            setInputRepoUrl(url);
+                                        }}>{url}</div>
+                                        <Trash2 className="h-4 w-4 ml-2 text-red-600 hidden group-hover:block" onClick={(e) => {
+                                            e.stopPropagation();
+                                            deleteSearchURL(url);
+                                        }}/>
+                                    </div>
+                                )
+                            })}
+                        </div>
+                    </div>
                     <div className="absolute right-0 top-0 h-full inline-block">
                         <Button className="rounded-l-none" onClick={handleUrlSearch} disabled={isSearching} loading={isSearching}>Search</Button>
                     </div>
