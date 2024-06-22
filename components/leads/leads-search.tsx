@@ -97,28 +97,32 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     }, [repoUrl, page, perPage, createQueryString, pathname, router, filters]);
 
     const validateAndModifyUrl = useCallback((url: string) => {
+        let updatedUrl = url;
         // If the URL starts with "http://", replace it with "https://"
-        if (url.startsWith('http://')) {
-            url = url.replace('http://', 'https://');
+        if (updatedUrl.startsWith('http://')) {
+            updatedUrl = updatedUrl.replace('http://', 'https://');
         }
         // If the URL does not start with any protocol, prepend "https://"
-        else if (!url.startsWith('https://')) {
-            url = 'https://' + url;
+        else if (!updatedUrl.startsWith('https://')) {
+            updatedUrl = 'https://' + updatedUrl;
         }
         
-        if (!url.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)$/)) {
+        if (!updatedUrl.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)$/)) {
             setSearchError('Please enter a valid GitHub repository URL.');
             return null;
         }
-
-        setInputRepoUrl(url);
-        return url;
+        if( updatedUrl !== url ) {
+            setInputRepoUrl(updatedUrl);
+        }
+        return updatedUrl;
     }, [setInputRepoUrl]);
 
     const handleUrlSearch = useCallback(() => {
+        
         const validUrl = validateAndModifyUrl(inputRepoUrl);
         setPage(1);
         if (validUrl) {
+        
             setRepoUrl(validUrl);
             // save it to the history
             saveSearchURL(validUrl); 
@@ -425,11 +429,13 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         <div className="absolute left-0 top-0 w-full flex flex-col bg-white text-sm py-2 z-50 border border-t-0 shadow-lg rounded-b-md">
                             {urlsHistory.map((url: string, index: number) => {
                                 return (
-                                    <div key={index} className="flex items-center justify-between cursor-pointer hover:bg-gray-200 py-2 px-4 group">
+                                    <div key={index} className="flex items-center justify-between cursor-pointer hover:bg-gray-200 px-4 group">
                                         <div onClick={() => {
                                             canSearchOnInputUrlChangeEffect = true;
                                             setInputRepoUrl(url);
-                                        }}>{url}</div>
+                                        }}
+                                        className="w-full py-2"
+                                        >{url}</div>
                                         <Trash2 className="h-4 w-4 ml-2 text-red-600 hidden group-hover:block" onClick={(e) => {
                                             e.stopPropagation();
                                             deleteSearchURL(url);
