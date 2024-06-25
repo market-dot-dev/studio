@@ -5,11 +5,11 @@ import Editor from "@monaco-editor/react";
 import { Box, Text } from "@radix-ui/themes";
 import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
 
-import renderElement from "./site/page-renderer";
+import renderElement from "./page-renderer";
 import { useRouter } from "next/navigation";
 
 import { Flex, Grid, Col, Badge, Callout, Button, Bold, TextInput, Card } from "@tremor/react";
-import DashboardCard from "./common/dashboard-card";
+import DashboardCard from "../common/dashboard-card";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import {
   setHomepage,
@@ -17,7 +17,8 @@ import {
   updatePage,
 } from "@/app/services/PageService";
 import { Page, Site } from "@prisma/client";
-import PageEditorSidebar from "./site/page-editor-sidebar";
+import PageEditorSidebar from "./page-editor-sidebar";
+import { useFullscreen } from "../dashboard/dashboard-context";
 
 let debounceTimeout: any;
 
@@ -155,6 +156,8 @@ export default function PageEditor({
   const [willBeHome, setWillBeHome] = useState<boolean>(isHome);
   const [isCurrentlyHome, setIsCurrentlyHome] = useState<boolean>(isHome);
 
+  const {fullscreen, setFullscreen} = useFullscreen();
+
   const [titleError, setTitleError] = useState<string | null>(null);
   const [slugError, setSlugError] = useState<string | null>(null);
 
@@ -190,6 +193,11 @@ export default function PageEditor({
         e.preventDefault();
         clearTimeout(debounceTimeout);
         saveContent(data);
+      }
+
+      // if escape key is pressed, exit fullscreen
+      if (e.key === "Escape") {
+        setFullscreen(false);
       }
     };
 
@@ -417,7 +425,7 @@ export default function PageEditor({
   return (
     <>
       <Grid numItems={12} className="gap-2">
-        <Col numColSpanMd={9}>
+        <Col numColSpanMd={9} className={ fullscreen ? ' p-4' : '' }>
           <Grid numItems={12} className="mb-4 gap-2">
             <Col numColSpanMd={8}>
               <Bold>Page Title</Bold>
@@ -480,7 +488,7 @@ export default function PageEditor({
 
         </Col>
 
-        <Col numColSpanMd={3}>
+        <Col numColSpanMd={3} className={ fullscreen ? ' p-4' : '' }>
           <DashboardCard>
             <Box>
               <Text>This page is currently</Text>
@@ -517,12 +525,12 @@ export default function PageEditor({
           </DashboardCard>
         </Col>
         <Col numColSpanMd={12}>
-        <Card className="p-0">
+        <Card className={"p-0" + (fullscreen ? " ring-0 shadow-none rounded-none" : "")}>
             <TabGroup
               defaultIndex={PREVIEW_INDEX}
               onIndexChange={(index) => setIsPreview(index === PREVIEW_INDEX)}
             >
-              <div className="p-4 border border-x-0 border-t-0">
+              <div className={"flex justify-between p-4 border border-x-0" + (fullscreen ? " bg-white py-2 z-10" : " border-t-0")}>
                 <TabList variant="solid" className="font-bold">
                   <Tab className={isPreview ? "bg-white" : ""} icon={EyeOpenIcon}>
                     Preview
@@ -531,6 +539,9 @@ export default function PageEditor({
                     Code
                   </Tab>
                 </TabList>
+                <Button size="xs" onClick={() => setFullscreen(!fullscreen)} className="p-2 text-white bg-gray-800 rounded-md">
+                  {fullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                </Button>
               </div>
               <TabPanels>
                 <TabPanel>
@@ -548,11 +559,11 @@ export default function PageEditor({
                   </PreviewFrame>
                 </TabPanel>
                 <TabPanel className="mt-0">
-                  <Grid numItems={4} className="gap-4 pt-0">
+                  <Grid numItems={fullscreen ? 5 : 4} className="gap-4 pt-0">
                     <Col numColSpan={1}>
                       <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
                     </Col>
-                    <Col numColSpan={3}>
+                    <Col numColSpan={fullscreen ? 4 : 3}>
                       <div className="w-full sticky top-0 h-[100vh]">
                         <Editor                        
                           height="max(100%, 90vh)" // By default, it does not have a size
