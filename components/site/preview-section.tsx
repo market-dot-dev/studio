@@ -18,7 +18,7 @@ export default function PreviewSection({ content, width=400, height, screenWidth
     return (
         <svg fill="none" width={width} height={height} viewBox={`0 0 ${screenWidth} ${screenHeight}`} xmlns="http://www.w3.org/2000/svg" className={"w-full h-full object-contain object-bottom " + className }>
             <foreignObject width={screenWidth} height={screenHeight}>
-                <div className="flex flex-col justify-start items-stretch w-full h-full">
+                <div className="flex flex-col justify-start items-stretch w-full h-full bg-white">
                     { previewElement ?
                     <>
                     {

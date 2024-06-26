@@ -3,7 +3,7 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Box, Text } from "@radix-ui/themes";
-import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { EyeOpenIcon, CodeIcon, InfoCircledIcon, BorderSplitIcon } from "@radix-ui/react-icons";
 
 import renderElement from "./page-renderer";
 import { useRouter } from "next/navigation";
@@ -148,7 +148,11 @@ export default function PageEditor({
 
   const [status, setStatus] = useState<any>({ message: "", type: "info" });
 
-  const [isPreview, setIsPreview] = useState<boolean>(true);
+  // 0: "preview",
+  // 1: "code",
+  // 2: "split",
+  const [viewMode, setViewMode] = useState<number>(0);
+  
 
   const [previewElement, setPreviewElement] = useState<any>(null);
   const [forceStatusRefresh, setForceStatusRefresh] = useState<boolean>(false);
@@ -208,26 +212,31 @@ export default function PageEditor({
     };
   }, [data])
 
+  const generatePreview = useCallback(() => {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.content, "text/html");
+      const rootElement = doc.body.children;
+      setPreviewElement(Array.from(rootElement));
+    } catch (error) {
+      console.log(error);
+    }
+  }, [setPreviewElement, data.content]);
+
   useEffect(() => {
-    if (isPreview) {
-      try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(data.content, "text/html");
-        const rootElement = doc.body.children;
-        setPreviewElement(Array.from(rootElement));
-      } catch (error) {
-        console.log(error);
-      }
+    if (viewMode === 0 || viewMode === 2) {
+      generatePreview();
     } else {
       setPreviewElement(null);
     }
-  }, [isPreview]);
+  }, [viewMode]);
 
   // trigger auto save on content change
   useEffect(() => {
     // do not attempt auto save if the title and slug of the page are not set
     if (data?.content && data?.title && data?.slug) {
       debouncedSaveChanges();
+      debouncedGeneratePreview();
     }
   }, [data.content]);
 
@@ -291,6 +300,11 @@ export default function PageEditor({
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(autoSaveChanges, 2000);
   }, [data]);
+
+  const debouncedGeneratePreview = useCallback(() => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(generatePreview, 500);
+  }, [data.content]);
 
   const doDeletePage = async () => {
     if (inProgress || !page?.id) return;
@@ -411,8 +425,6 @@ export default function PageEditor({
     );
   
 
-  const PREVIEW_INDEX = 0;
-  const CODE_INDEX = 1;
   const lastUpdateDate = new Date(data.updatedAt).toLocaleString("en-US", {
     month: "long",
     day: "numeric",
@@ -422,6 +434,47 @@ export default function PageEditor({
     hour12: true,
   });
 
+  const preview = (<PreviewFrame>
+    {previewElement
+      ? 
+      renderElement(
+            previewElement as Element,
+            0,
+            site,
+            page,
+            true,
+          )
+      : null}
+  </PreviewFrame>
+  )
+
+  const codeview = (
+    <Grid numItems={fullscreen ? 5 : 4} className="gap-4 pt-0">
+      { viewMode !== 2 ? <Col numColSpan={1}>
+        <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
+      </Col> : null }
+      <Col numColSpan={fullscreen ? (viewMode < 2 ? 4 : 5)  : viewMode < 2 ? 3 : 4}>
+        <div className="w-full sticky top-0 h-[100vh] border border-y-0 border-r-0">
+          <Editor                        
+            height="max(100%, 90vh)" // By default, it does not have a size
+            defaultLanguage="html"
+            defaultValue=""
+            theme="night-dark"
+            value={data.content}
+            onChange={(value) =>
+              setData((data: any) => ({ ...data, content: value }))
+            }
+            onMount={handleEditorDidMount}
+            options={{
+              minimap: {
+                enabled: false,
+              },
+            }}
+          />
+        </div>
+      </Col>
+    </Grid>
+  )
   return (
     <>
       <Grid numItems={12} className="gap-2">
@@ -527,16 +580,21 @@ export default function PageEditor({
         <Col numColSpanMd={12}>
         <Card className={"p-0" + (fullscreen ? " ring-0 shadow-none rounded-none" : "")}>
             <TabGroup
-              defaultIndex={PREVIEW_INDEX}
-              onIndexChange={(index) => setIsPreview(index === PREVIEW_INDEX)}
+              defaultIndex={viewMode}
+              onIndexChange={(index) => {
+                setViewMode(index);
+              }}
             >
               <div className={"flex justify-between p-4 border border-x-0" + (fullscreen ? " bg-white py-2 z-10" : " border-t-0")}>
                 <TabList variant="solid" className="font-bold">
-                  <Tab className={isPreview ? "bg-white" : ""} icon={EyeOpenIcon}>
+                  <Tab className={viewMode === 0 ? "bg-white" : ""} icon={EyeOpenIcon}>
                     Preview
                   </Tab>
-                  <Tab className={isPreview ? "" : "bg-white"} icon={CodeIcon}>
+                  <Tab className={viewMode === 1 ? "bg-white" : ""} icon={CodeIcon}>
                     Code
+                  </Tab>
+                  <Tab className={viewMode === 2 ? "bg-white" : ""} icon={BorderSplitIcon}>
+                    Split
                   </Tab>
                 </TabList>
                 <Button size="xs" onClick={() => setFullscreen(!fullscreen)} className="p-2 text-white bg-gray-800 rounded-md">
@@ -545,42 +603,17 @@ export default function PageEditor({
               </div>
               <TabPanels>
                 <TabPanel>
-                  <PreviewFrame>
-                    {previewElement
-                      ? 
-                      renderElement(
-                            previewElement as Element,
-                            0,
-                            site,
-                            page,
-                            true,
-                          )
-                      : null}
-                  </PreviewFrame>
+                  {preview}
                 </TabPanel>
                 <TabPanel className="mt-0">
-                  <Grid numItems={fullscreen ? 5 : 4} className="gap-4 pt-0">
+                  {codeview}
+                </TabPanel>
+                <TabPanel className="mt-0">
+                  <Grid numItems={2} className="gap-4">
+                    <Col numColSpan={1}>{preview}</Col>
                     <Col numColSpan={1}>
-                      <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
-                    </Col>
-                    <Col numColSpan={fullscreen ? 4 : 3}>
-                      <div className="w-full sticky top-0 h-[100vh]">
-                        <Editor                        
-                          height="max(100%, 90vh)" // By default, it does not have a size
-                          defaultLanguage="html"
-                          defaultValue=""
-                          theme="vs-dark"
-                          value={data.content}
-                          onChange={(value) =>
-                            setData((data: any) => ({ ...data, content: value }))
-                          }
-                          onMount={handleEditorDidMount}
-                          options={{
-                            minimap: {
-                              enabled: false,
-                            },
-                          }}
-                        />
+                    <div className="w-full sticky top-0 h-[100vh]">
+                      {codeview}
                       </div>
                     </Col>
                   </Grid>
