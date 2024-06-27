@@ -369,6 +369,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     }, []);
 
     useEffect(() => {
+        
         if(canSearchOnInputUrlChangeEffect) {
             handleUrlSearch();
             canSearchOnInputUrlChangeEffect = false;
@@ -412,7 +413,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         onBlur={() => {
                             setTimeout(() => {
                                 setIsUrlInputFocused(false);
-                            }, 0);
+                            }, 100);
                         }}
                         onInput={ (e: any) => {
                             setSearchError('');
@@ -429,13 +430,14 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         <div className="absolute left-0 top-0 w-full flex flex-col bg-white text-sm py-2 z-50 border border-t-0 shadow-lg rounded-b-md">
                             {urlsHistory.map((url: string, index: number) => {
                                 return (
-                                    <div key={index} className="flex items-center justify-between cursor-pointer hover:bg-gray-200 px-4 group">
-                                        <div onClick={() => {
+                                    <div key={index} className="flex items-center justify-between cursor-pointer hover:bg-gray-200 px-4 group"
+                                        onClick={() => {
                                             canSearchOnInputUrlChangeEffect = true;
+                                            
                                             setInputRepoUrl(url);
                                         }}
-                                        className="w-full py-2"
-                                        >{url}</div>
+                                    >
+                                        <div className="w-full py-2">{url}</div>
                                         <Trash2 className="h-4 w-4 ml-2 text-red-600 hidden group-hover:block" onClick={(e) => {
                                             e.stopPropagation();
                                             deleteSearchURL(url);
