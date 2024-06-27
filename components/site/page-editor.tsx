@@ -478,105 +478,109 @@ export default function PageEditor({
   return (
     <>
       <Grid numItems={12} className="gap-2">
-        <Col numColSpanMd={9} className={ fullscreen ? ' p-4' : '' }>
-          <Grid numItems={12} className="mb-4 gap-2">
-            <Col numColSpanMd={8}>
-              <Bold>Page Title</Bold>
-              <TextInput
-                placeholder="Title"
-                error={titleError ? true : false}
-                errorMessage={titleError ? titleError : ""}
-                defaultValue={data?.title || ""}
-                onChange={(e) => {
-                  setTitleError(null);
-                  setData({ ...data, title: e.target.value });
-                }}
-              ></TextInput>
-            </Col>
-
-            <Col numColSpanMd={4}>
-              <Flex>
-                <Bold>URL Slug</Bold>
-              </Flex>
-
-              <Flex>
+        { ! fullscreen ?
+          <>
+          <Col numColSpanMd={9} className={ fullscreen ? ' p-4' : '' }>
+            <Grid numItems={12} className="mb-4 gap-2">
+              <Col numColSpanMd={8}>
+                <Bold>Page Title</Bold>
                 <TextInput
-                  placeholder="Path"
-                  error={slugError ? true : false}
-                  errorMessage={slugError ? slugError : ""}
-                  defaultValue={data?.slug || ""}
+                  placeholder="Title"
+                  error={titleError ? true : false}
+                  errorMessage={titleError ? titleError : ""}
+                  defaultValue={data?.title || ""}
                   onChange={(e) => {
-                    setSlugError(null);
-                    setSlugVirgin(false);
-                    setData({ ...data, slug: e.target.value });
+                    setTitleError(null);
+                    setData({ ...data, title: e.target.value });
                   }}
                 ></TextInput>
-              </Flex>
-            </Col>
-          </Grid>
+              </Col>
 
-          <Flex className="mb-2" justifyContent="between">
-            <Box>
-              <Bold>Page Content</Bold>
-            </Box>
-            <Box>{ data.slug ? previewLink : null}</Box>
-          </Flex>
+              <Col numColSpanMd={4}>
+                <Flex>
+                  <Bold>URL Slug</Bold>
+                </Flex>
 
-          <Flex className="mb-2" justifyContent="between">
-            <Box>
-              <Bold>Page Status</Bold>
-            </Box>
-            <Box>
-              <DraftSelectBox
-                inProgress={inProgress}
-                isDeleting={isDeleting}
-                draft={data.draft}
-                handleChange={async (draft) => {
-                  setData({ ...data, draft });
-                  await updatePage(data.id, { draft });
-                }}
-              />
-            </Box>
-          </Flex>
+                <Flex>
+                  <TextInput
+                    placeholder="Path"
+                    error={slugError ? true : false}
+                    errorMessage={slugError ? slugError : ""}
+                    defaultValue={data?.slug || ""}
+                    onChange={(e) => {
+                      setSlugError(null);
+                      setSlugVirgin(false);
+                      setData({ ...data, slug: e.target.value });
+                    }}
+                  ></TextInput>
+                </Flex>
+              </Col>
+            </Grid>
 
-        </Col>
-
-        <Col numColSpanMd={3} className={ fullscreen ? ' p-4' : '' }>
-          <DashboardCard>
-            <Box>
-              <Text>This page is currently</Text>
-              {data.draft ? (
-                <>
-                  {" "}
-                  in{" "}
-                  <Badge color="gray" size="xs">
-                    Draft
-                  </Badge>{" "}
-                </>
-              ) : (
-                <>
-                  {" "}
-                  <Badge color="green" size="xs">
-                    Live
-                  </Badge>{" "}
-                </>
-              )}
-              and was last updated on {lastUpdateDate}.
-            </Box>
-          </DashboardCard>
-
-          {status.message ? (
-            <TimedAlert {...status} refresh={forceStatusRefresh} />
-          ) : null}
-
-          <DashboardCard>
-            <Box mb="2">{saveButton}</Box>
-            <Flex className='gap-2'>
-              <Box mb="2" className='grow'>{makeHomepageButton}</Box>
-              <Box mb="2">{deleteButton}</Box>
+            <Flex className="mb-2" justifyContent="between">
+              <Box>
+                <Bold>Page Content</Bold>
+              </Box>
+              <Box>{ data.slug ? previewLink : null}</Box>
             </Flex>
-          </DashboardCard>
-        </Col>
+
+            <Flex className="mb-2" justifyContent="between">
+              <Box>
+                <Bold>Page Status</Bold>
+              </Box>
+              <Box>
+                <DraftSelectBox
+                  inProgress={inProgress}
+                  isDeleting={isDeleting}
+                  draft={data.draft}
+                  handleChange={async (draft) => {
+                    setData({ ...data, draft });
+                    await updatePage(data.id, { draft });
+                  }}
+                />
+              </Box>
+            </Flex>
+
+          </Col>
+
+          <Col numColSpanMd={3} className={ fullscreen ? ' p-4' : '' }>
+            <DashboardCard>
+              <Box>
+                <Text>This page is currently</Text>
+                {data.draft ? (
+                  <>
+                    {" "}
+                    in{" "}
+                    <Badge color="gray" size="xs">
+                      Draft
+                    </Badge>{" "}
+                  </>
+                ) : (
+                  <>
+                    {" "}
+                    <Badge color="green" size="xs">
+                      Live
+                    </Badge>{" "}
+                  </>
+                )}
+                and was last updated on {lastUpdateDate}.
+              </Box>
+            </DashboardCard>
+
+            {status.message ? (
+              <TimedAlert {...status} refresh={forceStatusRefresh} />
+            ) : null}
+
+            <DashboardCard>
+              <Box mb="2">{saveButton}</Box>
+              <Flex className='gap-2'>
+                <Box mb="2" className='grow'>{makeHomepageButton}</Box>
+                <Box mb="2">{deleteButton}</Box>
+              </Flex>
+            </DashboardCard>
+          </Col>
+          </>
+        : null }
         <Col numColSpanMd={12}>
         <Card className={"p-0" + (fullscreen ? " ring-0 shadow-none rounded-none" : "")}>
             <TabGroup

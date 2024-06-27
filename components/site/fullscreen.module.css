@@ -10,5 +10,6 @@
 }
 
 .fullscreen > div:first-child {
+  display: none;
   padding: 1rem;
 }
