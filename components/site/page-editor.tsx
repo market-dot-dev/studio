@@ -604,7 +604,7 @@ export default function PageEditor({
 
                 <div className="flex gap-4">
                 {fullscreen ? 
-                <Button>{saveButton}</Button> : null }
+                <Button>{saveButton}</Button> : <></> }
                 <Button size="xs" onClick={() => setFullscreen(!fullscreen)}>
                   {fullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
                 </Button>
