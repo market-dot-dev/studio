@@ -3,13 +3,13 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Box, Text } from "@radix-ui/themes";
-import { EyeOpenIcon, CodeIcon, InfoCircledIcon } from "@radix-ui/react-icons";
+import { EyeOpenIcon, CodeIcon, InfoCircledIcon, BorderSplitIcon } from "@radix-ui/react-icons";
 
-import renderElement from "./site/page-renderer";
+import renderElement from "./page-renderer";
 import { useRouter } from "next/navigation";
 
 import { Flex, Grid, Col, Badge, Callout, Button, Bold, TextInput, Card } from "@tremor/react";
-import DashboardCard from "./common/dashboard-card";
+import DashboardCard from "../common/dashboard-card";
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import {
   setHomepage,
@@ -17,7 +17,8 @@ import {
   updatePage,
 } from "@/app/services/PageService";
 import { Page, Site } from "@prisma/client";
-import PageEditorSidebar from "./site/page-editor-sidebar";
+import PageEditorSidebar from "./page-editor-sidebar";
+import { useFullscreen } from "../dashboard/dashboard-context";
 
 let debounceTimeout: any;
 
@@ -147,13 +148,19 @@ export default function PageEditor({
 
   const [status, setStatus] = useState<any>({ message: "", type: "info" });
 
-  const [isPreview, setIsPreview] = useState<boolean>(true);
+  // 0: "preview",
+  // 1: "code",
+  // 2: "split",
+  const [viewMode, setViewMode] = useState<number>(0);
+  
 
   const [previewElement, setPreviewElement] = useState<any>(null);
   const [forceStatusRefresh, setForceStatusRefresh] = useState<boolean>(false);
 
   const [willBeHome, setWillBeHome] = useState<boolean>(isHome);
   const [isCurrentlyHome, setIsCurrentlyHome] = useState<boolean>(isHome);
+
+  const {fullscreen, setFullscreen} = useFullscreen();
 
   const [titleError, setTitleError] = useState<string | null>(null);
   const [slugError, setSlugError] = useState<string | null>(null);
@@ -191,6 +198,11 @@ export default function PageEditor({
         clearTimeout(debounceTimeout);
         saveContent(data);
       }
+
+      // if escape key is pressed, exit fullscreen
+      if (e.key === "Escape") {
+        setFullscreen(false);
+      }
     };
 
     document.addEventListener("keydown", handleSaveShortcut);
@@ -200,26 +212,31 @@ export default function PageEditor({
     };
   }, [data])
 
+  const generatePreview = useCallback(() => {
+    try {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(data.content, "text/html");
+      const rootElement = doc.body.children;
+      setPreviewElement(Array.from(rootElement));
+    } catch (error) {
+      console.log(error);
+    }
+  }, [setPreviewElement, data.content]);
+
   useEffect(() => {
-    if (isPreview) {
-      try {
-        const parser = new DOMParser();
-        const doc = parser.parseFromString(data.content, "text/html");
-        const rootElement = doc.body.children;
-        setPreviewElement(Array.from(rootElement));
-      } catch (error) {
-        console.log(error);
-      }
+    if (viewMode === 0 || viewMode === 2) {
+      generatePreview();
     } else {
       setPreviewElement(null);
     }
-  }, [isPreview]);
+  }, [viewMode]);
 
   // trigger auto save on content change
   useEffect(() => {
     // do not attempt auto save if the title and slug of the page are not set
     if (data?.content && data?.title && data?.slug) {
       debouncedSaveChanges();
+      debouncedGeneratePreview();
     }
   }, [data.content]);
 
@@ -283,6 +300,11 @@ export default function PageEditor({
     clearTimeout(debounceTimeout);
     debounceTimeout = setTimeout(autoSaveChanges, 2000);
   }, [data]);
+
+  const debouncedGeneratePreview = useCallback(() => {
+    clearTimeout(debounceTimeout);
+    debounceTimeout = setTimeout(generatePreview, 500);
+  }, [data.content]);
 
   const doDeletePage = async () => {
     if (inProgress || !page?.id) return;
@@ -403,8 +425,6 @@ export default function PageEditor({
     );
   
 
-  const PREVIEW_INDEX = 0;
-  const CODE_INDEX = 1;
   const lastUpdateDate = new Date(data.updatedAt).toLocaleString("en-US", {
     month: "long",
     day: "numeric",
@@ -414,162 +434,190 @@ export default function PageEditor({
     hour12: true,
   });
 
+  const preview = (<PreviewFrame>
+    {previewElement
+      ? 
+      renderElement(
+            previewElement as Element,
+            0,
+            site,
+            page,
+            true,
+          )
+      : null}
+  </PreviewFrame>
+  )
+
+  const codeview = (
+    <Grid numItems={fullscreen ? 5 : 4} className="gap-4 pt-0">
+      { viewMode !== 2 ? <Col numColSpan={1}>
+        <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
+      </Col> : null }
+      <Col numColSpan={fullscreen ? (viewMode < 2 ? 4 : 5)  : viewMode < 2 ? 3 : 4}>
+        <div className="w-full sticky top-0 h-[100vh] border border-y-0 border-r-0">
+          <Editor                        
+            height="max(100%, 90vh)" // By default, it does not have a size
+            defaultLanguage="html"
+            defaultValue=""
+            theme="night-dark"
+            value={data.content}
+            onChange={(value) =>
+              setData((data: any) => ({ ...data, content: value }))
+            }
+            onMount={handleEditorDidMount}
+            options={{
+              minimap: {
+                enabled: false,
+              },
+            }}
+          />
+        </div>
+      </Col>
+    </Grid>
+  )
   return (
     <>
       <Grid numItems={12} className="gap-2">
-        <Col numColSpanMd={9}>
-          <Grid numItems={12} className="mb-4 gap-2">
-            <Col numColSpanMd={8}>
-              <Bold>Page Title</Bold>
-              <TextInput
-                placeholder="Title"
-                error={titleError ? true : false}
-                errorMessage={titleError ? titleError : ""}
-                defaultValue={data?.title || ""}
-                onChange={(e) => {
-                  setTitleError(null);
-                  setData({ ...data, title: e.target.value });
-                }}
-              ></TextInput>
-            </Col>
-
-            <Col numColSpanMd={4}>
-              <Flex>
-                <Bold>URL Slug</Bold>
-              </Flex>
-
-              <Flex>
+        { ! fullscreen ?
+          <>
+          <Col numColSpanMd={9} className={ fullscreen ? ' p-4' : '' }>
+            <Grid numItems={12} className="mb-4 gap-2">
+              <Col numColSpanMd={8}>
+                <Bold>Page Title</Bold>
                 <TextInput
-                  placeholder="Path"
-                  error={slugError ? true : false}
-                  errorMessage={slugError ? slugError : ""}
-                  defaultValue={data?.slug || ""}
+                  placeholder="Title"
+                  error={titleError ? true : false}
+                  errorMessage={titleError ? titleError : ""}
+                  defaultValue={data?.title || ""}
                   onChange={(e) => {
-                    setSlugError(null);
-                    setSlugVirgin(false);
-                    setData({ ...data, slug: e.target.value });
+                    setTitleError(null);
+                    setData({ ...data, title: e.target.value });
                   }}
                 ></TextInput>
-              </Flex>
-            </Col>
-          </Grid>
+              </Col>
 
-          <Flex className="mb-2" justifyContent="between">
-            <Box>
-              <Bold>Page Content</Bold>
-            </Box>
-            <Box>{ data.slug ? previewLink : null}</Box>
-          </Flex>
+              <Col numColSpanMd={4}>
+                <Flex>
+                  <Bold>URL Slug</Bold>
+                </Flex>
 
-          <Flex className="mb-2" justifyContent="between">
-            <Box>
-              <Bold>Page Status</Bold>
-            </Box>
-            <Box>
-              <DraftSelectBox
-                inProgress={inProgress}
-                isDeleting={isDeleting}
-                draft={data.draft}
-                handleChange={async (draft) => {
-                  setData({ ...data, draft });
-                  await updatePage(data.id, { draft });
-                }}
-              />
-            </Box>
-          </Flex>
+                <Flex>
+                  <TextInput
+                    placeholder="Path"
+                    error={slugError ? true : false}
+                    errorMessage={slugError ? slugError : ""}
+                    defaultValue={data?.slug || ""}
+                    onChange={(e) => {
+                      setSlugError(null);
+                      setSlugVirgin(false);
+                      setData({ ...data, slug: e.target.value });
+                    }}
+                  ></TextInput>
+                </Flex>
+              </Col>
+            </Grid>
 
-        </Col>
-
-        <Col numColSpanMd={3}>
-          <DashboardCard>
-            <Box>
-              <Text>This page is currently</Text>
-              {data.draft ? (
-                <>
-                  {" "}
-                  in{" "}
-                  <Badge color="gray" size="xs">
-                    Draft
-                  </Badge>{" "}
-                </>
-              ) : (
-                <>
-                  {" "}
-                  <Badge color="green" size="xs">
-                    Live
-                  </Badge>{" "}
-                </>
-              )}
-              and was last updated on {lastUpdateDate}.
-            </Box>
-          </DashboardCard>
-
-          {status.message ? (
-            <TimedAlert {...status} refresh={forceStatusRefresh} />
-          ) : null}
-
-          <DashboardCard>
-            <Box mb="2">{saveButton}</Box>
-            <Flex className='gap-2'>
-              <Box mb="2" className='grow'>{makeHomepageButton}</Box>
-              <Box mb="2">{deleteButton}</Box>
+            <Flex className="mb-2" justifyContent="between">
+              <Box>
+                <Bold>Page Content</Bold>
+              </Box>
+              <Box>{ data.slug ? previewLink : null}</Box>
             </Flex>
-          </DashboardCard>
-        </Col>
+
+            <Flex className="mb-2" justifyContent="between">
+              <Box>
+                <Bold>Page Status</Bold>
+              </Box>
+              <Box>
+                <DraftSelectBox
+                  inProgress={inProgress}
+                  isDeleting={isDeleting}
+                  draft={data.draft}
+                  handleChange={async (draft) => {
+                    setData({ ...data, draft });
+                    await updatePage(data.id, { draft });
+                  }}
+                />
+              </Box>
+            </Flex>
+
+          </Col>
+
+          <Col numColSpanMd={3} className={ fullscreen ? ' p-4' : '' }>
+            <DashboardCard>
+              <Box>
+                <Text>This page is currently</Text>
+                {data.draft ? (
+                  <>
+                    {" "}
+                    in{" "}
+                    <Badge color="gray" size="xs">
+                      Draft
+                    </Badge>{" "}
+                  </>
+                ) : (
+                  <>
+                    {" "}
+                    <Badge color="green" size="xs">
+                      Live
+                    </Badge>{" "}
+                  </>
+                )}
+                and was last updated on {lastUpdateDate}.
+              </Box>
+            </DashboardCard>
+
+            {status.message ? (
+              <TimedAlert {...status} refresh={forceStatusRefresh} />
+            ) : null}
+
+            <DashboardCard>
+              <Box mb="2">{saveButton}</Box>
+              <Flex className='gap-2'>
+                <Box mb="2" className='grow'>{makeHomepageButton}</Box>
+                <Box mb="2">{deleteButton}</Box>
+              </Flex>
+            </DashboardCard>
+          </Col>
+          </>
+        : null }
         <Col numColSpanMd={12}>
-        <Card className="p-0">
+        <Card className={"p-0" + (fullscreen ? " ring-0 shadow-none rounded-none" : "")}>
             <TabGroup
-              defaultIndex={PREVIEW_INDEX}
-              onIndexChange={(index) => setIsPreview(index === PREVIEW_INDEX)}
+              defaultIndex={viewMode}
+              onIndexChange={(index) => {
+                setViewMode(index);
+              }}
             >
-              <div className="p-4 border border-x-0 border-t-0">
+              <div className={"flex justify-between p-4 border border-x-0" + (fullscreen ? " bg-white py-2 z-10" : " border-t-0")}>
                 <TabList variant="solid" className="font-bold">
-                  <Tab className={isPreview ? "bg-white" : ""} icon={EyeOpenIcon}>
+                  <Tab className={viewMode === 0 ? "bg-white" : ""} icon={EyeOpenIcon}>
                     Preview
                   </Tab>
-                  <Tab className={isPreview ? "" : "bg-white"} icon={CodeIcon}>
+                  <Tab className={viewMode === 1 ? "bg-white" : ""} icon={CodeIcon}>
                     Code
                   </Tab>
+                  <Tab className={viewMode === 2 ? "bg-white" : ""} icon={BorderSplitIcon}>
+                    Split
+                  </Tab>
                 </TabList>
+                <Button size="xs" onClick={() => setFullscreen(!fullscreen)} className="p-2 text-white bg-gray-800 rounded-md">
+                  {fullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                </Button>
               </div>
               <TabPanels>
                 <TabPanel>
-                  <PreviewFrame>
-                    {previewElement
-                      ? 
-                      renderElement(
-                            previewElement as Element,
-                            0,
-                            site,
-                            page,
-                            true,
-                          )
-                      : null}
-                  </PreviewFrame>
+                  {preview}
                 </TabPanel>
                 <TabPanel className="mt-0">
-                  <Grid numItems={4} className="gap-4 pt-0">
+                  {codeview}
+                </TabPanel>
+                <TabPanel className="mt-0">
+                  <Grid numItems={2} className="gap-4">
+                    <Col numColSpan={1}>{preview}</Col>
                     <Col numColSpan={1}>
-                      <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
-                    </Col>
-                    <Col numColSpan={3}>
-                      <div className="w-full sticky top-0 h-[100vh]">
-                        <Editor                        
-                          height="max(100%, 90vh)" // By default, it does not have a size
-                          defaultLanguage="html"
-                          defaultValue=""
-                          theme="vs-dark"
-                          value={data.content}
-                          onChange={(value) =>
-                            setData((data: any) => ({ ...data, content: value }))
-                          }
-                          onMount={handleEditorDidMount}
-                          options={{
-                            minimap: {
-                              enabled: false,
-                            },
-                          }}
-                        />
+                    <div className="w-full sticky top-0 h-[100vh]">
+                      {codeview}
                       </div>
                     </Col>
                   </Grid>
