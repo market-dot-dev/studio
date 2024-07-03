@@ -601,9 +601,14 @@ export default function PageEditor({
                     Split
                   </Tab>
                 </TabList>
-                <Button size="xs" onClick={() => setFullscreen(!fullscreen)} className="p-2 text-white bg-gray-800 rounded-md">
+
+                <div className="flex gap-4">
+                {fullscreen ? 
+                <Button>{saveButton}</Button> : null }
+                <Button size="xs" onClick={() => setFullscreen(!fullscreen)}>
                   {fullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
                 </Button>
+                </div>
               </div>
               <TabPanels>
                 <TabPanel>
