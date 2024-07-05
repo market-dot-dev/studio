@@ -1,8 +1,8 @@
 "use client";
 
-import { Flex, Text, TextInput, Button } from "@tremor/react";
+import { Flex, Text, TextInput, Button, Card, Title } from "@tremor/react";
 import { Contract } from "@prisma/client";
-import { startTransition, useState } from "react";
+import { startTransition, useCallback, useState } from "react";
 import {
   updateContract,
   createContract,
@@ -11,11 +11,15 @@ import {
 import { useRouter } from "next/navigation";
 import Uploader, { Attachment } from "@/components/uploader";
 
+import { FaRegTrashAlt } from "react-icons/fa";
+import ContractDeleteButton from "./contract-delete-button";
+
 export default function ContractEdit({
   contract: contractObj,
 }: {
   contract: Contract | null;
 }) {
+  
   const [contract, setContract] = useState<ContractWithUploadData>(
     contractObj ||
       ({
@@ -24,6 +28,8 @@ export default function ContractEdit({
   );
 
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  
   const [error, setError] = useState<{ message: string } | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const router = useRouter();
@@ -34,6 +40,7 @@ export default function ContractEdit({
       ...contract,
       [name]: value,
     } as ContractWithUploadData;
+    
     setContract(updatedContract);
   };
 
@@ -64,7 +71,7 @@ export default function ContractEdit({
         setContract(newContract);
         setIsSaving(false);
 
-        router.replace(`/contracts/${newContract.id}/edit`);
+        router.replace(`/contracts/${newContract.id}`);
         setInfo("Contract created successfully");
       }
     } catch (error) {
@@ -85,13 +92,14 @@ export default function ContractEdit({
       } as Contract;
     });
   };
+  
 
-  const onUploadDataChange = (uploadData: File | null) => {
+  const handleRemoveAttachment = () => {
     setContract((contract) => {
       return {
         ...contract,
-        storage: "upload",
-        uploadData,
+        attachmentUrl: null,
+        attachmentType: null,
       } as ContractWithUploadData;
     });
   };
@@ -167,33 +175,42 @@ export default function ContractEdit({
               </span>
             </label>
           </div>
-          {contract.storage === "upload" && (
-            <Flex
-              flexDirection="col"
-              alignItems="start"
-              className="w-1/2 gap-2"
-            >
-              <label
-                htmlFor="attachment"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Attachment
-              </label>
-              <Uploader
-                allowedTypes={["pdf"]}
-                acceptTypes="application/pdf"
-                attachmentType={contract.attachmentType}
-                attachmentUrl={contract.attachmentUrl}
-                onChange={onAttachmentChange}
-              />
-            </Flex>
-          )}
+          {
+            contract.storage === "upload" ? 
+            <>
+            { contract.attachmentUrl ? 
+              <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-1">
+                  <h2 className="text-xl font-semibold">Uploaded File</h2>
+                  <p className="text-sm text-gray-500">
+                    Attachment
+                  </p>
+                <Flex flexDirection="col" alignItems="start" className="mt-3 mb-1 border items-center justify-center p-8 gap-3 rounded-md border-gray-300 min-h-72">
+                  
+                    <Text>{contract.attachmentUrl.split('/').pop()}</Text>
+                    <Button size="xs" onClick={handleRemoveAttachment} variant="light" color="red">
+                      <FaRegTrashAlt />
+                    </Button>
+                  
+                </Flex>
+              </Flex>
+             :
+              null 
+            }
+              <Flex flexDirection="col" alignItems="start" className={ "w-1/2 gap-2" + (contract?.attachmentUrl ? ' hidden' : '') }>
+                
+                <Uploader
+                  allowedTypes={["pdf"]}
+                  acceptTypes="application/pdf"
+                  attachmentType={contract.attachmentType}
+                  attachmentUrl={contract.attachmentUrl}
+                  onChange={onAttachmentChange}
+                  autoUpload={true}
+                />
+              </Flex>
+            </>
+          : null}
           {contract.storage === "link" && (
-            <Flex
-              flexDirection="col"
-              alignItems="start"
-              className="w-1/2 gap-2"
-            >
+            <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
               <label
                 htmlFor="url"
                 className="block text-sm font-medium text-gray-700"
@@ -209,9 +226,26 @@ export default function ContractEdit({
               />
             </Flex>
           )}
-          <Button onClick={handleSubmit} disabled={isSaving}>
-            {editing ? "Save Contract" : "Create Contract"}
-          </Button>
+          <div className="flex items-center justify-between w-full">
+            <Button onClick={handleSubmit} disabled={isSaving || isDeleting}>
+              {editing ? "Save Contract" : "Create Contract"}
+            </Button>
+            {editing ? 
+            <ContractDeleteButton
+              contractId={contract.id}
+              onConfirm={() => setIsDeleting(true)}
+              onSuccess={() => {
+                setIsDeleting(false);
+                window.location.href = '/contracts';
+              }}
+              onError={(error: any) => {
+                setIsDeleting(false);
+                setError(error as { message: string });
+              }}
+          
+              />: null
+            }
+          </div>
         </Flex>
       </form>
     </>

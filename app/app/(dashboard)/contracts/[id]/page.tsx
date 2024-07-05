@@ -2,14 +2,14 @@
 
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import ContractShow from "./contract-show";
+import ContractEdit from "./contract-edit";
 import { getContractById } from "@/app/services/contract-service";
 import { notFound } from "next/navigation";
 
-export default async function ContractShowPage({
+export default async function ContractEditPage({
   params,
 }: {
-  params: { id: string };
+  params?: { id: string };
 }) {
   const session = await getSession();
 
@@ -17,15 +17,18 @@ export default async function ContractShowPage({
     redirect("/login");
   }
 
-  const contract = await getContractById(params.id);
-
-  if (!contract) {
-    notFound();
+  let contract = null;
+  if (params?.id) {
+    contract = await getContractById(params.id);
+    console.log(contract);
+    if (!contract || contract.maintainerId !== session.user.id) {
+      notFound();
+    }
   }
 
   return (
     <div className="space-y-6">
-      <ContractShow contract={contract} />
+      <ContractEdit contract={contract} />
     </div>
   );
 }

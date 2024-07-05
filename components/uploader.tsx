@@ -66,6 +66,7 @@ type UploaderProps = {
   attachmentUrl: string | null;
   attachmentType: string | null;
   onChange?: (attachment: Partial<Attachment>) => void;
+  autoUpload?: boolean;
 };
 
 const defaultAllowedTypes = ["png", "jpg", "gif", "mp4"];
@@ -77,10 +78,12 @@ export default function Uploader({
   attachmentUrl,
   attachmentType,
   onChange,
+  autoUpload = false,
 }: UploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploadData, setUploadData] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+  const [progress, setProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(
     attachmentUrl || null,
@@ -99,10 +102,13 @@ export default function Uploader({
             setUploadData((prev) => e.target?.result as string);
           };
           reader.readAsDataURL(file);
+          if (autoUpload) {
+            onSubmit(file);  // Automatically start the upload process if autoUpload is true
+          }
         }
       }
     },
-    [setUploadData],
+    [setUploadData, autoUpload],
   );
 
   const toastUploadSuccess = (url: string) => {
@@ -123,7 +129,10 @@ export default function Uploader({
           </p>
         </div>
       </div>,
-    );
+      {
+        closeButton: true,
+      }
+    )
   };
 
   const onDropEvent = (e: any) => {
@@ -139,6 +148,9 @@ export default function Uploader({
           setUploadData((prev) => e.target?.result as string);
         };
         reader.readAsDataURL(file);
+        if (autoUpload) {
+          onSubmit(file);  // Automatically start the upload process if autoUpload is true
+        }
       }
     }
   };
@@ -153,22 +165,38 @@ export default function Uploader({
   const onSubmit = async (file: File) => {
     setSaving(true);
 
-    fetch("/api/upload", {
-      method: "POST",
-      headers: { "content-type": file?.type || "application/octet-stream" },
-      body: file,
-    }).then(async (res) => {
-      if (res.status === 200) {
-        const { url } = await res.json();
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "/api/upload");
+    xhr.setRequestHeader("content-type", file?.type || "application/octet-stream");
+
+    xhr.upload.onprogress = (event) => {
+      if (event.lengthComputable) {
+        const percentComplete = (event.loaded / event.total) * 100;
+        setProgress(percentComplete);
+      }
+    };
+
+    xhr.onload = async () => {
+      if (xhr.status === 200) {
+        const { url } = JSON.parse(xhr.responseText);
         setUploadedFilePath(url);
         onChange?.({ attachmentUrl: url, attachmentType: file.type });
         toastUploadSuccess(url);
       } else {
-        const error = await res.text();
+        const error = xhr.responseText;
         toast.error(error);
       }
       setSaving(false);
-    });
+      setProgress(0);
+    };
+
+    xhr.onerror = () => {
+      toast.error("An error occurred during the upload");
+      setSaving(false);
+      setProgress(0);
+    };
+
+    xhr.send(file);
   };
 
   const saveDisabled = useMemo(() => {
@@ -272,6 +300,21 @@ export default function Uploader({
         </div>
       </div>
 
+      {saving && (
+        <div className="relative pt-1">
+          <div className="flex mb-2 items-center justify-between">
+            <div className="text-right">
+              <span className="text-xs font-semibold inline-block text-gray-500">
+                {Math.round(progress)}%
+              </span>
+            </div>
+          </div>
+          <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
+            <div style={{ width: `${progress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div>
+          </div>
+        </div>
+      )}
+
       {uploadedFilePath && (
         <div>
           <Button
@@ -282,27 +325,25 @@ export default function Uploader({
           </Button>
         </div>
       )}
-      {!uploadedFilePath && (
-        <>
-          <Button
-            disabled={saveDisabled}
-            onClick={(e) => {
-              e.preventDefault();
-              onSubmit(file!);
-            }}
-            className={`${
-              saveDisabled
-                ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
-                : "border-black bg-black text-white hover:bg-white hover:text-black"
-            } flex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none`}
-          >
-            {saving ? (
-              <LoadingDots color="#808080" />
-            ) : (
-              <p className="text-sm">Confirm upload</p>
-            )}
-          </Button>
-        </>
+      {!uploadedFilePath && !autoUpload && (
+        <Button
+          disabled={saveDisabled}
+          onClick={(e) => {
+            e.preventDefault();
+            onSubmit(file!);
+          }}
+          className={`${
+            saveDisabled
+              ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
+              : "border-black bg-black text-white hover:bg-white hover:text-black"
+          } flex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none`}
+        >
+          {saving ? (
+            <LoadingDots color="#808080" />
+          ) : (
+            <p className="text-sm">Confirm upload</p>
+          )}
+        </Button>
       )}
     </form>
   );

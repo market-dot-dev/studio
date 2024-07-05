@@ -114,10 +114,10 @@ class ContractService {
     ) {
       throw new Error("Unauthorized");
     }
+    
+    // const updateData = await this.uploadAttachment(contractAttributes);
 
-    const updateData = await this.uploadAttachment(contractAttributes);
-
-    return prisma.contract.update({ where: { id }, data: updateData });
+    return prisma.contract.update({ where: { id }, data: contractAttributes });
   }
 
   static async createContract(

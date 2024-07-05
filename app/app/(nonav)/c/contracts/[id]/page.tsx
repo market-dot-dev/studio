@@ -16,34 +16,32 @@ const ContractPage: NextPageWithLayout<ContractPageProps> = async ({
   params,
 }: ContractPageProps) => {
   const contract = await ContractService.getContractById(params.id);
-
+  
+  
   if (!contract) {
     return <div>Contract not found</div>;
   }
 
-  const { name, description, url, attachmentUrl, attachmentType } = contract;
+  const { name, description, url, attachmentUrl, attachmentType, storage } = contract;
 
   return (
-    <div className="flex min-h-screen flex-col md:flex-row">
+    <div className="flex flex-col md:flex-row bg-green-500 h-screen">
       {/* Left Column */}
       <div
-        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 p-8 text-slate-50 md:fixed md:w-2/5 lg:py-32 xl:px-32"
+        className="flex flex-col gap-2 justify-center bg-slate-800 p-8 md:h-screen text-slate-50 md:w-2/5 lg:py-32 xl:px-32"
         style={{ backgroundImage: "url(/voronoi.png)" }}
       >
-        <Title>{name}</Title>
-        <Text>{description}</Text>
+        <Title className="text-slate-300">{name}</Title>
+        <Text className="text-slate-500">{description}</Text>
       </div>
 
       {/* Right Column */}
-      <div className="ml-auto w-full overflow-y-auto bg-slate-100 p-8 text-slate-800 md:w-3/5 md:p-16">
-        {url ? (
-          <iframe src={url} width="100%" height="100%" />
-        ) : attachmentUrl && attachmentType ? (
+      <div className="grow bg-slate-100 text-slate-800 md:w-3/5">
+        {(storage === 'link' && url) || attachmentUrl ? (
           <embed
-            src={attachmentUrl}
-            type={attachmentType}
-            width="100%"
-            height="100%"
+            src={(storage === 'link' ? url : attachmentUrl)+'#toolbar=0'}
+            type={attachmentType ?? undefined}
+            className="w-full h-screen"
           />
         ) : (
           <div>No contract document available</div>
