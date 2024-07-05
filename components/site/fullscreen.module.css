@@ -1,0 +1,15 @@
+.fullscreen {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 99;
+    background: white;
+    overflow: auto;
+    height: 100vh;
+    max-width: unset;
+}
+
+.fullscreen > div:first-child {
+  display: none;
+  padding: 1rem;
+}

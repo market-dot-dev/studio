@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
 import { Flex } from "@tremor/react";
 import OnboardingGuide from "@/components/onboarding/onboarding-guide";
-import { DasboardProvider } from "@/components/dashboard/dashboard-context";
+import { DashboardProvider } from "@/components/dashboard/dashboard-context";
 import SessionService from "@/app/services/SessionService";
 import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
 import SessionRefresher from "@/components/common/session-refresher";
@@ -20,7 +20,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   const site = await getOnlySiteFromUserId(user.id);
 
   return (
-    <DasboardProvider siteId={site?.id ?? null}>
+    <DashboardProvider siteId={site?.id ?? null}>
       <SessionRefresher />
       <div>
         <Nav siteId={site?.id ?? null} roleId={user.roleId || 'anonymous'}>
@@ -38,6 +38,6 @@ export default async function DashboardLayout({ children }: { children: ReactNod
           </Flex>
         </div>
       </div>
-    </DasboardProvider>
+    </DashboardProvider>
   );
 }

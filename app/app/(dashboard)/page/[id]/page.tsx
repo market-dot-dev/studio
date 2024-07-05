@@ -2,9 +2,10 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 
-import PageEditor from "@/components/page-editor";
+import PageEditor from "@/components/site/page-editor";
 import PageHeading from "@/components/common/page-heading";
 import DomainServices from "@/app/services/domain-service";
+import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
 
 export default async function Page({ params }: { params: { id: string } }) {
 	const session = await getSession();
@@ -47,7 +48,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   const siteUrl = DomainServices.getRootUrl(data?.site?.subdomain ?? 'app');
   
   return (
-    <>
+    <FullScreenSwitcher>
      <div className="flex justify-between w-full">
         <div className="flex flex-row">
           <PageHeading title={'Edit Page' + (data?.title? ": " + data.title : "")} />
@@ -58,6 +59,6 @@ export default async function Page({ params }: { params: { id: string } }) {
 
 
     <PageEditor site={data?.site} page={data} siteUrl={siteUrl} homepageId={ data.site?.homepageId || null} />
-    </>
+    </FullScreenSwitcher>
   )
 }

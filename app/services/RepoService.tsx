@@ -350,7 +350,9 @@ class RepoService {
       throw new Error('No user found.');
     }
 
-    const installationRepos = await RepoService.getInstallationRepos(parseInt(installationId));
+    const githubAppInstallationId = parseInt(installationId);
+    
+    const installationRepos = await RepoService.getInstallationRepos(githubAppInstallationId);
     // check if the repo is part of the installation
     const repoDetails = installationRepos.find((repo: any) => repo.id === parseInt(repoId));
 
