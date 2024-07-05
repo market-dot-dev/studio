@@ -44,6 +44,31 @@ class UserService {
     });
   }
 
+  static async getCustomersMaintainers(): Promise<Partial<User>[]> {
+
+    // if current user is admin
+    const session = await getSession();
+    if(session?.user.roleId !== 'admin') {
+      return [];
+    }
+
+    // find users where roleId is either customer or maintainer
+    return prisma?.user.findMany({
+      where: {
+        roleId: {
+          in: ['customer', 'maintainer'],
+        },
+      },
+      select: {
+        id: true,
+        gh_username: true,
+        email: true,
+        name: true,
+        roleId: true,
+      },
+    });
+  }
+
   static async findUserByGithubId(gh_username: string): Promise<User | undefined | null> {
     return prisma?.user.findFirst({
       where: {
