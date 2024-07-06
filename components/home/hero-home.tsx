@@ -51,7 +51,7 @@ export default function HeroHome() {
     videoWidth={1920}
     videoHeight={1080} /> */}
         <img src="/gitwallet-screenshot.png" alt="Gitwallet Screenshot" className="w-full rounded-xl md:rounded-3xl" />
-
+        <div style={{ position: 'relative', paddingBottom: 'calc(56.1219512195122% + 42px)', height: 0 }}><iframe src="https://app.supademo.com/embed/cly6bf9z00bufnyarxvuzvyzh" title="Gitwallet Demo" allow="clipboard-write" frameBorder="0" allowFullScreen style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}></iframe></div>
       </div>
 
     </div>
