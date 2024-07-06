@@ -49,7 +49,10 @@ class AuthService {
     let userData: User | undefined | null = undefined;
 
     if (trigger === "update") {
-      if(sessionUser?.id){
+      if(session?.['impersonate'] !== undefined && sessionUser?.roleId === "admin") {
+        userData = await UserService.findUser(session.impersonate);
+      }
+      else if(sessionUser?.id){
         userData = await UserService.findUser(sessionUser.id);
       }
     } else if (trigger === "signIn") {
