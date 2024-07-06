@@ -84,7 +84,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
           <span className={`mr-1 text-4xl font-extrabold ${textClasses}`}>{}</span>
         </div>
 
-        <Text className="text-center text-xs text-gray-400">What&apos;s Included:</Text>
+        {tierFeatures.length !== 0 && <Text className="text-center text-xs text-gray-400">What&apos;s Included:</Text>}
         <TierFeatureList features={tierFeatures}  darkMode={darkMode} />
       </div>
 
