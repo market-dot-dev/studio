@@ -1,5 +1,6 @@
 import UserService from "@/app/services/UserService";
 import { Button, Card, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Title } from "@tremor/react";
+import ImpersonateButton from "./impersonate-button";
 
 
 
@@ -31,7 +32,7 @@ export default async function UsersList() {
 					<TableCell>{user.name}</TableCell>
 					<TableCell>{user.roleId}</TableCell>
 					<TableHeaderCell>
-						<Button size="xs">Login as</Button>
+						<ImpersonateButton userId={user.id!} />
 					</TableHeaderCell>
 					</TableRow>
 				))}
