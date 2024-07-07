@@ -1,7 +1,9 @@
 "use client";
 
-import { Flex, Text, TextInput, Button, Card, Title } from "@tremor/react";
+import { Flex, Text, TextInput, Button } from "@tremor/react";
 import { Contract } from "@prisma/client";
+import Link from "next/link";
+import PageHeading from "@/components/common/page-heading";
 import { startTransition, useCallback, useState } from "react";
 import {
   updateContract,
@@ -106,9 +108,8 @@ export default function ContractEdit({
 
   return (
     <>
-      <h2 className="mb-4 text-xl font-semibold">
-        {editing ? "Edit Contract" : "Create Contract"}
-      </h2>
+      <Link href="/contracts" className="underline">← All Contracts</Link>
+      <PageHeading title={editing ? "Edit Contract" : "Create Contract"} />
       <form>
         {error && <Text className="text-red-500">{error?.message}</Text>}
         {info && <Text className="text-green-500">{info}</Text>}

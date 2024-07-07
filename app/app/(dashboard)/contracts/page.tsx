@@ -4,6 +4,8 @@ import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ContractSettings from "./contracts-index";
 import ContractService from "@/app/services/contract-service";
+import PageHeading from "@/components/common/page-heading";
+import PrimaryButton from "@/components/common/link-button";
 
 export default async function ContractSettingsPage() {
   const session = await getSession();
@@ -15,8 +17,19 @@ export default async function ContractSettingsPage() {
   const contracts = await ContractService.getContractsByCurrentMaintainer();
 
   return (
-    <div className="space-y-6">
-      <ContractSettings contracts={contracts} />
+    <div className="flex max-w flex-col max-w-screen-xl space-y-12">
+      <div className="flex justify-between">
+        <div className="flex flex-row">
+          <PageHeading title="Contracts" />
+        </div>
+        <div className="flex flex-row">
+          <PrimaryButton label="New Contract" href="/contracts/create" />
+        </div>
+      </div>
+
+      <div className="flex flex-col space-y-6">
+        <ContractSettings contracts={contracts} />
+      </div>
     </div>
   );
 }

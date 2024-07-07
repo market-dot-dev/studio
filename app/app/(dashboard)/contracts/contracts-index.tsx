@@ -62,13 +62,6 @@ export default function ContractSettings({ contracts }: { contracts: Contract[] 
 
   return (
     <>
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Available Contracts</h2>
-        <Link href="/contracts/create">
-          <Button>Create Contract</Button>
-        </Link>
-      </div>
-
       <DashboardCard>
         {error && <p className="text-red-500">{error.message}</p>}
         <Table>
