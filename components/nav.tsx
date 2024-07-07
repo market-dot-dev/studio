@@ -5,6 +5,7 @@ import {
   Globe,
   LayoutDashboard,
   KanbanSquare,
+  Scroll,
   Menu,
   Users,
   Settings,
@@ -21,7 +22,7 @@ import {
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
-import { FaDiscord, FaTelegram, FaTelegramPlane } from "react-icons/fa";
+import { FaDiscord, FaTelegramPlane } from "react-icons/fa";
 
 export default function Nav({ children, siteId, roleId }: { children: ReactNode, siteId: string | null, roleId: string | null }) {
   const urlSegments = useSelectedLayoutSegments();
@@ -46,6 +47,12 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         href: "/tiers",
         isActive: urlSegments[0] === "tiers",
         icon: <KanbanSquare width={18} />,
+      },
+      {
+        name: "Contracts",
+        href: "/contracts",
+        isActive: urlSegments[1] === "contracts",
+        icon: <Scroll width={18} />,
       },
       {
         name: "Leads",

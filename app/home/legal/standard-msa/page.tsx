@@ -1,11 +1,8 @@
 "use client";
 
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import UserService from "@/app/services/UserService";
 import { Title, Text } from "@tremor/react";
 
-export default async function DefaultMasterServicesAgreement() {
+const DefaultMasterServicesAgreement = () => {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
 
@@ -22,8 +19,9 @@ export default async function DefaultMasterServicesAgreement() {
           width="100%"
           height="100%"
         />
-
       </div>
     </div>
   );
-}
+};
+
+export default DefaultMasterServicesAgreement;

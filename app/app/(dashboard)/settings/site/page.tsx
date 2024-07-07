@@ -3,11 +3,9 @@
 
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import PageHeading from "@/components/common/page-heading";
 
 import SiteService from "@/app/services/SiteService";
 import SiteSettings from "@/components/user/site-settings";
-import { Title } from "@tremor/react";
 
 
 export default async function SiteSettingsPage() {
