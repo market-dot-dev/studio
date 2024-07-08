@@ -56,7 +56,7 @@ const ContractText = ({ checkoutProject, contract }: { checkoutProject: string, 
     </>
   }
 
-  const url = `/contracts/${contract.id}`;
+  const url = `/c/contracts/${contract.id}`;
 
   return <>
     {checkoutProject} uses the{" "}
