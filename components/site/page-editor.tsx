@@ -602,6 +602,12 @@ export default function PageEditor({
                   </Tab>
                 </TabList>
 
+                { fullscreen ?
+                  <div className="flex">
+                  { data.slug ? previewLink : null}
+                  </div> : <></>
+                }
+
                 <div className="flex gap-4">
                 {fullscreen ? 
                 <Button>{saveButton}</Button> : <></> }
