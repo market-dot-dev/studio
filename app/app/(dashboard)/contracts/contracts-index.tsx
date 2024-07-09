@@ -31,7 +31,7 @@ const ContractRow = ({ contract, currentUser, handleView }: {
       <TableCell>{contract.description}</TableCell>
       <TableCell>
         <div className="flex flex-row justify-end gap-1">
-          <Link href={`/c/contracts/${contract.id}`} target="_blank">Preview</Link>
+          <Link href={`/c/contracts/${contract.id}`} target="_blank">View</Link>
           {/* {ownsContract ? (
             <>
               <Button size='xs' onClick={() => (window.location.href = `/contracts/${contract.id}/edit`)}>Edit</Button>

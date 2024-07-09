@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useMemo, ChangeEvent } from "react";
+import { useState, useCallback, useMemo, ChangeEvent, useEffect } from "react";
 import { toast } from "sonner";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Button } from "@tremor/react";
@@ -67,6 +67,7 @@ type UploaderProps = {
   attachmentType: string | null;
   onChange?: (attachment: Partial<Attachment>) => void;
   autoUpload?: boolean;
+  setUploading?: (uploading: boolean) => void;
 };
 
 const defaultAllowedTypes = ["png", "jpg", "gif", "mp4"];
@@ -79,6 +80,7 @@ export default function Uploader({
   attachmentType,
   onChange,
   autoUpload = false,
+  setUploading,
 }: UploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploadData, setUploadData] = useState<string | null>(null);
@@ -88,6 +90,7 @@ export default function Uploader({
   const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(
     attachmentUrl || null,
   );
+  
 
   const onChangePicture = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -202,6 +205,10 @@ export default function Uploader({
   const saveDisabled = useMemo(() => {
     return !file || !uploadData || saving;
   }, [uploadData, saving, file]);
+
+  useEffect(() => {
+    setUploading?.(saving);
+  }, [saving])
 
   return (
     <form className="grid w-full gap-6">

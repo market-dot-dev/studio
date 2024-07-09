@@ -31,6 +31,7 @@ export default function ContractEdit({
 
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   
   const [error, setError] = useState<{ message: string } | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -108,7 +109,10 @@ export default function ContractEdit({
 
   return (
     <>
-      <Link href="/contracts" className="underline">← All Contracts</Link>
+      <div className="flex justify-between w-full items-center">
+        <Link href="/contracts" className="underline">← All Contracts</Link>
+        { editing ? <Link href={`/c/contracts/${contract.id}`} target="_blank" className="underline">View</Link> : null}
+      </div>
       <PageHeading title={editing ? "Edit Contract" : "Create Contract"} />
       <form>
         {error && <Text className="text-red-500">{error?.message}</Text>}
@@ -206,6 +210,7 @@ export default function ContractEdit({
                   attachmentType={contract.attachmentType}
                   attachmentUrl={contract.attachmentUrl}
                   onChange={onAttachmentChange}
+                  setUploading={setIsUploading}
                   autoUpload={true}
                 />
               </Flex>
@@ -229,7 +234,7 @@ export default function ContractEdit({
             </Flex>
           )}
           <div className="flex items-center justify-between w-full">
-            <Button onClick={handleSubmit} disabled={isSaving || isDeleting}>
+            <Button onClick={handleSubmit} disabled={isSaving || isDeleting || isUploading}>
               {editing ? "Save Contract" : "Create Contract"}
             </Button>
             {editing ? 
