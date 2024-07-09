@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Text, TextInput, Button } from "@tremor/react";
+import { Flex, Text, TextInput, Button, Textarea } from "@tremor/react";
 import { Contract } from "@prisma/client";
 import Link from "next/link";
 import PageHeading from "@/components/common/page-heading";
@@ -140,10 +140,11 @@ export default function ContractEdit({
             >
               Description
             </label>
-            <TextInput
+            <Textarea
               placeholder="Contract description"
               name="description"
               id="description"
+              rows={4}
               defaultValue={contract?.description ?? ""}
               onChange={(e) => handleInputChange("description", e.target.value)}
             />

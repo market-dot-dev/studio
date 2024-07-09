@@ -2,7 +2,7 @@
 
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import ContractEdit from "../[id]/contract-edit"
+import ContractEdit from "@/components/contracts/contract-edit"
 
 export default async function ContractCreatePage() {
   const session = await getSession();

@@ -2,7 +2,7 @@
 
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import ContractEdit from "./contract-edit";
+import ContractEdit from "../../../../../components/contracts/contract-edit";
 import { getContractById } from "@/app/services/contract-service";
 import { notFound } from "next/navigation";
 
