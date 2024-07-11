@@ -16,17 +16,17 @@ export default async function Tiers() {
     <div className="flex max-w flex-col max-w-screen-xl space-y-12">
       <div className="flex justify-between">
         <div className="flex flex-row">
-          <PageHeading title="Tiers" />
+          <PageHeading title="Your Packages" />
         </div>
         <div className="flex flex-row">
-          <PrimaryButton label="New Tier" href="/tiers/new" />
+          <PrimaryButton label="New Package" href="/tiers/new" />
         </div>
       </div>
 
       <div className="flex flex-col space-y-6">
         <section>
           <div className="max-w-screen-xl">
-            {tiers.length === 0 && <div>You have no tiers. Create a new tier to get started.</div>}
+            {tiers.length === 0 && <div>You have no packages defined. Create a new one to get started.</div>}
             <Grid numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-8" >
               {tiers.map((tier, index) => (
                 <>
