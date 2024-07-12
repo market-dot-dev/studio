@@ -1,7 +1,7 @@
 import PageHeading from '@/components/common/page-heading';
 import PrimaryButton from '@/components/common/link-button';
 import TierService, { TierWithFeatures } from '@/app/services/TierService';
-import { Grid, Badge } from '@tremor/react';
+import { Grid, Badge, Text } from '@tremor/react';
 
 import TierCard from '@/components/tiers/tier-card';
 import SessionService from '@/app/services/SessionService';
@@ -15,8 +15,9 @@ export default async function Tiers() {
   return (
     <div className="flex max-w flex-col max-w-screen-xl space-y-12">
       <div className="flex justify-between">
-        <div className="flex flex-row">
+        <div className="flex flex-col">
           <PageHeading title="Your Packages" />
+          <Text>Packages are what you sell to your customers. You can inlcude them on your website or send them to customers directly using a checkout link.</Text>
         </div>
         <div className="flex flex-row">
           <PrimaryButton label="New Package" href="/tiers/new" />
