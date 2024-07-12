@@ -9,7 +9,7 @@ export default async function SettingsLayout({ children } : {
     return (
         <div className="flex max-w-screen-xl flex-col">
             <div className="flex flex-col space-y-6">
-                <PageHeading title="Leads" />
+                <PageHeading title="Research" />
                 <Text>Search for companies using your Open Source Projects.</Text>
                 <LeadsNav />
                 {children}
