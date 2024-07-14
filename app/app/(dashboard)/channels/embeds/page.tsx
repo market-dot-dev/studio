@@ -2,12 +2,13 @@ import EmbedItem from "@/components/embedables/embed-item";
 import { Divider, Flex, Text } from "@tremor/react";
 import embedables from "@/components/site/embedables/";
 import { getSite } from "@/lib/site/fetchers";
-import { Code2, Github } from "lucide-react";
+import { Code2, Spline } from "lucide-react";
 import PageHeading from "@/components/common/page-heading";
 import Tabs from "@/components/common/tabs";
 import githubEmbeds from "@/components/site/github-embeds";
 import GithubEmbedItem from "@/components/github/github-embed-item";
 import { getRootUrl } from "@/app/services/domain-service";
+
 
 export default async function EmbedChannel({ params }: { params: { id: string } }) {
     const site = await getSite() as any;
@@ -34,7 +35,7 @@ export default async function EmbedChannel({ params }: { params: { id: string } 
 
             },
             {
-                title: (<div className="flex gap-2 items-center"><Github size={18} /> <span>Github</span></div>),
+                title: (<div className="flex gap-2 items-center"><Spline size={18} /> <span>SVG</span></div>),
                 content: (<div><Flex flexDirection="col" alignItems="start" className="gap-6">
                   <Text>Embed services in your Github Readme.</Text>
                     <Flex flexDirection="col" className="gap-12 w-full">
