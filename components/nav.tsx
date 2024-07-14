@@ -13,6 +13,7 @@ import {
   Code2,
   Radar,
   Box,
+  Home,
 } from "lucide-react";
 import {
   useParams,
@@ -22,6 +23,7 @@ import {
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
 import { FaDiscord, FaTelegramPlane } from "react-icons/fa";
+import { Badge } from "@tremor/react";
 
 export default function Nav({ children, siteId, roleId }: { children: ReactNode, siteId: string | null, roleId: string | null }) {
   const urlSegments = useSelectedLayoutSegments();
@@ -33,7 +35,19 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         name: "Home",
         href: "/",
         isActive: urlSegments.length === 0,
-        icon: <LayoutDashboard width={18} />,
+        icon: <Home width={18} />,
+      },
+      {
+        name: "Settings",
+        href: "/settings",
+        isActive: urlSegments[0] === "settings",
+        icon: <Settings width={18} />,
+      },
+      // SERVICES
+      {
+        name: "Services",
+        href: "",
+        isDivider: true,
       },
       {
         name: "Services",
@@ -42,7 +56,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         icon: <Box width={18} />,
       },
       {
-        name: "Tiers",
+        name: "Packages",
         href: "/tiers",
         isActive: urlSegments[0] === "tiers",
         icon: <KanbanSquare width={18} />,
@@ -51,10 +65,18 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         name: "Contracts",
         href: "/contracts",
         isActive: urlSegments[1] === "contracts",
+        isBeta: true,
         icon: <Scroll width={18} />,
       },
+
+      // CUSTOMERS 
       {
-        name: "Leads",
+        name: "Customers",
+        href: "",
+        isDivider: true,
+      },
+      {
+        name: "Research",
         href: "/leads",
         isActive: urlSegments[0] === "leads",
         icon: <Radar width={18} />,
@@ -65,18 +87,16 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         isActive: urlSegments[0] === "customers",
         icon: <Users width={18} />,
       },
+
+      // REPORTS
       {
         name: "Reports",
         href: "/reports",
         isActive: urlSegments[0] === "reports",
         icon: <BarChart4 width={18} />,
       },
-      {
-        name: "Settings",
-        href: "/settings",
-        isActive: urlSegments[0] === "settings",
-        icon: <Settings width={18} />,
-      },
+
+      // CHANNELS
       {
         name: "Channels",
         href: "",
@@ -95,20 +115,21 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
         isActive: urlSegments[0] === "embeds",
         icon: <Code2 width={18} />,
       },
-      {
 
-        name: "Get Support",
+      // SUPPORT
+      {
+        name: "Support",
         href: "",
         isDivider: true,
       },
       {
-        name: "Gitwallet Discord",
+        name: "Discord",
         href: "https://discord.gg/ZdSpS4BuGd",
         target: "_blank",
         icon: <FaDiscord width={18} />,
       },
       {
-        name: "DM Founder",
+        name: "Contact Founder",
         href: "https://t.me/tarunsachdeva2",
         target: "_blank",
         icon: <FaTelegramPlane width={18} />,
@@ -161,7 +182,7 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
             </div>
           </div>
           <div className="grid gap-0.5">
-            {tabs.map(({ name, href, target, isActive, icon }) => (
+            {tabs.map(({ name, href, target, isActive, isBeta, icon }) => (
               href === "" ? (
                 <span key={name} className="text-xs font-small uppercase mt-4">{name}</span>
               ) : (
@@ -174,10 +195,10 @@ export default function Nav({ children, siteId, roleId }: { children: ReactNode,
                 >
                   {icon}
                   <span className="text-sm font-medium">{name}</span>
+                  {isBeta && <Badge size={'xs'} tooltip="We are all works in progress. This feature, a bit more so.">Beta</Badge>}
                 </Link>
               )
             ))}
-
           </div>
         </div>
         <div>
