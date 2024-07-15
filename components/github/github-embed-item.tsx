@@ -13,7 +13,7 @@ export default function GithubEmbedItem({site, index, rootUrl} : any) {
   const [settings, setSettings] = useState({} as any);
   const [html, setHtml] = useState<string>('');
   
-  const Settings = githubEmbeds[index].settings;
+  const Settings = githubEmbeds[index].settings ?? null;
   
   useEffect(() => {
 
@@ -43,7 +43,7 @@ export default function GithubEmbedItem({site, index, rootUrl} : any) {
               
               <Flex flexDirection="col" alignItems="start" className="gap-4 w-1/4" justifyContent="start">
                 <Title>Embed Configuration</Title>
-                <Settings site={site} settings={settings} setSettings={setSettings} />
+                { Settings ? <Settings site={site} settings={settings} setSettings={setSettings} /> : null }
               </Flex>
             
             </Flex>
