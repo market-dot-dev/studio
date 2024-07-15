@@ -40,11 +40,12 @@ export default function GithubEmbedItem({site, index, rootUrl} : any) {
               </DashboardCard>
                  
               
-              
-              <Flex flexDirection="col" alignItems="start" className="gap-4 w-1/4" justifyContent="start">
-                <Title>Embed Configuration</Title>
-                { Settings ? <Settings site={site} settings={settings} setSettings={setSettings} /> : null }
-              </Flex>
+              { Settings ? 
+                <Flex flexDirection="col" alignItems="start" className="gap-4 w-1/4" justifyContent="start">
+                  <Title>Embed Configuration</Title>
+                  <Settings site={site} settings={settings} setSettings={setSettings} />
+                </Flex>
+               : null }
             
             </Flex>
           
