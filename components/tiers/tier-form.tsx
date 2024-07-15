@@ -331,7 +331,7 @@ export default function TierForm({ tier: tierObj, contracts }: TierFormProps) {
 							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
 							name="description"
 							value={tier.description || ''}
-							onValueChange={(v) => handleInputChange('tierDescription', v)}
+							onValueChange={(v) => handleInputChange('description', v)}
 						/>
 					</div>
 
