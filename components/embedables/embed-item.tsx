@@ -7,7 +7,6 @@ import DashboardCard from "../common/dashboard-card";
 
 export default function EmbedItem({site, index} : any) {
     
-  const [active, setActive] = useState(0)
   const [settings, setSettings] = useState({} as any);
   const domain = `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   const Component = embedables[index].preview;
@@ -25,7 +24,7 @@ export default function EmbedItem({site, index} : any) {
 
   return (
     <Flex flexDirection='col' alignItems="stretch" className='gap-4'>
-      <Title>{embedables[index].name}</Title>
+      <Title className="mt-6">{embedables[index].name}</Title>
       <Grid numItems={1} className="gap-8">
         
         <Col numColSpan={1}>

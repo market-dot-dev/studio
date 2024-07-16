@@ -9,7 +9,6 @@ import {
   Menu,
   Users,
   Settings,
-  Github,
   BarChart4,
   Code2,
   Radar,

@@ -15,7 +15,7 @@ import {
 import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
 import Tier from "@/app/models/Tier";
 import CancelSubscriptionButton from "./subscriptions/cancel-subscription-button";
-import CustomerPurchasesTabs from "../../../components/customer/customer-purchases-tabs";
+import Tabs from "../../../components/common/tabs";
 
 type TierWithFeatures = Tier & { features: Feature[] } | null;
 
@@ -194,7 +194,24 @@ export default async function SubscriptionsAndChargesList({ params }: { params: 
       <div className="flex flex-col space-y-6">
         <PageHeading title="Packages" />
         <Text>Your one time purchases and subscription packages.</Text>
-        <CustomerPurchasesTabs tabOneTimePurchases={tabOneTimePurchases} tabActiveSubscriptions={tabActiveSubscriptions} tabPastSubscriptions={tabPastSubscriptions} />
+        
+        <Tabs tabs={
+          [
+            {
+              title: <span>One Time Purchases</span>,
+              content: tabOneTimePurchases
+            },
+            {
+              title: <span>Active Subscriptions</span>,
+              content: tabActiveSubscriptions
+            },
+            {
+              title: <span>Past Subscriptions</span>,
+              content: tabPastSubscriptions
+            }
+          ]
+        } />
+        
       </div>
     </div>
   );
