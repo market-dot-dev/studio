@@ -1,11 +1,11 @@
-import { PrismaClient, Service } from '@prisma/client';
+import { Contract, PrismaClient, Service } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 
 const prisma = new PrismaClient();
 
-async function main() {
+const syncServices = async () => {
   const yamlFile = path.join(__dirname, './sync/services.yaml');
   const fileContents = fs.readFileSync(yamlFile, 'utf8');
   const data = yaml.load(fileContents) as { services: Array<Service> };
@@ -33,6 +33,33 @@ async function main() {
       where: { id },
     });
   }
+};
+
+const syncContracts = async () => {
+  const yamlFile = path.join(__dirname, './sync/contracts.yaml');
+  const fileContents = fs.readFileSync(yamlFile, 'utf8');
+  const data = yaml.load(fileContents) as { contracts: Array<Contract> };
+
+  // Retrieve all current contracts in the database.
+  const existingContracts = await prisma.contract.findMany();
+  
+  // Synchronize each contract from the YAML to the database.
+  for (const contract of data.contracts) {
+    await prisma.contract.upsert({
+      where: { id: contract.id },
+      update: { ...contract },
+      create: { ...contract },
+    });
+  }
+}
+
+async function main() {
+  console.log('Syncing...');
+  console.log('* services');
+  await syncServices();
+  console.log('* contracts');
+  await syncContracts();
+  console.log('Synced!');
 }
 
 main()

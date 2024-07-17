@@ -9,6 +9,7 @@ class RoleService {
     /^\/embed\//,
     /^\/api\/og\//,
     /^\/api\/tiers\//,
+    /^\/api\/buybutton\//,
     /^\/home$/,
     /^\/alpha\/login$/,
     /^\/login$/,
@@ -39,7 +40,7 @@ class RoleService {
   }
 
   static async canViewPath(path: string, roleId: Role = 'anonymous') {
-    if (roleId === 'anonymous') {
+    if (roleId === 'anonymous') {  
       const result = RoleService.anonymousPaths.some(regex => regex.test(path));
       console.debug("==== canViewPath anonymous", path, result ? 'allowed' : 'blocked');
       return result;

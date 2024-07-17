@@ -12,7 +12,7 @@ import TierFeaturePicker from '../features/tier-feature-picker';
 import { attachMany } from '@/app/services/feature-service';
 import Link from 'next/link';
 import DashboardCard from '../common/dashboard-card';
-import { Feature } from '@prisma/client';
+import { Contract, Feature } from '@prisma/client';
 import LoadingDots from "@/components/icons/loading-dots";
 import {
 	Select,
@@ -27,12 +27,12 @@ import {
 import useCurrentSession from '@/app/hooks/use-current-session';
 import LinkButton from '../common/link-button';
 import { getRootUrl } from '@/app/services/domain-service';
-import { findUser } from '@/app/services/UserService';
 import { Check, Copy } from 'lucide-react';
 
 
 interface TierFormProps {
 	tier?: Partial<Tier>;
+	contracts: Contract[];
 }
 
 const TierVersionCard = ({ tierVersion }: { tierVersion: TierVersionWithFeatures }) => {
@@ -167,7 +167,7 @@ const calcDiscount = (price: number, annualPrice: number) => {
 	return Math.round(((twelveMonths - annualPrice) / twelveMonths * 100) * 10) / 10;
 }
 
-export default function TierForm({ tier: tierObj }: TierFormProps) {
+export default function TierForm({ tier: tierObj, contracts }: TierFormProps) {
 	const [tier, setTier] = useState<TierWithFeatures>((tierObj ? tierObj : newTier()) as Tier);
 
 	const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(new Set<string>());
@@ -331,8 +331,24 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
 							name="description"
 							value={tier.description || ''}
-							onValueChange={(v) => handleInputChange('tierDescription', v)}
+							onValueChange={(v) => handleInputChange('description', v)}
 						/>
+					</div>
+
+					<div className="mb-4">
+						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Contract</label>
+						<Select
+							id="contractId"
+							placeholder="Choose contract"
+							required
+							name="contractId"
+							value={tier.contractId || 'gitwallet-msa'}
+							onValueChange={(v) => handleInputChange('contractId', v)}
+						>
+							{ contracts.map((c, index) => 
+								<SelectItem value={c.id} key={index}>{c.name}</SelectItem>
+							)}
+						</Select>
 					</div>
 
 					<div className="mb-4">
@@ -511,8 +527,6 @@ export default function TierForm({ tier: tierObj }: TierFormProps) {
 							</DashboardCard>
 						</div>
 					</>}
-
-
 
 					<div className="mb-4">
 						<label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Version History</label>

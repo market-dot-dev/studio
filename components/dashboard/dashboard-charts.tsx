@@ -1,5 +1,6 @@
-import { Metric, Card, Text, Flex, BarChart, LineChart } from "@tremor/react";
+import { Metric, Card, Text, Flex, BarChart, LineChart, Button } from "@tremor/react";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
+import Link from "next/link";
 
 export default function DashboardCharts({ customers }: { customers: CustomerWithChargesAndSubscriptions[] }) {
 
@@ -146,6 +147,11 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
             />
           </Card>
         </div>
+        <Link href='/reports' className="ml-auto">
+          <Button size="xs" className="h-6" variant="secondary">
+          More Details →
+          </Button>
+			</Link>
       </div>
     </>
   );

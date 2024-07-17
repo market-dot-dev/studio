@@ -44,6 +44,7 @@ model User {
   subscribedLegacyProducts LegacyProduct[] @relation("UserAsUser")
   maintainedLegacyProducts LegacyProduct[] @relation("UserAsMaintainer")
   charges                  Charge[]
+  contracts                Contract[]
 }
 
 model Account {
@@ -188,6 +189,8 @@ model Tier {
   updatedAt     DateTime        @updatedAt
   LegacyProduct LegacyProduct[]
   Charge        Charge[]
+  contractId    String?
+  contract      Contract?       @relation(fields: [contractId], references: [id])
 
   @@index([userId, stripePriceId])
 }
@@ -257,7 +260,7 @@ model WaitlistUser {
 
 model Repo {
   id        String   @id @default(cuid())
-  repoId    String   
+  repoId    String
   radarId   Int?
   name      String
   url       String?
@@ -370,4 +373,17 @@ model Lead {
   user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([host, uuid], name: "host_uuid_unique")
+}
+
+model Contract {
+  id             String  @id @default(cuid())
+  name           String
+  description    String?
+  maintainerId   String?
+  maintainer     User?   @relation(fields: [maintainerId], references: [id])
+  url            String?
+  storage        String
+  attachmentUrl  String?
+  attachmentType String?
+  Tier           Tier[]
 }

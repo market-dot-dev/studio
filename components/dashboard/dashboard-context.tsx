@@ -1,16 +1,42 @@
 'use client'
-import { createContext, useContext, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode } from "react";
 
-export const DashboardContext = createContext<string | null>(null);
+interface DashboardContextType {
+  siteId: string | null;
+  fullscreen: boolean;
+  setFullscreen: (fullscreen: boolean) => void;
+}
 
-export function DasboardProvider({ children, siteId }: { children: ReactNode; siteId: string | null }) {
-  return <DashboardContext.Provider value={siteId}>{children}</DashboardContext.Provider>;
+const defaultContextValue: DashboardContextType = {
+  siteId: null,
+  fullscreen: false,
+  setFullscreen: () => {}
+};
+
+export const DashboardContext = createContext<DashboardContextType>(defaultContextValue);
+
+export function DashboardProvider({ children, siteId }: { children: ReactNode; siteId: string | null }) {
+  const [fullscreen, setFullscreen] = useState<boolean>(false);
+
+  return (
+    <DashboardContext.Provider value={{ siteId, fullscreen, setFullscreen }}>
+      {children}
+    </DashboardContext.Provider>
+  );
 }
 
 export function useSiteId() {
-  const siteId = useContext(DashboardContext);
-  if (siteId === null) {
+  const context = useContext(DashboardContext);
+  if (context.siteId === null) {
     throw new Error("useSiteId must be used within a DashboardProvider");
   }
-  return siteId;
+  return context.siteId;
+}
+
+export function useFullscreen() {
+  const context = useContext(DashboardContext);
+  return {
+    fullscreen: context.fullscreen,
+    setFullscreen: context.setFullscreen
+  };
 }
