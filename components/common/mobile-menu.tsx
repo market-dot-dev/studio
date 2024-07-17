@@ -62,12 +62,12 @@ export default function MobileMenu() {
       >
         <ul className="bg-gray-800 px-4 py-2">
           <li>
-            <Link href="#features" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
+            <Link href="#features" className="text-gray-300 hover:text-gray-50 px-4 py-2 flex items-center transition duration-150 ease-in-out">
               Product
             </Link>
           </li>
           <li>
-            <Link href="https://discord.gg/Wnkhzbb7vD" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
+            <Link href="https://discord.gg/Wnkhzbb7vD" className="text-gray-300 hover:text-gray-50 px-4 py-2 flex items-center transition duration-150 ease-in-out">
               Changelog
             </Link>
           </li>
@@ -75,7 +75,7 @@ export default function MobileMenu() {
             <span className="flex text-gray-300 py-2">Support</span>
             <ul className="pl-4">
             <li>
-                  <Link href="https://discord.gg/ZdSpS4BuGd" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight" target='_blank'>
+                  <Link href="https://discord.gg/ZdSpS4BuGd" className="font-medium text-sm text-gray-300 hover:text-gray-50 flex py-2 px-4 leading-tight" target='_blank'>
                     Join the Discord
                   </Link>
                 </li>
@@ -85,7 +85,7 @@ export default function MobileMenu() {
                   </Link>
                 </li> */}
                 <li>
-                  <Link href="https://x.com/gitwallet" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight" target='_blank'>
+                  <Link href="https://x.com/gitwallet" className="font-medium text-sm text-gray-300 hover:text-gray-50 flex py-2 px-4 leading-tight" target='_blank'>
                     Find us on Twitter
                   </Link>
                 </li> 

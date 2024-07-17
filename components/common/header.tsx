@@ -20,21 +20,21 @@ export default function Header() {
                 height={50}
                 className="relative mx-auto h-12 w-auto"
                 src="/gw-logo-white.png"
-              />            
+              />
             </Link>
           </div>
 
           {/* Desktop navigation */}
-          <nav className="hidden md:flex md:grow">
+          <nav className="hidden md:flex">
             {/* Desktop menu links */}
-            <ul className="flex grow justify-end flex-wrap items-center">
+            <ul className="flex grow justify-center flex-wrap items-center border-2 rounded-full px-2 gap-4 md:sticky md:top-2">
               <li>
-                <Link href="#features" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
+                <Link href="#features" className="text-gray-300 hover:text-gray-50 px-4 py-2 flex items-center transition duration-150 ease-in-out">
                   Product
                 </Link>
               </li>
               <li>
-                <Link href="https://blog.gitwallet.co" className="text-gray-300 hover:text-gray-200 px-4 py-2 flex items-center transition duration-150 ease-in-out">
+                <Link href="https://blog.gitwallet.co" className="text-gray-300 hover:text-gray-50 px-4 py-2 flex items-center transition duration-150 ease-in-out">
                   Changelog
                 </Link>
               </li>
@@ -42,17 +42,12 @@ export default function Header() {
               <Dropdown title="Support">
                 {/* 2nd level: hover */}
                 <li>
-                  <Link href="https://discord.gg/ZdSpS4BuGd" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight" target='_blank'>
+                  <Link href="https://discord.gg/ZdSpS4BuGd" className="font-medium text-sm text-gray-300 hover:text-gray-50 flex py-2 px-4 leading-tight" target='_blank'>
                     Join the Discord
                   </Link>
                 </li>
-                {/* <li>
-                  <Link href="#" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
-                    Documentation
-                  </Link>
-                </li> */}
                 <li>
-                  <Link href="https://x.com/gitwallet" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight" target='_blank'>
+                  <Link href="https://x.com/gitwallet" className="font-medium text-sm text-gray-300 hover:text-gray-50 flex py-2 px-4 leading-tight" target='_blank'>
                     Find us on Twitter
                   </Link>
                 </li>
@@ -60,12 +55,14 @@ export default function Header() {
             </ul>
 
             {/* Desktop sign in links */}
+          </nav>
+          <div className='hidden md:flex'>
             <ul className="flex grow justify-end flex-wrap items-center">
               <li>
-                <Link href="https://app.gitwallet.co/login"><Button color="green" variant="primary" size="xs" className="w-full">Login →</Button></Link>
+                <Link href="https://app.gitwallet.co/login"><button className="px-4 py-2 border-2 rounded-full text-gray-300 hover:text-gray-50">Login →</button></Link>
               </li>
             </ul>
-          </nav>
+          </div>
 
           <MobileMenu />
 
