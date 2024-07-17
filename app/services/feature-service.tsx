@@ -88,6 +88,25 @@ class FeatureService {
     return features || [];
   }
 
+  static async findActiveByCurrentUser(): Promise<Feature[]> {
+    const user = await UserService.getCurrentUser();
+
+    if(!user){
+      throw new Error("not logged in");
+    }
+
+    const features = await prisma.feature.findMany({
+      where: {
+        userId: user?.id,
+        isEnabled: true,
+      },
+    });
+
+    return features || [];
+  }
+
+  
+
   static async create(attributes: FeatureCreateAttributes) {
     // Ensure the required `userId` is available when a feature is created.
     if (!attributes.userId) {
