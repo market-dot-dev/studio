@@ -42,20 +42,20 @@ export default function Header() {
               <Dropdown title="Support">
                 {/* 2nd level: hover */}
                 <li>
-                  <Link href="https://discord.gg/ZdSpS4BuGd" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
+                  <Link href="https://discord.gg/ZdSpS4BuGd" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight" target='_blank'>
                     Join the Discord
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link href="#" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
                     Documentation
                   </Link>
-                </li>
+                </li> */}
                 <li>
-                  <Link href="mailto:contact@gitwallet.co" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
-                    Email Us
+                  <Link href="https://x.com/gitwallet" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight" target='_blank'>
+                    Find us on Twitter
                   </Link>
-                </li> 
+                </li>
               </Dropdown>
             </ul>
 
