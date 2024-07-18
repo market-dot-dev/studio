@@ -25,6 +25,7 @@ import Image from "next/image";
 import useContract from "@/app/hooks/use-contract";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Contract } from "@prisma/client";
+import { parseTierDescription } from "@/lib/utils";
 
 const TierNotAvailable = () => {
   return (
@@ -81,7 +82,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
 
   const [tier, isTierLoading] = useTier(id);
   const [contract, isContractLoading] = useContract(tier?.contractId || undefined);
-  const [maintainer, isMaintainerLoading] = useUser(tier?.userId);
+  const [maintainer, isMaintainerLoading, hasActiveFeatures] = useUser(tier?.userId);
   const [features, isFeaturesLoading] = useFeatures(id);
 
   const checkoutProject = maintainer?.projectName || maintainer?.name;
@@ -95,6 +96,9 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   if (tier?.id && !tier?.published) {
     return TierNotAvailable();
   }
+
+  const featuresFromDescription = !isTierLoading && tier?.description ? parseTierDescription(tier.description).filter((section) => section.features).map((section) => section.features).flat() : [];
+  
 
   const tierInfo = 
   
@@ -126,10 +130,17 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
           Package Benefits
         </AccordionHeader>
         <AccordionBody>
-          {features ? 
-            <TierFeatureList features={features || []} /> :
-            <Text>No features have been listed in this package.</Text>
+          { hasActiveFeatures ?
+            features ? 
+              <TierFeatureList features={features || []} /> :
+              <Text>No features have been listed in this package.</Text>
+            :
+            featuresFromDescription.length ?
+                <TierFeatureList features={featuresFromDescription.map((feature: string, index: number) => ({ id: `${index}`, name: feature, isEnabled: true }))} />
+                :<Text>No features have been listed in this package.</Text>
+          
           }
+          
         </AccordionBody>
       </Accordion>}
 

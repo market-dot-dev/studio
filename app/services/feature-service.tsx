@@ -87,6 +87,13 @@ class FeatureService {
 
     return features || [];
   }
+  
+  static async hasActiveFeaturesForUser(userId: string): Promise<boolean> {
+    
+    const features = await FeatureService.findActiveByUser(userId);
+    return features.length > 0;
+
+  } 
 
   static async findActiveByUser(userId: string): Promise<Feature[]> {
     const features = await prisma.feature.findMany({
@@ -210,6 +217,6 @@ class FeatureService {
   }
 }
 
-export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser, attachMany, setFeatureCollection, haveFeatureIdsChanged } = FeatureService;
+export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser, attachMany, setFeatureCollection, haveFeatureIdsChanged, hasActiveFeaturesForUser } = FeatureService;
 
 export default FeatureService;
