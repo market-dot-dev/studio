@@ -11,8 +11,7 @@ import AOS from 'aos'
 import 'aos/dist/aos.css'
 import HeroHome from "@/components/home/hero-home";
 import BuiltFor from "@/components/home/target";
-import FeatureMarketplace from "@/components/home/feature-marketplace";
-import FeatureInsights from "@/components/home/feature-insights";
+import ProductTour from "@/components/home/product-tour";
 import FeatureProducts from "@/components/home/feature-products";
 import Logos from "@/components/home/project-logos";
 import Footer from "@/components/home/footer";
@@ -91,8 +90,10 @@ export default function HomePage() {
           <Header/>
           <PageIllustration />
           <HeroHome />
+          <ProductTour />
           <Logos />
           <BuiltFor />
+          <FeatureProducts />
           <CommerceFeatures />
           {/* <FeatureProducts />
           <FeatureMarketplace />

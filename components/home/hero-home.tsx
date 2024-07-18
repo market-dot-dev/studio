@@ -26,24 +26,20 @@ export default function HeroHome() {
       </div>
 
       {/* Hero content */}
-      <div className="relative pt-32 pb-10 md:pt-40 md:pb-16">
-
+      <div className="relative pt-32 pb-10 md:pt-40 md:pb-4">
         {/* Section header */}
         <div className="max-w-3xl mx-auto text-center pb-12 md:pb-16">
           <Link href="https://blog.gitwallet.co"><Button className="rounded-3xl py-1 mb-2" variant="primary" color="gray" size="xs">Read our Launch Post →</Button></Link>
           <h1 className="mb-4 text-4xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">A commerce platform for <CurvedUnderline>open source projects</CurvedUnderline></h1>
           {/* <h1 className="mb-4 text-4xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Get paid for your <br/><CurvedUnderline>open source expertise.</CurvedUnderline></h1> */}
         <p className="mb-6 font-light text-gray-200 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400">Gitwallet helps you build a business from an open source project. Manage products & services, sell across channels, and grow your business - all in one place.</p>
-
           <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center">
             <div data-aos="fade-up">
               <Link href={maintainerLoginUrl}><Button color="green" className="w-full">Get Started →</Button></Link>
             </div>
           </div>
         </div>
-        <div style={{ position: 'relative', paddingBottom: 'calc(56.1219512195122% + 42px)', height: 0 }}><iframe src="https://app.supademo.com/embed/clyqetqxh01g3z9kdl2v5fii4" loading="lazy" title="Gitwallet Product Tour" allow="clipboard-write" frameBorder="0" allowFullScreen style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}></iframe></div>
       </div>
-
     </div>
   </section>
   )
