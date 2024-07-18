@@ -1,10 +1,11 @@
 import React from 'react';
 import { notFound } from "next/navigation";
-import { findPage } from '@/app/services/PageService';
+
 import { JSDOM } from "jsdom";
 import renderElement from '@/components/site/page-renderer';
-import Head from 'next/head';
+
 import PageService from '@/app/services/PageService';
+import FeatureService from '@/app/services/feature-service';
 
 export default async function SitePage({
   params,
@@ -13,6 +14,7 @@ export default async function SitePage({
 }) {
   const domain = decodeURIComponent(params.domain);
   const data = await PageService.getPage(domain, params.slug);
+  const activeFeatures = data?.userId ? await FeatureService.findActiveByUser(data.userId) : [];
   
   
   if (!data) {
@@ -29,7 +31,7 @@ export default async function SitePage({
   const rootElement = dom.window.document.body;
   const {pages, ...site} = data;
   const elements: Element[] = Array.from(rootElement.children);
-  const reactElement = renderElement(elements, 0, site, pages?.[0]);
+  const reactElement = renderElement(elements, 0, site, pages?.[0], false, !!activeFeatures?.length);
   
   return (
     <>

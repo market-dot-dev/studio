@@ -5,7 +5,7 @@ import embedables from "../site/embedables";
 import CodeSnippet from "./code-snippet";
 import DashboardCard from "../common/dashboard-card";
 
-export default function EmbedItem({site, index} : any) {
+export default function EmbedItem({site, index, hasActiveFeatures} : any) {
     
   const [settings, setSettings] = useState({} as any);
   const domain = `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
@@ -34,7 +34,7 @@ export default function EmbedItem({site, index} : any) {
             <DashboardCard className="w-3/4">
               <Flex flexDirection="col" className="grow gap-6">
                   
-                { previewProps ? <Component site={site} settings={settings} {...previewProps} /> : null }
+                { previewProps ? <Component site={site} settings={settings} {...previewProps} hasActiveFeatures={hasActiveFeatures} /> : null }
               
                 <CodeSnippet code={`<script 
   data-domain='${domain}' 

@@ -44,12 +44,12 @@ type DynamicComponentProps = {
   };
   
   // For recursively rendering elements
-  const renderElement = (element: Element | Element[], index : number, site : any = null, page : any = null, isPreview : boolean = false): JSX.Element => {
+  const renderElement = (element: Element | Element[], index : number, site : any = null, page : any = null, isPreview : boolean = false, hasActiveFeatures?: boolean): JSX.Element => {
     
     // in case there are multiple root elements, wrap them in a fragment
     if(Array.isArray(element)) {
       return (<>
-        {element.map((child, index) => renderElement(child as Element, index, site, page, isPreview))}
+        {element.map((child, index) => renderElement(child as Element, index, site, page, isPreview, hasActiveFeatures))}
       </>)
     } 
     
@@ -86,13 +86,14 @@ type DynamicComponentProps = {
         props = {
           ...props, 
           ...( site? {site} : {}),
-          ...( page? {page} : {})
+          ...( page? {page} : {}),
+          ...( hasActiveFeatures? {hasActiveFeatures} : {})
         }
       }
       
       const children = Array.from(element.childNodes).map((child, index) => {
         if(child.nodeName.startsWith('#text')) return child.textContent
-        return renderElement(child as Element, index, site, page, isPreview)
+        return renderElement(child as Element, index, site, page, isPreview, hasActiveFeatures)
       });
       return <CustomComponent key={'component'+index} {...props}>{children}</CustomComponent>;
     }
@@ -118,7 +119,7 @@ type DynamicComponentProps = {
     if (element.children.length > 0) {
       return (
         <DynamicComponent tag={tag} className={className} key={index}  {...attributes}>
-          { Array.from(element.childNodes).map((child, index) => child.nodeName.startsWith('#text') ? child.textContent : renderElement(child as Element, index as number, site, page, isPreview)) }
+          { Array.from(element.childNodes).map((child, index) => child.nodeName.startsWith('#text') ? child.textContent : renderElement(child as Element, index as number, site, page, isPreview, hasActiveFeatures)) }
         </DynamicComponent>
       );
     } else {

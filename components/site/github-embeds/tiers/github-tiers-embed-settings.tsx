@@ -1,14 +1,15 @@
 'use client'
 
-import { Text, Flex, Bold, Card } from "@tremor/react";
+import { Text, Flex, Card } from "@tremor/react";
 import { useEffect, useState } from "react";
 import { getTiersForUser } from "@/app/services/TierService";
-import LinkButton from "@/components/common/link-button";
 import { AlertCircle } from "lucide-react";
+import { TextInput } from "flowbite-react";
 
 export type GithubTiersEmbedSettingsProps = {
   darkmode: boolean | undefined;
-  tiers: string[]
+  tiers: string[],
+  height?: number
 }
 
 export type TierItem = {
@@ -23,6 +24,7 @@ type SettingsContext = {
 export default function GithubTiersEmbedSettings({site, settings, setSettings} : { site: any, settings: GithubTiersEmbedSettingsProps, setSettings: any}) {
   
   const [settingsContext, setSettingsContext ] = useState<SettingsContext>({tiers: []});
+  const [heightBuffer, setHeightBuffer] = useState(settings.height);
 
   useEffect(() => {
     const action = async () => {
@@ -39,6 +41,17 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
     }
     action();
   }, [])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSettings((prev: any) => ({
+        ...prev,
+        height: heightBuffer
+      }));
+    }, 500); // Adjust the delay as needed
+
+    return () => clearTimeout(timeout);
+  }, [heightBuffer]);
 
   return (
     
@@ -94,6 +107,14 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
           )
         })}
         </Flex>
+      <Text>Height (optional)</Text>
+      <TextInput
+        type="number"
+        value={heightBuffer}
+        onChange={(e) => {
+          setHeightBuffer(e.target.value as any)
+        }}
+      />
       <div className="grow flex items-end">
         <Card
             className="mb-4 flex flex-row justify-between items-start bg-gray-100 border border-gray-400 px-4 py-3 text-gray-700"

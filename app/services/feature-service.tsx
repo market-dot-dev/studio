@@ -88,6 +88,17 @@ class FeatureService {
     return features || [];
   }
 
+  static async findActiveByUser(userId: string): Promise<Feature[]> {
+    const features = await prisma.feature.findMany({
+      where: {
+        userId,
+        isEnabled: true,
+      },
+    });
+    
+    return features || [];
+  }
+
   static async findActiveByCurrentUser(): Promise<Feature[]> {
     const user = await UserService.getCurrentUser();
 
@@ -95,14 +106,7 @@ class FeatureService {
       throw new Error("not logged in");
     }
 
-    const features = await prisma.feature.findMany({
-      where: {
-        userId: user?.id,
-        isEnabled: true,
-      },
-    });
-
-    return features || [];
+    return FeatureService.findActiveByUser(user.id);
   }
 
   

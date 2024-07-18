@@ -183,12 +183,12 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
             </div>
           </div>
           <div className="grid gap-0.5">
-            {tabs.map(({ name, href, target, isActive, isBeta, icon }) => (
+            {tabs.map(({ name, href, target, isActive, isBeta, icon }, index: number) => (
               href === "" ? (
                 <span key={name} className="text-xs font-small uppercase mt-4">{name}</span>
               ) : (
                 <Link
-                  key={name}
+                  key={name + index}
                   href={href}
                   target={target}
                   className={`flex items-center space-x-3 ${isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
