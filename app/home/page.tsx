@@ -6,7 +6,7 @@ import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremo
 import { Suspense } from "react";
 import PageIllustration from "@/components/common/page-illustration";
 import Header from "@/components/common/header";
-import CommerceFeatures from "@/components/home/tabs";
+import ProductFeatures from "@/components/home/tabs";
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 import HeroHome from "@/components/home/hero-home";
@@ -93,11 +93,7 @@ export default function HomePage() {
           <ProductTour />
           <Logos />
           <BuiltFor />
-          <FeatureProducts />
-          <CommerceFeatures />
-          {/* <FeatureProducts />
-          <FeatureMarketplace />
-          <FeatureInsights /> */}
+          <ProductFeatures />
           <Footer />
         </div>
       </div>

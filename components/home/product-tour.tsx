@@ -10,7 +10,7 @@ export default function ProductTour() {
   return (
 
     <section>
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 relative mb-20">
         {/* Hero content */}
         <div className="relative pb-8">
           {/* Section header */}
