@@ -127,11 +127,13 @@ export default function PageEditor({
   page,
   homepageId,
   siteUrl,
+  hasActiveFeatures
 }: {
   site: Partial<Site>;
   page: Partial<Page>;
   homepageId: string | null;
   siteUrl: string | null;
+  hasActiveFeatures?: boolean;
 }): JSX.Element {
   const isHome = page.id === homepageId;
 
@@ -443,6 +445,7 @@ export default function PageEditor({
             site,
             page,
             true,
+            hasActiveFeatures
           )
       : null}
   </PreviewFrame>

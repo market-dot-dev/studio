@@ -2,10 +2,12 @@
 import { useModal } from "@/components/modal/provider";
 import { Feature } from "@prisma/client";
 import styles from './features.module.css';
-import { Button, Title } from "@tremor/react";
-import { CopyBlock, a11yLight } from "react-code-blocks";
+import { Title } from "@tremor/react";
+import {
+    CheckSquare2 as CheckSquare,
+  } from "lucide-react";
 
-export default function CustomerPackageFeatures({ features, maintainerEmail }: { features: Feature[], maintainerEmail: string | null }) {
+export default function CustomerPackageFeatures({ features, maintainerEmail }: { features: Partial<Feature>[], maintainerEmail: string | null }) {
     const { show, hide } = useModal();
 
     const isEmail = (uri: string) => uri.includes('@');
@@ -29,7 +31,9 @@ export default function CustomerPackageFeatures({ features, maintainerEmail }: {
 
 							</div>
 						</div>
-						: null
+						: <div className="flex flex-row my-1" key={feature.id}>
+                            <CheckSquare className="text-green-500 min-w-6" /> &nbsp; {feature.name}
+                        </div>
                 ))}
             </div>,
             hide,

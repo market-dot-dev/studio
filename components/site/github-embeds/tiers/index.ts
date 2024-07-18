@@ -7,8 +7,9 @@ export default async function tiers({site, rootUrl, settings}: {site: any, rootU
   const tiers = settings?.tiers?.length ? 'tiers=' + settings.tiers.join(',') : null;
 
   const darkMode = settings?.darkmode ? 'darkmode=true' : null;
+  const height = settings?.height ? 'height=' + settings.height : null;
 
-  const queryParams = [tiers, darkMode].filter(Boolean).join('&');
+  const queryParams = [tiers, darkMode, height ].filter(Boolean).join('&');
   
 
 

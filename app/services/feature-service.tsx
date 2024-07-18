@@ -87,6 +87,36 @@ class FeatureService {
 
     return features || [];
   }
+  
+  static async hasActiveFeaturesForUser(userId: string): Promise<boolean> {
+    
+    const features = await FeatureService.findActiveByUser(userId);
+    return features.length > 0;
+
+  } 
+
+  static async findActiveByUser(userId: string): Promise<Feature[]> {
+    const features = await prisma.feature.findMany({
+      where: {
+        userId,
+        isEnabled: true,
+      },
+    });
+    
+    return features || [];
+  }
+
+  static async findActiveByCurrentUser(): Promise<Feature[]> {
+    const user = await UserService.getCurrentUser();
+
+    if(!user){
+      throw new Error("not logged in");
+    }
+
+    return FeatureService.findActiveByUser(user.id);
+  }
+
+  
 
   static async create(attributes: FeatureCreateAttributes) {
     // Ensure the required `userId` is available when a feature is created.
@@ -187,6 +217,6 @@ class FeatureService {
   }
 }
 
-export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser, attachMany, setFeatureCollection, haveFeatureIdsChanged } = FeatureService;
+export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser, attachMany, setFeatureCollection, haveFeatureIdsChanged, hasActiveFeaturesForUser } = FeatureService;
 
 export default FeatureService;

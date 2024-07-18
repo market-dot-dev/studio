@@ -8,7 +8,7 @@ import Link from 'next/link';
 import { set } from 'date-fns';
 const transparentBody = 'body {background: transparent}';
 // This renders the actual component for both server and client sides.
-export default function Tiers({tiers, subdomain, settings}: { tiers : any[], subdomain: string, settings: TiersEmbedSettingsProps}) : JSX.Element {
+export default function Tiers({tiers, subdomain, settings, hasActiveFeatures}: { tiers : any[], subdomain: string, settings: TiersEmbedSettingsProps, hasActiveFeatures?: boolean}) : JSX.Element {
     const containerRef = useRef<HTMLDivElement>(null);
     const [alteredStyle, setAlteredStyle] = useState<any>({
         transformOrigin: 'top left',
@@ -78,7 +78,7 @@ export default function Tiers({tiers, subdomain, settings}: { tiers : any[], sub
                             <Grid numItems={1} numItemsSm={1} numItemsMd={tiers.length < 2 ? tiers.length : 2} numItemsLg={tiers.length < 4 ? tiers.length : 4}  className="gap-4 sm:gap-8 md:gap-12">
                                 {tiers.map((tier: any, index: number) => (
                                     <Col key={index} className="flex flex-col p-4 sm:p-5 md:p-6 mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md">
-                                        <TierCard tier={tier} url={subdomain} darkMode={settings.darkmode}>
+                                        <TierCard tier={tier} url={subdomain} darkMode={settings.darkmode} hasActiveFeatures={hasActiveFeatures}>
                                             <Link href={`/checkout/${tier.id}`} target="_blank"><Button variant="primary" className="w-full">Get Started</Button></Link>
                                         </TierCard>
                                     </Col>

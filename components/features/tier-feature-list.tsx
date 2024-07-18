@@ -5,7 +5,7 @@ import {
   CheckSquare2 as CheckSquare,
 } from "lucide-react";
 
-export const TierFeatureCheck = ({ feature, darkMode = false }: { feature: Feature; darkMode?: boolean }) => {
+export const TierFeatureCheck = ({ feature, darkMode = false }: { feature: Partial<Feature>; darkMode?: boolean }) => {
   const featureIconClasses = (darkMode ? "text-green-400" : "text-green-500" )+ " min-w-6";
 
   return (<>
@@ -14,7 +14,7 @@ export const TierFeatureCheck = ({ feature, darkMode = false }: { feature: Featu
 }
 
 
-const TierFeatureList = ({ features, darkMode = false }: { features: Feature[]; darkMode?: boolean }) => {
+const TierFeatureList = ({ features, darkMode = false }: { features: Partial<Feature>[]; darkMode?: boolean }) => {
   return (<>
     <div className="text-left">
       <ul>
