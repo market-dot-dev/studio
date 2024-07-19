@@ -16,6 +16,8 @@ import CustomerPackageFeatures from "../../../components/customer/customer-packa
 import Tier from "@/app/models/Tier";
 import CancelSubscriptionButton from "./subscriptions/cancel-subscription-button";
 import Tabs from "../../../components/common/tabs";
+import FeatureService from "@/app/services/feature-service";
+import { parseTierDescription } from "@/lib/utils";
 
 type TierWithFeatures = Tier & { features: Feature[] } | null;
 
@@ -26,9 +28,15 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
   const tier = await TierService.findTier(charge.tierId!) as TierWithFeatures;
   if (!tier) return null;
 
-  const maintainer = await UserService.findUser(tier.userId);
+  const [maintainer, hasActiveFeatures] = await Promise.all([
+    UserService.findUser(tier.userId),
+    FeatureService.hasActiveFeaturesForUser(tier.userId),
+  ]);
+
   if (!maintainer) return null;
 
+  const featuresFromDescription =  tier?.description ? parseTierDescription(tier.description).filter((section) => section.features).map((section) => section.features).flat().map((feature: string, index: number) => ({ id: `${index}`, name: feature, isEnabled: true })) : [];
+  
   let status = 'paid';
   
 
@@ -61,7 +69,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
             </Text>
         </div>
         <div className="flex gap-4">
-          <CustomerPackageFeatures features={tier.features} maintainerEmail={maintainer?.email} />
+          <CustomerPackageFeatures features={hasActiveFeatures ? tier.features : featuresFromDescription} maintainerEmail={maintainer?.email} />
         </div>
         
  
@@ -85,8 +93,15 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
   const tier = await TierService.findTier(subscription.tierId!) as TierWithFeatures;
   if (!tier) return null;
 
-  const maintainer = await UserService.findUser(tier.userId);
+  
+  const [maintainer, hasActiveFeatures] = await Promise.all([
+    UserService.findUser(tier.userId),
+    FeatureService.hasActiveFeaturesForUser(tier.userId),
+  ]);
+  
   if (!maintainer) return null;
+
+  const featuresFromDescription =  tier?.description ? parseTierDescription(tier.description).filter((section) => section.features).map((section) => section.features).flat().map((feature: string, index: number) => ({ id: `${index}`, name: feature, isEnabled: true })) : [];
 
   const actualCadence = subscription.priceAnnual ? 'year' : tier.cadence;
   const actualPrice = subscription.priceAnnual ? tier.priceAnnual : tier.price;
@@ -140,7 +155,7 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
       </div> */}
 
       <div className="flex flex-row space-x-2 justify-between">
-        <CustomerPackageFeatures features={tier.features} maintainerEmail={maintainer?.email} />
+        <CustomerPackageFeatures features={hasActiveFeatures ? tier.features : featuresFromDescription} maintainerEmail={maintainer?.email} />
         <CancelSubscriptionButton subscriptionId={subscription.id} />
         {/* <Link href={`/subscriptions/${subscription.id}`}>
           <Button>Tier Details</Button>

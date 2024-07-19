@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { JSDOM } from "jsdom";
 import renderElement from '@/components/site/page-renderer';
 import PageService from '@/app/services/PageService';
-
+import FeatureService from '@/app/services/feature-service';
 export default async function SiteHomePage({
   params,
 }: {
@@ -11,7 +11,7 @@ export default async function SiteHomePage({
 }) {  
   const domain = decodeURIComponent(params.domain);
   const data = await PageService.getHomepage(domain);
-
+  const activeFeatures = data?.userId ? await FeatureService.findActiveByUser(data.userId) : [];
   if (!data || !data.homepage?.content) {
     notFound();
   }
@@ -21,7 +21,7 @@ export default async function SiteHomePage({
 
   const {homepage, ...site} = data;
   const elements: Element[] = Array.from(rootElement.children);
-  const reactElement = renderElement(elements, 0, site, homepage);
+  const reactElement = renderElement(elements, 0, site, homepage, false, !!activeFeatures?.length);
   
   return (
     <>

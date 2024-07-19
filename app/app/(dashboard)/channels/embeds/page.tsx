@@ -8,10 +8,15 @@ import Tabs from "@/components/common/tabs";
 import githubEmbeds from "@/components/site/github-embeds";
 import GithubEmbedItem from "@/components/github/github-embed-item";
 import { getRootUrl } from "@/app/services/domain-service";
-
+import FeatureService from "@/app/services/feature-service";
 
 export default async function EmbedChannel({ params }: { params: { id: string } }) {
-    const site = await getSite() as any;
+
+    const [site, activeFeatures] = await Promise.all([
+      getSite(),
+      FeatureService.findActiveByCurrentUser(),
+    ]) as any;
+
     const rootUrl = getRootUrl(site?.subdomain ?? 'app');
     return (
       <Flex flexDirection="col" alignItems="start" className="gap-6">
@@ -26,7 +31,7 @@ export default async function EmbedChannel({ params }: { params: { id: string } 
                 <Flex flexDirection="col" className="gap-12 w-full">
                   {Object.keys(embedables).map((index) => (
                     <div key={index} className='w-full' >
-                      <EmbedItem index={index} site={site} />
+                      <EmbedItem index={index} site={site} hasActiveFeatures={!!activeFeatures?.length} />
                       <Divider/>
                     </div>
                   ))}
@@ -41,7 +46,7 @@ export default async function EmbedChannel({ params }: { params: { id: string } 
                     <Flex flexDirection="col" className="gap-12 w-full">
                       {Object.keys(githubEmbeds).map((index) => (
                         <div key={index} className='w-full' >
-                          <GithubEmbedItem index={index} site={site} rootUrl={rootUrl} />
+                          <GithubEmbedItem index={index} site={site} rootUrl={rootUrl} hasActiveFeatures={!!activeFeatures?.length} />
                           <Divider/>
                         </div>
                       ))}

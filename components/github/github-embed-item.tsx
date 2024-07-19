@@ -6,7 +6,7 @@ import CodeSnippet from "../embedables/code-snippet";
 import DashboardCard from "../common/dashboard-card";
 
 
-export default function GithubEmbedItem({site, index, rootUrl} : any) {
+export default function GithubEmbedItem({site, index, rootUrl, hasActiveFeatures} : any) {
     
   const [active, setActive] = useState(0)
   const [markdown, setMarkdown] = useState<string>('');

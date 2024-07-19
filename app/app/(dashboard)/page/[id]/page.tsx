@@ -6,36 +6,67 @@ import PageEditor from "@/components/site/page-editor";
 import PageHeading from "@/components/common/page-heading";
 import DomainServices from "@/app/services/domain-service";
 import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
-
+import FeatureService from "@/app/services/feature-service";
 export default async function Page({ params }: { params: { id: string } }) {
 	const session = await getSession();
 	if (!session) {
 		redirect("/login");
 	}
-	const data = await prisma.page.findUnique({
-		where: {
-			id: decodeURIComponent(params.id),
-		},
-		include: {
-			site: {
-				select: {
-					id: true,
-					name: true,
-					description: true,
-					subdomain: true,
-					homepageId: true,
-					user: {
-						select: {
-							name: true,
-							image: true,
-							projectName: true,
-							projectDescription: true,
+	// const data = await prisma.page.findUnique({
+	// 	where: {
+	// 		id: decodeURIComponent(params.id),
+	// 	},
+	// 	include: {
+	// 		site: {
+	// 			select: {
+	// 				id: true,
+	// 				name: true,
+	// 				description: true,
+	// 				subdomain: true,
+	// 				homepageId: true,
+	// 				user: {
+	// 					select: {
+	// 						name: true,
+	// 						image: true,
+	// 						projectName: true,
+	// 						projectDescription: true,
+	// 					}
+	// 				}
+	// 			},
+	// 		},
+	// 	},
+	// });
+
+	// const activeFeatures = await FeatureService.findActiveByCurrentUser();
+
+	const [data, activeFeatures] = await Promise.all([
+		prisma.page.findUnique({
+			where: {
+				id: decodeURIComponent(params.id),
+			},
+			include: {
+				site: {
+					select: {
+						id: true,
+						name: true,
+						description: true,
+						subdomain: true,
+						homepageId: true,
+						user: {
+							select: {
+								name: true,
+								image: true,
+								projectName: true,
+								projectDescription: true,
+							}
 						}
-					}
+					},
 				},
 			},
-		},
-	});
+		}),
+		FeatureService.findActiveByCurrentUser(),
+	]);
+			
 	
 	
 
@@ -58,7 +89,7 @@ export default async function Page({ params }: { params: { id: string } }) {
       </div>
 
 
-    <PageEditor site={data?.site} page={data} siteUrl={siteUrl} homepageId={ data.site?.homepageId || null} />
+    <PageEditor site={data?.site} page={data} siteUrl={siteUrl} homepageId={ data.site?.homepageId || null} hasActiveFeatures={!!activeFeatures?.length} />
     </FullScreenSwitcher>
   )
 }

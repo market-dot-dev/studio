@@ -97,3 +97,29 @@ export const formatCurrency = (amount: number, currency: string = 'USD'): string
   };
   return amount.toLocaleString('en-US', options);
 };
+
+export const parseTierDescription = (description: string) => {
+  const lines = description.split('\n');
+  const result = [] as any[];
+
+  lines.forEach(content => {
+    const line = content.trim();
+    if(line.length === 0) return;
+    const latest = result[result.length - 1];
+    if (line.startsWith('-')) {
+      if(latest?.features) {
+        latest.features.push(line.replace(/^-+\s*/, ''));
+      } else {
+        result.push({ features: [line.replace(/^-+\s*/, '')] });
+      }
+    } else {
+      if(latest?.text) {
+        latest.text.push(line);
+      } else {
+        result.push({ text: [line] });
+      }
+    }
+  });
+
+  return result;
+}

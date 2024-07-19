@@ -5,12 +5,16 @@ import { Grid, Badge, Text } from '@tremor/react';
 
 import TierCard from '@/components/tiers/tier-card';
 import SessionService from '@/app/services/SessionService';
+import FeatureService from '@/app/services/feature-service';
 
 export default async function Tiers() {
   const currentUserId = await SessionService.getCurrentUserId();
   if (!currentUserId) return <>You must log in</>;
 
-  const tiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUserId);
+  const [ tiers, activeFeatures ] = await Promise.all([
+    TierService.findByUserIdWithFeatures(currentUserId),
+    FeatureService.findActiveByCurrentUser(),
+  ]);
 
   return (
     <div className="flex max-w flex-col max-w-screen-xl space-y-12">
@@ -33,7 +37,7 @@ export default async function Tiers() {
                 <>
                 <div key={index} className='text-center mb-8'>
                   <Badge className="mb-2 mx-auto" color={tier.published ? 'green' : 'gray'}>{tier.published ? 'Active' : 'Inactive'}</Badge>
-                  <TierCard tier={tier} canEdit={true} />
+                  <TierCard tier={tier} canEdit={true} hasActiveFeatures={!!activeFeatures?.length}  />
                   </div>
                 </>
               ))}

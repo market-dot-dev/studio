@@ -9,6 +9,7 @@ import { DashboardProvider } from "@/components/dashboard/dashboard-context";
 import SessionService from "@/app/services/SessionService";
 import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
 import SessionRefresher from "@/components/common/session-refresher";
+import FeatureService from "@/app/services/feature-service";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
   const user = await SessionService.getSessionUser();
@@ -18,12 +19,13 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   }
   console.log(onboarding)
   const site = await getOnlySiteFromUserId(user.id);
+  const activeFeatures = await FeatureService.findActiveByCurrentUser();
 
   return (
     <DashboardProvider siteId={site?.id ?? null}>
       <SessionRefresher />
       <div>
-        <Nav siteId={site?.id ?? null} roleId={user.roleId || 'anonymous'}>
+        <Nav siteId={site?.id ?? null} roleId={user.roleId || 'anonymous'} hasFeatures={activeFeatures.length != 0} >
           <Suspense fallback={<div>Loading...</div>}>
             <Profile />
           </Suspense>

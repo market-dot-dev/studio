@@ -168,7 +168,7 @@ model Tier {
   description String?
   tagline     String?
 
-  published Boolean @default(false)
+  published Boolean @default(true)
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   price                 Int
