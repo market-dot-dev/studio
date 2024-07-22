@@ -96,7 +96,7 @@ export default function ProductFeatures() {
                 >
                   <article className="relative max-w-md mx-auto md:max-w-none">
                   <figure className="md:absolute md:inset-y-0 md:right-0 md:w-1/2">
-                      <img src="/services.png" alt="Premium Products" className="w-full rounded-2xl border-4 border-slate-400" />
+                      <img src="/packages.png" alt="Premium Products" className="w-full rounded-2xl border-4 border-slate-400" />
                     </figure>
 
                     <div className="relative py-8 md:py-16 px-10 md:pr-16 md:max-w-lg lg:max-w-xl rounded-xl">

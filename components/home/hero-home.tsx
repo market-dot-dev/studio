@@ -17,7 +17,7 @@ export default function HeroHome() {
         <div className="max-w-3xl mx-auto text-center pb-12 md:pb-16">
           <Link href="https://blog.gitwallet.co"><Button className="rounded-full py-1 mb-2" variant="primary" color="gray" size="xs">Read our Launch Post →</Button></Link>
           <h1 className="mb-4 text-4xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Build a business from an <CurvedUnderline>open source project.</CurvedUnderline></h1>
-        <p className="mb-6 font-light text-gray-200 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400 ">Gitwallet helps you build a business from an open source project. Manage products & services, sell across channels, and grow your business - all in one place.</p>
+        <p className="mb-6 font-light text-gray-200 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400 ">Gitwallet is a commerce platform made for open source developers. Build premium products and services, sell across channels, and grow your business - all in one place.</p>
           <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center">
             <div data-aos="fade-up">
               <Link href={maintainerLoginUrl}><Button color="green" className="w-full">Get Started →</Button></Link>
