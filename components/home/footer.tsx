@@ -66,7 +66,7 @@ export default function Footer() {
                 />            
               </Link>
               <div className="text-gray-400 text-sm text-center md:text-left">
-                &copy; Gitwallet. All rights reserved.
+                
               </div>
             </div>
 

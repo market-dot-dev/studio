@@ -22,7 +22,7 @@ import {
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
-import { FaDiscord, FaTelegramPlane } from "react-icons/fa";
+import { FaDiscord, FaGithubAlt, FaTelegramPlane } from "react-icons/fa";
 import { Badge } from "@tremor/react";
 
 export default function Nav({ children, siteId, roleId, hasFeatures }: { children: ReactNode, siteId: string | null, roleId: string | null, hasFeatures: boolean | null}) {
@@ -130,10 +130,10 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         icon: <FaDiscord width={18} />,
       },
       {
-        name: "Contact Founder",
-        href: "https://t.me/tarunsachdeva2",
+        name: "Github",
+        href: "https://www.github.com/git-wallet",
         target: "_blank",
-        icon: <FaTelegramPlane width={18} />,
+        icon: <FaGithubAlt width={18} />,
       },
       ...(['admin'].includes(roleId || '') ?
         [{
