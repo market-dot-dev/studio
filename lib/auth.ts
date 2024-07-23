@@ -134,7 +134,10 @@ export const authOptions: NextAuthOptions = {
         },
       });
       
-      await RegistrationService.createSite(user);
+      await Promise.all([
+        RegistrationService.createSite(user),
+        RegistrationService.createDefaultTiers(user),
+      ]);
     },
   },
 };

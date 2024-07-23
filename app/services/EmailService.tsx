@@ -16,7 +16,7 @@ class EmailService {
   static footerMessage = '<p>Thank you,<br>The Gitwallet Team</p>';
 
   static async sendEmail(email: string | null, subject: string, text: string, html: string) {
-    console.log('sending email', email, subject, html);
+    // console.log('sending email', email, subject, html);
     if (!email) {
       console.error('Invalid email address');
       return;

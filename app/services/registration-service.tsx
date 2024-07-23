@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma"
 import { siteName, siteDescription, homepageTitle, homepageTemplate} from "@/lib/constants/site-template";
 import { signIn } from "next-auth/react";
 import { cookies } from 'next/headers'
-
+import defaultTiers from "@/lib/constants/tiers/default-tiers";
 
 interface UserDetails {
   id: string;
@@ -76,9 +76,31 @@ class RegistrationService {
         },
       });
   
-      await RegistrationService.createSite(user);
-  
+
       return user;
+    }
+  }
+
+
+  static async createDefaultTiers(user: User) {
+    try {
+      const tiers = defaultTiers.map((tier) => {
+        return {
+          ...tier,
+          published: false,
+          price: 0,
+          revision: 0,
+          cadence: 'month',
+          userId: user.id,
+          contractId: 'gitwallet-msa'
+        }
+      });
+
+      await prisma.tier.createMany({
+        data: tiers
+      });
+    } catch (error) {
+      console.error('Error creating default tiers', error);
     }
   }
 
