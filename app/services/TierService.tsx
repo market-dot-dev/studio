@@ -4,12 +4,13 @@ import prisma from "@/lib/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService, { SubscriptionCadence } from "./StripeService";
 import UserService, { getCurrentUser } from "./UserService";
-import { Feature, TierVersion } from "@prisma/client";
+import { Feature, TierVersion, User } from "@prisma/client";
 import SessionService from "./SessionService";
 import FeatureService from "./feature-service";
 import SubscriptionService from "./SubscriptionService";
+import defaultTiers from "@/lib/constants/tiers/default-tiers";
 
-export type TierWithFeatures = Tier & { features?: Feature[] };
+export type TierWithFeatures = Tier & { features?: Feature[], _count?: { Charge: number, subscriptions: number } };
 export type TierVersionWithFeatures = TierVersion & { features?: Feature[]};
 
 class TierService {
@@ -47,8 +48,45 @@ class TierService {
       },
       include: {
         features: true,
+        _count: {
+          select: {
+            Charge: true,
+            subscriptions: true
+          },
+        },
       },
     });
+  }
+
+  static async createDefaultTier(index?: number) {
+    
+    const tierIndex = index || 0;
+
+    const defaultTier = defaultTiers[tierIndex];
+    
+    try {
+      
+      const tier = {
+        ...defaultTier,
+        published: false,
+        price: 0,
+        revision: 0,
+        cadence: 'month',
+        contractId: 'gitwallet-msa'
+      }
+
+      await TierService.createTier(tier);
+
+      return {
+        nextIndex: tierIndex + 1,
+        total: defaultTiers.length
+      }
+
+    } catch (error) {
+      console.error('Error creating default tiers', error);
+    }
+
+    
   }
 
   static async findTierByUserId(userId: string): Promise<Tier[]> {
@@ -67,6 +105,10 @@ class TierService {
     delete result.id;
     delete result.features;
     delete result.versions;
+    delete result._count;
+    delete result.userId;
+    delete result.createdAt;
+    delete result.updatedAt;
     return result as Tier;
   }
 
@@ -83,7 +125,7 @@ class TierService {
       throw new Error('Tier name is required.');
     }
 
-    if(!tierData.price) {
+    if(tierData.price === undefined) {
       throw new Error('Price is required.');
     }
 
@@ -120,9 +162,22 @@ class TierService {
 
     const tier = await prisma.tier.findUnique({
       where: { id },
+      select: {
+        _count: {
+          select: {
+            Charge: true,
+            subscriptions: true,
+            features: true
+          },
+        },
+      },
     });
 
     if (!tier) throw new Error(`Tier with ID ${id} not found`);
+
+    if(tier._count?.Charge || tier._count?.subscriptions || tier._count?.features) {
+      throw new Error('Tier has existing charges, subscriptions or features')
+    }
 
     return await prisma.tier.delete({
       where: { id },
@@ -526,4 +581,5 @@ export const {
   shouldCreateNewVersion,
   updateApplicationFee,
   updateTier,
+  createDefaultTier
 } = TierService;

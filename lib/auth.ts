@@ -133,11 +133,7 @@ export const authOptions: NextAuthOptions = {
           onboarding: JSON.stringify( defaultOnboardingState )
         },
       });
-      
-      await Promise.all([
-        RegistrationService.createSite(user),
-        RegistrationService.createDefaultTiers(user),
-      ]);
+      await RegistrationService.createSite(user);
     },
   },
 };

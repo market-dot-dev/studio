@@ -6,6 +6,7 @@ import { Grid, Badge, Text } from '@tremor/react';
 import TierCard from '@/components/tiers/tier-card';
 import SessionService from '@/app/services/SessionService';
 import FeatureService from '@/app/services/feature-service';
+import TiersEmptyState from './empty-state';
 
 export default async function Tiers() {
   const currentUserId = await SessionService.getCurrentUserId();
@@ -23,15 +24,16 @@ export default async function Tiers() {
           <PageHeading title="Your Packages" />
           <Text>Packages are what you sell to your customers. You can inlcude them on your website or send them to customers directly using a checkout link.</Text>
         </div>
+        { tiers.length > 0 ?
         <div className="flex flex-row">
           <PrimaryButton label="New Package" href="/tiers/new" />
-        </div>
+        </div> : null }
       </div>
 
       <div className="flex flex-col space-y-6">
         <section>
           <div className="max-w-screen-xl">
-            {tiers.length === 0 && <div>You have no packages defined. Create a new one to get started.</div>}
+            {tiers.length === 0 && <TiersEmptyState />}
             <Grid numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-8" >
               {tiers.map((tier, index) => (
                 <>
