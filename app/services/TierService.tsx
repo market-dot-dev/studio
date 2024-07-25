@@ -58,7 +58,7 @@ class TierService {
     });
   }
 
-  static async createDefaultTier(index?: number) {
+  static async createTemplateTier(index?: number) {
     
     const tierIndex = index || 0;
 
@@ -69,21 +69,19 @@ class TierService {
       const tier = {
         ...defaultTier,
         published: false,
-        price: 0,
         revision: 0,
-        cadence: 'month',
         contractId: 'gitwallet-msa'
       }
 
-      await TierService.createTier(tier);
+      const createdTier = await TierService.createTier(tier);
 
       return {
-        nextIndex: tierIndex + 1,
-        total: defaultTiers.length
+        success: true,
+        id: createdTier.id,
       }
 
     } catch (error) {
-      console.error('Error creating default tiers', error);
+      console.error('Error creating template tier', error);
     }
 
     
@@ -581,5 +579,5 @@ export const {
   shouldCreateNewVersion,
   updateApplicationFee,
   updateTier,
-  createDefaultTier
+  createTemplateTier
 } = TierService;
