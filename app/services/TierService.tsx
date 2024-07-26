@@ -62,7 +62,7 @@ class TierService {
     
     const tierIndex = index || 0;
 
-    const defaultTier = defaultTiers[tierIndex];
+    const defaultTier = defaultTiers[tierIndex]['data'];
     
     try {
       
