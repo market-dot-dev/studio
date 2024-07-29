@@ -32,7 +32,7 @@ export default function PageEditorSidebar({editorRef, monacoRef}: {editorRef: an
             range: newRange,
             options: {
               isWholeLine: false,
-              className: 'bg-stone-600', 
+              className: 'bg-orange-200',
             }
           };
     

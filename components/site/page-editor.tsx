@@ -451,7 +451,7 @@ export default function PageEditor({
   </PreviewFrame>
   )
 
-  const codeview = (
+  const codeview = (useWithRefs?: boolean) => (
     <Grid numItems={fullscreen ? 5 : 4} className="gap-4 pt-0">
       { viewMode !== 2 ? <Col numColSpan={1}>
         <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
@@ -467,7 +467,7 @@ export default function PageEditor({
             onChange={(value) =>
               setData((data: any) => ({ ...data, content: value }))
             }
-            onMount={handleEditorDidMount}
+            onMount={useWithRefs ? handleEditorDidMount : () => {}}
             options={{
               minimap: {
                 enabled: false,
@@ -624,14 +624,14 @@ export default function PageEditor({
                   {preview}
                 </TabPanel>
                 <TabPanel className="mt-0">
-                  {codeview}
+                  {codeview(true)}
                 </TabPanel>
                 <TabPanel className="mt-0">
                   <Grid numItems={2} className="gap-4">
                     <Col numColSpan={1}>{preview}</Col>
                     <Col numColSpan={1}>
                     <div className="w-full sticky top-0 h-[100vh]">
-                      {codeview}
+                      {codeview(false)}
                       </div>
                     </Col>
                   </Grid>
