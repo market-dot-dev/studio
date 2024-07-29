@@ -2,11 +2,13 @@ import { useCallback, useState } from "react";
 import ComponentsPanel from "./components-panel";
 import ThemesPanel from "./themes-panel";
 import { Bold, Divider, Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
+import { text } from "stream/consumers";
 
 export default function PageEditorSidebar({editorRef, monacoRef}: {editorRef: any, monacoRef: any}) {
     const [activeTab, setActiveTab] = useState(0);
 
     const insertAtCursor = useCallback((textToInsert: string) => {
+        console.log('editorRef', editorRef);
         if (!editorRef) return;
 
         const selection = editorRef.getSelection();

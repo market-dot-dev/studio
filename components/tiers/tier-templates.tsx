@@ -11,8 +11,25 @@ import { X } from 'lucide-react';
 
 export default function TierTemplates({ children, multiple }: { children: React.ReactNode, multiple?: boolean }) {
 	const { show, hide } = useModal();
+	
+	const gotoNewBlankPackage = useCallback(() => {
+		window.location.href = '/tiers/new';
+	}, []);
+
+	const header = (
+		<div className="flex gap-8">
+			<div className="flex flex-col">
+				<Title>Create new package(s)</Title>
+				<Text>You can choose { multiple ? ' among the templates' : ' a template' } below</Text>
+			</div>
+			<div className="flex gap-4 items-center">
+				<Text>or</Text>
+				<Button size="xs" onClick={gotoNewBlankPackage}>Create a blank package</Button>
+			</div>
+		</div>
+	)
     const showModal = () => {
-        show(<TiersTemplatesModal hide={hide} multiple={multiple} />);
+        show(<TiersTemplatesModal hide={hide} multiple={multiple} />, undefined, undefined, header, 'w-full md:w-5/6 max-h-[80vh]');
     };
     return (
         <Button size="xs" onClick={showModal}>{children}</Button>
@@ -80,28 +97,13 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 		});
 	}, [setSelected, multiple]);
 
-	const gotoNewBlankPackage = useCallback(() => {
-		window.location.href = '/tiers/new';
-	}, []);
+	
 
 	
 
 	return (
-		<div className="w-full md:w-5/6 max-h-[80vh] bg-white border rounded-md overflow-auto flex flex-col items-stretch shadow-lg">
-			<div className=" bg-stone-100 h-16 border border-x-0 border-b-0 gap-4 flex p-4 justify-between items-center">
-				<div className="flex gap-8">
-					<div className="flex flex-col">
-						<Title>Create new package(s)</Title>
-						<Text>You can choose { multiple ? ' among the templates' : ' a template' } below</Text>
-					</div>
-					<div className="flex gap-4 items-center">
-						<Text>or</Text>
-						<Button size="xs" onClick={gotoNewBlankPackage}>Create a blank package</Button>
-					</div>
-				</div>
-				<Button onClick={hide} icon={X} variant="light" />
-			</div>
-			<div className="border flex grow flex-col gap-4 items-stretch justify-start overflow-auto">
+		<>
+			<div className="flex grow flex-col gap-4 items-stretch justify-start overflow-auto">
 				{ categorizedTiers.map((category, cIndex) => (
 					<div className="flex flex-col gap-4 p-4" key={cIndex}>
 						<Title>{category.name}</Title>
@@ -133,7 +135,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 					<Button size="xs" onClick={() => createTemplateTiers()} disabled={selected.length === 0}>Create {noun}</Button>
 				}
 			</div>
-		</div>
+		</>
 	)
 }
 
