@@ -84,7 +84,7 @@ const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, 
         </div>
 
 
-        {(tierFeatures.length || parsedDescription.length) && <Text className="text-center text-xs text-gray-400">What&apos;s Included:</Text>}
+        {(tierFeatures.length || parsedDescription.length) ? <Text className="text-center text-xs text-gray-400">What&apos;s Included:</Text> : null}
         {
         hasActiveFeatures ?
           tierFeatures.length !== 0 ? 

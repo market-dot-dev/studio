@@ -3,7 +3,7 @@
 import { Service, Feature } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import FeatureForm from '@/components/form/feature-form';
-import { Badge, Button } from '@tremor/react';
+import { Badge, Button, Title } from '@tremor/react';
 import { useModal } from "@/components/modal/provider";
 
 import {
@@ -169,19 +169,24 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
       return [...otherFeatures, updatedFeature];
     });
   };
+  
 
   useEffect(() => {
     if (selectedService) {
       const feature = featuresList.find((f) => f.serviceId === selectedService.id);
-      show(
-        <div className="flex flex-col gap-4bg-white p-6 border bg-white shadow-2xl w-full md:w-2/3 lg:w-1/2 rounded-md">
-          <div className="flex justify-between items-center">
-            <div className="font-bold mb-2">Details</div>
+      const modalHeader = (
+          <div className="flex justify-between items-center grow">
+            <Title>Details</Title>
             { feature?.isEnabled ? <Badge size="xs" color="green">Enabled</Badge> : null }
           </div>
-          <FeatureForm initialFeature={feature} service={selectedService} onSuccess={handleFeatureSuccess} requiresUri={selectedService.requiresUri} hide={hide} />
-        </div>
-        , () => setSelectedService(null));
+        )
+      show(
+        <FeatureForm initialFeature={feature} service={selectedService} onSuccess={handleFeatureSuccess} requiresUri={selectedService.requiresUri} hide={hide} />,
+        () => setSelectedService(null),
+        undefined,
+        modalHeader,
+        'w-full md:w-2/3 lg:w-1/2'
+      );
       
     }
   

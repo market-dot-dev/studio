@@ -6,27 +6,18 @@ import TierCard from "./tier-card"
 import { useCallback, useState } from "react";
 import { createTemplateTier } from "@/app/services/TierService";
 import { useModal } from "../modal/provider";
-import { X } from 'lucide-react';
+import { X, CheckSquare2 as CheckSquare, Square } from 'lucide-react';
 
 
 export default function TierTemplates({ children, multiple }: { children: React.ReactNode, multiple?: boolean }) {
 	const { show, hide } = useModal();
 	
-	const gotoNewBlankPackage = useCallback(() => {
-		window.location.href = '/tiers/new';
-	}, []);
+	// const gotoNewBlankPackage = useCallback(() => {
+	// 	window.location.href = '/tiers/new';
+	// }, []);
 
 	const header = (
-		<div className="flex gap-8">
-			<div className="flex flex-col">
-				<Title>Create new package(s)</Title>
-				<Text>You can choose { multiple ? ' among the templates' : ' a template' } below</Text>
-			</div>
-			<div className="flex gap-4 items-center">
-				<Text>or</Text>
-				<Button size="xs" onClick={gotoNewBlankPackage}>Create a blank package</Button>
-			</div>
-		</div>
+			<Title>Create{multiple ? '' : ' a'} new package{multiple ? 's' : ''}</Title>
 	)
     const showModal = () => {
         show(<TiersTemplatesModal hide={hide} multiple={multiple} />, undefined, undefined, header, 'w-full md:w-5/6 max-h-[80vh]');
@@ -74,6 +65,11 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 		
 	}
 
+	const createSingleTemplateTier = async (index: number) => {
+		const result = await createTemplateTier(index) as any;
+		window.location.href = '/tiers/' + result.id;
+	}
+
 	const determineIndex = useCallback((categoryIndex : number, rowIndex: number) => {
 		let index = 0;
 		if( categoryIndex > 0) {
@@ -85,16 +81,18 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 	}, [categorizedTiers])
 
 	const toggleSelected = useCallback((index: number) => {
-		setSelected((prev) => {
-			if (!multiple) {
-				return prev.includes(index) ? [] : [index]
-			}
-			if (prev.includes(index)) {
-				return prev.filter((i) => i !== index)
-			} else {
-				return [...prev, index]
-			}
-		});
+		if( !multiple) {
+
+		} else  {
+			setSelected((prev) => {
+				
+				if (prev.includes(index)) {
+					return prev.filter((i) => i !== index)
+				} else {
+					return [...prev, index]
+				}
+			});
+		}
 	}, [setSelected, multiple]);
 
 	
@@ -106,35 +104,50 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 			<div className="flex grow flex-col gap-4 items-stretch justify-start overflow-auto">
 				{ categorizedTiers.map((category, cIndex) => (
 					<div className="flex flex-col gap-4 p-4" key={cIndex}>
+						
 						<Title>{category.name}</Title>
-						<div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
-							{ category.tiers.map(({metaDescription, data : tier}, index) => (
-								<div 
-									key={index} 
-									className={"border p-4 bg-gray-100 cursor-pointer flex flex-col gap-4 items-center " + (selected.indexOf( determineIndex(cIndex, index) ) !== -1  ? "bg-gray-300" : "")} 
-									onClick={() => toggleSelected( determineIndex(cIndex, index) )}
-									>
-									<svg width="200" height="250" fill="none"  viewBox="0 0 320 400" xmlns="http://www.w3.org/2000/svg">
-										<foreignObject width="320" height="400" className="pointer-events-none">
-											<TierCard tier={tier as any}><></></TierCard>
-										</foreignObject>
-									</svg>
-									<Text>{metaDescription}</Text>
-								</div>
-							))}
+						<div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 ">
+							{ category.tiers.map(({metaDescription, data : tier}, index) => {
+								const determinedIndex = determineIndex(cIndex, index);
+								const isSelected = selected.indexOf( determinedIndex ) !== -1;
+								return (
+									<div 
+										key={index} 
+										className={"group border bg-gray-100 cursor-pointer relative rounded " + (isSelected  ? "outline" : "") + (multiple  ? "" : " overflow-hidden")} 
+										onClick={() => toggleSelected( determinedIndex )}
+										>
+										{ multiple ? <div className={"absolute -top-2 -right-2 bg-white border p-0 rounded " }>
+											{isSelected ? <CheckSquare size={24}/> : <Square size={24} className="text-gray-400"  />}
+										</div> : null }
+										<div className="p-4 pb-0 flex flex-col gap-4 justify-between items-center aspect-[3/2] overflow-hidden">
+											<Text className="text-gray-800">{metaDescription}</Text>
+											<svg className="w-full aspect-[100/56]" fill="none" viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+												<foreignObject width="320" height="400" className="pointer-events-none">
+													<TierCard tier={tier as any}><></></TierCard>
+												</foreignObject>
+											</svg>
+										</div>
+										{ !multiple &&
+											<div className="bg-white bg-opacity-50 flex justify-center items-center absolute left-0 w-full h-full top-[100%] group-hover:top-[0%] transition-[top]">
+												<Button size="xs" onClick={() => {createSingleTemplateTier(determinedIndex)}}>Create a {tier.name} package</Button>
+											</div>
+										}
+									</div>
+								)
+							})}
 						</div>
 					</div>
 				))}
 				
 			</div>
-			<div className=" bg-stone-100 h-16 border border-x-0 border-b-0 gap-4 flex p-4 justify-end items-center">
+			{ multiple ? <div className=" bg-stone-100 h-16 border border-x-0 border-b-0 gap-4 flex p-4 justify-end items-center">
 				{ creatingTemplateTiers ?
 					
 					<ProgressBar done={done} total={total} label={"Creating " + noun} />
 					:
 					<Button size="xs" onClick={() => createTemplateTiers()} disabled={selected.length === 0}>Create {noun}</Button>
 				}
-			</div>
+			</div> : null }
 		</>
 	)
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Text } from "@tremor/react";
+import { Button, Text, Title } from "@tremor/react";
 import { useState } from "react";
 import LoadingDots from "@/components/icons/loading-dots";
 import { useModal } from "@/components/modal/provider";
@@ -14,8 +14,9 @@ const ContractDeleteButton = ({ tierId, onConfirm, onSuccess, onError }: { tierI
   const showWarning = (e: any) => {
 	e.preventDefault();
 	e.stopPropagation();
+  const modalHeader = <Title>Delete Package</Title>
     show(
-        <div className="flex flex-col gap-12 bg-white p-6 border shadow-2xl w-full md:w-2/3 lg:w-1/2 rounded-md">
+        <div className="flex flex-col gap-12 p-6 ">
           <Text>Are you sure, you want to delete this package?</Text>
           <div className="flex gap-4">
            <Button size="xs" className="w-min" variant="primary" color="red" onClick={async() => {
@@ -40,7 +41,9 @@ const ContractDeleteButton = ({ tierId, onConfirm, onSuccess, onError }: { tierI
           </div>
         </div>,
         hide,
-        true // ignoreFocusTrap
+        true, // ignoreFocusTrap
+        modalHeader,
+        'w-full md:w-2/3 lg:w-1/2'
     );
 }
   return (

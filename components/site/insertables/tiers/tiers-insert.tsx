@@ -29,15 +29,8 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     }, []);
 
     return (
-        <Flex flexDirection="col" className="w-1/4 min-h-[50vh] bg-white border">
-            <Flex className="h-12 p-4 border-b">
-                <div className="grow">
-                    <Title>Select Tiers to be displayed</Title>
-                </div>
-                <div className="py-4">
-                    <Button onClick={hide} icon={X} variant="light" />
-                </div>
-            </Flex>
+        
+            
             <Flex flexDirection="col" alignItems="start" justifyContent="between" className="grow gap-2 p-4">
                 <Flex flexDirection="col" alignItems="stretch" justifyContent="start" className="grow gap-2">
                     
@@ -80,14 +73,17 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
             </Flex>
             
             
-        </Flex>
+        
     )
 }
 
 export default function TiersInsert({ insertAtCursor, children }: { insertAtCursor: (prop: any) => void, children: any}) {
     const { show, hide } = useModal();
     const showModal = () => {
-        show(<TiersInsertModal insertAtCursor={insertAtCursor} hide={hide} />);
+        const modalHeader = <div className="grow">
+            <Title>Select Tiers to be displayed</Title>
+        </div>
+        show(<TiersInsertModal insertAtCursor={insertAtCursor} hide={hide} />, undefined, undefined, modalHeader, 'w-1/4 min-h-[50vh]');
     };
     return (
         <div className="p-2 py-4" onClick={showModal}>{children}</div>

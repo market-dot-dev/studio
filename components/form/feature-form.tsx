@@ -83,7 +83,7 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 flex flex-col gap-4 items-start">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 flex flex-col gap-4 items-start p-4">
       <div className="flex flex-col w-full gap-2">
         <label htmlFor="name" className="text-sm text-gray-600 font-bold">Service Name</label>
         <div className="text-gray-600 text-xs">This is the name that appears on the features list for a Tier.</div>

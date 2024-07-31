@@ -54,7 +54,7 @@ export function ModalProvider({ children }: { children: ReactNode }) {
       {showModal && (
         <Modal showModal={showModal} setShowModal={setShowModal} ignoreFocusTrap={ignoreFocusTrap}>
           <div className={"bg-white border rounded-md overflow-auto shadow-lg flex flex-col items-stretch " + modalClasses}>
-            <div className=" bg-stone-100 h-16 border border-x-0 gap-4 flex p-4 justify-between items-center">
+            <div className=" bg-stone-100 h-12 border border-x-0 gap-4 flex p-4 justify-between items-center">
               {modalHeader}
               <Button onClick={hide} icon={X} variant="light" />
             </div>

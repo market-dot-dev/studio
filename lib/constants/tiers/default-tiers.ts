@@ -10,6 +10,19 @@ export type defaultTier = {
 	metaDescription: string;
 }
 
+const defaultTiers = [
+	{
+		data : {
+			name: "Blank",
+			tagline: "",
+			price: 0,
+			cadence: "month",
+			description: ''
+		},
+		metaDescription: "A blank package to start from scratch."
+	},
+]
+
 const supportTiers = [
 	// Support Tiers
 	{
@@ -167,6 +180,10 @@ const consultingTiers = [
 ] as defaultTier[];
 
 export const categorizedTiers = [
+	{
+		name: "Default",
+		tiers: defaultTiers
+	},
 	{
 		name: "Support",
 		tiers: supportTiers
