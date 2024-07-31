@@ -98,7 +98,7 @@ const consultingTiers = [
 		data : {
 			name: "Performance Consulting",
 			tagline: "Optimize your project's performance",
-			price: 3000,
+			price: 10000,
 			cadence: "once",
 			description: 
 `This package will help you optimize your web or mobile app performance. It includes:
@@ -107,21 +107,24 @@ const consultingTiers = [
 - Recommendations for performance enhancements
 - Regular performance reports`,
 		},
-		metaDescription: "Offer performance optimization services for a specific ecosystem"
+		metaDescription: "Offer performance optimization services for a specific ecosystem."
 	},
 	{
 		data : {
 			name: "Security Audits",
 			tagline: "Regular security audits and vulnerability assessments",
-			price: 5000,
+			price: 15000,
 			cadence: "once",
 			description: 
 `This package will help you optimize your project's performance. It includes:
 - One time vulnerability assessment for your codebase
+- Package dependency scanning
+- License compliance checks
 - Penetration testing
+- Setting up security monitoring tools
 `,
 		},
-		metaDescription: "Offer security auditing services for a specific ecosyste"
+		metaDescription: "Offer security auditing services for a specific ."
 	},
 ] as defaultTier[];
 
