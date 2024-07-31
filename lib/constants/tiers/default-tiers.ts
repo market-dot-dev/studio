@@ -38,7 +38,7 @@ const supportTiers = [
 - Regular project status updates and performance monitoring
 `,
 		},
-		metaDescription: "Perfect for projects requiring regular support and quicker response times."
+		metaDescription: "Provide premium support and quicker response times."
 	},
 	{
 		data : {
@@ -57,7 +57,7 @@ const supportTiers = [
 - Monthly performance reviews and strategic planning sessions
 `,
 		},
-		metaDescription: "Best for projects demanding high availability, rapid response, and strategic support."
+		metaDescription: "Provide the highest level of support & rapid response to your customers."
 	}
 ] as defaultTier[];
 
