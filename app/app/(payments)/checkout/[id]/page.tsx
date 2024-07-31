@@ -45,7 +45,7 @@ const TierNotAvailable = () => {
 }
 
 const ContractText = ({ checkoutProject, contract }: { checkoutProject: string, contract?: Contract }) => {
-  const pathToDefaultMSA = "/legal/standard-msa";
+  const pathToDefaultMSA = "https://app.gitwallet.co/c/contracts/gitwallet-msa";
 
   if (!contract) {
     return <>
@@ -57,7 +57,7 @@ const ContractText = ({ checkoutProject, contract }: { checkoutProject: string, 
     </>
   }
 
-  const url = `/c/contracts/${contract.id}`;
+  const url = `https://app.gitwallet.co/c/contracts/${contract.id}`;
 
   return <>
     {checkoutProject} uses the{" "}

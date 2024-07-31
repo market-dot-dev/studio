@@ -35,6 +35,7 @@ const StyledDropzone = ({ onFileAccepted, isUploading } : any) => {
 function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any) => void, hide: () => void}) {
 
     const [mediaList, setMediaList] = useState<Media[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [selectedMedia, setSelectedMedia] = useState<Media | null>(null);
     const [isUploading, setIsUploading] = useState<boolean>(false);
     const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -46,8 +47,10 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
 
     useEffect(() => {
         async function fetchMedia() {
+            setIsLoading(true);
             const media = await listMedia() as Media[];
             setMediaList(media);
+            setIsLoading(false);
         }
 
         fetchMedia();
