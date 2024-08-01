@@ -24,159 +24,121 @@ const defaultTiers = [
 ]
 
 const supportTiers = [
-	// Support Tiers
 	{
 		data : {
 			name: "Basic Support",
-			tagline: "Basic support for your project",
+			tagline: "This tier provides base-level project maintainence.",
 			price: 3000,
 			cadence: "month",
 			description: 
-`- Basic support
-- Working hours: 10:00 - 16:00
-- Response time: 48 hours
-- Support via email
+`- Basic open source project maintenance
+- Access to private support channels
+- Assistance with bug fixes and minor issues
 `,
 		},
-		metaDescription: "Ideal for projects needing occasional assistance."
-	},
-	{
-		data : {
-			name: "Standard Support",
-			tagline: "Standard support for your project",
-			price: 5000,
-			cadence: "month",
-			description: 
-`- Standard support
-- Working hours: 9:00 - 17:00
-- Response time: 24 hours
-- Support via email
-- Support via chat
-`,
-		},
-		metaDescription: "Perfect for projects requiring regular support and quicker response times."
+		metaDescription: "Provide essential support for your project."
 	},
 	{
 		data : {
 			name: "Premium Support",
-			tagline: "Premium support for your project",
+			tagline: "Ideal for teams that need quicker response times and premium support.",
+			price: 5000,
+			cadence: "month",
+			description: 
+`- All features of Basic Support, plus
+- 24 hour response time guarantee
+- Monthly office hours for your team
+- Regular project status updates and performance monitoring
+`,
+		},
+		metaDescription: "Provide premium support and quicker response times."
+	},
+	{
+		data : {
+			name: "Enterprise Support",
+			tagline: "Comprehensive support ideal for enterprises and larger scale projects",
 			price: 8000,
 			cadence: "month",
 			description: 
-`- Premium support
-- Working hours: 8:00 - 18:00
-- Response time: 12 hours
-- Support via email
-- Support via chat
-- Support via phone
+`- All features of Premium Support, plus
+- Response time 12 hours across time zones
+- Presence in your Slack or Discord server
+- Dedicated phone number for support
+- Dedicated support engineer
+- 1:1 training sessions
+- Assistance with major issues and project optimization
+- Monthly performance reviews and strategic planning sessions
 `,
 		},
-		metaDescription: "Best for projects demanding high availability and rapid response."
+		metaDescription: "Provide the highest level of support & rapid response to your customers."
 	}
 ] as defaultTier[];
 
 const trainingTiers = [
-	// Training Tiers
 	{
 		data : {
-			name: "Basic Training",
-			tagline: "Basic training for your team",
+			name: "1:1 Training Sessions",
+			tagline: "Office-hours style support for teams and individuals",
 			price: 3000,
 			cadence: "month",
 			description: 
-`- Basic training
-- Working hours: 10:00 - 16:00
-- Response time: 48 hours
-- Training via email
+`- Monthly office hours
+- Upto 5 hours of training sessions per month
+- Access to private repos and training materials
 `,
 		},
-		metaDescription: "Suitable for teams needing foundational training."
+		metaDescription: "Offer training sessions for users of your open source project."
 	},
 	{
 		data : {
-			name: "Standard Training",
-			tagline: "Standard training for your team",
+			name: "Team Training",
+			tagline: "Comprehensive training for your entire team",
 			price: 5000,
-			cadence: "month",
+			cadence: "monthly",
 			description: 
-`- Standard training
-- Working hours: 9:00 - 17:00
-- Response time: 24 hours
-- Training via email
-- Training via chat
+`- Monthly office hours for your team
+- Upto 10 hours of pair programming or 1:1 training sessions per month
+- Access to private repos and training materials
+- Availability in your Slack server
 `,
 		},
-		metaDescription: "Great for teams that require regular training and support."
-	},
-	{
-		data : {
-			name: "Premium Training",
-			tagline: "Premium training for your team",
-			price: 8000,
-			cadence: "month",
-			description: 
-`- Premium training
-- Working hours: 8:00 - 18:00
-- Response time: 12 hours
-- Training via email
-- Training via chat
-- Training via video calls
-`,
-		},
-		metaDescription: "Ideal for teams needing extensive training and faster responses."
+		metaDescription: "Offer a comprehensive training package to larger companies."
 	}
 ] as defaultTier[];
 
 const consultingTiers = [
-	// Consulting Tiers
 	{
 		data : {
-			name: "Basic Consulting",
-			tagline: "Basic consulting for your project",
-			price: 3000,
-			cadence: "month",
+			name: "Performance Consulting",
+			tagline: "Optimize your project's performance",
+			price: 10000,
+			cadence: "once",
 			description: 
-`- Basic consulting
-- Working hours: 10:00 - 16:00
-- Response time: 48 hours
-- Consulting via email
-`,
+`This package will help you optimize your web or mobile app performance. It includes:
+- Guidance on how to instrument your code for performance monitoring
+- Performance audits
+- Recommendations for performance enhancements
+- Regular performance reports`,
 		},
-		metaDescription: "Best for projects needing occasional expert advice."
+		metaDescription: "Offer performance optimization services for a specific ecosystem."
 	},
 	{
 		data : {
-			name: "Standard Consulting",
-			tagline: "Standard consulting for your project",
-			price: 5000,
-			cadence: "month",
+			name: "Security Audits",
+			tagline: "Regular security audits and vulnerability assessments",
+			price: 15000,
+			cadence: "once",
 			description: 
-`- Standard consulting
-- Working hours: 9:00 - 17:00
-- Response time: 24 hours
-- Consulting via email
-- Consulting via chat
+`This package will help you optimize your project's performance. It includes:
+- One time vulnerability assessment for your codebase
+- Package dependency scanning
+- License compliance checks
+- Penetration testing
+- Setting up security monitoring tools
 `,
 		},
-		metaDescription: "Perfect for projects that require regular consulting services."
+		metaDescription: "Offer security auditing services for a specific ."
 	},
-	{
-		data : {
-			name: "Premium Consulting",
-			tagline: "Premium consulting for your project",
-			price: 8000,
-			cadence: "month",
-			description: 
-`- Premium consulting
-- Working hours: 8:00 - 18:00
-- Response time: 12 hours
-- Consulting via email
-- Consulting via chat
-- Consulting via video calls
-`,
-		},
-		metaDescription: "Ideal for projects needing extensive consulting and quick responses."
-	}
 ] as defaultTier[];
 
 export const categorizedTiers = [
