@@ -34,8 +34,9 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 	const [creatingTemplateTiers, setCreatingTemplateTiers] = useState(false);
 	const [done, setDone] = useState(0);
 	const [total, setTotal] = useState(1);
+	const [singleTierInProgress, setSingleTierInProgress] = useState<boolean>(false);
 	
-	const noun = multiple && selected.length > 1 ? selected.length + " packages from selection" : "package from selection";
+	const noun = multiple && selected.length > 1 ? selected.length + " packages from selected templates" : "package from selected template";
 
 	const createTemplateTiers = async (index?: number) => {
 		const selectedTiers = [...selected];
@@ -66,8 +67,13 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 	}
 
 	const createSingleTemplateTier = async (index: number) => {
+		setTotal(1);
+		setSingleTierInProgress(true);
 		const result = await createTemplateTier(index) as any;
-		window.location.href = '/tiers/' + result.id;
+		setDone(1);
+		setTimeout(() => {
+			window.location.href = '/tiers/' + result.id;
+		}, 500)
 	}
 
 	const determineIndex = useCallback((categoryIndex : number, rowIndex: number) => {
@@ -138,7 +144,14 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 						</div>
 					</div>
 				))}
-				
+				{ !multiple && singleTierInProgress ? 
+					<div className="absolute inset-0 bg-white bg-opacity-50 flex justify-center items-center">
+						<div className="w-1/2 p-8 rounded-lg bg-white shadow-lg border">
+							<ProgressBar done={done} total={total} label={"Creating " + noun} />
+						</div>
+					</div> : null
+				}
+
 			</div>
 			{ multiple ? <div className=" bg-stone-100 h-16 border border-x-0 border-b-0 gap-4 flex p-4 justify-end items-center">
 				{ creatingTemplateTiers ?
@@ -155,7 +168,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 function ProgressBar({done, total, label}: {done: number, total: number, label?:string}) {
 	return (
 		<div className="flex flex-col w-full gap-2">
-			{label && <p className="text-sm ">{label}</p>}
+			{label && <p className="text-md ">{label}</p>}
 			<div className="relative w-full h-2 bg-gray-200 rounded-full">
 				<div className="absolute h-2 bg-gray-900 rounded-full transition-[width]" style={{width: `${(done/total)*100}%`}}></div>
 			</div>

@@ -74,31 +74,7 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
         }
     }, [selectedMedia, insertAtCursor, hide, alt, width, height]);
 
-    // const handleFileUpload = async (e: any) => {
-    //     e.preventDefault();
-    //     const formData = new FormData(e.target);
-    //     // if file is selected
-    //     const file = formData.get("file");
-        
-    //     if (file) {    
-            
-    //         setIsUploading(true);
-    //         try {
-    //             const newMedia = await uploadFile(formData);
-                
-    //             if (newMedia) {
-    //                 setMediaList([...mediaList, newMedia]);
-    //                 handleSelectMedia(newMedia);
-    //             }
-
-
-    //         } catch (error) {
-    //             console.error(error);
-    //         } finally {
-    //             setIsUploading(false);
-    //         }
-    //     }
-    // };
+    
 
     const handleFileUpload = async (file: any) => {
         setIsUploading(true);
@@ -145,6 +121,7 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                 </Flex>
 
                 <Flex justifyContent="start" alignItems="start" className="gap-4 grow p-4 flex-wrap max-h-[60vh] overflow-auto" >
+                    {isLoading && <Spinner />}
                     {mediaList.map((media) => {
                         const classes = `border ${selectedMedia?.id === media.id ? 'border-blue-500' : 'border-transparent'} cursor-pointer`;
                         return (
@@ -159,13 +136,7 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                         )
                     })}
                 </Flex>
-                {/* <Flex className="p-4 gap-12 border" justifyContent="start">
-                    <Title>Upload Image</Title>
-                    <form onSubmit={handleFileUpload}>
-                        <input type="file" name="file" onInput={() => setIsFileSelected(true)} className="file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100" />
-                        <Button type="submit" loading={isUploading} disabled={!isFileSelected}>Upload</Button>
-                    </form>
-                </Flex> */}
+                
 
                 
             </Flex>

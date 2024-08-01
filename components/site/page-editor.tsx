@@ -592,7 +592,7 @@ export default function PageEditor({
                 setViewMode(index);
               }}
             >
-              <div className={"flex justify-between p-4 border border-x-0" + (fullscreen ? " bg-white py-2 z-10" : " border-t-0")}>
+              <div className={"flex justify-between items-center p-4 border border-x-0" + (fullscreen ? " bg-white py-2 z-10" : " border-t-0")}>
                 <TabList variant="solid" className="font-bold">
                   <Tab className={viewMode === 0 ? "bg-white" : ""} icon={EyeOpenIcon}>
                     Preview

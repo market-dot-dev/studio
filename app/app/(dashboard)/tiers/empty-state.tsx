@@ -11,10 +11,10 @@ export default function TiersEmptyState() {
 			<div className="border rounded-lg flex gap-4 min-h-80 justify-between">
 				<div className="flex flex-col items-center justify-center p-8 basis-[50%] gap-4">
 					<h2 className="text-lg font-semibold text-gray-900">You have no packages defined</h2>
-					<p className="text-sm text-gray-500 w-3/4 text-center">You can use our pre-existing package templates to get you started quickly, or you can manually create your first package.</p>
+					<p className="text-sm text-gray-500 w-3/4 text-center">You can use our pre-existing package templates to get you started quickly.</p>
 					
 						<div className="flex gap-8 justify-around align-center">
-							<TierTemplates multiple={true}>Create Packages</TierTemplates>
+							<TierTemplates multiple={false}>Create a Package</TierTemplates>
 						</div>
 					
 				</div>

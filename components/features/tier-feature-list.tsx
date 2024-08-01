@@ -8,9 +8,12 @@ import {
 export const TierFeatureCheck = ({ feature, darkMode = false }: { feature: Partial<Feature>; darkMode?: boolean }) => {
   const featureIconClasses = (darkMode ? "text-green-400" : "text-green-500" )+ " min-w-6";
 
-  return (<>
-      <CheckSquare className={featureIconClasses} /> &nbsp; {feature.name}
-  </>);
+  return (
+    <>
+      <CheckSquare className={featureIconClasses} />
+      <div>{feature.name}</div>
+    </>
+  );
 }
 
 
@@ -19,7 +22,7 @@ const TierFeatureList = ({ features, darkMode = false }: { features: Partial<Fea
     <div className="text-left">
       <ul>
         {features.filter((f) => f.isEnabled).map((feature) => (
-          <li key={feature.id} className="flex flex-row my-1">
+          <li key={feature.id} className="flex flex-row my-2 gap-3">
             <TierFeatureCheck feature={feature} darkMode={darkMode} />
           </li>
         ))}
