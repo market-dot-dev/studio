@@ -22,7 +22,7 @@ const TierFeatureList = ({ features, darkMode = false }: { features: Partial<Fea
     <div className="text-left">
       <ul>
         {features.filter((f) => f.isEnabled).map((feature) => (
-          <li key={feature.id} className="flex flex-row my-2 gap-3">
+          <li key={feature.id} className="flex flex-row my-1 gap-3">
             <TierFeatureCheck feature={feature} darkMode={darkMode} />
           </li>
         ))}

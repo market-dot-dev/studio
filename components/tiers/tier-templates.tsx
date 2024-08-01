@@ -134,7 +134,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 											</svg>
 										</div>
 										{ !multiple &&
-											<div className="bg-white bg-opacity-50 flex justify-center items-center absolute left-0 w-full h-full top-[100%] group-hover:top-[0%] transition-[top]">
+											<div className="bg-white bg-opacity-50 flex justify-center items-center absolute left-0 w-full h-full top-0 opacity-0 group-hover:opacity-100 transition-opacity cursor-default">
 												<Button size="xs" onClick={() => {createSingleTemplateTier(determinedIndex)}}>Create a {tier.name} package</Button>
 											</div>
 										}
