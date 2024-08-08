@@ -337,10 +337,10 @@ export default function PageEditor({
     setIsDeleting(false);
   };
 
-  const saveButton = (
+  const saveButton = (className?: string) => (
     <Button
       size="xs"
-      className="w-full"
+      className={className}
       disabled={inProgress}
       loading={inProgress}
       loadingText="Saving..."
@@ -575,7 +575,7 @@ export default function PageEditor({
             ) : null}
 
             <DashboardCard>
-              <Box mb="2">{saveButton}</Box>
+              <Box mb="2">{saveButton('w-full')}</Box>
               <Flex className='gap-2'>
                 <Box mb="2" className='grow'>{makeHomepageButton}</Box>
                 <Box mb="2">{deleteButton}</Box>
@@ -592,7 +592,7 @@ export default function PageEditor({
                 setViewMode(index);
               }}
             >
-              <div className={"flex justify-between p-4 border border-x-0" + (fullscreen ? " bg-white py-2 z-10" : " border-t-0")}>
+              <div className={"flex justify-between items-center p-4 border border-x-0" + (fullscreen ? " bg-white py-2 z-10" : " border-t-0")}>
                 <TabList variant="solid" className="font-bold">
                   <Tab className={viewMode === 0 ? "bg-white" : ""} icon={EyeOpenIcon}>
                     Preview
@@ -612,11 +612,10 @@ export default function PageEditor({
                 }
 
                 <div className="flex gap-4">
-                {fullscreen ? 
-                <Button>{saveButton}</Button> : <></> }
-                <Button size="xs" onClick={() => setFullscreen(!fullscreen)}>
-                  {fullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-                </Button>
+                  { fullscreen && saveButton() }
+                  <Button onClick={() => setFullscreen(!fullscreen)}>
+                    {fullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                  </Button>
                 </div>
               </div>
               <TabPanels>

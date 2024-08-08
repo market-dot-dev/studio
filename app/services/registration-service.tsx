@@ -6,7 +6,6 @@ import { siteName, siteDescription, homepageTitle, homepageTemplate} from "@/lib
 import { signIn } from "next-auth/react";
 import { cookies } from 'next/headers'
 
-
 interface UserDetails {
   id: string;
   gh_username: string;
@@ -76,11 +75,11 @@ class RegistrationService {
         },
       });
   
-      await RegistrationService.createSite(user);
-  
+
       return user;
     }
   }
+
 
   static async createSite(user: User) {
     const pageData = {

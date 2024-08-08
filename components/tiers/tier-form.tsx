@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Flex, Text, Button, Bold, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab, Card } from "@tremor/react";
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
-import { createTier, destroyTier, updateTier, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
+import { createTier, updateTier, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
@@ -28,6 +28,7 @@ import useCurrentSession from '@/app/hooks/use-current-session';
 import LinkButton from '../common/link-button';
 import { getRootUrl } from '@/app/services/domain-service';
 import { Check, Copy } from 'lucide-react';
+import TierDeleteButton from './tier-delete-button';
 
 
 interface TierFormProps {
@@ -181,7 +182,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
     const [trialEnabled, setTrialEnabled] = useState(tier?.trialDays > 0);
     const [annualPlanEnabled, setAnnualPlanEnabled] = useState(tier?.priceAnnual ? tier.priceAnnual > 0 : false);
     const [annualDiscountPercent, setAnnualDiscountPercent] = useState(calcDiscount(tier.price, tier.priceAnnual || 0));
-
+    const [isDeleting, setIsDeleting] = useState(false);
     const newRecord = !tier?.id;
     const tierHasSubscribers = currentRevisionSubscriberCount > 0;
 
@@ -585,7 +586,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                     {/* <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Admin</label>
                     <Button variant="secondary" disabled={tier.id ? false : true} className="w-full" onClick={() => destroyTier(tier.id as string)}>Delete Tier</Button> */}
                     <Button
-                        disabled={isSaving}
+                        disabled={isSaving || isDeleting}
                         loading={isSaving}
                         onClick={onSubmit}
                     >
@@ -601,6 +602,23 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                     {tier.id && tier.published ? <Text className="mt-2">This tier is currently published and available for sale.</Text>
                         : <Text className="mt-2">This tier is not published and is not available for sale.</Text>}
                     <TierLinkCopier tier={tier} />
+                    { !newRecord && !tier._count?.Charge && !tier._count?.subscriptions && !tier.features?.length ?
+                        <div className="mt-4 flex flex-col bg-gray-100 rounded-lg border border-gray-400 px-2 py-4 text-gray-700 items-center">
+                            <Bold>Delete Package</Bold>
+                            <Text className="mb-4">Since this package does not have any active customers, you can delete this package, if required</Text>
+                            <TierDeleteButton 
+                                tierId={tier.id} 
+                                onConfirm={() => setIsDeleting(true)}
+                                onSuccess={() => {
+                                    setIsDeleting(false);
+                                    window.location.href = '/tiers';
+                                }}
+                                onError={(error: any) => {
+                                    setIsDeleting(false);
+                                }} />
+                        </div>
+                        : null
+                    }
                 </div>
             </div>
         </>

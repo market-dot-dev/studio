@@ -133,7 +133,6 @@ export const authOptions: NextAuthOptions = {
           onboarding: JSON.stringify( defaultOnboardingState )
         },
       });
-      
       await RegistrationService.createSite(user);
     },
   },

@@ -14,8 +14,9 @@ export default function CustomerPackageFeatures({ features, maintainerEmail }: {
     const isPhoneNumber = (uri: string) => /^\+?[1-9]\d{1,14}$/.test(uri);
 
     const showFeatures = () => {
+        
         show(
-            <div className="flex flex-col gap-4 bg-white p-6 border shadow-2xl w-full md:w-2/3 lg:w-1/2 rounded-md">
+            <div className="flex flex-col gap-4 bg-white p-6 border shadow-2xl  rounded-md">
                 {[{id: 0, name: 'Contact Maintainers', uri: maintainerEmail}, ...features].map((feature) => (
 					feature.uri ?
 						<div key={feature.id} className={styles.feature_item + ' flex flex-col gap-2'}>
@@ -37,7 +38,9 @@ export default function CustomerPackageFeatures({ features, maintainerEmail }: {
                 ))}
             </div>,
             hide,
-            true // ignoreFocusTrap
+            true, // ignoreFocusTrap
+            undefined,
+            'w-full md:w-2/3 lg:w-1/2'
         );
     }
 
