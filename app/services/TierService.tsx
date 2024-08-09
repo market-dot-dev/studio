@@ -150,10 +150,7 @@ class TierService {
   }
 
   static async destroyTier(id: string) {
-    if(process.env.NODE_ENV !== 'development'){
-      throw new Error('This operation is not allowed in production');
-    }
-
+    
     const user = await UserService.getCurrentUser();
 
     if (!user) throw new Error("User not authenticated");
