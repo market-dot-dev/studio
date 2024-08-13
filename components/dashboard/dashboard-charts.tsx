@@ -20,7 +20,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
   const processCustomers = (customers: CustomerWithChargesAndSubscriptions[]) => {
     const currentYear = new Date().getFullYear();
     const subscriptionCounts = {} as any;
-
+  
     for (let i = 0; i < 12; i++) {
       subscriptionCounts[i] = {
         date: new Date(currentYear, i).toLocaleString('default', { month: 'short', year: 'numeric' }),
@@ -30,69 +30,77 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
         'One-time Charges': 0,
       };
     }
-
+  
     customers.forEach(customer => {
       customer.subscriptions.forEach(subscription => {
         const createdMonth = new Date(subscription.createdAt).getMonth();
         subscriptionCounts[createdMonth]['New Subscriptions']++;
-
+  
         if (subscription.cancelledAt) {
           const cancelledMonth = new Date(subscription.cancelledAt).getMonth();
           subscriptionCounts[cancelledMonth]['Cancellations']++;
         }
-
+  
         if (!subscription.cancelledAt) {
-          const renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
-          if(renewalMonth !== undefined) {
+          let renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
+  
+          while (renewalMonth !== undefined && renewalMonth <= new Date().getMonth()) {
             subscriptionCounts[renewalMonth]['Renewals']++;
+            const renewalDate = new Date(subscription.createdAt);
+            renewalDate.setMonth(renewalMonth);
+            renewalMonth = getRenewalMonth(renewalDate, subscription.tier.cadence);
           }
         }
       });
-
+  
       customer.charges.forEach(charge => {
         const month = new Date(charge.createdAt).getMonth();
         subscriptionCounts[month]['One-time Charges']++;
       });
     });
-
+  
     const processedData = Object.values(subscriptionCounts);
     return processedData;
   };
+  
 
   const processRevenueData = (customers: CustomerWithChargesAndSubscriptions[]) => {
     const currentYear = new Date().getFullYear();
-    const yearStart = new Date(currentYear, 0, 1);
-
     const revenueData = Array.from({ length: 12 }, (_, i) => ({
       date: new Date(currentYear, i).toLocaleString('default', { month: 'short', year: 'numeric' }),
       'New Subscriptions': 0,
       'Renewals': 0,
       'One-time Charges': 0,
     }));
-
+  
     customers.forEach(customer => {
       customer.subscriptions.forEach(subscription => {
         const monthIndex = new Date(subscription.createdAt).getMonth();
         const price = subscription.tier.price;
         revenueData[monthIndex]['New Subscriptions'] += price;
-
+  
         if (!subscription.cancelledAt) {
-          const renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
-          if(renewalMonth !== undefined) {
+          let renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
+  
+          while (renewalMonth !== undefined && renewalMonth <= new Date().getMonth()) {
             revenueData[renewalMonth]['Renewals'] += price;
+            const renewalDate = new Date(subscription.createdAt);
+            renewalDate.setMonth(renewalMonth);
+            renewalMonth = getRenewalMonth(renewalDate, subscription.tier.cadence);
           }
         }
       });
-
+  
       customer.charges.forEach(charge => {
         const monthIndex = new Date(charge.createdAt).getMonth();
         const price = charge.tier.price;
         revenueData[monthIndex]['One-time Charges'] += price;
       });
     });
-
+  
     return revenueData;
   };
+  
 
   const customerTotals = processCustomers(customers);
   const revenueData = processRevenueData(customers);
