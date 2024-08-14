@@ -9,6 +9,7 @@ import LinkButton from "@/components/common/link-button";
 import SubscriptionStatusBadge from "../subscription-state";
 import UserService from "@/app/services/UserService";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button";
 
 const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
   const userId = params.id;
@@ -39,7 +40,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
           <Table className="mb-8">
             <TableBody>
               <TableRow>
-                <TableCell className="py-2"><strong>ID</strong></TableCell>
+                <TableCell className="py-2 w-1/2 md:w-1/3"><strong>ID</strong></TableCell>
                 <TableCell className="py-2"><pre>{customer.id}</pre></TableCell>
               </TableRow>
               <TableRow>
@@ -74,7 +75,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell className="py-2"><strong>Tier Name</strong></TableCell>
+                    <TableCell className="py-2 w-1/2 md:w-1/3"><strong>Tier Name</strong></TableCell>
                     <TableCell className="py-2">
                       {subscription.tier.name}
                       {subscription.tierVersionId ? ` (${subscription.tierVersionId})` : ""}
@@ -94,10 +95,17 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
                     <TableCell className="py-2"><strong>Subscription Date</strong></TableCell>
                     <TableCell className="py-2">{formatDate(subscription.createdAt)}</TableCell>
                   </TableRow>
-                  {subscription.cancelledAt && (
+                  {subscription.cancelledAt ? (
                     <TableRow>
                       <TableCell className="py-2"><strong>Cancellation Date</strong></TableCell>
                       <TableCell className="py-2">{formatDate(subscription.cancelledAt)}</TableCell>
+                    </TableRow>
+                  ) : (
+                    <TableRow>
+                      <TableCell className="py-2"><strong>Actions</strong></TableCell>
+                      <TableCell className="py-2">
+                        <CancelSubscriptionButton subscriptionId={subscription.id} />
+                      </TableCell>
                     </TableRow>
                   )}
                 </TableBody>
@@ -111,7 +119,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
               <Table>
                 <TableBody>
                   <TableRow>
-                    <TableCell className="py-2"><strong>Tier Name</strong></TableCell>
+                    <TableCell className="py-2 w-1/2 md:w-1/3" ><strong>Tier Name</strong></TableCell>
                     <TableCell className="py-2">{charge.tier.name}</TableCell>
                   </TableRow>
                   <TableRow>

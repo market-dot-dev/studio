@@ -46,9 +46,7 @@ const errorMessageMapping: Record<ErrorMessageCode, string> = {
   [ErrorMessageCode.StripeAccountDisabled]: 'Your Stripe account is disabled.',
 };
 
-const connStripe = async () => {
-  const user = await SessionService.getSessionUser();
-  const stripeAccountId = user?.stripeAccountId;
+const connStripe = async (stripeAccountId : string) => {
 
   if (!stripeAccountId) {
     throw new Error('Stripe account not connected');
@@ -345,8 +343,8 @@ class StripeService {
     return subscription;
   }
 
-  static async cancelSubscription(subscriptionId: string) {
-    return await (await connStripe()).subscriptions.cancel(subscriptionId);
+  static async cancelSubscription(subscriptionId: string, stripeAccountId: string) {
+    return await (await connStripe(stripeAccountId)).subscriptions.cancel(subscriptionId);
   }
 
   static async generateStripeCSRF(userId: string) {

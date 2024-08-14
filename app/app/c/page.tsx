@@ -89,7 +89,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
 
 const SubscriptionCard = async ({ subscription }: { subscription: Subscription }) => {
   if (!subscription || !subscription.tierId) return null;
-
+  
   const tier = await TierService.findTier(subscription.tierId!) as TierWithFeatures;
   if (!tier) return null;
 
@@ -156,7 +156,11 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
 
       <div className="flex flex-row space-x-2 justify-between">
         <CustomerPackageFeatures features={hasActiveFeatures ? tier.features : featuresFromDescription} maintainerEmail={maintainer?.email} />
-        <CancelSubscriptionButton subscriptionId={subscription.id} />
+        { subscription.state !== 'cancelled' &&
+        
+          <CancelSubscriptionButton subscriptionId={subscription.id} />
+        
+        }
         {/* <Link href={`/subscriptions/${subscription.id}`}>
           <Button>Tier Details</Button>
         </Link> */}
