@@ -199,7 +199,7 @@ class TierService {
       ...tierData,
     });
 
-    console.debug("============= payload", { tierData, attrs });
+    // console.debug("============= payload", { tierData, attrs });
 
     let newVersion: TierVersion | null = null;
 
@@ -296,7 +296,7 @@ class TierService {
     }
 
     const row = await TierService.toTierRow(attrs);
-    console.debug("============= updating", { tier, attrs, stripeConnected, createNewversion, priceChanged, row });
+    // console.debug("============= updating", { tier, attrs, stripeConnected, createNewversion, priceChanged, row });
 
     return await prisma.tier.update({
       where: { id },

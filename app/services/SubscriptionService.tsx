@@ -184,6 +184,12 @@ class SubscriptionService {
 
   // Cancel or destroy a subscription
   static async cancelSubscription(subscriptionId: string) {
+    const user = await SessionService.getSessionUser();
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
     const subscription = await prisma.subscription.findUnique({
       where: { id: subscriptionId },
       include: {
@@ -197,9 +203,21 @@ class SubscriptionService {
       },
     });
 
-    if (!subscription) throw new Error('Subscription not found');
+    if (!subscription) {
+      throw new Error('Subscription not found');
+    }
 
-    const stripeSubscription = await StripeService.cancelSubscription(subscription.stripeSubscriptionId);
+    const isMaintainer = subscription.tier.user.id === user.id;
+    const isSubscriber = !isMaintainer && subscription.user.id === user.id;
+
+
+    const maintainer = isMaintainer ? user : isSubscriber ? await UserService.findUser(subscription.tier.user.id) : null;
+
+    if (!maintainer?.stripeAccountId) {
+      throw new Error('Not authorized to cancel subscription or stripe account not connected');
+    }
+
+    const stripeSubscription = await StripeService.cancelSubscription(subscription.stripeSubscriptionId, maintainer.stripeAccountId);
 
     await prisma.subscription.update({
       data: {
