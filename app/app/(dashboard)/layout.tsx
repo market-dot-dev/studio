@@ -17,7 +17,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
   if (!user?.id) {
     redirect("/login");
   }
-  console.log(onboarding)
+  // console.log(onboarding)
   const site = await getOnlySiteFromUserId(user.id);
   const activeFeatures = await FeatureService.findActiveByCurrentUser();
 
