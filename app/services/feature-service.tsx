@@ -110,7 +110,7 @@ class FeatureService {
     const user = await UserService.getCurrentUser();
 
     if(!user){
-      throw new Error("not logged in");
+      return [];
     }
 
     return FeatureService.findActiveByUser(user.id);

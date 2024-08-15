@@ -3,14 +3,20 @@ import OnboardingGuide from "@/components/onboarding/onboarding-guide";
 import PageHeading from "@/components/common/page-heading";
 import SessionService from "@/app/services/SessionService";
 import RepoService from "@/app/services/RepoService";
-import DependentPackagesWidget from "@/components/packages/dependent-packages-widget";
+// import DependentPackagesWidget from "@/components/packages/dependent-packages-widget";
 import { CustomersTable } from "./customers/customer-table";
 import { customers as getCustomersData } from "@/app/services/UserService";
+import { redirect } from "next/navigation";
 
 export default async function Overview() {
 
-  const [user, repoResults, customers] = await Promise.all([
-    SessionService.getSessionUser(),
+  const user = await SessionService.getSessionUser();
+
+  if( !user?.id ) {
+    redirect("/login");
+  }
+
+  const [repoResults, customers] = await Promise.all([
     RepoService.getRepos(),
     getCustomersData()
   ]);
