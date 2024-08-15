@@ -20,7 +20,7 @@ const SubscriptionSuccess = () => {
     </Card>
   );
   */
-  redirect(DomainService.getRootUrl('app', '/packages'));
+  redirect(DomainService.getRootUrl('app', '/'));
 };
 
 export default SubscriptionSuccess;

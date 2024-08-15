@@ -4,7 +4,7 @@ import DomainService from '@/app/services/domain-service';
 import { redirect } from 'next/navigation';
 
 const SubscriptionSuccess = () => {
-  redirect(DomainService.getRootUrl('app', '/packages'));
+  redirect(DomainService.getRootUrl('app', '/'));
 };
 
 export default SubscriptionSuccess;
