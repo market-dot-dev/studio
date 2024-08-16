@@ -94,7 +94,7 @@ const trainingTiers = [
 			name: "Team Training",
 			tagline: "Comprehensive training for your entire team",
 			price: 5000,
-			cadence: "monthly",
+			cadence: "month",
 			description: 
 `- Monthly office hours for your team
 - Upto 10 hours of pair programming or 1:1 training sessions per month
