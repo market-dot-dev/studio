@@ -47,7 +47,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
       orders: [] as any[],
       averageOrderValue: [] as any[],
     };
-
+  
     for (let i = 0; i < 12; i++) {
       const monthLabel = new Date(currentYear, i).toLocaleString('default', { month: 'short', year: 'numeric' });
       data.newSubscriptions.push({ date: monthLabel, [labels['newSubscriptions']]: 0 });
@@ -62,49 +62,55 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
       data.orders.push({ date: monthLabel, [labels['orders']]: 0 });
       data.averageOrderValue.push({ date: monthLabel, [labels['averageOrderValue']]: 0 });
     }
-
-    let totalOneTimeCharges = 0;
-    let totalOrders = 0;
-
+  
     customers.forEach(customer => {
       customer.subscriptions.forEach(subscription => {
         const createdMonth = new Date(subscription.createdAt).getMonth();
         const price = subscription.tier.price;
-        
+  
         data.newSubscriptions[createdMonth][labels['newSubscriptions']]++;
         data.newSubscriptionsRevenue[createdMonth][labels['newSubscriptionsRevenue']] += price;
-
+  
         if (subscription.cancelledAt) {
           const cancelledMonth = new Date(subscription.cancelledAt).getMonth();
           data.cancellations[cancelledMonth][labels['cancellations']]++;
         } else {
-          data.activeSubscriptions[createdMonth][labels['activeSubscriptions']]++;
-          const renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
-          if (renewalMonth !== undefined) {
+          let renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
+          
+          while (renewalMonth !== undefined && renewalMonth <= new Date().getMonth()) {
             data.renewals[renewalMonth][labels['renewals']]++;
             data.renewedSubscriptionsRevenue[renewalMonth][labels['renewedSubscriptionsRevenue']] += price;
             data.monthlyRecurringRevenue[renewalMonth][labels['monthlyRecurringRevenue']] += price;
+            const renewalDate = new Date(subscription.createdAt);
+            renewalDate.setMonth(renewalMonth);
+            renewalMonth = getRenewalMonth(renewalDate, subscription.tier.cadence);
           }
+  
+          data.activeSubscriptions[createdMonth][labels['activeSubscriptions']]++;
         }
       });
-
+  
       customer.charges.forEach(charge => {
         const month = new Date(charge.createdAt).getMonth();
         const price = charge.tier.price;
-
+  
         data.oneTimeCharges[month][labels['oneTimeCharges']]++;
         data.oneTimeChargesRevenue[month][labels['oneTimeChargesRevenue']] += price;
         data.orders[month][labels['orders']]++;
-        totalOneTimeCharges += price;
-        totalOrders++;
+  
+        // Calculate average order value for the specific month
+        if (data.orders[month][labels['orders']] > 0) {
+          data.averageOrderValue[month][labels['averageOrderValue']] =
+            data.oneTimeChargesRevenue[month][labels['oneTimeChargesRevenue']] /
+            data.orders[month][labels['orders']];
+        }
       });
     });
-
-    const averageOrderValue = totalOrders ? totalOneTimeCharges / totalOrders : 0;
-    data.averageOrderValue.forEach(d => d[labels['averageOrderValue']] = averageOrderValue);
-
+  
     return data;
   };
+  
+  
 
   const data = processCustomers(customers);
 
