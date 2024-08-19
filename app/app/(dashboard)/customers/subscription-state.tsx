@@ -1,19 +1,23 @@
+import { formatDate } from "@/lib/utils";
 import { Subscription } from "@prisma/client";
 import { Badge, Text } from "@tremor/react";
 
 const SubscriptionStatusBadge = ({ subscription }: { subscription: Subscription }) => {
+    console.log('upup', subscription.id, subscription.activeUntil)
     return (
         <>
             {subscription.state === "renewing" ?
-                <Badge color="green">Active</Badge> :
-                    subscription.state === "cancelled" && subscription.activeUntil ?
-                    <>
-                        <Badge color="yellow">Cancelled</Badge>
-                        <Text className="text-xs">Active Until {subscription.activeUntil?.toLocaleDateString()}</Text>
-                    </>
-                    :
-                    subscription.state === "cancelled" && !subscription.activeUntil ?
-                        <Badge color="red">Cancelled</Badge> : ""
+                <Badge color="green" className="indent-0">Active</Badge> :
+                    subscription.state === "cancelled" ?
+                        subscription.activeUntil ?
+                            <>
+                                <Badge color="yellow" className="indent-0">Cancelled</Badge>
+                                <span className="text-xs block">Active Until {formatDate(subscription.activeUntil)}</span>
+                            </>
+                        :
+                            <Badge color="red" className="indent-0">Cancelled</Badge> 
+                    : null
+
             }
         </>
     )
