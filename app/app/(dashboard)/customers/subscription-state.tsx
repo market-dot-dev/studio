@@ -3,7 +3,7 @@ import { Subscription } from "@prisma/client";
 import { Badge, Text } from "@tremor/react";
 
 const SubscriptionStatusBadge = ({ subscription }: { subscription: Subscription }) => {
-    console.log('upup', subscription.id, subscription.activeUntil)
+    
     return (
         <>
             {subscription.state === "renewing" ?
