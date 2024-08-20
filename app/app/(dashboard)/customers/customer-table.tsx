@@ -7,108 +7,96 @@ import {
   TableHeaderCell,
   TableRow,
   Button,
-  Badge,
 } from '@tremor/react';
 import React from 'react';
 import Tier from '@/app/models/Tier';
 import LinkButton from '@/components/common/link-button';
 import DashboardCard from '@/components/common/dashboard-card';
-import { formatDate, formatCurrency } from '@/lib/utils';
-import Link from 'next/link';
 import SubscriptionStatusBadge from './subscription-state';
-
-type SubscriptionWithTier = Subscription & { tier: Tier };
-type ChargeWithTier = Charge & { tier: Tier };
+import PurchaseStatusBadge from './purchase-state';
+import { formatDate } from '@/lib/utils';
+import Link from 'next/link';
 
 export type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
-  subscriptions: (SubscriptionWithTier)[];
+  subscriptions: (Subscription & { tier: Tier })[];
 };
 
-const renderSubscriptionDetails = (subscriptions: SubscriptionWithTier[], customerId: string) => {
-  const displayedSubscriptions = subscriptions.slice(0, 2);
-  const hiddenSubscriptionsCount = subscriptions.length - displayedSubscriptions.length;
-
-  return (
-    <>
-      {displayedSubscriptions.map(subscription => (
-        <div key={subscription.id} className="mb-2 indent-4">
-          <p>{subscription.tier.name} {formatCurrency(subscription.tier.price)}/{subscription.tier.cadence} <SubscriptionStatusBadge subscription={subscription} /></p>
-          <span className="text-xs block">Started on {formatDate(new Date(subscription.createdAt))}</span>
-        </div>
-      ))}
-      {hiddenSubscriptionsCount > 0 && (
-        <div className="text-sm text-green-500 indent-4">
-          <Link href={`/customers/${customerId}`}>
-            ... {`${hiddenSubscriptionsCount} more subscription${hiddenSubscriptionsCount > 1 ? 's' : ''}`}
-          </Link>
-        </div>
-      )}
-    </>
-  );
+type SubscriptionRowProps = {
+  user: User;
+  subscription: Subscription & { tier: Tier };
+  hideCustomerDetails?: boolean;
 };
 
-const renderChargeDetails = (charges: ChargeWithTier[], customerId: string) => {
-  const displayedCharges = charges.slice(0, 2);
-  const hiddenChargesCount = charges.length - displayedCharges.length;
-
+const SubscriptionRow = ({ user, subscription, hideCustomerDetails }: SubscriptionRowProps) => {
   return (
-    <>
-      {displayedCharges.map(charge => (
-        <div key={charge.id} className="mb-2 indent-4">
-          <p>{charge.tier.name} {formatCurrency(charge.tier.price)}</p>
-          <span className="text-xs block">Purchased on {formatDate(new Date(charge.createdAt))}</span>
+    <TableRow className="m-0 p-2" key={subscription.id}>
+      <TableCell className="m-0 p-2">{hideCustomerDetails ? '' : user.name}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : (user.company || '(unknown)')}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : <a href={`mailto:${user.email}`}>{user.email}</a>}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{subscription.tier.name}</TableCell>
+      <TableCell className="m-0 p-2 text-center"><SubscriptionStatusBadge subscription={subscription} /></TableCell>
+      <TableCell className="m-0 p-2 text-center">{formatDate(subscription.createdAt)}</TableCell>
+      <TableCell className="m-0 p-2 text-right">
+      {hideCustomerDetails ? null : 
+        <div className="flex flex-row justify-end gap-1">
+          <LinkButton label="View" href={`/customers/${user.id}`} />
         </div>
-      ))}
-      {hiddenChargesCount > 0 && (
-        <div className="text-sm text-green-500 indent-4">
-          <Link href={`/customers/${customerId}`}>
-            ... {`${hiddenChargesCount} more charge${hiddenChargesCount > 1 ? 's' : ''}`}
-          </Link>
-        </div>
-      )}
-    </>
-  );
-};
-
-const CustomerRow = ({ customer }: { customer: CustomerWithChargesAndSubscriptions }) => {
-  const customerSince = formatDate(
-    new Date(Math.min(
-      ...customer.subscriptions.map(s => s.createdAt.getTime()),
-      ...customer.charges.map(c => c.createdAt.getTime())
-    ))
-  );
-
-  return (
-    <TableRow key={customer.id}>
-      <TableCell className="align-top">{customer.name}</TableCell>
-      <TableCell className="text-left align-top">{customer.company || '(unknown)'}</TableCell>
-      <TableCell className="text-left align-top"><a href={`mailto:${customer.email}`}>{customer.email}</a></TableCell>
-      <TableCell className="text-left align-top flex flex-col gap-3">
-        
-          <div className="flex flex-col gap-3">
-            <h4 className="font-bold">Subscriptions</h4>
-            {renderSubscriptionDetails(customer.subscriptions, customer.id)}
-          </div>
-        
-        
-          <div className="flex flex-col gap-3">
-            <h4 className="font-bold">Charges</h4>
-            {renderChargeDetails(customer.charges, customer.id)}
-          </div>
-        
-      </TableCell>
-      <TableCell className="text-center align-top">{customerSince}</TableCell>
-      <TableCell className="text-right align-top">
-        <LinkButton label="View" href={`/customers/${customer.id}`} />
+      }
       </TableCell>
     </TableRow>
   );
 };
 
-export const CustomersTable = ({ customers, maxInitialRows }: { customers: CustomerWithChargesAndSubscriptions[], maxInitialRows?: number }) => {
-  const showAll = !maxInitialRows;
-  const visibleCustomers = showAll ? customers : customers.slice(0, maxInitialRows);
+type ChargeRowProps = {
+  user: User;
+  charge: Charge & { tier: Tier };
+  hideCustomerDetails?: boolean;
+};
+
+const ChargeRow = ({ user, charge, hideCustomerDetails }: ChargeRowProps) => {
+  return (
+    <TableRow className="m-0 p-2" key={charge.id}>
+      <TableCell className="m-0 p-2">{hideCustomerDetails ? '' : user.name}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : (user.company || '(unknown)')}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : <a href={`mailto:${user.email}`}>{user.email}</a>}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{charge.tier.name}</TableCell>
+      <TableCell className="m-0 p-2 text-center"><PurchaseStatusBadge charge={charge} /></TableCell>
+      <TableCell className="m-0 p-2 text-center">{formatDate(charge.createdAt)}</TableCell>
+      <TableCell className="m-0 p-2 text-right">
+        {hideCustomerDetails ? null : 
+          <div className="flex flex-row justify-end gap-1">
+            <LinkButton label="View" href={`/customers/${user.id}`} />
+          </div>
+    }
+      </TableCell>
+    </TableRow>
+  );
+};
+
+export const CustomersTable = ({ customers , maxInitialRows }: { customers: CustomerWithChargesAndSubscriptions[], maxInitialRows?: number }) => {
+  
+  const showAll = false;
+
+  const rows = customers.flatMap((customer) => [
+    ...customer.subscriptions.map((subscription, index) => (
+      <SubscriptionRow key={subscription.id} user={customer} subscription={subscription} 
+        hideCustomerDetails={
+          index > 0 && subscription.userId === customer.subscriptions[index-1].userId
+        } />
+    )),
+    ...customer.charges.map((charge, index) => (
+      <ChargeRow key={charge.id} user={customer} charge={charge} 
+        hideCustomerDetails={
+          index > 0 ? 
+            charge.userId === customer.charges[index-1].userId 
+            : 
+            charge.userId === customer.subscriptions[customer.subscriptions.length - 1].userId
+        } />
+    )),
+  ]);
+
+  const visibleRows = showAll ? rows : rows.slice(0, maxInitialRows);
 
   return (
     <>
@@ -119,19 +107,18 @@ export const CustomersTable = ({ customers, maxInitialRows }: { customers: Custo
               <TableHeaderCell>Name</TableHeaderCell>
               <TableHeaderCell className="text-left">Company</TableHeaderCell>
               <TableHeaderCell className="text-left">Email</TableHeaderCell>
-              <TableHeaderCell className="text-left">Purchases</TableHeaderCell>
+              <TableHeaderCell className="text-left">Package</TableHeaderCell>
+              <TableHeaderCell className="text-center">Status</TableHeaderCell>
               <TableHeaderCell className="text-center">Customer Since</TableHeaderCell>
               <TableHeaderCell className="text-right"></TableHeaderCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {visibleCustomers.map(customer => (
-              <CustomerRow key={customer.id} customer={customer} />
-            ))}
+            {visibleRows}
           </TableBody>
         </Table>
       </DashboardCard>
-      {!showAll && customers.length > (maxInitialRows || 0) && (
+      {!showAll && maxInitialRows && rows.length > maxInitialRows && (
         <div className="grid justify-items-end">
           <Link href='/customers'>
             <Button size="xs" className="h-6" variant="secondary">
