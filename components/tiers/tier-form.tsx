@@ -605,7 +605,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                     { !newRecord && !tier._count?.Charge && !tier._count?.subscriptions && !tier.features?.length ?
                         <div className="mt-4 flex flex-col bg-gray-100 rounded-lg border border-gray-400 px-2 py-4 text-gray-700 items-center">
                             <Bold>Delete Package</Bold>
-                            <Text className="mb-4">Since this package does not have any active customers, you can delete this package, if required</Text>
+                            <Text className="mb-4">Since this package does not have any active customers, you can delete this package.</Text>
                             <TierDeleteButton 
                                 tierId={tier.id} 
                                 onConfirm={() => setIsDeleting(true)}
