@@ -1,20 +1,16 @@
 'use client'
 
-import { Bold, Card, Badge, Text } from "@tremor/react";
+import { Bold } from "@tremor/react";
 import CreatePageButton from "@/components/create-page-button";
 import Pages from "@/components/pages";
 import PageHeading from "@/components/common/page-heading";
-import PrimaryButton from "@/components/common/link-button";
 import { ExternalLinkChip } from "@/components/common/external-link";
-
-import { formatDistanceToNow } from 'date-fns';
-import Image from 'next/image';
 
 import { getSiteAndPages } from "@/app/services/SiteService";
 import { getRootUrl } from "@/app/services/domain-service";
 import { Page, Site } from "@prisma/client";
 import { useEffect, useState } from "react";
-import PreviewSection from "./preview-section";
+import SiteHomepagePreview from "../dashboard/site-homepage-preview";
 
 type SiteData = Partial<Site> & {
     pages: Page[];
@@ -64,34 +60,7 @@ export default function SiteAdmin({id} : { id: string}) {
 
             <div className="my-2">&nbsp;</div>
 
-            <Card>
-                <div className="flex justify-between w-full">
-                    <div className="absolute bottom-0 left-4">
-                        <PreviewSection content={homepage?.content ?? ''} width={280} height={220} screenWidth={1600} screenHeight={1250} className="border rounded-t-lg" />
-                    </div>
-                    <div className="flex-column ms-[300px]">
-                        <div className="mb-2">
-                            <Bold className="me-2">
-                                Site Homepage
-                            </Bold>
-
-                            {homepage?.draft ?
-                                <Badge color="gray" size="xs">Draft</Badge> :
-                                <Badge color="green" size="xs">Live</Badge>
-                            }
-                        </div>
-                        <div>
-                            { url ? <ExternalLinkChip href={url} label={url + ' ↗'} /> : null }
-                        </div>
-
-                        <Text className="mt-2">Title: {homepage?.title ?? "No Home Page Set"}</Text>
-                        <Text>Last Updated: {homepage?.updatedAt ? formatDistanceToNow(new Date(homepage.updatedAt), { addSuffix: true }) : 'Unknown'}</Text>
-                    </div>
-                    <div className="flex flex-row">
-                        <PrimaryButton label="Edit" href={`/page/${siteData.homepageId}`} />
-                    </div>
-                </div>
-            </Card>
+            <SiteHomepagePreview homepage={homepage} url={url ?? null}   homepageId={siteData.homepageId ?? null} />
 
             <div className="flex justify-between w-full">
                 <div className="flex flex-row">
