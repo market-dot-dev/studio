@@ -16,6 +16,7 @@ import SubscriptionStatusBadge from './subscription-state';
 import PurchaseStatusBadge from './purchase-state';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
+import { InfoIcon } from 'lucide-react';
 
 export type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
@@ -48,8 +49,8 @@ const SalesRow = ({ user, tierName, statusBadge, createdAt, userId }: SalesRowPr
   );
 };
 
-const SalesTable = ({ customers , maxInitialRows }: { customers: CustomerWithChargesAndSubscriptions[], maxInitialRows?: number }) => {
-  
+const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChargesAndSubscriptions[], maxInitialRows?: number }) => {
+
   const showAll = false;
 
   const sales = customers.flatMap((customer) => [
@@ -78,43 +79,55 @@ const SalesTable = ({ customers , maxInitialRows }: { customers: CustomerWithCha
 
   return (
     <>
-      <DashboardCard>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell className="text-left">Company</TableHeaderCell>
-              <TableHeaderCell className="text-left">Email</TableHeaderCell>
-              <TableHeaderCell className="text-left">Package</TableHeaderCell>
-              <TableHeaderCell className="text-center">Status</TableHeaderCell>
-              <TableHeaderCell className="text-center">Date</TableHeaderCell>
-              <TableHeaderCell className="text-right"></TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {visiblePurchases.map((purchase, index) => (
-              <SalesRow
-                key={`${purchase.type}-${index}`}
-                user={purchase.user}
-                tierName={purchase.tierName}
-                statusBadge={purchase.statusBadge}
-                createdAt={purchase.createdAt}
-                userId={purchase.userId}
-                
-              />
-            ))}
-          </TableBody>
-        </Table>
+      <div className="flex justify-between">
+        <h3 className="text-xl font-bold mb-2">Latest Sales</h3>
+        {!showAll && maxInitialRows && (
+          <div className="grid justify-items-end">
+            <Link href='/customers'>
+              <Button size="xs" className="h-6" variant="secondary">
+                View More Customers →
+              </Button>
+            </Link>
+          </div>
+        )}
+      </div>
+
+      <DashboardCard className="mb-4">
+        {sales.length === 0 ?
+          <div className="flex flex-col items-center justify-center py-8">
+            <InfoIcon className="h-12 w-12 text-gray-400 mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">No sales data available</h3>
+            <p className="text-gray-500 text-center max-w-md">
+              When you make your first sale, it will appear here.
+            </p>
+          </div> : 
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableHeaderCell>Name</TableHeaderCell>
+                <TableHeaderCell className="text-left">Company</TableHeaderCell>
+                <TableHeaderCell className="text-left">Email</TableHeaderCell>
+                <TableHeaderCell className="text-left">Package</TableHeaderCell>
+                <TableHeaderCell className="text-center">Status</TableHeaderCell>
+                <TableHeaderCell className="text-center">Date</TableHeaderCell>
+                <TableHeaderCell className="text-right"></TableHeaderCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {visiblePurchases.map((purchase, index) => (
+                <SalesRow
+                  key={`${purchase.type}-${index}`}
+                  user={purchase.user}
+                  tierName={purchase.tierName}
+                  statusBadge={purchase.statusBadge}
+                  createdAt={purchase.createdAt}
+                  userId={purchase.userId}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        }
       </DashboardCard>
-      {!showAll && maxInitialRows && sales.length > maxInitialRows && (
-        <div className="grid justify-items-end">
-          <Link href='/customers'>
-            <Button size="xs" className="h-6" variant="secondary">
-              View All Customers →
-            </Button>
-          </Link>
-        </div>
-      )}
     </>
   );
 };

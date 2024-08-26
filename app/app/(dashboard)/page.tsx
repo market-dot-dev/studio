@@ -38,12 +38,8 @@ export default async function Overview() {
         </div>
         <div className="flex flex-col space-y-6">
           <PageHeading title={title} />
-          <div className="flex flex-col gap-8">
-            {/* <h3 className="text-xl font-bold">Repo & Package Analytics</h3>
-            <DependentPackagesWidget repos={repos} /> */}
-            <h3 className="text-xl font-bold">Latest Sales</h3>
+          <div className="flex flex-col">
             <SalesTable customers={customers} maxInitialRows={5} />
-            <h3 className="text-xl font-bold">Reports</h3>
             <DashboardCharts customers={customers} />
           </div>
         </div>
