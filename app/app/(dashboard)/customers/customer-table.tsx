@@ -22,85 +22,61 @@ export type CustomerWithChargesAndSubscriptions = User & {
   subscriptions: (Subscription & { tier: Tier })[];
 };
 
-type SubscriptionRowProps = {
+type RowProps = {
   user: User;
-  subscription: Subscription & { tier: Tier };
-  hideCustomerDetails?: boolean;
+  item: (Subscription | Charge) & { tier: Tier };
+  hideCustomerDetails: boolean;
 };
 
-const SubscriptionRow = ({ user, subscription, hideCustomerDetails }: SubscriptionRowProps) => {
+const CustomerRow: React.FC<RowProps> = ({ user, item, hideCustomerDetails }) => {
+  const isSubscription = 'status' in item;
+  
   return (
-    <TableRow className="m-0 p-2" key={subscription.id}>
+    <TableRow className="m-0 p-2" key={item.id}>
       <TableCell className="m-0 p-2">{hideCustomerDetails ? '' : user.name}</TableCell>
       <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : (user.company || '(unknown)')}</TableCell>
       <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : <a href={`mailto:${user.email}`}>{user.email}</a>}</TableCell>
-      <TableCell className="m-0 p-2 text-left">{subscription.tier.name}</TableCell>
-      <TableCell className="m-0 p-2 text-center"><SubscriptionStatusBadge subscription={subscription} /></TableCell>
-      <TableCell className="m-0 p-2 text-center">{formatDate(subscription.createdAt)}</TableCell>
-      <TableCell className="m-0 p-2 text-right">
-      {hideCustomerDetails ? null : 
-        <div className="flex flex-row justify-end gap-1">
-          <LinkButton label="View" href={`/customers/${user.id}`} />
-        </div>
-      }
+      <TableCell className="m-0 p-2 text-left">{item.tier.name}</TableCell>
+      <TableCell className="m-0 p-2 text-center">
+        {isSubscription 
+          ? <SubscriptionStatusBadge subscription={item as Subscription} />
+          : <PurchaseStatusBadge charge={item as Charge} />
+        }
       </TableCell>
-    </TableRow>
-  );
-};
-
-type ChargeRowProps = {
-  user: User;
-  charge: Charge & { tier: Tier };
-  hideCustomerDetails?: boolean;
-};
-
-const ChargeRow = ({ user, charge, hideCustomerDetails }: ChargeRowProps) => {
-  return (
-    <TableRow className="m-0 p-2" key={charge.id}>
-      <TableCell className="m-0 p-2">{hideCustomerDetails ? '' : user.name}</TableCell>
-      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : (user.company || '(unknown)')}</TableCell>
-      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : <a href={`mailto:${user.email}`}>{user.email}</a>}</TableCell>
-      <TableCell className="m-0 p-2 text-left">{charge.tier.name}</TableCell>
-      <TableCell className="m-0 p-2 text-center"><PurchaseStatusBadge charge={charge} /></TableCell>
-      <TableCell className="m-0 p-2 text-center">{formatDate(charge.createdAt)}</TableCell>
+      <TableCell className="m-0 p-2 text-center">{formatDate(item.createdAt)}</TableCell>
       <TableCell className="m-0 p-2 text-right">
-        {hideCustomerDetails ? null : 
+        {!hideCustomerDetails && (
           <div className="flex flex-row justify-end gap-1">
             <LinkButton label="View" href={`/customers/${user.id}`} />
           </div>
-    }
+        )}
       </TableCell>
     </TableRow>
   );
 };
 
-export const CustomersTable = ({ customers , maxInitialRows }: { customers: CustomerWithChargesAndSubscriptions[], maxInitialRows?: number }) => {
-  
+export const CustomersTable: React.FC<{ 
+  customers: CustomerWithChargesAndSubscriptions[], 
+  maxInitialRows?: number 
+}> = ({ customers, maxInitialRows }) => {
   const showAll = false;
 
-  const rows = customers.flatMap((customer) => [
-    ...customer.subscriptions.map((subscription, index) => (
-      <SubscriptionRow 
-        key={subscription.id} 
-        user={customer} 
-        subscription={subscription} 
-        hideCustomerDetails={index > 0 && subscription.userId === customer.subscriptions[index-1].userId}
+  const rows = customers.flatMap((customer) => {
+    const allItems = [
+      ...customer.subscriptions.map(sub => ({ ...sub, type: 'subscription' as const })),
+      ...customer.charges.map(charge => ({ ...charge, type: 'charge' as const }))
+    ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+    return allItems.map((item, index) => (
+      <CustomerRow
+        key={item.id}
+        user={customer}
+        item={item}
+        hideCustomerDetails={index > 0 && item.userId === allItems[index - 1].userId}
       />
-    )),
-    ...customer.charges.map((charge, index) => (
-      <ChargeRow 
-        key={charge.id} 
-        user={customer} 
-        charge={charge} 
-        hideCustomerDetails={
-          index > 0 
-            ? charge.userId === customer.charges[index-1].userId 
-            : customer.subscriptions.length > 0 && charge.userId === customer.subscriptions[customer.subscriptions.length - 1].userId
-        }
-      />
-    )),
-  ]);
-  
+    ));
+  });
+
   const visibleRows = showAll ? rows : rows.slice(0, maxInitialRows);
 
   return (
@@ -109,13 +85,14 @@ export const CustomersTable = ({ customers , maxInitialRows }: { customers: Cust
         <Table>
           <TableHead>
             <TableRow>
-              <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell className="text-left">Company</TableHeaderCell>
-              <TableHeaderCell className="text-left">Email</TableHeaderCell>
-              <TableHeaderCell className="text-left">Package</TableHeaderCell>
-              <TableHeaderCell className="text-center">Status</TableHeaderCell>
-              <TableHeaderCell className="text-center">Customer Since</TableHeaderCell>
-              <TableHeaderCell className="text-right"></TableHeaderCell>
+              {['Name', 'Company', 'Email', 'Package', 'Status', 'Customer Since', ''].map((header, index) => (
+                <TableHeaderCell 
+                  key={header} 
+                  className={index < 3 ? 'text-left' : index === 5 ? 'text-center' : 'text-right'}
+                >
+                  {header}
+                </TableHeaderCell>
+              ))}
             </TableRow>
           </TableHead>
           <TableBody>
