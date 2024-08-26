@@ -92,7 +92,7 @@ const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChar
         )}
       </div>
 
-      <DashboardCard className="mb-4">
+      <DashboardCard className="mb-8">
         {sales.length === 0 ?
           <div className="flex flex-col items-center justify-center py-8">
             <InfoIcon className="h-12 w-12 text-gray-400 mb-4" />
