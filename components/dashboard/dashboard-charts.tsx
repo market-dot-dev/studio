@@ -187,6 +187,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               index="date"
               categories={["New Subscriptions", "Cancellations", "Renewals", "One-time Charges"]}
               colors={["gray-400", "red-400", "green-400", "blue-400"]}
+              autoMinValue={true}
               maxValue={Math.ceil(highestCustChangesInAMonth*120/100)}
               intervalType="preserveStartEnd"
               allowDecimals={false}
@@ -211,6 +212,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               categories={["New Subscriptions", "Renewals", "One-time Charges"]}
               colors={["gray-500", "blue-300", "yellow-300"]}
               connectNulls={true}
+              autoMinValue={true}
               maxValue={Math.ceil(highestRevenueItemInMonth*120/100)}
               intervalType="preserveStartEnd"
               allowDecimals={false}
