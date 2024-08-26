@@ -63,14 +63,15 @@ const ContractText = ({ checkoutProject, contract }: { checkoutProject: string, 
 }
 
 
-const CheckoutComponent = ({ id, tier, contract, maintainer, hasActiveFeatures, features }
+const CheckoutComponent = ({ id, tier, contract, maintainer, hasActiveFeatures, features, rootUrl }
   : {
     id: string,
     tier: Tier,
     contract: Contract | null,
     maintainer: User,
     hasActiveFeatures: boolean,
-    features: Feature[]
+    features: Feature[],
+    rootUrl: string
   }) => {
 
   const searchParams = useSearchParams();
@@ -156,7 +157,7 @@ const CheckoutComponent = ({ id, tier, contract, maintainer, hasActiveFeatures, 
       {/* Right Column */}
       <div className="ml-auto w-full overflow-y-auto bg-white p-8 text-slate-800 md:w-3/5 md:p-16">
 
-        {tier && maintainer && <RegistrationSection tier={tier} maintainer={maintainer} annual={isAnnual} />}
+        {tier && maintainer && <RegistrationSection tier={tier} maintainer={maintainer} annual={isAnnual} rootUrl={rootUrl} />}
 
       </div>
     </div>

@@ -5,10 +5,14 @@ import ContractService from "@/app/services/contract-service";
 import Tier from "@/app/models/Tier";
 import UserService from "@/app/services/UserService";
 import FeatureService from "@/app/services/feature-service";
+import DomainService from "@/app/services/domain-service";
 
 export default async function CheckoutPage({ params}: { params: { id: string } }) {
 
-	const tier = await TierService.findTier(params.id) as Tier;
+	const [rootUrl, tier] = await Promise.all([
+		DomainService.getRootUrl('app', '/'),
+		TierService.findTier(params.id)
+	]) as [string, Tier];
 	
 	const [contract, maintainer, hasActiveFeatures, features] = await Promise.all([
 		tier?.contractId ? ContractService.getContractById(tier?.contractId) : null,
@@ -26,7 +30,9 @@ export default async function CheckoutPage({ params}: { params: { id: string } }
 				contract={contract} 
 				maintainer={maintainer} 
 				hasActiveFeatures={hasActiveFeatures} 
-				features={features}   />
+				features={features}   
+				rootUrl={rootUrl}
+				/>
 			: <div>Not found</div>
 		}
 		</>

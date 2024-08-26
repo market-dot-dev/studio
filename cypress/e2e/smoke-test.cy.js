@@ -34,6 +34,7 @@ describe('gitwallet smoke test', () => {
     cy.get('[data-cy="checkout-button"]').click();
 
     // verify transaction went through
-    cy.contains("Paid", { timeout: 10000 }).should('exist');
+    cy.location('pathname', { timeout: 10000 }).should('eq', '/');
+    
   });
 })

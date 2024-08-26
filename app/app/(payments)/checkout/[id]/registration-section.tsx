@@ -26,10 +26,11 @@ const AlreadySubscribedCard = () => {
   </Card>);
 }
 
-const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
+const RegistrationCheckoutSection = ({ tier, maintainer, annual = false, rootUrl }: {
   tier: Tier;
   maintainer: User;
   annual?: boolean;
+  rootUrl: string;
 }) => {
   const { currentUser: user, refreshSession } = useCurrentSession();
   const userId = user?.id;
@@ -62,7 +63,7 @@ const RegistrationCheckoutSection = ({ tier, maintainer, annual = false }: {
       } else {
         setSubmittingSubscription(true);
         onClickSubscribe(userId, tierId, annual).then((res) => {
-          window.location.href = "/success";
+          window.location.href = rootUrl;
         }).catch((err) => {
           setError(err.message);
         });
