@@ -1,7 +1,6 @@
 import { Card, Text, LineChart } from "@tremor/react";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 
-
 const labels = {
   newSubscriptions: 'Subscriptions',
   cancellations: 'Cancellations',
@@ -14,12 +13,21 @@ const labels = {
   monthlyRecurringRevenue: 'Revenue',
   orders: 'Orders',
   averageOrderValue: 'Average Order Value',
-  
 } as any;
 
 export default function DashboardCharts({ customers }: { customers: CustomerWithChargesAndSubscriptions[] }) {
 
-  const getRenewalMonth = (createdAt: Date, cadence: string) => {
+  const getLastSixMonths = () => {
+    const today = new Date();
+    const months = [];
+    for (let i = 5; i >= 0; i--) {
+      const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+      months.push(d);
+    }
+    return months;
+  };
+
+  const getRenewalDate = (createdAt: Date, cadence: string) => {
     const creationDate = new Date(createdAt);
     let renewalDate;
 
@@ -29,11 +37,11 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
       renewalDate = new Date(creationDate.setFullYear(creationDate.getFullYear() + 1));
     }
 
-    return renewalDate?.getMonth();
+    return renewalDate;
   };
 
   const processCustomers = (customers: CustomerWithChargesAndSubscriptions[]) => {
-    const currentYear = new Date().getFullYear();
+    const lastSixMonths = getLastSixMonths();
     const data = {
       newSubscriptions: [] as any[],
       cancellations: [] as any[],
@@ -46,63 +54,80 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
       monthlyRecurringRevenue: [] as any[],
       orders: [] as any[],
       averageOrderValue: [] as any[],
-    };
+    } as any;
   
-    for (let i = 0; i < 12; i++) {
-      const monthLabel = new Date(currentYear, i).toLocaleString('default', { month: 'short', year: 'numeric' });
-      data.newSubscriptions.push({ date: monthLabel, [labels['newSubscriptions']]: 0 });
-      data.cancellations.push({ date: monthLabel, [labels['cancellations']]: 0 });
-      data.renewals.push({ date: monthLabel, [labels['renewals']]: 0 });
-      data.oneTimeCharges.push({ date: monthLabel, [labels['oneTimeCharges']]: 0 });
-      data.activeSubscriptions.push({ date: monthLabel, [labels['activeSubscriptions']]: 0 });
-      data.newSubscriptionsRevenue.push({ date: monthLabel, [labels['newSubscriptionsRevenue']]: 0 });
-      data.renewedSubscriptionsRevenue.push({ date: monthLabel, [labels['renewedSubscriptionsRevenue']]: 0 });
-      data.oneTimeChargesRevenue.push({ date: monthLabel, [labels['oneTimeChargesRevenue']]: 0 });
-      data.monthlyRecurringRevenue.push({ date: monthLabel, [labels['monthlyRecurringRevenue']]: 0 });
-      data.orders.push({ date: monthLabel, [labels['orders']]: 0 });
-      data.averageOrderValue.push({ date: monthLabel, [labels['averageOrderValue']]: 0 });
-    }
+    lastSixMonths.forEach(date => {
+      const monthLabel = date.toLocaleString('default', { month: 'short', year: 'numeric' });
+      Object.keys(data).forEach(key => {
+        data[key].push({ date: monthLabel, [labels[key]]: 0 });
+      });
+    });
   
     customers.forEach(customer => {
       customer.subscriptions.forEach(subscription => {
-        const createdMonth = new Date(subscription.createdAt).getMonth();
+        const createdDate = new Date(subscription.createdAt);
         const price = subscription.tier.price;
   
-        data.newSubscriptions[createdMonth][labels['newSubscriptions']]++;
-        data.newSubscriptionsRevenue[createdMonth][labels['newSubscriptionsRevenue']] += price;
+        const createdMonthIndex = lastSixMonths.findIndex(date => 
+          date.getMonth() === createdDate.getMonth() && 
+          date.getFullYear() === createdDate.getFullYear()
+        );
+  
+        if (createdMonthIndex !== -1) {
+          data.newSubscriptions[createdMonthIndex][labels['newSubscriptions']]++;
+          data.newSubscriptionsRevenue[createdMonthIndex][labels['newSubscriptionsRevenue']] += price;
+          data.activeSubscriptions[createdMonthIndex][labels['activeSubscriptions']]++;
+        }
   
         if (subscription.cancelledAt) {
-          const cancelledMonth = new Date(subscription.cancelledAt).getMonth();
-          data.cancellations[cancelledMonth][labels['cancellations']]++;
-        } else {
-          let renewalMonth = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
+          const cancelledDate = new Date(subscription.cancelledAt);
+          const cancelledMonthIndex = lastSixMonths.findIndex(date => 
+            date.getMonth() === cancelledDate.getMonth() && 
+            date.getFullYear() === cancelledDate.getFullYear()
+          );
           
-          while (renewalMonth !== undefined && renewalMonth <= new Date().getMonth()) {
-            data.renewals[renewalMonth][labels['renewals']]++;
-            data.renewedSubscriptionsRevenue[renewalMonth][labels['renewedSubscriptionsRevenue']] += price;
-            data.monthlyRecurringRevenue[renewalMonth][labels['monthlyRecurringRevenue']] += price;
-            const renewalDate = new Date(subscription.createdAt);
-            renewalDate.setMonth(renewalMonth);
-            renewalMonth = getRenewalMonth(renewalDate, subscription.tier.cadence);
+          if (cancelledMonthIndex !== -1) {
+            data.cancellations[cancelledMonthIndex][labels['cancellations']]++;
           }
-  
-          data.activeSubscriptions[createdMonth][labels['activeSubscriptions']]++;
+        } else {
+          let renewalDate = getRenewalDate(subscription.createdAt, subscription.tier.cadence);
+          
+          while (renewalDate && renewalDate <= new Date()) {
+            const renewalMonthIndex = lastSixMonths.findIndex(date => 
+              date.getMonth() === renewalDate!.getMonth() && 
+              date.getFullYear() === renewalDate!.getFullYear()
+            );
+            
+            if (renewalMonthIndex !== -1) {
+              data.renewals[renewalMonthIndex][labels['renewals']]++;
+              data.renewedSubscriptionsRevenue[renewalMonthIndex][labels['renewedSubscriptionsRevenue']] += price;
+              data.monthlyRecurringRevenue[renewalMonthIndex][labels['monthlyRecurringRevenue']] += price;
+            }
+            renewalDate = getRenewalDate(renewalDate, subscription.tier.cadence);
+          }
         }
       });
   
       customer.charges.forEach(charge => {
-        const month = new Date(charge.createdAt).getMonth();
+        const chargeDate = new Date(charge.createdAt);
         const price = charge.tier.price;
   
-        data.oneTimeCharges[month][labels['oneTimeCharges']]++;
-        data.oneTimeChargesRevenue[month][labels['oneTimeChargesRevenue']] += price;
-        data.orders[month][labels['orders']]++;
+        const chargeMonthIndex = lastSixMonths.findIndex(date => 
+          date.getMonth() === chargeDate.getMonth() && 
+          date.getFullYear() === chargeDate.getFullYear()
+        );
   
-        // Calculate average order value for the specific month
-        if (data.orders[month][labels['orders']] > 0) {
-          data.averageOrderValue[month][labels['averageOrderValue']] =
-            data.oneTimeChargesRevenue[month][labels['oneTimeChargesRevenue']] /
-            data.orders[month][labels['orders']];
+        if (chargeMonthIndex !== -1) {
+          data.oneTimeCharges[chargeMonthIndex][labels['oneTimeCharges']]++;
+          data.oneTimeChargesRevenue[chargeMonthIndex][labels['oneTimeChargesRevenue']] += price;
+          data.orders[chargeMonthIndex][labels['orders']]++;
+  
+          // Calculate average order value for the specific month
+          if (data.orders[chargeMonthIndex][labels['orders']] > 0) {
+            data.averageOrderValue[chargeMonthIndex][labels['averageOrderValue']] =
+              data.oneTimeChargesRevenue[chargeMonthIndex][labels['oneTimeChargesRevenue']] /
+              data.orders[chargeMonthIndex][labels['orders']];
+          }
         }
       });
     });
@@ -110,27 +135,29 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
     return data;
   };
   
-  
-
   const data = processCustomers(customers);
 
   const renderChart = (title: string, data: any[], category: string, color: string) => {
     
+    const heighestValue = Math.max(...data.map(d => d[labels[category]]));
+    
     return (
-    <Card>
-      <div className="flex flex-row justify-between">
-        <Text>{title}</Text>
-      </div>
-      <LineChart
-        className="h-72 mt-4"
-        data={data}
-        index="date"
-        categories={[labels[category]]}
-        colors={[color]}
-        yAxisWidth={80}
-        connectNulls={true}
-      />
-    </Card>
+      <Card>
+        <div className="flex flex-row justify-between">
+          <Text>{title} (Last 6 Months)</Text>
+        </div>
+        <LineChart
+          className="h-72 mt-4"
+          data={data}
+          index="date"
+          categories={[labels[category]]}
+          colors={[color]}
+          connectNulls={true}
+          maxValue={Math.ceil(heighestValue * 120 / 100)}
+          intervalType="preserveStartEnd"
+          allowDecimals={false}
+        />
+      </Card>
     )
   };
 
