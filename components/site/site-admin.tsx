@@ -18,15 +18,22 @@ import PreviewSection from "./preview-section";
 
 type SiteData = Partial<Site> & {
     pages: Page[];
-  };
+};
 
-export default function SiteAdmin({id} : { id: string}) {
+interface SiteAdminProps {
+    id: string;
+    isDashboard?: boolean;
+}
+
+
+
+export default function SiteAdmin({ id, isDashboard = false }: SiteAdminProps) {
 
     const [siteData, setSiteData] = useState<SiteData | null>(null);
     const [url, setUrl] = useState<string | null>(null);
 
     useEffect(() => {
-        if(id) {
+        if (id) {
             const getData = async () => {
                 try {
                     const data = await getSiteAndPages(id);
@@ -41,9 +48,9 @@ export default function SiteAdmin({id} : { id: string}) {
         }
     }, [])
 
-    const homepage = siteData?.pages?.find((page : Page) => page.id === siteData.homepageId) ?? null;
-    
-    if(!siteData) {
+    const homepage = siteData?.pages?.find((page: Page) => page.id === siteData.homepageId) ?? null;
+
+    if (!siteData) {
         return (
             <div>
                 Loading...
@@ -58,7 +65,7 @@ export default function SiteAdmin({id} : { id: string}) {
                     <PageHeading title="Site Content" />
                 </div>
                 <div className="flex flex-row">
-                    { url ? <ExternalLinkChip href={url} label={url + ' ↗'} /> : null }
+                    {url ? <ExternalLinkChip href={url} label={url + ' ↗'} /> : null}
                 </div>
             </div>
 
@@ -81,7 +88,7 @@ export default function SiteAdmin({id} : { id: string}) {
                             }
                         </div>
                         <div>
-                            { url ? <ExternalLinkChip href={url} label={url + ' ↗'} /> : null }
+                            {url ? <ExternalLinkChip href={url} label={url + ' ↗'} /> : null}
                         </div>
 
                         <Text className="mt-2">Title: {homepage?.title ?? "No Home Page Set"}</Text>
@@ -93,16 +100,21 @@ export default function SiteAdmin({id} : { id: string}) {
                 </div>
             </Card>
 
-            <div className="flex justify-between w-full">
-                <div className="flex flex-row">
-                    <Bold>All Pages</Bold>
-                </div>
-                <div className="flex flex-row">
-                    <CreatePageButton />
-                </div>
-            </div>
+            {!isDashboard && (
+                <>
+                    <div className="flex justify-between w-full">
+                        <div className="flex flex-row">
+                            <Bold>All Pages</Bold>
+                        </div>
+                        <div className="flex flex-row">
+                            <CreatePageButton />
+                        </div>
+                    </div>
 
-            <Pages pages={siteData.pages} url={url ?? ''} homepageId={siteData.homepageId ?? null} />
+                    <Pages pages={siteData.pages} url={url ?? ''} homepageId={siteData.homepageId ?? null} />
+                </>
+            )}
+
         </>
     )
 }
