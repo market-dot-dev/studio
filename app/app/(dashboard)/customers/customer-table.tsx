@@ -80,22 +80,27 @@ export const CustomersTable = ({ customers , maxInitialRows }: { customers: Cust
 
   const rows = customers.flatMap((customer) => [
     ...customer.subscriptions.map((subscription, index) => (
-      <SubscriptionRow key={subscription.id} user={customer} subscription={subscription} 
-        hideCustomerDetails={
-          index > 0 && subscription.userId === customer.subscriptions[index-1].userId
-        } />
+      <SubscriptionRow 
+        key={subscription.id} 
+        user={customer} 
+        subscription={subscription} 
+        hideCustomerDetails={index > 0 && subscription.userId === customer.subscriptions[index-1].userId}
+      />
     )),
     ...customer.charges.map((charge, index) => (
-      <ChargeRow key={charge.id} user={customer} charge={charge} 
+      <ChargeRow 
+        key={charge.id} 
+        user={customer} 
+        charge={charge} 
         hideCustomerDetails={
-          index > 0 ? 
-            charge.userId === customer.charges[index-1].userId 
-            : 
-            charge.userId === customer.subscriptions[customer.subscriptions.length - 1].userId
-        } />
+          index > 0 
+            ? charge.userId === customer.charges[index-1].userId 
+            : customer.subscriptions.length > 0 && charge.userId === customer.subscriptions[customer.subscriptions.length - 1].userId
+        }
+      />
     )),
   ]);
-
+  
   const visibleRows = showAll ? rows : rows.slice(0, maxInitialRows);
 
   return (
