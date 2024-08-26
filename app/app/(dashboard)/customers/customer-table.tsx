@@ -1,4 +1,3 @@
-"use client";
 import { User, Subscription, Charge } from '@prisma/client';
 import {
   Table,
@@ -26,21 +25,24 @@ export type CustomerWithChargesAndSubscriptions = User & {
 type SubscriptionRowProps = {
   user: User;
   subscription: Subscription & { tier: Tier };
+  hideCustomerDetails?: boolean;
 };
 
-const SubscriptionRow = ({ user, subscription }: SubscriptionRowProps) => {
+const SubscriptionRow = ({ user, subscription, hideCustomerDetails }: SubscriptionRowProps) => {
   return (
     <TableRow className="m-0 p-2" key={subscription.id}>
-      <TableCell className="m-0 p-2">{user.name}</TableCell>
-      <TableCell className="m-0 p-2 text-left">{user.company || '(unknown)'}</TableCell>
-      <TableCell className="m-0 p-2 text-left"><a href={`mailto:${user.email}`}>{user.email}</a></TableCell>
+      <TableCell className="m-0 p-2">{hideCustomerDetails ? '' : user.name}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : (user.company || '(unknown)')}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : <a href={`mailto:${user.email}`}>{user.email}</a>}</TableCell>
       <TableCell className="m-0 p-2 text-left">{subscription.tier.name}</TableCell>
       <TableCell className="m-0 p-2 text-center"><SubscriptionStatusBadge subscription={subscription} /></TableCell>
       <TableCell className="m-0 p-2 text-center">{formatDate(subscription.createdAt)}</TableCell>
       <TableCell className="m-0 p-2 text-right">
+      {hideCustomerDetails ? null : 
         <div className="flex flex-row justify-end gap-1">
           <LinkButton label="View" href={`/customers/${user.id}`} />
         </div>
+      }
       </TableCell>
     </TableRow>
   );
@@ -49,21 +51,24 @@ const SubscriptionRow = ({ user, subscription }: SubscriptionRowProps) => {
 type ChargeRowProps = {
   user: User;
   charge: Charge & { tier: Tier };
+  hideCustomerDetails?: boolean;
 };
 
-const ChargeRow = ({ user, charge }: ChargeRowProps) => {
+const ChargeRow = ({ user, charge, hideCustomerDetails }: ChargeRowProps) => {
   return (
     <TableRow className="m-0 p-2" key={charge.id}>
-      <TableCell className="m-0 p-2">{user.name}</TableCell>
-      <TableCell className="m-0 p-2 text-left">{user.company || '(unknown)'}</TableCell>
-      <TableCell className="m-0 p-2 text-left"><a href={`mailto:${user.email}`}>{user.email}</a></TableCell>
+      <TableCell className="m-0 p-2">{hideCustomerDetails ? '' : user.name}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : (user.company || '(unknown)')}</TableCell>
+      <TableCell className="m-0 p-2 text-left">{hideCustomerDetails ? '' : <a href={`mailto:${user.email}`}>{user.email}</a>}</TableCell>
       <TableCell className="m-0 p-2 text-left">{charge.tier.name}</TableCell>
       <TableCell className="m-0 p-2 text-center"><PurchaseStatusBadge charge={charge} /></TableCell>
       <TableCell className="m-0 p-2 text-center">{formatDate(charge.createdAt)}</TableCell>
       <TableCell className="m-0 p-2 text-right">
-        <div className="flex flex-row justify-end gap-1">
-          <LinkButton label="View" href={`/customers/${user.id}`} />
-        </div>
+        {hideCustomerDetails ? null : 
+          <div className="flex flex-row justify-end gap-1">
+            <LinkButton label="View" href={`/customers/${user.id}`} />
+          </div>
+    }
       </TableCell>
     </TableRow>
   );
@@ -74,11 +79,20 @@ export const CustomersTable = ({ customers , maxInitialRows }: { customers: Cust
   const showAll = false;
 
   const rows = customers.flatMap((customer) => [
-    ...customer.subscriptions.map((subscription) => (
-      <SubscriptionRow key={subscription.id} user={customer} subscription={subscription} />
+    ...customer.subscriptions.map((subscription, index) => (
+      <SubscriptionRow key={subscription.id} user={customer} subscription={subscription} 
+        hideCustomerDetails={
+          index > 0 && subscription.userId === customer.subscriptions[index-1].userId
+        } />
     )),
-    ...customer.charges.map((charge) => (
-      <ChargeRow key={charge.id} user={customer} charge={charge} />
+    ...customer.charges.map((charge, index) => (
+      <ChargeRow key={charge.id} user={customer} charge={charge} 
+        hideCustomerDetails={
+          index > 0 ? 
+            charge.userId === customer.charges[index-1].userId 
+            : 
+            charge.userId === customer.subscriptions[customer.subscriptions.length - 1].userId
+        } />
     )),
   ]);
 
@@ -93,7 +107,7 @@ export const CustomersTable = ({ customers , maxInitialRows }: { customers: Cust
               <TableHeaderCell>Name</TableHeaderCell>
               <TableHeaderCell className="text-left">Company</TableHeaderCell>
               <TableHeaderCell className="text-left">Email</TableHeaderCell>
-              <TableHeaderCell className="text-left">Tier</TableHeaderCell>
+              <TableHeaderCell className="text-left">Package</TableHeaderCell>
               <TableHeaderCell className="text-center">Status</TableHeaderCell>
               <TableHeaderCell className="text-center">Customer Since</TableHeaderCell>
               <TableHeaderCell className="text-right"></TableHeaderCell>

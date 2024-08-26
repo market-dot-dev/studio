@@ -8,7 +8,7 @@ import UserService from "@/app/services/UserService";
 import {
   CheckSquare2 as CheckSquare,
 } from "lucide-react";
-import { Bold } from "@tremor/react";
+
 import DomainService from "@/app/services/domain-service";
 import ChargeService from "@/app/services/charge-service";
 import TierService from "@/app/services/TierService";

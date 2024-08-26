@@ -85,9 +85,16 @@ export const formatDate = (date: Date | string): string => {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+    timeZone: 'UTC' // Ensure consistent output by using UTC
   };
-  return new Date(date).toLocaleDateString('en-US', options);
+
+  // Convert the date string to a Date object if it's not already
+  const parsedDate = typeof date === 'string' ? new Date(date) : date;
+
+  // Use 'en-US' for a consistent locale
+  return parsedDate.toLocaleDateString('en-US', options);
 };
+
 
 export const formatCurrency = (amount: number, currency: string = 'USD'): string => {
   const options: Intl.NumberFormatOptions = {
