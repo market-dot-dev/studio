@@ -30,7 +30,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
   const processCustomers = (customers: CustomerWithChargesAndSubscriptions[]) => {
     const lastSixMonths = getLastSixMonths();
     const subscriptionCounts = {} as any;
-  
+
     lastSixMonths.forEach(date => {
       subscriptionCounts[date.getTime()] = {
         date: date.toLocaleString('default', { month: 'short', year: 'numeric' }),
@@ -40,40 +40,40 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
         'One-time Charges': 0,
       };
     });
-  
+
     customers.forEach(customer => {
       customer.subscriptions.forEach(subscription => {
         const createdDate = new Date(subscription.createdAt);
-        const monthKey = lastSixMonths.find(date => 
-          date.getMonth() === createdDate.getMonth() && 
+        const monthKey = lastSixMonths.find(date =>
+          date.getMonth() === createdDate.getMonth() &&
           date.getFullYear() === createdDate.getFullYear()
         );
-        
+
         if (monthKey) {
           subscriptionCounts[monthKey.getTime()]['New Subscriptions']++;
         }
-  
+
         if (subscription.cancelledAt) {
           const cancelledDate = new Date(subscription.cancelledAt);
-          const cancelMonthKey = lastSixMonths.find(date => 
-            date.getMonth() === cancelledDate.getMonth() && 
+          const cancelMonthKey = lastSixMonths.find(date =>
+            date.getMonth() === cancelledDate.getMonth() &&
             date.getFullYear() === cancelledDate.getFullYear()
           );
-          
+
           if (cancelMonthKey) {
             subscriptionCounts[cancelMonthKey.getTime()]['Cancellations']++;
           }
         }
-  
+
         if (!subscription.cancelledAt) {
           let renewalDate = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
-  
+
           while (renewalDate && renewalDate <= new Date()) {
-            const renewalMonthKey = lastSixMonths.find(date => 
-              date.getMonth() === renewalDate!.getMonth() && 
+            const renewalMonthKey = lastSixMonths.find(date =>
+              date.getMonth() === renewalDate!.getMonth() &&
               date.getFullYear() === renewalDate!.getFullYear()
             );
-            
+
             if (renewalMonthKey) {
               subscriptionCounts[renewalMonthKey.getTime()]['Renewals']++;
             }
@@ -81,27 +81,27 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
           }
         }
       });
-  
+
       customer.charges.forEach(charge => {
         const chargeDate = new Date(charge.createdAt);
-        const monthKey = lastSixMonths.find(date => 
-          date.getMonth() === chargeDate.getMonth() && 
+        const monthKey = lastSixMonths.find(date =>
+          date.getMonth() === chargeDate.getMonth() &&
           date.getFullYear() === chargeDate.getFullYear()
         );
-        
+
         if (monthKey) {
           subscriptionCounts[monthKey.getTime()]['One-time Charges']++;
         }
       });
     });
-  
+
     return Object.values(subscriptionCounts);
   };
 
   const processRevenueData = (customers: CustomerWithChargesAndSubscriptions[]) => {
     const lastSixMonths = getLastSixMonths();
     const revenueData = {} as any;
-  
+
     lastSixMonths.forEach(date => {
       revenueData[date.getTime()] = {
         date: date.toLocaleString('default', { month: 'short', year: 'numeric' }),
@@ -110,28 +110,28 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
         'One-time Charges': 0,
       };
     });
-  
+
     customers.forEach(customer => {
       customer.subscriptions.forEach(subscription => {
         const createdDate = new Date(subscription.createdAt);
-        const monthKey = lastSixMonths.find(date => 
-          date.getMonth() === createdDate.getMonth() && 
+        const monthKey = lastSixMonths.find(date =>
+          date.getMonth() === createdDate.getMonth() &&
           date.getFullYear() === createdDate.getFullYear()
         );
-        
+
         if (monthKey) {
           revenueData[monthKey.getTime()]['New Subscriptions'] += subscription.tier.price;
         }
-  
+
         if (!subscription.cancelledAt) {
           let renewalDate = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
-  
+
           while (renewalDate && renewalDate <= new Date()) {
-            const renewalMonthKey = lastSixMonths.find(date => 
-              date.getMonth() === renewalDate!.getMonth() && 
+            const renewalMonthKey = lastSixMonths.find(date =>
+              date.getMonth() === renewalDate!.getMonth() &&
               date.getFullYear() === renewalDate!.getFullYear()
             );
-            
+
             if (renewalMonthKey) {
               revenueData[renewalMonthKey.getTime()]['Renewals'] += subscription.tier.price;
             }
@@ -139,20 +139,20 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
           }
         }
       });
-  
+
       customer.charges.forEach(charge => {
         const chargeDate = new Date(charge.createdAt);
-        const monthKey = lastSixMonths.find(date => 
-          date.getMonth() === chargeDate.getMonth() && 
+        const monthKey = lastSixMonths.find(date =>
+          date.getMonth() === chargeDate.getMonth() &&
           date.getFullYear() === chargeDate.getFullYear()
         );
-        
+
         if (monthKey) {
           revenueData[monthKey.getTime()]['One-time Charges'] += charge.tier.price;
         }
       });
     });
-    
+
     return Object.values(revenueData);
   };
 
@@ -161,14 +161,22 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
 
   const totalNewCustomers = customerTotals.reduce((acc, cur: any) => acc + cur['New Subscriptions'] + cur['One-time Charges'], 0) as number;
   const totalRevenue = revenueData.reduce((acc, cur: any) => acc + cur['New Subscriptions'] + cur['Renewals'] + cur['One-time Charges'], 0);
-  
+
   const highestCustChangesInAMonth = Math.max(...customerTotals.map((total: any) => [total['New Subscriptions'], total['Cancellations'], total['Renewals'], total['One-time Charges']]).flat());
-  
-  const highestRevenueItemInMonth = Math.max(...revenueData.map((total: any) => [total['New Subscriptions'] , total['Renewals'] , total['One-time Charges']]).flat());
+
+  const highestRevenueItemInMonth = Math.max(...revenueData.map((total: any) => [total['New Subscriptions'], total['Renewals'], total['One-time Charges']]).flat());
 
   return (
     <>
-      <div className="flex max-w-screen-xl flex-col mt-4 space-y-4">
+      <div className="flex justify-between">
+        <h3 className="text-xl font-bold mb-2">Reports</h3>
+        <Link href='/reports' className="ml-auto">
+          <Button size="xs" className="h-6" variant="secondary">
+            More Details →
+          </Button>
+        </Link>
+      </div>
+      <div className="flex max-w-screen-xl flex-col space-y-4">
         <div className="grid gap-6 sm:grid-cols-2">
           <Card>
             <div className="flex flex-row justify-between">
@@ -187,7 +195,8 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               index="date"
               categories={["New Subscriptions", "Cancellations", "Renewals", "One-time Charges"]}
               colors={["gray-400", "red-400", "green-400", "blue-400"]}
-              maxValue={Math.ceil(highestCustChangesInAMonth*120/100)}
+              autoMinValue={true}
+              maxValue={Math.ceil(highestCustChangesInAMonth * 120 / 100)}
               intervalType="preserveStartEnd"
               allowDecimals={false}
             />
@@ -211,17 +220,14 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               categories={["New Subscriptions", "Renewals", "One-time Charges"]}
               colors={["gray-500", "blue-300", "yellow-300"]}
               connectNulls={true}
-              maxValue={Math.ceil(highestRevenueItemInMonth*120/100)}
+              autoMinValue={true}
+              maxValue={Math.ceil(highestRevenueItemInMonth * 120 / 100)}
               intervalType="preserveStartEnd"
               allowDecimals={false}
             />
           </Card>
         </div>
-        <Link href='/reports' className="ml-auto">
-          <Button size="xs" className="h-6" variant="secondary">
-          More Details →
-          </Button>
-        </Link>
+
       </div>
     </>
   );
