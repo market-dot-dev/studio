@@ -1,4 +1,4 @@
-import { Metric, Card, Text, Flex, BarChart, LineChart, Button } from "@tremor/react";
+import { Metric, Card, Text, Flex, BarChart, LineChart, Button, Badge } from "@tremor/react";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import Link from "next/link";
 
@@ -156,20 +156,52 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
     return Object.values(revenueData);
   };
 
-  const customerTotals = processCustomers(customers);
-  const revenueData = processRevenueData(customers);
+  const generateDummyData = () => {
+    const lastSixMonths = getLastSixMonths();
+    const dummyCustomerTotals = [];
+    const dummyRevenueData = [];
+
+    for (let i = 0; i < 6; i++) {
+      const date = lastSixMonths[i].toLocaleString('default', { month: 'short', year: 'numeric' });
+      
+      dummyCustomerTotals.push({
+        date,
+        'New Subscriptions': Math.floor(Math.random() * 10) + 5,
+        'Cancellations': Math.floor(Math.random() * 3),
+        'Renewals': Math.floor(Math.random() * 8) + 3,
+        'One-time Charges': Math.floor(Math.random() * 5) + 1,
+      });
+
+      dummyRevenueData.push({
+        date,
+        'New Subscriptions': Math.round((1000 + i * 200 + Math.random() * 300) / 10) * 10,
+        'Renewals': Math.round((1500 + i * 250 + Math.random() * 400) / 10) * 10,
+        'One-time Charges': Math.round((500 + i * 100 + Math.random() * 200) / 10) * 10,
+      });
+    }
+
+    return { dummyCustomerTotals, dummyRevenueData };
+  };
+
+  const { dummyCustomerTotals, dummyRevenueData } = generateDummyData();
+  const customerTotals = customers.length > 0 ? processCustomers(customers) : dummyCustomerTotals;
+  const revenueData = customers.length > 0 ? processRevenueData(customers) : dummyRevenueData;
 
   const totalNewCustomers = customerTotals.reduce((acc, cur: any) => acc + cur['New Subscriptions'] + cur['One-time Charges'], 0) as number;
   const totalRevenue = revenueData.reduce((acc, cur: any) => acc + cur['New Subscriptions'] + cur['Renewals'] + cur['One-time Charges'], 0);
 
   const highestCustChangesInAMonth = Math.max(...customerTotals.map((total: any) => [total['New Subscriptions'], total['Cancellations'], total['Renewals'], total['One-time Charges']]).flat());
-
   const highestRevenueItemInMonth = Math.max(...revenueData.map((total: any) => [total['New Subscriptions'], total['Renewals'], total['One-time Charges']]).flat());
+
+  const isUsingDummyData = customers.length === 0;
 
   return (
     <>
       <div className="flex justify-between">
-        <h3 className="text-xl font-bold mb-2">Reports</h3>
+        <div className="flex mb-2">
+          <div className="text-xl font-bold mb-2 mr-2">Reports</div>
+          {dummyCustomerTotals && <Badge size='sm' className="p-1 h-fit rounded-full">Sample Data</Badge>}
+        </div>
         <Link href='/reports' className="ml-auto">
           <Button size="xs" className="h-6" variant="secondary">
             More Details →
@@ -180,7 +212,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
         <div className="grid gap-6 sm:grid-cols-2">
           <Card>
             <div className="flex flex-row justify-between">
-              <Text>Sales (Last 6 Months)</Text>
+              <Text>New Customers (Last 6 Months)</Text>
             </div>
             <Flex
               className="space-x-3 truncate"
@@ -194,7 +226,9 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               data={customerTotals}
               index="date"
               categories={["New Subscriptions", "Cancellations", "Renewals", "One-time Charges"]}
-              colors={["gray-400", "red-400", "green-400", "blue-400"]}
+              colors={isUsingDummyData 
+                ? ["gray-300", "gray-400", "gray-500", "gray-600"]
+                : ["gray-400", "red-400", "green-400", "blue-400"]}
               autoMinValue={true}
               maxValue={Math.ceil(highestCustChangesInAMonth * 120 / 100)}
               intervalType="preserveStartEnd"
@@ -218,7 +252,9 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               data={revenueData}
               index="date"
               categories={["New Subscriptions", "Renewals", "One-time Charges"]}
-              colors={["gray-500", "blue-300", "yellow-300"]}
+              colors={isUsingDummyData
+                ? ["gray-300", "gray-500", "gray-700"]
+                : ["gray-500", "blue-300", "yellow-300"]}
               connectNulls={true}
               autoMinValue={true}
               maxValue={Math.ceil(highestRevenueItemInMonth * 120 / 100)}
