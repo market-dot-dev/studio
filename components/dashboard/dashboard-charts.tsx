@@ -1,6 +1,7 @@
 import { Metric, Card, Text, Flex, BarChart, LineChart, Button, Badge } from "@tremor/react";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import Link from "next/link";
+import RevenueLineChart from "./revenue-line-chart";
 
 export default function DashboardCharts({ customers }: { customers: CustomerWithChargesAndSubscriptions[] }) {
 
@@ -163,7 +164,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
 
     for (let i = 0; i < 6; i++) {
       const date = lastSixMonths[i].toLocaleString('default', { month: 'short', year: 'numeric' });
-      
+
       dummyCustomerTotals.push({
         date,
         'New Subscriptions': Math.floor(Math.random() * 10) + 5,
@@ -194,6 +195,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
   const highestRevenueItemInMonth = Math.max(...revenueData.map((total: any) => [total['New Subscriptions'], total['Renewals'], total['One-time Charges']]).flat());
 
   const isUsingDummyData = customers.length === 0;
+
 
   return (
     <>
@@ -226,7 +228,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               data={customerTotals}
               index="date"
               categories={["New Subscriptions", "Cancellations", "Renewals", "One-time Charges"]}
-              colors={isUsingDummyData 
+              colors={isUsingDummyData
                 ? ["gray-300", "gray-400", "gray-500", "gray-600"]
                 : ["gray-400", "red-400", "green-400", "blue-400"]}
               autoMinValue={true}
@@ -247,19 +249,11 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
             >
               <Metric className="font-cal">${`${totalRevenue}`}</Metric>
             </Flex>
-            <LineChart
-              className="h-72 mt-4"
-              data={revenueData}
-              index="date"
-              categories={["New Subscriptions", "Renewals", "One-time Charges"]}
-              colors={isUsingDummyData
-                ? ["gray-300", "gray-500", "gray-700"]
-                : ["gray-500", "blue-300", "yellow-300"]}
-              connectNulls={true}
-              autoMinValue={true}
-              maxValue={Math.ceil(highestRevenueItemInMonth * 120 / 100)}
-              intervalType="preserveStartEnd"
-              allowDecimals={false}
+
+            <RevenueLineChart
+              revenueData={revenueData}
+              isUsingDummyData={isUsingDummyData}
+              highestRevenueItemInMonth={highestRevenueItemInMonth}
             />
           </Card>
         </div>
