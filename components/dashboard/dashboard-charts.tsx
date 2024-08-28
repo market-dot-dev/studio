@@ -202,7 +202,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
       <div className="flex justify-between">
         <div className="flex mb-2">
           <div className="text-xl font-bold mb-2 mr-2">Reports</div>
-          {dummyCustomerTotals && <Badge size='sm' className="p-1 h-fit rounded-full">Sample Data</Badge>}
+          {isUsingDummyData && <Badge size='sm' className="p-1 h-fit rounded-full">Sample Data</Badge>}
         </div>
         <Link href='/reports' className="ml-auto">
           <Button size="xs" className="h-6" variant="secondary">
