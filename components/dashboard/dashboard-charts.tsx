@@ -211,7 +211,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
         </Link>
       </div>
       <div className="flex max-w-screen-xl flex-col space-y-4">
-        <div className="grid gap-6 sm:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           <Card>
             <div className="flex flex-row justify-between">
               <Text>New Customers (Last 6 Months)</Text>
