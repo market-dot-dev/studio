@@ -4,7 +4,7 @@ import { User } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
 
-export default function ProjectSettings({ user }: { user: Partial<User> }) {
+export default function BusinessSettings({ user }: { user: Partial<User> }) {
     const [isSaving, setIsSaving] = useState(false);
     const [userData, setUserData] = useState<Partial<User>>(user);
 
@@ -30,16 +30,16 @@ export default function ProjectSettings({ user }: { user: Partial<User> }) {
             <Flex justifyContent="between" alignItems="start" className="w-full gap-12">
                 <Flex flexDirection="col" alignItems="start" className="space-y-6 w-1/2">
                     <Flex flexDirection="col" alignItems="start" className="w-full gap-2">
-                        <label htmlFor="project-name" className="block text-sm font-medium text-gray-700">Project Name</label>
-                        <Text>Your project name</Text>
+                        <label htmlFor="project-name" className="block text-sm font-medium text-gray-700">Business Name</label>
+                        <Text>Provide a name for your business, if you have one.</Text>
                         <TextInput placeholder="" name="project-name" id="project-name" value={userData.projectName ?? ''} onChange={(e) => {
                             setUserData({ ...userData, projectName: e.target.value });
                         }} />
                     </Flex>
 
                     <Flex flexDirection="col" alignItems="start" className="w-full gap-2">
-                        <label htmlFor="project-description" className="block text-sm font-medium text-gray-700">Project Description</label>
-                        <Text>Your project description is used in your site homepage (and other pages where you embed the {`<SiteDescription>`} component).</Text>
+                        <label htmlFor="project-description" className="block text-sm font-medium text-gray-700">Business Description</label>
+                        <Text>Your business description is used in your site homepage (and other pages where you embed the {`<SiteDescription>`} component).</Text>
                         <Textarea className="h-52" placeholder="" name="project-description" id="project-description" value={userData.projectDescription ?? ''} onChange={(e) => {
                             setUserData({ ...userData, projectDescription: e.target.value });
                         }} />

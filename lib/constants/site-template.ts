@@ -2,8 +2,8 @@ import { defaultPageTemplate, newPageTemplate as defaultBlankPageTemplate } from
 
 export const siteName = 'Your Site';
 export const siteDescription = 'Your Site Description';
-export const projectName = 'Your Open Source Project';
-export const projectDescription = 'Your project description';
+export const businessName = 'Your business name';
+export const businessDescription = 'Your business description';
 export const homepageTitle = 'Welcome';
 
 
