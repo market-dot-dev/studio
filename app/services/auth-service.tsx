@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { defaultOnboardingState } from "./onboarding/onboarding-steps";
 import { cookies } from "next/headers";
-import { projectDescription, projectName } from "@/lib/constants/site-template";
+import { businessDescription, businessName } from "@/lib/constants/site-template";
 import { SessionUser, createSessionUser } from "../models/Session";
 import UserService from "./UserService";
 import EmailService from "./EmailService";
@@ -152,8 +152,8 @@ class AuthService {
       where: { id: user.id },
       data: {
         roleId,
-        projectName,
-        projectDescription,
+        projectName: businessName,
+        projectDescription: businessDescription,
         ...(name ? { name } : {}),
       },
     });

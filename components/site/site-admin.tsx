@@ -72,7 +72,7 @@ export default function SiteAdmin({id} : { id: string}) {
                     <div className="flex-column ms-[300px]">
                         <div className="mb-2">
                             <Bold className="me-2">
-                                Site Homepage
+                                Your Homepage
                             </Bold>
 
                             {homepage?.draft ?

@@ -15,7 +15,7 @@ export default function SettingsNav() {
       segment: null,
     },
     {
-      name: "Project Info",
+      name: "Business Info",
       href: `/settings/project`,
       segment: "project",
     },

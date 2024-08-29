@@ -5,7 +5,7 @@
 import prisma from "@/lib/prisma";
 import {getCurrentUserId} from "../SessionService";
 import { defaultOnboardingState, type OnboardingStepsType } from "./onboarding-steps";
-import { projectName, projectDescription } from "@/lib/constants/site-template";
+import { businessName, businessDescription } from "@/lib/constants/site-template";
 
 
 class OnboardingService {
@@ -95,7 +95,7 @@ class OnboardingService {
         if (result) {
 
             // Check if the project setup step is done
-            if (result.projectName !== projectName && result.projectDescription !== projectDescription) {
+            if (result.projectName !== businessName && result.projectDescription !== businessDescription) {
                 onboardingState.setupProject = true;
             }
 

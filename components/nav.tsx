@@ -3,7 +3,6 @@
 import Link from "next/link";
 import {
   Globe,
-  LayoutDashboard,
   KanbanSquare,
   Scroll,
   Menu,
@@ -14,6 +13,7 @@ import {
   Radar,
   Box,
   Home,
+  Eye,
 } from "lucide-react";
 import {
   useParams,
@@ -36,26 +36,21 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         href: "/",
         isActive: urlSegments.length === 0,
         icon: <Home width={18} />,
-      },
+      }, 
+
       {
         name: "Settings",
         href: "/settings",
         isActive: urlSegments[0] === "settings",
         icon: <Settings width={18} />,
       },
-      // SERVICES
+
+      // Services
       {
-        name: "Services",
+        name: "Your Services",
         href: "",
         isDivider: true,
       },
-      ...(hasFeatures ? [
-      {
-        name: "Services",
-        href: "/features",
-        isActive: urlSegments[0] === "features",
-        icon: <Box width={18} />,
-      }] : []),
       {
         name: "Packages",
         href: "/tiers",
@@ -69,12 +64,26 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         isBeta: true,
         icon: <Scroll width={18} />,
       },
-
-      // CUSTOMERS 
+  
+      // Customers
       {
         name: "Customers",
         href: "",
         isDivider: true,
+      },
+      ...(hasFeatures ? [
+      {
+        name: "Services",
+        href: "/features",
+        isActive: urlSegments[0] === "features",
+        icon: <Box width={18} />,
+      }] : []),
+
+      {
+        name: "Customers",
+        href: "/customers",
+        isActive: urlSegments[0] === "customers",
+        icon: <Users width={18} />,
       },
       {
         name: "Research",
@@ -82,24 +91,10 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         isActive: urlSegments[0] === "leads",
         icon: <Radar width={18} />,
       },
-      {
-        name: "Customers",
-        href: "/customers",
-        isActive: urlSegments[0] === "customers",
-        icon: <Users width={18} />,
-      },
 
-      // REPORTS
+      // Marketing
       {
-        name: "Reports",
-        href: "/reports",
-        isActive: urlSegments[0] === "reports",
-        icon: <BarChart4 width={18} />,
-      },
-
-      // CHANNELS
-      {
-        name: "Channels",
+        name: "Marketing",
         href: "",
         isDivider: true,
       },
@@ -108,7 +103,7 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
           name: "Your Site",
           href: `/site/${siteId}`,
           isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
-          icon: <Globe width={18} />,
+          icon: <Globe width={18} />
         }] : []),
       {
         name: "Embeds",
@@ -117,17 +112,35 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         icon: <Code2 width={18} />,
       },
 
-      // SUPPORT
+      // Analytics 
       {
-        name: "Support",
+        name: "Analytics",
         href: "",
         isDivider: true,
       },
       {
-        name: "Discord",
+        name: "Reports",
+        href: "/reports",
+        isActive: urlSegments[0] === "reports",
+        icon: <BarChart4 width={18} />,
+      },
+      // SUPPORT
+      {
+        name: "Get Support",
+        href: "",
+        isDivider: true,
+      },
+      {
+        name: "Join Discord",
         href: "https://discord.gg/ZdSpS4BuGd",
         target: "_blank",
         icon: <FaDiscord width={18} />,
+      },
+      {
+        name: "DM Founder",
+        href: "https://t.me/tarunsachdeva2",
+        target: "_blank",
+        icon: <FaTelegramPlane width={18} />,
       },
       {
         name: "Github",
@@ -196,16 +209,13 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
                 >
                   {icon}
                   <span className="text-sm font-medium">{name}</span>
-                  {isBeta && <Badge size={'xs'} tooltip="We are all works in progress. This feature, a bit more so.">Beta</Badge>}
+                  {isBeta && <Badge size={'xs'} tooltip="This feature is still in Beta">Beta</Badge>}
                 </Link>
               )
             ))}
           </div>
         </div>
         <div>
-          <div className="grid gap-1">
-
-          </div>
           <div className="my-2 border-t border-stone-200 dark:border-stone-700" />
           {children}
         </div>

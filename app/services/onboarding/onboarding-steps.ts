@@ -34,6 +34,23 @@ export const onboardingStepsIcons = {
 // enumerate the steps that the user needs to complete
 export const onboardingSteps = [
     {
+        name: 'setupSite',
+        description: 'Your site is your first sales channel. Customize it to match your brand and start selling.',
+        urls: [ 
+            '/site/',
+            '/page/'
+         ],
+        title: 'Build Your Site',
+        icon: Globe,
+    },
+    {
+        name: 'setupTiers',
+        description: 'Define your service offerings and create a package for sale.',
+        urls: ['/features', '/tiers'],
+        title: 'Define Service Packages',
+        icon: Package,
+    },
+    {
         name: 'setupPayment',
         description: 'Connect a Stripe account to start receiving payments.',
         urls: ['/settings/payment'],
@@ -41,37 +58,20 @@ export const onboardingSteps = [
         icon: Banknote,
     },
     {
-        name: 'setupTiers',
-        description: 'Define your service offerings and create a Tier for sale. Tiers are the building blocks of your service.',
-        urls: ['/features', '/tiers'],
-        title: 'Define Services & Tiers',
-        icon: Package,
-    },
-    {
-        name: 'connectRepos',
-        description: 'Connect repositories to Gitwallet to to quickly setup your Gitwallet site & workflows with existing details about your project.',
-        urls: ['/settings/repos'],
-        title: 'Connect Github Repo',
-        icon: Github,
-    },
-    {
         name: 'setupProject',
-        description: 'Your project settings apply in many places, from your website to checkout.',
+        description: 'Your business settings apply in many places, from your website to checkout.',
         urls: ['/settings/project'],
-        title: 'Add Project Details',
+        title: 'Provide Business Details',
         icon: Computer,
     },
     {
-        name: 'setupSite',
-        description: 'Your site is your first sales channel. Customize it to match your brand and start selling.',
-        urls: [ 
-            '/site/',
-            '/page/'
-         ],
-        title: 'Review your Site',
-        icon: Globe,
-    
+        name: 'connectRepos',
+        description: 'If you maintain any open sources repos, connecting repos to verify ownership.',
+        urls: ['/settings/repos'],
+        title: 'Connect Github Repos',
+        icon: Github,
     },
+
 ]
 
 // export const onboardingStepsDescription = {
