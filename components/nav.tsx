@@ -51,6 +51,13 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         href: "",
         isDivider: true,
       },
+      ...(hasFeatures ? [
+        {
+          name: "Services",
+          href: "/features",
+          isActive: urlSegments[0] === "features",
+          icon: <Box width={18} />,
+      }] : []),  
       {
         name: "Packages",
         href: "/tiers",
@@ -71,14 +78,6 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         href: "",
         isDivider: true,
       },
-      ...(hasFeatures ? [
-      {
-        name: "Services",
-        href: "/features",
-        isActive: urlSegments[0] === "features",
-        icon: <Box width={18} />,
-      }] : []),
-
       {
         name: "Customers",
         href: "/customers",
