@@ -146,6 +146,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
         <div className="flex flex-row justify-between">
           <Text>{title} (Last 6 Months)</Text>
         </div>
+        
         <LineChart
           className="h-72 mt-4"
           data={data}
@@ -153,6 +154,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
           categories={[labels[category]]}
           colors={[color]}
           connectNulls={true}
+          autoMinValue={true}
           maxValue={Math.ceil(heighestValue * 120 / 100)}
           intervalType="preserveStartEnd"
           allowDecimals={false}
