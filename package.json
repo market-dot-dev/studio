@@ -47,7 +47,7 @@
     "focus-trap-react": "^10.2.3",
     "framer-motion": "^10.18.0",
     "gray-matter": "^4.0.3",
-    "input-otp": "0.3.31-beta",
+    "input-otp": "1.2.4",
     "js-cookie": "^3.0.5",
     "js-yaml": "^4.1.0",
     "jsdom": "^23.2.0",
