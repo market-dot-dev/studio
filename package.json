@@ -71,7 +71,7 @@
     "remark": "^14.0.3",
     "sharp": "^0.33.5",
     "sonner": "^1.4.0",
-    "stripe": "^14.15.0",
+    "stripe": "^16.11.0",
     "swr": "^2.2.4",
     "tailwind-merge": "^2.2.1",
     "unist-util-visit": "^5.0.0",
