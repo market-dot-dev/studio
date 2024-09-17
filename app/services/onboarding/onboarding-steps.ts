@@ -46,7 +46,7 @@ export const onboardingSteps = [
     {
         name: 'setupTiers',
         description: 'Define your service offerings and create a package for sale.',
-        urls: ['/features', '/tiers'],
+        urls: ['/tiers'],
         title: 'Define Service Packages',
         icon: Package,
     },
