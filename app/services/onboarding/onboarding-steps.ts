@@ -2,9 +2,10 @@
 // ADD Setup project step
 // ADD 
 
-import { Computer, Banknote, Package, Globe, Github } from "lucide-react"
+import { Computer, Banknote, Package, Globe, Github, Waves } from "lucide-react"
 
 export type OnboardingStepsType = {
+    welcome: boolean,
     connectRepos: boolean,
     setupProject: boolean,
     setupPayment: boolean,
@@ -33,6 +34,13 @@ export const onboardingStepsIcons = {
 
 // enumerate the steps that the user needs to complete
 export const onboardingSteps = [
+    {
+        name: 'welcome',
+        description: 'Welcome to Gitwallet! Let\'s get you set up and ready to go.',
+        urls: [],
+        title: 'Welcome',
+        icon: Waves,
+    },
     {
         name: 'setupSite',
         description: 'Your site is your first sales channel. Customize it to match your brand and start selling.',

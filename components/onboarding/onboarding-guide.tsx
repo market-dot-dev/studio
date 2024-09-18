@@ -30,19 +30,23 @@ function TodoItem({ step, completedSteps, setCompletedSteps, dashboard }: {
     return (
         <div className="flex flex-col items-center text-center">
             {stepIconDiv}
-            <Badge icon={completed ? Check : BadgeAlert} size="xs" color={completed ? "green" : "gray"} className="mb-2">
-                {completed ? `Completed` : `To Do`}
-            </Badge>
+            {step.name !== 'welcome' && (
+                <Badge icon={completed ? Check : BadgeAlert} size="xs" color={completed ? "green" : "gray"} className="mb-2">
+                    {completed ? `Completed` : `To Do`}
+                </Badge>
+            )}
             <Bold className="text-lg mb-2">{stepTitle}</Bold>
             <Text className="mb-4">{stepDescription}</Text>
-            <Button 
-                size="sm" 
-                variant="primary" 
-                className="w-full"
-                onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}
-            >
-                {completed ? "Review" : "Start"} {stepTitle}
-            </Button>
+            {step.name !== 'welcome' && (
+                <Button 
+                    size="sm" 
+                    variant="primary" 
+                    className="w-full"
+                    onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}
+                >
+                    {completed ? "Review" : "Start"} {stepTitle}
+                </Button>
+            )}
         </div>
     )
 }
@@ -89,8 +93,10 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
 
     // Update the type definition of navigateToStep
     const navigateToStep = (step: typeof onboardingSteps[number]) => {
-        const url = step.name === 'setupSite' && siteId ? step.urls[0] + siteId : step.urls[0];
-        router.push(url);
+        if (step.name !== 'welcome' && step.urls.length > 0) {
+            const url = step.name === 'setupSite' && siteId ? step.urls[0] + siteId : step.urls[0];
+            router.push(url);
+        }
     };
 
     const nextStep = () => {
