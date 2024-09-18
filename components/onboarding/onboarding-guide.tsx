@@ -87,7 +87,8 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
         return <></>;
     }
 
-    const navigateToStep = (step: onBoardingStepType) => {
+    // Update the type definition of navigateToStep
+    const navigateToStep = (step: typeof onboardingSteps[number]) => {
         const url = step.name === 'setupSite' && siteId ? step.urls[0] + siteId : step.urls[0];
         router.push(url);
     };
