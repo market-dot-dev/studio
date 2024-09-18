@@ -49,6 +49,8 @@ function TodoItem({ step, completedSteps, setCompletedSteps, dashboard }: {
 
 export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }): JSX.Element {
     const pathName = usePathname();
+    const router = useRouter();
+    const siteId = useSiteId();
     const [completedSteps, setCompletedSteps] = useState<OnboardingStepsType>(null);
     const [isDismissing, setIsDismissing] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
@@ -65,6 +67,12 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
         if (!(window as any)['refreshOnboarding']) {
             (window as any)['refreshOnboarding'] = action;
         }
+
+        // Find the current step index based on the current path
+        const index = onboardingSteps.findIndex(step => step.urls.some(url => pathName.includes(url)));
+        if (index !== -1) {
+            setCurrentStepIndex(index);
+        }
     }, [pathName])
 
     const dismissGuide = useCallback(() => {
@@ -79,15 +87,24 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
         return <></>;
     }
 
+    const navigateToStep = (step: onBoardingStepType) => {
+        const url = step.name === 'setupSite' && siteId ? step.urls[0] + siteId : step.urls[0];
+        router.push(url);
+    };
+
     const nextStep = () => {
         if (currentStepIndex < onboardingSteps.length - 1) {
-            setCurrentStepIndex(currentStepIndex + 1);
+            const nextStepIndex = currentStepIndex + 1;
+            setCurrentStepIndex(nextStepIndex);
+            navigateToStep(onboardingSteps[nextStepIndex]);
         }
     };
 
     const prevStep = () => {
         if (currentStepIndex > 0) {
-            setCurrentStepIndex(currentStepIndex - 1);
+            const prevStepIndex = currentStepIndex - 1;
+            setCurrentStepIndex(prevStepIndex);
+            navigateToStep(onboardingSteps[prevStepIndex]);
         }
     };
 
