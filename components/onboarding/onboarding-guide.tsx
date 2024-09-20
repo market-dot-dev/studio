@@ -7,7 +7,7 @@ import { saveState as saveOnboardingState } from "@/app/services/onboarding/Onbo
 import { onboardingSteps, type OnboardingStepsType, onBoardingStepType } from "@/app/services/onboarding/onboarding-steps";
 import { getState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
-import { Check, BadgeAlert, ArrowRight, ArrowLeft } from "lucide-react";
+import { Check, BadgeAlert, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
 
 function TodoItem({ step, completedSteps, setCompletedSteps, dashboard }: {
     step: onBoardingStepType,
@@ -37,16 +37,6 @@ function TodoItem({ step, completedSteps, setCompletedSteps, dashboard }: {
             )}
             <Bold className="text-lg mb-2">{stepTitle}</Bold>
             <Text className="mb-4">{stepDescription}</Text>
-            {step.name !== 'welcome' && (
-                <Button 
-                    size="sm" 
-                    variant="primary" 
-                    className="w-full"
-                    onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}
-                >
-                    {completed ? "Review" : "Start"} {stepTitle}
-                </Button>
-            )}
         </div>
     )
 }
@@ -59,6 +49,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     const [isDismissing, setIsDismissing] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
 
     useEffect(() => {
         const action = async () => {
@@ -79,6 +70,10 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
         }
     }, [pathName])
 
+    useEffect(() => {
+        setIsLoading(false);
+    }, [pathName]);
+
     const dismissGuide = useCallback(() => {
         setIsDismissing(true);
         saveOnboardingState(null).then(() => {
@@ -93,7 +88,11 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
 
     // Update the type definition of navigateToStep
     const navigateToStep = (step: typeof onboardingSteps[number]) => {
-        if (step.name !== 'welcome' && step.urls.length > 0) {
+        if (step.name === 'welcome') {
+            setIsLoading(true);
+            router.push('/');
+        } else if (step.urls.length > 0) {
+            setIsLoading(true);
             const url = step.name === 'setupSite' && siteId ? step.urls[0] + siteId : step.urls[0];
             router.push(url);
         }
@@ -117,15 +116,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
 
     return (
         <div className={`flex max-w-screen-xl flex-col space-y-2 ${!dashboard ? 'mb-4' : ''}`}>
-            {dashboard &&
-                <div className="flex flex-col text-start mb-4">
-                    <p className="font-cal text-3xl font-bold mb-2">
-                        Welcome to Gitwallet!
-                    </p>
-                    <Text>Here&apos;s a quick guide to get you started.&nbsp;</Text>
-                </div>
-            }
-
             <Card className="max-w-full p-4">
                 {/* Progress indicator */}
                 <div className="flex justify-between mb-6">
@@ -149,25 +139,35 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                     dashboard={dashboard}
                 />
 
-                {/* Navigation buttons */}
-                <div className="flex justify-between mt-6">
-                    <Button
-                        variant="secondary"
-                        onClick={prevStep}
-                        disabled={currentStepIndex === 0}
-                        icon={ArrowLeft}
-                    >
-                        Previous
-                    </Button>
-                    <Button
-                        variant="primary"
-                        onClick={nextStep}
-                        disabled={currentStepIndex === onboardingSteps.length - 1}
-                        icon={ArrowRight}
-                        iconPosition="right"
-                    >
-                        Next
-                    </Button>
+                {/* Navigation buttons and loading indicator */}
+                <div className="flex flex-col items-center mt-6">
+                    <div className="flex justify-between w-full">
+                        <Button
+                            variant="secondary"
+                            onClick={prevStep}
+                            disabled={currentStepIndex === 0 || isLoading}
+                            icon={ArrowLeft}
+                        >
+                            {currentStepIndex === 0 ? 'Home' : 'Previous'}
+                        </Button>
+                        
+                        {isLoading && (
+                            <div className="flex items-center mt-4">
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                <Text>Loading page...</Text>
+                            </div>
+                        )}
+                        
+                        <Button
+                            variant="primary"
+                            onClick={nextStep}
+                            disabled={currentStepIndex === onboardingSteps.length - 1 || isLoading}
+                            icon={ArrowRight}
+                            iconPosition="right"
+                        >
+                            Next
+                        </Button>
+                    </div>
                 </div>
             </Card>
 
