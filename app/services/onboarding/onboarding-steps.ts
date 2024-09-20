@@ -2,7 +2,7 @@
 // ADD Setup project step
 // ADD 
 
-import { Computer, Banknote, Package, Globe, Github, Waves } from "lucide-react"
+import { Computer, Banknote, Package, Globe, Github, Waves, Circle, CircleDot, Volume2 } from "lucide-react"
 
 export type OnboardingStepsType = {
     welcome: boolean,
@@ -11,6 +11,7 @@ export type OnboardingStepsType = {
     setupPayment: boolean,
     setupTiers: boolean,
     setupSite: boolean,
+    setupMarketing: boolean,
 } | null;
 
 export type onBoardingStepKeyType = keyof OnboardingStepsType;
@@ -30,16 +31,17 @@ export const onboardingStepsIcons = {
     setupPayment: Banknote,
     setupTiers: Package,
     setupSite: Globe,
+    setupMarketing: Volume2
 }
 
 // enumerate the steps that the user needs to complete
 export const onboardingSteps = [
     {
         name: 'welcome',
-        description: 'Welcome to Gitwallet! Let\'s get you set up and ready to go.',
+        description: 'This guide will walk through setting up a website, building packages to sell.',
         urls: [],
-        title: 'Welcome',
-        icon: Waves,
+        title: 'Welcome to Gitwallet',
+        icon: CircleDot,
     },
     {
         name: 'setupSite',
@@ -59,13 +61,6 @@ export const onboardingSteps = [
         icon: Package,
     },
     {
-        name: 'setupPayment',
-        description: 'Connect a Stripe account to start receiving payments.',
-        urls: ['/settings/payment'],
-        title: 'Connect Payout Account',
-        icon: Banknote,
-    },
-    {
         name: 'setupProject',
         description: 'Your business settings apply in many places, from your website to checkout.',
         urls: ['/settings/project'],
@@ -78,6 +73,20 @@ export const onboardingSteps = [
         urls: ['/settings/repos'],
         title: 'Connect Github Repos',
         icon: Github,
+    },
+    {
+        name: 'setupMarketing',
+        description: 'Set up marketing channels to promote your services and reach potential customers.',
+        urls: ['/channels/embeds'],
+        title: 'Setup Marketing',
+        icon: Volume2,
+    },
+    {
+        name: 'setupPayment',
+        description: 'Connect a Stripe account to start receiving payments.',
+        urls: ['/settings/payment'],
+        title: 'Connect Payout Account',
+        icon: Banknote,
     },
 
 ]

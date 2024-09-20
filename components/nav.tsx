@@ -107,7 +107,7 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
       {
         name: "Embeds",
         href: "/channels/embeds",
-        isActive: urlSegments[0] === "embeds",
+        isActive: urlSegments[1] === "embeds",
         icon: <Code2 width={18} />,
       },
 
