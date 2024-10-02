@@ -53,7 +53,7 @@
     "jsdom": "^23.2.0",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.436.0",
-    "nanoid": "^4.0.2",
+    "nanoid": "^5.0.7",
     "next": "^14.1.0",
     "next-auth": "^4.24.7",
     "next-mdx-remote": "^4.4.1",
