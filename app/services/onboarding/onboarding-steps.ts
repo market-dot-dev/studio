@@ -78,7 +78,7 @@ export const onboardingSteps = [
         name: 'setupMarketing',
         description: 'Set up marketing channels to promote your services and reach potential customers.',
         urls: ['/channels/embeds'],
-        title: 'Setup Marketing',
+        title: 'Promotion Tools',
         icon: Volume2,
     },
     {
