@@ -61,7 +61,7 @@ export async function GET(
               marginBottom: '50px',
             }}
           >
-            {site.subdomain + '.gitwallet.co' ?? ''}
+            {site.subdomain ? `${site.subdomain}.gitwallet.co` : ''}
           </div>
         </div>
     ),
