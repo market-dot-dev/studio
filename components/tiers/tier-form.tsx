@@ -646,7 +646,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                                     />
                                 )}
                             </div>
-                            {!tier._count?.Charge && !tier._count?.subscriptions && !tier.features?.length && (
+                            {!tier._count?.Charge && !tier._count?.subscriptions && (
                                 <Text className="mt-2 text-sm text-gray-500">This package can be deleted as it has no active customers or features.</Text>
                             )}
                         </div>
