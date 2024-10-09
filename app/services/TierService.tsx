@@ -560,6 +560,61 @@ class TierService {
 
     return allTiers;
   }
+
+  // Add this new function to the TierService class
+
+  static async duplicateTier(tierId: string) {
+    const user = await UserService.getCurrentUser();
+    
+    if (!user) {
+      throw new Error("User not authenticated");
+    }
+
+    const originalTier = await prisma.tier.findUnique({
+      where: { id: tierId },
+      include: { features: true }
+    });
+
+    if (!originalTier) {
+      throw new Error(`Tier with ID ${tierId} not found`);
+    }
+
+    // Create a new tier object with the same data as the original
+    const newTierData: Partial<Tier> = {
+      name: `${originalTier.name} (Copy)`,
+      published: false,
+      price: originalTier.price,
+      revision: 0,
+      cadence: originalTier.cadence,
+      userId: user.id,
+      stripeProductId: null,
+      description: originalTier.description,
+      tagline: originalTier.tagline,
+      applicationFeePercent: originalTier.applicationFeePercent,
+      applicationFeePrice: originalTier.applicationFeePrice,
+      stripePriceId: null,
+      trialDays: originalTier.trialDays,
+      priceAnnual: originalTier.priceAnnual,
+      stripePriceIdAnnual: null,
+      contractId: originalTier.contractId,
+    };
+
+    try {
+      // Create the new tier
+      const createdTier = await TierService.createTier(newTierData);
+
+      // Duplicate the features
+      if (originalTier.features && originalTier.features.length > 0) {
+        const featureIds = originalTier.features.map(feature => feature.id);
+        await FeatureService.setFeatureCollection(createdTier.id, featureIds, 'tier');
+      }
+
+      return createdTier;
+    } catch (error) {
+      console.error('Error duplicating tier:', error);
+      throw error;
+    }
+  }
 };
 
 export default TierService;
@@ -576,5 +631,6 @@ export const {
   shouldCreateNewVersion,
   updateApplicationFee,
   updateTier,
-  createTemplateTier
+  createTemplateTier,
+  duplicateTier,
 } = TierService;
