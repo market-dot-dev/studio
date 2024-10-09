@@ -84,7 +84,7 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({ versionedAttribut
 
         return (
             <Callout className="mt-2 mb-5" title="New Version" color="red">
-                You&apos;re changing the <strong>{reasonsText}</strong> of a tier with subscribers, which will result in a new version.
+                You&apos;re changing the <strong>{reasonsText}</strong> of a package with subscribers, which will result in a new version.
             </Callout>
         );
     } else {
@@ -152,7 +152,7 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
             </div>
             </>
             :
-            <Text>To create a checkout link, this tier needs to be marked as available for sale.</Text>
+            <Text>To create a checkout link, this package needs to be marked as available for sale.</Text>
         
             }
             {errorMessage && (
@@ -179,7 +179,7 @@ const DuplicateTierButton = ({ tierId }: { tierId: string }) => {
       window.location.href = `/tiers/${newTier.id}`;
     } else {
       // Handle error case
-      console.error('Failed to duplicate tier');
+      console.error('Failed to duplicate package');
     }
     setIsLoading(false);
   };
@@ -191,7 +191,7 @@ const DuplicateTierButton = ({ tierId }: { tierId: string }) => {
       disabled={isLoading}
       loading={isLoading}
     >
-      Duplicate Tier
+      Duplicate
     </Button>
   );
 };
@@ -213,8 +213,8 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
     const newRecord = !tier?.id;
     const tierHasSubscribers = currentRevisionSubscriberCount > 0;
 
-    const formTitle = newRecord ? 'Create New Tier' : tier.name;
-    const buttonLabel = newRecord ? 'Create Tier' : 'Update Tier';
+    const formTitle = newRecord ? 'Create New Package' : tier.name;
+    const buttonLabel = newRecord ? 'Create Package' : 'Update Package';
 
     const [errors, setErrors] = useState<any>({});
     const [isSaving, setIsSaving] = useState(false);
@@ -232,7 +232,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
 
     const validateForm = () => {
         if (!tier.name) {
-            setErrors({ ...errors, name: 'Please enter a name for the tier' });
+            setErrors({ ...errors, name: 'Please enter a name for the package' });
             return false;
         }
         return true;
@@ -304,7 +304,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                 <div className="md:col-span-2 space-y-6">
                     <div className="flex justify-between">
                         <div>
-                            <Link href="/tiers" className="underline">← All Tiers</Link>
+                            <Link href="/tiers" className="underline">← All Packages</Link>
                             <PageHeading title={formTitle} />
                         </div>
                         <div>
@@ -327,7 +327,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                             featuresChanged={featuresChanged}
                         />
 
-                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Name</label>
+                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Package Name</label>
                         <TextInput
                             id="tierName"
                             placeholder="Premium"
@@ -335,13 +335,12 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                             name="name"
                             value={tier.name}
                             onValueChange={(v) => handleInputChange('name', v)}
-
                         />
                         {errors['name'] ? <Text color="red" >{errors['name']}</Text> : null}
                     </div>
 
                     <div className="mb-4">
-                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Tagline</label>
+                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Package Tagline</label>
                         <TextInput
                             id="tierTagline"
                             placeholder="Great for startups and smaller companies."
@@ -353,11 +352,11 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                     </div>
 
                     <div className="mb-4">
-                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Description</label>
+                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Package Description</label>
                         <Textarea
                             id="tierDescription"
                             rows={4}
-                            placeholder="Describe your tier here. This is for your own use and will not be shown to any potential customers."
+                            placeholder="Describe your package here. This is for your own use and will not be shown to any potential customers."
                             name="description"
                             value={tier.description || ''}
                             onValueChange={(v) => handleInputChange('description', v)}
@@ -504,7 +503,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
 
 
                     <div className="mb-4">
-                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Status</label>
+                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Package Status</label>
                         <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
                             <Flex className='gap-2' justifyContent='start'>
 
@@ -525,13 +524,13 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                                         }} />
                                     <span>
                                         <label htmlFor="switch" className="text-sm text-gray-900">
-                                            Make this tier <span className="font-medium text-gray-700">available for sale.</span>
+                                            Make this package <span className="font-medium text-gray-700">available for sale.</span>
                                         </label>
                                     </span>
                                 </>}
                             </Flex>
                             {(!canPublish && !canPublishLoading) && <>
-                                <Callout className="my-2" title="Payment Setup Required" color="red">You need to connect your Stripe account to publish a tier. Visit <a href="/settings/payment" className="underline">Payment Settings</a> to get started.</Callout>
+                                <Callout className="my-2" title="Payment Setup Required" color="red">You need to connect your Stripe account to publish a package. Visit <a href="/settings/payment" className="underline">Payment Settings</a> to get started.</Callout>
                             </>}
                         </label>
                     </div>
@@ -558,9 +557,9 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                     </>}
 
                     <div className="mb-4">
-                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Tier Version History</label>
+                        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Package Version History</label>
 
-                        {!!versions && versions.length === 0 && <Text>{tier.name} has {currentRevisionSubscriberCount === 0 ? "no customers yet" : currentRevisionSubscriberCount + " customers"}. If you make any price or feature changes for a tier that has customers, your changes to the previous tier will be kept as a tier version. Customers will be charged what they originally purchased.</Text>}
+                        {!!versions && versions.length === 0 && <Text>{tier.name} has {currentRevisionSubscriberCount === 0 ? "no customers yet" : currentRevisionSubscriberCount + " customers"}. If you make any price or feature changes for a package that has customers, your changes to the previous package will be kept as a package version. Customers will be charged what they originally purchased.</Text>}
 
                         {!!versions && versions.length > 0 &&
                             <>
@@ -604,7 +603,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                                     </Table>
                                 </DashboardCard>
 
-                                <Text className="my-4">Please note that tier versions are only recorded when you make feature or price changes to a tier where you have existing customers. Customers will be charged what they originally purchased.</Text>
+                                <Text className="my-4">Please note that package versions are only recorded when you make feature or price changes to a package where you have existing customers. Customers will be charged what they originally purchased.</Text>
                             </>
                         }
                     </div>
@@ -623,14 +622,14 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                 <div className="md:w-[300px] text-center mb-auto" >
                     <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Preview</label>
                     <TierCard tier={tier} features={featureObjs} buttonDisabled={newRecord} hasActiveFeatures={hasActiveFeatures} />
-                    {tier.id && tier.published ? <Text className="mt-2">This tier is currently published and available for sale.</Text>
-                        : <Text className="mt-2">This tier is not published and is not available for sale.</Text>}
+                    {tier.id && tier.published ? <Text className="mt-2">This package is currently published and available for sale.</Text>
+                        : <Text className="mt-2">This package is not published and is not available for sale.</Text>}
                     <TierLinkCopier tier={tier} />
                     { !newRecord && (
                         <div className="mt-4 flex flex-col bg-gray-100 rounded-lg border border-gray-400 px-2 py-4 text-gray-700 items-center">
-                            <Bold>Admin</Bold>
-                            <Text className="mb-4">Manage this tier with advanced options.</Text>
-                            <div className="flex gap-2 justify-center">
+                            <Bold>Admin Options</Bold>
+                            
+                            <div className="flex my-2 gap-2 justify-center">
                                 <DuplicateTierButton tierId={tier.id} />
                                 {!tier._count?.Charge && !tier._count?.subscriptions && !tier.features?.length && (
                                     <TierDeleteButton 
@@ -647,7 +646,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                                 )}
                             </div>
                             {!tier._count?.Charge && !tier._count?.subscriptions && !tier.features?.length && (
-                                <Text className="mt-2 text-sm text-gray-500">This tier can be deleted as it has no active customers or features.</Text>
+                                <Text className="mt-2 text-sm text-gray-500">This package can be deleted as it has no active customers or features.</Text>
                             )}
                         </div>
                     )}
