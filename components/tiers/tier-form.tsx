@@ -569,10 +569,10 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                                     <Table>
                                         <TableHead>
                                             <TableRow className="border-b-2 border-gray-400">
-                                                <TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 text-gray-500 uppercase tracking-wider">Created</TableHeaderCell>
-                                                <TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 text-gray-500 uppercase tracking-wider">Features</TableHeaderCell>
-                                                <TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 text-gray-500 uppercase tracking-wider">Price</TableHeaderCell>
-                                                <TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 text-gray-500 uppercase tracking-wider">#Customers</TableHeaderCell>
+                                                <TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 uppercase tracking-wider">Created</TableHeaderCell>
+                                                <TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-gray-500 uppercase tracking-wider">Features</TableHeaderCell>
+                                                <TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 uppercase tracking-wider">Price</TableHeaderCell>
+                                                <TableHeaderCell className="p-1 ps-0 m-0 text-xs font-medium text-center text-gray-500 uppercase tracking-wider">#Customers</TableHeaderCell>
                                             </TableRow>
                                         </TableHead>
                                         <TableBody>
