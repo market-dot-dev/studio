@@ -27,7 +27,7 @@ import {
 import useCurrentSession from '@/app/hooks/use-current-session';
 import LinkButton from '../common/link-button';
 import { getRootUrl } from '@/app/services/domain-service';
-import { Check, Copy } from 'lucide-react';
+import { Check, Copy, Trash2 } from 'lucide-react';
 import TierDeleteButton from './tier-delete-button';
 
 
@@ -190,6 +190,7 @@ const DuplicateTierButton = ({ tierId }: { tierId: string }) => {
       onClick={handleDuplicate}
       disabled={isLoading}
       loading={isLoading}
+      icon={Copy}
     >
       Duplicate
     </Button>
