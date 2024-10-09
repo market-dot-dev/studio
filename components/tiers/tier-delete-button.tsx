@@ -47,7 +47,7 @@ const ContractDeleteButton = ({ tierId, onConfirm, onSuccess, onError }: { tierI
     );
 }
   return (
-    <Button size="xs" className="w-min" variant="primary" color="red" onClick={showWarning}>Delete</Button>
+    <Button size="xs" variant="primary" color="red" onClick={showWarning}>Delete Package</Button>
   );
 }
 

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { Flex, Text, Button, Bold, Badge, NumberInput, Callout, TextInput, Textarea, Accordion, AccordionHeader, AccordionBody, Icon, Tab, Card } from "@tremor/react";
 import Tier, { newTier } from '@/app/models/Tier';
 import { subscriberCount } from '@/app/services/SubscriptionService';
-import { createTier, updateTier, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures } from '@/app/services/TierService';
+import { createTier, updateTier, getVersionsByTierId, TierVersionWithFeatures, TierWithFeatures, duplicateTier } from '@/app/services/TierService';
 import TierCard from './tier-card';
 import { userHasStripeAccountIdById } from '@/app/services/StripeService';
 import PageHeading from '../common/page-heading';
@@ -168,6 +168,33 @@ const calcDiscount = (price: number, annualPrice: number) => {
     const twelveMonths = price * 12;
     return Math.round(((twelveMonths - annualPrice) / twelveMonths * 100) * 10) / 10;
 }
+
+const DuplicateTierButton = ({ tierId }: { tierId: string }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleDuplicate = async () => {
+    setIsLoading(true);
+    const newTier = await duplicateTier(tierId);
+    if (newTier) {
+      window.location.href = `/tiers/${newTier.id}`;
+    } else {
+      // Handle error case
+      console.error('Failed to duplicate tier');
+    }
+    setIsLoading(false);
+  };
+
+  return (
+    <Button
+      variant="secondary"
+      onClick={handleDuplicate}
+      disabled={isLoading}
+      loading={isLoading}
+    >
+      Duplicate Tier
+    </Button>
+  );
+};
 
 export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures = false }: TierFormProps) {
     const [tier, setTier] = useState<TierWithFeatures>((tierObj ? tierObj : newTier()) as Tier);
@@ -582,9 +609,6 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                         }
                     </div>
 
-                    {/* TODO: RE-ENABLE DELETING TIERS - CURRENT UX IS TRASH */}
-                    {/* <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">Admin</label>
-                    <Button variant="secondary" disabled={tier.id ? false : true} className="w-full" onClick={() => destroyTier(tier.id as string)}>Delete Tier</Button> */}
                     <Button
                         disabled={isSaving || isDeleting}
                         loading={isSaving}
@@ -602,23 +626,31 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                     {tier.id && tier.published ? <Text className="mt-2">This tier is currently published and available for sale.</Text>
                         : <Text className="mt-2">This tier is not published and is not available for sale.</Text>}
                     <TierLinkCopier tier={tier} />
-                    { !newRecord && !tier._count?.Charge && !tier._count?.subscriptions && !tier.features?.length ?
+                    { !newRecord && (
                         <div className="mt-4 flex flex-col bg-gray-100 rounded-lg border border-gray-400 px-2 py-4 text-gray-700 items-center">
-                            <Bold>Delete Package</Bold>
-                            <Text className="mb-4">Since this package does not have any active customers, you can delete this package.</Text>
-                            <TierDeleteButton 
-                                tierId={tier.id} 
-                                onConfirm={() => setIsDeleting(true)}
-                                onSuccess={() => {
-                                    setIsDeleting(false);
-                                    window.location.href = '/tiers';
-                                }}
-                                onError={(error: any) => {
-                                    setIsDeleting(false);
-                                }} />
+                            <Bold>Admin</Bold>
+                            <Text className="mb-4">Manage this tier with advanced options.</Text>
+                            <div className="flex gap-2 justify-center">
+                                <DuplicateTierButton tierId={tier.id} />
+                                {!tier._count?.Charge && !tier._count?.subscriptions && !tier.features?.length && (
+                                    <TierDeleteButton 
+                                        tierId={tier.id} 
+                                        onConfirm={() => setIsDeleting(true)}
+                                        onSuccess={() => {
+                                            setIsDeleting(false);
+                                            window.location.href = '/tiers';
+                                        }}
+                                        onError={(error: any) => {
+                                            setIsDeleting(false);
+                                        }}
+                                    />
+                                )}
+                            </div>
+                            {!tier._count?.Charge && !tier._count?.subscriptions && !tier.features?.length && (
+                                <Text className="mt-2 text-sm text-gray-500">This tier can be deleted as it has no active customers or features.</Text>
+                            )}
                         </div>
-                        : null
-                    }
+                    )}
                 </div>
             </div>
         </>
