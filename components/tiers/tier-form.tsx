@@ -632,7 +632,7 @@ export default function TierForm({ tier: tierObj, contracts, hasActiveFeatures =
                             
                             <div className="flex my-2 gap-2 justify-center">
                                 <DuplicateTierButton tierId={tier.id} />
-                                {!tier._count?.Charge && !tier._count?.subscriptions && !tier.features?.length && (
+                                {!tier._count?.Charge && !tier._count?.subscriptions && (
                                     <TierDeleteButton 
                                         tierId={tier.id} 
                                         onConfirm={() => setIsDeleting(true)}
