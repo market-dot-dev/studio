@@ -141,8 +141,8 @@ importers:
         specifier: ^18.2.0
         version: 18.2.0(react@18.2.0)
       react-dropzone:
-        specifier: ^14.2.3
-        version: 14.2.3(react@18.2.0)
+        specifier: ^14.2.10
+        version: 14.2.10(react@18.2.0)
       react-hook-form:
         specifier: ^7.50.1
         version: 7.50.1(react@18.2.0)
@@ -6292,8 +6292,8 @@ packages:
     peerDependencies:
       react: ^18.2.0
 
-  react-dropzone@14.2.3:
-    resolution: {integrity: sha512-O3om8I+PkFKbxCukfIR3QAGftYXDZfOE2N1mr/7qebQJHs7U+/RSL/9xomJNpRg9kM5h9soQSdf0Gc7OHF5Fug==}
+  react-dropzone@14.2.10:
+    resolution: {integrity: sha512-Y98LOCYxGO2jOFWREeKJlL7gbrHcOlTBp+9DCM1dh9XQ8+P/8ThhZT7kFb05C+bPcTXq/rixpU+5+LzwYrFLUw==}
     engines: {node: '>= 10.13'}
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
@@ -12370,7 +12370,7 @@ snapshots:
 
   file-selector@0.6.0:
     dependencies:
-      tslib: 2.6.2
+      tslib: 2.8.0
 
   fill-range@2.2.4:
     dependencies:
@@ -15356,7 +15356,7 @@ snapshots:
       react: 18.2.0
       scheduler: 0.23.0
 
-  react-dropzone@14.2.3(react@18.2.0):
+  react-dropzone@14.2.10(react@18.2.0):
     dependencies:
       attr-accept: 2.2.2
       file-selector: 0.6.0
