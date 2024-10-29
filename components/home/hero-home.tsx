@@ -23,7 +23,7 @@ export default function HeroHome() {
                 Read our Launch Post →
               </Button>
             </Link>
-            <h1 className="mx-auto mb-6 text-4xl font-bold leading-none tracking-tight text-white lg:text-6xl">
+            <h1 className="mx-auto mb-6 text-4xl md:text-5xl font-bold leading-none tracking-tight text-white lg:text-6xl">
               Build a business from an
               <br /> <CurvedUnderline>open source project</CurvedUnderline>
             </h1>
@@ -35,7 +35,7 @@ export default function HeroHome() {
             <div className="mx-auto max-w-xs sm:flex sm:max-w-none sm:justify-center">
               <div data-aos="fade-up">
                 <Link href={maintainerLoginUrl}>
-                  <Button color="green" className="w-full">
+                  <Button className="w-full bg-green-500 hover:bg-green-400 transition">
                     Get Started →
                   </Button>
                 </Link>
