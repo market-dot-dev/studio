@@ -45,7 +45,7 @@
     "flowbite": "^2.5.2",
     "flowbite-react": "^0.7.2",
     "focus-trap-react": "^10.2.3",
-    "framer-motion": "^10.18.0",
+    "framer-motion": "^11.11.10",
     "gray-matter": "^4.0.3",
     "input-otp": "1.2.4",
     "js-cookie": "^3.0.5",
