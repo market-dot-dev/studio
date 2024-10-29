@@ -7,34 +7,40 @@ import { Button } from '@tremor/react'
 
 export default function Header() {
   return (
-    <header className="absolute w-full z-30">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center justify-between h-20">
+    <header className="absolute z-30 w-full">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6">
+        <div className="relative flex h-20 items-center justify-between">
           {/* Site branding */}
-          <div className="shrink-0 mr-4">
+          <div className="mr-4 shrink-0">
             {/* Logo */}
             <Link href="/" className="block">
               <Image
                 alt="Gitwallet"
                 width={50}
                 height={50}
-                className="relative mx-auto h-12 w-auto"
+                className="relative mx-auto h-10 w-auto"
                 src="/gw-logo-white.png"
               />
             </Link>
           </div>
 
           {/* Desktop navigation */}
-          <nav className="hidden md:flex">
+          <nav className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
             {/* Desktop menu links */}
-            <ul className="flex grow justify-center flex-wrap items-center border-2 rounded-full px-2 gap-4 md:sticky md:top-2">
+            <ul className="flex grow flex-wrap items-center justify-center gap-4 rounded-full bg-white/25 px-2 text-white ring-1 ring-white/40 filter backdrop-blur-md md:sticky md:top-2">
               <li>
-                <Link href="#features" className="text-gray-300 hover:text-gray-50 px-4 py-2 flex items-center transition duration-150 ease-in-out">
+                <Link
+                  href="#features"
+                  className="flex items-center px-4 py-2 transition duration-150 ease-in-out"
+                >
                   Product
                 </Link>
               </li>
               <li>
-                <Link href="https://blog.gitwallet.co" className="text-gray-300 hover:text-gray-50 px-4 py-2 flex items-center transition duration-150 ease-in-out">
+                <Link
+                  href="https://blog.gitwallet.co"
+                  className="flex items-center px-4 py-2 transition duration-150 ease-in-out"
+                >
                   Changelog
                 </Link>
               </li>
@@ -42,12 +48,20 @@ export default function Header() {
               <Dropdown title="Support">
                 {/* 2nd level: hover */}
                 <li>
-                  <Link href="https://discord.gg/ZdSpS4BuGd" className="font-medium text-sm text-gray-300 hover:text-gray-50 flex py-2 px-4 leading-tight" target='_blank'>
+                  <Link
+                    href="https://discord.gg/ZdSpS4BuGd"
+                    className="flex px-4 py-2 text-sm font-medium leading-tight"
+                    target="_blank"
+                  >
                     Join the Discord
                   </Link>
                 </li>
                 <li>
-                  <Link href="https://x.com/gitwallet" className="font-medium text-sm text-gray-300 hover:text-gray-50 flex py-2 px-4 leading-tight" target='_blank'>
+                  <Link
+                    href="https://x.com/gitwallet"
+                    className="flex px-4 py-2 text-sm font-medium leading-tight"
+                    target="_blank"
+                  >
                     Find us on Twitter
                   </Link>
                 </li>
@@ -56,18 +70,21 @@ export default function Header() {
 
             {/* Desktop sign in links */}
           </nav>
-          <div className='hidden md:flex'>
-            <ul className="flex grow justify-end flex-wrap items-center">
-              <li>
-                <Link href="https://app.gitwallet.co/login"><button className="px-4 py-2 border-2 rounded-full text-gray-300 hover:text-gray-50">Login →</button></Link>
+          <div className="hidden md:flex">
+            <ul className="flex grow flex-wrap items-center justify-end">
+              <li className='group'>
+                <Link href="https://app.gitwallet.co/login">
+                  <button className="rounded-full bg-white/25 px-4 py-2 ring-1 ring-white/40 group-hover:bg-white group-hover:text-gray-800 transition">
+                    Login →
+                  </button>
+                </Link>
               </li>
             </ul>
           </div>
 
           <MobileMenu />
-
         </div>
       </div>
     </header>
-  )
+  );
 }
