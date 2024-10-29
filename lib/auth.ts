@@ -119,7 +119,7 @@ export const authOptions: NextAuthOptions = {
     session: AuthService.sessionCallback,
   },
   events: {
-    signIn: async ({user, account }: any) => {
+    signIn: async ({ user, account }: any) => {
     },
     createUser: async ({user}: {user: any}) => {
       if (!user) {

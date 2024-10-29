@@ -8,24 +8,42 @@ const maintainerLoginUrl = process.env.NODE_ENV === 'development'
 
 export default function HeroHome() {
   return (
-    
     <section>
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 relative">
-      {/* Hero content */}
-      <div className="relative pt-32 pb-10 md:pt-40 md:pb-4">
-        {/* Section header */}
-        <div className="max-w-3xl mx-auto text-center pb-12 md:pb-16">
-          <Link href="https://blog.gitwallet.co"><Button className="rounded-full py-1 mb-2" variant="primary" color="gray" size="xs">Read our Launch Post →</Button></Link>
-          <h1 className="mb-4 text-4xl font-bold leading-none tracking-tight md:text-5xl xl:text-5xl text-white">Build a business from an <CurvedUnderline>open source project.</CurvedUnderline></h1>
-        <p className="mb-6 font-light text-gray-200 lg:mb-8 md:text-lg lg:text-xl dark:text-gray-400 ">Gitwallet is a commerce platform made for open source developers. Build premium products and services, sell across channels, and grow your business - all in one place.</p>
-          <div className="max-w-xs mx-auto sm:max-w-none sm:flex sm:justify-center">
-            <div data-aos="fade-up">
-              <Link href={maintainerLoginUrl}><Button color="green" className="w-full">Get Started →</Button></Link>
+      <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
+        {/* Hero content */}
+        <div className="relative pb-10 pt-32 md:pb-4 md:pt-40">
+          {/* Section header */}
+          <div className="mx-auto max-w-3xl pb-12 text-center md:pb-16">
+            <Link href="https://blog.gitwallet.co">
+              <Button
+                className="mb-6 rounded-full py-1.5 bg-gray-700 hover:bg-gray-600 px-4 border-none transition"
+                variant="primary"
+                size="xs"
+              >
+                Read our Launch Post →
+              </Button>
+            </Link>
+            <h1 className="mx-auto mb-6 text-4xl font-bold leading-none tracking-tight text-white lg:text-6xl">
+              Build a business from an
+              <br /> <CurvedUnderline>open source project</CurvedUnderline>
+            </h1>
+            <p className="mb-6 max-w-[50ch] text-gray-400 dark:text-gray-400 md:text-lg lg:mb-8 lg:text-xl mx-auto">
+              Gitwallet is a commerce platform made for open source developers.
+              Build premium products and services, sell across channels, and
+              grow your business - all in one place.
+            </p>
+            <div className="mx-auto max-w-xs sm:flex sm:max-w-none sm:justify-center">
+              <div data-aos="fade-up">
+                <Link href={maintainerLoginUrl}>
+                  <Button color="green" className="w-full">
+                    Get Started →
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </section>
-  )
+    </section>
+  );
 }
