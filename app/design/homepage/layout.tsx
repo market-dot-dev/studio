@@ -28,7 +28,7 @@ export default function HomePageLayout({ children }: { children: React.ReactNode
       style={{ textRendering: "optimizeLegibility" }}
     >
       <div className="relative mx-auto grid max-w-[700px] grid-cols-12 lg:max-w-[1600px]">
-        <aside className="left-0 top-0 z-10 col-span-full flex flex-col items-start p-6 lg:sticky lg:col-span-4 lg:h-screen lg:p-12 xl:p-16">
+        <aside className="left-0 top-0 z-10 col-span-full flex flex-col items-start p-6 lg:sticky lg:col-span-4 lg:h-screen lg:p-12 lg:pr-0 xl:p-16">
           <Image
             src="/logotype.svg"
             alt="gitwallet logo"
@@ -64,14 +64,14 @@ export default function HomePageLayout({ children }: { children: React.ReactNode
                 <a href={link.href}>{link.text}</a>
                 <ChevronRight
                   size={20}
-                  strokeWidth={2.5}
-                  className="opacity-50"
+                  strokeWidth={2}
+                  className="text-[#b8b8b3] -mr-0.5"
                 />
               </li>
             ))}
           </ul>
         </aside>
-        <main className="col-span-full flex w-full flex-col gap-y-16 overflow-visible p-6 lg:col-span-8 lg:p-12 xl:p-16">
+        <main className="col-span-full flex w-full flex-col gap-y-16 overflow-visible p-6 lg:col-span-8 lg:p-12 lg:pl-24 xl:p-16">
           {children}
         </main>
       </div>
