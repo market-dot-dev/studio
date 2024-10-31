@@ -57,17 +57,20 @@ async function customMiddleware(req: NextRequest) {
   path = path === "/" ? "" : path;
 
   // exempt from middleware rewrites
-  if( url.pathname.startsWith('/monitoring')) {
+  if (url.pathname.startsWith('/monitoring') || url.pathname.startsWith('/design')) {
     return NextResponse.next();
   }
 
   // alpha.gitwallet.co
-  if(reservedSubdomain === 'alpha') {
+  if (reservedSubdomain === 'alpha') {
     return rewrite(`/alpha${path}`, req.url);
   }
 
   // gitwallet.co
   if (bareDomain) {
+    if (url.pathname.startsWith('/design')) {
+      return rewrite(`/design${path}`, req.url);
+    }
     return rewrite(`/home${path}`, req.url);
   }
 

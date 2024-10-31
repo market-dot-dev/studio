@@ -37,7 +37,7 @@ export default function Dropdown({
       <Transition
         show={dropdownOpen}
         as="ul"
-        className="origin-top-right absolute top-full right-0 -mt-1 w-40 bg-white/25 ring-1 ring-white/40 py-2 ml-4 rounded-md backdrop-blur"
+        className="origin-top-right absolute top-full right-0 -mt-1 w-40 bg-white ring-1 ring-black/10 text-neutrla-900 font-medium text-gray-800 py-2 ml-4 rounded-md backdrop-blur shadow-md"
         enter="transition ease-out duration-200 transform"
         enterFrom="opacity-0 -translate-y-2"
         enterTo="opacity-100 translate-y-0"

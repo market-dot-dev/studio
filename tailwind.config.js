@@ -108,6 +108,7 @@ module.exports = {
         30: "7.5rem",
       },
       fontFamily: {
+        sans: ["Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica", ...fontFamily.sans],
         default: ["var(--font-inter)", ...fontFamily.sans],
         cal: ["var(--font-cal)", ...fontFamily.sans],
         title: ["var(--font-title)", ...fontFamily.sans],
