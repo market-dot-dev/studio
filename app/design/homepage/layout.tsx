@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { ChevronRight } from "lucide-react";
 
-
 const links = [
   {
     href: "#",
@@ -27,35 +26,35 @@ export default function HomePageLayout({ children }: { children: React.ReactNode
       className="bg-[#F5F5F4] font-sans text-[19px] font-bold leading-6 tracking-[-0.01em] text-[#222214] antialiased"
       style={{ textRendering: "optimizeLegibility" }}
     >
-      <div className="relative mx-auto grid max-w-[700px] grid-cols-12 lg:max-w-[1600px]">
-        <aside className="left-0 top-0 z-10 col-span-full flex flex-col items-start p-6 lg:sticky lg:col-span-4 lg:h-screen lg:p-12 lg:pr-0 xl:p-16">
+      <div className="relative mx-auto grid max-w-[800px] grid-cols-12 lg:max-w-none">
+        <aside className="left-0 top-0 z-10 col-span-full flex flex-col items-start p-6 md:pt-9 lg:sticky lg:col-span-4 lg:h-screen lg:p-12 lg:pr-0 xl:p-16 2xl:fixed 2xl:max-w-[500px]">
           <Image
             src="/logotype.svg"
             alt="gitwallet logo"
             height={32}
             width={164}
-            className="mb-12 h-7 w-auto xl:mb-16 xl:h-8"
+            className="mb-12 h-7 w-auto xl:mb-14 xl:h-8"
           />
-          <h1 className="mb-5 whitespace-nowrap text-[clamp(40px,7vw,48px)] font-bold leading-[clamp(40px,7vw,48px)] tracking-[-0.035em] lg:text-[clamp(40px,3.5vw,48px)] lg:leading-[clamp(40px,3.5vw,48px)]">
+          <h1 className="mb-5 whitespace-nowrap text-[clamp(40px,7vw,48px)] font-bold leading-[1] tracking-[-0.035em] lg:text-[clamp(40px,4vw,48px)] xl:text-[clamp(40px,3.25vw,48px)]">
             Business Toolkit
             <br />
             for Open Source
           </h1>
-          <p className="mb-7 max-w-[55ch] text-[#8C8C88]">
+          <p className="mb-7 max-w-[50ch] text-[#8C8C88]">
             One place to sell services, find customers & market everywhere —
             purpose-built for open source.
           </p>
-          <button className="mb-8 flex w-full items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-[#BBC4A2] px-12 py-3 font-bold xl:px-16 xl:py-4">
+          <button className="flex w-full items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-[#BBC4A2] px-12 py-3 text-[18px] font-bold">
             <Image
               src="/github.svg"
               alt="github logo"
               height={24}
               width={24}
-              className="h-5 w-auto xl:h-6"
+              className="h-[22px] w-auto"
             />
             Sign up with Github
           </button>
-          <ul className="w-full">
+          <ul className="mt-8 w-full lg:mt-12">
             {links.map((link) => (
               <li
                 key={link.text}
@@ -65,13 +64,13 @@ export default function HomePageLayout({ children }: { children: React.ReactNode
                 <ChevronRight
                   size={20}
                   strokeWidth={2}
-                  className="text-[#b8b8b3] -mr-0.5"
+                  className="-mr-0.5 text-[#b8b8b3]"
                 />
               </li>
             ))}
           </ul>
         </aside>
-        <main className="col-span-full flex w-full flex-col gap-y-16 overflow-visible p-6 lg:col-span-8 lg:p-12 lg:pl-24 xl:p-16">
+        <main className="2xl:col-span-8 2xl:col-start-5 col-span-full flex w-full max-w-[1000px] flex-col gap-y-16 overflow-visible p-6 lg:col-span-8 lg:p-12 lg:pl-[72px] xl:p-16 2xl:px-0">
           {children}
         </main>
       </div>
