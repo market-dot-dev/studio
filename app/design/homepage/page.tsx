@@ -7,6 +7,7 @@ import {
   AppWindow,
   CodeSquare,
   ScanSearch,
+  Radar,
 } from "lucide-react";
 import Image from "next/image";
 import Hero from "@/components/design/Hero";
@@ -33,9 +34,11 @@ export default function HomePage() {
     <>
       <Hero />
       <Section
-        icon={<Package />}
+        badge={{
+          icon: <Package />,
+          title: "Sell",
+        }}
         color={colors.green["100"]}
-        title="Offerings"
         headline="Sell Products & Services in Seconds"
         description="The source of truth for all your offerings. Start with proven pricing
           structure & contracts to sell nearly whatever you want."
@@ -66,7 +69,7 @@ export default function HomePage() {
           <FeatureCard
             icon={<FileBox />}
             title="Host digital products"
-            description="Upload & host courses, ebooks, or other digital products. We handle the payment processing and delivery."
+            description="Upload & host courses, ebooks and other resources — we handle the payment and delivery."
             image={{
               src: "/course.png",
               alt: "Package cards illustration",
@@ -78,9 +81,11 @@ export default function HomePage() {
         </div>
       </Section>
       <Section
-        icon={<Speech />}
+        badge={{
+          icon: <Speech />,
+          title: "Marketing",
+        }}
         color={colors.purple["100"]}
-        title="Marketing"
         headline="Market Everywhere"
         description="The source of truth for all your offerings. Start with proven pricing
           structure & contracts to sell nearly whatever you want."
@@ -89,7 +94,7 @@ export default function HomePage() {
           <FeatureCard
             icon={<AppWindow />}
             title="Fully-customizable landing pages"
-            description="Make support, training or consulting packages. Compare your pricing to plans use by real developers."
+            description="Start with a beautiful template, designed for developers. Not good enough? Pop the hood with a full-screen code editor."
             image={{
               src: "/landing-page.png",
               alt: "Package cards illustration",
@@ -101,7 +106,7 @@ export default function HomePage() {
           <FeatureCard
             icon={<CodeSquare />}
             title="Purpose-built embeds"
-            description="Start working with clients faster by accessing our library of ready-made, open source contracts."
+            description="Use single-purpose, customizable embeds to promote servies on your repo, read.me or anywhere really."
             image={{
               src: "/embeds-screenshot.png",
               alt: "Package cards illustration",
@@ -113,20 +118,22 @@ export default function HomePage() {
         </div>
       </Section>
       <Section
-        icon={<ScanSearch />}
+        badge={{
+          icon: <ScanSearch />,
+          title: "Research",
+        }}
         color={colors.yellow["100"]}
-        title="Research"
         headline="Find Projects & Customers"
         description="The source of truth for all your offerings. Start with proven pricing
           structure & contracts to sell nearly whatever you want."
       >
         <div className="flex w-full flex-col gap-6 lg:flex-row">
           <FeatureCard
-            icon={<AppWindow />}
-            title="Fully-customizable landing pages"
-            description="Make support, training or consulting packages. Compare your pricing to plans use by real developers."
+            icon={<Radar />}
+            title="In-depth repo reports"
+            description="Crawl the dependency graph of any repo and find out who's actually using your stuff (or make a logo-soup)."
             image={{
-              src: "/landing-page.png",
+              src: "/radar.png",
               alt: "Package cards illustration",
             }}
             color={colors.yellow}
@@ -143,8 +150,8 @@ export default function HomePage() {
                 className="h-6 w-auto"
               />
             }
-            title="Purpose-built embeds"
-            description="Start working with clients faster by accessing our library of ready-made, open source contracts."
+            title="Explore ecosystems with Echo"
+            description="Keep a pulse on open source — find the big players, interesting projects and top talent in any ecosystem."
             image={{
               src: "/echo.png",
               alt: "Package cards illustration",

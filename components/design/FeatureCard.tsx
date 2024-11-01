@@ -10,13 +10,13 @@ interface FeatureCardProps {
   icon: ReactElement;
   title: string;
   description: string;
-  image: {
-    src: string;
-    alt: string;
-  };
   color: {
     "100": string;
     "10": string;
+  };
+  image?: {
+    src: string;
+    alt: string;
   };
   orientation?: "horizontal" | "vertical";
   isComingSoon?: boolean;
@@ -51,7 +51,7 @@ export default function FeatureCard({
     >
       {isComingSoon && (
         <span
-          className="absolute right-0 top-0 rounded-bl-md rounded-tr-lg border-b border-l border-black/5 px-2 text-[10px] font-bold uppercase leading-6 tracking-wider text-white"
+          className="absolute right-0 top-0 rounded-bl-md rounded-tr-lg border-b border-l border-black/5 px-2 text-[10px] font-bold uppercase leading-6 tracking-wider text-white opacity-95"
           style={{ backgroundColor: color["100"] }}
         >
           Coming Soon
@@ -87,12 +87,15 @@ export default function FeatureCard({
           orientation === "horizontal" ? "max-w-[25ch]" : "w-full"
         }`}
       >
-        <div className="flex h-6 items-center justify-between" style={{ color: color["100"] }}>
+        <div
+          className="flex h-6 items-center justify-between"
+          style={{ color: color["100"] }}
+        >
           {React.cloneElement(icon, { size: 24 })}
           {link && (
             <Link
               href={link.href}
-              className="group flex items-center gap-[3px] text-[15px] leading-6 hover:brightness-90 -mr-1"
+              className="group -mr-1 flex items-center gap-[3px] text-[15px] leading-6 hover:brightness-90"
               style={{ color: color["100"] }}
             >
               {link.text}
@@ -113,23 +116,25 @@ export default function FeatureCard({
           </p>
         </div>
       </div>
-      <div
-        className={clsx(
-          "z-[-1] ml-auto justify-self-end overflow-visible pl-12 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] xl:pl-24",
-          orientation === "horizontal" ? "pt-3" : "w-full pt-3 lg:pt-6",
-          imageMaxWidth,
-        )}
-      >
-        <Image
-          src={image.src}
-          alt={image.alt}
-          height={800}
-          width={600}
-          className={`h-full w-full justify-self-end drop-shadow-sm ${
-            orientation === "horizontal" ? "object-contain" : "object-cover"
-          }`}
-        />
-      </div>
+      {image && (
+        <div
+          className={clsx(
+            "z-[-1] ml-auto justify-self-end overflow-visible pl-12 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] xl:pl-24",
+            orientation === "horizontal" ? "pt-3" : "w-full pt-3 lg:pt-6",
+            imageMaxWidth,
+          )}
+        >
+          <Image
+            src={image.src}
+            alt={image.alt}
+            height={800}
+            width={600}
+            className={`h-full w-full justify-self-end drop-shadow-sm ${
+              orientation === "horizontal" ? "object-contain" : "object-cover"
+            }`}
+          />
+        </div>
+      )}
     </div>
   );
 }

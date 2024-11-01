@@ -7,12 +7,12 @@ export default function Hero() {
   return (
     <div className="flex flex-col items-center gap-12 tracking-tight lg:text-[24px] lg:leading-8 ">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center lg:max-w-none">
-        <h1 className="mb-6 whitespace-nowrap text-center text-[clamp(32px,11vw,64px)] font-bold leading-[0.9] tracking-[-0.035em] lg:text-[88px] lg:tracking-[-0.04em] xl:mb-10 xl:text-[120px] xl:leading-[104px]">
+        <h1 className="mb-6 whitespace-nowrap text-center text-[clamp(32px,11vw,64px)] font-bold leading-[0.9] tracking-[-0.035em] lg:text-[88px] lg:tracking-[-0.045em] xl:mb-10 xl:text-[120px] xl:leading-[104px]">
           Business Toolkit
           <br />
           for Open Source
         </h1>
-        <p className="mb-6 max-w-[45ch] text-center text-[#8C8C88] xl:mb-8">
+        <p className="mb-6 max-w-[45ch] text-center text-[#8C8C88] xl:mb-8 text-pretty">
           One place to{" "}
           <span className="text-[#6e7d47]">
             <Package

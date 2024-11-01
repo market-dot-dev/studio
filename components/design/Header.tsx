@@ -23,7 +23,7 @@ export default function Header({ className }: { className?: string }) {
       >
         <div className="relative flex items-center justify-between border-b border-[#d2d2cf] pb-2.5 tracking-[-0.02em] md:border-none">
           <Logo className="h-6 md:h-7" />
-          <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-8 text-[#8C8C88] md:flex lg:gap-12">
+          <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9 text-[#8C8C88] md:flex ">
             <Link href="#" className="whitespace-nowrap">
               Product
             </Link>
@@ -36,10 +36,10 @@ export default function Header({ className }: { className?: string }) {
             <Popover.Root>
               <Popover.Trigger asChild>
                 <button className="flex items-center gap-1 whitespace-nowrap">
-                  Support
+                  Follow
                   <ChevronDown
                     size={16}
-                    className="mt-0.5 opacity-50"
+                    className="mt-0.5 opacity-70"
                     strokeWidth={3}
                   />
                 </button>
