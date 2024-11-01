@@ -5,7 +5,7 @@ import { Package, ScanSearch, Speech, BookOpen } from "lucide-react";
 
 export default function Hero() {
   return (
-    <div className="flex flex-col items-center gap-12 tracking-tight lg:text-[24px] lg:leading-8">
+    <div className="flex flex-col items-center gap-12 tracking-tight lg:text-[24px] lg:leading-8 ">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center lg:max-w-none">
         <h1 className="mb-6 whitespace-nowrap text-center text-[clamp(32px,11vw,64px)] font-bold leading-[0.9] tracking-[-0.035em] lg:text-[88px] lg:tracking-[-0.04em] xl:mb-10 xl:text-[120px] xl:leading-[104px]">
           Business Toolkit

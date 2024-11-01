@@ -146,7 +146,7 @@ export default function HomePage() {
             title="Purpose-built embeds"
             description="Start working with clients faster by accessing our library of ready-made, open source contracts."
             image={{
-              src: "/embeds-screenshot.png",
+              src: "/echo.png",
               alt: "Package cards illustration",
             }}
             color={colors.yellow}

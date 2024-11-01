@@ -1,7 +1,7 @@
 "use client";
 
 import React, { ReactElement } from "react";
-import { ArrowRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import clsx from "clsx";
@@ -35,7 +35,7 @@ export default function FeatureCard({
   color,
   orientation = "vertical",
   isComingSoon = false,
-  imageMaxWidth = "max-w-[400px] lg:max-w-[400px]",
+  imageMaxWidth = "sm:max-w-[70%] lg:max-w-[400px]",
   link,
 }: FeatureCardProps) {
   return (
@@ -43,7 +43,7 @@ export default function FeatureCard({
       className={`relative flex h-full w-full flex-col items-start justify-between gap-x-6 overflow-hidden rounded-lg ring-1 ring-inset ring-black/[10%] ${
         orientation === "horizontal"
           ? "sm:max-h-[500px] md:max-h-[300px] md:flex-row lg:max-h-[320px]"
-          : "max-h-[400px]"
+          : "max-h-[450px]"
       }`}
       style={{
         backgroundImage: `radial-gradient(circle at top right, ${color["10"]}, #f1f1f0)`,
@@ -57,20 +57,10 @@ export default function FeatureCard({
           Coming Soon
         </span>
       )}
-      {link && (
-        <Link
-          href={link.href}
-          className="absolute right-0 top-0 rounded-bl-md rounded-tr-lg border-b border-l border-black/5 px-2 text-[10px] font-bold uppercase leading-6 tracking-wider text-white"
-          style={{ backgroundColor: color["100"] }}
-        >
-          {link.text}
-          <ArrowRight size={16} className="ml-1 inline-block" />
-        </Link>
-      )}
       <div className="pointer-events-none absolute inset-0 z-[-2]">
         <div className="pointer-events-none absolute inset-0">
           <div
-            className="absolute inset-0 -bottom-8 right-[25%] -ml-px bg-[url('/circuit-pattern.svg?height=50&width=50')] bg-repeat opacity-[8%]"
+            className="absolute inset-0 -bottom-8 right-[25%] -ml-px bg-[url('/circuit-pattern.svg?height=50&width=50')] bg-repeat opacity-[7%]"
             style={{
               maskImage:
                 "radial-gradient(ellipse 220% 140% at bottom left, black, transparent 45%)",
@@ -97,14 +87,28 @@ export default function FeatureCard({
           orientation === "horizontal" ? "max-w-[25ch]" : "w-full"
         }`}
       >
-        <div style={{ color: color["100"] }}>
+        <div className="flex h-6 items-center justify-between" style={{ color: color["100"] }}>
           {React.cloneElement(icon, { size: 24 })}
+          {link && (
+            <Link
+              href={link.href}
+              className="group flex items-center gap-[3px] text-[15px] leading-6 hover:brightness-90 -mr-1"
+              style={{ color: color["100"] }}
+            >
+              {link.text}
+              <ChevronRight
+                size={16}
+                strokeWidth={2.5}
+                className="transition group-hover:translate-x-px"
+              />
+            </Link>
+          )}
         </div>
         <div className="flex flex-col gap-2">
           <h3 className="text-xl font-semibold tracking-tight text-gray-900">
             {title}
           </h3>
-          <p className="max-w-[40ch] text-balance text-[15px] leading-5 tracking-normal text-black/40">
+          <p className="max-w-[40ch] text-balance text-[15px] leading-5 tracking-[-0.0075em] text-black/40">
             {description}
           </p>
         </div>
