@@ -6,7 +6,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <div>
+      <div className="p-12">
         <div className="mb-5 flex gap-2 text-[#7d8861]">
           <Package size={24} />
           <p className="">Offerings</p>

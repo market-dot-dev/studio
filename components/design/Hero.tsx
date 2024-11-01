@@ -6,9 +6,9 @@ import NavLinks from './NavLinks';
 
 export default function Hero() {
   return (
-    <div className="flex flex-col gap-12 gap-x-[72px] xl:gap-x-24 px-6 py-9 md:flex-row md:p-12 md:pr-0 xl:-mr-12">
-      <div className="left-0 top-0 z-10 col-span-full flex flex-col items-start xl:hidden">
-        <h1 className="mb-5 whitespace-nowrap text-[40px] font-bold leading-[1] tracking-[-0.035em] lg:text-[clamp(40px,4vw,48px)] xl:text-[clamp(40px,3.25vw,48px)]">
+    <div className="flex flex-col gap-y-12 pt-9 md:pt-12 lg:-mr-12 lg:flex-row">
+      <div className="left-0 top-0 z-10 col-span-full flex flex-col items-start px-6 md:px-12 xl:hidden">
+        <h1 className="mb-5 whitespace-nowrap text-[clamp(36px,10.5vw,48px)] font-bold leading-[1] tracking-[-0.035em] sm:text-[48px] lg:text-[clamp(40px,4vw,48px)] xl:text-[clamp(40px,3.25vw,48px)]">
           Business Toolkit
           <br />
           for Open Source
@@ -29,7 +29,15 @@ export default function Hero() {
         </button>
         <NavLinks />
       </div>
-      <Image src="/home.png" alt="gitwallet logo" height={1600} width={2400} className='md:-mt-2 max-h-[540px] xl:max-h-none ' />
+      <div className="pl-6 md:pl-12">
+        <Image
+          src="/home.png"
+          alt="gitwallet logo"
+          height={1600}
+          width={2400}
+          className="lg:max-h-[540px] xl:max-h-none"
+        />
+      </div>
       {/* <div className="overflow-visible">
         <div className="relative mt-96 aspect-[3/2] w-[calc(100%+8rem)] overflow-visible lg:w-[calc(100%+8rem)] 2xl:w-full">
           <Image
