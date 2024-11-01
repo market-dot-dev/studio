@@ -1,28 +1,17 @@
 import { Package, HandPlatter } from "lucide-react";
 import Image from "next/image";
+import Hero from "@/components/design/Hero";
 
 export default function HomePage() {
   return (
     <>
-      <div className="overflow-visible">
-        <div className="relative mt-96 aspect-[3/2] w-[calc(100%+8rem)] overflow-visible lg:w-[calc(100%+8rem)] 2xl:w-full">
-          <Image
-            src="/home.png"
-            alt="gitwallet logo"
-            fill
-            style={{
-              objectFit: "contain",
-              objectPosition: "left center",
-            }}
-          />
-        </div>
-      </div>
+      <Hero />
       <div>
         <div className="mb-5 flex gap-2 text-[#7d8861]">
           <Package size={24} />
           <p className="">Offerings</p>
         </div>
-        <h2 className="mb-5 whitespace-nowrap text-[clamp(40px,7vw,46px)] font-bold leading-[1] tracking-[-0.035em] lg:text-[clamp(40px,3.5vw,46px)]">
+        <h2 className="mb-5 text-[clamp(40px,7vw,46px)] font-bold leading-[1] tracking-[-0.035em] lg:text-[clamp(40px,3.5vw,46px)]">
           Sell se<span className="tracking-normal">r</span>vices & products
           <br /> in seconds
         </h2>
@@ -30,8 +19,8 @@ export default function HomePage() {
           One place to sell services, find customers & market everywhere —
           purpose-built for open source.
         </p>
-        <div className="flex flex-col gap-6">
-          <div className="relative flex h-full max-h-[400px] w-full flex-col items-start justify-between gap-x-6 gap-y-4 overflow-hidden rounded-lg pl-6 pt-5 ring-1 ring-inset ring-black/[8%] sm:max-h-[500px] md:max-h-[300px] md:flex-row lg:max-h-[275px] 2xl:max-h-[300px]">
+        <div className="flex flex-col gap-6 md:mx-0">
+          <div className="rounded-lg relative flex h-full max-h-[400px] w-full flex-col items-start justify-between gap-x-6 gap-y-4 overflow-hidden pl-6 pt-5 ring-1 ring-inset ring-black/[8%] sm:max-h-[500px] md:max-h-[300px] md:flex-row lg:max-h-[275px] 2xl:max-h-[300px]">
             <div className="pointer-events-none absolute inset-0 z-[-2]">
               <div className="pointer-events-none absolute inset-0">
                 <div
