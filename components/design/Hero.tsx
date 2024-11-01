@@ -1,12 +1,11 @@
 import React from 'react'
 import Image from 'next/image'
-import Logo from './Logo'
-import { Package, ScanSearch, Speech } from "lucide-react";
-import NavLinks from './NavLinks';
+import Link from 'next/link'
+import { Package, ScanSearch, Speech, BookOpen } from "lucide-react";
 
 export default function Hero() {
   return (
-    <div className="flex flex-col items-center gap-12 tracking-tight  lg:text-[24px] lg:leading-8">
+    <div className="flex flex-col items-center gap-12 tracking-tight lg:text-[24px] lg:leading-8">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center lg:max-w-none">
         <h1 className="mb-6 whitespace-nowrap text-center text-[clamp(32px,11vw,64px)] font-bold leading-[0.9] tracking-[-0.035em] lg:text-[88px] lg:tracking-[-0.04em] xl:mb-10 xl:text-[120px] xl:leading-[104px]">
           Business Toolkit
@@ -18,35 +17,35 @@ export default function Hero() {
           <span className="text-[#6e7d47]">
             <Package
               size={32}
-              className="inline-block h-5 w-auto lg:h-7 self-center"
+              className="-mt-1 inline h-5 w-auto self-center lg:h-7"
             />{" "}
-            Sell
-          </span>{" "}
-          services,{" "}
+            Sell services
+          </span>
+          ,{" "}
           <span className="text-[#9b7f43]">
             <ScanSearch
               size={32}
-              className="inline-block h-5 w-auto lg:h-7"
+              className="-mt-1 inline-block h-5 w-auto lg:h-7"
             />{" "}
-            Find
+            Find customers
           </span>{" "}
-          customers and{" "}
+          and{" "}
           <span className="text-[#696b94]">
             <Speech
               size={32}
-              className="inline-block h-5 w-auto lg:h-7"
+              className="-mt-1 inline-block h-5 w-auto lg:h-7"
             />{" "}
-            Market
+            Market everywhere
           </span>{" "}
-          everywhere — purpose-built for Open Source.
+          — purpose-built for Open Source.
         </p>
-        <button className="flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-[#BBC4A2] px-8 py-3 text-[18px] font-bold lg:gap-4  lg:text-[20px] lg:leading-6 lg:tracking-[-0.02em]">
+        <button className="flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-[#BBC4A2] px-8 py-3 text-[18px] font-bold  lg:text-[20px] lg:leading-6 lg:tracking-[-0.02em]">
           <Image
             src="/github.svg"
             alt="github logo"
             height={24}
             width={24}
-            className="h-[22px] w-auto lg:h-7"
+            className="h-[22px] w-auto lg:h-6"
           />
           Sign up with Github
         </button>
@@ -63,7 +62,7 @@ export default function Hero() {
           alt="gitwallet logo"
           height={1600}
           width={2400}
-          className="h-full w-full max-w-[1100px] lg:max-h-[540px] xl:max-h-none"
+          className="h-full w-full max-w-[950px] xl:max-w-[1100px]"
         />
       </div>
       {/* <div className="overflow-visible">

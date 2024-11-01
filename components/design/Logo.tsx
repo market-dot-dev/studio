@@ -5,7 +5,7 @@ import clsx from 'clsx';
 export default function Logo({ className }: { className?: string }) {
   return (
     <Image
-      src="/logotype.svg"
+      src="/gitwallet-logo.svg"
       alt="gitwallet logo"
       height={32}
       width={164}

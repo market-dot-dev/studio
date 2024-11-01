@@ -30,7 +30,7 @@ export default function HomePageLayout({ children }: { children: React.ReactNode
       <Header />
       {/* <Aside className="col-span-4 hidden xl:flex" /> */}
       {/* <Link href="#" className="fixed top-12 right-12">Login</Link> */}
-      <main className="flex w-full flex-col gap-24 lg:gap-y-32 overflow-visible xl:col-span-8 2xl:col-span-8 2xl:col-start-5 max-w-[800px] lg:max-w-[1400px] mx-auto p-6 pt-10 md:p-12 xl:pt-24">
+      <main className="flex w-full flex-col gap-24 lg:gap-y-32 overflow-visible xl:col-span-8 2xl:col-span-8 2xl:col-start-5 max-w-[800px] lg:max-w-[1400px] mx-auto px-6 pt-12 md:p-12 lg:pt-24 xl:pt-32">
         {children}
       </main>
     </div>

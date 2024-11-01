@@ -1,7 +1,9 @@
 "use client";
 
 import React, { ReactElement } from "react";
+import { ArrowRight } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import clsx from "clsx";
 
 interface FeatureCardProps {
@@ -12,10 +14,17 @@ interface FeatureCardProps {
     src: string;
     alt: string;
   };
-  color: string;
+  color: {
+    "100": string;
+    "10": string;
+  };
   orientation?: "horizontal" | "vertical";
   isComingSoon?: boolean;
   imageMaxWidth?: string | null;
+  link?: {
+    text: string;
+    href: string;
+  }
 }
 
 export default function FeatureCard({
@@ -27,22 +36,36 @@ export default function FeatureCard({
   orientation = "vertical",
   isComingSoon = false,
   imageMaxWidth = "max-w-[400px] lg:max-w-[400px]",
+  link,
 }: FeatureCardProps) {
   return (
     <div
-      className={`bg-[#f2f2f2] relative flex h-full w-full flex-col items-start justify-between gap-x-6 overflow-hidden rounded-lg ring-1 ring-inset ring-black/[9%] ${
+      className={`relative flex h-full w-full flex-col items-start justify-between gap-x-6 overflow-hidden rounded-lg ring-1 ring-inset ring-black/[10%] ${
         orientation === "horizontal"
-          ? "sm:max-h-[500px] md:max-h-[300px] md:flex-row lg:max-h-[275px] 2xl:max-h-[300px]"
+          ? "sm:max-h-[500px] md:max-h-[300px] md:flex-row lg:max-h-[320px]"
           : "max-h-[400px]"
       }`}
+      style={{
+        backgroundImage: `radial-gradient(circle at top right, ${color["10"]}, #f1f1f0)`,
+      }}
     >
       {isComingSoon && (
         <span
-          className="absolute right-0 top-0 rounded-bl-md rounded-tr-lg border-b border-l border-black/10 px-2 text-[10px] font-bold uppercase leading-6 tracking-wider text-white"
-          style={{ backgroundColor: color }}
+          className="absolute right-0 top-0 rounded-bl-md rounded-tr-lg border-b border-l border-black/5 px-2 text-[10px] font-bold uppercase leading-6 tracking-wider text-white"
+          style={{ backgroundColor: color["100"] }}
         >
           Coming Soon
         </span>
+      )}
+      {link && (
+        <Link
+          href={link.href}
+          className="absolute right-0 top-0 rounded-bl-md rounded-tr-lg border-b border-l border-black/5 px-2 text-[10px] font-bold uppercase leading-6 tracking-wider text-white"
+          style={{ backgroundColor: color["100"] }}
+        >
+          {link.text}
+          <ArrowRight size={16} className="ml-1 inline-block" />
+        </Link>
       )}
       <div className="pointer-events-none absolute inset-0 z-[-2]">
         <div className="pointer-events-none absolute inset-0">
@@ -74,7 +97,9 @@ export default function FeatureCard({
           orientation === "horizontal" ? "max-w-[25ch]" : "w-full"
         }`}
       >
-        <div style={{ color }}>{React.cloneElement(icon, { size: 24 })}</div>
+        <div style={{ color: color["100"] }}>
+          {React.cloneElement(icon, { size: 24 })}
+        </div>
         <div className="flex flex-col gap-2">
           <h3 className="text-xl font-semibold tracking-tight text-gray-900">
             {title}
@@ -86,7 +111,7 @@ export default function FeatureCard({
       </div>
       <div
         className={clsx(
-          "z-[-1] ml-auto justify-self-end overflow-visible pl-12 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.08)] xl:pl-24",
+          "z-[-1] ml-auto justify-self-end overflow-visible pl-12 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] xl:pl-24",
           orientation === "horizontal" ? "pt-3" : "w-full pt-3 lg:pt-6",
           imageMaxWidth,
         )}
@@ -96,7 +121,7 @@ export default function FeatureCard({
           alt={image.alt}
           height={800}
           width={600}
-          className={`h-full w-full justify-self-end ${
+          className={`h-full w-full justify-self-end drop-shadow-sm ${
             orientation === "horizontal" ? "object-contain" : "object-cover"
           }`}
         />
