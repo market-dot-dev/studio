@@ -21,9 +21,9 @@ export default function Header({ className }: { className?: string }) {
           className,
         )}
       >
-        <div className="relative flex items-center justify-between border-b border-[#d2d2cf] pb-2.5 tracking-[-0.02em] md:border-none">
+        <div className="relative flex items-center justify-between pb-2.5 tracking-[-0.02em] ">
           <Logo className="h-6 md:h-7" />
-          <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9 text-[#8C8C88] md:flex ">
+          <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9 text-[#8C8C88] lg:flex ">
             <Link href="#" className="whitespace-nowrap">
               Product
             </Link>
@@ -63,7 +63,7 @@ export default function Header({ className }: { className?: string }) {
           </div>
           <div className="flex w-fit items-center gap-6">
             <Link href="#">Log in</Link>
-            <button onClick={toggleMenu} className="md:hidden">
+            <button onClick={toggleMenu} className="lg:hidden">
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
@@ -71,7 +71,7 @@ export default function Header({ className }: { className?: string }) {
       </header>
 
       {isMenuOpen && (
-        <div className="fixed inset-0 z-50 bg-[#F5F5F4] md:hidden">
+        <div className="fixed inset-0 z-50 bg-[#F5F5F4] lg:hidden">
           <div className="flex h-full flex-col items-center justify-center gap-6 text-[#8C8C88]">
             <Link href="#" className="text-2xl" onClick={toggleMenu}>
               Product

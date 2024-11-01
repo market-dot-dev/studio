@@ -8,6 +8,7 @@ import {
   CodeSquare,
   ScanSearch,
   Radar,
+  Shapes,
 } from "lucide-react";
 import Image from "next/image";
 import Hero from "@/components/design/Hero";
@@ -163,6 +164,23 @@ export default function HomePage() {
               text: "Try it out",
               href: "https://ecosystems.gitwallet.co/",
             }}
+          />
+        </div>
+      </Section>
+      <Section
+        color={colors.yellow["100"]}
+        headline="And So Much More"
+        description="Full suite of tools to replace the usual suspects and help you build your business."
+      >
+        <div className="flex w-full flex-col gap-6 lg:flex-row">
+          <FeatureCard
+            icon={<Radar />}
+            title="In-depth repo reports"
+            description="Crawl the dependency graph of any repo and find out who's actually using your stuff (or make a logo-soup)."
+            
+            color={colors.yellow}
+            orientation="vertical"
+            imageMaxWidth={null}
           />
         </div>
       </Section>

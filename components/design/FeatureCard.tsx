@@ -60,26 +60,19 @@ export default function FeatureCard({
       <div className="pointer-events-none absolute inset-0 z-[-2]">
         <div className="pointer-events-none absolute inset-0">
           <div
-            className="absolute inset-0 -bottom-8 right-[25%] -ml-px bg-[url('/circuit-pattern.svg?height=50&width=50')] bg-repeat opacity-[7%]"
+            className={clsx(
+              "absolute inset-0 -bottom-8 bg-[url('/circuit-pattern.svg?height=50&width=50')] bg-repeat opacity-[7%]",
+              image ? "right-[25%] -ml-px" : "left-[25%] -mt-0.5",
+            )}
             style={{
-              maskImage:
-                "radial-gradient(ellipse 220% 140% at bottom left, black, transparent 45%)",
-              WebkitMaskImage:
-                "radial-gradient(ellipse 220% 140% at bottom left, black, transparent 45%)",
+              maskImage: image
+                ? "radial-gradient(ellipse 220% 140% at bottom left, black, transparent 45%)"
+                : "radial-gradient(ellipse 220% 140% at top right, black, transparent 45%)",
+              WebkitMaskImage: image
+                ? '"radial-gradient(ellipse 220% 140% at bottom left, black, transparent 45%)",'
+                : "radial-gradient(ellipse 220% 140% at top right, black, transparent 45%)",
             }}
           />
-          {/* <div
-            className="absolute inset-0 -bottom-6 bg-gradient-to-tr to-transparent"
-            style={{
-              maskImage:
-                "radial-gradient(ellipse 340% 120% at bottom left, black, black 60%, transparent 80%)",
-              WebkitMaskImage:
-                "radial-gradient(ellipse 340% 120% at bottom left, black, black 60%, transparent 80%)",
-              mixBlendMode: "overlay",
-              from: `${color}/[20%]`,
-              via: `${color}/[3%]`,
-            }}
-          /> */}
         </div>
       </div>
       <div
