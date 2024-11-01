@@ -1,41 +1,69 @@
 import React from 'react'
 import Image from 'next/image'
 import Logo from './Logo'
-import { ChevronRight } from "lucide-react";
+import { Package, ScanSearch, Speech } from "lucide-react";
 import NavLinks from './NavLinks';
 
 export default function Hero() {
   return (
-    <div className="flex flex-col gap-y-12 pt-9 md:pt-12 lg:-mr-12 lg:flex-row">
-      <div className="left-0 top-0 z-10 col-span-full flex flex-col items-start px-6 md:px-12 xl:hidden">
-        <h1 className="mb-5 whitespace-nowrap text-[clamp(36px,10.5vw,48px)] font-bold leading-[1] tracking-[-0.035em] sm:text-[48px] lg:text-[clamp(40px,4vw,48px)] xl:text-[clamp(40px,3.25vw,48px)]">
+    <div className="flex flex-col items-center gap-12 tracking-tight  lg:text-[24px] lg:leading-8">
+      <div className="flex h-full w-full max-w-[500px] flex-col items-center lg:max-w-none">
+        <h1 className="mb-6 whitespace-nowrap text-center text-[clamp(32px,11vw,64px)] font-bold leading-[0.9] tracking-[-0.035em] lg:text-[88px] lg:tracking-[-0.04em] xl:mb-10 xl:text-[120px] xl:leading-[104px]">
           Business Toolkit
           <br />
           for Open Source
         </h1>
-        <p className="mb-6 max-w-[50ch] text-[#8C8C88]">
-          One place to sell services, find customers & market everywhere —
-          purpose-built for open source.
+        <p className="mb-6 max-w-[45ch] text-center text-[#8C8C88] xl:mb-8">
+          One place to{" "}
+          <span className="text-[#6e7d47]">
+            <Package
+              size={32}
+              className="inline-block h-5 w-auto lg:h-7 self-center"
+            />{" "}
+            Sell
+          </span>{" "}
+          services,{" "}
+          <span className="text-[#9b7f43]">
+            <ScanSearch
+              size={32}
+              className="inline-block h-5 w-auto lg:h-7"
+            />{" "}
+            Find
+          </span>{" "}
+          customers and{" "}
+          <span className="text-[#696b94]">
+            <Speech
+              size={32}
+              className="inline-block h-5 w-auto lg:h-7"
+            />{" "}
+            Market
+          </span>{" "}
+          everywhere — purpose-built for Open Source.
         </p>
-        <button className="mb-8 flex w-full items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-[#BBC4A2] px-12 py-3 text-[18px] font-bold">
+        <button className="flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-[#BBC4A2] px-8 py-3 text-[18px] font-bold lg:gap-4  lg:text-[20px] lg:leading-6 lg:tracking-[-0.02em]">
           <Image
             src="/github.svg"
             alt="github logo"
             height={24}
             width={24}
-            className="h-[22px] w-auto"
+            className="h-[22px] w-auto lg:h-7"
           />
           Sign up with Github
         </button>
-        <NavLinks />
+        {/* <NavLinks /> */}
+        {/* <div className="flex gap-4">
+          <p className="text-[#8C8C88]">Why we exist</p>
+          <p className="text-[#8C8C88]">Changelog</p>
+        </div> */}
       </div>
-      <div className="pl-6 md:pl-12">
+      {/* <div className="drop-shadow-sm lg:-mr-[100vw] xl:-mr-64"> */}
+      <div className="drop-shadow-sm">
         <Image
           src="/home.png"
           alt="gitwallet logo"
           height={1600}
           width={2400}
-          className="lg:max-h-[540px] xl:max-h-none"
+          className="h-full w-full max-w-[1100px] lg:max-h-[540px] xl:max-h-none"
         />
       </div>
       {/* <div className="overflow-visible">

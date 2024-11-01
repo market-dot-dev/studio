@@ -24,17 +24,15 @@ const links = [
 export default function HomePageLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="relative overflow-hidden bg-[#F5F5F4] font-sans text-[19px] font-bold leading-6 tracking-[-0.01em] text-[#222214] antialiased"
+      className="relative overflow-hidden bg-[#F5F5F4] font-sans text-[19px] font-bold leading-6 tracking-[-0.015em] text-[#222214] antialiased pt-[57px]"
       style={{ textRendering: "optimizeLegibility" }}
     >
-      <div className=" md:gap-x-12">
-        <Header className="col-span-full " />
-        {/* <Aside className="col-span-4 hidden xl:flex" /> */}
-        {/* <Link href="#" className="fixed top-12 right-12">Login</Link> */}
-        <main className="col-span-full flex w-full flex-col overflow-visible xl:col-span-8 2xl:col-span-8 2xl:col-start-5">
-          {children}
-        </main>
-      </div>
+      <Header />
+      {/* <Aside className="col-span-4 hidden xl:flex" /> */}
+      {/* <Link href="#" className="fixed top-12 right-12">Login</Link> */}
+      <main className="flex w-full flex-col gap-24 lg:gap-y-32 overflow-visible xl:col-span-8 2xl:col-span-8 2xl:col-start-5 max-w-[800px] lg:max-w-[1400px] mx-auto p-6 pt-10 md:p-12 xl:pt-24">
+        {children}
+      </main>
     </div>
   );
 }
