@@ -13,7 +13,7 @@ export default function Hero() {
           for Open Source
         </h1>
         <p className="mb-6 text-pretty text-center text-[clamp(20px,12vw,24px)] leading-[clamp(24px,12vw,32px)] text-[#8C8C88] md:max-w-[45ch]  xl:mb-8">
-          One place to
+          One place to{" "}
           <span className="text-[#6e7d47]">
             <Package
               size={32}

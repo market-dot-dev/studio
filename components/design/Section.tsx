@@ -1,19 +1,20 @@
+import clsx from "clsx";
 import React, { ReactElement } from "react";
 
 interface SectionProps {
+  headline: ReactElement | string;
+  description: string;
+  children: React.ReactNode;
+  color?: string;
   badge?: {
     icon: ReactElement;
     title: string;
   }
-  color: string;
-  headline: ReactElement | string;
-  description: string;
-  children: React.ReactNode;
 }
 
 export default function Section({ badge, headline, description, color, children }: SectionProps) {
   return (
-    <div className="flex flex-col items-center">
+    <div className={clsx("flex flex-col items-center", !badge && 'mt-8 md:mt-[56px]')}>
       {badge && (
         <div
           className="mb-6 flex items-center gap-2 text-[#7d8861] lg:mb-8 text-[24px] leading-8"

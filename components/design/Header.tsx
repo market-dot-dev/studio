@@ -21,7 +21,7 @@ export default function Header({ className }: { className?: string }) {
           className,
         )}
       >
-        <div className="relative flex items-center justify-between pb-2.5 tracking-[-0.02em] ">
+        <div className="relative flex items-center justify-between pb-2.5 tracking-[-0.025em] ">
           <Logo className="h-6 md:h-7" />
           <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9 text-[#8C8C88] lg:flex ">
             <Link href="#" className="whitespace-nowrap">

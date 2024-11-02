@@ -25,6 +25,7 @@ interface FeatureCardProps {
     text: string;
     href: string;
   }
+  span?: string;
 }
 
 export default function FeatureCard({
@@ -37,21 +38,24 @@ export default function FeatureCard({
   isComingSoon = false,
   imageMaxWidth = "sm:max-w-[70%] lg:max-w-[400px]",
   link,
+  span = 'col-span-1'
 }: FeatureCardProps) {
   return (
     <div
-      className={`relative flex h-full w-full flex-col items-start justify-between gap-x-6 overflow-hidden rounded-lg ring-1 ring-inset ring-black/[10%] ${
+      className={clsx(
+        'relative flex h-full w-full flex-col items-start justify-between gap-x-6 overflow-hidden rounded-lg ring-1 ring-inset ring-black/[10%]',
         orientation === "horizontal"
           ? "sm:max-h-[500px] md:max-h-[300px] md:flex-row lg:max-h-[320px]"
-          : "max-h-[450px]"
-      }`}
+          : "max-h-[450px]",
+        span,
+      )}
       style={{
         backgroundImage: `radial-gradient(circle at top right, ${color["10"]}, #f1f1f0)`,
       }}
     >
       {isComingSoon && (
         <span
-          className="absolute right-0 top-0 rounded-bl-md rounded-tr-lg border-b border-l border-black/5 px-2 text-[10px] font-bold uppercase leading-6 tracking-wider text-white opacity-95"
+          className="absolute right-0 top-0 rounded-bl-md rounded-tr-lg border-b border-l border-black/5 px-2 text-[10px] font-bold uppercase leading-6 tracking-wider text-white"
           style={{ backgroundColor: color["100"] }}
         >
           Coming Soon
@@ -62,7 +66,7 @@ export default function FeatureCard({
           <div
             className={clsx(
               "absolute inset-0 -bottom-8 bg-[url('/circuit-pattern.svg?height=50&width=50')] bg-repeat opacity-[7%]",
-              image ? "right-[25%] -ml-px" : "left-[25%] -mt-0.5",
+              image ? "right-[25%] -ml-px" : "left-[26.5%] -mt-0.5 -mr-1",
             )}
             style={{
               maskImage: image

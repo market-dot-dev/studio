@@ -8,7 +8,10 @@ import {
   CodeSquare,
   ScanSearch,
   Radar,
-  Shapes,
+  UsersRound,
+  ChartLine,
+  Signature,
+  ShoppingCart
 } from "lucide-react";
 import Image from "next/image";
 import Hero from "@/components/design/Hero";
@@ -16,6 +19,10 @@ import FeatureCard from "@/components/design/FeatureCard";
 import Section from "@/components/design/Section";
 
 const colors = {
+  default: {
+    "100": "rgba(149, 149, 125, 1)",
+    "10": "rgba(149, 149, 125, 0.04)",
+  },
   green: {
     "100": "rgba(125, 136, 97, 1)",
     "10": "rgba(125, 136, 97, 0.04)",
@@ -34,6 +41,15 @@ export default function HomePage() {
   return (
     <>
       <Hero />
+      <Section
+        headline="Sell Products & Services in Seconds"
+        description="The source of truth for all your offerings. Start with proven pricing
+          structure & contracts to sell nearly whatever you want."
+      >
+        <div className="flex w-full flex-col gap-6 lg:flex-row">
+          
+        </div>
+      </Section>
       <Section
         badge={{
           icon: <Package />,
@@ -168,19 +184,44 @@ export default function HomePage() {
         </div>
       </Section>
       <Section
-        color={colors.yellow["100"]}
+        color={colors.default["100"]}
         headline="And So Much More"
         description="Full suite of tools to replace the usual suspects and help you build your business."
       >
-        <div className="flex w-full flex-col gap-6 lg:flex-row">
+        <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2">
           <FeatureCard
-            icon={<Radar />}
-            title="In-depth repo reports"
-            description="Crawl the dependency graph of any repo and find out who's actually using your stuff (or make a logo-soup)."
-            
-            color={colors.yellow}
+            icon={<UsersRound />}
+            title="CRM for OSS"
+            description="Fully-featured CRM, re-designed for open source services."
+            color={colors.default}
             orientation="vertical"
             imageMaxWidth={null}
+          />
+          <FeatureCard
+            icon={<ChartLine />}
+            title="Sales reports & insights"
+            description="Track sales and see how your services are performing."
+            color={colors.default}
+            orientation="vertical"
+            imageMaxWidth={null}
+          />
+          <FeatureCard
+            icon={<Signature />}
+            title="Write & design proposals"
+            description="Create, share and sign service agreements in minutes."
+            color={colors.default}
+            orientation="vertical"
+            imageMaxWidth={null}
+            isComingSoon
+          />
+          <FeatureCard
+            icon={<ShoppingCart />}
+            title="Custom checkout"
+            description="Let people pay in a decicated checkout flow, tailored to you."
+            color={colors.default}
+            orientation="vertical"
+            imageMaxWidth={null}
+            isComingSoon
           />
         </div>
       </Section>
