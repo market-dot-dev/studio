@@ -24,13 +24,12 @@ const links = [
 export default function HomePageLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="relative overflow-hidden bg-[#F5F5F4] font-sans text-[19px] font-bold leading-6 tracking-[-0.015em] text-[#222214] antialiased pt-[57px]"
+      className="relative overflow-hidden bg-[#F5F5F4] pt-[57px] font-sans text-[19px] font-bold leading-6 tracking-[-0.02em] text-[#222214] antialiased"
       style={{ textRendering: "optimizeLegibility" }}
     >
       <Header />
-      {/* <Aside className="col-span-4 hidden xl:flex" /> */}
-      {/* <Link href="#" className="fixed top-12 right-12">Login</Link> */}
-      <main className="flex w-full flex-col gap-24 lg:gap-y-32 overflow-visible xl:col-span-8 2xl:col-span-8 2xl:col-start-5 max-w-[800px] lg:max-w-[1130px] mx-auto px-6 pt-[86px] lg:pt-40">
+      {/* <main className="mx-auto flex w-full max-w-[800px] flex-col gap-24 overflow-visible px-6 pb-24 pt-[86px] lg:max-w-[1130px] lg:gap-y-32 lg:pt-40 xl:col-span-8 2xl:col-span-8 2xl:col-start-5"> */}
+      <main className="mx-auto flex w-full max-w-[800px] flex-col gap-32 overflow-visible px-6 pb-32 pt-32 lg:max-w-[1200px] lg:gap-y-32 lg:pt-48 xl:col-span-8 2xl:col-span-8 2xl:col-start-5">
         {children}
       </main>
     </div>

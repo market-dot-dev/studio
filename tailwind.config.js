@@ -147,6 +147,9 @@ module.exports = {
       animation: {
         wiggle: "wiggle 0.8s both",
       },
+      screens: {
+        "xs": "425px",
+      },
     },
   },
   safelist: [
