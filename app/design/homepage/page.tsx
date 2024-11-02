@@ -11,7 +11,8 @@ import {
   UsersRound,
   ChartLine,
   Signature,
-  ShoppingCart
+  ShoppingCart,
+  Shapes
 } from "lucide-react";
 import Image from "next/image";
 import Hero from "@/components/design/Hero";
@@ -42,13 +43,10 @@ export default function HomePage() {
     <>
       <Hero />
       <Section
-        headline="Sell Products & Services in Seconds"
-        description="The source of truth for all your offerings. Start with proven pricing
-          structure & contracts to sell nearly whatever you want."
+        headline="Tools that Grow with Your Project"
+        description="Indie devs, dev shops & established projects use Gitwallet to power their entire open source business."
       >
-        <div className="flex w-full flex-col gap-6 lg:flex-row">
-          
-        </div>
+        <div className="flex w-full flex-col gap-6 lg:flex-row"></div>
       </Section>
       <Section
         badge={{
@@ -184,6 +182,10 @@ export default function HomePage() {
         </div>
       </Section>
       <Section
+        badge={{
+          icon: <Shapes />,
+          title: "Everything Else",
+        }}
         color={colors.default["100"]}
         headline="And So Much More"
         description="Full suite of tools to replace the usual suspects and help you build your business."

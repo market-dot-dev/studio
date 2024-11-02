@@ -7,12 +7,12 @@ export default function Hero() {
   return (
     <div className="flex flex-col items-center gap-12 tracking-tight md:gap-12 md:text-[24px] md:leading-8">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center md:max-w-none">
-        <h1 className="mb-6 whitespace-nowrap text-center text-[clamp(32px,12vw,64px)] font-bold leading-[0.9] tracking-[-0.035em] md:text-[88px] md:tracking-[-0.045em] xl:mb-10 xl:text-[120px] xl:leading-[104px]">
+        <h1 className="mb-6 whitespace-nowrap text-center text-[clamp(32px,12vw,64px)] font-bold leading-[0.9] tracking-[-0.035em] md:text-[88px] md:tracking-[-0.045em] lg:mb-10 lg:text-[120px] lg:leading-[104px]">
           Business Toolkit
           <br />
           for Open Source
         </h1>
-        <p className="mb-6 text-pretty text-center text-[clamp(20px,12vw,24px)] leading-[clamp(24px,12vw,32px)] text-[#8C8C88] md:max-w-[45ch]  xl:mb-8">
+        <p className="mb-6 text-pretty text-center md:text-[clamp(20px,12vw,24px)] md:leading-[clamp(24px,12vw,32px)] text-[#8C8C88] max-w-[40ch]  lg:mb-8">
           One place to{" "}
           <span className="text-[#6e7d47]">
             <Package
@@ -55,8 +55,8 @@ export default function Hero() {
           <p className="text-[#8C8C88]">Changelog</p>
         </div> */}
       </div>
-      {/* <div className="drop-shadow-sm md:-mr-[100vw] xl:-mr-64"> */}
-      <div className="-mr-32 drop-shadow-sm md:-mx-9 xl:m-0">
+      {/* <div className="drop-shadow-sm md:-mr-[100vw] lg:-mr-64"> */}
+      <div className="-mr-24 drop-shadow-sm md:m-0 md:w-[calc(100vw-96px)] lg:w-full">
         <Image
           src="/home.png"
           alt="gitwallet logo"
@@ -66,7 +66,7 @@ export default function Hero() {
         />
       </div>
       {/* <div className="overflow-visible">
-        <div className="relative mt-96 aspect-[3/2] w-[calc(100%+8rem)] overflow-visible md:w-[calc(100%+8rem)] 2xl:w-full">
+        <div className="relative mt-96 aspect-[3/2] w-[calc(100%+8rem)] overflow-visible md:w-[calc(100%+8rem)] 2lg:w-full">
           <Image
             src="/home.png"
             alt="gitwallet logo"
