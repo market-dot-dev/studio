@@ -80,7 +80,7 @@ export default function Customers() {
                 },
                 {
                   icon: <AppWindowMac />,
-                  text: "Promote yourself with customizable themed landing pages",
+                  text: "Promote yourself with themed landing pages",
                 },
               ]}
             />
@@ -99,7 +99,7 @@ export default function Customers() {
           <CustomerCard
             icon={<Store />}
             title="Development Shops"
-            description="Scale up & manage your whole business"
+            description="Scale up & manage your business"
             items={[
               {
                 icon: <UsersRound />,
