@@ -1,5 +1,5 @@
-import type { ReactElement } from 'react'
-import React from 'react'
+import type { ReactElement } from "react";
+import React from "react";
 
 interface CustomerCardProps {
   icon: ReactElement;
@@ -11,7 +11,12 @@ interface CustomerCardProps {
   }[];
 }
 
-export default function CustomerCard({ icon, title, description, items }: CustomerCardProps) {
+export default function CustomerCard({
+  icon,
+  title,
+  description,
+  items,
+}: CustomerCardProps) {
   return (
     <div className="flex h-full w-full flex-col bg-white/[88%] p-6 pb-7 pr-12 pt-5 shadow-sm ring-1 ring-black/[9%] md:rounded-lg md:p-7 md:pb-10 md:pr-9 md:pt-6">
       {React.cloneElement(icon, {

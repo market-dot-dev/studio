@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
-import Link from "./Link";
+import Link from "@/components/home/new/link";
 import clsx from "clsx";
 
 interface FeatureCardProps {
@@ -71,7 +71,7 @@ export default function FeatureCard({
           <div className="pointer-events-none absolute inset-0">
             <div
               className={clsx(
-                "absolute inset-0 -bottom-8 bg-[url('/circuit-pattern.svg?height=100&width=100')] bg-repeat opacity-[9%]",
+                "absolute inset-0 -bottom-8 bg-[url('/circuit-pattern.svg?height=100&width=100')] bg-repeat opacity-[6%]",
                 image ? "right-[25%] -ml-px" : "left-[28.75%] -mt-0.5",
               )}
               style={{
@@ -121,7 +121,7 @@ export default function FeatureCard({
           <div className="flex flex-col gap-2">
             <h3
               className={clsx(
-                "text-marketing-primary text-pretty font-bold tracking-tight",
+                "text-marketing-primary text-pretty text-marketing-base font-bold tracking-tight",
                 image && "xs:text-2xl xs:leading-7 lg:text-[19px] lg:leading-6",
               )}
             >

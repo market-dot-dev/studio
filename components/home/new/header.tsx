@@ -1,11 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import { Globe, ChevronDown, Menu, X } from "lucide-react";
-import Image from "next/image";
-import Link from "./Link";
-import Logo from "./Logo";
+import Link from "@/components/home/new/link";
+import Logo from "@/components/home/new/logo";
 import clsx from "clsx";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 export default function Header({ className }: { className?: string }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,12 +15,12 @@ export default function Header({ className }: { className?: string }) {
     <>
       <header
         className={clsx(
-          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] px-6 pt-[18px] trackning-[0.02em]",
+          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] px-5 md:px-6 pt-4 md:pt-[18px] trackning-[0.02em]",
           className,
         )}
       >
         <div className="relative flex items-center justify-between pb-2.5">
-          <Logo className="h-6 md:h-7" />
+          <Logo className="h-6 md:h-7 w-fit" />
           <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9  lg:flex">
             <Link href="#product" className="whitespace-nowrap">
               Product
@@ -41,11 +40,11 @@ export default function Header({ className }: { className?: string }) {
               />
             </button>
           </div>
-          <div className="flex w-fit items-center gap-6">
+          <div className="flex w-fit items-center gap-[22px] md:gap-6">
             <Link href="#" className="-mt-0.5 text-marketing-primary">
               Log in
             </Link>
-            <button onClick={toggleMenu} className="lg:hidden">
+            <button onClick={toggleMenu} className="lg:hidden text-marketing-primary">
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>

@@ -1,13 +1,13 @@
-import Header from "@/components/design/Header";
+import Header from "@/components/home/new/header";
 
 export default function HomePageLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="relative overflow-hidden bg-marketing-background pt-[57px] font-sans text-[19px] font-bold leading-6 tracking-[-0.02em] text-marketing-secondary antialiased"
+      className="bg-marketing-background text-marketing-base text-marketing-secondary relative overflow-hidden pt-[57px] font-sans font-bold antialiased"
       style={{ textRendering: "optimizeLegibility" }}
     >
       <Header />
-      <main className="mx-auto flex w-full max-w-[800px] flex-col gap-32 overflow-visible px-6 lg:px-12 pb-32 pt-16 lg:pt-32 lg:max-w-[1300px] lg:gap-y-32 xl:col-span-8 2xl:col-span-8 2xl:col-start-5">
+      <main className="mx-auto flex max-w-[800px] flex-col gap-24 overflow-visible px-6 pb-24 pt-12 md:pt-16 lg:max-w-[1300px] lg:px-12 xl:col-span-8 2xl:col-span-8 2xl:col-start-5">
         {children}
       </main>
     </div>

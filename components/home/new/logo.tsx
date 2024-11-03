@@ -9,7 +9,7 @@ export default function Logo({ className }: { className?: string }) {
       alt="gitwallet logo"
       height={32}
       width={164}
-      className={clsx("h-7 w-auto", className)}
+      className={clsx(className)}
     />
   );
 }
