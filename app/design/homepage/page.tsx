@@ -104,7 +104,13 @@ export default function HomePage() {
                 },
                 {
                   icon: <ChartLine />,
-                  text: "Track sales and see how your services are performing",
+                  text: (
+                    <>
+                      Track sales and see how your se
+                      <span className="tracking-normal">r</span>vices are pe
+                      <span className="tracking-normal">r</span>foming
+                    </>
+                  ),
                 },
                 {
                   icon: <Coins />,
@@ -168,7 +174,14 @@ export default function HomePage() {
           <FeatureCard
             icon={<ScrollText />}
             title="Use templated contracts"
-            description="Start working with clients faster by accessing our library of ready-made, open source contracts."
+            description={
+              <>
+                Sta<span className="tracking-normal">r</span>t working with
+                clients faster by accessing our libra
+                <span className="tracking-normal">r</span>y of ready-made, open
+                source contracts.
+              </>
+            }
             image={{
               src: "/contract-template.png",
               alt: "Package cards illustration",
@@ -229,15 +242,26 @@ export default function HomePage() {
             Market Eve<span className="tracking-normal">r</span>ywhere
           </>
         }
-        description="The source of truth for all your offerings. Start with proven pricing
-          structure & contracts to sell nearly whatever you want."
+        description={
+          <>
+            The source of truth for all your offerings. Sta
+            <span className="tracking-normal">r</span>t with proven pricing
+            structure & contracts to sell nearly whatever you want.
+          </>
+        }
         isFullBleed
       >
         <div className="relative grid w-full grid-cols-1 flex-col gap-6 lg:grid-cols-2">
           <FeatureCard
             icon={<AppWindowMac />}
             title="Fully-customizable landing pages"
-            description="Start with a beautiful template, designed for OS developers. Not good enough? Pop the hood with a full-screen code editor."
+            description={
+              <>
+                Sta<span className="tracking-normal">r</span>t with a beautiful
+                template, designed for OS developers. Not good enough? Pop the
+                hood with a full-screen code editor.
+              </>
+            }
             image={{
               src: "/landing-page.png",
               alt: "Package cards illustration",
@@ -245,7 +269,7 @@ export default function HomePage() {
             color={colors.purple}
             orientation="vertical"
             imageMaxWidth={null}
-            className="sm:aspect-[4/3] lg:aspect-[5/4] "
+            className="sm:aspect-[4/3] lg:aspect-[5/4]"
           />
           <FeatureCard
             icon={<CodeSquare />}
@@ -289,7 +313,7 @@ export default function HomePage() {
             color={colors.orange}
             orientation="vertical"
             imageMaxWidth={null}
-            className="sm:aspect-[4/3] lg:aspect-[5/4] "
+            className="sm:aspect-[4/3] lg:aspect-[5/4]"
           />
           <FeatureCard
             icon={
@@ -314,7 +338,7 @@ export default function HomePage() {
               text: "Try it out",
               href: "https://ecosystems.gitwallet.co/",
             }}
-            className="sm:aspect-[4/3] lg:aspect-[5/4] "
+            className="sm:aspect-[4/3] lg:aspect-[5/4]"
           />
         </div>
       </Section>
@@ -324,7 +348,7 @@ export default function HomePage() {
           title: "Everything Else",
         }}
         color={colors.swamp["100"]}
-        headline="& So Much More"
+        headline="& Much Much More"
         description="Full suite of tools to replace the usual suspects and help you build your business."
         isFullBleed
       >

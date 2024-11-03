@@ -7,7 +7,7 @@ import clsx from "clsx";
 interface FeatureCardProps {
   icon: ReactElement;
   title: string;
-  description: string;
+  description: ReactElement | string;
   color: {
     "100": string;
     "10%": string;
@@ -22,7 +22,7 @@ interface FeatureCardProps {
   link?: {
     text: string;
     href: string;
-  }
+  };
   span?: string;
   className?: string;
 }

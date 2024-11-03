@@ -7,7 +7,7 @@ interface CustomerCardProps {
   description: string;
   items: {
     icon: ReactElement;
-    text: string;
+    text: ReactElement | string;
   }[];
 }
 
@@ -28,7 +28,7 @@ export default function CustomerCard({ icon, title, description, items }: Custom
       </div>
       <ul className="flex flex-col gap-2 text-pretty pl-0.5 text-[15px] leading-5 tracking-[-0.0075em] md:gap-3 lg:max-w-[40ch]">
         {items.map((item) => (
-          <li key={item.text} className="flex gap-4">
+          <li key={item.text.toString()} className="flex gap-4">
             {React.cloneElement(item.icon, {
               size: 20,
               className: "shrink-0 text-marketing-swamp",

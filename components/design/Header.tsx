@@ -40,20 +40,9 @@ export default function Header({ className }: { className?: string }) {
                 strokeWidth={3}
               />
             </button>
-
-            {/* <div className="w-48 rounded-md bg-white p-4 shadow-lg">
-              <div className="flex flex-col gap-2">
-                <Link href="#" className="flex items-center gap-2">
-                  Discord
-                </Link>
-                <Link href="#" className="flex items-center gap-2">
-                  Twitter
-                </Link>
-              </div>
-            </div> */}
           </div>
           <div className="flex w-fit items-center gap-6">
-            <Link href="#" className="-mt-0.5">
+            <Link href="#" className="-mt-0.5 text-marketing-primary">
               Log in
             </Link>
             <button onClick={toggleMenu} className="lg:hidden">

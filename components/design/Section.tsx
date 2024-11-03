@@ -5,7 +5,7 @@ import React, { ReactElement } from "react";
 
 interface SectionProps {
   headline: ReactElement | string;
-  description: string;
+  description: ReactElement | string;
   children: React.ReactNode;
   color?: string;
   badge?: {
