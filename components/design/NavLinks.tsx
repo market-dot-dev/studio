@@ -36,7 +36,7 @@ const Item = ({ href, text, className }: { href: string, text: string, className
 
 export default function NavLinks({ className }: { size?: 'sm' | 'lg', className?: string }) {
   return (
-    <ul className={clsx("w-full text-[#8C8C88]", className)}>
+    <ul className={clsx("w-full ", className)}>
       {/* <Item {...{ href: "#", text: "Login", className: "hidden lg:flex" }} /> */}
       {links.map((link) => (
         <Item key={link.text} {...link} />

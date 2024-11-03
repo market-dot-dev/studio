@@ -108,8 +108,6 @@ body {
 } */
 @layer base {
   :root {
-    --radius: 0.5rem;:root {
-    --animated-dashed-stroke-color: rgba(140, 140, 136, 1);
-  }
+    --radius: 0.5rem;
   }
 }

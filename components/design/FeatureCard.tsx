@@ -1,7 +1,7 @@
 import React, { ReactElement } from "react";
 import { ChevronRight } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "./Link";
 import clsx from "clsx";
 
 interface FeatureCardProps {
@@ -10,7 +10,7 @@ interface FeatureCardProps {
   description: string;
   color: {
     "100": string;
-    "10": string;
+    "10%": string;
   };
   image?: {
     src: string;
@@ -35,20 +35,20 @@ export default function FeatureCard({
   color,
   orientation = "vertical",
   isComingSoon = false,
-  imageMaxWidth = "sm:max-w-[70%] md:max-w-[475px]",
+  imageMaxWidth = "max-w-[clamp(350px,70%,450px)] sm:max-w-[clamp(350px,85%,520px)] lg:max-w-none",
   link,
-  span = 'col-span-1',
-  className
+  span = "col-span-1",
+  className,
 }: FeatureCardProps) {
   return (
     <div
       className={clsx(
-        "relative overflow-hidden ring-1 ring-inset ring-black/[10%] md:rounded-lg w-full",
+        "relative w-full overflow-hidden ring-1 ring-inset ring-black/[9%] md:rounded-lg",
         span,
         className,
       )}
       style={{
-        backgroundImage: `radial-gradient(circle at top right, ${color["10"]}, #f1f1f0)`,
+        backgroundImage: `radial-gradient(circle at top right, ${color["10%"]}, #f1f1f0)`,
       }}
     >
       <div
@@ -61,7 +61,7 @@ export default function FeatureCard({
       >
         {isComingSoon && (
           <span
-            className="absolute right-0 top-0 rounded-bl-[5px] md:rounded-tr-lg border-b border-l border-black/5 pl-[7px] pr-2 text-[10px] font-bold uppercase leading-[19px] lg:leading-[21px] h-5 lg:h-[22px]  tracking-wider text-white shadow-sm"
+            className="absolute right-0 top-0 h-6 leading-[23px] rounded-bl-[6px] border-b border-l border-black/5 pl-[7px] pr-2 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm md:rounded-tr-lg "
             style={{ backgroundColor: color["100"] }}
           >
             Coming Soon
@@ -71,90 +71,77 @@ export default function FeatureCard({
           <div className="pointer-events-none absolute inset-0">
             <div
               className={clsx(
-                "absolute inset-0 -bottom-8 bg-[url('/circuit-pattern.svg?height=50&width=50')] bg-repeat opacity-[7%]",
+                "absolute inset-0 -bottom-8 bg-[url('/circuit-pattern.svg?height=100&width=100')] bg-repeat opacity-[9%]",
                 image ? "right-[25%] -ml-px" : "left-[28.75%] -mt-0.5",
               )}
               style={{
                 maskImage: image
-                  ? "radial-gradient(ellipse 220% 140% at bottom left, black, transparent 45%)"
-                  : "radial-gradient(ellipse 220% 140% at top right, black, transparent 45%)",
+                  ? "radial-gradient(ellipse 220% 140% at bottom left, black, transparent 50%)"
+                  : "radial-gradient(ellipse 220% 140% at top right, black, transparent 50%)",
                 WebkitMaskImage: image
-                  ? '"radial-gradient(ellipse 220% 140% at bottom left, black, transparent 45%)",'
-                  : "radial-gradient(ellipse 220% 140% at top right, black, transparent 45%)",
+                  ? '"radial-gradient(ellipse 220% 140% at bottom left, black, transparent 50%)",'
+                  : "radial-gradient(ellipse 220% 140% at top right, black, transparent 50%)",
               }}
             />
           </div>
         </div>
         <div
-          className={`xs:flex-row z-10 flex flex-col gap-x-4 gap-y-3 p-6 lg:flex-col lg:pt-5 ${
-            orientation === "horizontal" ? "max-w-[25ch]" : "w-full"
-          }`}
+          className={clsx(
+            "z-10 flex flex-col gap-x-4 gap-y-3 p-6",
+            image && "xs:gap-y-4 xs:pt-5 lg:gap-3",
+            orientation === "horizontal" ? "max-w-[25ch]" : "w-full",
+          )}
         >
           <div
-            className="flex h-6 items-center justify-between"
-            style={{ color: color["100"] }}
+            className={clsx(
+              "flex h-6 items-center justify-between",
+              image && "xs:h-7 lg:h-6",
+            )}
           >
-            {React.cloneElement(icon, { size: 24 })}
+            {React.cloneElement(icon, {
+              size: 28,
+              color: color["100"],
+              className: `h-6 w-auto ${image ? "xs:h-7 lg:h-6" : ""}`,
+            })}
             {link && (
               <Link
                 href={link.href}
-                className="group -mr-1 hidden items-center gap-[3px] text-[15px] leading-6 hover:brightness-90 lg:flex"
+                className="xs:leading-7 group -mr-1 flex items-center gap-[3px] text-[15px] leading-6 hover:brightness-90 lg:leading-6"
                 style={{ color: color["100"] }}
               >
                 {link.text}
                 <ChevronRight
                   size={16}
                   strokeWidth={2.5}
-                  className="transition group-hover:translate-x-px"
+                  className="transition group-hover:translate-x-px group-active:translate-x-0"
                 />
               </Link>
             )}
           </div>
-          <div className="flex w-full flex-wrap justify-between gap-2">
-            <div className="flex flex-col gap-2">
-              <h3 className="text-xl font-bold leading-6 tracking-tight">
-                {title}
-              </h3>
-              <p className="max-w-[40ch] text-balance text-[15px] leading-5 tracking-[-0.0075em] text-black/40">
-                {description}
-              </p>
-            </div>
-            {link && (
-              <Link
-                href={link.href}
-                className="group -mr-1 h-fit flex lg:hidden items-center gap-[3px] text-[15px] leading-6 hover:brightness-90 w-fit"
-                style={{ color: color["100"] }}
-              >
-                {link.text}
-                <ChevronRight
-                  size={16}
-                  strokeWidth={2.5}
-                  className="transition group-hover:translate-x-px shrink-0"
-                />
-              </Link>
-            )}
-            {/* {isComingSoon && (
-              <span
-                className="sm:hidden w-fit h-fit rounded border border-black/5 px-1.5 text-[10px] font-bold uppercase leading-5 tracking-wider text-white my-px"
-                style={{ backgroundColor: color["100"] }}
-              >
-                Coming Soon
-              </span>
-            )} */}
-            {/* {isComingSoon && (
-              <span
-                className="md:hidden rounded w-fit border border-black/5 px-2 text-[10px] font-bold uppercase leading-5 tracking-wider text-white"
-                style={{ backgroundColor: color["100"] }}
-              >
-                Coming Soon
-              </span>
-            )} */}
+          <div className="flex flex-col gap-2">
+            <h3
+              className={clsx(
+                "text-marketing-primary text-pretty font-bold tracking-tight",
+                image && "xs:text-2xl xs:leading-7 lg:text-[19px] lg:leading-6",
+              )}
+            >
+              {title}
+            </h3>
+            <p
+              className={clsx(
+                "max-w-[40ch] text-balance text-[15px] leading-5 tracking-[-0.0075em] text-black/40",
+                image &&
+                  "sm:max-w-[45ch] sm:text-pretty lg:max-w-[40ch] lg:text-balance",
+              )}
+            >
+              {description}
+            </p>
           </div>
         </div>
         {image && (
           <div
             className={clsx(
-              "z-[-1] ml-auto justify-self-end overflow-visible pl-16 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] xl:pl-24",
+              "xs:pl-12 z-[-1] ml-auto justify-self-end overflow-visible pl-6 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] sm:pl-24",
               orientation === "horizontal" ? "pt-3" : "w-full pt-3 lg:pt-6",
               imageMaxWidth,
             )}

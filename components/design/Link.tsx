@@ -4,25 +4,25 @@ import * as NextLink from "next/link";
 import clsx from "clsx";
 
 type CustomLinkProps = {
-  className?: string;
+  target?: '_blank' | '_self' | '_parent' | '_top';
+  rel?: string;
   style?: React.CSSProperties;
+  className?: string;
   children: React.ReactNode;
 } & LinkProps;
 
 export default function Link({
   className,
-  style,
   children,
-  ...linkProps
+  ...props
 }: CustomLinkProps) {
   return (
     <NextLink.default
-      {...linkProps}
+      {...props}
       className={clsx(
-        "text-[#8C8C88] transition hover:brightness-[80%] active:scale-[99%]",
+        " transition-all duration-[175ms] hover:text-marketing-primary active:scale-[99%]",
         className,
       )}
-      style={style}
     >
       {children}
     </NextLink.default>

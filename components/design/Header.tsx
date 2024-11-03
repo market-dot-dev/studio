@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Globe, ChevronDown, Menu, X } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
+import Link from "./Link";
 import Logo from "./Logo";
 import clsx from "clsx";
 
@@ -22,8 +22,8 @@ export default function Header({ className }: { className?: string }) {
       >
         <div className="relative flex items-center justify-between pb-2.5">
           <Logo className="h-6 md:h-7" />
-          <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9 text-[#8C8C88] lg:flex">
-            <Link href="#" className="whitespace-nowrap">
+          <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9  lg:flex">
+            <Link href="#product" className="whitespace-nowrap">
               Product
             </Link>
             <Link href="#" className="whitespace-nowrap">
@@ -65,7 +65,7 @@ export default function Header({ className }: { className?: string }) {
 
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 bg-[#F5F5F4] lg:hidden">
-          <div className="flex h-full flex-col items-center justify-center gap-6 text-[#8C8C88]">
+          <div className="flex h-full flex-col items-center justify-center gap-6 ">
             <Link href="#" className="text-2xl" onClick={toggleMenu}>
               Product
             </Link>

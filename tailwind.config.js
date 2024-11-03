@@ -13,6 +13,32 @@ module.exports = {
     extend: {
       colors: {
         // light mode
+        marketing: {
+          primary: '#222214',
+          secondary: '#8C8C88',
+          background: '#F5F5F4',
+          camo: '#BBC4A2',
+          swamp: {
+            DEFAULT: 'rgba(143, 143, 112, 1)',
+            '10%': 'rgba(143, 143, 112, 0.1)',
+            '10': 'rgba(239, 239, 236, 1)',
+          },
+          green: {
+            DEFAULT: 'rgba(125, 136, 97, 1)',
+            '10%': 'rgba(125, 136, 97, 0.1)',
+            '10': 'rgba(233, 234, 229, 1)',
+          },
+          purple: {
+            DEFAULT: 'rgba(118, 120, 158, 1)',
+            '10%': 'rgba(118, 120, 158, 0.1)',
+            '10': '#E8E8EB',
+          },
+          orange: {
+            DEFAULT: 'rgba(178, 134, 52, 1)',
+            '10%': 'rgba(178, 134, 52, 0.1)',
+            '10': 'rgba(238, 234, 225, 1)',
+          },
+        },
         tremor: {
           brand: {
             faint: "#F9FAFB", // gray-50
