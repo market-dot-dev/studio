@@ -5,7 +5,7 @@ import Sell from "@/components/home/new/sections/sell";
 import Marketing from "@/components/home/new/sections/marketing";
 import Testimonial from "@/components/home/new/testimonial";
 import Research from "@/components/home/new/sections/research";
-import EverythingElse from "@/components/home/new/sections/everything-else";
+import GrabBag from "@/components/home/new/sections/grab-bag";
 
 export default function HomePage() {
   return (
@@ -42,7 +42,7 @@ export default function HomePage() {
       />
       <Marketing />
       <Research />
-      <EverythingElse />
+      <GrabBag />
     </>
   );
 }

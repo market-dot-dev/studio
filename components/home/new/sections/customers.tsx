@@ -40,7 +40,7 @@ function CustomerCard({ icon, title, description, items }: CustomerCardProps) {
           {description}
         </p>
       </div>
-      <ul className="flex flex-col text-pretty pl-0.5 text-[15px] leading-5 tracking-[-0.0075em] gap-3 lg:max-w-[40ch]">
+      <ul className="flex flex-col text-pretty pl-0.5 text-[15px] leading-5 tracking-[-0.0075em] gap-3 ">
         {items.map((item) => (
           <li key={item.text.toString()} className="flex gap-4">
             {React.cloneElement(item.icon, {
@@ -62,7 +62,7 @@ export default function Customers() {
       description="Indie devs, dev shops & established projects use Gitwallet to power their entire open source business."
       isFullBleed
     >
-      <div className="mx-auto flex w-full max-w-[950px] flex-col gap-6 px-6 sm:gap-9">
+      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-6 px-6 sm:gap-9">
         <div className="relative grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
           <div className="relative">
             <CustomerCard

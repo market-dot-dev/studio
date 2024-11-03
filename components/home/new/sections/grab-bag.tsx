@@ -4,7 +4,7 @@ import FeatureCard from '@/components/home/new/feature-card';
 import { UsersRound, ChartLine, Signature, ShoppingCart, Shapes } from 'lucide-react';
 import { colors } from '@/lib/home/colors';
 
-export default function EverythingElse() {
+export default function GrabBag() {
   return (
     <Section
       badge={{
