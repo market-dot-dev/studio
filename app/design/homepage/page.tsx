@@ -1,6 +1,6 @@
 import React from "react";
 import Hero from "@/components/home/new/sections/hero";
-import WhosItFor from "@/components/home/new/sections/whos-it-for";
+import Customers from "@/components/home/new/sections/customers";
 import Sell from "@/components/home/new/sections/sell";
 import Marketing from "@/components/home/new/sections/marketing";
 import Testimonial from "@/components/home/new/testimonial";
@@ -11,7 +11,7 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <WhosItFor />
+      <Customers />
       <span id="products" className="hidden"></span>
       <Sell />
       <Testimonial

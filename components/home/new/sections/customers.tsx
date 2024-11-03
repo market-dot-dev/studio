@@ -1,8 +1,8 @@
-import React from 'react'
-import Link from '@/components/home/new/link';
-import Section from '@/components/home/new/section';
-import CustomerCard from '@/components/home/new/customer-card';
-import AnimatedDashedLine from '@/components/home/new/animated-dashed-line';
+import type { ReactElement } from "react";
+import React from "react";
+import Link from "@/components/home/new/link";
+import Section from "@/components/home/new/section";
+import AnimatedDashedLine from "@/components/home/new/animated-dashed-line";
 import {
   UserRound,
   PackageOpen,
@@ -15,15 +15,54 @@ import {
   ChevronRight,
 } from "lucide-react";
 
-export default function WhosItFor() {
+interface CustomerCardProps {
+  icon: ReactElement;
+  title: string;
+  description: string;
+  items: {
+    icon: ReactElement;
+    text: ReactElement | string;
+  }[];
+}
+
+function CustomerCard({ icon, title, description, items }: CustomerCardProps) {
+  return (
+    <div className="flex h-full w-full flex-col bg-white/[88%] p-6 pb-7 pr-12 pt-5 shadow-sm ring-1 ring-black/[9%] rounded-lg md:p-7 md:pb-10 md:pr-9 md:pt-6">
+      {React.cloneElement(icon, {
+        size: 28,
+        className: "h-6 sm:h-7 -mx-px text-marketing-swamp",
+      })}
+      <div className="mb-5 mt-4 md:mb-6">
+        <h3 className="text-marketing-primary mb-1 sm:text-marketing-md">
+          {title}
+        </h3>
+        <p className="text-[15px] leading-5 tracking-[-0.0075em]">
+          {description}
+        </p>
+      </div>
+      <ul className="flex flex-col gap-2 text-pretty pl-0.5 text-[15px] leading-5 tracking-[-0.0075em] md:gap-3 lg:max-w-[40ch]">
+        {items.map((item) => (
+          <li key={item.text.toString()} className="flex gap-4">
+            {React.cloneElement(item.icon, {
+              size: 20,
+              className: "shrink-0 text-marketing-swamp",
+            })}
+            <p>{item.text}</p>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+export default function Customers() {
   return (
     <Section
       headline="Tools that Grow with Your Project"
       description="Indie devs, dev shops & established projects use Gitwallet to power their entire open source business."
-      className="md:mb-[56px]"
       isFullBleed
     >
-      <div className="mx-auto flex w-full max-w-[950px] flex-col gap-8 md:gap-12">
+      <div className="mx-auto flex w-full max-w-[950px] flex-col gap-6 px-6 sm:gap-9">
         <div className="relative grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
           <div className="relative">
             <CustomerCard
@@ -83,7 +122,7 @@ export default function WhosItFor() {
             ]}
           />
         </div>
-        <div className="flex items-center justify-center px-6 md:px-0">
+        <div className="flex items-center justify-center">
           <Link
             href="#"
             className="group flex items-center gap-[3px] text-pretty text-center"

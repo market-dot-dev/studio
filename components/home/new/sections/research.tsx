@@ -39,7 +39,7 @@ export default function Research() {
               alt="echo logo"
               height={28}
               width={164}
-              className="h-[20px] w-auto"
+              className="h-[20px]! w-auto"
             />
           }
           title="Explore ecosystems with Echo"

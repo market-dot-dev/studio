@@ -131,7 +131,7 @@ module.exports = {
         'marketing-md': ['24px', { lineHeight: '28px', letterSpacing: '-0.025em' }],
         'marketing-lg': ['30px', { lineHeight: '28px', letterSpacing: '-0.035em' }],
         'marketing-xl': ['37px', { lineHeight: '40px', letterSpacing: '-0.035em' }],
-        'marketing-2xl': ['46px', { lineHeight: '36px', letterSpacing: '-0.04em' }],
+        'marketing-2xl': ['46px', { lineHeight: '44px', letterSpacing: '-0.04em' }],
         'marketing-3xl': ['58px', { lineHeight: '52px', letterSpacing: '-0.04em' }],
         'marketing-4xl': ['72px', { lineHeight: '64px', letterSpacing: '-0.045em' }],
         'marketing-5xl': ['91px', { lineHeight: '80px', letterSpacing: '-0.045em' }],

@@ -27,15 +27,10 @@ export default function Section({
 }: SectionProps) {
   return (
     <div
-      className={clsx(
-        "relative flex flex-col items-center",
-        !badge && "md:mt-[56px]",
-        className,
-      )}
-    >
+      className={clsx("relative flex flex-col items-center", className )}>
       {badge && (
         <div
-          className="mb-6 flex items-center gap-2 text-[24px] leading-8 text-[#7d8861] lg:mb-8"
+          className="text-marketing-md mb-5 flex items-center gap-2 sm:mb-6"
           style={{ color }}
         >
           <div style={{ color }}>
@@ -47,14 +42,16 @@ export default function Section({
           <p>{badge.title}</p>
         </div>
       )}
-      <h2 className="text-marketing-primary mb-4 max-w-[20ch] text-balance text-center text-[clamp(32px,11vw,48px)] font-bold leading-[1] tracking-[-0.035em] sm:leading-[0.9] md:text-[48px] lg:mb-6 lg:text-[64px]">
+      <h2 className="text-marketing-primary sm:text-marketing-2xl mb-3 sm:mb-4 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] lg:mb-6 lg:text-marketing-3xl">
         {headline}
       </h2>
-      <p className="mb-9 max-w-[50ch] text-pretty text-center">{description}</p>
+      <p className="text-marketing-sm sm:text-marketing-base mb-6 max-w-[45ch] text-pretty text-center sm:mb-9">
+        {description}
+      </p>
       <div
         className={clsx(
           "relative",
-          isFullBleed ? " -mx-6 w-screen md:m-0 md:w-full" : "w-full",
+          isFullBleed ? "-mx-6 w-screen md:m-0 md:w-full" : "w-full",
         )}
       >
         {children}
