@@ -27,20 +27,20 @@ interface CustomerCardProps {
 
 function CustomerCard({ icon, title, description, items }: CustomerCardProps) {
   return (
-    <div className="flex h-full w-full flex-col bg-white/[88%] p-6 pb-7 pr-12 pt-5 shadow-sm ring-1 ring-black/[9%] rounded-lg md:p-7 md:pb-10 md:pr-9 md:pt-6">
+    <div className="flex h-full w-full flex-col bg-white/[88%] p-6 pb-7 pr-12 pt-5 shadow-sm ring-1 ring-black/[9%] rounded-lg lg:p-7 lg:pb-10 lg:pr-9 lg:pt-6">
       {React.cloneElement(icon, {
         size: 28,
-        className: "h-6 sm:h-7 -mx-px text-marketing-swamp",
+        className: "h-6 lg:h-7 -mx-px text-marketing-swamp",
       })}
-      <div className="mb-5 mt-4 md:mb-6">
-        <h3 className="text-marketing-primary mb-1 sm:text-marketing-md">
+      <div className="mb-5 mt-3 lg:mt-4 lg:mb-6">
+        <h3 className="text-marketing-primary mb-1 lg:text-marketing-md">
           {title}
         </h3>
         <p className="text-[15px] leading-5 tracking-[-0.0075em]">
           {description}
         </p>
       </div>
-      <ul className="flex flex-col gap-2 text-pretty pl-0.5 text-[15px] leading-5 tracking-[-0.0075em] md:gap-3 lg:max-w-[40ch]">
+      <ul className="flex flex-col text-pretty pl-0.5 text-[15px] leading-5 tracking-[-0.0075em] gap-3 lg:max-w-[40ch]">
         {items.map((item) => (
           <li key={item.text.toString()} className="flex gap-4">
             {React.cloneElement(item.icon, {
