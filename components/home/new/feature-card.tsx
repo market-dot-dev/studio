@@ -43,7 +43,7 @@ export default function FeatureCard({
   return (
     <div
       className={clsx(
-        "relative w-full overflow-hidden ring-1 ring-inset ring-black/[9%] md:rounded-lg",
+        "relative w-full overflow-hidden md:rounded-lg",
         span,
         className,
       )}
@@ -51,6 +51,7 @@ export default function FeatureCard({
         backgroundImage: `radial-gradient(circle at top right, ${color["10%"]}, #f1f1f0)`,
       }}
     >
+      <div className="absolute inset-0 z-10 overflow-hidden ring-1 ring-inset ring-black/[9%] md:rounded-lg"></div>
       <div
         className={clsx(
           "flex h-full w-full flex-col items-start justify-between gap-x-6",
@@ -61,7 +62,7 @@ export default function FeatureCard({
       >
         {isComingSoon && (
           <span
-            className="absolute right-0 top-0 h-6 leading-[23px] rounded-bl-[6px] border-b border-l border-black/5 pl-[7px] pr-2 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm md:rounded-tr-lg "
+            className="absolute right-0 top-0 h-6 rounded-bl-[6px] border-b border-l border-black/5 pl-[7px] pr-2 text-[10px] font-bold uppercase leading-[23px] tracking-wider text-white shadow-sm md:rounded-tr-lg"
             style={{ backgroundColor: color["100"] }}
           >
             Coming Soon
@@ -121,7 +122,7 @@ export default function FeatureCard({
           <div className="flex flex-col gap-2">
             <h3
               className={clsx(
-                "text-marketing-primary text-pretty text-marketing-base font-bold tracking-tight",
+                "text-marketing-primary text-marketing-base text-pretty font-bold tracking-tight",
                 image && "xs:text-2xl xs:leading-7 lg:text-[19px] lg:leading-6",
               )}
             >
@@ -142,7 +143,7 @@ export default function FeatureCard({
           <div
             className={clsx(
               "xs:pl-12 z-[-1] ml-auto justify-self-end overflow-visible pl-6 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] sm:pl-24",
-              orientation === "horizontal" ? "pt-3" : "w-full pt-3 lg:pt-6",
+              orientation === "horizontal" ? "pt-3" : "w-full lg:pt-6",
               imageMaxWidth,
             )}
           >
