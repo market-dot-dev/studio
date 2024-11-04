@@ -17,7 +17,7 @@ export default function Hero() {
           find customers & market eve<span className="tracking-normal">r</span>
           ywhere — purpose-built for Open Source.
         </p>
-        <Button className="text-marketing-primary flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-marketing-camo px-8 py-3 transition-all hover:brightness-[103%] active:scale-[99%] active:brightness-[101%] md:py-4">
+        <Button className="md:py-4">
           <Image
             src="/github.svg"
             alt="github logo"

@@ -58,7 +58,7 @@ export default function FeatureCard({
       <div className="absolute inset-0 z-10 overflow-hidden ring-1 ring-inset ring-black/[9%] rounded-lg"></div>
       {link?.asCard && (
         <div
-          className="absolute inset-0 z-[-1] overflow-hidden opacity-0 group-hover:opacity-[6%] transition-opacity duration-200"
+          className="absolute inset-0 z-[-1] overflow-hidden opacity-0 group-hover:opacity-[6%] transition-opacity duration-200 pointer-events-none"
           style={{ backgroundColor: color["100"] }}
         ></div>
       )}

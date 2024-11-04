@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Transition } from '@headlessui/react'
+import { ChevronDown } from 'lucide-react'
 
 type DropdownProps = {
   children: React.ReactNode
@@ -16,28 +17,29 @@ export default function Dropdown({
   const [dropdownOpen, setDropdownOpen] = useState<boolean>(false)
 
   return (
-    <li
-      className="relative"
+    <div
+      className="group relative w-fit"
       onMouseEnter={() => setDropdownOpen(true)}
       onMouseLeave={() => setDropdownOpen(false)}
       onFocus={() => setDropdownOpen(true)}
       onBlur={() => setDropdownOpen(false)}
     >
-      <a
-        className=" px-4 py-2 flex items-center transition duration-150 ease-in-out"
-        href="#0"
+      <button
         aria-expanded={dropdownOpen}
         onClick={(e) => e.preventDefault()}
+        className="p-2 -m-2 text-marketing-secondary group-hover:text-marketing-primary duraton-200 flex items-center gap-1 whitespace-nowrap transition-all"
       >
         {title}
-        <svg className="w-2 h-2 fill-current  cursor-pointer ml-2 shrink-0 mb-px" viewBox="0 0 12 12" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10.28 4.305L5.989 8.598 1.695 4.305A1 1 0 00.28 5.72l5 5a1 1 0 001.414 0l5-5a1 1 0 10-1.414-1.414z" />
-        </svg>
-      </a>
+        <ChevronDown
+          size={16}
+          className="mt-0.5 opacity-70 group-hover:opacity-100"
+          strokeWidth={3}
+        />
+      </button>
       <Transition
         show={dropdownOpen}
         as="ul"
-        className="origin-top-right absolute top-full right-0 -mt-1 w-40 bg-white ring-1 ring-black/10 text-neutrla-900 font-medium text-gray-800 py-2 ml-4 rounded-md backdrop-blur shadow-md"
+        className="[&>*]:px-[18px] [&>*]:py-1  absolute -bottom-[84px] -left-[18px] z-50 flex w-[7rem] origin-top flex-col items-start rounded-lg bg-white py-2 shadow-md ring-1 ring-black/10"
         enter="transition ease-out duration-200 transform"
         enterFrom="opacity-0 -translate-y-2"
         enterTo="opacity-100 translate-y-0"
@@ -47,6 +49,6 @@ export default function Dropdown({
       >
         {children}
       </Transition>
-    </li>
-  )
+    </div>
+  );
 }

@@ -8,9 +8,10 @@ import Link from "@/components/home/new/link";
 import Logo from "@/components/home/new/logo";
 import Button from '@/components/home/new/button';
 import FeatureCard from "./feature-card";
+import Dropdown from '@/components/home/new/dropdown';
 import clsx from "clsx";
 import { colors } from "@/lib/home/colors";
-import { ChevronDown, Package, Speech, ScanSearch } from "lucide-react";
+import { ChevronDown, ChevronRight, Package, Speech, ScanSearch } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface AnimatedHambugerButtonProps {
@@ -101,6 +102,99 @@ const AnimatedHambugerButton = ({
   );
 };
 
+const Accordion = ({
+  title,
+  children,
+  className,
+}: {
+  title: string;
+  children: React.ReactNode;
+  className?: string;
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const childrenArray = React.Children.toArray(children);
+
+  const DURATION = 0.2;
+
+  const containerVariants = {
+    open: { opacity: 1, height: "auto" },
+    collapsed: { opacity: 0, height: 0 },
+  };
+
+  const childVariants = {
+    open: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.1, duration: DURATION },
+    }),
+    collapsed: (i: number) => ({
+      opacity: 0,
+      y: -10,
+      transition: {
+        delay: (childrenArray.length - i - 1) * 0.1,
+        duration: DURATION,
+      },
+    }),
+  };
+
+  return (
+    <details
+      className={clsx("group", isOpen && "pb-6", className)}
+      open={isOpen}
+    >
+      <summary
+        className={clsx(
+          "hover:text-marketing-primary group flex h-[60px] cursor-pointer list-none transition-colors",
+          isOpen && "text-marketing-primary",
+        )}
+        onClick={(e) => {
+          e.preventDefault();
+          setIsOpen(!isOpen);
+        }}
+      >
+        <div className="flex w-full items-center justify-between">
+          <h2 className="text-marketing-md leading-5">{title}</h2>
+          <ChevronRight
+            className={clsx(
+              "text-marketing-secondary/70 -mr-[3px] h-6 w-6 transition-all duration-200 group-hover:opacity-100",
+              isOpen && "rotate-90",
+            )}
+          />
+        </div>
+      </summary>
+      <AnimatePresence initial={false}>
+        <motion.div
+          key={isOpen ? "open" : "closed"}
+          initial="collapsed"
+          animate={isOpen ? "open" : "collapsed"}
+          exit="collapsed"
+          variants={containerVariants}
+          transition={{
+            duration: childrenArray.length * DURATION,
+            ease: [0.04, 0.62, 0.23, 0.98],
+          }}
+        >
+          <motion.div className="flex flex-col gap-4 pt-1 sm:flex-row">
+            {childrenArray.map((child, index) => (
+              <motion.div
+                key={index}
+                custom={isOpen ? index : childrenArray.length - index - 1}
+                variants={childVariants}
+                initial="collapsed"
+                animate={isOpen ? "open" : "collapsed"}
+                exit="collapsed"
+              >
+                {child}
+              </motion.div>
+            ))}
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+    </details>
+  );
+};
+
 export default function Header({ className }: { className?: string }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -117,8 +211,6 @@ export default function Header({ className }: { className?: string }) {
   }, [isMenuOpen]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-
-  const closeMenu = () => setIsMenuOpen(false);
 
   const menuVariants = {
     hidden: { opacity: 0, scale: 0.99 },
@@ -170,7 +262,9 @@ export default function Header({ className }: { className?: string }) {
         )}
       >
         <div className="relative z-[100] flex items-center justify-between pb-2.5">
-          <Logo className="h-6 w-fit md:h-7" />
+          <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
+            <Logo className="h-6 w-fit md:h-7" />
+          </button>
           <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex">
             <Link href="#product" className="whitespace-nowrap">
               Product
@@ -181,14 +275,20 @@ export default function Header({ className }: { className?: string }) {
             <Link href="#" className="whitespace-nowrap">
               Changelog
             </Link>
-            <button className="flex items-center gap-1 whitespace-nowrap">
-              Follow
-              <ChevronDown
-                size={16}
-                className="mt-0.5 opacity-70"
-                strokeWidth={3}
-              />
-            </button>
+            <Dropdown title="Follow">
+              <Link
+                href="#"
+                className="text-marketing-sm w-full whitespace-nowrap"
+              >
+                Discord
+              </Link>
+              <Link
+                href="#"
+                className="text-marketing-sm w-full whitespace-nowrap"
+              >
+                Twitter
+              </Link>
+            </Dropdown>
           </div>
           <div className="flex w-fit items-center gap-[22px] md:gap-6">
             <Link href="#" className="text-marketing-primary -mt-0.5">
@@ -205,7 +305,7 @@ export default function Header({ className }: { className?: string }) {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="bg-marketing-background text-marketing-primary fixed inset-0 z-40 overflow-y-auto pt-[50px] md:pt-[56px] lg:hidden"
+            className="bg-marketing-background text-marketing-md fixed inset-0 z-40 overflow-y-auto pb-[72px] pt-[50px] text-left md:pt-[56px] lg:hidden"
             initial="hidden"
             animate="visible"
             exit="hidden"
@@ -213,10 +313,25 @@ export default function Header({ className }: { className?: string }) {
             transition={{ duration: 0.15 }}
           >
             <div className="relative">
-              <div className="flex min-h-full flex-col gap-y-5 p-6 pt-4 md:pt-9">
-                <div className="md:order-auto order-last w-full text-left">
-                  <h2 className="text-marketing-md mb-5">Products</h2>
-                  <div className="flex flex-col gap-4 sm:flex-row">
+              <div className="flex min-h-full flex-col p-6 pt-4 md:pt-3">
+                <hr className="border-black/15 sm:hidden" />
+                <Accordion title="Products" className="sm:hidden">
+                  {products.map((product) => (
+                    <FeatureCard
+                      key={product.title}
+                      icon={product.icon}
+                      color={product.color}
+                      title={product.title}
+                      description={product.description}
+                      link={product.link}
+                    />
+                  ))}
+                </Accordion>
+                <div className="hidden w-full pb-6 sm:block">
+                  <h2 className="text-marketing-primary flex h-[60px] items-center leading-5">
+                    Products
+                  </h2>
+                  <div className="flex gap-4">
                     {products.map((product) => (
                       <FeatureCard
                         key={product.title}
@@ -232,27 +347,41 @@ export default function Header({ className }: { className?: string }) {
                 <hr className="border-black/15" />
                 <Link
                   href={"#"}
-                  className="text-marketing-md w-full text-left leading-5"
+                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
                   Changelog
                 </Link>
                 <hr className="border-black/15" />
                 <Link
                   href={"#"}
-                  className="text-marketing-md w-full text-left leading-5"
+                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
                   Why we exist
                 </Link>
                 <hr className="border-black/15" />
+                <Link
+                  href={"#"}
+                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                >
+                  Discord
+                </Link>
+                <hr className="border-black/15" />
+                <Link
+                  href={"#"}
+                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                >
+                  Twitter
+                </Link>
+                <hr className="border-black/15" />
               </div>
-              <div className="p-6 fixed bottom-0 left-0 right-0">
-                <Button className='w-full drop-shadow-sm'>
+              <div className="fixed bottom-0 left-0 right-0 p-6">
+                <Button className="w-full">
                   <Image
                     src="/github.svg"
                     alt="github logo"
                     height={24}
                     width={24}
-                    className="h-[22px] w-auto md:h-6"
+                    className="col-span-2 col-start-1 h-[22px] w-auto md:h-6"
                   />
                   Sign up with Github
                 </Button>
