@@ -195,6 +195,13 @@ const Accordion = ({
   );
 };
 
+const loginURL = process.env.NODE_ENV === 'development'
+  ? "http://app.gitwallet.local:3000/login"
+  : "https://app.gitwallet.co/login";
+
+const discordURL = "https://discord.gg/ZdSpS4BuGd";
+const blogURL = "https://blog.gitwallet.co";
+
 export default function Header({ className }: { className?: string }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -269,10 +276,7 @@ export default function Header({ className }: { className?: string }) {
             <Link href="#product" className="whitespace-nowrap">
               Product
             </Link>
-            <Link href="#" className="whitespace-nowrap">
-              Why we exist
-            </Link>
-            <Link href="#" className="whitespace-nowrap">
+            <Link href={blogURL} target="_blank" className="whitespace-nowrap">
               Changelog
             </Link>
             <Dropdown title="Follow">
