@@ -36,11 +36,11 @@ function CustomerCard({ icon, title, description, items }: CustomerCardProps) {
         <h3 className="text-marketing-primary mb-1 lg:text-marketing-md">
           {title}
         </h3>
-        <p className="text-[15px] leading-5 tracking-[-0.0075em]">
+        <p className="text-marketing-sm leading-5 tracking-[-0.0075em]">
           {description}
         </p>
       </div>
-      <ul className="flex flex-col text-pretty pl-0.5 text-[15px] leading-5 tracking-[-0.0075em] gap-3 ">
+      <ul className="flex flex-col text-pretty pl-0.5 text-marketing-sm leading-5 tracking-[-0.0075em] gap-3 ">
         {items.map((item) => (
           <li key={item.text.toString()} className="flex gap-4">
             {React.cloneElement(item.icon, {

@@ -3,8 +3,8 @@ import React from "react";
 import * as NextLink from "next/link";
 import clsx from "clsx";
 
-type CustomLinkProps = {
-  target?: '_blank' | '_self' | '_parent' | '_top';
+export type CustomLinkProps = {
+  target?: "_blank" | "_self" | "_parent" | "_top";
   rel?: string;
   style?: React.CSSProperties;
   className?: string;

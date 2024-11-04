@@ -30,7 +30,7 @@ export default function Section({
     <div className={clsx("relative flex flex-col items-center", className)}>
       {badge && (
         <div
-          className="sm:text-marketing-md mb-4 flex items-center gap-2 sm:mb-5 lg:mb-7"
+          className="sm:text-marketing-md mb-4 flex items-center gap-2 sm:mb-7 lg:mb-8"
           style={{ color }}
         >
           <div style={{ color }}>
@@ -44,7 +44,7 @@ export default function Section({
       )}
       <GradientHeading
         as="h2"
-        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-2 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-3 lg:mb-5"
+        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4 lg:mb-5"
       >
         {headline}
       </GradientHeading>

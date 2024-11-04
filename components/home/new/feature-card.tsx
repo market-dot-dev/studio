@@ -1,17 +1,16 @@
-import React, { ReactElement } from "react";
-import { ChevronRight } from "lucide-react";
+import type { ReactElement } from "react";
+import type { Color } from "@/lib/home/colors";
+import React from "react";
 import Image from "next/image";
 import Link from "@/components/home/new/link";
 import clsx from "clsx";
+import { ChevronRight } from "lucide-react";
 
 interface FeatureCardProps {
   icon: ReactElement;
   title: string;
   description: ReactElement | string;
-  color: {
-    "100": string;
-    "10%": string;
-  };
+  color: Color;
   image?: {
     src: string;
     alt: string;
@@ -22,6 +21,7 @@ interface FeatureCardProps {
   link?: {
     text: string;
     href: string;
+    asCard?: boolean;
   };
   span?: string;
   className?: string;
@@ -40,10 +40,14 @@ export default function FeatureCard({
   span = "col-span-1",
   className,
 }: FeatureCardProps) {
+
+  const Element = link?.asCard ? "a" : "div";
+
   return (
-    <div
+    <Element
+      href={link?.href}
       className={clsx(
-        "relative w-full overflow-hidden md:rounded-lg",
+        "group relative w-full overflow-hidden rounded-lg",
         span,
         className,
       )}
@@ -51,7 +55,13 @@ export default function FeatureCard({
         backgroundImage: `radial-gradient(circle at top right, ${color["10%"]}, #f1f1f0)`,
       }}
     >
-      <div className="absolute inset-0 z-10 overflow-hidden ring-1 ring-inset ring-black/[9%] md:rounded-lg"></div>
+      <div className="absolute inset-0 z-10 overflow-hidden ring-1 ring-inset ring-black/[9%] rounded-lg"></div>
+      {link?.asCard && (
+        <div
+          className="absolute inset-0 z-[-1] overflow-hidden opacity-0 group-hover:opacity-[6%] transition-opacity duration-200"
+          style={{ backgroundColor: color["100"] }}
+        ></div>
+      )}
       <div
         className={clsx(
           "flex h-full w-full flex-col items-start justify-between gap-x-6",
@@ -68,7 +78,7 @@ export default function FeatureCard({
             Coming Soon
           </span>
         )}
-        <div className="pointer-events-none absolute inset-0 z-[-2]">
+        <div className="pointer-events-none absolute inset-0 z-[-3]">
           <div className="pointer-events-none absolute inset-0">
             <div
               className={clsx(
@@ -104,10 +114,10 @@ export default function FeatureCard({
               color: color["100"],
               className: `h-6 w-auto ${image ? "xs:h-7 lg:h-6" : ""}`,
             })}
-            {link && (
+            {link && !link.asCard && (
               <Link
                 href={link.href}
-                className="xs:leading-7 group -mr-1 flex items-center gap-[3px] text-[15px] leading-6 hover:brightness-90 lg:leading-6"
+                className="xs:leading-7 text-marketing-sm group -mr-1 flex items-center gap-[3px] leading-6 brightness-[95%] hover:brightness-90 lg:leading-6"
                 style={{ color: color["100"] }}
               >
                 {link.text}
@@ -130,7 +140,7 @@ export default function FeatureCard({
             </h3>
             <p
               className={clsx(
-                "max-w-[40ch] text-balance text-[15px] leading-5 tracking-[-0.0075em] text-black/40",
+                "text-marketing-sm max-w-[40ch] text-balance leading-5 tracking-[-0.0075em] text-black/40",
                 image &&
                   "sm:max-w-[45ch] sm:text-pretty lg:max-w-[40ch] lg:text-balance",
               )}
@@ -142,7 +152,7 @@ export default function FeatureCard({
         {image && (
           <div
             className={clsx(
-              "xs:pl-12 z-[-1] ml-auto justify-self-end overflow-visible pl-6 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] sm:pl-24",
+              "xs:pl-12 z-[-2] ml-auto justify-self-end overflow-visible pl-6 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] sm:pl-24",
               orientation === "horizontal" ? "md:pt-3" : "w-full sm:pt-3",
               imageMaxWidth,
             )}
@@ -159,6 +169,6 @@ export default function FeatureCard({
           </div>
         )}
       </div>
-    </div>
+    </Element>
   );
 }

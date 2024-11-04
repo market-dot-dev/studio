@@ -1,6 +1,6 @@
 import Image from "next/image";
 import GradientHeading from "@/components/home/new/gradient-heading";
-import RotatingSvgCircle from '@/components/home/new/rotating-svg-circle';
+import Button from "@/components/home/new/button";
 
 export default function Footer() {
   const svgs = [
@@ -17,7 +17,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative w-full overflow-hidden pt-12 pb-24 sm:pt-[72px] sm:pb-[144px]">
+    <footer className="relative w-full overflow-hidden pt-12 pb-24 sm:pt-[72px] sm:pb-[144px] lg:pb-48">
       <div className="container relative mx-auto px-4">
         <div className="flex w-full flex-col items-center">
           <GradientHeading
@@ -30,7 +30,7 @@ export default function Footer() {
           <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(19px,12vw,24px)] md:leading-[clamp(20px,12vw,28px)]">
             Get started for free, no credit card required.
           </p>
-          <button className="text-marketing-primary flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-[#BBC4A2] px-8 py-3 text-[18px] font-bold transition-all hover:brightness-[103%] active:scale-[99%] active:brightness-[101%] md:py-4 md:text-[20px] md:leading-6 md:tracking-[-0.02em]">
+          <Button>
             <Image
               src="/github.svg"
               alt="github logo"
@@ -39,7 +39,7 @@ export default function Footer() {
               className="h-[22px] w-auto md:h-6"
             />
             Sign up with Github
-          </button>
+          </Button>
         </div>
       </div>
     </footer>
@@ -63,7 +63,7 @@ export default function Footer() {
 //           <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(19px,12vw,24px)] md:leading-[clamp(20px,12vw,28px)]">
 //             Get started for free, no credit card required.
 //           </p>
-//           <button className="text-marketing-primary flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-[#BBC4A2] px-8 py-3 text-[18px] font-bold transition-all hover:brightness-[103%] active:scale-[99%] active:brightness-[101%] md:py-4 md:text-[20px] md:leading-6 md:tracking-[-0.02em]">
+//           <button className="text-marketing-primary flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-marketing-camo px-8 py-3 text-[18px] font-bold transition-all hover:brightness-[103%] active:scale-[99%] active:brightness-[101%] md:py-4 md:text-[20px] md:leading-6 md:tracking-[-0.02em]">
 //             <Image
 //               src="/github.svg"
 //               alt="github logo"

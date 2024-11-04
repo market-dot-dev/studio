@@ -1,4 +1,9 @@
-export const colors = {
+export type Color = {
+  "100": string;
+  "10%": string;
+}
+
+export const colors: Record<string, Color> = {
   swamp: {
     "100": "rgba(143, 143, 112, 1)",
     "10%": "rgba(143, 143, 112, 0.06)",

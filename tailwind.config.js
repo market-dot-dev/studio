@@ -18,6 +18,10 @@ module.exports = {
           primary: '#222214',
           secondary: '#8C8C88',
           background: '#F5F5F4',
+          accent: {
+            DEFAULT: '#E8E8E4',
+            active: '#E0E0DB',
+          },
           camo: '#BBC4A2',
           swamp: {
             DEFAULT: 'rgba(143, 143, 112, 1)',
