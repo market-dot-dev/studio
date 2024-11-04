@@ -1,6 +1,6 @@
 import React from 'react'
 import Image from 'next/image'
-import Link from 'next/link';
+import Link from '../link';
 import Button from '@/components/home/new/button';
 import GradientHeading from '@/components/home/new/gradient-heading';
 import { loginURL } from '@/lib/home/social-urls';
@@ -9,7 +9,7 @@ export default function Hero() {
   return (
     <div className="flex flex-col items-center gap-8 tracking-tight md:text-[24px] md:leading-8">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center md:max-w-none">
-        <GradientHeading className="lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8">
+        <GradientHeading className="lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-4xl font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8">
           The business toolkit
           <br />
           for open source.
