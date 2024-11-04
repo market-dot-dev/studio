@@ -19,7 +19,7 @@ export default function Hero() {
           find customers & market eve<span className="tracking-normal">r</span>
           ywhere — purpose-built for Open Source.
         </p>
-        <Link href={loginURL} className="md:py-3.5 md:mx-6">
+        <Link href={loginURL} className="md:py-3 md:mx-6">
           <Button>
             <Image
               src="/github.svg"

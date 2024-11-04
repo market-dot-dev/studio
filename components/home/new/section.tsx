@@ -31,7 +31,7 @@ export default function FeatureSection({
   return (
     <div
       className={clsx(
-        "relative mx-auto flex max-w-[800px] flex-col items-center px-6 lg:max-w-[1300px] lg:px-12 w-full scroll-mt-1",
+        "relative mx-auto flex max-w-[800px] flex-col items-center px-6 lg:max-w-[1300px] lg:px-12 w-full scroll-mt-24",
         className,
       )}
       {...attributes}

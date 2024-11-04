@@ -15,7 +15,7 @@ export default function Marketing() {
       color={colors.purple["100"]}
       headline={
         <>
-          Market Eve<span className="tracking-normal">r</span>ywhere
+          Market Eve<span className="tracking-normal">ry</span>where
         </>
       }
       description={

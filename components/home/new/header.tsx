@@ -275,7 +275,7 @@ export default function Header({ className }: { className?: string }) {
     <>
       <header
         className={clsx(
-          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-[18px] pr-[22px] pt-4 md:pl-[22px] md:pr-6 md:pt-[18px]",
+          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-[18px] pr-[22px] pt-4 md:pl-[22px] md:pr-6 md:pt-[18px] tracking-tight",
           className,
         )}
       >

@@ -55,7 +55,8 @@ export default function FeatureCard({
       className={clsx(
         "relative flex h-full w-full overflow-hidden",
         borderRadius,
-        link?.asCard && "hover:ring-1 ring-inset ring-black/[11%] transition duration-[175ms]",
+        link?.asCard &&
+          "duration-[175ms] ring-inset ring-black/[15%] transition hover:ring-1",
         className,
         span,
       )}
@@ -89,7 +90,7 @@ export default function FeatureCard({
           <div className="pointer-events-none absolute inset-0">
             <div
               className={clsx(
-                "absolute inset-0 -bottom-8 bg-[url('/circuit-pattern.svg?height=100&width=100')] bg-repeat opacity-[6%]",
+                "pointer-events-none absolute inset-0 -bottom-8 bg-[url('/circuit-pattern.svg?height=100&width=100')] bg-repeat opacity-[6%]",
                 image ? "right-[25%] -ml-px" : "left-[28.75%] -mt-0.5",
               )}
               style={{
