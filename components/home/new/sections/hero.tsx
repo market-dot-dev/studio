@@ -5,7 +5,7 @@ import GradientHeading from '@/components/home/new/gradient-heading';
 
 export default function Hero() {
   return (
-    <div className="flex flex-col items-center gap-8 tracking-tight md:text-[24px] md:leading-8">
+    <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-8  px-6 tracking-tight md:text-[24px] lg:max-w-[1300px] lg:px-12">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center md:max-w-none">
         <GradientHeading className="lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8">
           Business Toolkit
@@ -17,7 +17,7 @@ export default function Hero() {
           find customers & market eve<span className="tracking-normal">r</span>
           ywhere — purpose-built for Open Source.
         </p>
-        <Button className="md:py-3.5 md:mx-6">
+        <Button className="md:mx-6 md:py-3.5">
           <Image
             src="/github.svg"
             alt="github logo"
@@ -28,7 +28,7 @@ export default function Hero() {
           Sign up with Github
         </Button>
       </div>
-      <div className="xs:-ml-1 xs:gap-3.5 -ml-2 flex w-fit items-center gap-3 sm:justify-center sm:gap-4 md:gap-6">
+      <div className="xs:-ml-1 xs:gap-4 -ml-2 flex w-fit items-center gap-3 sm:justify-center sm:gap-4 md:gap-6">
         <Image
           src="/new-shipyard-logo.svg"
           alt="shipyard logo"

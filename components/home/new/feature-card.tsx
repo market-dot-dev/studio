@@ -6,6 +6,13 @@ import Link from "@/components/home/new/link";
 import clsx from "clsx";
 import { ChevronRight } from "lucide-react";
 
+export interface FeatureCardLinkProps {
+  text: string;
+  href: string;
+  asCard?: boolean;
+  onClick?: React.MouseEventHandler<HTMLElement>;
+}
+
 interface FeatureCardProps {
   icon: ReactElement;
   title: string;
@@ -19,11 +26,7 @@ interface FeatureCardProps {
   isComingSoon?: boolean;
   imageMaxWidth?: string | null;
   borderRadius?: string;
-  link?: {
-    text: string;
-    href: string;
-    asCard?: boolean;
-  };
+  link?: FeatureCardLinkProps;
   span?: string;
   className?: string;
 }
@@ -48,10 +51,11 @@ export default function FeatureCard({
   return (
     <Element
       href={link?.href}
+      onClick={link?.onClick}
       className={clsx(
-        "relative w-full overflow-hidden",
+        "relative flex h-full w-full overflow-hidden",
         borderRadius,
-        link?.asCard && "group",
+        link?.asCard && "hover:ring-1 ring-inset ring-black/[11%] transition duration-[175ms]",
         className,
         span,
       )}
@@ -65,12 +69,6 @@ export default function FeatureCard({
           borderRadius,
         )}
       ></div>
-      {link?.asCard && (
-        <div
-          className="pointer-events-none absolute inset-0 z-[-1] overflow-hidden opacity-0 transition-opacity duration-200 group-hover:opacity-[7%]"
-          style={{ backgroundColor: color["100"] }}
-        ></div>
-      )}
       <div
         className={clsx(
           "flex h-full w-full flex-col items-start justify-between gap-x-6",

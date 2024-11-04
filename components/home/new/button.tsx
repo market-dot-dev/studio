@@ -3,8 +3,9 @@ import React from 'react'
 
 interface ButtonProps {
   children: React.ReactNode;
-  onClick?: () => void;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  onClick?: () => void | ((e: any) => void) ;
+  variant?: 'primary' | 'secondary' | 'ghost' | 'link';
+  size?: 'sm' | 'base';
   className?: string;
 }
 
@@ -13,6 +14,7 @@ export default function Button({
   onClick,
   className,
   variant = "primary",
+  size = "base",
   ...props
 }: ButtonProps) {
   if (variant === "ghost") {
@@ -20,7 +22,7 @@ export default function Button({
       <button
         onClick={onClick}
         className={clsx(
-          `text-marketing-primary hover:bg-marketing-accent active:bg-marketing-accent-active focus-visible:ring-marketing-camo relative h-8 w-8 rounded-[5px] transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[98%]`,
+          `text-marketing-primary hover:bg-marketing-accent active:bg-marketing-accent-active focus-visible:ring-marketing-camo relative p-4 rounded-[5px] transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[98%] -m-2`,
           className,
         )}
         {...props}
@@ -33,8 +35,15 @@ export default function Button({
     <button
       onClick={onClick}
       className={clsx(
-        "text-marketing-primary text-marketing-base flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg px-5 py-3 transition-all duration-200 hover:brightness-[103%] active:scale-[98%] active:brightness-[101%]",
-        variant === "secondary" ? "bg-marketing-accent hover:bg-marketing-accent-active" : 'bg-gradient-to-b from-marketing-camo/80 to-marketing-camo ring-1 ring-black/[24%] shadow active:shadow-sm',
+        "flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg transition-all duration-200",
+        variant === "primary" &&
+          "text-marketing-primary from-marketing-camo/75 via-marketing-camo/[92%] to-marketing-camo shadow-marketing-camo/40 bg-gradient-to-b shadow-md ring-1 ring-black/[20%] active:shadow",
+        variant === "secondary" &&
+          "text-marketing-primary bg-marketing-accent hover:bg-marketing-accent-active",
+        variant === "link"
+          ? "text-marketing-secondary hover:text-marketing-primary focus:text-marketing-primary"
+          : "px-5 py-3 hover:brightness-[103%] active:scale-[98%] active:brightness-[101%]",
+        size === "sm" ? "text-marketing-sm" : "text-marketing-base",
         className,
       )}
       {...props}

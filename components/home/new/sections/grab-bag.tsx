@@ -15,6 +15,7 @@ export default function GrabBag() {
       headline="& Much More"
       description="Full suite of tools to replace the usual suspects and help you build your business."
       isFullBleed
+      className='lg:max-w-[1150px]'
     >
       <div className="mx-auto grid w-full  grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
         <FeatureCard

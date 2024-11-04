@@ -2,9 +2,11 @@
 
 import type { Color } from '@/lib/home/colors';
 import type { ReactElement } from "react";
+import type { FeatureCardLinkProps } from "./feature-card";
 import React, { useState, useEffect } from "react";
 import Image from 'next/image';
 import Link from "@/components/home/new/link";
+import { useRouter } from 'next/navigation';
 import Logo from "@/components/home/new/logo";
 import Button from '@/components/home/new/button';
 import FeatureCard from "./feature-card";
@@ -14,7 +16,6 @@ import { ChevronRight, Package, Speech, ScanSearch } from "lucide-react";
 import { colors } from "@/lib/home/colors";
 import { loginURL, discordURL, blogURL, twitterUrl } from '@/lib/home/social-urls';
 import { motion, AnimatePresence } from "framer-motion";
-
 
 interface AnimatedHambugerButtonProps {
   isOpen: boolean;
@@ -27,11 +28,7 @@ interface Product {
   color: Color;
   title: string;
   description: string;
-  link: {
-    text: string;
-    href: string;
-    asCard: true;
-  };
+  link: FeatureCardLinkProps;
 }
 
 const AnimatedHambugerButton = ({
@@ -198,14 +195,13 @@ const Accordion = ({
 };
 
 export default function Header({ className }: { className?: string }) {
+  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (isMenuOpen) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
+    isMenuOpen 
+      ? document.body.classList.add("overflow-hidden") 
+      : document.body.classList.remove("overflow-hidden");
 
     return () => {
       document.body.classList.remove("overflow-hidden");
@@ -213,6 +209,23 @@ export default function Header({ className }: { className?: string }) {
   }, [isMenuOpen]);
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+
+  // Intercept product card links to close menu when clicked
+    const handleProductCardClick: React.MouseEventHandler<HTMLElement> = (
+      event,
+    ) => {
+      event.preventDefault();
+
+      const href = (event.currentTarget as HTMLAnchorElement).getAttribute(
+        "href",
+      );
+      if (!href) return;
+
+      setIsMenuOpen(false);
+      setTimeout(() => {
+        router.push(href);
+      }, 150);
+    };
 
   const menuVariants = {
     hidden: { opacity: 0, scale: 0.99 },
@@ -229,6 +242,7 @@ export default function Header({ className }: { className?: string }) {
         text: "Learn more",
         href: "#sell",
         asCard: true,
+        onClick: handleProductCardClick,
       },
     },
     {
@@ -240,18 +254,19 @@ export default function Header({ className }: { className?: string }) {
         text: "Learn more",
         href: "#marketing",
         asCard: true,
+        onClick: handleProductCardClick,
       },
     },
     {
       icon: <ScanSearch />,
       color: colors["orange"],
       title: "Research",
-      description:
-        "See who's using your stuff & find new customers.",
+      description: "See who's using your stuff & find new customers.",
       link: {
         text: "Learn more",
         href: "#research",
         asCard: true,
+        onClick: handleProductCardClick,
       },
     },
   ];
@@ -260,7 +275,7 @@ export default function Header({ className }: { className?: string }) {
     <>
       <header
         className={clsx(
-          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-[18px] pr-4 pt-4 md:px-6 md:pt-[18px]",
+          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-[18px] pr-[22px] pt-4 md:pl-[22px] md:pr-6 md:pt-[18px]",
           className,
         )}
       >
@@ -268,30 +283,37 @@ export default function Header({ className }: { className?: string }) {
           <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
             <Logo className="h-[26px] w-fit md:h-7" />
           </button>
-          <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex ml-0.5">
-            <Link href="#product" className="whitespace-nowrap">
-              Product
-            </Link>
+          <div className="absolute left-1/2 top-[calc(50%-6px)] ml-0.5 hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex">
+            <Dropdown
+              title="Product"
+              orientation="horizontal"
+              className="grid grid-cols-3 -bottom-[220px] left-1/2 -translate-x-1/2 w-[700px] gap-4 rounded-[24px] px-4 py-4"
+            >
+              {products.map((product) => (
+                <Dropdown.Item key={product.title}>
+                  <FeatureCard
+                    key={product.title}
+                    icon={product.icon}
+                    color={product.color}
+                    title={product.title}
+                    description={product.description}
+                    link={product.link}
+                    borderRadius="rounded-lg"
+                    className="h-full"
+                  />
+                </Dropdown.Item>
+              ))}
+            </Dropdown>
             <Link href={blogURL} target="_blank" className="whitespace-nowrap">
               Changelog
             </Link>
             <Dropdown title="Follow">
-              <Link
-                href={discordURL}
-                className="text-marketing-sm w-full whitespace-nowrap"
-              >
-                Discord
-              </Link>
-              <Link
-                href={twitterUrl}
-                className="text-marketing-sm w-full whitespace-nowrap"
-              >
-                Twitter
-              </Link>
+              <Dropdown.Item href={discordURL}>Discord</Dropdown.Item>
+              <Dropdown.Item href={twitterUrl}>Twitter</Dropdown.Item>
             </Dropdown>
           </div>
           <div className="flex w-fit items-center gap-[22px] md:gap-6">
-            <Link href={loginURL} className="text-marketing-primary -mt-0.5">
+            <Link href={loginURL} variant='primary' className="-mt-[3px] sm:-mt-1">
               Log in
             </Link>
             <AnimatedHambugerButton
@@ -315,7 +337,7 @@ export default function Header({ className }: { className?: string }) {
             <div className="relative">
               <div className="flex min-h-full flex-col p-6 pt-4 md:pt-3">
                 <hr className="border-black/15 sm:hidden" />
-                <Accordion title="Products" className="sm:hidden">
+                <Accordion title="Product" className="sm:hidden">
                   {products.map((product) => (
                     <FeatureCard
                       key={product.title}
@@ -332,7 +354,7 @@ export default function Header({ className }: { className?: string }) {
                   <h2 className="text-marketing-primary flex h-[60px] items-center leading-5">
                     Products
                   </h2>
-                  <div className="flex gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     {products.map((product) => (
                       <FeatureCard
                         key={product.title}
@@ -370,7 +392,7 @@ export default function Header({ className }: { className?: string }) {
                 <hr className="border-black/15" />
               </div>
               <div className="fixed bottom-0 left-0 right-0 p-6">
-                <Button className="md:mx-6 md:py-3.5 w-full">
+                <Button className="w-full md:py-3.5">
                   <Image
                     src="/github.svg"
                     alt="github logo"

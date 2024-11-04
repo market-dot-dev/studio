@@ -22,7 +22,7 @@ module.exports = {
             DEFAULT: '#E8E8E4',
             active: '#E0E0DB',
           },
-          camo: '#BBC4A2',
+          camo: '#C2CBA8',
           swamp: {
             DEFAULT: 'rgba(143, 143, 112, 1)',
             '10%': 'rgba(143, 143, 112, 0.1)',
