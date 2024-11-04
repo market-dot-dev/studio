@@ -103,7 +103,7 @@ export default function Customers() {
             items={[
               {
                 icon: <UsersRound />,
-                text: "CRM designed for OSS",
+                text: "Minimal CRM, designed for OSS",
               },
               {
                 icon: <ChartLine />,
@@ -125,7 +125,7 @@ export default function Customers() {
         <div className="flex items-center justify-center">
           <Link
             href="#"
-            className="group flex items-center gap-[3px] text-pretty text-center"
+            className="text-marketing-sm sm:text-marketing-base group flex items-center gap-[3px] text-pretty text-center"
             aria-label="See how people are using Gitwallet in our Discord"
           >
             See how people are using Gitwallet

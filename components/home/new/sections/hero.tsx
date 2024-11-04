@@ -1,15 +1,21 @@
 import React from 'react'
 import Image from 'next/image'
+import GradientHeading from '@/components/home/new/gradient-heading';
 
 export default function Hero() {
   return (
     <div className="flex flex-col items-center gap-y-6 tracking-tight md:gap-9 md:text-[24px] md:leading-8">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center md:max-w-none">
-        <h1 className="text-marketing-primary lg:text-marketing-5xl mb-5 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:text-marketing-4xl md:tracking-[-0.045em] lg:mb-8">
+        <GradientHeading className="lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8">
           Business Toolkit
           <br />
           for Open Source
-        </h1>
+        </GradientHeading>
+        {/* <h1 className="text-marketing-primary lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8">
+          Business Toolkit
+          <br />
+          for Open Source
+        </h1> */}
         <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(19px,12vw,24px)] md:leading-[clamp(20px,12vw,28px)]">
           One place to sell se<span className="tracking-normal">r</span>vices,
           find customers & market eve<span className="tracking-normal">r</span>
@@ -26,7 +32,7 @@ export default function Hero() {
           Sign up with Github
         </button>
       </div>
-      <div className="-ml-2 xs:-ml-1 flex items-center gap-3 sm:justify-center xs:gap-3.5 sm:gap-4 md:gap-6">
+      <div className="xs:-ml-1 xs:gap-3.5 -ml-2 flex items-center gap-3 sm:justify-center sm:gap-4 md:gap-6">
         <Image
           src="/new-shipyard-logo.svg"
           alt="shipyard logo"

@@ -2,6 +2,7 @@
 
 import clsx from "clsx";
 import React, { ReactElement } from "react";
+import GradientHeading from "./gradient-heading";
 
 interface SectionProps {
   headline: ReactElement | string;
@@ -26,11 +27,10 @@ export default function Section({
   children,
 }: SectionProps) {
   return (
-    <div
-      className={clsx("relative flex flex-col items-center", className )}>
+    <div className={clsx("relative flex flex-col items-center", className)}>
       {badge && (
         <div
-          className="text-marketing-md mb-5 flex items-center gap-2 sm:mb-6"
+          className="text-marketing-md mb-5 flex items-center gap-2 sm:mb-7"
           style={{ color }}
         >
           <div style={{ color }}>
@@ -42,9 +42,12 @@ export default function Section({
           <p>{badge.title}</p>
         </div>
       )}
-      <h2 className="text-marketing-primary sm:text-marketing-2xl mb-3 sm:mb-4 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] lg:mb-6 lg:text-marketing-3xl">
+      <GradientHeading
+        as="h2"
+        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4 lg:mb-6"
+      >
         {headline}
-      </h2>
+      </GradientHeading>
       <p className="text-marketing-sm sm:text-marketing-base mb-6 max-w-[45ch] text-pretty text-center sm:mb-9">
         {description}
       </p>
