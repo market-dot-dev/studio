@@ -12,7 +12,7 @@ export default function GrabBag() {
         title: "Everything Else",
       }}
       color={colors.swamp["100"]}
-      headline="& Much Much More"
+      headline="+ So Much More"
       description="Full suite of tools to replace the usual suspects and help you build your business."
       isFullBleed
     >
