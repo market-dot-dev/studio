@@ -10,9 +10,9 @@ export default function Hero() {
     <div className="flex flex-col items-center gap-8 tracking-tight md:text-[24px] md:leading-8">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center md:max-w-none">
         <GradientHeading className="lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-4xl font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8">
-          The business toolkit
+          The Business Toolkit
           <br />
-          for open source.
+          for Open Source.
         </GradientHeading>
         <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(15px,12vw,24px)] md:leading-[clamp(16px,12vw,28px)]">
           Use Gitwallet to setup premium se<span className="tracking-normal">r</span>vices,

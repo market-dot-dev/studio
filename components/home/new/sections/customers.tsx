@@ -59,8 +59,8 @@ function CustomerCard({ icon, title, description, items }: CustomerCardProps) {
 export default function Customers() {
   return (
     <Section
-      headline="Tools that Grow with Your Project"
-      description="Indie devs, dev shops & established projects use Gitwallet to power their entire open source business."
+      headline="Tools that Grow with Your Business"
+      description="Indie developers and dev shops use Gitwallet to power their business as it expands."
       isFullBleed
     >
       <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5 px-6 sm:gap-8">
@@ -118,7 +118,7 @@ export default function Customers() {
               },
               {
                 icon: <Coins />,
-                text: "Save time & money by replacing your SaSS-soup",
+                text: "Save time & money by replacing your SAAS-soup",
               },
             ]}
           />
