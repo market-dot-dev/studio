@@ -1,7 +1,9 @@
 import React from 'react'
 import Image from 'next/image'
+import Link from 'next/link';
 import Button from '@/components/home/new/button';
 import GradientHeading from '@/components/home/new/gradient-heading';
+import { loginURL } from '@/lib/home/social-urls';
 
 export default function Hero() {
   return (
@@ -17,16 +19,18 @@ export default function Hero() {
           find customers & market eve<span className="tracking-normal">r</span>
           ywhere — purpose-built for Open Source.
         </p>
-        <Button className="md:py-3.5 md:mx-6">
-          <Image
-            src="/github.svg"
-            alt="github logo"
-            height={24}
-            width={24}
-            className="h-[22px] w-auto md:h-6"
-          />
-          Sign up with Github
+        <Link href={loginURL} className="md:py-3.5 md:mx-6">
+          <Button>
+            <Image
+              src="/github.svg"
+              alt="github logo"
+              height={24}
+              width={24}
+              className="h-[22px] w-auto md:h-6"
+            />
+            Sign up with Github
         </Button>
+      </Link>
       </div>
       <div className="xs:-ml-1 xs:gap-3.5 -ml-2 flex w-fit items-center gap-3 sm:justify-center sm:gap-4 md:gap-6">
         <Image
