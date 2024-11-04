@@ -11,6 +11,7 @@ class RoleService {
     /^\/api\/tiers\//,
     /^\/api\/buybutton\//,
     /^\/home$/,
+    /^\/design/,
     /^\/alpha\/login$/,
     /^\/login$/,
     /^\/legal/,

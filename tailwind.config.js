@@ -1,3 +1,4 @@
+
 const { fontFamily } = require("tailwindcss/defaultTheme");
 
 /** @type {import('tailwindcss').Config} */
@@ -7,12 +8,42 @@ module.exports = {
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
     "./lib/**/*.{js,ts,jsx,tsx}",
-    "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}", // Tremor module
+    "./node_modules/@tremor/**/*.{js,ts,jsx,tsx}", // Tremor module 
   ],
   theme: {
     extend: {
       colors: {
         // light mode
+        marketing: {
+          primary: '#222214',
+          secondary: '#8C8C88',
+          background: '#F5F5F4',
+          accent: {
+            DEFAULT: '#E8E8E4',
+            active: '#E0E0DB',
+          },
+          camo: '#BBC4A2',
+          swamp: {
+            DEFAULT: 'rgba(143, 143, 112, 1)',
+            '10%': 'rgba(143, 143, 112, 0.1)',
+            '10': 'rgba(239, 239, 236, 1)',
+          },
+          green: {
+            DEFAULT: 'rgba(125, 136, 97, 1)',
+            '10%': 'rgba(125, 136, 97, 0.1)',
+            '10': 'rgba(233, 234, 229, 1)',
+          },
+          purple: {
+            DEFAULT: 'rgba(118, 120, 158, 1)',
+            '10%': 'rgba(118, 120, 158, 0.1)',
+            '10': '#E8E8EB',
+          },
+          orange: {
+            DEFAULT: 'rgba(178, 134, 52, 1)',
+            '10%': 'rgba(178, 134, 52, 0.1)',
+            '10': 'rgba(238, 234, 225, 1)',
+          },
+        },
         tremor: {
           brand: {
             faint: "#F9FAFB", // gray-50
@@ -97,6 +128,17 @@ module.exports = {
         "tremor-default": ["0.875rem", { lineHeight: "1.25rem" }],
         "tremor-title": ["1.125rem", { lineHeight: "1.75rem" }],
         "tremor-metric": ["1.875rem", { lineHeight: "2.25rem" }],
+        // didn't namespace 'marketing' beacause it wouldn't compile for some reason
+        'marketing-xs': ['12px', { lineHeight: '16px', letterSpacing: '-0.02em' }],
+        'marketing-sm': ['15px', { lineHeight: '20px', letterSpacing: '-0.02em' }],
+        'marketing-base': ['19px', { lineHeight: '24px', letterSpacing: '-0.025em' }],
+        'marketing-md': ['24px', { lineHeight: '28px', letterSpacing: '-0.025em' }],
+        'marketing-lg': ['30px', { lineHeight: '32px', letterSpacing: '-0.025em' }],
+        'marketing-xl': ['37px', { lineHeight: '40px', letterSpacing: '-0.03em' }],
+        'marketing-2xl': ['46px', { lineHeight: '44px', letterSpacing: '-0.035em' }],
+        'marketing-3xl': ['58px', { lineHeight: '52px', letterSpacing: '-0.035em' }],
+        'marketing-4xl': ['72px', { lineHeight: '64px', letterSpacing: '-0.045em' }],
+        'marketing-5xl': ['91px', { lineHeight: '80px', letterSpacing: '-0.045em' }],
       },
       width: {
         1536: "1536px",
@@ -108,6 +150,7 @@ module.exports = {
         30: "7.5rem",
       },
       fontFamily: {
+        sans: ["Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica", ...fontFamily.sans],
         default: ["var(--font-inter)", ...fontFamily.sans],
         cal: ["var(--font-cal)", ...fontFamily.sans],
         title: ["var(--font-title)", ...fontFamily.sans],
@@ -145,6 +188,9 @@ module.exports = {
       },
       animation: {
         wiggle: "wiggle 0.8s both",
+      },
+      screens: {
+        "xs": "425px",
       },
     },
   },

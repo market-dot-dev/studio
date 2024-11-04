@@ -1,3 +1,6 @@
+import React from "react";
+import Image from "next/image";
+import Link from "@/components/home/new/link";
 import Hero from "@/components/home/new/sections/hero";
 import Customers from "@/components/home/new/sections/customers";
 import Sell from "@/components/home/new/sections/sell";

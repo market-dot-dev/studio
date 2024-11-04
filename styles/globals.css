@@ -106,3 +106,8 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
 body {
   top: unset !important;
 } */
+@layer base {
+  :root {
+    --radius: 0.5rem;
+  }
+}
