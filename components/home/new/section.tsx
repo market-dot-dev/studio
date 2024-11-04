@@ -8,6 +8,7 @@ interface SectionProps {
   headline: ReactElement | string;
   description: ReactElement | string;
   children: React.ReactNode;
+  id?: string;
   color?: string;
   badge?: {
     icon: ReactElement;
@@ -25,12 +26,13 @@ export default function Section({
   isFullBleed = false,
   className,
   children,
+  ...attributes
 }: SectionProps) {
   return (
-    <div className={clsx("relative flex flex-col items-center", className)}>
+    <section className={clsx("relative flex flex-col items-center", className)} {...attributes}>
       {badge && (
         <div
-          className="sm:text-marketing-md mb-4 flex items-center gap-2 sm:mb-7 lg:mb-8"
+          className="sm:text-marketing-md mb-4 flex items-center gap-2 sm:mb-6"
           style={{ color }}
         >
           <div style={{ color }}>
@@ -44,7 +46,7 @@ export default function Section({
       )}
       <GradientHeading
         as="h2"
-        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4 lg:mb-5"
+        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4"
       >
         {headline}
       </GradientHeading>
@@ -59,105 +61,6 @@ export default function Section({
       >
         {children}
       </div>
-    </div>
+    </section>
   );
 }
-// "use client";
-
-// import clsx from "clsx";
-// import React, { ReactElement } from "react";
-
-// interface SectionProps {
-//   headline: ReactElement | string;
-//   description: string;
-//   children: React.ReactNode;
-//   color?: string;
-//   badge?: {
-//     icon: ReactElement;
-//     title: string;
-//   };
-//   isFullBleed?: boolean;
-//   className?: string;
-//   showDashedLine?: boolean;
-// }
-
-// export default function Section({
-//   badge,
-//   headline,
-//   description,
-//   color,
-//   isFullBleed = false,
-//   className,
-//   children,
-//   showDashedLine = false,
-// }: SectionProps) {
-//   return (
-//     <div
-//       className={clsx(
-//         "relative flex flex-col items-center",
-//         !badge && "md:mt-[56px]",
-//         className,
-//       )}
-//     >
-//       {badge && (
-//         <div
-//           className="mb-6 flex items-center gap-2 text-[24px] leading-8 text-[#7d8861] lg:mb-8"
-//           style={{ color }}
-//         >
-//           <div style={{ color }}>
-//             {React.cloneElement(badge.icon, {
-//               size: 32,
-//               className: "h-6 w-auto lg:h-8",
-//             })}
-//           </div>
-//           <p>{badge.title}</p>
-//         </div>
-//       )}
-//       <h2 className="text-marketing-primary mb-4 max-w-[20ch] text-balance text-center text-[clamp(32px,16vw,48px)] font-bold leading-[1] tracking-[-0.035em] sm:leading-[0.9] md:text-[48px] lg:mb-6 lg:text-[64px]">
-//         {headline}
-//       </h2>
-//       <p className="mb-9 max-w-[50ch] text-pretty text-center">{description}</p>
-//       <div
-//         className={clsx(
-//           "relative",
-//           isFullBleed ? " -mx-6 w-screen md:m-0 md:w-full" : "w-full",
-//           showDashedLine && "section-dashed-line",
-//         )}
-//         style={
-//           {
-//             "--stroke-color": color,
-//           } as React.CSSProperties
-//         }
-//       >
-//         {children}
-//       </div>
-//       <style jsx>{`
-//         .section-dashed-line::before {
-//           content: "";
-//           position: absolute;
-//           left: 34px;
-//           top: 64px;
-//           bottom: 64px;
-//           width: 2px;
-//           height: auto;
-//           opacity: 0.8;
-//           background-image: linear-gradient(
-//             to bottom,
-//             var(--stroke-color) 50%,
-//             transparent 50%
-//           );
-//           background-size: 2px 12px;
-//           background-repeat: repeat-y;
-//           animation: dashedLineAnimation 20s linear infinite;
-//           z-index: -1;
-//         }
-
-//         @keyframes dashedLineAnimation {
-//           to {
-//             background-position: 0 240px;
-//           }
-//         }
-//       `}</style>
-//     </div>
-//   );
-// }

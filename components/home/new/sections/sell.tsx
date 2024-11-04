@@ -7,6 +7,7 @@ import { Package, ScrollText, ShoppingBag, FileBox } from 'lucide-react';
 export default function Sell() {
   return (
     <Section
+      id="sell"
       color={colors.green["100"]}
       badge={{
         icon: <ShoppingBag />,

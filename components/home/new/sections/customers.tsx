@@ -3,6 +3,7 @@ import React from "react";
 import Link from "@/components/home/new/link";
 import Section from "@/components/home/new/section";
 import AnimatedDashedLine from "@/components/home/new/animated-dashed-line";
+import { discordURL } from "@/lib/home/social-urls";
 import {
   UserRound,
   PackageOpen,
@@ -124,7 +125,7 @@ export default function Customers() {
         </div>
         <div className="flex items-center justify-center">
           <Link
-            href="#"
+            href={discordURL}
             className="text-marketing-sm sm:text-marketing-base group flex items-center gap-[3px] text-pretty text-center"
             aria-label="See how people are using Gitwallet in our Discord"
           >

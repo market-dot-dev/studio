@@ -27,7 +27,7 @@ export default function Dropdown({
       <button
         aria-expanded={dropdownOpen}
         onClick={(e) => e.preventDefault()}
-        className="p-2 -m-2 text-marketing-secondary group-hover:text-marketing-primary duraton-200 flex items-center gap-1 whitespace-nowrap transition-all"
+        className="py-3 -my-3 px-6 -mx-6 text-marketing-secondary group-hover:text-marketing-primary duraton-200 flex items-center gap-1 whitespace-nowrap transition-all"
       >
         {title}
         <ChevronDown

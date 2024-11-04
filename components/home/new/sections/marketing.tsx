@@ -7,6 +7,7 @@ import { colors } from '@/lib/home/colors';
 export default function Marketing() {
   return (
     <Section
+      id="marketing"
       badge={{
         icon: <Speech />,
         title: "Marketing",

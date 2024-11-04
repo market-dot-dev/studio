@@ -47,18 +47,19 @@ export default function FeatureCard({
     <Element
       href={link?.href}
       className={clsx(
-        "group relative w-full overflow-hidden rounded-lg",
-        span,
+        "relative w-full overflow-hidden rounded-lg",
+        link?.asCard && "group",
         className,
+        span,
       )}
       style={{
         backgroundImage: `radial-gradient(circle at top right, ${color["10%"]}, #f1f1f0)`,
       }}
     >
-      <div className="absolute inset-0 z-10 overflow-hidden ring-1 ring-inset ring-black/[9%] rounded-lg"></div>
+      <div className="absolute inset-0 z-10 overflow-hidden rounded-lg ring-1 ring-inset ring-black/[9%]"></div>
       {link?.asCard && (
         <div
-          className="absolute inset-0 z-[-1] overflow-hidden opacity-0 group-hover:opacity-[6%] transition-opacity duration-200 pointer-events-none"
+          className="pointer-events-none absolute inset-0 z-[-1] overflow-hidden opacity-0 transition-opacity duration-200 group-hover:opacity-[6%]"
           style={{ backgroundColor: color["100"] }}
         ></div>
       )}
@@ -117,7 +118,7 @@ export default function FeatureCard({
             {link && !link.asCard && (
               <Link
                 href={link.href}
-                className="xs:leading-7 text-marketing-sm group -mr-1 flex items-center gap-[3px] leading-6 brightness-[95%] hover:brightness-90 lg:leading-6"
+                className="xs:leading-7 text-marketing-sm group -mr-1 flex items-center gap-[3px] leading-6 brightness-[95%] hover:brightness-[85%] lg:leading-6"
                 style={{ color: color["100"] }}
               >
                 {link.text}

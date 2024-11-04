@@ -8,6 +8,7 @@ import { colors } from '@/lib/home/colors';
 export default function Research() {
   return (
     <Section
+      id="research"
       badge={{
         icon: <ScanSearch />,
         title: "Research",

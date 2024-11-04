@@ -10,9 +10,11 @@ import Button from '@/components/home/new/button';
 import FeatureCard from "./feature-card";
 import Dropdown from '@/components/home/new/dropdown';
 import clsx from "clsx";
+import { ChevronRight, Package, Speech, ScanSearch } from "lucide-react";
 import { colors } from "@/lib/home/colors";
-import { ChevronDown, ChevronRight, Package, Speech, ScanSearch } from "lucide-react";
+import { loginURL, discordURL, blogURL, launchPostUrl, twitterUrl } from '@/lib/home/social-urls';
 import { motion, AnimatePresence } from "framer-motion";
+
 
 interface AnimatedHambugerButtonProps {
   isOpen: boolean;
@@ -195,13 +197,6 @@ const Accordion = ({
   );
 };
 
-const loginURL = process.env.NODE_ENV === 'development'
-  ? "http://app.gitwallet.local:3000/login"
-  : "https://app.gitwallet.co/login";
-
-const discordURL = "https://discord.gg/ZdSpS4BuGd";
-const blogURL = "https://blog.gitwallet.co";
-
 export default function Header({ className }: { className?: string }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -276,18 +271,25 @@ export default function Header({ className }: { className?: string }) {
             <Link href="#product" className="whitespace-nowrap">
               Product
             </Link>
+            <Link
+              href={launchPostUrl}
+              target="_blank"
+              className="whitespace-nowrap"
+            >
+              Why we exist
+            </Link>
             <Link href={blogURL} target="_blank" className="whitespace-nowrap">
               Changelog
             </Link>
             <Dropdown title="Follow">
               <Link
-                href="#"
+                href={discordURL}
                 className="text-marketing-sm w-full whitespace-nowrap"
               >
                 Discord
               </Link>
               <Link
-                href="#"
+                href={twitterUrl}
                 className="text-marketing-sm w-full whitespace-nowrap"
               >
                 Twitter
@@ -295,7 +297,7 @@ export default function Header({ className }: { className?: string }) {
             </Dropdown>
           </div>
           <div className="flex w-fit items-center gap-[22px] md:gap-6">
-            <Link href="#" className="text-marketing-primary -mt-0.5">
+            <Link href={loginURL} className="text-marketing-primary -mt-0.5">
               Log in
             </Link>
             <AnimatedHambugerButton
@@ -350,28 +352,28 @@ export default function Header({ className }: { className?: string }) {
                 </div>
                 <hr className="border-black/15" />
                 <Link
-                  href={"#"}
+                  href={blogURL}
                   className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
                   Changelog
                 </Link>
                 <hr className="border-black/15" />
                 <Link
-                  href={"#"}
+                  href={launchPostUrl}
                   className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
                   Why we exist
                 </Link>
                 <hr className="border-black/15" />
                 <Link
-                  href={"#"}
+                  href={discordURL}
                   className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
                   Discord
                 </Link>
                 <hr className="border-black/15" />
                 <Link
-                  href={"#"}
+                  href={twitterUrl}
                   className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
                   Twitter
