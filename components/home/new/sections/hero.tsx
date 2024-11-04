@@ -76,7 +76,7 @@ export default function Hero() {
           className="h-[clamp(16px,9.1vw,48px)] w-full md:h-12 lg:h-14"
         />
       </div>
-      <div className="-mr-60 mt-6 h-full w-[calc(100vw+192px)] overflow-visible rounded-md ring-1 ring-black/[8%] sm:rounded-lg md:-mr-72 md:mt-0 lg:mx-auto lg:mr-0 lg:mt-0 lg:w-full lg:max-w-[1150px] lg:rounded-xl">
+      <div className="-mr-60 mt-6 h-full w-[calc(100vw+192px)] overflow-visible rounded-md ring-1 ring-black/[8%] sm:rounded-lg md:-mr-72 md:mt-0 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-[1150px] lg:rounded-xl">
         <Image
           src="/home.png"
           alt="gitwallet logo"

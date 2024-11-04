@@ -35,7 +35,7 @@ const CompanyName = ({ name, url }: { name: string; url?: string }) =>
 export default function Testimonial({ quote, quotee }: TestimonialProps) {
   return (
     // <div className="mx-auto md:border-l md:pl-12 border-black/[15%] lg:border-none lg:pl-0 mb-6 sm:mb-12 lg:my-12 flex flex-col gap-4 text-pretty md:max-w-[100ch] lg:items-center md:gap-6 lg:text-center ">
-    <div className="mx-auto mb-9 flex flex-col gap-4 text-pretty border-black/[15%] sm:my-9 sm:gap-6 sm:border-l sm:pl-6 md:pl-12 lg:pl-16">
+    <div className="mx-auto  flex flex-col gap-4 text-pretty border-black/[15%] sm:gap-6 my-6 sm:my-9 sm:border-l sm:pl-6 md:pl-12 ">
       <blockquote className="text-marketing-md sm:text-marketing-lg lg:text-marketing-xl text-pretty md:max-w-[100ch] lg:max-w-none sm:text-balance">
         {quote}
       </blockquote>

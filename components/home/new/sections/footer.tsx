@@ -17,7 +17,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative w-full overflow-hidden  py-16">
+    <footer className="relative w-full overflow-hidden py-12 sm:pt-[72px] pb-[144px]">
       <div className="container relative mx-auto px-4">
         <div className="flex w-full flex-col items-center">
           <GradientHeading
