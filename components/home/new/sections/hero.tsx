@@ -10,14 +10,14 @@ export default function Hero() {
     <div className="flex flex-col items-center gap-8 tracking-tight md:text-[24px] md:leading-8">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center md:max-w-none">
         <GradientHeading className="lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8">
-          Business Toolkit
+          The business toolkit
           <br />
-          for Open Source
+          for open source.
         </GradientHeading>
         <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(15px,12vw,24px)] md:leading-[clamp(16px,12vw,28px)]">
-          One place to sell se<span className="tracking-normal">r</span>vices,
+          Use Gitwallet to setup premium se<span className="tracking-normal">r</span>vices,
           find customers & market eve<span className="tracking-normal">r</span>
-          ywhere — purpose-built for Open Source.
+          ywhere. Built for developers.
         </p>
         <Link href={loginURL} className="md:py-3.5 md:mx-6">
           <Button>
