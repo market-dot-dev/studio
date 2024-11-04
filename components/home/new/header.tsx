@@ -12,7 +12,7 @@ import Dropdown from '@/components/home/new/dropdown';
 import clsx from "clsx";
 import { ChevronRight, Package, Speech, ScanSearch } from "lucide-react";
 import { colors } from "@/lib/home/colors";
-import { loginURL, discordURL, blogURL, launchPostUrl, twitterUrl } from '@/lib/home/social-urls';
+import { loginURL, discordURL, blogURL, twitterUrl } from '@/lib/home/social-urls';
 import { motion, AnimatePresence } from "framer-motion";
 
 
@@ -142,7 +142,7 @@ const Accordion = ({
 
   return (
     <details
-      className={clsx("group", isOpen && "pb-6", className)}
+      className={clsx(isOpen && "pb-6", className)}
       open={isOpen}
     >
       <summary
@@ -247,7 +247,7 @@ export default function Header({ className }: { className?: string }) {
       color: colors["orange"],
       title: "Research",
       description:
-        "See who's using your stuff & find the right people for your project.",
+        "See who's using your stuff & find new customers.",
       link: {
         text: "Learn more",
         href: "#research",
@@ -266,18 +266,11 @@ export default function Header({ className }: { className?: string }) {
       >
         <div className="relative z-[100] flex items-center justify-between pb-2.5">
           <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
-            <Logo className="h-6 w-fit md:h-7" />
+            <Logo className="h-[26px] w-fit md:h-7" />
           </button>
-          <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex">
+          <div className="absolute left-1/2 top-[calc(50%-6px)] hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex ml-0.5">
             <Link href="#product" className="whitespace-nowrap">
               Product
-            </Link>
-            <Link
-              href={launchPostUrl}
-              target="_blank"
-              className="whitespace-nowrap"
-            >
-              Why we exist
             </Link>
             <Link href={blogURL} target="_blank" className="whitespace-nowrap">
               Changelog
@@ -359,13 +352,6 @@ export default function Header({ className }: { className?: string }) {
                   className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
                   Changelog
-                </Link>
-                <hr className="border-black/15" />
-                <Link
-                  href={launchPostUrl}
-                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
-                >
-                  Why we exist
                 </Link>
                 <hr className="border-black/15" />
                 <Link

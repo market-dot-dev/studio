@@ -32,7 +32,7 @@ export default function Dropdown({
         {title}
         <ChevronDown
           size={16}
-          className="mt-0.5 opacity-70 group-hover:opacity-100"
+          className="mt-0.5 opacity-60 group-hover:opacity-100"
           strokeWidth={3}
         />
       </button>

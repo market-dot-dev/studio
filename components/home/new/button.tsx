@@ -34,7 +34,7 @@ export default function Button({
       onClick={onClick}
       className={clsx(
         "text-marketing-primary text-marketing-base flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg px-5 py-3 transition-all duration-200 hover:brightness-[103%] active:scale-[98%] active:brightness-[101%]",
-        variant === "secondary" ? "bg-marketing-accent hover:bg-marketing-accent-active" : 'bg-gradient-to-b from-marketing-camo/80 to-marketing-camo ring-1 ring-black/[23%] shadow',
+        variant === "secondary" ? "bg-marketing-accent hover:bg-marketing-accent-active" : 'bg-gradient-to-b from-marketing-camo/80 to-marketing-camo ring-1 ring-black/[24%] shadow active:shadow-sm',
         className,
       )}
       {...props}
