@@ -18,6 +18,7 @@ interface FeatureCardProps {
   orientation?: "horizontal" | "vertical";
   isComingSoon?: boolean;
   imageMaxWidth?: string | null;
+  borderRadius?: string;
   link?: {
     text: string;
     href: string;
@@ -35,7 +36,8 @@ export default function FeatureCard({
   color,
   orientation = "vertical",
   isComingSoon = false,
-  imageMaxWidth = "max-w-[clamp(350px,70%,450px)] sm:max-w-[clamp(350px,85%,520px)] lg:max-w-none",
+  imageMaxWidth = "max-w-[clamp(310px,75%,450px)] sm:max-w-[clamp(350px,85%,520px)] lg:max-w-none",
+  borderRadius = 'md:rounded-lg',
   link,
   span = "col-span-1",
   className,
@@ -47,7 +49,8 @@ export default function FeatureCard({
     <Element
       href={link?.href}
       className={clsx(
-        "relative w-full overflow-hidden rounded-lg",
+        "relative w-full overflow-hidden",
+        borderRadius,
         link?.asCard && "group",
         className,
         span,
@@ -56,10 +59,15 @@ export default function FeatureCard({
         backgroundImage: `radial-gradient(circle at top right, ${color["10%"]}, #f1f1f0)`,
       }}
     >
-      <div className="absolute inset-0 z-10 overflow-hidden rounded-lg ring-1 ring-inset ring-black/[9%]"></div>
+      <div
+        className={clsx(
+          "pointer-events-none absolute inset-0 z-10 overflow-hidden ring-1 ring-inset ring-black/[9%]",
+          borderRadius,
+        )}
+      ></div>
       {link?.asCard && (
         <div
-          className="pointer-events-none absolute inset-0 z-[-1] overflow-hidden opacity-0 transition-opacity duration-200 group-hover:opacity-[6%]"
+          className="pointer-events-none absolute inset-0 z-[-1] overflow-hidden opacity-0 transition-opacity duration-200 group-hover:opacity-[7%]"
           style={{ backgroundColor: color["100"] }}
         ></div>
       )}
@@ -79,7 +87,7 @@ export default function FeatureCard({
             Coming Soon
           </span>
         )}
-        <div className="pointer-events-none absolute inset-0 z-[-3]">
+        <div className="pointer-events-none absolute inset-0 z-[-3] overflow-hidden">
           <div className="pointer-events-none absolute inset-0">
             <div
               className={clsx(

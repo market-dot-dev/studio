@@ -259,7 +259,7 @@ export default function Header({ className }: { className?: string }) {
     <>
       <header
         className={clsx(
-          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-[22px] pr-4 pt-4 md:px-6 md:pt-[18px]",
+          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-[18px] pr-4 pt-4 md:px-6 md:pt-[18px]",
           className,
         )}
       >
@@ -330,6 +330,7 @@ export default function Header({ className }: { className?: string }) {
                       title={product.title}
                       description={product.description}
                       link={product.link}
+                      borderRadius="rounded-lg"
                     />
                   ))}
                 </Accordion>
@@ -346,6 +347,7 @@ export default function Header({ className }: { className?: string }) {
                         title={product.title}
                         description={product.description}
                         link={product.link}
+                        borderRadius="rounded-lg"
                       />
                     ))}
                   </div>
