@@ -143,7 +143,7 @@ export default function FeatureCard({
           <div
             className={clsx(
               "xs:pl-12 z-[-1] ml-auto justify-self-end overflow-visible pl-6 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] sm:pl-24",
-              orientation === "horizontal" ? "pt-3" : "w-full lg:pt-6",
+              orientation === "horizontal" ? "md:pt-3" : "w-full sm:pt-3",
               imageMaxWidth,
             )}
           >

@@ -12,11 +12,11 @@ export default function GrabBag() {
         title: "Everything Else",
       }}
       color={colors.swamp["100"]}
-      headline="+ So Much More"
+      headline="& Much More"
       description="Full suite of tools to replace the usual suspects and help you build your business."
       isFullBleed
     >
-      <div className="mx-auto grid w-full max-w-[1000px] grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
+      <div className="mx-auto grid w-full  grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
         <FeatureCard
           icon={<UsersRound />}
           title="CRM for OSS"

@@ -4,7 +4,7 @@ import GradientHeading from '@/components/home/new/gradient-heading';
 
 export default function Hero() {
   return (
-    <div className="flex flex-col items-center gap-y-6 tracking-tight md:gap-9 md:text-[24px] md:leading-8">
+    <div className="flex flex-col items-center gap-y-6 tracking-tight md:gap-8 md:text-[24px] md:leading-8">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center md:max-w-none">
         <GradientHeading className="lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8">
           Business Toolkit
@@ -77,7 +77,7 @@ export default function Hero() {
         />
       </div>
       {/* <div className="-mr-60 mt-6 h-full w-[calc(100vw+192px)] overflow-visible rounded-md ring-1 ring-black/[8%] sm:rounded-lg md:-mr-72 md:mt-0 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-[1150px] lg:rounded-xl"> */}
-      <div className="-mr-60 h-full w-[calc(100vw+192px)] overflow-visible rounded-md ring-1 ring-black/[8%] sm:rounded-lg md:-mr-72 md:mt-0 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-[1150px] lg:rounded-xl">
+      <div className="-mr-60 h-full w-[calc(100vw+192px)] overflow-visible rounded xs:rounded-md ring-1 ring-black/[8%] sm:rounded-lg md:-mr-72 md:mt-0 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-[1150px] lg:rounded-xl">
         <Image
           src="/home.png"
           alt="gitwallet logo"

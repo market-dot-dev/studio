@@ -13,11 +13,11 @@ export default function GradientHeading({
   className,
 }: GradientHeadingProps) {
   return (
-    <div className="-mb-2">
+    <div className="-m-3">
       <Element
         className={cn(
           "from-marketing-primary/[92%]  to-marketing-primary bg-gradient-to-b bg-clip-text text-transparent",
-          "pb-2", // Add 8px padding to the bottom
+          "p-3", // Add 8px padding to the bottom
           className,
         )}
       >

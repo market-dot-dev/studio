@@ -62,7 +62,7 @@ export default function Customers() {
       description="Indie devs, dev shops & established projects use Gitwallet to power their entire open source business."
       isFullBleed
     >
-      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5 px-6 sm:gap-9">
+      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5 px-6 sm:gap-8">
         <div className="relative grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
           <div className="relative">
             <CustomerCard

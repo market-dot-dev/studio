@@ -30,13 +30,13 @@ export default function Section({
     <div className={clsx("relative flex flex-col items-center", className)}>
       {badge && (
         <div
-          className="text-marketing-md mb-4 flex items-center gap-2 sm:mb-7"
+          className="sm:text-marketing-md mb-4 flex items-center gap-2 sm:mb-5 lg:mb-7"
           style={{ color }}
         >
           <div style={{ color }}>
             {React.cloneElement(badge.icon, {
               size: 32,
-              className: "h-7 w-auto",
+              className: "h-6 sm:h-7 w-auto",
             })}
           </div>
           <p>{badge.title}</p>
@@ -44,11 +44,11 @@ export default function Section({
       )}
       <GradientHeading
         as="h2"
-        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-2 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4 lg:mb-6"
+        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-2 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-3 lg:mb-5"
       >
         {headline}
       </GradientHeading>
-      <p className="text-marketing-sm sm:text-marketing-base mb-5 max-w-[45ch] text-pretty text-center sm:mb-9">
+      <p className="text-marketing-sm sm:text-marketing-base mb-5 max-w-[45ch] text-pretty text-center sm:mb-8">
         {description}
       </p>
       <div
