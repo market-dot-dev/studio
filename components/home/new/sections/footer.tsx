@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "../link";
+import { loginURL } from "@/lib/home/social-urls";
 import GradientHeading from "@/components/home/new/gradient-heading";
 import Button from "@/components/home/new/button";
 
@@ -30,16 +32,18 @@ export default function Footer() {
           <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(19px,12vw,24px)] md:leading-[clamp(20px,12vw,28px)]">
             Get started for free, no credit card required.
           </p>
-          <Button className="md:mx-6 md:py-3.5">
-            <Image
-              src="/github.svg"
-              alt="github logo"
-              height={24}
-              width={24}
-              className="h-[22px] w-auto md:h-6"
-            />
-            Sign up with Github
-          </Button>
+          <Link href={loginURL} className="md:py-3.5 md:mx-6">
+            <Button>
+              <Image
+                src="/github.svg"
+                alt="github logo"
+                height={24}
+                width={24}
+                className="h-[22px] w-auto md:h-6"
+              />
+              Sign up with Github
+            </Button>
+          </Link>
         </div>
       </div>
     </footer>
