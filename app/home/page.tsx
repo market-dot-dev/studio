@@ -1,110 +1,73 @@
-"use client";
-import { useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
-import { Suspense } from "react";
-import PageIllustration from "@/components/common/page-illustration";
-import Header from "@/components/common/header";
-import ProductFeatures from "@/components/home/tabs";
-import AOS from 'aos'
-import 'aos/dist/aos.css'
-import HeroHome from "@/components/home/hero-home";
-import BuiltFor from "@/components/home/target";
-import ProductTour from "@/components/home/product-tour";
-import FeatureProducts from "@/components/home/feature-products";
-import Logos from "@/components/home/project-logos";
-import Footer from "@/components/home/footer";
-
-
-const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
-const maintainerLoginUrl = process.env.NODE_ENV === 'development'
-  ? "http://app.gitwallet.local:3000/login"
-  : "https://app.gitwallet.co/login";
-
-
-const bookDemoUrl = "https://cal.com/tarunsachdeva/gitwallet-demo";
-// Define a type for the testimonial props, including the logo
-type TestimonialProps = {
-  ecosystem: string;
-  logoSrc: string;
-};
-
-type FAQItem = {
-  question: string;
-  answer: string;
-};
-
-const frequentlyAskedQuestions: FAQItem[] = [
-  {
-    question: "What does this mean for my open source license?",
-    answer: "Nothing changes with your OSS code or license. Gitwallet is a toolkit for any services that you personally provide for companies."
-  },
-  {
-    question: "Can I use Gitwallet for anything besides support?",
-    answer: "Soon. Support is where we are starting, but we are working on adding more features to help you build a business around your OSS."
-  },
-  {
-    question: "Who is building Gitwallet?",
-    answer: "Gitwallet is being built by Lab0324, a product studio based in Toronto, with developers and designers around the world. We are also working closely with maintainers across ecosystems. If you want to get in touch, feel free to DM <a href=\"https://www.x.com/tarunsachdeva\" target=\"_blank\"><u>the founder</u></a>!"
-  },
-  {
-    question: "How can I learn more and participate?",
-    answer: "First - thank you for your interest! The best way to participate is join our <a href=\"" + surveyLink + "\" target=\"_blank\"><u>design partnership</u></a> to get early access and help shape Gitwallet with other maintainers."
-  }
-];
-
-
-const logoPath = "/";
-// A simple component to display each testimonial with a logo
-const EcosystemLogo: React.FC<TestimonialProps> = ({ ecosystem, logoSrc }) => (
-  <div className="flex flex-col items-center gap-4">
-    <Image alt={ecosystem} src={logoPath + logoSrc} width={80} height={50} />
-  </div>
-);
-
-const renderSectionHeading = (text: string) => {
-  return (
-    <h3 className="text-2xl font-bold leading-none tracking-tight mb-2">{text}</h3>
-  );
-};
-
+import Hero from "@/components/home/new/sections/hero";
+import Customers from "@/components/home/new/sections/customers";
+import Sell from "@/components/home/new/sections/sell";
+import Marketing from "@/components/home/new/sections/marketing";
+import Testimonial from "@/components/home/new/testimonial";
+import Research from "@/components/home/new/sections/research";
+import GrabBag from "@/components/home/new/sections/grab-bag";
+import Footer from "@/components/home/new/sections/footer";
 
 export default function HomePage() {
-
-  useEffect(() => {
-    AOS.init({
-      once: true,
-      disable: 'phone',
-      duration: 600,
-      easing: 'ease-out-sine',
-    })
-  })
-
   return (
-
-
     <>
-      <div className="font-inter antialiased bg-gray-900 text-gray-200 tracking-tight">
-        <div className="flex flex-col min-h-screen overflow-hidden">
-          <Header/>
-          <PageIllustration />
-          <HeroHome />
-          <ProductTour />
-          <Logos />
-          <BuiltFor />
-          <ProductFeatures />
-          <Footer />
+      <Hero />
+      <Customers />
+      <span id="products" className="hidden"></span>
+      <Sell />
+      <Testimonial
+        quote={
+          <>
+            Gitwallet helped our collective of core maintainers{" "}
+            <span className="text-marketing-primary">
+              set up our first commercial se
+              <span className="tracking-[-0.005em]">r</span>vices tiers in under
+              a week
+            </span>
+            . Their perspective working in and around engineering and creator
+            communities was instrumental in helping us think through the
+            messaging that would resonate most.
+          </>
+        }
+        quotee={{
+          name: "Bethany",
+          title: "GM",
+          image: {
+            src: "/bc-avatar.jpg",
+          },
+          company: {
+            name: "Shipyard",
+            url: "https://ipshipyard.gitwallet.co/",
+          },
+        }}
+      />
+      <Marketing />
+      <Research />
+      <GrabBag />
+      <Footer />
+      {/* <footer className="py-24 w-[100vw]">
+        <div className="flex w-full max-w-[500px] flex-col items-center md:max-w-none">
+          <GradientHeading
+            as="h2"
+            className="lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8"
+          >
+            Sta<span className="tracking-normal">r</span>t building
+            <br /> your business
+          </GradientHeading>
+          <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(19px,12vw,24px)] md:leading-[clamp(20px,12vw,28px)]">
+            Get started for free, no credit card required.
+          </p>
+          <button className="text-marketing-primary flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg bg-marketing-camo px-8 py-3 text-[18px] font-bold transition-all hover:brightness-[103%] active:scale-[99%] active:brightness-[101%] md:py-4 md:text-[20px] md:leading-6 md:tracking-[-0.02em]">
+            <Image
+              src="/github.svg"
+              alt="github logo"
+              height={24}
+              width={24}
+              className="h-[22px] w-auto md:h-6"
+            />
+            Sign up with Github
+          </button>
         </div>
-      </div>
+      </footer> */}
     </>
   );
 }
-
-
-// Sections
-// Hero
-// Features
-// Used by
-// Testimonial
-// 
