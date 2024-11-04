@@ -46,7 +46,7 @@ export default function Section({
       )}
       <GradientHeading
         as="h2"
-        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[20ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4"
+        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[17ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4"
       >
         {headline}
       </GradientHeading>

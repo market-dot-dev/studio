@@ -28,7 +28,7 @@ interface CustomerCardProps {
 
 function CustomerCard({ icon, title, description, items }: CustomerCardProps) {
   return (
-    <div className="flex h-full w-full flex-col bg-white/[88%] p-6 pb-7 pr-12 pt-5 shadow-sm ring-1 ring-black/[9%] rounded-lg lg:p-7 lg:pb-10 lg:pr-9 lg:pt-6">
+    <div className="flex  w-full flex-col bg-white/[88%] p-6 pb-7 pr-12 pt-5 shadow-sm ring-1 ring-black/[9%] rounded-lg lg:p-7 lg:pb-10 lg:pr-9 lg:pt-6">
       {React.cloneElement(icon, {
         size: 28,
         className: "h-6 lg:h-7 -mx-px text-marketing-swamp",

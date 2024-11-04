@@ -20,9 +20,8 @@ export default function Marketing() {
       }
       description={
         <>
-          The source of truth for all your offerings. Sta
-          <span className="tracking-normal">r</span>t with proven pricing
-          structure & contracts to sell nearly whatever you want.
+          Expand your audience and boost visibility with a fully adaptable,
+          developer-focused approach to marketing your open-source work.
         </>
       }
       isFullBleed

@@ -5,19 +5,19 @@ import GradientHeading from '@/components/home/new/gradient-heading';
 
 export default function Hero() {
   return (
-    <div className="flex flex-col items-center gap-y-6 tracking-tight md:gap-8 md:text-[24px] md:leading-8">
+    <div className="flex flex-col items-center gap-8 tracking-tight md:text-[24px] md:leading-8">
       <div className="flex h-full w-full max-w-[500px] flex-col items-center md:max-w-none">
         <GradientHeading className="lg:text-marketing-5xl md:text-marketing-4xl mb-5 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-6 md:tracking-[-0.045em] lg:mb-8">
           Business Toolkit
           <br />
           for Open Source
         </GradientHeading>
-        <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(19px,12vw,24px)] md:leading-[clamp(20px,12vw,28px)]">
+        <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(15px,12vw,24px)] md:leading-[clamp(16px,12vw,28px)]">
           One place to sell se<span className="tracking-normal">r</span>vices,
           find customers & market eve<span className="tracking-normal">r</span>
           ywhere — purpose-built for Open Source.
         </p>
-        <Button className="md:py-4">
+        <Button className="md:py-3.5 md:mx-6">
           <Image
             src="/github.svg"
             alt="github logo"

@@ -14,9 +14,8 @@ export default function Research() {
         title: "Research",
       }}
       color={colors.orange["100"]}
-      headline="Find Projects & Customers"
-      description="The source of truth for all your offerings. Start with proven pricing
-          structure & contracts to sell nearly whatever you want."
+      headline={<>Find Projects<br/>& Customers</>}
+      description="Discover who's engaging with your work and uncover projects that align with your goals."
       isFullBleed
     >
       <div className="relative grid w-full grid-cols-1 gap-6 lg:grid-cols-2">

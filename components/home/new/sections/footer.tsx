@@ -17,7 +17,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative w-full overflow-hidden pt-12 pb-24 sm:pt-[72px] sm:pb-[144px] lg:pb-48">
+    <footer className="relative w-full overflow-hidden pb-24 pt-12 sm:pb-[144px] sm:pt-[72px] lg:pb-48">
       <div className="container relative mx-auto px-4">
         <div className="flex w-full flex-col items-center">
           <GradientHeading
@@ -30,7 +30,7 @@ export default function Footer() {
           <p className="mb-6 max-w-[45ch] text-pretty text-center md:mb-8 md:text-[clamp(19px,12vw,24px)] md:leading-[clamp(20px,12vw,28px)]">
             Get started for free, no credit card required.
           </p>
-          <Button>
+          <Button className="md:mx-6 md:py-3.5">
             <Image
               src="/github.svg"
               alt="github logo"

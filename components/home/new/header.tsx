@@ -224,7 +224,7 @@ export default function Header({ className }: { className?: string }) {
       icon: <Package />,
       color: colors["green"],
       title: "Sell",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      description: "Sell products & services, find packages that work.",
       link: {
         text: "Learn more",
         href: "#sell",
@@ -235,7 +235,7 @@ export default function Header({ className }: { className?: string }) {
       icon: <Speech />,
       color: colors["purple"],
       title: "Marketing",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      description: "Promote your work with customizable marketing tools.",
       link: {
         text: "Learn more",
         href: "#marketing",
@@ -246,7 +246,8 @@ export default function Header({ className }: { className?: string }) {
       icon: <ScanSearch />,
       color: colors["orange"],
       title: "Research",
-      description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+      description:
+        "See who's using your stuff & find the right people for your project.",
       link: {
         text: "Learn more",
         href: "#research",
@@ -383,7 +384,7 @@ export default function Header({ className }: { className?: string }) {
                 <hr className="border-black/15" />
               </div>
               <div className="fixed bottom-0 left-0 right-0 p-6">
-                <Button className="w-full">
+                <Button className="md:mx-6 md:py-3.5 w-full">
                   <Image
                     src="/github.svg"
                     alt="github logo"
