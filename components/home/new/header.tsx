@@ -6,6 +6,13 @@ import Logo from "@/components/home/new/logo";
 import clsx from "clsx";
 import { ChevronDown, Menu, X } from "lucide-react";
 
+const loginURL = process.env.NODE_ENV === 'development'
+  ? "http://app.gitwallet.local:3000/login"
+  : "https://app.gitwallet.co/login";
+
+const discordURL = "https://discord.gg/ZdSpS4BuGd";
+const blogURL = "https://blog.gitwallet.co";
+
 export default function Header({ className }: { className?: string }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -25,23 +32,15 @@ export default function Header({ className }: { className?: string }) {
             <Link href="#product" className="whitespace-nowrap">
               Product
             </Link>
-            <Link href="#" className="whitespace-nowrap">
-              Why we exist
-            </Link>
-            <Link href="#" className="whitespace-nowrap">
+            <Link href={blogURL} target="_blank" className="whitespace-nowrap">
               Changelog
             </Link>
-            <button className="flex items-center gap-1 whitespace-nowrap">
-              Follow
-              <ChevronDown
-                size={16}
-                className="mt-0.5 opacity-70"
-                strokeWidth={3}
-              />
-            </button>
+            <Link href={discordURL} target="_blank" className="whitespace-nowrap">
+              Discord
+            </Link>
           </div>
           <div className="flex w-fit items-center gap-[22px] md:gap-6">
-            <Link href="#" className="-mt-0.5 text-marketing-primary">
+            <Link href={loginURL} className="-mt-0.5 text-marketing-primary">
               Log in
             </Link>
             <button onClick={toggleMenu} className="lg:hidden text-marketing-primary">
@@ -56,9 +55,6 @@ export default function Header({ className }: { className?: string }) {
           <div className="flex h-full flex-col items-center justify-center gap-6 ">
             <Link href="#" className="text-2xl" onClick={toggleMenu}>
               Product
-            </Link>
-            <Link href="#" className="text-2xl" onClick={toggleMenu}>
-              Why we exist
             </Link>
             <Link href="#" className="text-2xl" onClick={toggleMenu}>
               Changelog
