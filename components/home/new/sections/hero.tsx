@@ -19,7 +19,7 @@ export default function Hero() {
           find customers & market eve<span className="tracking-normal">r</span>
           ywhere. Built for developers.
         </p>
-        <Link href={loginURL} className="md:mx-6 md:pb-2 lg:mt-2">
+        <Link href={loginURL} className="md:mx-6 md:py-2">
           <Button>
             <Image
               src="/github.svg"
