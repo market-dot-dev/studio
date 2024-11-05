@@ -14,24 +14,11 @@ export default function Research() {
         title: "Research",
       }}
       color={colors.orange["100"]}
-      headline={<>Find Projects<br/>& Customers</>}
+      headline={<>Find Customers</>}
       description="Discover who's engaging with your work and uncover projects that align with your goals."
       isFullBleed
     >
       <div className="relative grid w-full grid-cols-1 gap-6 lg:grid-cols-2">
-        <FeatureCard
-          icon={<Target />}
-          title="In-depth repo reports"
-          description="Crawl the dependency graph of any repo and find out who's actually using your stuff (or make a logo-soup)."
-          image={{
-            src: "/radar.png",
-            alt: "Package cards illustration",
-          }}
-          color={colors.orange}
-          orientation="vertical"
-          imageMaxWidth={null}
-          className="sm:aspect-[4/3] lg:aspect-[5/4]"
-        />
         <FeatureCard
           icon={
             <Image
@@ -42,8 +29,8 @@ export default function Research() {
               className="h-[20px]! w-auto"
             />
           }
-          title="Explore ecosystems with Echo"
-          description="Keep a pulse on open source — find the big players, interesting projects and top talent in any ecosystem."
+          title="Get listed on a premium marketplace"
+          description="Echo is a new discovery marketplace for open source communities, projects and resources."
           image={{
             src: "/echo.png",
             alt: "Package cards illustration",
@@ -55,6 +42,19 @@ export default function Research() {
             text: "Try it out",
             href: "https://ecosystems.gitwallet.co/",
           }}
+          className="sm:aspect-[4/3] lg:aspect-[5/4]"
+        />
+        <FeatureCard
+          icon={<Target />}
+          title="In-depth repo reports"
+          description="Use dependency graphs to find and contact potential customers."
+          image={{
+            src: "/radar.png",
+            alt: "Package cards illustration",
+          }}
+          color={colors.orange}
+          orientation="vertical"
+          imageMaxWidth={null}
           className="sm:aspect-[4/3] lg:aspect-[5/4]"
         />
       </div>
