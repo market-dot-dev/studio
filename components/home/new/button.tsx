@@ -35,14 +35,14 @@ export default function Button({
     <button
       onClick={onClick}
       className={clsx(
-        "flex w-fit items-center justify-center gap-3 whitespace-nowrap rounded-lg transition-all duration-200",
+        "text-marketing-sm xs:text-marketing-base flex w-fit items-center justify-center gap-2.5 xs:gap-3 whitespace-nowrap rounded-lg transition-all duration-200",
         variant === "primary" &&
           "text-marketing-primary from-marketing-camo/75 via-marketing-camo/[92%] to-marketing-camo shadow-marketing-camo/40 bg-gradient-to-b shadow-md ring-1 ring-black/[20%] active:shadow",
         variant === "secondary" &&
           "text-marketing-primary bg-marketing-accent hover:bg-marketing-accent-active",
         variant === "link"
           ? "text-marketing-secondary hover:text-marketing-primary focus:text-marketing-primary"
-          : "px-5 py-3 hover:brightness-[103%] active:scale-[98%] active:brightness-[101%]",
+          : "px-4 xs:px-5 py-2.5 xs:py-3 hover:brightness-[103%] active:scale-[98%] active:brightness-[101%]",
         size === "sm" ? "text-marketing-sm" : "text-marketing-base",
         className,
       )}

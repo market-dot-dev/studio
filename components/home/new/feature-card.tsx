@@ -51,7 +51,7 @@ export default function FeatureCard({
   return (
     <Element
       href={link?.href}
-      onClick={link?.onClick}
+      onClick={link?.onClick && ((e) => link.onClick?.(e))}
       className={clsx(
         "relative flex h-full w-full overflow-hidden",
         borderRadius,

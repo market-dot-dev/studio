@@ -7,7 +7,7 @@ export default function HomePageLayout({ children }: { children: React.ReactNode
       style={{ textRendering: "optimizeLegibility" }}
     >
       <Header />
-      <main className="mx-auto flex max-w-[800px] flex-col gap-12 sm:gap-[72px] lg:gap-24 overflow-visible px-6 pt-9 lg:pt-[72px] lg:max-w-[1300px] lg:px-12 xl:col-span-8 2xl:col-span-8 2xl:col-start-5">
+      <main className="mx-auto flex flex-col gap-[72px] sm:gap-24 overflow-visible pt-9 xs:pt-12 md:pt-[72px]">
         {children}
       </main>
     </div>

@@ -9,15 +9,15 @@ export default function GrabBag() {
     <Section
       badge={{
         icon: <Shapes />,
-        title: "Everything Else",
+        title: "Everything else",
       }}
       color={colors.swamp["100"]}
-      headline="& Much More"
+      headline="+ much more"
       description="Full suite of tools to replace the usual suspects and help you build your business."
       isFullBleed
-      className='lg:max-w-[1150px]'
+      className="lg:max-w-[1150px]"
     >
-      <div className="mx-auto grid w-full  grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
+      <div className="mx-auto grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
         <FeatureCard
           icon={<UsersRound />}
           title="CRM for OSS"

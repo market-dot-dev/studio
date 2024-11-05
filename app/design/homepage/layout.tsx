@@ -11,7 +11,6 @@ export default function HomePageLayout({ children }: { children: React.ReactNode
       }}
     >
       <Header />
-      {/* <main className="mx-auto flex max-w-[800px] flex-col gap-12 sm:gap-[72px] lg:gap-24 overflow-visible px-6 pt-9 lg:pt-[72px] lg:max-w-[1300px] lg:px-12"> */}
       <main className="flex flex-col gap-12 sm:gap-[72px] lg:gap-24 overflow-visible pt-9 lg:pt-[72px]">
         {children}
       </main>
