@@ -8,19 +8,24 @@ export type CustomLinkProps = {
   rel?: string;
   style?: React.CSSProperties;
   className?: string;
+  variant?: 'primary' | 'secondary';
   children: React.ReactNode;
 } & LinkProps;
 
 export default function Link({
   className,
   children,
+  variant = 'secondary',
   ...props
 }: CustomLinkProps) {
   return (
     <NextLink.default
       {...props}
       className={clsx(
-        " transition-all duration-[175ms] hover:text-marketing-primary active:scale-[99%]",
+        "duration-[175ms] transition-colors",
+        variant === "primary"
+          ? "text-marketing-primary"
+          : "text-marketing-secondary hover:text-marketing-primary",
         className,
       )}
     >

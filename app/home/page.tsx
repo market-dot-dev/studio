@@ -12,7 +12,7 @@ export default function HomePage() {
     <>
       <Hero />
       <Customers />
-      <span id="products" className="hidden"></span>
+      <span id="product" className="hidden"></span> {/* Anchor for product nav link */}
       <Sell />
       <Testimonial
         quote={

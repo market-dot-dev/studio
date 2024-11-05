@@ -34,27 +34,29 @@ const CompanyName = ({ name, url }: { name: string; url?: string }) =>
 
 export default function Testimonial({ quote, quotee }: TestimonialProps) {
   return (
-    <div className="mx-auto  flex flex-col gap-4 text-pretty border-black/[15%] sm:gap-6 my-6 sm:my-9 sm:border-l sm:pl-6 lg:pl-12 ">
-      <blockquote className="text-marketing-md sm:text-marketing-lg lg:text-marketing-xl text-pretty md:max-w-[100ch] lg:max-w-none sm:text-balance">
-        {quote}
-      </blockquote>
-      <div className="flex w-fit items-center gap-3">
-        {quotee.image && (
-          <Image
-            src={quotee.image.src}
-            width={32}
-            height={32}
-            className="rounded-full"
-            alt={
-              quotee.image.alt ||
-              `${quotee.name}, ${quotee.title} at ${quotee.company.name}`
-            }
-          />
-        )}
-        <p>
-          {`${quotee.name}, ${quotee.title} at `}
-          <CompanyName {...quotee.company} />
-        </p>
+    <div className="mx-auto w-full max-w-[800px] px-6 lg:max-w-[1300px] lg:px-12">
+      <div className="mt-9 mb-12 sm:mt-12 sm:mb-16 flex flex-col gap-4 text-pretty border-black/[15%] sm:gap-6 sm:border-l sm:pl-6 lg:pl-12">
+        <blockquote className="text-marketing-md sm:text-marketing-lg lg:text-marketing-xl text-pretty sm:text-balance md:max-w-[100ch] lg:max-w-none">
+          {quote}
+        </blockquote>
+        <div className="flex w-fit items-center gap-3">
+          {quotee.image && (
+            <Image
+              src={quotee.image.src}
+              width={32}
+              height={32}
+              className="rounded-full"
+              alt={
+                quotee.image.alt ||
+                `${quotee.name}, ${quotee.title} at ${quotee.company.name}`
+              }
+            />
+          )}
+          <p>
+            {`${quotee.name}, ${quotee.title} at `}
+            <CompanyName {...quotee.company} />
+          </p>
+        </div>
       </div>
     </div>
   );

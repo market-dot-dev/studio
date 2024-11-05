@@ -5,9 +5,9 @@ import React, { ReactElement } from "react";
 import GradientHeading from "./gradient-heading";
 
 interface SectionProps {
-  headline: ReactElement | string;
-  description: ReactElement | string;
   children: React.ReactNode;
+  headline?: ReactElement | string;
+  description?: ReactElement | string;
   id?: string;
   color?: string;
   badge?: {
@@ -18,7 +18,7 @@ interface SectionProps {
   className?: string;
 }
 
-export default function Section({
+export default function FeatureSection({
   badge,
   headline,
   description,
@@ -29,7 +29,13 @@ export default function Section({
   ...attributes
 }: SectionProps) {
   return (
-    <section className={clsx("relative flex flex-col items-center", className)} {...attributes}>
+    <div
+      className={clsx(
+        "relative mx-auto flex max-w-[800px] flex-col items-center px-6 lg:max-w-[1300px] lg:px-12 w-full scroll-mt-24",
+        className,
+      )}
+      {...attributes}
+    >
       {badge && (
         <div
           className="sm:text-marketing-md mb-4 flex items-center gap-2 sm:mb-6"
@@ -44,15 +50,19 @@ export default function Section({
           <p>{badge.title}</p>
         </div>
       )}
-      <GradientHeading
-        as="h2"
-        className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[17ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4"
-      >
-        {headline}
-      </GradientHeading>
-      <p className="text-marketing-sm sm:text-marketing-base mb-5 max-w-[45ch] text-pretty text-center sm:mb-8">
-        {description}
-      </p>
+      {headline && (
+        <GradientHeading
+          as="h2"
+          className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[17ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4"
+        >
+          {headline}
+        </GradientHeading>
+      )}
+      {description && (
+        <p className="text-marketing-sm sm:text-marketing-base mb-5 max-w-[45ch] text-pretty text-center sm:mb-8">
+          {description}
+        </p>
+      )}
       <div
         className={clsx(
           "relative",
@@ -61,6 +71,6 @@ export default function Section({
       >
         {children}
       </div>
-    </section>
+    </div>
   );
 }

@@ -59,11 +59,10 @@ function CustomerCard({ icon, title, description, items }: CustomerCardProps) {
 export default function Customers() {
   return (
     <Section
-      headline="Tools that Grow with Your Business"
+      headline="Tools that grow with your business"
       description="Indie developers and dev shops use Gitwallet to power their business as it expands."
-      isFullBleed
     >
-      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5 px-6 sm:gap-8">
+      <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5 sm:gap-8">
         <div className="relative grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
           <div className="relative">
             <CustomerCard
@@ -73,7 +72,7 @@ export default function Customers() {
               items={[
                 {
                   icon: <PackageOpen />,
-                  text: "See proven packages other devs use",
+                  text: "See packages other devs offer",
                 },
                 {
                   icon: <ScrollText />,
@@ -126,14 +125,14 @@ export default function Customers() {
         <div className="flex items-center justify-center">
           <Link
             href={discordURL}
-            className="text-marketing-sm sm:text-marketing-base group flex items-center gap-[3px] text-pretty text-center"
+            className="text-marketing-sm sm:text-marketing-base group flex items-center gap-0.5 sm:gap-[3px] text-pretty text-center"
             aria-label="See how people are using Gitwallet in our Discord"
           >
             See how people are using Gitwallet
             <ChevronRight
               size={20}
               strokeWidth={2.5}
-              className="xs:block -mr-1 hidden transition-transform group-hover:translate-x-px"
+              className="h-4 sm:h-5 -mr-1 transition-transform group-hover:translate-x-px"
             />
           </Link>
         </div>
