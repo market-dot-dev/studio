@@ -49,7 +49,7 @@ export default function Promote() {
         <FeatureCard
           icon={<CodeSquare />}
           title="Purpose-built embeds"
-          description="Use single-purpose, customizable embeds to promote servies on your repo, read.me or anywhere really."
+          description="Use single-purpose, customizable embeds to promote services on your repo, read.me or anywhere really."
           image={{
             src: "/embeds.png",
             alt: "Package cards illustration",
