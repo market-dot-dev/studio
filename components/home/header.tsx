@@ -259,7 +259,7 @@ export default function Header({ className }: { className?: string }) {
                 </Link>
                 <div className="hidden w-full pb-6 sm:block">
                   <h2 className="flex h-[60px] items-center leading-5 text-marketing-primary">
-                    Products
+                    Product
                   </h2>
                   <div className="grid grid-cols-3 gap-4">
                     {products.map((product) => (
