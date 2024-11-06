@@ -56,7 +56,7 @@ export default function Dropdown({
           show={isOpen}
           as="ul"
           className={cn(
-            "absolute -bottom-[86px] -left-[18px] z-50 flex w-fit min-w-[7rem] origin-top items-start rounded-lg bg-white py-2 text-marketing-sm shadow-md ring-1 ring-black/10",
+            "absolute -bottom-[85px] -left-[18px] z-50 flex w-fit min-w-[7rem] origin-top items-start rounded-lg bg-white py-2 text-marketing-sm shadow-md ring-1 ring-black/10",
             orientation === "horizontal" ? "flex-row" : "flex-col",
             className,
           )}

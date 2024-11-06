@@ -188,13 +188,13 @@ export default function Header({ className }: { className?: string }) {
       >
         <div className="relative z-[100] flex items-center justify-between py-3">
           <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
-            <Logo className="h-[22px] w-fit xs:h-[26px]" />
+            <Logo className="h-[22px] w-auto xs:h-[26px]" />
           </button>
           <div className="absolute left-1/2 top-1/2 ml-0.5 hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex">
             <Dropdown
               title="Product"
               orientation="horizontal"
-              className="-bottom-[222px] grid w-[700px] grid-cols-3 gap-4 rounded-[24px] px-4 py-4 left-1/2 -translate-x-1/2"
+              className="-bottom-[221px] left-1/2 grid w-[700px] -translate-x-1/2 grid-cols-3 gap-4 rounded-[24px] px-4 py-4"
             >
               {products.map((product) => (
                 <Dropdown.Item key={product.title}>
@@ -302,7 +302,7 @@ export default function Header({ className }: { className?: string }) {
                 <hr className="border-black/15" />
               </div>
               <div className="fixed bottom-0 left-0 right-0 p-6">
-                <Button className="w-full ">
+                <Button className="w-full">
                   <Image
                     src="/github.svg"
                     alt="github logo"
