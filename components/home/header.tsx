@@ -167,11 +167,11 @@ export default function Header({ className }: { className?: string }) {
     {
       icon: <ScanSearch />,
       color: colors["orange"],
-      title: "Discover",
+      title: "Research",
       description: "See who's using your stuff & find new customers.",
       link: {
         text: "Learn more",
-        href: "#discover",
+        href: "#research",
         asCard: true,
         onClick: handleLinkClick,
       },

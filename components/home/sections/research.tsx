@@ -6,13 +6,13 @@ import FeatureCard from '@/components/home/feature-card';
 import { ScanSearch, Target, BookOpenCheck } from 'lucide-react';
 import { colors } from '@/lib/home/colors';
 
-export default function Discover() {
+export default function Research() {
   return (
     <Section
-      id="discover"
+      id="research"
       badge={{
         icon: <ScanSearch />,
-        title: "Discover",
+        title: "Research",
       }}
       color={colors.orange["100"]}
       headline="Find Customers"
