@@ -13,11 +13,11 @@ export default function GradientHeading({
   className,
 }: GradientHeadingProps) {
   return (
-    <div className="-m-3">
+    <div className="-m-3"> {/* Offset extra space */}
       <Element
         className={cn(
-          "from-marketing-primary/[92%]  to-marketing-primary bg-gradient-to-b bg-clip-text text-transparent",
-          "p-3", // Add 8px padding to the bottom
+          "bg-gradient-to-b from-marketing-primary/[91%] to-marketing-primary bg-clip-text text-transparent",
+          "p-3", // Extra space so the mask doesn't clip text with a tighter line height
           className,
         )}
       >

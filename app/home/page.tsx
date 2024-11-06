@@ -1,18 +1,19 @@
-import Hero from "@/components/home/new/sections/hero";
-import Customers from "@/components/home/new/sections/customers";
-import Sell from "@/components/home/new/sections/sell";
-import Marketing from "@/components/home/new/sections/marketing";
-import Testimonial from "@/components/home/new/testimonial";
-import Research from "@/components/home/new/sections/research";
-import GrabBag from "@/components/home/new/sections/grab-bag";
-import Footer from "@/components/home/new/sections/footer";
+import Hero from "@/components/home/sections/hero";
+import Customers from "@/components/home/sections/customers";
+import Sell from "@/components/home/sections/sell";
+import Promote from "@/components/home/sections/promote";
+import Discover from "@/components/home/sections/discover";
+import Testimonial from "@/components/home/testimonial";
+import GrabBag from "@/components/home/sections/grab-bag";
+import Footer from "@/components/home/sections/footer";
 
 export default function HomePage() {
   return (
     <>
       <Hero />
       <Customers />
-      <span id="product" className="hidden"></span> {/* Anchor for product nav link */}
+      <span id="product" className="hidden"></span>{" "}
+      {/* Anchor for product nav link */}
       <Sell />
       <Testimonial
         quote={
@@ -40,8 +41,8 @@ export default function HomePage() {
           },
         }}
       />
-      <Marketing />
-      <Research />
+      <Promote />
+      <Discover />
       <GrabBag />
       <Footer />
     </>

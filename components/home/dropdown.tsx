@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState, createContext, useContext } from "react";
-import Link from "@/components/home/new/link";
-import Button from "@/components/home/new/button";
+import Link from "@/components/home/link";
+import Button from "@/components/home/button";
 import { Transition } from "@headlessui/react";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -43,7 +43,7 @@ export default function Dropdown({
         <button
           aria-expanded={isOpen}
           onClick={(e) => e.preventDefault()}
-          className="text-marketing-secondary group-hover:text-marketing-primary duraton-[175ms] group -mx-6 -my-5 flex items-center gap-1 whitespace-nowrap px-6 py-5 transition-all"
+          className="cursor-default text-marketing-secondary group-hover:text-marketing-primary duraton-200 ease-out group -mx-6 -my-4 flex items-center gap-1 whitespace-nowrap px-6 py-4 transition-all"
         >
           {title}
           <ChevronDown
@@ -56,7 +56,7 @@ export default function Dropdown({
           show={isOpen}
           as="ul"
           className={cn(
-            "absolute -bottom-[84px] -left-[18px] z-50 flex w-fit min-w-[7rem] origin-top items-start rounded-lg bg-white py-2 text-marketing-sm shadow-md ring-1 ring-black/10",
+            "absolute -bottom-[86px] -left-[18px] z-50 flex w-fit min-w-[7rem] origin-top items-start rounded-lg bg-white py-2 text-marketing-sm shadow-md ring-1 ring-black/10",
             orientation === "horizontal" ? "flex-row" : "flex-col",
             className,
           )}

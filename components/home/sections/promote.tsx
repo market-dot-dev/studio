@@ -1,16 +1,16 @@
 import React from 'react'
-import Section from '@/components/home/new/section';
-import FeatureCard from '@/components/home/new/feature-card';
+import Section from '@/components/home/section';
+import FeatureCard from '@/components/home/feature-card';
 import { Speech, AppWindowMac, CodeSquare } from 'lucide-react';
 import { colors } from '@/lib/home/colors';
 
-export default function Marketing() {
+export default function Promote() {
   return (
     <Section
-      id="marketing"
+      id="promote"
       badge={{
         icon: <Speech />,
-        title: "Marketing",
+        title: "Promote",
       }}
       color={colors.purple["100"]}
       headline={
@@ -51,7 +51,7 @@ export default function Marketing() {
           title="Purpose-built embeds"
           description="Use single-purpose, customizable embeds to promote servies on your repo, read.me or anywhere really."
           image={{
-            src: "/embeds-screenshot.png",
+            src: "/embeds.png",
             alt: "Package cards illustration",
           }}
           color={colors.purple}

@@ -1,18 +1,18 @@
 import React from 'react'
-import Section from '@/components/home/new/section';
-import FeatureCard from '@/components/home/new/feature-card';
-import { UsersRound, ChartLine, Signature, ShoppingCart, Shapes } from 'lucide-react';
+import Section from '@/components/home/section';
+import FeatureCard from '@/components/home/feature-card';
+import { UsersRound, ChartLine, Signature, ShoppingCart, ListCheck } from 'lucide-react';
 import { colors } from '@/lib/home/colors';
 
 export default function GrabBag() {
   return (
     <Section
       badge={{
-        icon: <Shapes />,
-        title: "Everything else",
+        icon: <ListCheck />,
+        title: "Manage",
       }}
       color={colors.swamp["100"]}
-      headline="+ much more"
+      headline="+ Much more"
       description="Full suite of tools to replace the usual suspects and help you build your business."
       isFullBleed
       className="lg:max-w-[1150px]"

@@ -31,14 +31,14 @@ export default function FeatureSection({
   return (
     <div
       className={clsx(
-        "relative mx-auto flex max-w-[800px] flex-col items-center px-6 lg:max-w-[1300px] lg:px-12 w-full scroll-mt-24",
+        "scroll-mt-16 relative mx-auto flex w-full max-w-[800px] flex-col items-center px-6 lg:max-w-[1300px] lg:px-16 ",
         className,
       )}
       {...attributes}
     >
       {badge && (
         <div
-          className="sm:text-marketing-md mb-4 flex items-center gap-2 sm:mb-6"
+          className="mb-4 flex items-center gap-2 sm:mb-6 sm:text-marketing-md"
           style={{ color }}
         >
           <div style={{ color }}>
@@ -53,13 +53,13 @@ export default function FeatureSection({
       {headline && (
         <GradientHeading
           as="h2"
-          className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[17ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4"
+          className="mb-3 max-w-[17ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4 sm:text-marketing-2xl lg:text-marketing-3xl"
         >
           {headline}
         </GradientHeading>
       )}
       {description && (
-        <p className="text-marketing-sm sm:text-marketing-base mb-5 max-w-[45ch] text-pretty text-center sm:mb-8">
+        <p className="mb-5 max-w-[45ch] text-pretty text-center text-marketing-sm sm:mb-8 sm:text-marketing-base">
           {description}
         </p>
       )}

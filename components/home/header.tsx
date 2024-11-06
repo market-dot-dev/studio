@@ -5,12 +5,12 @@ import type { ReactElement } from "react";
 import type { FeatureCardLinkProps } from "./feature-card";
 import React, { useState, useEffect } from "react";
 import Image from 'next/image';
-import Link from "@/components/home/new/link";
+import Link from "@/components/home/link";
 import { useRouter } from 'next/navigation';
-import Logo from "@/components/home/new/logo";
-import Button from '@/components/home/new/button';
+import Logo from "@/components/home/logo";
+import Button from '@/components/home/button';
 import FeatureCard from "./feature-card";
-import Dropdown from '@/components/home/new/dropdown';
+import Dropdown from '@/components/home/dropdown';
 import clsx from "clsx";
 import { Package, Speech, ScanSearch } from "lucide-react";
 import { colors } from "@/lib/home/colors";
@@ -55,7 +55,7 @@ const AnimatedHambugerButton = ({
     <Button
       variant='ghost'
       onClick={toggleMenu}
-      className={clsx('md:hidden text-marketing-primary', className )}
+      className={clsx('text-marketing-primary', className )}
       aria-label={isOpen ? "Close menu" : "Open menu"}
     >
       <motion.svg
@@ -155,11 +155,11 @@ export default function Header({ className }: { className?: string }) {
     {
       icon: <Speech />,
       color: colors["purple"],
-      title: "Marketing",
+      title: "Promote",
       description: "Promote your work with customizable marketing tools.",
       link: {
         text: "Learn more",
-        href: "#marketing",
+        href: "#promote",
         asCard: true,
         onClick: handleLinkClick,
       },
@@ -167,11 +167,11 @@ export default function Header({ className }: { className?: string }) {
     {
       icon: <ScanSearch />,
       color: colors["orange"],
-      title: "Research",
+      title: "Discover",
       description: "See who's using your stuff & find new customers.",
       link: {
         text: "Learn more",
-        href: "#research",
+        href: "#discover",
         asCard: true,
         onClick: handleLinkClick,
       },
@@ -182,19 +182,19 @@ export default function Header({ className }: { className?: string }) {
     <>
       <header
         className={clsx(
-          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-[18px] pr-[22px] pt-4 tracking-tight md:pl-[22px] md:pr-6 md:pt-[18px]",
+          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-5 pr-6 pt-1.5 tracking-tight",
           className,
         )}
       >
-        <div className="relative z-[100] flex items-center justify-between pb-2.5">
+        <div className="relative z-[100] flex items-center justify-between py-3">
           <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
-            <Logo className="h-[22px] xs:h-[26px] w-fit md:h-7" />
+            <Logo className="h-[22px] w-fit xs:h-[26px]" />
           </button>
-          <div className="absolute left-1/2 top-[calc(50%-6px)] ml-0.5 hidden -translate-x-1/2 -translate-y-1/2 gap-9 md:flex">
+          <div className="absolute left-1/2 top-1/2 ml-0.5 hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex">
             <Dropdown
               title="Product"
               orientation="horizontal"
-              className="-bottom-[220px] left-1/2 grid w-[700px] -translate-x-1/2 grid-cols-3 gap-4 rounded-[24px] px-4 py-4"
+              className="-bottom-[222px] grid w-[700px] grid-cols-3 gap-4 rounded-[24px] px-4 py-4 left-1/2 -translate-x-1/2"
             >
               {products.map((product) => (
                 <Dropdown.Item key={product.title}>
@@ -223,13 +223,14 @@ export default function Header({ className }: { className?: string }) {
             <Link
               href={loginURL}
               variant="primary"
-              className="text-marketing-sm xs:text-marketing-base -mt-px xs:-mt-[3px] sm:-mt-1"
+              className="-mt-0.5 text-marketing-sm xs:text-marketing-base"
             >
               Log in
             </Link>
             <AnimatedHambugerButton
               isOpen={isMenuOpen}
               toggleMenu={toggleMenu}
+              className="lg:hidden"
             />
           </div>
         </div>
@@ -238,7 +239,7 @@ export default function Header({ className }: { className?: string }) {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="fixed inset-0 z-40 overflow-y-auto bg-marketing-background pb-[72px] pt-[50px] text-left text-marketing-md md:pt-[56px] lg:hidden"
+            className="fixed inset-0 z-40 overflow-y-auto bg-marketing-background pb-[72px] pt-[52px] text-left text-marketing-md lg:hidden"
             initial="hidden"
             animate="visible"
             exit="hidden"
@@ -246,11 +247,12 @@ export default function Header({ className }: { className?: string }) {
             transition={{ duration: 0.15 }}
           >
             <div className="relative">
-              <div className="flex min-h-full flex-col p-6 pt-4 md:pt-3">
-                <hr className="border-black/15 sm:hidden" />
+              <div className="flex min-h-full flex-col p-6 pl-[22px] pt-2">
+                <hr className="border-black/15" />
                 <Link
                   href="#product"
-                  className="flex h-[60px] w-full items-center leading-5 text-marketing-primary sm:hidden"
+                  variant="primary"
+                  className="flex h-[60px] w-full items-center leading-5 sm:hidden"
                   onClick={(e) => handleLinkClick(e)}
                 >
                   Product
@@ -276,34 +278,37 @@ export default function Header({ className }: { className?: string }) {
                 <hr className="border-black/15" />
                 <Link
                   href={blogURL}
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5 text-marketing-primary sm:text-marketing-secondary"
+                  variant="primary"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Changelog
                 </Link>
                 <hr className="border-black/15" />
                 <Link
                   href={discordURL}
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5 text-marketing-primary sm:text-marketing-secondary"
+                  variant="primary"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Discord
                 </Link>
                 <hr className="border-black/15" />
                 <Link
                   href={twitterUrl}
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5 text-marketing-primary sm:text-marketing-secondary"
+                  variant="primary"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Twitter
                 </Link>
                 <hr className="border-black/15" />
               </div>
               <div className="fixed bottom-0 left-0 right-0 p-6">
-                <Button className="w-full md:py-3.5">
+                <Button className="w-full ">
                   <Image
                     src="/github.svg"
                     alt="github logo"
                     height={24}
                     width={24}
-                    className="col-span-2 col-start-1 xs:h-[18px] h-[22px] w-auto md:h-6"
+                    className="col-span-2 col-start-1 h-[22px] w-auto xs:h-[18px] md:h-6"
                   />
                   Sign up with Github
                 </Button>

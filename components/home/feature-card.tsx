@@ -2,7 +2,7 @@ import type { ReactElement } from "react";
 import type { Color } from "@/lib/home/colors";
 import React from "react";
 import Image from "next/image";
-import Link from "@/components/home/new/link";
+import Link from "@/components/home/link";
 import clsx from "clsx";
 import { ChevronRight } from "lucide-react";
 
@@ -56,7 +56,7 @@ export default function FeatureCard({
         "relative flex h-full w-full overflow-hidden",
         borderRadius,
         link?.asCard &&
-          "duration-[175ms] ring-inset ring-black/[15%] transition hover:ring-1",
+          "duration-200 ring-inset ring-black/[18%] transition hover:ring-1",
         className,
         span,
       )}
@@ -107,25 +107,25 @@ export default function FeatureCard({
         <div
           className={clsx(
             "z-10 flex flex-col gap-x-4 gap-y-3 p-6",
-            image && "xs:gap-y-4 xs:pt-5 lg:gap-3",
+            image && "sm:gap-y-4 sm:pt-5 lg:gap-3",
             orientation === "horizontal" ? "max-w-[25ch]" : "w-full",
           )}
         >
           <div
             className={clsx(
               "flex h-6 items-center justify-between",
-              image && "xs:h-7 lg:h-6",
+              image && "sm:h-7 lg:h-6",
             )}
           >
             {React.cloneElement(icon, {
               size: 28,
               color: color["100"],
-              className: `h-6 w-auto ${image ? "xs:h-7 lg:h-6" : ""}`,
+              className: `h-6 w-auto ${image ? "sm:h-7 lg:h-6" : ""}`,
             })}
             {link && !link.asCard && (
               <Link
                 href={link.href}
-                className="xs:leading-7 text-marketing-sm group -mr-1 flex items-center gap-[3px] leading-6 brightness-[95%] hover:brightness-[85%] lg:leading-6"
+                className="tracking-[-0.015em] sm:leading-7 text-marketing-sm group -mr-1 flex items-center gap-[3px] leading-6 brightness-[95%] hover:brightness-[85%] lg:leading-6"
                 style={{ color: color["100"] }}
               >
                 {link.text}
@@ -140,8 +140,8 @@ export default function FeatureCard({
           <div className="flex flex-col gap-2">
             <h3
               className={clsx(
-                "text-marketing-primary text-marketing-base text-pretty font-bold tracking-tight",
-                image && "xs:text-2xl xs:leading-7 lg:text-[19px] lg:leading-6",
+                "text-marketing-primary text-marketing-base text-pretty font-bold tracking-tight  ",
+                image && "sm:text-2xl sm:leading-7 lg:text-[19px] lg:leading-6",
               )}
             >
               {title}
@@ -150,7 +150,7 @@ export default function FeatureCard({
               className={clsx(
                 "text-marketing-sm max-w-[40ch] text-balance leading-5 tracking-[-0.0075em] text-black/40",
                 image &&
-                  "sm:max-w-[45ch] sm:text-pretty lg:max-w-[40ch] lg:text-balance",
+                  "sm:max-w-[45ch] sm:text-pretty lg:max-w-[41ch] lg:text-balance",
               )}
             >
               {description}

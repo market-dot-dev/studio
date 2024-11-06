@@ -1,8 +1,8 @@
 import type { ReactElement } from "react";
 import React from "react";
-import Link from "@/components/home/new/link";
-import Section from "@/components/home/new/section";
-import AnimatedDashedLine from "@/components/home/new/animated-dashed-line";
+import Link from "@/components/home/link";
+import Section from "@/components/home/section";
+import AnimatedDashedLine from "@/components/home/animated-dashed-line";
 import { discordURL } from "@/lib/home/social-urls";
 import {
   UserRound,

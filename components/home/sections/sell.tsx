@@ -1,6 +1,6 @@
 import React from 'react'
-import Section from '@/components/home/new/section';
-import FeatureCard from '@/components/home/new/feature-card';
+import Section from '@/components/home/section';
+import FeatureCard from '@/components/home/feature-card';
 import { colors } from '@/lib/home/colors';
 import { Package, ScrollText, ShoppingBag, FileBox } from 'lucide-react';
 
@@ -27,9 +27,9 @@ export default function Sell() {
         <FeatureCard
           icon={<Package />}
           title="Offer packages"
-          description="Make support, training or consulting packages. Compare your pricing to offerings from real developers."
+          description="Make support, training or consulting packages. Use market rates to compare & adjust your pricing."
           image={{
-            src: "/package-cards.png",
+            src: "/tiers.png",
             alt: "Package cards illustration",
           }}
           color={colors.green}

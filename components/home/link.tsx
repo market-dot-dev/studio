@@ -22,9 +22,9 @@ export default function Link({
     <NextLink.default
       {...props}
       className={clsx(
-        "duration-[175ms] transition-colors",
+        "duration-200 transition-colors ease-in-out",
         variant === "primary"
-          ? "text-marketing-primary"
+          ? "text-marketing-primary hover:text-marketing-secondary"
           : "text-marketing-secondary hover:text-marketing-primary",
         className,
       )}
