@@ -31,6 +31,7 @@ export default function Research() {
                   alt="echo logo"
                   height={34}
                   width={118}
+                  aria-labelledby="Echo"
                   className="mr-[5px] inline h-[17px] w-auto shrink-0"
                 />
               </Link>

@@ -21,7 +21,7 @@ export default function HomePage() {
             Gitwallet helped our collective of core maintainers{" "}
             <span className="text-marketing-primary">
               set up our first commercial se
-              <span className="tracking-[-0.005em]">r</span>vices tiers in under
+              <span className="tracking-[-0.005em]">r</span>vice tiers in under
               a week
             </span>
             . Their perspective working in and around engineering and creator

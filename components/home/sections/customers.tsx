@@ -111,7 +111,7 @@ export default function Customers() {
                   <>
                     Track sales and see how your se
                     <span className="tracking-normal">r</span>vices are pe
-                    <span className="tracking-normal">r</span>foming
+                    <span className="tracking-normal">r</span>forming
                   </>
                 ),
               },

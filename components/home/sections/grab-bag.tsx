@@ -13,7 +13,7 @@ export default function GrabBag() {
       }}
       color={colors.swamp["100"]}
       headline="+ Much more"
-      description="Full suite of tools to replace the usual suspects and help you build your business."
+      description="A full suite of tools to replace the usual suspects and help you build your business."
       isFullBleed
       className="lg:max-w-[1150px]"
     >
@@ -39,7 +39,7 @@ export default function GrabBag() {
         <FeatureCard
           icon={<Signature />}
           title="Write & design proposals"
-          description="Create, share and sign service agreements in minutes."
+          description="Create, share, and sign service agreements in minutes."
           color={colors.swamp}
           orientation="vertical"
           imageMaxWidth={null}
@@ -49,7 +49,7 @@ export default function GrabBag() {
         <FeatureCard
           icon={<ShoppingCart />}
           title="Custom checkout"
-          description="Let people pay in a decicated checkout flow, tailored to you."
+          description="Let people pay in a dedicated checkout flow, tailored to you."
           color={colors.swamp}
           orientation="vertical"
           imageMaxWidth={null}

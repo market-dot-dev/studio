@@ -19,7 +19,7 @@ export default function Sell() {
           <br />& Se<span className="tracking-[-0.005em]">r</span>vices
         </>
       }
-      description="The source of truth for all your offerings. Start with proven pricing
+      description="The source of truth for all your offerings. Start with a proven pricing
           structure & contracts to sell nearly whatever you want."
       isFullBleed
     >
@@ -27,7 +27,7 @@ export default function Sell() {
         <FeatureCard
           icon={<Package />}
           title="Offer packages"
-          description="Make support, training or consulting packages. Use market rates to compare & adjust your pricing."
+          description="Make support, training, or consulting packages. Use market rates to compare & adjust your pricing."
           image={{
             src: "/tiers.png",
             alt: "Package cards illustration",
@@ -58,7 +58,7 @@ export default function Sell() {
         <FeatureCard
           icon={<FileBox />}
           title="Host digital products"
-          description="Upload & host courses, ebooks and other resources — we handle the payment and delivery."
+          description="Upload & host courses, ebooks, and other resources — we handle the payment and delivery."
           image={{
             src: "/course.png",
             alt: "Package cards illustration",
