@@ -33,6 +33,10 @@ if (session?.roleId && isAdmin) {
 } else {
 */
 
+type GitHubUser = NaUser & {
+  gh_username?: string;
+};
+
 class AuthService {
   static async jwtCallback(callbackParams: JwtCallbackParams) {
     const {
@@ -113,13 +117,42 @@ class AuthService {
     return user;
   }
 
-  static async onCreateUser(account: any, user: NaUser) {
+  static async onCreateUser(account: any, user: GitHubUser) {
     const signupName = cookies().get("signup_name") ?? null;
     const name = (signupName?.value ?? null) as string | null;
 
     const roleId = account.provider === "github" ? "maintainer" : "customer";
 
+    let echoProfileVerified: boolean = false;
+
     if (account && user) {
+      
+      // If this is a maintainer, perform the third-party API check
+      if (roleId === "maintainer") {
+        const echoApiEndpoint = process.env.ECHO_API_ENDPOINT;
+        const echoApiKey = process.env.ECHO_API_KEY;
+
+        if (echoApiEndpoint && echoApiKey) {
+          try {
+            const response = await fetch(`${echoApiEndpoint}experts/${user.gh_username}`, {
+              headers: {
+                'Accept': 'application/json',
+                'X-API-KEY': echoApiKey,
+              }
+            });
+            
+            if(response.status === 200) {
+              echoProfileVerified = true;
+            }
+            
+          } catch (error) {
+            console.error('Third-party API check failed:', error);
+          }
+        } else {
+          console.error('Echo API endpoint or key is not set');
+        }
+      }
+
       await prisma.account.upsert({
         where: {
           provider_providerAccountId: {
@@ -152,6 +185,7 @@ class AuthService {
       where: { id: user.id },
       data: {
         roleId,
+        echoProfileVerified,
         projectName: businessName,
         projectDescription: businessDescription,
         ...(name ? { name } : {}),

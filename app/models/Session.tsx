@@ -13,6 +13,7 @@ export type SessionUser = {
   stripePaymentMethodIds: Record<string, string>;
   stripeAccountId?: string;
   stripeAccountDisabled?: boolean;
+  echoProfileVerified?: boolean;
 };
 
 export type Session = {
@@ -34,6 +35,7 @@ export const createSessionUser = (user: User): SessionUser => {
     stripePaymentMethodIds: (user.stripePaymentMethodIds || {}) as Record<string, string>,
     stripeAccountId: user.stripeAccountId || undefined,
     stripeAccountDisabled: user.stripeAccountDisabled || false,
+    echoProfileVerified: user.echoProfileVerified || false,
   }
 }
 
