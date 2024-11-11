@@ -1,21 +1,22 @@
 import SectionCTA from './section-cta';
-import SectionImageText from './section-image-text';
-import SectionTextImage from './section-text-image';
 import SectionHero from './section-hero';
+import SectionWork from './section-work';
 import SectionTiers from './section-tiers';
+import SectionExpertise from './section-expertise';
 
 export default [
     SectionHero,
+    SectionExpertise,
+    SectionWork,
     SectionTiers,
     SectionCTA,
-    SectionImageText,
-    SectionTextImage,
 ]
 
 export const defaultPageTemplate = 
     SectionHero.template +
+    SectionExpertise.template +
+    SectionWork.template +
     SectionTiers.template +
-    SectionImageText.template +
     SectionCTA.template;
 
 export const newPageTemplate =

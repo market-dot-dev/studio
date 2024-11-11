@@ -1,14 +1,14 @@
 // import Image from "next/image";
 import localFont from "next/font/local";
-import "./globals.css";
+import "@/styles/globals.css";
 
 const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
+  src: "@/styles/fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
+  src: "@/styles/fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
@@ -104,7 +104,7 @@ export default function NewLandingPageTemplate() {
                     Internet through decentralization.
                   </p>
                 </div>
-                <div className="grid grid-cols-1 gap-x-9 gap-y-6 md:grid-cols-3">
+                <div className="grid grid-cols-1 gap-y-6 md:grid-cols-3 lg:gap-x-9">
                   <div className="flex flex-col rounded-lg bg-white p-6 shadow ring-1 ring-black/5 md:p-7">
                     <div className="mb-5 flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-b from-emerald-50 to-emerald-100 shadow-md shadow-emerald-100 ring-1 ring-emerald-900/15">
                       <svg
