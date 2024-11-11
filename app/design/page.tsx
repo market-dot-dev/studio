@@ -1,23 +1,8 @@
-// import Image from "next/image";
-import localFont from "next/font/local";
-import "@/styles/globals.css";
-
-const geistSans = localFont({
-  src: "@/styles/fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
-  weight: "100 900",
-});
-const geistMono = localFont({
-  src: "@/styles/fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
-  weight: "100 900",
-});
-
 export default function NewLandingPageTemplate() {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`antialiased font-geist`}
         style={{ textRendering: "optimizeLegibility" }}
       >
         <div className="relative flex min-h-screen flex-col items-center pt-40 font-[family-name:var(--font-geist-sans)] md:pt-48 [&_a:focus-visible]:outline-none [&_a:focus-visible]:ring [&_a:focus-visible]:ring-emerald-500 [&_a:focus-visible]:ring-offset-2 [&_a:focus-visible]:[ring-offset:2px] [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring [&_button:focus-visible]:ring-emerald-500 [&_button:focus-visible]:ring-offset-2 [&_button:focus-visible]:[ring-offset:2px]">

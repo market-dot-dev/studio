@@ -13,7 +13,7 @@ export default {
           Internet through decentralization.
         </p>
       </div>
-      <div class="grid grid-cols-1 gap-y-6 md:grid-cols-3 lg:gap-x-9">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-3 lg:gap-x-9">
         <div class="flex flex-col rounded-lg bg-white p-6 shadow ring-1 ring-black/5 md:p-7">
           <div class="mb-5 flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-b from-emerald-50 to-emerald-100 shadow-md shadow-emerald-100 ring-1 ring-emerald-900/15">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-code-xml h-5 w-5 text-emerald-600">
