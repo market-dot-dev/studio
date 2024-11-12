@@ -1,6 +1,6 @@
 export default {
     name: 'Hero',
-    template: `<section className="hero relative mx-auto flex max-w-xl flex-col items-center px-6 pb-16 md:px-12 md:pb-24 pt-48 w-full">
+    template: `<section className="hero relative mx-auto flex flex-col items-center px-6 pb-16 md:px-12 md:pb-24 pt-48 w-full">
       <div
         className="pointer-events-none absolute inset-0 z-[-1] h-[280px] bg-[url('/circuit-pattern.svg?height=100&width=100')] bg-repeat opacity-[4%]"
         style={{
