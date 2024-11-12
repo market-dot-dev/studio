@@ -9,7 +9,7 @@ export default {
         }}
       ></div>
       <img
-        src="/example-logo.png"
+        src="/gw-logo-nav.png"
         alt="logo"
         className="mb-7 h-16 w-16 rounded-md bg-white shadow ring-black/10 md:mb-8 md:h-24 md:w-24"
       />

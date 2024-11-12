@@ -3,7 +3,7 @@ export default {
   template: `<header className="fixed left-0 right-0 top-0 p-6">
       <div className="relative flex justify-between gap-6">
         <img
-          src="/example-logo.png"
+          src="/gw-logo-nav.png"
           alt="logo"
           className="h-10 w-10 rounded bg-white ring-black/10"
         />
