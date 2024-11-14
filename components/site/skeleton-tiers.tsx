@@ -6,8 +6,8 @@ import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-
 
 export default function PricingTiers(): JSX.Element {
   return (
-    <div className="relative w-full rounded-[42px] border border-dashed border-gray-300 bg-[#FDFDFD] p-9">
-      <span className="absolute -top-3 left-1/2 flex h-6 -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-white px-3 font-mono text-[10px] uppercase tracking-wider text-gray-500 ring-1 ring-black/10">
+    <div className="relative w-full rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8">
+      <span className="absolute -top-2 left-1/2 flex h-4 -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-white px-1.5 font-mono text-[9px] uppercase tracking-wider text-gray-500 ring-1 ring-black/10">
         Sample Data
       </span>
       <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">

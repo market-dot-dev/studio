@@ -75,7 +75,7 @@ export default function NewLandingPageTemplate() {
             </section>
             <section
               id="expertise"
-              className="w-full scroll-mt-8 bg-gradient-to-b from-transparent to-gray-50 px-6 py-16 md:px-12 md:py-24"
+              className="w-full scroll-mt-8 bg-gradient-to-b from-transparent to-gray-50 px-6 md:px-12 py-20"
             >
               <div className="mx-auto flex max-w-6xl flex-col items-center gap-9 md:gap-12">
                 <div className="flex max-w-xl flex-col gap-4 text-pretty">
@@ -181,7 +181,7 @@ export default function NewLandingPageTemplate() {
             </section>
             <section
               id="work"
-              className="projects scroll-mt-8 px-6 py-16 md:px-12 md:py-24"
+              className="projects scroll-mt-8 px-6 md:px-12 py-20"
             >
               <div className="mx-auto flex max-w-6xl flex-col items-center gap-8 md:gap-12">
                 <div className="mx-auto flex max-w-xl flex-col items-center gap-5">
@@ -332,7 +332,7 @@ export default function NewLandingPageTemplate() {
             </section>
             <section
               id="services"
-              className="projects w-full scroll-mt-8 bg-gradient-to-b from-transparent to-gray-50 px-6 py-16 md:px-12 md:py-24"
+              className="projects w-full scroll-mt-8 bg-gradient-to-b from-transparent to-gray-50 px-6 md:px-12 py-20"
             >
               <div className="flex flex-col items-center gap-8 md:gap-12">
                 <div className="mx-auto flex max-w-xl flex-col items-center gap-5">
