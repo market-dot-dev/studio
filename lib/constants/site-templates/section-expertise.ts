@@ -1,6 +1,6 @@
 export default {
     name: 'Expertise',
-  template: `<section id="expertise" class="w-full scroll-mt-8 bg-gradient-to-b from-transparent to-gray-50 px-6 py-16 md:px-12 md:py-24">
+  template: `<section id="expertise" class="w-full scroll-mt-8 px-6 py-16 md:px-12 md:py-24">
     <div class="mx-auto flex max-w-6xl flex-col items-center gap-9 md:gap-12">
       <div class="flex max-w-xl flex-col gap-4 text-pretty">
         <h2 class="font-gray-900 text-center text-3xl font-medium tracking-tight sm:text-4xl md:text-5xl">

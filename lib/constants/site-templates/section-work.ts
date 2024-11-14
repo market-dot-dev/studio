@@ -14,57 +14,57 @@ export default {
         </p>
       </div>
       <div class="grid grid-cols-1 gap-9 last:pb-0 md:grid-cols-2 md:gap-y-12 [&>*:last-child]:border-b-0 [&>*]:border-b [&>*]:pb-9 md:[&>*]:border-y-0 md:[&>*]:border-l md:[&>*]:py-0 md:[&>*]:pl-9">
-        <div class="flex flex-col justify-between">
-          <div class="mb-6">
+        <div class="flex flex-col gap-4 justify-between">
+          <div>
             <img
               alt=""
               src="https://tailwindui.com/plus/img/logos/reform-logo-gray-900.svg"
               class="h-9 w-auto"
             />
           </div>
-          <blockquote class="mb-5 text-gray-500">We are the core maintainers of IPFS and libp2p, now working as an independent entity in the Protocol Labs network. Our mission is to build a more resilient and participatory Internet through decentralization.</blockquote>
+          <blockquote class=" text-gray-500 !pl-0 !border-l-0">We are the core maintainers of IPFS and libp2p, now working as an independent entity in the Protocol Labs network. Our mission is to build a more resilient and participatory Internet through decentralization.</blockquote>
           <p class="text-sm text-gray-500">
             <strong class="font-semibold text-gray-800">Amada Jackson</strong>
             , Head of Product at Reform
           </p>
         </div>
-        <div class="flex flex-col justify-between">
-          <div class="mb-6">
+        <div class="flex flex-col gap-4 justify-between">
+          <div>
             <img
               alt=""
               src="https://tailwindui.com/plus/img/logos/reform-logo-gray-900.svg"
               class="h-9 w-auto"
             />
           </div>
-          <blockquote class="mb-5 text-gray-500">We are the core maintainers of IPFS and libp2p, now working as an independent entity in the Protocol Labs network. Our mission is to build a more resilient and participatory Internet through decentralization.</blockquote>
+          <blockquote class=" text-gray-500 !pl-0 !border-l-0">We are the core maintainers of IPFS and libp2p, now working as an independent entity in the Protocol Labs network. Our mission is to build a more resilient and participatory Internet through decentralization. </blockquote>
           <p class="text-sm text-gray-500">
             <strong class="font-semibold text-gray-800">Amada Jackson</strong>
             , Head of Product at Reform
           </p>
         </div>
-        <div class="flex flex-col justify-between">
-          <div class="mb-6">
+        <div class="flex flex-col gap-4 justify-between">
+          <div>
             <img
               alt=""
               src="https://tailwindui.com/plus/img/logos/reform-logo-gray-900.svg"
               class="h-9 w-auto"
             />
           </div>
-          <blockquote class="mb-5 text-gray-500">We are the core maintainers of IPFS and libp2p, now working as an independent entity in the Protocol Labs network. Our mission is to build a more resilient and participatory Internet through decentralization.</blockquote>
+          <blockquote class=" text-gray-500 !pl-0 !border-l-0">We are the core maintainers of IPFS and libp2p, now working as an independent entity in the Protocol Labs network. Our mission is to build a more resilient and participatory Internet through decentralization.</blockquote>
           <p class="text-sm text-gray-500">
             <strong class="font-semibold text-gray-800">Amada Jackson</strong>
             , Head of Product at Reform
           </p>
         </div>
-        <div class="flex flex-col justify-between">
-          <div class="mb-6">
+        <div class="flex flex-col gap-4 justify-between">
+          <div>
             <img
               alt=""
               src="https://tailwindui.com/plus/img/logos/reform-logo-gray-900.svg"
               class="h-9 w-auto"
             />
           </div>
-          <blockquote class="mb-5 text-gray-500">We are the core maintainers of IPFS and libp2p, now working as an independent entity in the Protocol Labs network. Our mission is to build a more resilient and participatory Internet through decentralization.</blockquote>
+          <blockquote class=" text-gray-500 !pl-0 !border-l-0">We are the core maintainers of IPFS and libp2p, now working as an independent entity in the Protocol Labs network. Our mission is to build a more resilient and participatory Internet through decentralization.</blockquote>
           <p class="text-sm text-gray-500">
             <strong class="font-semibold text-gray-800">Amada Jackson</strong>
             , Head of Product at Reform

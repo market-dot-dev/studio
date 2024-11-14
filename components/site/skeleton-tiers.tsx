@@ -1,15 +1,16 @@
 import type { SubscriptionCadence } from "@/app/services/StripeService";
-import { Check } from "lucide-react";
+import Link from "next/link";
+import { Check, ChevronRight } from "lucide-react";
 import tierPlaceholderData from "@/lib/constants/placeholder/tiers";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
 
 export default function PricingTiers(): JSX.Element {
   return (
-    <div className="relative rounded-[30px] border border-gray-200 bg-gray-50/50 p-9">
-      <span className="absolute z-10 -top-2.5 left-1/2 flex h-5 -translate-x-1/2 items-center whitespace-nowrap rounded-full border bg-white px-[9px] font-mono text-[10px] uppercase tracking-wider text-gray-500">
+    <div className="relative w-full rounded-[42px] border border-dashed border-gray-300 bg-[#FDFDFD] p-9">
+      <span className="absolute -top-3 left-1/2 flex h-6 -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-white px-3 font-mono text-[10px] uppercase tracking-wider text-gray-500 ring-1 ring-black/10">
         Sample Data
       </span>
-      <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
         {tierPlaceholderData.map((tier) => {
           const cadenceShorthand =
             subscriptionCadenceShorthands[tier.cadence as SubscriptionCadence];
@@ -53,6 +54,15 @@ export default function PricingTiers(): JSX.Element {
             </div>
           );
         })}
+      </div>
+      <div className="absolute -bottom-2 left-1/2 col-span-full -translate-x-1/2 bg-gradient-to-b from-[#FDFDFD] to-white px-2">
+        <Link
+          href="/tiers"
+          className="group flex items-center gap-0.5 text-xs font-medium tracking-tight text-gray-500 hover:text-gray-600"
+        >
+          Set up your packages
+          <ChevronRight className="-mr-[3px] mt-px h-3 w-3 transition-transform group-hover:translate-x-px group-focus:translate-x-px" />
+        </Link>
       </div>
     </div>
   );
