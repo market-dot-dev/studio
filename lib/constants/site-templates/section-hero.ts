@@ -4,7 +4,7 @@ export default {
     <div class="z-0 hero relative mx-auto flex flex-col items-center px-6 pb-20 md:px-12 !pt-[calc(44px+80px)] w-full">
       <div class="pointer-events-none absolute inset-0 z-[-1] h-[280px] bg-[url('/circuit-pattern.svg?height=100&width=100')] bg-repeat opacity-5 [mask-image:linear-gradient(to_bottom,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)]"></div>
       <img
-        src="/gw-logo-nav.png"
+        src="/logo-placeholder.png"
         alt="logo"
         class="mb-6 h-16 w-16 drop-shadow ring-black/10 md:h-24 md:w-24"
       />
