@@ -1,17 +1,18 @@
 export default {
     name: 'Tiers',
-    template: `<section class="bg-gray-50 dark:bg-gray-800">
-    <div class="max-w-screen-xl px-4 py-8 mx-auto space-y-12 lg:space-y-20 lg:py-24 lg:px-6">
-        
-        <div class="text-gray-500 sm:text-lg dark:text-gray-400">
-            <h2 class="mb-4 text-center text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">Neque porro quisquam est qui</h2>
-            <p class="mb-8 text-center font-light lg:text-xl">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
-            <!-- List -->
-            <div class="pt-8 space-y-5 border-t border-gray-200 my-7 dark:border-gray-700">
+    template: `
+        <div id="tiers" class="projects w-full scroll-mt-8 px-6 md:px-12 py-20">
+            <div class="flex flex-col items-center gap-8 md:gap-12">
+                <div class="mx-auto flex max-w-xl flex-col items-center gap-5">
+                <h2 class="font-gray-900 text-center text-3xl font-medium tracking-tight sm:text-4xl md:text-5xl">
+                    Our Services
+                </h2>
+                <p class="text-pretty text-center text-gray-500">
+                    We offer everything from concept development to post-launch support, ensuring your project succeeds at every step.
+                </p>
+                </div>
                 <Tiers></Tiers>
             </div>
-            <p class="font-light lg:text-xl text-center">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam.</p>
-        
-    </div>
-</section>`
+        </div>
+    `
 }

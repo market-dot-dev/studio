@@ -156,8 +156,10 @@ module.exports = {
         sans: ["Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica", ...fontFamily.sans],
         default: ["var(--font-inter)", ...fontFamily.sans],
         cal: ["var(--font-cal)", ...fontFamily.sans],
+        geist: ["var(--font-geist)", ...fontFamily.sans],
         title: ["var(--font-title)", ...fontFamily.sans],
         mono: ["Consolas", ...fontFamily.mono],
+        'geist-mono': ["var(--font-geist-mono)", ...fontFamily.mono],
       },
       typography: {
         DEFAULT: {

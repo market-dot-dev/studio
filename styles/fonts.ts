@@ -5,11 +5,24 @@ export const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin"],
 });
+
 export const cal = localFont({
   src: "./CalSans-SemiBold.otf",
   variable: "--font-cal",
   weight: "600",
   display: "swap",
+});
+
+const geist = localFont({
+  src: "./GeistVF.woff",
+  variable: "--font-geist-sans",
+  weight: "100 900",
+});
+
+const geistMono = localFont({
+  src: "./GeistMonoVF.woff",
+  variable: "--font-geist-mono",
+  weight: "100 900",
 });
 
 export const calTitle = localFont({
@@ -35,4 +48,6 @@ export const fontMapper = {
   "font-cal": calTitle.variable,
   "font-lora": lora.variable,
   "font-work": work.variable,
+  "font-geist": geist.variable,
+  "font-geist-mono": geistMono.variable,
 } as Record<string, string>;
