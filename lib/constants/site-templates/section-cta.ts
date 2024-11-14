@@ -7,10 +7,7 @@ export default {
                     Work with us
                 </h2>
                 <p class="mb-6 text-pretty text-center text-gray-500">
-                    We are the core maintainers of IPFS and libp2p, now working as
-                    an independent entity in the Protocol Labs network. Our mission
-                    is to build a more resilient and participatory Internet through
-                    decentralization.
+                    Ready to build something great? Let’s connect and bring your ideas to life with software that works for you.
                 </p>
                 <a href="mailto:example@email.com" class="inline-flex items-center rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-shadow hover:shadow">
                     Get in touch

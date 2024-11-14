@@ -8,10 +8,7 @@ export default {
                     Our Services
                 </h2>
                 <p class="text-pretty text-center text-gray-500">
-                    We are the core maintainers of IPFS and libp2p, now working
-                    as an independent entity in the Protocol Labs network. Our
-                    mission is to build a more resilient and participatory
-                    Internet through decentralization.
+                    We offer everything from concept development to post-launch support, ensuring your project succeeds at every step.
                 </p>
                 </div>
                 <Tiers></Tiers>
