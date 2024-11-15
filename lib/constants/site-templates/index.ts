@@ -25,5 +25,7 @@ export const defaultPageTemplate =
 export const newPageTemplate =
     SectionHeader.template +
     SectionHero.template +
-    SectionCTA.template
-    
+    SectionExpertise.template +
+    SectionWork.template +
+    SectionTiers.template +
+    SectionCTA.template;
