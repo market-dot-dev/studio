@@ -111,7 +111,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
         {categorizedTiers.map((category, cIndex) => (
           <div className="flex flex-col gap-4 p-4" key={cIndex}>
             <Title>{category.name}</Title>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 w-full">
+            <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {category.tiers.map(({ metaDescription, data: tier }, index) => {
                 const determinedIndex = determineIndex(cIndex, index);
                 const isSelected = selected.indexOf(determinedIndex) !== -1;
@@ -138,8 +138,10 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
                         )}
                       </div>
                     ) : null}
-                    <div className="flex aspect-[3/2] flex-col justify-between gap-4 overflow-hidden p-6 pb-0">
-                      <Text className="text-stone-600 text-sm">{metaDescription}</Text>
+                    <div className="flex aspect-[3/2] flex-col justify-between gap-4 overflow-hidden px-5 pt-4">
+                      <Text className="text-xs text-stone-600">
+                        {metaDescription}
+                      </Text>
                       <svg
                         className="aspect-[100/56] w-full"
                         fill="none"
@@ -161,7 +163,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
                       <div className="absolute left-0 top-0 flex h-full w-full cursor-default items-center justify-center bg-white bg-opacity-50 opacity-0 transition-opacity group-hover:opacity-100">
                         <Button
                           size="xs"
-                          className="h-10 w-10 bg-stone-800"
+                          className="h-10 w-10 bg-stone-800 transition-all hover:scale-105"
                           onClick={() => {
                             createSingleTemplateTier(determinedIndex);
                           }}
@@ -195,7 +197,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
           ) : (
             <Button
               size="xs"
-							className="h-10 w-10 bg-stone-900"
+              className="h-10 w-10 bg-stone-900 hover:scale-105 transition-all"
               onClick={() => createTemplateTiers()}
               disabled={selected.length === 0}
             >
