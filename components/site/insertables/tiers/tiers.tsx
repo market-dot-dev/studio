@@ -10,7 +10,7 @@ export default function Tiers({ tiers, hasActiveFeatures }: { tiers : any[], has
           <Grid
             numItems={1}
             numItemsSm={1}
-            numItemsLg={tiers.length > 3 ? tiers.length : 3}
+            numItemsLg={3}
             className="mx-auto w-full max-w-screen-2xl gap-6"
           >
             {tiers.map((tier: any, index: number) => (
