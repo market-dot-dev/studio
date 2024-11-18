@@ -5,7 +5,8 @@ import { TiersEmbedSettingsProps } from './tiers-embed-settings';
 import SkeletonTiers from '../../skeleton-tiers';
 import TierCard from '@/components/tiers/tier-card';
 import Link from 'next/link';
-import { set } from 'date-fns';
+import clsx from 'clsx';
+
 const transparentBody = 'body {background: transparent}';
 // This renders the actual component for both server and client sides.
 export default function Tiers({tiers, subdomain, settings, hasActiveFeatures}: { tiers : any[], subdomain: string, settings: TiersEmbedSettingsProps, hasActiveFeatures?: boolean}) : JSX.Element {
@@ -52,7 +53,6 @@ export default function Tiers({tiers, subdomain, settings, hasActiveFeatures}: {
     };
 
     useEffect(() => {
-        
         if(!containerRef.current) return;
 
         // Initial call
@@ -68,31 +68,47 @@ export default function Tiers({tiers, subdomain, settings, hasActiveFeatures}: {
     }, [containerRef.current]);
     
     return (
-        <>
-            <div className="flex flex-col space-y-6 w-full">
-                <div ref={containerRef} style={{height: containerHeight+'px'}} >
-                    
-                { alteredStyle.scale !== null ?
-                    <div className="mx-auto lg:py-4 w-[100vw]" style={alteredStyle}>
-                        { tiers.length ? 
-                            <Grid numItems={1} numItemsSm={1} numItemsMd={tiers.length < 2 ? tiers.length : 2} numItemsLg={tiers.length < 4 ? tiers.length : 4}  className="gap-4 sm:gap-8 md:gap-12 mx-auto">
-                                {tiers.map((tier: any, index: number) => (
-                                    <Col key={index} className="flex flex-col p-4 sm:p-5 md:p-6  w-full max-w-xs sm:max-w-sm md:max-w-md">
-                                        <TierCard tier={tier} url={subdomain} darkMode={settings.darkmode} hasActiveFeatures={hasActiveFeatures}>
-                                            <Link href={`/checkout/${tier.id}`} target="_blank"><Button variant="primary" className="w-full">Get Started</Button></Link>
-                                        </TierCard>
-                                    </Col>
-                                ))}
-                            </Grid> : 
-                            <SkeletonTiers  />
-                        }
-                    </div>
-                    : null
-                }
-                </div>
-            </div>
+      <>
+        <div className="flex w-full flex-col space-y-6">
+          <div ref={containerRef} style={{ height: containerHeight + "px" }}>
+            {alteredStyle.scale !== null ? (
+              <div className="mx-auto w-[100vw] lg:py-4" style={alteredStyle}>
+                {tiers.length ? (
+                  <Grid
+                    numItems={1}
+                    numItemsSm={1}
+                    numItemsLg={tiers.length > 3 ? tiers.length : 3}
+                    className={clsx(
+                      "mx-auto w-full gap-6",
+                      tiers.length > 3 ? "max-w-screen-2xl" : "max-w-screen-xl",
+                    )}
+                  >
+                    {tiers.map((tier: any, index: number) => (
+                      <Col key={index} className="w-full max-w-lg lg:max-w-xs">
+                        <TierCard
+                          tier={tier}
+                          url={subdomain}
+                          darkMode={settings.darkmode}
+                          hasActiveFeatures={hasActiveFeatures}
+                        >
+                          <Link href={`/checkout/${tier.id}`} target="_blank">
+                            <Button variant="primary" className="w-full">
+                              Get Started
+                            </Button>
+                          </Link>
+                        </TierCard>
+                      </Col>
+                    ))}
+                  </Grid>
+                ) : (
+                  <SkeletonTiers />
+                )}
+              </div>
+            ) : null}
+          </div>
+        </div>
 
-            <style dangerouslySetInnerHTML={{__html: transparentBody}}></style>
-        </>
-    )
+        <style dangerouslySetInnerHTML={{ __html: transparentBody }}></style>
+      </>
+    );
 }

@@ -57,12 +57,12 @@ export default async function Tiers() {
                       <span
                         className={clsx(
                           "h-2 w-2 rounded-full ring-inset ring-1 ring-black/5",
-                          tier.published ? "bg-emerald-500" : "bg-stone-400",
+                          tier.published ? "bg-emerald-600" : "bg-stone-400",
                         )}
                       ></span>
                       <p className={clsx(
                         "text-sm font-medium",
-                        tier.published ? 'text-emerald-600' : 'text-stone-500'
+                        tier.published ? 'text-emerald-700' : 'text-stone-500'
                       )}>{tier.published ? "Active" : "Inactive"}</p>
                     </div>
                     <Link
