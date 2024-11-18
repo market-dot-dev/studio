@@ -5,7 +5,6 @@ import { TiersEmbedSettingsProps } from './tiers-embed-settings';
 import SkeletonTiers from '../../skeleton-tiers';
 import TierCard from '@/components/tiers/tier-card';
 import Link from 'next/link';
-import clsx from 'clsx';
 
 const transparentBody = 'body {background: transparent}';
 // This renders the actual component for both server and client sides.
@@ -78,10 +77,7 @@ export default function Tiers({tiers, subdomain, settings, hasActiveFeatures}: {
                     numItems={1}
                     numItemsSm={1}
                     numItemsLg={tiers.length > 3 ? tiers.length : 3}
-                    className={clsx(
-                      "mx-auto w-full gap-6",
-                      tiers.length > 3 ? "max-w-screen-2xl" : "max-w-screen-xl",
-                    )}
+                    className="mx-auto w-full max-w-screen-2xl gap-6"
                   >
                     {tiers.map((tier: any, index: number) => (
                       <Col key={index} className="w-full max-w-lg lg:max-w-xs">
