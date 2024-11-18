@@ -31,11 +31,12 @@ type DynamicComponentProps = {
   ];
   
   function sanitizeAttributeName(attrName: string) {
-    // Define a regex pattern for invalid characters
-    const invalidChars = /[^a-zA-Z0-9-_:.]/g;
-    // Remove invalid characters
-    const sanitized = attrName.replace(invalidChars, '');
-    return sanitized;
+    // Convert kebab-case to camelCase (e.g., data-value to dataValue)
+    const camelCased = attrName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+    
+    // Remove any remaining invalid characters (but keep the converted camelCase)
+    const invalidChars = /[^a-zA-Z0-9_:.]/g;
+    return camelCased.replace(invalidChars, '');
   }
 
   const DynamicComponent: React.FC<DynamicComponentProps> = ({ tag, className, children, ...attributes }) => {
@@ -108,7 +109,7 @@ type DynamicComponentProps = {
         return;
       }
 
-      attributes[item.name] = item.value;
+      attributes[sanitizeAttributeName(item.name)] = item.value;
     });
     
     // Check if the element is a void element
