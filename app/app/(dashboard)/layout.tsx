@@ -32,7 +32,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         </Nav>
         <div className="min-h-screen sm:pl-60">
           <Flex alignItems="stretch" className="w-full">
-            <div className="max-w-screen-xl grow p-8">
+            <div className="max-w-screen-xl grow p-8 mx-auto">
               { onboarding ? <OnboardingGuide /> : null }
               {user?.stripeAccountDisabled && user?.stripeAccountId && <StripeDisabledBanner /> }
               {children}

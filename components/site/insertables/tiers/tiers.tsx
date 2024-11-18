@@ -9,7 +9,7 @@ export default function Tiers({ tiers, hasActiveFeatures }: { tiers : any[], has
             { tiers.length ? 
             <div className="flex justify-center gap-12 flex-wrap">
                 {tiers.map((tier : any, index: number) => (
-                    <div key={index} className="flex flex-col min-w-[300px]">
+                    <div key={index} className="flex flex-col sm:min-w-[320px] max-w-xs w-full">
                         <TierCard tier={tier} hasActiveFeatures={hasActiveFeatures} />
                     </div>
                 ))}
