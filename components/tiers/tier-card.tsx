@@ -105,7 +105,7 @@ const TierCard: React.FC<TierCardProps> = ({
         <div>
           <h3
             className={clsx(
-              "mb-1 font-geist font-semibold text-gray-900",
+              "text-lg mb-1 font-geist font-semibold text-gray-900",
               alignment === "center" && "text-center",
               textClasses,
             )}
