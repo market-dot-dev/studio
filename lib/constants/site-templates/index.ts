@@ -2,6 +2,7 @@ import SectionCTA from './section-cta';
 import SectionHero from './section-hero';
 import SectionWork from './section-work';
 import SectionTiers from './section-tiers';
+import SectionFooter from './section-footer';
 import SectionHeader from './section-header';
 import SectionExpertise from './section-expertise';
 
@@ -12,6 +13,7 @@ export default [
     SectionWork,
     SectionTiers,
     SectionCTA,
+    SectionFooter,
 ]
 
 export const defaultPageTemplate = 
@@ -20,12 +22,11 @@ export const defaultPageTemplate =
     SectionExpertise.template +
     SectionWork.template +
     SectionTiers.template +
-    SectionCTA.template;
+    SectionCTA.template +
+    SectionFooter.template;
     
 export const newPageTemplate =
     SectionHeader.template +
     SectionHero.template +
-    SectionExpertise.template +
-    SectionWork.template +
-    SectionTiers.template +
     SectionCTA.template;
+    SectionFooter.template;
