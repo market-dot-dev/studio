@@ -1,6 +1,6 @@
 'use client'
-import { Grid, Col, Button } from '@tremor/react';
-import { use, useEffect, useRef, useState } from 'react';
+import { Button } from '@tremor/react';
+import { useEffect, useRef, useState } from 'react';
 import { TiersEmbedSettingsProps } from './tiers-embed-settings';
 import SkeletonTiers from '../../skeleton-tiers';
 import TierCard from '@/components/tiers/tier-card';
@@ -64,44 +64,44 @@ export default function Tiers({tiers, subdomain, settings, hasActiveFeatures}: {
         return () => {
             window.removeEventListener('resize', handleResize);
         };
-    }, [containerRef.current]);
+    }, []);
     
     return (
       <>
-        <div className="flex w-full flex-col space-y-6">
-          <div ref={containerRef} style={{ height: containerHeight + "px" }}>
-            {alteredStyle.scale !== null ? (
-              <div className="mx-auto w-[100vw] lg:py-4" style={alteredStyle}>
-                {tiers.length ? (
-                  <Grid
-                    numItems={1}
-                    numItemsSm={1}
-                    numItemsLg={3}
-                    className="mx-auto w-full max-w-screen-2xl gap-6"
-                  >
-                    {tiers.map((tier: any, index: number) => (
-                      <Col key={index} className="w-full max-w-lg lg:max-w-xs">
-                        <TierCard
-                          tier={tier}
-                          url={subdomain}
-                          darkMode={settings.darkmode}
-                          hasActiveFeatures={hasActiveFeatures}
-                        >
-                          <Link href={`/checkout/${tier.id}`} target="_blank">
-                            <Button variant="primary" className="w-full">
-                              Get Started
-                            </Button>
-                          </Link>
-                        </TierCard>
-                      </Col>
-                    ))}
-                  </Grid>
-                ) : (
-                  <SkeletonTiers />
-                )}
-              </div>
-            ) : null}
-          </div>
+        <div ref={containerRef} style={{ height: containerHeight + "px" }}>
+          {alteredStyle.scale !== null ? (
+            <div
+              className="mx-auto flex w-[100vw] justify-center lg:py-6"
+              style={alteredStyle}
+            >
+              {tiers.length ? (
+                <div className="mx-auto flex max-w-screen-2xl flex-wrap justify-center gap-6">
+                  {tiers.map((tier: any, index: number) => (
+                    <div
+                      key={index}
+                      className="min-w-xxs w-full md:max-w-sm lg:max-w-xs"
+                    >
+                      <TierCard
+                        tier={tier}
+                        url={subdomain}
+                        darkMode={settings.darkmode}
+                        hasActiveFeatures={hasActiveFeatures}
+                        alignment={tiers.length === 1 ? "center" : "left"}
+                      >
+                        <Link href={`/checkout/${tier.id}`} target="_blank">
+                          <Button variant="primary" className="w-full">
+                            Get Started
+                          </Button>
+                        </Link>
+                      </TierCard>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <SkeletonTiers />
+              )}
+            </div>
+          ) : null}
         </div>
 
         <style dangerouslySetInnerHTML={{ __html: transparentBody }}></style>

@@ -15,6 +15,7 @@ type TierCardProps = {
   url?: string;
   tier: TierWithFeatures;
   buttonDisabled?: boolean;
+  alignment?: "left" | "center";
   darkMode?: boolean;
   features?: Feature[];
   hasActiveFeatures?: boolean;
@@ -66,6 +67,7 @@ const TierCard: React.FC<TierCardProps> = ({
   darkMode = false, 
   features = [], 
   hasActiveFeatures,
+  alignment = 'left',
   className,
   children, 
 }) => {
@@ -89,41 +91,73 @@ const TierCard: React.FC<TierCardProps> = ({
   return (
     <Card
       className={clsx(
-        "relative flex h-full w-full flex-col justify-between gap-8 rounded-md bg-white p-6 pt-5 shadow ring-1 ring-gray-500/10",
+        "relative flex h-full w-full flex-col justify-between rounded-md bg-white p-6 pt-5 shadow ring-1 ring-gray-500/10",
         containerClasses,
         className,
       )}
     >
-      <div>
-        <h3 className={clsx("mb-1 font-geist font-semibold text-gray-900", textClasses)}>
-          {tier.name}
-        </h3>
-        <p className="text-sm text-gray-500">{tier.tagline}</p>
-
-        {hasAnnual && isntOnce ? (
-          <div className="my-5 flex justify-center gap-1">
-            <Text>Monthly</Text>
-            <Switch
-              checked={showAnnual}
-              onChange={() => setShowAnnual(!showAnnual)}
-            />
-            <Text>Annual</Text>
-          </div>
-        ) : null}
-
-        <div className="my-6 text-4xl">
-          <span className="font-geist-mono">
-            $
-            {showAnnual ? Math.round((tier.priceAnnual || 0) / 12) : tier.price}
-          </span>
-          {cadenceShorthand && (
-            <span className="text-base font-normal text-gray-500">
-              /{cadenceShorthand}
-            </span>
-          )}
+      <div
+        className={clsx(
+          "flex flex-col gap-6",
+          alignment === "center" && "items-center",
+        )}
+      >
+        <div>
+          <h3
+            className={clsx(
+              "mb-1 font-geist font-semibold text-gray-900",
+              alignment === "center" && "text-center",
+              textClasses,
+            )}
+          >
+            {tier.name}
+          </h3>
+          <p
+            className={clsx(
+              "text-sm text-gray-500",
+              alignment === "center" && "text-center",
+            )}
+          >
+            {tier.tagline}
+          </p>
         </div>
-        {hasActiveFeatures && tierFeatures.length !== 0 
-          ? (
+        <div
+          className={clsx(
+            "flex flex-col gap-1",
+            alignment === "center" && "items-center",
+          )}
+        >
+          <div className="text-4xl">
+            <span className="font-geist-mono">
+              $
+              {showAnnual
+                ? Math.round((tier.priceAnnual || 0) / 12)
+                : tier.price}
+            </span>
+            {cadenceShorthand && (
+              <span className="text-base/10 font-normal text-gray-500">
+                <span className="mr-px">/</span>
+                {cadenceShorthand}
+              </span>
+            )}
+          </div>
+          {hasAnnual && isntOnce ? (
+            <div className="flex items-center gap-1.5">
+              <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+                Monthly
+              </p>
+              <Switch
+                checked={showAnnual}
+                onChange={() => setShowAnnual(!showAnnual)}
+              />
+              <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+                Yearly
+              </p>
+            </div>
+          ) : null}
+        </div>
+        <div className="flex flex-col gap-4">
+          {hasActiveFeatures && tierFeatures.length !== 0 ? (
             <TierFeatureList features={tierFeatures} darkMode={darkMode} />
           ) : (
             parsedDescription.map((section, dex) => {
@@ -131,10 +165,7 @@ const TierCard: React.FC<TierCardProps> = ({
                 return (
                   <div key={dex}>
                     {section.text.map((text: string, index: number) => (
-                      <Text
-                        key={index}
-                        className="text-sm text-gray-500 mb-4"
-                      >
+                      <Text key={index} className="text-sm text-gray-500">
                         {text}
                       </Text>
                     ))}
@@ -157,11 +188,10 @@ const TierCard: React.FC<TierCardProps> = ({
               );
             })
           )}
+        </div>
       </div>
-      <div className="w-full">
-        {children ? (
-          children
-        ) : (
+      <div className="mt-12 w-full">
+        {children || (
           <CheckoutButton
             url={url}
             tierId={tier.id}
