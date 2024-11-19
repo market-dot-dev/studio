@@ -1,12 +1,14 @@
 import PageHeading from '@/components/common/page-heading';
 import TierService from '@/app/services/TierService';
-import { Grid, Badge, Text } from '@tremor/react';
-
+import { Badge, Text } from '@tremor/react';
+import { Pencil } from 'lucide-react';
+import Link from 'next/link';
 import TierCard from '@/components/tiers/tier-card';
 import SessionService from '@/app/services/SessionService';
 import FeatureService from '@/app/services/feature-service';
 import TiersEmptyState from './empty-state';
-import TierTemplates from '@/components/tiers/tier-templates';
+import NewTierModal from '@/components/tiers/new-tier-modal';
+import clsx from 'clsx';
 
 export default async function Tiers() {
   const currentUserId = await SessionService.getCurrentUserId();
@@ -19,42 +21,71 @@ export default async function Tiers() {
 
   const tiersDashboardTitleArea = (
     <div className="flex flex-col">
-      <PageHeading title="Your Packages" />
+      <PageHeading title="Packages" />
       <Text>Packages are what you sell to your customers. You can inlcude them on your website or send them to customers directly using a checkout link.</Text>
     </div>
   )
   return (
-
-    <div className="flex max-w flex-col max-w-screen-xl space-y-12">
-
-      <div className="flex justify-between items-center">
+    <div className="max-w flex max-w-screen-xl flex-col space-y-12">
+      <div className="flex items-start justify-between">
         <div className="flex flex-col">
-          <PageHeading title="Your Packages" />
-          <Text>Packages are what you sell to your customers. You can inlcude them on your website or send them to customers directly using a checkout link.</Text>
+          <PageHeading title="Packages" />
+          <p className="max-w-prose text-balance text-sm text-stone-500">
+            Packages are what you sell to your customers. You can inlcude them
+            on your website or send them to customers directly using a checkout
+            link.
+          </p>
         </div>
-        {tiers.length > 0 ?
+        {tiers.length > 0 ? (
           <div className="flex flex-row">
-            <TierTemplates multiple={false}>New Package</TierTemplates>
-          </div> : null}
+            <NewTierModal multiple={false}>New Package</NewTierModal>
+          </div>
+        ) : null}
       </div>
       <div className="flex flex-col space-y-6">
         <section>
           <div className="max-w-screen-xl">
             {tiers.length === 0 && <TiersEmptyState />}
-            <Grid numItemsSm={1} numItemsMd={2} numItemsLg={3} className="gap-8" >
+            <div className="grid grid-cols-1 gap-2 sm:gap-6 lg:grid-cols-2 xl:grid-cols-3">
               {tiers.map((tier, index) => (
-                <>
-                  <div key={index} className='text-center mb-8'>
-                    <Badge className="mb-2 mx-auto" color={tier.published ? 'green' : 'gray'}>{tier.published ? 'Active' : 'Inactive'}</Badge>
-                    <TierCard tier={tier} canEdit={true} hasActiveFeatures={!!activeFeatures?.length} />
+                <div
+                  key={index}
+                  className="flex flex-col gap-4 rounded-2xl bg-stone-100 text-center"
+                >
+                  <div className="flex items-center justify-between gap-4 p-3 pl-5">
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={clsx(
+                          "h-2 w-2 rounded-full ring-inset ring-1 ring-black/5",
+                          tier.published ? "bg-emerald-600" : "bg-stone-400",
+                        )}
+                      ></span>
+                      <p className={clsx(
+                        "text-sm font-medium",
+                        tier.published ? 'text-emerald-700' : 'text-stone-500'
+                      )}>{tier.published ? "Active" : "Inactive"}</p>
+                    </div>
+                    <Link
+                      href={`tiers/${tier.id}`}
+                      className="flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-sm font-medium hover:bg-stone-200 active:bg-stone-300 transition-colors duration-200 ease-in-out"
+                    >
+                      <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
+                      Edit
+                    </Link>
                   </div>
-                </>
+                  <div className="flex items-center justify-center p-6 pb-10 pt-0 h-full">
+                    <TierCard
+                      tier={tier}
+                      hasActiveFeatures={!!activeFeatures?.length}
+                      className="m-auto max-w-xs sm:scale-90"
+                    />
+                  </div>
+                </div>
               ))}
-            </Grid>
+            </div>
           </div>
         </section>
       </div>
-
     </div>
   );
 }

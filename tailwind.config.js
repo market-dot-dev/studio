@@ -127,6 +127,7 @@ module.exports = {
         "tremor-full": "9999px",
       },
       fontSize: {
+        xxs: ['10px', '12px'],
         "tremor-label": ["0.75rem"],
         "tremor-default": ["0.875rem", { lineHeight: "1.25rem" }],
         "tremor-title": ["1.125rem", { lineHeight: "1.75rem" }],
@@ -145,6 +146,9 @@ module.exports = {
       },
       width: {
         1536: "1536px",
+      },
+      maxWidth: {
+        xxs: '300px'
       },
       height: {
         150: "37.5rem",

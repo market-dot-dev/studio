@@ -1,35 +1,51 @@
 'use client';
 
-import { TierWithFeatures } from '@/app/services/TierService';
+import type { SubscriptionCadence } from "@/app/services/StripeService";
+import type { TierWithFeatures } from '@/app/services/TierService';
 import { Card, Button, Text, Switch } from '@tremor/react';
 import Link from 'next/link';
 import TierFeatureList from '@/components/features/tier-feature-list';
 import { Feature } from '@prisma/client';
 import { useState } from 'react';
 import { parseTierDescription } from '@/lib/utils';
+import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
+import clsx from 'clsx';
 
 type TierCardProps = {
   url?: string;
   tier: TierWithFeatures;
-  canEdit?: boolean;
   buttonDisabled?: boolean;
+  alignment?: "left" | "center";
   darkMode?: boolean;
-  children?: React.ReactNode;
   features?: Feature[];
   hasActiveFeatures?: boolean;
+  className?: string;
+  children?: React.ReactNode;
 };
 
 export const generateLink = (url: string | null, tierId: string, annual: boolean) => {
   return `${url ? url : ''}/checkout/${tierId}${annual ? '?annual=true' : ''}`;
 }
 
-const GetStartedButton = ({ url, tierId, canEdit, annual = false }: { url: string | null, tierId: string, canEdit: boolean, annual?: boolean }) => {
-  const linkUrl = generateLink(url, tierId, annual);
-  const variant = canEdit ? "secondary" : "primary";
+const CheckoutButton = ({ 
+  url, 
+  tierId, 
+  annual = false,
+  variant = 'primary', 
+}: { 
+  url: string | null, 
+  tierId: string, 
+  annual?: boolean 
+  variant?: "secondary" | "primary", 
+}) => {
+  const checkoutUrl = generateLink(url, tierId, annual);
 
   return (
-    <Link href={linkUrl}>
-      <Button variant={variant} className="w-full">
+    <Link href={checkoutUrl}>
+      <Button
+        variant={variant}
+        className="w-full rounded-md !bg-gradient-to-b from-gray-800 to-gray-950 px-3 py-2 text-center text-sm font-medium text-white shadow-sm ring-1 ring-black/5 transition-shadow hover:bg-gray-700 hover:shadow"
+      >
         {annual ? `Get Started` : `Get Started`}
       </Button>
     </Link>
@@ -45,69 +61,142 @@ const calcDiscount = (price: number, annualPrice: number) => {
 
 
 
-const TierCard: React.FC<TierCardProps> = ({ tier, url = null, canEdit = false, darkMode = false, features = [], children, hasActiveFeatures }) => {
+const TierCard: React.FC<TierCardProps> = ({ 
+  tier, 
+  url = null, 
+  darkMode = false, 
+  features = [], 
+  hasActiveFeatures,
+  alignment = 'left',
+  className,
+  children, 
+}) => {
+  const [showAnnual, setShowAnnual] = useState(false);
+  // const [annualDiscountPercent, setAnnualDiscountPercent] = useState(calcDiscount(tier.price, tier.priceAnnual || 0));
+
   const containerClasses = darkMode
-    ? "text-white bg-gray-800 border-gray-600"
-    : "text-gray-900 bg-white border-gray-100";
+    ? "text-white "
+    : "text-gray-900 bg-white";
+  
+  const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
   
   const hasAnnual = (tier.priceAnnual || 0) > 0;
   const isntOnce = tier.cadence !== 'once';
-  const [showAnnual, setShowAnnual] = useState(false);
-  const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
-  const directlyProvidedFeatures = !!features && features.length > 0;
-  const [annualDiscountPercent, setAnnualDiscountPercent] = useState(calcDiscount(tier.price, tier.priceAnnual || 0));
-
-  const tierFeatures = (directlyProvidedFeatures ? features : tier.features) || [];
+  const cadenceShorthand = subscriptionCadenceShorthands[tier.cadence as SubscriptionCadence];
   
+  const directlyProvidedFeatures = !!features && features.length > 0;
+  const tierFeatures = (directlyProvidedFeatures ? features : tier.features) || [];
   const parsedDescription = parseTierDescription(tier.description || '');
   
-
   return (
-    <Card className={`flex flex-col p-6 mx-auto w-full h-full justify-between max-w-xs text-center rounded-lg border shadow ${containerClasses}`}>
-      <div>
-        <h3 className={`mb-4 text-2xl font-bold ${textClasses}`}>{tier.name}</h3>
-        <p className="mb-4 font-light text-sm text-gray-500 mb-2">{tier.tagline}</p>
-        <div className="text-center">
+    <Card
+      className={clsx(
+        "relative flex h-full w-full flex-col justify-between rounded-md bg-white p-6 pt-5 shadow ring-1 ring-gray-500/10",
+        containerClasses,
+        className,
+      )}
+    >
+      <div
+        className={clsx(
+          "flex flex-col gap-6",
+          alignment === "center" && "items-center",
+        )}
+      >
+        <div>
+          <h3
+            className={clsx(
+              "mb-1 font-geist font-semibold text-gray-900",
+              alignment === "center" && "text-center",
+              textClasses,
+            )}
+          >
+            {tier.name}
+          </h3>
+          <p
+            className={clsx(
+              "text-sm text-gray-500",
+              alignment === "center" && "text-center",
+            )}
+          >
+            {tier.tagline}
+          </p>
+        </div>
+        <div
+          className={clsx(
+            "flex flex-col gap-1",
+            alignment === "center" && "items-center",
+          )}
+        >
+          <div className="text-4xl">
+            <span className="font-geist-mono">
+              $
+              {showAnnual
+                ? Math.round((tier.priceAnnual || 0) / 12)
+                : tier.price}
+            </span>
+            {cadenceShorthand && (
+              <span className="text-base/10 font-normal text-gray-500">
+                <span className="mr-px">/</span>
+                {cadenceShorthand}
+              </span>
+            )}
+          </div>
           {hasAnnual && isntOnce ? (
-            <div className="justify-center flex gap-1">
-              <Text>Monthly</Text>
-              <Switch checked={showAnnual} onChange={() => setShowAnnual(!showAnnual)} /> 
-              <Text>Annual</Text>
+            <div className="flex items-center gap-1.5">
+              <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+                Monthly
+              </p>
+              <Switch
+                checked={showAnnual}
+                onChange={() => setShowAnnual(!showAnnual)}
+              />
+              <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+                Yearly
+              </p>
             </div>
           ) : null}
         </div>
+        <div className="flex flex-col gap-4">
+          {hasActiveFeatures && tierFeatures.length !== 0 ? (
+            <TierFeatureList features={tierFeatures} darkMode={darkMode} />
+          ) : (
+            parsedDescription.map((section, dex) => {
+              if (section.text) {
+                return (
+                  <div key={dex}>
+                    {section.text.map((text: string, index: number) => (
+                      <Text key={index} className="text-sm text-gray-500">
+                        {text}
+                      </Text>
+                    ))}
+                  </div>
+                );
+              }
 
-        <div className="flex justify-center items-baseline my-4">
-          <span className={`mr-1 text-4xl font-extrabold ${textClasses}`}>${showAnnual ? Math.round((tier.priceAnnual || 0) / 12) : tier.price}</span>
-          /&nbsp;
-          <span className="text-gray-500 dark:text-gray-400">{tier.cadence}</span>
+              return (
+                <TierFeatureList
+                  key={dex}
+                  features={section.features.map(
+                    (feature: string, index: number) => ({
+                      id: index,
+                      name: feature,
+                      isEnabled: true,
+                    }),
+                  )}
+                  darkMode={darkMode}
+                />
+              );
+            })
+          )}
         </div>
-
-
-        {(tierFeatures.length || parsedDescription.length) ? <Text className="text-center text-xs text-gray-400">What&apos;s Included:</Text> : null}
-        {
-        hasActiveFeatures ?
-          tierFeatures.length !== 0 ? 
-              <TierFeatureList features={tierFeatures}  darkMode={darkMode} /> : null
-        :
-          parsedDescription.map((section, dex) => {
-            if(section.text) {
-              return <div key={dex}>
-                { section.text.map((text: string, index: number) => (
-                  <Text key={index} className="text-center text-sm text-gray-500">{text}</Text>
-                )) }
-              </div>
-            } else {
-              return <TierFeatureList key={dex} features={section.features.map((feature: string, index: number) => ({ id: index, name: feature, isEnabled: true }))} darkMode={darkMode} />
-            }
-          }) 
-        }
       </div>
-
-      <div className="flex flex-col gap-2 w-full mt-4">
-        {canEdit && <Link href={`tiers/${tier.id}`}><Button variant="primary" className="w-full">Edit</Button></Link>}
-        {children ? children : (
-          <GetStartedButton url={url} tierId={tier.id} canEdit={canEdit} annual={showAnnual && isntOnce} />
+      <div className="mt-12 w-full">
+        {children || (
+          <CheckoutButton
+            url={url}
+            tierId={tier.id}
+            annual={showAnnual && isntOnce}
+          />
         )}
       </div>
     </Card>
