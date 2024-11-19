@@ -1,4 +1,3 @@
-import { Grid, Col } from '@tremor/react'
 import SkeletonTiers from '../../skeleton-tiers';
 import TierCard from '@/components/tiers/tier-card';
 

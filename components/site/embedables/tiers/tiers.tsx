@@ -1,6 +1,6 @@
 'use client'
-import { Grid, Col, Button } from '@tremor/react';
-import { use, useEffect, useRef, useState } from 'react';
+import { Button } from '@tremor/react';
+import { useEffect, useRef, useState } from 'react';
 import { TiersEmbedSettingsProps } from './tiers-embed-settings';
 import SkeletonTiers from '../../skeleton-tiers';
 import TierCard from '@/components/tiers/tier-card';
