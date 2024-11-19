@@ -79,13 +79,14 @@ export default function Tiers({tiers, subdomain, settings, hasActiveFeatures}: {
                   {tiers.map((tier: any, index: number) => (
                     <div
                       key={index}
-                      className="w-full min-w-xxs md:max-w-sm lg:max-w-xs"
+                      className="min-w-xxs w-full md:max-w-sm lg:max-w-xs"
                     >
                       <TierCard
                         tier={tier}
                         url={subdomain}
                         darkMode={settings.darkmode}
                         hasActiveFeatures={hasActiveFeatures}
+                        alignment={tiers.length === 1 ? "center" : "left"}
                       >
                         <Link href={`/checkout/${tier.id}`} target="_blank">
                           <Button variant="primary" className="w-full">
