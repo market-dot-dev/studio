@@ -1,9 +1,7 @@
 import { useState } from "react";
 import SectionHeader from "./section-header";
 import { Bold, Button, Card, TextInput } from "@tremor/react";
-import ProspectService, {
-  addNewProspectForPackage,
-} from "@/app/services/prospect-service";
+import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Tier } from "@prisma/client";
 
 export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
@@ -22,6 +20,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
     try {
       await addNewProspectForPackage(newProspect, tier);
     } catch (error) {
+      // TODO(mathusan): handle this error better.
       console.error(error);
     } finally {
       setIsSubmitting(false);
