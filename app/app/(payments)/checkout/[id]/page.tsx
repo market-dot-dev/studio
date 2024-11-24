@@ -243,7 +243,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                 tier={tier}
                 maintainer={maintainer}
                 annual={isAnnual}
-                contactUsCheckout={true} // TODO(mathusan): pass this based on the type of tier the user has chosen
+                // contactUsCheckout={true} TODO(mathusan): pass this based on the type of tier the user has chosen
               />
             )}
           </>
