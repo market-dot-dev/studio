@@ -45,6 +45,7 @@ model User {
   maintainedLegacyProducts LegacyProduct[] @relation("UserAsMaintainer")
   charges                  Charge[]
   contracts                Contract[]
+  prospects                Prospect[]
 }
 
 model Account {
@@ -191,7 +192,7 @@ model Tier {
   Charge        Charge[]
   contractId    String?
   contract      Contract?       @relation(fields: [contractId], references: [id])
-
+  Prospects     Prospect[]
   @@index([userId, stripePriceId])
 }
 
@@ -386,4 +387,17 @@ model Contract {
   attachmentUrl  String?
   attachmentType String?
   Tier           Tier[]
+}
+
+model Prospect {
+  id        String   @id @default(cuid())
+  userId    String
+  name      String
+  email     String
+  tiers     Tier[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([email, userId])
 }
