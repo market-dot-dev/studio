@@ -130,7 +130,6 @@ export default function OnboardingForm() {
                   type="radio"
                   name="team-type"
                   className="text-gray-500 checked:text-gray-900 "
-                  defaultChecked
                 />
               </div>
             </label>
