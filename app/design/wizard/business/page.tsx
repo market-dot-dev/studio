@@ -113,10 +113,12 @@ export default function OnboardingForm() {
           </label>
           <div className="space-y-2">
             <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
-              <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-3 shadow-sm [&:has(input:checked)]:border-gray-800 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-gray-800">
+              <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm [&:has(input:checked)]:border-gray-800 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-gray-800">
                 <div className="flex items-center">
                   <UsersRound className="mr-3 h-5 w-5 text-gray-500" />
-                  <span className="text-gray-900">We&apos;re a team</span>
+                  <span className="text-sm text-gray-900">
+                    We&apos;re a team
+                  </span>
                 </div>
                 <input
                   type="radio"
@@ -126,10 +128,12 @@ export default function OnboardingForm() {
               </div>
             </label>
             <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
-              <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-3 shadow-sm [&:has(input:checked)]:border-gray-800 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-gray-800">
+              <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm [&:has(input:checked)]:border-gray-800 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-gray-800">
                 <div className="flex items-center">
                   <UserRound className="mr-3 h-5 w-5 text-gray-500" />
-                  <span className="text-gray-900">It&apos;s just me</span>
+                  <span className="text-sm text-gray-900">
+                    It&apos;s just me
+                  </span>
                 </div>
                 <input
                   type="radio"
