@@ -8,7 +8,5 @@ export default function TiersClient({site, settings, tiers, hasActiveFeatures }:
     
     const filteredTiers = tiers.filter((tier: any) => (settings.tiers ?? []).includes(tier.id));
 
-    return (<>
-        <Tiers tiers={filteredTiers} subdomain={site.subdomain} settings={settings} hasActiveFeatures={hasActiveFeatures} />
-    </>)
+    return <Tiers tiers={filteredTiers} subdomain={site.subdomain} settings={settings} hasActiveFeatures={hasActiveFeatures} />
 }
