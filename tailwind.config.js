@@ -49,60 +49,60 @@ module.exports = {
         },
         tremor: {
           brand: {
-            faint: "#F9FAFB", // gray-50
-            muted: "#E5E7EB", // gray-200
-            subtle: "#6B7280", // gray-500
-            DEFAULT: "#374151", // gray-800
-            emphasis: "#1F2937", // gray-900
+            faint: "#fafaf9", // stone-50
+            muted: "#e7e5e4", // stone-200
+            subtle: "#78716c", // stone-500
+            DEFAULT: "#292524", // stone-800
+            emphasis: "#1c1917", // stone-900
             inverted: "#ffffff", // white
           },
           background: {
-            muted: "#f9fafb", // gray-50
-            subtle: "#f3f4f6", // gray-100
+            muted: "#fafaf9", // stone-50
+            subtle: "#f5f5f4", // stone-100
             DEFAULT: "#ffffff", // white
-            emphasis: "#374151", // gray-700
+            emphasis: "#44403c", // stone-700
           },
           border: {
-            DEFAULT: "#e5e7eb", // gray-200
+            DEFAULT: "#e7e5e4", // stone-200
           },
           ring: {
-            DEFAULT: "#e5e7eb", // gray-200
+            DEFAULT: "#e7e5e4", // stone-200
           },
           content: {
-            subtle: "#9ca3af", // gray-400
-            DEFAULT: "#6b7280", // gray-500
-            emphasis: "#374151", // gray-700
-            strong: "#111827", // gray-900
+            subtle: "#a8a29e", // stone-400
+            DEFAULT: "#78716c", // stone-500
+            emphasis: "#44403c", // stone-700
+            strong: "#1c1917", // stone-900
             inverted: "#ffffff", // white
           },
         },
         // dark mode
         "dark-tremor": {
           brand: {
-            faint: "#0B1229", // custom
-            muted: "#172554", // blue-950
-            subtle: "#1e40af", // blue-800
-            DEFAULT: "#3b82f6", // blue-500
-            emphasis: "#60a5fa", // blue-400
-            inverted: "#030712", // gray-950
+            faint: "#0c0a09", // stone-950
+            muted: "#1c1917", // stone-900
+            subtle: "#292524", // stone-800
+            DEFAULT: "#78716c", // stone-500
+            emphasis: "#a8a29e", // stone-400
+            inverted: "#0c0a09", // stone-950
           },
           background: {
-            muted: "#131A2B", // custom
-            subtle: "#1f2937", // gray-800
-            DEFAULT: "#111827", // gray-900
-            emphasis: "#d1d5db", // gray-300
+            muted: "#1c1917", // stone-900
+            subtle: "#292524", // stone-800
+            DEFAULT: "#1c1917", // stone-900
+            emphasis: "#d6d3d1", // stone-300
           },
           border: {
-            DEFAULT: "#1f2937", // gray-800
+            DEFAULT: "#292524", // stone-800
           },
           ring: {
-            DEFAULT: "#1f2937", // gray-800
+            DEFAULT: "#292524", // stone-800
           },
           content: {
-            subtle: "#4b5563", // gray-600
-            DEFAULT: "#6b7280", // gray-600
-            emphasis: "#e5e7eb", // gray-200
-            strong: "#f9fafb", // gray-50
+            subtle: "#57534e", // stone-600
+            DEFAULT: "#57534e", // stone-600
+            emphasis: "#e7e5e4", // stone-200
+            strong: "#fafaf9", // stone-50
             inverted: "#000000", // black
           },
         },
@@ -122,8 +122,8 @@ module.exports = {
           "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
       },
       borderRadius: {
-        "tremor-small": "0.375rem",
-        "tremor-default": "0.5rem",
+        "tremor-small": "0.25rem",
+        "tremor-default": "0.375rem",
         "tremor-full": "9999px",
       },
       fontSize: {
@@ -206,30 +206,30 @@ module.exports = {
   safelist: [
     {
       pattern:
-        /^(bg-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+        /^(bg-(?:stone|slate|gray|zinc|neutral|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
       variants: ["hover", "ui-selected"],
     },
     {
       pattern:
-        /^(text-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+        /^(text-(?:stone|slate|gray|zinc|neutral|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
       variants: ["hover", "ui-selected"],
     },
     {
       pattern:
-        /^(border-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+        /^(border-(?:stone|slate|gray|zinc|neutral|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
       variants: ["hover", "ui-selected"],
     },
     {
       pattern:
-        /^(ring-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+        /^(ring-(?:sstone|late|gray|zinc|neutral|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
     },
     {
       pattern:
-        /^(stroke-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+        /^(stroke-(?:stone|slate|gray|zinc|neutral|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
     },
     {
       pattern:
-        /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
+        /^(fill-(?:stone|slate|gray|zinc|neutral|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/,
     },
   ],
   plugins: [
