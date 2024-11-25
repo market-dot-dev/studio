@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Image from "next/image";
 import { TextInput, Button } from "@tremor/react";
 import { UsersRound, UserRound, ImageIcon } from "lucide-react";
@@ -142,9 +143,11 @@ export default function OnboardingForm() {
         {/* <Button variant="light" className="text-gray-600">
           Back
         </Button> */}
-        <Button className="bg-gray-900 text-white hover:bg-gray-800">
-          Next
-        </Button>
+        <Link href="/design/wizard/offerings">
+          <Button className="bg-gray-900 text-white hover:bg-gray-800">
+            Next
+          </Button>
+        </Link>
       </div>
     </div>
   );
