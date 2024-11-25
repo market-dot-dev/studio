@@ -21,7 +21,7 @@ export default function OnboardingForm() {
   };
 
   return (
-    <div className="w-full max-w-lg flex flex-col gap-8 ">
+    <div className="flex w-full max-w-lg flex-col gap-8">
       <div className="flex justify-center">
         <Image
           src="/gw-logo-nav.png"
@@ -54,7 +54,9 @@ export default function OnboardingForm() {
               placeholder=""
               className="rounded-r-none border-none bg-white shadow-none focus:border focus:border-gray-900"
             />
-            <span className="py-2 pr-3 text-gray-400 text-sm">.gitwallet.co</span>
+            <span className="py-2 pr-3 text-sm text-gray-400">
+              .gitwallet.co
+            </span>
           </div>
           <p className="text-xs text-gray-500">
             Your landing page will live here (you can change this later).
@@ -99,7 +101,10 @@ export default function OnboardingForm() {
           <label className="block text-gray-900">
             Where are you based out of?
           </label>
-          <TextInput placeholder="Toronto, Canada" className="bg-white" />
+          <TextInput
+            placeholder="Toronto, Canada"
+            className="bg-white text-gray-900"
+          />
         </div>
 
         <div className="space-y-2">
@@ -129,7 +134,7 @@ export default function OnboardingForm() {
                 <input
                   type="radio"
                   name="team-type"
-                  className="text-gray-500 checked:text-gray-900 "
+                  className="text-gray-500 checked:text-gray-900"
                 />
               </div>
             </label>
@@ -137,11 +142,7 @@ export default function OnboardingForm() {
         </div>
       </div>
 
-      {/* Navigation */}
-      <div className="flex justify-end pt-6">
-        {/* <Button variant="light" className="text-gray-600">
-          Back
-        </Button> */}
+      <div className="flex w-full justify-end pt-6">
         <Link href="/design/wizard/offerings">
           <Button className="bg-gray-900 text-white hover:bg-gray-800">
             Next

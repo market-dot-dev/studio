@@ -96,9 +96,9 @@ export default function OfferingsForm() {
         {offerings.map(({ id, title, description, icon: Icon }) => (
           <label
             key={id}
-            className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200"
+            className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-1 focus-within:ring-gray-300"
           >
-            <div className="relative flex h-full cursor-pointer flex-col items-center rounded-tremor-default border bg-white p-6 text-center shadow-sm transition-colors [&:has(input:checked)]:border-gray-800 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-gray-800">
+            <div className="relative flex h-full cursor-pointer flex-col items-center rounded-tremor-default border bg-white p-6 text-center shadow-sm transition-colors focus-within:border-gray-300 hover:bg-gray-50 [&:has(input:checked)]:border-gray-800 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-gray-800">
               <Icon className="mb-3 h-6 w-6 text-gray-500" />
               <h3 className="mb-2 font-bold text-gray-900">{title}</h3>
               <p className="text-sm text-gray-500">{description}</p>
@@ -120,13 +120,9 @@ export default function OfferingsForm() {
       {/* Navigation */}
       <div className="flex w-full max-w-lg justify-between pt-6">
         <Link href="/design/wizard/business">
-          <Button variant="light">
-            Back
-          </Button>
+          <Button variant="light">Back</Button>
         </Link>
-        <Button variant="primary">
-          Finish
-        </Button>
+        <Button variant="primary">Finish</Button>
       </div>
     </div>
   );
