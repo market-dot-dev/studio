@@ -117,7 +117,7 @@ export default function OnboardingForm() {
                   className="h-20 w-auto rounded shadow-sm ring-1 ring-black/10"
                 />
                 <button
-                  onClick={() => setFile(null)}
+                  onClick={handleFilePicker}
                   className="mt-4 text-xs text-gray-500 underline"
                 >
                   Pick another image
