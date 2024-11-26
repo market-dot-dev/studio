@@ -5,10 +5,11 @@ import Image from "next/image";
 import { TextInput, Button } from "@tremor/react";
 import { UsersRound, UserRound, ImageIcon } from "lucide-react";
 import { useState, useRef } from "react";
+import clsx from "clsx";
 
 export default function OnboardingForm() {
   const [file, setFile] = useState<File | null>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingOverDropzone, setIsDraggingOverDropzone] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -24,17 +25,17 @@ export default function OnboardingForm() {
 
   const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setIsDragging(true);
+    setIsDraggingOverDropzone(true);
   };
 
   const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setIsDragging(false);
+    setIsDraggingOverDropzone(false);
   };
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
-    setIsDragging(false);
+    setIsDraggingOverDropzone(false);
     const droppedFile = event.dataTransfer.files[0];
     if (droppedFile && droppedFile.type.startsWith("image/")) {
       setFile(droppedFile);
@@ -90,9 +91,10 @@ export default function OnboardingForm() {
             <span className="ml-2 text-xs text-gray-500">Optional</span>
           </label>
           <div
-            className={`rounded-lg border border-dashed transition-colors ${
-              isDragging ? "border-gray-400" : "border-gray-300"
-            } bg-gray-100 p-10 text-center`}
+            className={clsx(
+              "rounded-lg border border-dashed bg-gray-100 p-10 text-center transition-colors",
+              isDraggingOverDropzone ? "border-gray-400" : "border-gray-300",
+            )}
             onDragEnter={handleDragEnter}
             onDragOver={handleDragEnter}
             onDragLeave={handleDragLeave}
@@ -107,13 +109,13 @@ export default function OnboardingForm() {
             />
             {file ? (
               <div className="mx-auto flex flex-col items-center">
-                  <Image
-                    src={URL.createObjectURL(file)}
-                    alt="Selected file preview"
-                    height={80}
-                    width={80}
-                    className="h-20 w-auto rounded ring-1 ring-black/10 shadow-sm"
-                  />
+                <Image
+                  src={URL.createObjectURL(file)}
+                  alt="Selected file preview"
+                  height={80}
+                  width={80}
+                  className="h-20 w-auto rounded shadow-sm ring-1 ring-black/10"
+                />
                 <button
                   onClick={() => setFile(null)}
                   className="mt-4 text-xs text-gray-500 underline"
