@@ -8,16 +8,37 @@ import { useState, useRef } from "react";
 
 export default function OnboardingForm() {
   const [file, setFile] = useState<File | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      setFile(event.target.files[0]);
+    const selectedFile = event.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
     }
   };
 
   const handleFilePicker = () => {
     fileInputRef.current?.click();
+  };
+
+  const handleDragEnter = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setIsDragging(false);
+    const droppedFile = event.dataTransfer.files[0];
+    if (droppedFile && droppedFile.type.startsWith("image/")) {
+      setFile(droppedFile);
+    }
   };
 
   return (
@@ -43,12 +64,12 @@ export default function OnboardingForm() {
 
       <div className="space-y-8">
         <div className="space-y-2">
-          <label className="block text-gray-900">Business Name</label>
+          <label className="block text-sm text-gray-900">Business Name</label>
           <TextInput placeholder="" className="bg-white" />
         </div>
 
         <div className="space-y-2">
-          <label className="block text-gray-900">Domain</label>
+          <label className="block text-sm text-gray-900">Domain</label>
           <div className="flex items-center justify-between gap-4 rounded-tremor-default border border-tremor-border bg-white shadow-tremor-input">
             <TextInput
               placeholder=""
@@ -59,16 +80,24 @@ export default function OnboardingForm() {
             </span>
           </div>
           <p className="text-xs text-gray-500">
-            Your landing page will live here (you can change this later).
+            Your landing page will live here. You can change this later.
           </p>
         </div>
 
         <div className="space-y-2">
-          <label className="flex items-baseline justify-between text-gray-900">
+          <label className="flex items-baseline justify-between text-sm text-gray-900">
             Logo
             <span className="ml-2 text-xs text-gray-500">Optional</span>
           </label>
-          <div className="rounded-lg border border-dashed border-gray-300 bg-gray-100 p-10 text-center">
+          <div
+            className={`rounded-lg border border-dashed transition-colors ${
+              isDragging ? "border-gray-400" : "border-gray-300"
+            } bg-gray-100 p-10 text-center`}
+            onDragEnter={handleDragEnter}
+            onDragOver={handleDragEnter}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+          >
             <input
               type="file"
               ref={fileInputRef}
@@ -76,29 +105,44 @@ export default function OnboardingForm() {
               className="hidden"
               accept="image/*"
             />
-            <div className="mx-auto flex flex-col items-center">
-              <ImageIcon className="mx-auto h-6 w-6 text-gray-400" />
-              <div className="mt-3 text-xs text-gray-500">
-                <p>Drag & drop a .png or .jpg</p>
-                <p>
-                  or{" "}
-                  <button
-                    onClick={handleFilePicker}
-                    className="cursor-pointer underline"
-                  >
-                    add a file
-                  </button>
-                </p>
+            {file ? (
+              <div className="mx-auto flex flex-col items-center">
+                  <Image
+                    src={URL.createObjectURL(file)}
+                    alt="Selected file preview"
+                    height={80}
+                    width={80}
+                    className="h-20 w-auto rounded ring-1 ring-black/10 shadow-sm"
+                  />
+                <button
+                  onClick={() => setFile(null)}
+                  className="mt-4 text-xs text-gray-500 underline"
+                >
+                  Pick another image
+                </button>
               </div>
-              {file && (
-                <p className="mt-2 text-gray-600">Selected: {file.name}</p>
-              )}
-            </div>
+            ) : (
+              <div className="mx-auto flex flex-col items-center">
+                <ImageIcon className="mx-auto h-6 w-6 text-gray-400" />
+                <div className="mt-3 text-xs text-gray-500">
+                  <p>Drag & drop a .png or .jpg</p>
+                  <p>
+                    or{" "}
+                    <button
+                      onClick={handleFilePicker}
+                      className="cursor-pointer underline"
+                    >
+                      add a file
+                    </button>
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="space-y-2">
-          <label className="block text-gray-900">
+          <label className="block text-sm text-gray-900">
             Where are you based out of?
           </label>
           <TextInput
@@ -108,7 +152,7 @@ export default function OnboardingForm() {
         </div>
 
         <div className="space-y-2">
-          <label className="block text-gray-900">
+          <label className="block text-sm text-gray-900">
             Are you a team or independent?
           </label>
           <div className="space-y-2">
@@ -123,7 +167,7 @@ export default function OnboardingForm() {
                 <input
                   type="radio"
                   name="team-type"
-                  className="text-gray-500 checked:text-marketing-swamp focus:ring-0"
+                  className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
                 />
               </div>
             </label>
@@ -138,7 +182,7 @@ export default function OnboardingForm() {
                 <input
                   type="radio"
                   name="team-type"
-                  className="text-gray-500 checked:text-marketing-swamp focus:ring-0"
+                  className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
                 />
               </div>
             </label>
