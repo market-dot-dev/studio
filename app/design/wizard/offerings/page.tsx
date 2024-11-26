@@ -18,6 +18,7 @@ interface Offering {
   title: string;
   description: string;
   icon: React.ElementType;
+  isComingSoon?: boolean;
 }
 
 const offerings: Offering[] = [
@@ -44,18 +45,21 @@ const offerings: Offering[] = [
     title: "Courses",
     description: "Create and sell online courses",
     icon: BookOpen,
+    isComingSoon: true,
   },
   {
     id: "private-repos",
     title: "Private Repos",
     description: "Share private repositories and code",
     icon: BookLock,
+    isComingSoon: true,
   },
   {
     id: "sass-tools",
     title: "SaaS Tools",
     description: "Write and publish digital books",
     icon: AppWindowMac,
+    isComingSoon: true,
   },
 ];
 
@@ -93,24 +97,33 @@ export default function OfferingsForm() {
       </div>
 
       <div className="grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {offerings.map(({ id, title, description, icon: Icon }) => (
-          <label
-            key={id}
-            className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-1 focus-within:ring-gray-300"
-          >
-            <div className="relative flex h-full cursor-pointer flex-col items-center rounded-tremor-default border bg-white hover:focus-within:bg-white p-6 text-center shadow-sm transition-colors focus-within:border-gray-300 hover:bg-gray-50 [&:has(input:checked)]:border-gray-800 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-gray-800">
-              <Icon className="mb-3 h-6 w-6 text-gray-500" />
-              <h3 className="mb-2 font-bold text-gray-900">{title}</h3>
-              <p className="text-sm text-gray-500">{description}</p>
-              <input
-                type="checkbox"
-                className="sr-only"
-                checked={selectedOfferings.has(id)}
-                onChange={() => toggleOffering(id)}
-              />
-            </div>
-          </label>
-        ))}
+        {offerings.map(
+          ({ id, title, description, icon: Icon, isComingSoon }) => (
+            <label
+              key={id}
+              className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-1 focus-within:ring-gray-300"
+            >
+              <div className="relative">
+                {isComingSoon && (
+                  <span className="absolute right-px top-px z-10 h-5 rounded-bl-[6px] border-b border-l border-black/5 bg-marketing-swamp pl-[7px] pr-2 text-[9px] font-bold uppercase leading-[19px] tracking-wider text-white shadow-sm md:rounded-tr-[5px]">
+                    Coming Soon
+                  </span>
+                )}
+                <div className="relative flex h-full cursor-pointer flex-col items-center rounded-tremor-default border bg-white p-6 text-center shadow-sm transition-colors focus-within:border-gray-300 hover:bg-gray-50 hover:focus-within:bg-white [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
+                  <Icon className="mb-3 h-6 w-6 text-gray-500" />
+                  <h3 className="mb-2 font-bold text-gray-900">{title}</h3>
+                  <p className="text-sm text-gray-500">{description}</p>
+                  <input
+                    type="checkbox"
+                    className="sr-only"
+                    checked={selectedOfferings.has(id)}
+                    onChange={() => toggleOffering(id)}
+                  />
+                </div>
+              </div>
+            </label>
+          ),
+        )}
       </div>
 
       <div className="w-full max-w-lg space-y-2">

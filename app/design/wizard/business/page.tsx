@@ -113,7 +113,7 @@ export default function OnboardingForm() {
           </label>
           <div className="space-y-2">
             <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
-              <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm [&:has(input:checked)]:border-gray-800 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-gray-800">
+              <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
                 <div className="flex items-center">
                   <UsersRound className="mr-3 h-5 w-5 text-gray-500" />
                   <span className="text-sm text-gray-900">
@@ -123,12 +123,12 @@ export default function OnboardingForm() {
                 <input
                   type="radio"
                   name="team-type"
-                  className="text-gray-500 checked:text-gray-900 focus:outline-none"
+                  className="text-gray-500 checked:text-marketing-swamp focus:ring-0"
                 />
               </div>
             </label>
             <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
-              <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm [&:has(input:checked)]:border-gray-800 [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-gray-800">
+              <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
                 <div className="flex items-center">
                   <UserRound className="mr-3 h-5 w-5 text-gray-500" />
                   <span className="text-sm text-gray-900">
@@ -138,7 +138,7 @@ export default function OnboardingForm() {
                 <input
                   type="radio"
                   name="team-type"
-                  className="text-gray-500 checked:text-gray-900"
+                  className="text-gray-500 checked:text-marketing-swamp focus:ring-0"
                 />
               </div>
             </label>
