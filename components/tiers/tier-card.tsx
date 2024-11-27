@@ -1,15 +1,18 @@
-'use client';
+"use client";
 
 import type { SubscriptionCadence } from "@/app/services/StripeService";
-import type { TierWithFeatures } from '@/app/services/TierService';
-import { Card, Button, Text, Switch } from '@tremor/react';
-import Link from 'next/link';
-import TierFeatureList from '@/components/features/tier-feature-list';
-import { Feature } from '@prisma/client';
-import { useState } from 'react';
-import { parseTierDescription } from '@/lib/utils';
+import type {
+  CheckoutType,
+  TierWithFeatures,
+} from "@/app/services/TierService";
+import { Card, Button, Text, Switch } from "@tremor/react";
+import Link from "next/link";
+import TierFeatureList from "@/components/features/tier-feature-list";
+import { Feature } from "@prisma/client";
+import { useState } from "react";
+import { parseTierDescription } from "@/lib/utils";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
-import clsx from 'clsx';
+import clsx from "clsx";
 
 type TierCardProps = {
   url?: string;
@@ -23,20 +26,26 @@ type TierCardProps = {
   children?: React.ReactNode;
 };
 
-export const generateLink = (url: string | null, tierId: string, annual: boolean) => {
-  return `${url ? url : ''}/checkout/${tierId}${annual ? '?annual=true' : ''}`;
-}
+export const generateLink = (
+  url: string | null,
+  tierId: string,
+  annual: boolean,
+) => {
+  return `${url ? url : ""}/checkout/${tierId}${annual ? "?annual=true" : ""}`;
+};
 
-const CheckoutButton = ({ 
-  url, 
-  tierId, 
+const CheckoutButton = ({
+  url,
+  tierId,
   annual = false,
-  variant = 'primary', 
-}: { 
-  url: string | null, 
-  tierId: string, 
-  annual?: boolean 
-  variant?: "secondary" | "primary", 
+  variant = "primary",
+  checkoutType = "gitwallet",
+}: {
+  url: string | null;
+  tierId: string;
+  annual?: boolean;
+  variant?: "secondary" | "primary";
+  checkoutType?: CheckoutType;
 }) => {
   const checkoutUrl = generateLink(url, tierId, annual);
 
@@ -46,48 +55,37 @@ const CheckoutButton = ({
         variant={variant}
         className="w-full rounded-md !bg-gradient-to-b from-gray-800 to-gray-950 px-3 py-2 text-center text-sm font-medium text-white shadow-sm ring-1 ring-black/5 transition-shadow hover:bg-gray-700 hover:shadow"
       >
-        {annual ? `Get Started` : `Get Started`}
+        {checkoutType === "gitwallet" ? "Get Started" : "Contact Us"}
       </Button>
     </Link>
   );
-}
+};
 
-const calcDiscount = (price: number, annualPrice: number) => {
-  if (price === 0) return 0;
-  if (annualPrice === 0) return 100;
-  const twelveMonths = price * 12;
-  return Math.round(((twelveMonths - annualPrice) / twelveMonths * 100) * 10) / 10;
-}
-
-
-
-const TierCard: React.FC<TierCardProps> = ({ 
-  tier, 
-  url = null, 
-  darkMode = false, 
-  features = [], 
+const TierCard: React.FC<TierCardProps> = ({
+  tier,
+  url = null,
+  darkMode = false,
+  features = [],
   hasActiveFeatures,
-  alignment = 'left',
+  alignment = "left",
   className,
-  children, 
+  children,
 }) => {
   const [showAnnual, setShowAnnual] = useState(false);
-  // const [annualDiscountPercent, setAnnualDiscountPercent] = useState(calcDiscount(tier.price, tier.priceAnnual || 0));
 
-  const containerClasses = darkMode
-    ? "text-white "
-    : "text-gray-900 bg-white";
-  
+  const containerClasses = darkMode ? "text-white " : "text-gray-900 bg-white";
   const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
-  
+
   const hasAnnual = (tier.priceAnnual || 0) > 0;
-  const isntOnce = tier.cadence !== 'once';
-  const cadenceShorthand = subscriptionCadenceShorthands[tier.cadence as SubscriptionCadence];
-  
+  const isntOnce = tier.cadence !== "once";
+  const cadenceShorthand =
+    subscriptionCadenceShorthands[tier.cadence as SubscriptionCadence];
+
   const directlyProvidedFeatures = !!features && features.length > 0;
-  const tierFeatures = (directlyProvidedFeatures ? features : tier.features) || [];
-  const parsedDescription = parseTierDescription(tier.description || '');
-  
+  const tierFeatures =
+    (directlyProvidedFeatures ? features : tier.features) || [];
+  const parsedDescription = parseTierDescription(tier.description || "");
+
   return (
     <Card
       className={clsx(
@@ -105,7 +103,7 @@ const TierCard: React.FC<TierCardProps> = ({
         <div>
           <h3
             className={clsx(
-              "text-lg mb-1 font-geist font-semibold text-gray-900",
+              "mb-1 font-geist text-lg font-semibold text-gray-900",
               alignment === "center" && "text-center",
               textClasses,
             )}
@@ -121,41 +119,43 @@ const TierCard: React.FC<TierCardProps> = ({
             {tier.tagline}
           </p>
         </div>
-        <div
-          className={clsx(
-            "flex flex-col gap-1",
-            alignment === "center" && "items-center",
-          )}
-        >
-          <div className="text-4xl">
-            <span className="font-geist-mono">
-              $
-              {showAnnual
-                ? Math.round((tier.priceAnnual || 0) / 12)
-                : tier.price}
-            </span>
-            {cadenceShorthand && (
-              <span className="text-base/10 font-normal text-gray-500">
-                <span className="mr-px">/</span>
-                {cadenceShorthand}
-              </span>
+        {tier.checkoutType === "gitwallet" && (
+          <div
+            className={clsx(
+              "flex flex-col gap-1",
+              alignment === "center" && "items-center",
             )}
-          </div>
-          {hasAnnual && isntOnce ? (
-            <div className="flex items-center gap-1.5">
-              <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
-                Monthly
-              </p>
-              <Switch
-                checked={showAnnual}
-                onChange={() => setShowAnnual(!showAnnual)}
-              />
-              <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
-                Yearly
-              </p>
+          >
+            <div className="text-4xl">
+              <span className="font-geist-mono">
+                $
+                {showAnnual
+                  ? Math.round((tier.priceAnnual || 0) / 12)
+                  : tier.price}
+              </span>
+              {cadenceShorthand && (
+                <span className="text-base/10 font-normal text-gray-500">
+                  <span className="mr-px">/</span>
+                  {cadenceShorthand}
+                </span>
+              )}
             </div>
-          ) : null}
-        </div>
+            {hasAnnual && isntOnce ? (
+              <div className="flex items-center gap-1.5">
+                <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+                  Monthly
+                </p>
+                <Switch
+                  checked={showAnnual}
+                  onChange={() => setShowAnnual(!showAnnual)}
+                />
+                <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+                  Yearly
+                </p>
+              </div>
+            ) : null}
+          </div>
+        )}
         <div className="flex flex-col gap-4">
           {hasActiveFeatures && tierFeatures.length !== 0 ? (
             <TierFeatureList features={tierFeatures} darkMode={darkMode} />
@@ -196,6 +196,7 @@ const TierCard: React.FC<TierCardProps> = ({
             url={url}
             tierId={tier.id}
             annual={showAnnual && isntOnce}
+            checkoutType={tier.checkoutType as CheckoutType}
           />
         )}
       </div>

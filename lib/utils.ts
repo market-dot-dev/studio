@@ -4,6 +4,15 @@ import { twMerge } from "tailwind-merge";
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+// Tremor focusRing [v0.0.1]
+export const focusRing = [
+  // base
+  "outline outline-offset-2 outline-0 focus-visible:outline-2",
+  // outline color
+  "outline-blue-500 dark:outline-blue-500",
+];
+
 export async function fetcher<JSON = any>(
   input: RequestInfo,
   init?: RequestInit,
@@ -60,67 +69,69 @@ export const random = (min: number, max: number) => {
 
 export const extractGitHubRepoInfo = (url: string | null | undefined) => {
   if (!url) {
-      return null;
+    return null;
   }
   const pattern = /https:\/\/github\.com\/([^\/]+)\/([^\/]+)/;
   const match = url.match(pattern);
 
   if (match) {
-      return {
-          usernameOrOrg: match[1],
-          repoName: match[2]
-      };
+    return {
+      usernameOrOrg: match[1],
+      repoName: match[2],
+    };
   } else {
-      return null;
+    return null;
   }
-}
+};
 
-export const gitHubRepoOrgAndName = (url : string | null | undefined) => {
+export const gitHubRepoOrgAndName = (url: string | null | undefined) => {
   const repoInfo = extractGitHubRepoInfo(url);
   return repoInfo ? `${repoInfo.usernameOrOrg}/${repoInfo.repoName}` : "";
-}
+};
 
 export const formatDate = (date: Date | string): string => {
   const options: Intl.DateTimeFormatOptions = {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    timeZone: 'UTC' // Ensure consistent output by using UTC
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC", // Ensure consistent output by using UTC
   };
 
   // Convert the date string to a Date object if it's not already
-  const parsedDate = typeof date === 'string' ? new Date(date) : date;
+  const parsedDate = typeof date === "string" ? new Date(date) : date;
 
   // Use 'en-US' for a consistent locale
-  return parsedDate.toLocaleDateString('en-US', options);
+  return parsedDate.toLocaleDateString("en-US", options);
 };
 
-
-export const formatCurrency = (amount: number, currency: string = 'USD'): string => {
+export const formatCurrency = (
+  amount: number,
+  currency: string = "USD",
+): string => {
   const options: Intl.NumberFormatOptions = {
-    style: 'currency',
+    style: "currency",
     currency,
     minimumFractionDigits: 2,
   };
-  return amount.toLocaleString('en-US', options);
+  return amount.toLocaleString("en-US", options);
 };
 
 export const parseTierDescription = (description: string) => {
-  const lines = description.split('\n');
+  const lines = description.split("\n");
   const result = [] as any[];
 
-  lines.forEach(content => {
+  lines.forEach((content) => {
     const line = content.trim();
-    if(line.length === 0) return;
+    if (line.length === 0) return;
     const latest = result[result.length - 1];
-    if (line.startsWith('-')) {
-      if(latest?.features) {
-        latest.features.push(line.replace(/^-+\s*/, ''));
+    if (line.startsWith("-")) {
+      if (latest?.features) {
+        latest.features.push(line.replace(/^-+\s*/, ""));
       } else {
-        result.push({ features: [line.replace(/^-+\s*/, '')] });
+        result.push({ features: [line.replace(/^-+\s*/, "")] });
       }
     } else {
-      if(latest?.text) {
+      if (latest?.text) {
         latest.text.push(line);
       } else {
         result.push({ text: [line] });
@@ -129,4 +140,4 @@ export const parseTierDescription = (description: string) => {
   });
 
   return result;
-}
+};
