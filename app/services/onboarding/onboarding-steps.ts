@@ -25,13 +25,13 @@ export const onboardingSteps = [
         name: 'setupTiers',
         description: 'Define your service offerings and create a package for sale.',
         urls: ['/tiers'],
-        title: 'Define Service Packages',
+        title: 'List your services',
     },
     {
         name: 'setupPayment',
         description: 'Connect a Stripe account to start receiving payments.',
         urls: ['/settings/payment'],
-        title: 'Connect Payout Account',
+        title: 'Connect Stripe',
     },
     {
         name: 'setupSite',
@@ -40,7 +40,7 @@ export const onboardingSteps = [
             '/site/',
             '/page/'
          ],
-        title: 'Build Your Site',
+        title: 'Customize your site',
     },
 ]
 

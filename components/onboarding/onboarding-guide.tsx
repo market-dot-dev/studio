@@ -36,21 +36,30 @@ function TodoItem({ step, index, currentStep, completedSteps }: {
         >
           <div className="flex h-5 items-center">
             {completed ? (
-              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-500 ring-4 ring-stone-50">
+              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-500 ring-4 ring-white">
                 <Check size={12} color="white" />
               </div>
             ) : (
               <div
                 className={clsx(
-                  "box-border h-4 w-4 shrink-0 rounded-full border border-stone-300 ring-4 ring-stone-50",
-                  activeStep ? "bg-white" : "border-dashed",
+                  "box-border h-4 w-4 shrink-0 rounded-full border border-stone-300 ring-4 ring-white",
+                  activeStep && "border-dashed",
                 )}
               ></div>
             )}
           </div>
-          <div className="flex w-full flex-wrap items-center justify-between gap-3 ring-4 ring-stone-50">
+          <div className="flex w-full flex-wrap items-center justify-between gap-3">
             <div className="flex flex-col items-start">
-              <Bold className="w-fit text-sm">{stepTitle}</Bold>
+              <Bold
+                className={clsx(
+                  "w-fit text-sm",
+                  completed || !activeStep
+                    ? "text-stone-500"
+                    : "text-stone-900",
+                )}
+              >
+                {stepTitle}
+              </Bold>
               {!activeStep && !completed && <Text>{stepDescription}</Text>}
             </div>
             {!activeStep && !completed && (
@@ -72,7 +81,7 @@ function TodoItem({ step, index, currentStep, completedSteps }: {
             )}
           </div>
         </div>
-        <hr className="ml-12 border-stone-200 last:hidden" />
+        <hr className="ml-12 border-stone-200/75 last:hidden" />
       </>
     );
 }
@@ -115,13 +124,13 @@ export default function OnboardingGuide(): JSX.Element {
     }, [setIsDismissing]);
 
 
-    if (completedSteps === null || isDismissed || pathName === '/') return <></>;
+    if (completedSteps === null || isDismissed) return <></>;
 
     return (
       <div
-        className={`flex max-w-screen-xl flex-col items-start overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-sm`}
+        className={`flex max-w-screen-xl flex-col items-start overflow-hidden rounded-lg border border-stone-200 `}
       >
-        <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-stone-200/60 bg-stone-100 py-2 pl-4 pr-3">
+        <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-stone-200/75 bg-stone-50 py-2.5 pl-4 pr-2.5">
           <div className="flex items-center gap-4">
             <Goal size={16} className="text-stone-500" />
             <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500">
@@ -133,18 +142,14 @@ export default function OnboardingGuide(): JSX.Element {
               <Button
                 variant="light"
                 onClick={dismissGuide}
-                className="group m-0 p-0 text-sm underline"
+                className="group -m-1 rounded p-1 text-sm underline transition-colors hover:bg-stone-200"
               >
-                <X
-                  size={16}
-                  className="text-stone-500 transition-colors group-hover:text-stone-900"
-                />
+                <X size={16} className="text-stone-500" />
               </Button>
             </div>
           )}
         </div>
-        {/* <hr className="ml-12 border-stone-200 w-full" /> */}
-        <div className="before:border-dashed before:border-stone-300 relative flex w-full flex-col before:absolute before:inset-y-5 before:left-6 before:z-[-1] before:w-px before:border-l ">
+        <div className="relative flex w-full flex-col before:absolute before:inset-y-5 before:left-[23.5px] before:z-[-1] before:w-px before:border-l before:border-dashed before:border-stone-300">
           {onboardingSteps.map((step, index) => {
             return (
               <TodoItem

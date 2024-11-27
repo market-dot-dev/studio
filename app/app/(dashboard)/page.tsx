@@ -31,19 +31,12 @@ export default async function Overview() {
   }));
 
   return (
-    <>
-      <div className="flex max-w-screen-xl flex-col">
-        <div className="text-center">
-          {onboarding ? <OnboardingGuide /> : null}
-        </div>
-        <div className="flex flex-col space-y-6">
-          <PageHeading title={title} />
-          <div className="flex flex-col">
-            <SalesTable customers={customers} maxInitialRows={5} />
-            <DashboardCharts customers={customers} />
-          </div>
-        </div>
+    <div className="flex max-w-screen-xl flex-col space-y-6">
+      <PageHeading title={title} />
+      <div className="flex flex-col">
+        <SalesTable customers={customers} maxInitialRows={5} />
+        <DashboardCharts customers={customers} />
       </div>
-    </>
+    </div>
   );
 }

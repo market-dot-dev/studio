@@ -25,16 +25,22 @@ export default async function DashboardLayout({ children }: { children: ReactNod
     <DashboardProvider siteId={site?.id ?? null}>
       <SessionRefresher />
       <div>
-        <Nav siteId={site?.id ?? null} roleId={user.roleId || 'anonymous'} hasFeatures={activeFeatures.length != 0} >
+        <Nav
+          siteId={site?.id ?? null}
+          roleId={user.roleId || "anonymous"}
+          hasFeatures={activeFeatures.length != 0}
+        >
           <Suspense fallback={<div>Loading...</div>}>
             <Profile />
           </Suspense>
         </Nav>
         <div className="min-h-screen sm:pl-60">
-          <Flex alignItems="stretch" className="w-full">
-            <div className="flex flex-col gap-9 max-w-screen-xl grow p-8 mx-auto">
-              {onboarding ? <OnboardingGuide /> : null }
-              {user?.stripeAccountDisabled && user?.stripeAccountId && <StripeDisabledBanner /> }
+          <Flex alignItems="stretch" className="flex w-full flex-col gap-4 p-4">
+            {onboarding && <OnboardingGuide />}
+            {user?.stripeAccountDisabled && user?.stripeAccountId && (
+              <StripeDisabledBanner />
+            )}
+            <div className="relative mx-auto flex w-full max-w-screen-xl grow flex-col gap-8 p-4">
               {children}
             </div>
           </Flex>
