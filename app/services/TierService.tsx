@@ -425,6 +425,7 @@ class TierService {
         price: true,
         cadence: true,
         priceAnnual: true,
+        checkoutType: true,
         versions: {
           orderBy: {
             createdAt: "desc", // Order by creation date in descending order
