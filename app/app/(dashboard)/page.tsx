@@ -22,7 +22,7 @@ export default async function Overview() {
     getCustomersData()
   ]);
 
-  const title = user?.name ? `Welcome, ${user.name}!` : "Your Dashboard";
+  const title = user?.name ? `Welcome, ${user.name}` : "Your Dashboard";
   const onboarding = user?.onboarding;
 
   const repos = repoResults.map(repo => ({

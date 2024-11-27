@@ -7,21 +7,21 @@ import { saveState as saveOnboardingState } from "@/app/services/onboarding/Onbo
 import { onboardingSteps, type OnboardingStepsType, onBoardingStepType } from "@/app/services/onboarding/onboarding-steps";
 import { getState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
-import { Check, X, ChevronRight } from "lucide-react";
+import { Check, X, ChevronRight, Goal } from "lucide-react";
+import clsx from "clsx";
 
-function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps }: {
+function TodoItem({ step, index, currentStep, completedSteps }: {
     step: onBoardingStepType,
     index: number,
     currentStep: number | null,
     completedSteps: OnboardingStepsType,
-    setCompletedSteps: (steps: OnboardingStepsType) => void,
 }): JSX.Element {
 
     const router = useRouter()
     const siteId = useSiteId();
 
 
-    const { title: stepTitle, urls: stepURL, description: stepDescription, icon: stepIcon } = step;
+    const { title: stepTitle, urls: stepURL, description: stepDescription } = step;
 
     const activeStep = currentStep === index;
 
@@ -30,25 +30,25 @@ function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps 
     return (
       <>
         <div
-          className="flex w-full flex-row items-start gap-4 border-b p-4 py-3 last:border-b-0"
-          onClick={() =>
-            router.push(
-              step.name === "setupSite" && siteId
-                ? stepURL[0] + siteId
-                : stepURL[0],
-            )
-          }
-        >
-          {completed ? (
-            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500">
-              <Check size={16} color="white" />
-            </div>
-          ) : activeStep ? (
-            <div className="box-border h-5 w-5 shrink-0 rounded-full border-2"></div>
-          ) : (
-            <div className="box-border h-5 w-5 shrink-0 rounded-full border-2 border-dashed"></div>
+          className={clsx(
+            "flex w-full flex-row items-start gap-4 p-4 py-2.5 last:border-b-0",
           )}
-          <div className="flex w-full flex-wrap items-center justify-between gap-3">
+        >
+          <div className="flex h-5 items-center">
+            {completed ? (
+              <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-500 ring-4 ring-stone-50">
+                <Check size={12} color="white" />
+              </div>
+            ) : (
+              <div
+                className={clsx(
+                  "box-border h-4 w-4 shrink-0 rounded-full border border-stone-300 ring-4 ring-stone-50",
+                  activeStep ? "bg-white" : "border-dashed",
+                )}
+              ></div>
+            )}
+          </div>
+          <div className="flex w-full flex-wrap items-center justify-between gap-3 ring-4 ring-stone-50">
             <div className="flex flex-col items-start">
               <Bold className="w-fit text-sm">{stepTitle}</Bold>
               {!activeStep && !completed && <Text>{stepDescription}</Text>}
@@ -72,6 +72,7 @@ function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps 
             )}
           </div>
         </div>
+        <hr className="ml-12 border-stone-200 last:hidden" />
       </>
     );
 }
@@ -100,11 +101,9 @@ export default function OnboardingGuide(): JSX.Element {
         setCurrentStep(currentStep);
 
         // set a window function that can be called from other components to refresh the onboarding guide
-        if (!(window as any)['refreshOnboarding']) {
-            (window as any)['refreshOnboarding'] = () => {
-                action();
-            }
-        }
+        if ((window as any)['refreshOnboarding']) return;
+
+        (window as any)['refreshOnboarding'] = () => action();
     }, [pathName])
 
     const dismissGuide = useCallback(() => {
@@ -120,23 +119,32 @@ export default function OnboardingGuide(): JSX.Element {
 
     return (
       <div
-        className={`flex max-w-screen-xl flex-col items-start rounded-lg shadow-sm ring-1 ring-black/10`}
+        className={`flex max-w-screen-xl flex-col items-start overflow-hidden rounded-lg border border-stone-200 bg-stone-50 shadow-sm`}
       >
-        <div className="flex w-full items-center justify-between gap-4 px-4 py-2 border-b bg-gray-50">
-            <h3 className="font-bold text-sm">Get started</h3>
-            {!isDismissed && (
-                <div className="m-0 flex justify-end">
-                <Button
-                    variant="light"
-                    onClick={dismissGuide}
-                    className="m-0 p-0 text-sm underline group"
-                >
-                    <X size={20} className="text-gray-500 group-hover:text-gray-900 transition-colors" />
-                </Button>
-                </div>
-            )}
+        <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-stone-200/60 bg-stone-100 py-2 pl-4 pr-3">
+          <div className="flex items-center gap-4">
+            <Goal size={16} className="text-stone-500" />
+            <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500">
+              Get started
+            </h3>
+          </div>
+          {!isDismissed && (
+            <div className="m-0 flex justify-end">
+              <Button
+                variant="light"
+                onClick={dismissGuide}
+                className="group m-0 p-0 text-sm underline"
+              >
+                <X
+                  size={16}
+                  className="text-stone-500 transition-colors group-hover:text-stone-900"
+                />
+              </Button>
+            </div>
+          )}
         </div>
-        <div className="flex w-full flex-col">
+        {/* <hr className="ml-12 border-stone-200 w-full" /> */}
+        <div className="before:border-dashed before:border-stone-300 relative flex w-full flex-col before:absolute before:inset-y-5 before:left-6 before:z-[-1] before:w-px before:border-l ">
           {onboardingSteps.map((step, index) => {
             return (
               <TodoItem
@@ -145,7 +153,6 @@ export default function OnboardingGuide(): JSX.Element {
                 step={step as onBoardingStepType}
                 currentStep={currentStep}
                 completedSteps={completedSteps}
-                setCompletedSteps={setCompletedSteps}
               />
             );
           })}

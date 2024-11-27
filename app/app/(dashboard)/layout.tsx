@@ -33,8 +33,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         <div className="min-h-screen sm:pl-60">
           <Flex alignItems="stretch" className="w-full">
             <div className="flex flex-col gap-9 max-w-screen-xl grow p-8 mx-auto">
-              {/* { onboarding ? <OnboardingGuide /> : null } */}
-              <OnboardingGuide />
+              {onboarding ? <OnboardingGuide /> : null }
               {user?.stripeAccountDisabled && user?.stripeAccountId && <StripeDisabledBanner /> }
               {children}
             </div>
