@@ -7,16 +7,14 @@ import { saveState as saveOnboardingState } from "@/app/services/onboarding/Onbo
 import { onboardingSteps, type OnboardingStepsType, onBoardingStepType } from "@/app/services/onboarding/onboarding-steps";
 import { getState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
-import { Check, BadgeAlert, X, ChevronRight } from "lucide-react";
-import clsx from "clsx";
+import { Check, X, ChevronRight } from "lucide-react";
 
-function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps, dashboard }: {
+function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps }: {
     step: onBoardingStepType,
     index: number,
     currentStep: number | null,
     completedSteps: OnboardingStepsType,
     setCompletedSteps: (steps: OnboardingStepsType) => void,
-    dashboard?: boolean
 }): JSX.Element {
 
     const router = useRouter()
@@ -77,7 +75,7 @@ function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps,
       </>
     );
 }
-export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }): JSX.Element {
+export default function OnboardingGuide(): JSX.Element {
     const pathName = usePathname();
     const [currentStep, setCurrentStep] = useState<number | null>(null);
     const [completedSteps, setCompletedSteps] = useState<OnboardingStepsType>(null);
@@ -118,19 +116,7 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     }, [setIsDismissing]);
 
 
-    if (completedSteps === null || isDismissed || (pathName === '/' && !dashboard)) return <></>;
-
-    const ConditionalWrapper = ({ 
-        condition, 
-        wrapper, 
-        children 
-    }: { 
-        condition: boolean, 
-        wrapper: (children: React.ReactNode) => JSX.Element, 
-        children: React.ReactNode 
-    }) => {
-        return condition ? wrapper(children) : children;
-    };
+    if (completedSteps === null || isDismissed || pathName === '/') return <></>;
 
     return (
       <div
@@ -153,7 +139,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
         <div className="flex w-full flex-col">
           {onboardingSteps.map((step, index) => {
             return (
-              // assuming 4 onboarding steps, so width is 1/4
               <TodoItem
                 key={index}
                 index={index}
@@ -161,7 +146,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                 currentStep={currentStep}
                 completedSteps={completedSteps}
                 setCompletedSteps={setCompletedSteps}
-                dashboard={dashboard}
               />
             );
           })}

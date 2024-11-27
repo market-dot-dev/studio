@@ -34,7 +34,7 @@ export default async function Overview() {
     <>
       <div className="flex max-w-screen-xl flex-col">
         <div className="text-center">
-          {onboarding ? <OnboardingGuide dashboard={true} /> : null}
+          {onboarding ? <OnboardingGuide /> : null}
         </div>
         <div className="flex flex-col space-y-6">
           <PageHeading title={title} />
