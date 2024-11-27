@@ -11,7 +11,6 @@ import {
   AppWindowMac,
 } from "lucide-react";
 import { useState } from "react";
-import Link from "next/link";
 
 interface Offering {
   id: string;

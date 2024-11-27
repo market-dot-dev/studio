@@ -8,6 +8,8 @@ import { onboardingSteps, type OnboardingStepsType, onBoardingStepType } from "@
 import { getState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
 import { Check, BadgeAlert } from "lucide-react";
+import BusinessForm from "@/app/design/wizard/business/page";
+import OfferingsForm from "@/app/design/wizard/offerings/page";
 
 function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps, dashboard }: {
     step: onBoardingStepType,
@@ -62,6 +64,7 @@ function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps,
         </>
     )
 }
+
 export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }): JSX.Element {
 
     const pathName = usePathname();
@@ -69,8 +72,8 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     const [completedSteps, setCompletedSteps] = useState<OnboardingStepsType>(null);
     const [isDismissing, setIsDismissing] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
-
-
+    const [wizardShown, setIsWizardShow] = useState(true);
+    const [wizardStep, setWizardStep] = useState(0);
 
     useEffect(() => {
 
@@ -121,57 +124,113 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     };
 
     return (
-        <div className={`flex max-w-screen-xl flex-col space-y-2` + (!dashboard ? ` mb-4` : ``)}>
-
-            {!dashboard && !isDismissed &&
-                <div className="flex justify-between m-0">
-                    <Bold>A quick guide to help you setup...</Bold>
-                    <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
-                </div>}
-
-            <Flex flexDirection="col" alignItems="stretch" className="gap-8">
-
-                {dashboard &&
-                    <div className="flex flex-col text-start">
-                        <p className="font-cal text-3xl font-bold mb-2">
-                            Welcome to Gitwallet!
-                        </p>
-                        <Text>Here&apos;s a quick guide to get you started.&nbsp;</Text>
+        wizardShown ? 
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                <div className="bg-white rounded-lg p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
+                    <div className="flex flex-col items-center justify-center space-y-4">
+                        {wizardStep === 0 ? (
+                            <div className="flex flex-col items-center w-full">
+                                <BusinessForm />
+                                <div className="flex justify-end gap-4 mt-4 w-full max-w-lg">
+                                    <Button 
+                                        variant="light" 
+                                        onClick={() => setIsWizardShow(false)}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button 
+                                        variant="primary"
+                                        onClick={() => setWizardStep(1)}
+                                    >
+                                        Next
+                                    </Button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="flex flex-col items-center w-full">
+                                <OfferingsForm />
+                                <div className="flex justify-between mt-4 w-full max-w-3xl">
+                                    <Button 
+                                        variant="light"
+                                        onClick={() => setWizardStep(0)}
+                                    >
+                                        Back
+                                    </Button>
+                                    <div className="flex gap-4">
+                                        <Button 
+                                            variant="light" 
+                                            onClick={() => setIsWizardShow(false)}
+                                        >
+                                            Cancel
+                                        </Button>
+                                        <Button 
+                                            variant="primary"
+                                            onClick={() => {
+                                                setIsWizardShow(false);
+                                                // Here you can add logic to save all wizard data
+                                            }}
+                                        >
+                                            Finish
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        :
+            <div className={`flex max-w-screen-xl flex-col space-y-2` + (!dashboard ? ` mb-4` : ``)}>
+                {!dashboard && !isDismissed &&
+                    <div className="flex justify-between m-0">
+                        <Bold>A quick guide to help you setup...</Bold>
+                        <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
                     </div>}
 
-                <ConditionalWrapper condition={dashboard ?? true}
-                    wrapper={children =>
-                        <Card className="max-w-full p-4">
-                            {children}
-                        </Card>
-                    }
-                >
-                    <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
-                        {
-                            onboardingSteps.map((step, index) => {
-                                return (
-                                    // assuming 4 onboarding steps, so width is 1/4
-                                    <div className={!dashboard ? `w-1/4` : ``} key={index}>
-                                        <TodoItem
-                                            index={index}
-                                            step={step as onBoardingStepType}
-                                            currentStep={currentStep}
-                                            completedSteps={completedSteps}
-                                            setCompletedSteps={setCompletedSteps}
-                                            dashboard={dashboard}
-                                        />
-                                        {dashboard && index !== onboardingSteps.length - 1 && <Divider className="my-5" />}
-                                    </div>
-                                )
-                            })
+                <Flex flexDirection="col" alignItems="stretch" className="gap-8">
+
+                    {dashboard &&
+                        <div className="flex flex-col text-start">
+                            <p className="font-cal text-3xl font-bold mb-2">
+                                Welcome to Gitwallet!
+                            </p>
+                            <Text>Here&apos;s a quick guide to get you started.&nbsp;</Text>
+                        </div>}
+
+                    <ConditionalWrapper condition={dashboard ?? true}
+                        wrapper={children =>
+                            <Card className="max-w-full p-4">
+                                {children}
+                            </Card>
                         }
-                    </div>
-                </ConditionalWrapper>
-            </Flex>
-            {dashboard && !isDismissed &&
-                <div className="flex justify-end m-0">
-                    <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
-                </div>}
-        </div>
+                    >
+                        <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
+                            {
+                                onboardingSteps.map((step, index) => {
+                                    return (
+                                        // assuming 4 onboarding steps, so width is 1/4
+                                        <div className={!dashboard ? `w-1/4` : ``} key={index}>
+                                            <TodoItem
+                                                index={index}
+                                                step={step as onBoardingStepType}
+                                                currentStep={currentStep}
+                                                completedSteps={completedSteps}
+                                                setCompletedSteps={setCompletedSteps}
+                                                dashboard={dashboard}
+                                            />
+                                            {dashboard && index !== onboardingSteps.length - 1 && <Divider className="my-5" />}
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    </ConditionalWrapper>
+                </Flex>
+
+                {dashboard && !isDismissed &&
+                    <div className="flex justify-end m-0">
+                        <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
+                    </div>}
+            </div>
     )
 }

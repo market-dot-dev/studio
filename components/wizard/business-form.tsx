@@ -6,7 +6,7 @@ import { UsersRound, UserRound, ImageIcon } from "lucide-react";
 import { useState, useRef } from "react";
 import clsx from "clsx";
 
-export default function OnboardingForm() {
+export default function BusinessForm() {
   const [file, setFile] = useState<File | null>(null);
   const [isDraggingOverDropzone, setIsDraggingOverDropzone] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -192,4 +192,4 @@ export default function OnboardingForm() {
       </div>
     </div>
   );
-}
+} 
