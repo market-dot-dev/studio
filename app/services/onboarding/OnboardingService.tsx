@@ -95,9 +95,9 @@ class OnboardingService {
         if (result) {
 
             // Check if the project setup step is done
-            if (result.projectName !== businessName && result.projectDescription !== businessDescription) {
-                onboardingState.setupProject = true;
-            }
+            // if (result.projectName !== businessName && result.projectDescription !== businessDescription) {
+            //     onboardingState.setupProject = true;
+            // }
 
             // Check if the payment setup step is done
             if (result.stripeAccountId) {

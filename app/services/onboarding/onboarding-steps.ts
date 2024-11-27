@@ -2,7 +2,7 @@
 // ADD Setup project step
 // ADD 
 
-import { Computer, Banknote, Package, Globe, Github } from "lucide-react"
+import { Package, AppWindowMac, Wallet, WalletMinimal } from "lucide-react"
 
 export type OnboardingStepsType = {
     connectRepos: boolean,
@@ -20,29 +20,10 @@ export type onBoardingStepType = {
     urls: string[],
     title: string,
     icon: any,
-
-}
-
-export const onboardingStepsIcons = {
-    connectRepos: Github,
-    setupProject: Computer,
-    setupPayment: Banknote,
-    setupTiers: Package,
-    setupSite: Globe,
 }
 
 // enumerate the steps that the user needs to complete
 export const onboardingSteps = [
-    {
-        name: 'setupSite',
-        description: 'Your site is your first sales channel. Customize it to match your brand and start selling.',
-        urls: [ 
-            '/site/',
-            '/page/'
-         ],
-        title: 'Build Your Site',
-        icon: Globe,
-    },
     {
         name: 'setupTiers',
         description: 'Define your service offerings and create a package for sale.',
@@ -55,23 +36,25 @@ export const onboardingSteps = [
         description: 'Connect a Stripe account to start receiving payments.',
         urls: ['/settings/payment'],
         title: 'Connect Payout Account',
-        icon: Banknote,
+        icon: WalletMinimal,
     },
     {
-        name: 'setupProject',
-        description: 'Your business settings apply in many places, from your website to checkout.',
-        urls: ['/settings/project'],
-        title: 'Provide Business Details',
-        icon: Computer,
+        name: 'setupSite',
+        description: 'Your site is your first sales channel. Customize it to match your brand and start selling.',
+        urls: [ 
+            '/site/',
+            '/page/'
+         ],
+        title: 'Build Your Site',
+        icon: AppWindowMac,
     },
-    {
-        name: 'connectRepos',
-        description: 'If you maintain any open sources repos, connecting repos to verify ownership.',
-        urls: ['/settings/repos'],
-        title: 'Connect Github Repos',
-        icon: Github,
-    },
-
+    // {
+    //     name: 'connectRepos',
+    //     description: 'If you maintain any open sources repos, connecting repos to verify ownership.',
+    //     urls: ['/settings/repos'],
+    //     title: 'Connect Github Repos',
+    //     icon: Github,
+    // },
 ]
 
 // export const onboardingStepsDescription = {

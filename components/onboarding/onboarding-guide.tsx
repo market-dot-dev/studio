@@ -7,7 +7,8 @@ import { saveState as saveOnboardingState } from "@/app/services/onboarding/Onbo
 import { onboardingSteps, type OnboardingStepsType, onBoardingStepType } from "@/app/services/onboarding/onboarding-steps";
 import { getState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
-import { Check, BadgeAlert } from "lucide-react";
+import { Check, BadgeAlert, X, ChevronRight } from "lucide-react";
+import clsx from "clsx";
 
 function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps, dashboard }: {
     step: onBoardingStepType,
@@ -24,56 +25,66 @@ function TodoItem({ step, index, currentStep, completedSteps, setCompletedSteps,
 
     const { title: stepTitle, urls: stepURL, description: stepDescription, icon: stepIcon } = step;
 
-    const stepIconDiv =
-        <div className="me-2">
-            <Icon icon={stepIcon} size={"xl"} />
-        </div>;
-
     const activeStep = currentStep === index;
 
     const completed = completedSteps?.[step.name] === true;
 
     return (
-        <>
-            <div className="flex cursor-pointer" onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}>
-                <div className="flex flex-row">
-                    {dashboard && stepIconDiv}
-                    <div className={!dashboard && activeStep ? `mx-2 p-2 mb-2 rounded-lg w-full bg-gray-100` : !dashboard ? `p-2 mb-2 w-full` : ``}>
-                        <div className="px-1 mb-2">
-                            <div className={dashboard ? "flex items-center justify-start gap-0" : "flex flex-col items-center justify-start gap-0"}>
-                                <Badge icon={completed ? Check : BadgeAlert} size="xs" color={completed ? "green" : "gray"} className={dashboard ? `me-2` : `mb-2`}>
-                                    {completed ? `Completed` : `To Do`}
-                                </Badge>
-
-                                <Bold className={dashboard ? `text-sm leading-tight` : `text-sm leading-tight text-center`}>{stepTitle} {!dashboard}</Bold>
-                            </div>
-                            {dashboard &&
-                                <div className="flex">
-                                    <Text>{stepDescription}</Text>
-                                </div>
-                            }
-                        </div>
-                        {dashboard &&
-                            <Button size="xs" variant="primary" className="w-min py-1.5 px-4" onClick={() => router.push(step.name === 'setupSite' && siteId ? stepURL[0] + siteId : stepURL[0])}>{stepTitle} {activeStep ? "↓" : "→"}</Button>
-                        }
-                    </div>
-                </div>
+      <>
+        <div
+          className="flex w-full flex-row items-start gap-4 border-b p-4 py-3 last:border-b-0"
+          onClick={() =>
+            router.push(
+              step.name === "setupSite" && siteId
+                ? stepURL[0] + siteId
+                : stepURL[0],
+            )
+          }
+        >
+          {completed ? (
+            <div className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-green-500">
+              <Check size={16} color="white" />
             </div>
-        </>
-    )
+          ) : activeStep ? (
+            <div className="box-border h-5 w-5 shrink-0 rounded-full border-2"></div>
+          ) : (
+            <div className="box-border h-5 w-5 shrink-0 rounded-full border-2 border-dashed"></div>
+          )}
+          <div className="flex w-full flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-col items-start">
+              <Bold className="w-fit text-sm">{stepTitle}</Bold>
+              {!activeStep && !completed && <Text>{stepDescription}</Text>}
+            </div>
+            {!activeStep && !completed && (
+              <Button
+                size="xs"
+                variant="light"
+                className="w-fit font-medium"
+                onClick={() =>
+                  router.push(
+                    step.name === "setupSite" && siteId
+                      ? stepURL[0] + siteId
+                      : stepURL[0],
+                  )
+                }
+              >
+                <span>{stepTitle}</span>
+                <ChevronRight size={16} className="mb-px ml-0.5 inline-block" />
+              </Button>
+            )}
+          </div>
+        </div>
+      </>
+    );
 }
 export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }): JSX.Element {
-
     const pathName = usePathname();
     const [currentStep, setCurrentStep] = useState<number | null>(null);
     const [completedSteps, setCompletedSteps] = useState<OnboardingStepsType>(null);
     const [isDismissing, setIsDismissing] = useState(false);
     const [isDismissed, setIsDismissed] = useState(false);
 
-
-
     useEffect(() => {
-
         const action = async () => {
             const state = await getState() as OnboardingStepsType;
             setCompletedSteps(state);
@@ -96,8 +107,6 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
                 action();
             }
         }
-
-
     }, [pathName])
 
     const dismissGuide = useCallback(() => {
@@ -109,69 +118,54 @@ export default function OnboardingGuide({ dashboard }: { dashboard?: boolean }):
     }, [setIsDismissing]);
 
 
-    if (completedSteps === null || isDismissed || (pathName === '/' && !dashboard)) {
-        return (
-            <></>
-        );
-    }
+    if (completedSteps === null || isDismissed || (pathName === '/' && !dashboard)) return <></>;
 
-
-    const ConditionalWrapper = ({ condition, wrapper, children }: { condition: boolean, wrapper: (children: React.ReactNode) => JSX.Element, children: React.ReactNode }) => {
+    const ConditionalWrapper = ({ 
+        condition, 
+        wrapper, 
+        children 
+    }: { 
+        condition: boolean, 
+        wrapper: (children: React.ReactNode) => JSX.Element, 
+        children: React.ReactNode 
+    }) => {
         return condition ? wrapper(children) : children;
     };
 
     return (
-        <div className={`flex max-w-screen-xl flex-col space-y-2` + (!dashboard ? ` mb-4` : ``)}>
-
-            {!dashboard && !isDismissed &&
-                <div className="flex justify-between m-0">
-                    <Bold>A quick guide to help you setup...</Bold>
-                    <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
-                </div>}
-
-            <Flex flexDirection="col" alignItems="stretch" className="gap-8">
-
-                {dashboard &&
-                    <div className="flex flex-col text-start">
-                        <p className="font-cal text-3xl font-bold mb-2">
-                            Welcome to Gitwallet!
-                        </p>
-                        <Text>Here&apos;s a quick guide to get you started.&nbsp;</Text>
-                    </div>}
-
-                <ConditionalWrapper condition={dashboard ?? true}
-                    wrapper={children =>
-                        <Card className="max-w-full p-4">
-                            {children}
-                        </Card>
-                    }
+      <div
+        className={`flex max-w-screen-xl flex-col items-start rounded-lg shadow-sm ring-1 ring-black/10`}
+      >
+        <div className="flex w-full items-center justify-between gap-4 px-4 py-2 border-b bg-gray-50">
+            <h3 className="font-bold text-sm">Get started</h3>
+            {!isDismissed && (
+                <div className="m-0 flex justify-end">
+                <Button
+                    variant="light"
+                    onClick={dismissGuide}
+                    className="m-0 p-0 text-sm underline group"
                 >
-                    <div className={dashboard ? `flex flex-col` : `flex flex-row`}>
-                        {
-                            onboardingSteps.map((step, index) => {
-                                return (
-                                    // assuming 4 onboarding steps, so width is 1/4
-                                    <div className={!dashboard ? `w-1/4` : ``} key={index}>
-                                        <TodoItem
-                                            index={index}
-                                            step={step as onBoardingStepType}
-                                            currentStep={currentStep}
-                                            completedSteps={completedSteps}
-                                            setCompletedSteps={setCompletedSteps}
-                                            dashboard={dashboard}
-                                        />
-                                        {dashboard && index !== onboardingSteps.length - 1 && <Divider className="my-5" />}
-                                    </div>
-                                )
-                            })
-                        }
-                    </div>
-                </ConditionalWrapper>
-            </Flex>
-            {dashboard && !isDismissed &&
-                <div className="flex justify-end m-0">
-                    <Button variant="light" onClick={dismissGuide} className="m-0 p-0 text-sm underline">Dismiss this guide</Button>
-                </div>}
+                    <X size={20} className="text-gray-500 group-hover:text-gray-900 transition-colors" />
+                </Button>
+                </div>
+            )}
         </div>
-    )
+        <div className="flex w-full flex-col">
+          {onboardingSteps.map((step, index) => {
+            return (
+              // assuming 4 onboarding steps, so width is 1/4
+              <TodoItem
+                key={index}
+                index={index}
+                step={step as onBoardingStepType}
+                currentStep={currentStep}
+                completedSteps={completedSteps}
+                setCompletedSteps={setCompletedSteps}
+                dashboard={dashboard}
+              />
+            );
+          })}
+        </div>
+      </div>
+    );
 }
