@@ -4,7 +4,7 @@ import Nav from "@/components/nav";
 import { redirect } from "next/navigation";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
 import { Flex } from "@tremor/react";
-import OnboardingGuide from "@/components/onboarding/onboarding-guide";
+import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
 import { DashboardProvider } from "@/components/dashboard/dashboard-context";
 import SessionService from "@/app/services/SessionService";
 import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
@@ -36,7 +36,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
         </Nav>
         <div className="min-h-screen sm:pl-60">
           <Flex alignItems="stretch" className="flex w-full flex-col gap-4 p-4">
-            {onboarding && <OnboardingGuide />}
+            {onboarding && <OnboardingChecklist />}
             {user?.stripeAccountDisabled && user?.stripeAccountId && (
               <StripeDisabledBanner />
             )}

@@ -1,5 +1,4 @@
 import DashboardCharts from "@/components/dashboard/dashboard-charts";
-import OnboardingGuide from "@/components/onboarding/onboarding-guide";
 import PageHeading from "@/components/common/page-heading";
 import SessionService from "@/app/services/SessionService";
 import RepoService from "@/app/services/RepoService";
@@ -23,7 +22,6 @@ export default async function Overview() {
   ]);
 
   const title = user?.name ? `Welcome, ${user.name}` : "Your Dashboard";
-  const onboarding = user?.onboarding;
 
   const repos = repoResults.map(repo => ({
     radarId: repo.radarId,

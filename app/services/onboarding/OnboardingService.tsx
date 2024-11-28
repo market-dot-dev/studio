@@ -9,7 +9,6 @@ import { businessName, businessDescription } from "@/lib/constants/site-template
 
 
 class OnboardingService {
-    
     static async saveState(state: OnboardingStepsType | null ) {
 
         const id = await getCurrentUserId();
