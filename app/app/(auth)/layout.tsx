@@ -8,12 +8,12 @@ export const metadata: Metadata = {
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen w-full flex-col lg:justify-center bg-stone-100 px-6 py-12 sm:px-12 lg:items-center">
+    <div className="flex min-h-screen w-full flex-col justify-center bg-stone-100 px-6 py-12 sm:px-12 items-center h-full">
       <div className="h-full justify-between items-center lg:justify-center flex w-full max-w-screen-2xl grid-cols-9 flex-col gap-x-12 gap-y-24 lg:grid  2xl:grid-cols-12">
-        <div className="col-span-4 flex flex-col justify-center lg:pb-16 2xl:col-span-6 w-full">
+        <div className="col-span-4 flex flex-col justify-center pb-[72px] 2xl:col-span-6 w-full">
           <div className="mx-auto w-full max-w-md">{children}</div>
         </div>
-        <div className="col-span-5 flex flex-col justify-center gap-6 text-pretty 2xl:col-span-6">
+        <div className="col-span-5 hidden lg:flex flex-col justify-center gap-6 text-pretty 2xl:col-span-6">
           <div className="flex flex-col gap-4 md:gap-6 border-black/15 md:border-l md:pl-9">
             <blockquote className="tracking-tightish text-pretty text-2xl leading-7 lg:text-3xl font-medium text-stone-900 xl:text-4xl">
               Gitwallet helped our collective of core maintainers{" "}
