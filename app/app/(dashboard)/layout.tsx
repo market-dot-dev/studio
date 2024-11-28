@@ -11,13 +11,16 @@ import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
 import SessionRefresher from "@/components/common/session-refresher";
 import FeatureService from "@/app/services/feature-service";
 
-export default async function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function DashboardLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const user = await SessionService.getSessionUser();
   const onboarding = user?.onboarding;
   if (!user?.id) {
     redirect("/login");
   }
-  // console.log(onboarding)
   const site = await getOnlySiteFromUserId(user.id);
   const activeFeatures = await FeatureService.findActiveByCurrentUser();
 
