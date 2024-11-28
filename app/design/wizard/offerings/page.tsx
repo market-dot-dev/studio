@@ -126,10 +126,6 @@ export default function OfferingsForm() {
         )}
       </div>
 
-      <div className="w-full max-w-lg space-y-2">
-        <TextInput placeholder="Something else..." />
-      </div>
-
       {/* Navigation */}
       <div className="flex w-full max-w-lg justify-between pt-6">
         <Link href="/design/wizard/business">
