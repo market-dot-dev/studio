@@ -1,18 +1,22 @@
 objects:
-  - id: 'dev-ag'
-    email: 'aaron.graves@gmail.com'
-    name: 'Aaron Graves'
-    gh_username: 'agraves'
-    stripeAccountId: 'acct_1PMFxnAfDjiGFAtF'
-  - id: 'dev-ts'
-    email: 'tarun@lab0324.xyz'
-    name: 'Tarun Sachdeva'
-    gh_username: 'tarunsachdeva'
-  - id: 'dev-gg'
-    email: 'gagan@gitwallet.co'
-    name: 'Gagan Goraya'
-    gh_username: 'gsgoraya'
-  - id: 'dev-an'
-    email: 'andrew@gitwallet.co'
-    name: 'Andrew Nesbitt'
-    gh_username: 'andrew'
+  - id: "dev-ag"
+    email: "aaron.graves@gmail.com"
+    name: "Aaron Graves"
+    gh_username: "agraves"
+    stripeAccountId: "acct_1PMFxnAfDjiGFAtF"
+  - id: "dev-ts"
+    email: "tarun@lab0324.xyz"
+    name: "Tarun Sachdeva"
+    gh_username: "tarunsachdeva"
+  - id: "dev-gg"
+    email: "gagan@gitwallet.co"
+    name: "Gagan Goraya"
+    gh_username: "gsgoraya"
+  - id: "dev-an"
+    email: "andrew@gitwallet.co"
+    name: "Andrew Nesbitt"
+    gh_username: "andrew"
+  - id: "dev-mathusan"
+    email: "mathusans52@gmail.com"
+    name: "Mathusan Selvarajah"
+    gh_username: "mathu97"
