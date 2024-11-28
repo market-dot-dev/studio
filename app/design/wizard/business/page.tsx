@@ -134,7 +134,7 @@ export default function OnboardingForm() {
                       onClick={handleFilePicker}
                       className="cursor-pointer underline"
                     >
-                      add a file
+                      pick an image
                     </button>
                   </p>
                 </div>
