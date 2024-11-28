@@ -19,10 +19,10 @@ export default async function LoginPage() {
         alt="Gitwallet"
         width={64}
         height={64}
-        className="relative mx-auto h-16 w-16"
+        className="relative mx-auto h-14 w-14 md:h-16 md:w-16"
         src="/gw-logo-nav.png"
       />
-      <h1 className="mt-8 text-center text-3xl font-bold tracking-tight dark:text-white md:text-4xl">
+      <h1 className="mt-8 text-center font-bold tracking-tight dark:text-white text-4xl">
         Login to Gitwallet
       </h1>
       <p className="mt-3 text-center text-sm text-stone-600 dark:text-stone-400">

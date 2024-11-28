@@ -201,6 +201,9 @@ module.exports = {
       screens: {
         "xs": "425px",
       },
+      letterSpacing: {
+        tightish: '-0.0125em'
+      }
     },
   },
   safelist: [
