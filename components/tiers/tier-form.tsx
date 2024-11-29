@@ -21,7 +21,6 @@ import {
   TierVersionWithFeatures,
   TierWithFeatures,
   duplicateTier,
-  CheckoutType,
 } from "@/app/services/TierService";
 import TierCard from "./tier-card";
 import { userHasStripeAccountIdById } from "@/app/services/StripeService";
@@ -45,9 +44,8 @@ import {
 import useCurrentSession from "@/app/hooks/use-current-session";
 import LinkButton from "../common/link-button";
 import { getRootUrl } from "@/app/services/domain-service";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, UsersRound, Wallet, Mail } from "lucide-react";
 import TierDeleteButton from "./tier-delete-button";
-import { RadioGroup, RadioGroupItem } from "@/components/common/radio-button";
 
 interface TierFormProps {
   tier?: Partial<Tier>;
@@ -521,11 +519,17 @@ export default function TierForm({
         (window as any)["refreshOnboarding"]();
       }
     }
-    userHasStripeAccountIdById().then((value: boolean) => {
-      setCanPublish(value);
+
+    if (tier.checkoutType === "gitwallet") {
+      userHasStripeAccountIdById().then((value: boolean) => {
+        setCanPublish(value);
+        setCanPublishLoading(false);
+      });
+    } else {
+      setCanPublish(true);
       setCanPublishLoading(false);
-    });
-  }, []);
+    }
+  }, [tier.checkoutType]);
 
   useEffect(() => {
     if (tier.id) {
@@ -552,7 +556,10 @@ export default function TierForm({
     }
   }, [tier, tierObj]);
 
-  const canPublishDisabled = !canPublish || canPublishLoading;
+  const canPublishDisabled =
+    tier.checkoutType === "gitwallet"
+      ? !canPublish || canPublishLoading
+      : false;
 
   return (
     <>
@@ -579,13 +586,51 @@ export default function TierForm({
             <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
               Checkout Type
             </label>
-            <RadioGroup
-              className="flex gap-4"
-              onValueChange={(v) =>
-                setTier({ ...tier, checkoutType: v as CheckoutType })
-              }
-            >
-              <div className="flex items-center gap-x-2">
+            <div className="space-y-2">
+              <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
+                <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
+                  <div className="flex items-center">
+                    <Wallet className="mr-3 h-5 w-5 text-gray-500" />
+                    <span className="text-sm text-gray-900">Gitwallet</span>
+                  </div>
+                  <input
+                    type="radio"
+                    name="checkout-type"
+                    value="gitwallet"
+                    className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
+                    checked={tier.checkoutType === "gitwallet"}
+                    onChange={(e) =>
+                      handleInputChange(
+                        "checkoutType",
+                        e.target.checked ? "gitwallet" : "contact-us",
+                      )
+                    }
+                  />
+                </div>
+              </label>
+              <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
+                <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
+                  <div className="flex items-center">
+                    <Mail className="mr-3 h-5 w-5 text-gray-500" />
+                    <span className="text-sm text-gray-900">Contact Us</span>
+                  </div>
+                  <input
+                    type="radio"
+                    name="checkout-type"
+                    className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
+                    value="contact-us"
+                    checked={tier.checkoutType === "contact-us"}
+                    onChange={(e) => {
+                      handleInputChange(
+                        "checkoutType",
+                        e.target.checked ? "contact-us" : "gitwallet",
+                      );
+                    }}
+                  />
+                </div>
+              </label>
+            </div>
+            {/* <div className="flex items-center gap-x-2">
                 <RadioGroupItem
                   value="gitwallet"
                   id="gitwallet"
@@ -605,10 +650,10 @@ export default function TierForm({
                   Contact Us
                 </label>
               </div>
-            </RadioGroup>
+            </RadioGroup> */}
             {tier.checkoutType === "gitwallet" ? (
               <Text className="mt-2">
-                Your customers will be redirected to GitWallet's optimized
+                Your customers will be redirected to Gitwallet&apos;s optimized
                 checkout page where they can securely checkout.
               </Text>
             ) : (
