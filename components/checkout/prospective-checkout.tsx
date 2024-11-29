@@ -6,7 +6,7 @@ import { Bold, Button, Card, TextInput } from "@tremor/react";
 import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Tier } from "@prisma/client";
 import { useRouter } from "next/navigation";
-
+import { toast } from "sonner";
 export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -23,7 +23,8 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
 
     try {
       await addNewProspectForPackage(newProspect, tier);
-      router.push("/success");
+      toast.success("We've received your request. We'll be in touch soon!");
+      router.push("/");
     } catch (error) {
       // TODO(mathusan): handle this error better.
       console.error(error);
