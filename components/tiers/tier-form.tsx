@@ -630,27 +630,6 @@ export default function TierForm({
                 </div>
               </label>
             </div>
-            {/* <div className="flex items-center gap-x-2">
-                <RadioGroupItem
-                  value="gitwallet"
-                  id="gitwallet"
-                  checked={tier.checkoutType === "gitwallet"}
-                />
-                <label htmlFor="gitwallet" className="text-sm">
-                  GitWallet
-                </label>
-              </div>
-              <div className="flex items-center gap-x-2">
-                <RadioGroupItem
-                  value="contact-us"
-                  id="contact-us"
-                  checked={tier.checkoutType === "contact-us"}
-                />
-                <label htmlFor="contact-us" className="text-sm">
-                  Contact Us
-                </label>
-              </div>
-            </RadioGroup> */}
             {tier.checkoutType === "gitwallet" ? (
               <Text className="mt-2">
                 Your customers will be redirected to Gitwallet&apos;s optimized
