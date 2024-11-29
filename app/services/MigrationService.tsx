@@ -7,7 +7,7 @@ import prisma from "@/lib/prisma";
 
 class MigrationService {
   static async migrateUser(user: User) {
-    if(!user.stripeAccountId) {
+    if (!user.stripeAccountId) {
       throw new Error("User does not have a connected stripe account");
     }
 
@@ -33,22 +33,25 @@ class MigrationService {
 
     const stripeService = new StripeService(user.stripeAccountId);
 
-    for(const tier of tiers) {
+    for (const tier of tiers) {
       // create a new product and price on the connected account
-      if(!tier.stripeProductId) {
-        const product = await stripeService.createProduct(tier.name, tier.description || undefined);
-        const price = await stripeService.createPrice(product.id, tier.price);
-        
+      if (!tier.stripeProductId) {
+        const product = await stripeService.createProduct(
+          tier.name,
+          tier.description || undefined,
+        );
+        const price = await stripeService.createPrice(product.id, tier.price!);
+
         await prisma.tier.update({
           where: { id: tier.id },
           data: {
             stripeProductId: product.id,
             stripePriceId: price.id,
-          }
+          },
         });
       }
     }
   }
-};
+}
 
 export default MigrationService;

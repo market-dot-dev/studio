@@ -10,18 +10,12 @@ interface CheckoutProps {
   tier: Tier;
   maintainer: User;
   annual?: boolean;
-  contactUsCheckout?: boolean;
 }
-const Checkout = ({
-  tier,
-  maintainer,
-  annual = false,
-  contactUsCheckout = false,
-}: CheckoutProps) => {
+const Checkout = ({ tier, maintainer, annual = false }: CheckoutProps) => {
   const { currentUser: user } = useCurrentSession();
   const userId = user?.id;
 
-  if (contactUsCheckout) {
+  if (tier.checkoutType === "contact-form") {
     return <ProspectiveCheckout tier={tier} />;
   }
 
