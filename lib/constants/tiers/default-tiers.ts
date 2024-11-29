@@ -4,7 +4,7 @@ type tierData = {
   price: number;
   cadence: string;
   description: string;
-  checkoutType: "gitwallet" | "contact-us";
+  checkoutType: "gitwallet" | "contact-form";
 };
 export type defaultTier = {
   data: tierData;

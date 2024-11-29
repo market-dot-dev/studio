@@ -15,7 +15,7 @@ const Checkout = ({ tier, maintainer, annual = false }: CheckoutProps) => {
   const { currentUser: user } = useCurrentSession();
   const userId = user?.id;
 
-  if (tier.checkoutType === "contact-us") {
+  if (tier.checkoutType === "contact-form") {
     return <ProspectiveCheckout tier={tier} />;
   }
 

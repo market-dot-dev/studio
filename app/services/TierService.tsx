@@ -15,7 +15,7 @@ export type TierWithFeatures = Tier & {
   _count?: { Charge: number; subscriptions: number };
 };
 export type TierVersionWithFeatures = TierVersion & { features?: Feature[] };
-export type CheckoutType = "gitwallet" | "contact-us";
+export type CheckoutType = "gitwallet" | "contact-form";
 
 class TierService {
   static async destroyStripePrice(tier: Tier) {
