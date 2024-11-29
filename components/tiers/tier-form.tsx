@@ -586,7 +586,7 @@ export default function TierForm({
             <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
               Checkout Type
             </label>
-            <div className="space-y-2">
+            <div className="flex gap-2">
               <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
                 <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
                   <div className="flex items-center">
