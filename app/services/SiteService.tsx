@@ -1,6 +1,6 @@
 "use server";
 
-import { Site, User } from "@prisma/client";
+import { Site } from "@prisma/client";
 import prisma from "@/lib/prisma";
 
 import { revalidateTag } from "next/cache";

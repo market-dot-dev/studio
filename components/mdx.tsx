@@ -20,7 +20,7 @@ export default function MDX({ source }: { source: MDXRemoteProps }) {
       className={`prose-md prose prose-stone m-auto w-11/12 dark:prose-invert sm:prose-lg sm:w-3/4 ${styles.root}`}
       suppressHydrationWarning={true}
     >
-      {/* @ts-ignore */}
+      {/* @ts-expect-error */}
       <MDXRemote {...source} components={components} />
     </article>
   );

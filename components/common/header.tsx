@@ -1,9 +1,7 @@
-import Link from 'next/link'
-import Dropdown from './dropdown'
-import MobileMenu from './mobile-menu'
-import Image from 'next/image'
-import { Button } from '@tremor/react'
-
+import Link from "next/link";
+import Dropdown from "./dropdown";
+import MobileMenu from "./mobile-menu";
+import Image from "next/image";
 
 export default function Header() {
   return (
@@ -25,7 +23,7 @@ export default function Header() {
           </div>
 
           {/* Desktop navigation */}
-          <nav className="hidden md:flex absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+          <nav className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:flex">
             {/* Desktop menu links */}
             <ul className="flex grow flex-wrap items-center justify-center gap-4 rounded-full bg-white/25 px-2 text-white ring-1 ring-white/40 filter backdrop-blur-md md:sticky md:top-2">
               <li>
@@ -72,9 +70,9 @@ export default function Header() {
           </nav>
           <div className="hidden md:flex">
             <ul className="flex grow flex-wrap items-center justify-end">
-              <li className='group'>
+              <li className="group">
                 <Link href="https://app.gitwallet.co/login">
-                  <button className="rounded-full bg-white/25 px-4 py-2 ring-1 ring-white/40 group-hover:bg-white group-hover:text-gray-800 transition">
+                  <button className="rounded-full bg-white/25 px-4 py-2 ring-1 ring-white/40 transition group-hover:bg-white group-hover:text-gray-800">
                     Login →
                   </button>
                 </Link>

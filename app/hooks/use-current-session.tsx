@@ -4,17 +4,23 @@ import { SessionUser } from "../models/Session";
 const useCurrentSession = () => {
   const { data, status, update } = naUseSession();
   const currentUser = data?.user as SessionUser;
-  
+
   const isSignedIn = () => status === "authenticated";
-  const isAdmin = () => isSignedIn() && (currentUser?.roleId === "admin");
-  const isCustomer = () => isSignedIn() && (currentUser?.roleId === "customer");
+  const isAdmin = () => isSignedIn() && currentUser?.roleId === "admin";
+  const isCustomer = () => isSignedIn() && currentUser?.roleId === "customer";
 
   const refreshSession = async () => {
-    console.log("Refreshing session..."); // Add this line
+    console.log("Refreshing session...");
     await update({ force: true });
-  }
+  };
 
-  return { currentUser, refreshSession, isSignedIn, isAdmin } as const;
-}
+  return {
+    currentUser,
+    refreshSession,
+    isSignedIn,
+    isAdmin,
+    isCustomer,
+  } as const;
+};
 
 export default useCurrentSession;

@@ -1,26 +1,11 @@
 "use client";
 
-import {
-  Card,
-  Title,
-  List,
-  Text,
-  Flex,
-  Bold,
-  Button,
-  AccordionList,
-  Badge,
-  Divider,
-  Icon,
-} from "@tremor/react";
-import { useCallback, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { Card, Title, Button, Badge } from "@tremor/react";
+import { useCallback, useState } from "react";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 
 export default function RestoreOnboarding(): JSX.Element {
-  console.log("hello");
-  const pathName = usePathname();
   const [completedSteps, setCompletedSteps] = useState(null);
   const [isDismissing, setIsDismissing] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);

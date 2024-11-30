@@ -13,12 +13,8 @@ type LegacyProductWithExtra = LegacyProduct & {
 };
 
 const MigratorComponent = ({
-  user,
-  tiers,
   legacyProducts,
 }: {
-  user: User;
-  tiers: Tier[];
   legacyProducts: LegacyProductWithExtra[];
 }) => {
   const [password, setPassword] = useState("");

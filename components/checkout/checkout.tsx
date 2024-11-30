@@ -53,7 +53,7 @@ export default function RegistrationCheckoutSection({
         setSubmittingPayment(true);
       } else {
         onClickSubscribe(userId, tierId, annual)
-          .then((res) => {
+          .then(() => {
             setLoading(false);
             window.location.href = "/success";
           })

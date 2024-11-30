@@ -1,4 +1,3 @@
-import PageHeading from "@/components/common/page-heading";
 import {
   Button,
   Table,
@@ -7,31 +6,20 @@ import {
   TableHead,
   TableHeaderCell,
   TableBody,
-  BadgeDelta,
-  Bold,
-  Badge,
   Card,
 } from "@tremor/react";
 import SubscriptionService from "@/app/services/SubscriptionService";
 import { SubscriptionWithUser } from "@/app/models/Subscription";
-import DashboardCard from "@/components/common/dashboard-card";
-import TierService from "@/app/services/TierService";
-import PrimaryLinkButton from "../common/link-button";
 import Link from "next/link";
 import LinkButton from "../common/link-button";
 import SessionService from "@/app/services/SessionService";
 
-export default async function LatestCustomersList(props: { numRecords?: number, previewMode?: boolean }) {
-
+export default async function LatestCustomersList(props: {
+  numRecords?: number;
+  previewMode?: boolean;
+}) {
   // Number of records to show (optional)
   const numRecords = props.numRecords || 3;
-
-  // In preview mode, only a few columns are shown
-  const previewMode = props.previewMode || true;
-
-  // Number of days to look back for new customers
-  const daysAgo = 30;
-
   const currentUserId = await SessionService.getCurrentUserId();
   const subscriptions: SubscriptionWithUser[] =
     await SubscriptionService.subscribedToUser(currentUserId!);
@@ -50,47 +38,69 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
 
   // Example customer data could eventually come from a data source
   const exampleCustomers: CustomerRow[] = [
-    { name: 'John Appleseed (Example Customer)', company: 'Acme Inc.', tier: 'Premium Tier' },
-    { name: 'Joan Lisgar (Example Customer)', company: 'Megacorp Inc.', tier: 'Enterprise Tier' },
+    {
+      name: "John Appleseed (Example Customer)",
+      company: "Acme Inc.",
+      tier: "Premium Tier",
+    },
+    {
+      name: "Joan Lisgar (Example Customer)",
+      company: "Megacorp Inc.",
+      tier: "Enterprise Tier",
+    },
   ];
 
   return (
     <>
-      <div className="flex max-w-screen-xl flex-col mt-4 space-y-4">
-
+      <div className="mt-4 flex max-w-screen-xl flex-col space-y-4">
         <Card>
           {latestSubscriptions.length === 0 ? (
             <Table>
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Company</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Company
+                  </TableHeaderCell>
                   <TableHeaderCell className="text-right">Tier</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Actions
+                  </TableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {exampleCustomers.map((customer, index) => (
                   <TableRow className="m-0 p-2" key={index}>
                     <TableCell className="m-0 p-2">{customer.name}</TableCell>
-                    <TableCell className="m-0 p-2 text-right">{customer.company}</TableCell>
-                    <TableCell className="m-0 p-2 text-right">{customer.tier}</TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      {customer.company}
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      {customer.tier}
+                    </TableCell>
                     <TableCell className="m-0 p-2 text-right">
                       <div className="flex flex-row justify-end gap-1">
-                        <Button className="py-1" disabled>View</Button>
+                        <Button className="py-1" disabled>
+                          View
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>) :
-            (<Table className="">
+            </Table>
+          ) : (
+            <Table className="">
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Company</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Company
+                  </TableHeaderCell>
                   <TableHeaderCell className="text-right">Tier</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Actions
+                  </TableHeaderCell>
                 </TableRow>
               </TableHead>
 
@@ -120,11 +130,12 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
                   );
                 })}
               </TableBody>
-            </Table>)}
+            </Table>
+          )}
         </Card>
 
         <div className="grid justify-items-end">
-          <Link href='/customers'>
+          <Link href="/customers">
             <Button size="xs" className="h-6" variant="secondary">
               All Customers →
             </Button>

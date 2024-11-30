@@ -2,10 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useParams, useSelectedLayoutSegment } from "next/navigation";
+import { useSelectedLayoutSegment } from "next/navigation";
 
 export default function LeadsNav() {
-//   const { id } = useParams() as { id?: string };
   const segment = useSelectedLayoutSegment();
 
   const navItems = [
@@ -18,7 +17,7 @@ export default function LeadsNav() {
       name: "Shortlisted",
       href: `/leads/shortlisted`,
       segment: "shortlisted",
-    }
+    },
   ];
 
   return (

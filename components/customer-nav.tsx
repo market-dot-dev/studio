@@ -1,21 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowLeft,
-  BarChart3,
-  Edit3,
-  Globe,
-  LayoutDashboard,
-  KanbanSquare,
-  Menu,
-  Users,
-  Newspaper,
-  Settings,
-  Github,
-  BarChart4,
-  Code2,
-} from "lucide-react";
+import { LayoutDashboard, Menu, Settings } from "lucide-react";
 import {
   useParams,
   usePathname,
@@ -23,7 +9,7 @@ import {
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 
-export default function CustomerNav({ children }: { children: ReactNode  }) {
+export default function CustomerNav({ children }: { children: ReactNode }) {
   const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
 
@@ -40,7 +26,7 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
         href: "/settings",
         isActive: urlSegments[0] === "settings",
         icon: <Settings width={18} />,
-      }
+      },
     ];
   }, [urlSegments, id]);
 
@@ -73,15 +59,19 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
       >
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg px-2 py-1.5">
-              <div className="text-md font-medium">
-                <Link href="/" ><img src="/gw-logo-nav.png" className="h-8 hover:scale-110" /></Link>
-              </div>
+            <div className="text-md font-medium">
+              <Link href="/">
+                <img src="/gw-logo-nav.png" className="h-8 hover:scale-110" />
+              </Link>
+            </div>
           </div>
           <div className="grid gap-0.5">
-            {tabs.map(({ name, href, isActive, icon }) => (
+            {tabs.map(({ name, href, isActive, icon }) =>
               href === "" ? (
-                  <span key={name} className="text-xs font-small uppercase mt-4">{name}</span>
-                ) : (
+                <span key={name} className="font-small mt-4 text-xs uppercase">
+                  {name}
+                </span>
+              ) : (
                 <Link
                   key={name}
                   href={href}
@@ -92,14 +82,12 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
                   {icon}
                   <span className="text-sm font-medium">{name}</span>
                 </Link>
-              )
-            ))}
+              ),
+            )}
           </div>
         </div>
         <div>
-          <div className="grid gap-1">
-            
-          </div>
+          <div className="grid gap-1"></div>
           <div className="my-2 border-t border-stone-200 dark:border-stone-700" />
           {children}
         </div>

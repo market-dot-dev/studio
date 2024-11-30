@@ -2,14 +2,7 @@
 "use server";
 
 import PageHeading from "@/components/common/page-heading";
-import {
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  Textarea,
-} from "@tremor/react";
+import { Table, TableBody, TableCell, TableRow } from "@tremor/react";
 import Link from "next/link";
 import DashboardCard from "@/components/common/dashboard-card";
 import LinkButton from "@/components/common/link-button";

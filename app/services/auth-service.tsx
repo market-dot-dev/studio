@@ -3,7 +3,10 @@
 import prisma from "@/lib/prisma";
 import { defaultOnboardingState } from "./onboarding/onboarding-steps";
 import { cookies } from "next/headers";
-import { businessDescription, businessName } from "@/lib/constants/site-template";
+import {
+  businessDescription,
+  businessName,
+} from "@/lib/constants/site-template";
 import { SessionUser, createSessionUser } from "../models/Session";
 import UserService from "./UserService";
 import EmailService from "./EmailService";
@@ -16,43 +19,26 @@ type JwtCallbackParams = {
   token: JWT;
   user: AdapterUser | NaUser;
   account: Account | null;
-  //profile?: Profile | undefined;
   trigger?: "signIn" | "update" | "signUp" | undefined;
   isNewUser?: boolean | undefined;
   session?: any;
-}
-
-/*
-const isAdmin = currentUser?.roleId === "admin";
-if (session?.roleId && isAdmin) {
-  token.user = {
-    foo: "bar",
-    ...token.user,
-    roleId: session.roleId,
-  };
-} else {
-*/
+};
 
 class AuthService {
   static async jwtCallback(callbackParams: JwtCallbackParams) {
-    const {
-      token,
-      user,
-      account,
-      trigger,
-      session,
-      isNewUser,
-    } = callbackParams;
+    const { token, user, account, trigger, session } = callbackParams;
     const sessionUser = token?.user as SessionUser | undefined | null;
 
     const newToken = { ...token };
     let userData: User | undefined | null = undefined;
 
     if (trigger === "update") {
-      if(session?.['impersonate'] !== undefined && sessionUser?.roleId === "admin") {
+      if (
+        session?.["impersonate"] !== undefined &&
+        sessionUser?.roleId === "admin"
+      ) {
         userData = await UserService.findUser(session.impersonate);
-      }
-      else if(sessionUser?.id){
+      } else if (sessionUser?.id) {
         userData = await UserService.findUser(sessionUser.id);
       }
     } else if (trigger === "signIn") {
@@ -72,10 +58,10 @@ class AuthService {
     return session;
   }
 
-  static async onSignIn(account: any, naUser: NaUser){
+  static async onSignIn(account: any, naUser: NaUser) {
     const user = await UserService.findUser(naUser.id);
 
-    if(!user){
+    if (!user) {
       return null;
     }
 
@@ -83,16 +69,16 @@ class AuthService {
     if (!user.onboarding) {
       user.onboarding = JSON.stringify(defaultOnboardingState);
     }
-    
+
     const existingAccount = await prisma.account.findFirst({
       where: {
         provider: account.provider,
         providerAccountId: account.providerAccountId,
-      }
-    })
+      },
+    });
 
     // FIXME
-    if(!existingAccount) return user;
+    if (!existingAccount) return user;
 
     // update refresh/access tokens
     await prisma.account.update({
@@ -100,15 +86,15 @@ class AuthService {
         provider_providerAccountId: {
           provider: account.provider,
           providerAccountId: account.providerAccountId,
-        }
+        },
       },
       data: {
         access_token: account.access_token,
         expires_at: account.expires_at,
         refresh_token: account.refresh_token,
         refresh_token_expires_in: account.refresh_token_expires_in,
-      }
-    })
+      },
+    });
 
     return user;
   }

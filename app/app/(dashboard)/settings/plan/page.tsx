@@ -3,7 +3,7 @@
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import UserService from "@/app/services/UserService";
-import { Text, Button, Card, Badge } from "@tremor/react";
+import { Text, Button, Card } from "@tremor/react";
 
 type PricingPlan = {
   title: string;
@@ -18,14 +18,23 @@ const plans: PricingPlan[] = [
     title: "Free",
     price: "$0",
     tagline: "For early adopters only.",
-    features: ["Services and Tier Builder", "Sell Across Multiple Channels", "Basic CRM and Reporting"],
+    features: [
+      "Services and Tier Builder",
+      "Sell Across Multiple Channels",
+      "Basic CRM and Reporting",
+    ],
     active: true,
   },
   {
     title: "Premium",
     price: "$29",
     tagline: "For OSS projects with a large community and maturing ecosystem.",
-    features: ["Everything in Free, plus:","Direct Sales", "Marketing and Acquisition", "Prioritized Bug Fixes" ],
+    features: [
+      "Everything in Free, plus:",
+      "Direct Sales",
+      "Marketing and Acquisition",
+      "Prioritized Bug Fixes",
+    ],
   },
 ];
 
@@ -44,46 +53,50 @@ export default async function PlanSettings() {
 
   return (
     <>
-      <div className="w-full mt-10">
+      <div className="mt-10 w-full">
         <Card className="border-2 border-slate-800 bg-slate-50">
-          To our early users: Thank you for your support. We are offering you a free plan for your first 3 months of using Gitwallet.
+          To our early users: Thank you for your support. We are offering you a
+          free plan for your first 3 months of using Gitwallet.
         </Card>
       </div>
 
-      <div className="flex flex-col justify-center items-center w-full my-10">
-        <div className="grid md:grid-cols-3 gap-4">
+      <div className="my-10 flex w-full flex-col items-center justify-center">
+        <div className="grid gap-4 md:grid-cols-3">
           {plans.map((plan, index) => (
-            <Card key={index} className={plan.active ? "border-4 border-green-400" : ""}>
-              <div key={plan.title} className=
-                {plan.active ?
-                  // "border-2 border-blue-500 max-w-sm rounded overflow-hidden shadow-lg" : 
-                  "max-w-sm rounded overflow-hidden shadow-lg" :
-                  "max-w-sm rounded overflow-hidden shadow-lg"}>
-                <div className="font-bold text-xl mb-2">{plan.title}</div>
-                <div className="text-gray-700 text-base">{plan.tagline}</div>
+            <Card
+              key={index}
+              className={plan.active ? "border-4 border-green-400" : ""}
+            >
+              <div
+                key={plan.title}
+                className={
+                  plan.active
+                    ? // "border-2 border-blue-500 max-w-sm rounded overflow-hidden shadow-lg" :
+                      "max-w-sm overflow-hidden rounded shadow-lg"
+                    : "max-w-sm overflow-hidden rounded shadow-lg"
+                }
+              >
+                <div className="mb-2 text-xl font-bold">{plan.title}</div>
+                <div className="text-base text-gray-700">{plan.tagline}</div>
                 <div className="text-4xl font-bold">{plan.price}/mo</div>
                 <ul className="mt-4">
-                  {plan.features.map(feature => (
-                    <li key={feature} className="text-gray-700 text-base mb-2">
+                  {plan.features.map((feature) => (
+                    <li key={feature} className="mb-2 text-base text-gray-700">
                       {feature}
                     </li>
                   ))}
                 </ul>
-                <Button
-                  disabled={plan.active}
-                  className="rounded">
-
-                  {plan.active ?
-                    <Text>Your Current Plan</Text> :
+                <Button disabled={plan.active} className="rounded">
+                  {plan.active ? (
+                    <Text>Your Current Plan</Text>
+                  ) : (
                     <Text>Upgrade to {plan.title}</Text>
-                  }
+                  )}
                 </Button>
-
               </div>
             </Card>
           ))}
         </div>
-
       </div>
     </>
   );

@@ -2,10 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { useParams, useSelectedLayoutSegment } from "next/navigation";
+import { useSelectedLayoutSegment } from "next/navigation";
 
 export default function SettingsNav() {
-  const { id } = useParams() as { id?: string };
   const segment = useSelectedLayoutSegment();
 
   const navItems = [
@@ -25,20 +24,20 @@ export default function SettingsNav() {
       segment: "site",
     },
     {
-        name: "Connected Repositories",
-        href: `/settings/repos`,
-        segment: "repos",
+      name: "Connected Repositories",
+      href: `/settings/repos`,
+      segment: "repos",
     },
     {
-        name: "Payout Info",
-        href: `/settings/payment`,
-        segment: "payment",
+      name: "Payout Info",
+      href: `/settings/payment`,
+      segment: "payment",
     },
     {
-        name: "Gitwallet Plan",
-        href: `/settings/plan`,
-        segment: "plan",
-    }
+      name: "Gitwallet Plan",
+      href: `/settings/plan`,
+      segment: "plan",
+    },
   ];
 
   return (

@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService, { SubscriptionCadence } from "./StripeService";
 import UserService, { getCurrentUser } from "./UserService";
-import { Feature, TierVersion, User } from "@prisma/client";
+import { Feature, TierVersion } from "@prisma/client";
 import SessionService from "./SessionService";
 import FeatureService from "./feature-service";
 import SubscriptionService from "./SubscriptionService";

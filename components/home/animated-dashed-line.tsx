@@ -25,7 +25,6 @@ export default function AnimatedDashedLine({
   className,
 }: AnimatedDashedLineProps = {}) {
   const isHorizontal = orientation === "horizontal";
-  const lineLength = isHorizontal ? width : height;
 
   return (
     <div

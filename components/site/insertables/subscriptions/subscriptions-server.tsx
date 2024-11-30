@@ -6,8 +6,6 @@ import SessionService from "@/app/services/SessionService";
 // This is the component that will render at the frontend of the site, facing the customer
 export async function SubscriptionsServer({
   site,
-  page,
-  ...props
 }: {
   site: any;
   page: any;
