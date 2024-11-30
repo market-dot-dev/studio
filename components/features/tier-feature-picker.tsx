@@ -24,7 +24,7 @@ interface TierFeaturePickerWidgetProps {
 // whyyyyyyyyyyyyyyy
 const setsEqual = (a: Set<any>, b: Set<any>) => {
   if (a.size !== b.size) return false;
-  for (let item of a) if (!b.has(item)) return false;
+  for (const item of a) if (!b.has(item)) return false;
   return true;
 }
 
@@ -107,7 +107,7 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   }, [selectedFeatureIds, pristineFeatureIds, setFeaturesChanged, setFeatureObjs, allFeatures]);
 
   const handleFeatureToggle = async (feature: Feature) => {
-    let updatedFeatures = new Set(selectedFeatureIds);
+    const updatedFeatures = new Set(selectedFeatureIds);
     const featureId = feature.id;
 
     if (selectedFeatureIds?.has(featureId)) {

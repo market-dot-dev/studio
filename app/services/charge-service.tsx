@@ -102,7 +102,7 @@ class ChargeService {
     if(existingCharge) throw new Error('User has already bought this tier');
     */
 
-    let res = await prisma.charge.create({
+    const res = await prisma.charge.create({
       data: {
       userId: userId,
       tierId: tierId,

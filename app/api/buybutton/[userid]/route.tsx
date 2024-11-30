@@ -5,7 +5,7 @@ export async function GET(req: NextRequest, { params }: { params: { userid: stri
   
   // const searchParams = req.nextUrl.searchParams;
 
-  let user = await UserService.findUser(params.userid);
+  const user = await UserService.findUser(params.userid);
 
   const buttonText = 'View';
   const description = user?.projectName ? `${user.projectName} has premium services available on Gitwallet.` : 'This project has premium services available on Gitwallet.';

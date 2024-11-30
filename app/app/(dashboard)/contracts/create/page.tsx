@@ -11,7 +11,7 @@ export default async function ContractCreatePage() {
     redirect("/login");
   }
 
-  let contract = null;
+  const contract = null;
 
   return (
     <div className="space-y-6">

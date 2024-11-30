@@ -37,7 +37,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
 
   const featuresFromDescription =  tier?.description ? parseTierDescription(tier.description).filter((section) => section.features).map((section) => section.features).flat().map((feature: string, index: number) => ({ id: `${index}`, name: feature, isEnabled: true })) : [];
   
-  let status = 'paid';
+  const status = 'paid';
   
 
   return (

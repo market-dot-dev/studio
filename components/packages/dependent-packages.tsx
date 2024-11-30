@@ -67,7 +67,7 @@ export default function DependentPackages({ repos, compact = false }: { repos: R
 		startPackagesTransition(() => {
 			getPackages(parseInt(e)).then((res) => {
 				
-				let { packages, facets, most_popular_package_id } = res.data;
+				const { packages, facets, most_popular_package_id } = res.data;
 				
 				if (packages && packages.length) {
 					

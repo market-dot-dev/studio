@@ -14,8 +14,8 @@ import DomainService from "@/app/services/domain-service";
 type PostWithSite = Post & { site: { subdomain: string | null } | null };
 
 export default function Editor({ post }: { post: PostWithSite }) {
-  let [isPendingSaving, startTransitionSaving] = useTransition();
-  let [isPendingPublishing, startTransitionPublishing] = useTransition();
+  const [isPendingSaving, startTransitionSaving] = useTransition();
+  const [isPendingPublishing, startTransitionPublishing] = useTransition();
   const [data, setData] = useState<PostWithSite>(post);
   const [hydrated, setHydrated] = useState(false);
 

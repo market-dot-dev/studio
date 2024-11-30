@@ -73,7 +73,7 @@ class ContractService {
   private static async uploadAttachment(
     contract: ContractWithUploadData,
   ): Promise<Prisma.ContractCreateInput> {
-    let data: Partial<Prisma.ContractCreateInput> = {};
+    const data: Partial<Prisma.ContractCreateInput> = {};
 
     console.log("~~~~~~~~~~~~~~ uploading");
     if (contract.uploadData) {

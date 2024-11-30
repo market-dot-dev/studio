@@ -198,7 +198,7 @@ class RepoService {
 
   static async getInstallationToken(id: number) {
     
-    let installation = await RepoService.getInstallation(id) as GithubAppInstallation;
+    const installation = await RepoService.getInstallation(id) as GithubAppInstallation;
 
     // check if the token is still valid
     const expiresAt = new Date(installation.expiresAt).getTime();

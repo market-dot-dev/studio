@@ -11,7 +11,7 @@ import useCurrentSession from "@/app/hooks/use-current-session";
 // usign a local variable to avoid state update delays
 
 export function CustomerLoginComponent({ redirect, signup = false } : { redirect?: string, signup?: boolean }) {
-    let handlingVerificationRef = useRef(false);
+    const handlingVerificationRef = useRef(false);
 
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);

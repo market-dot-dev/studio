@@ -45,7 +45,7 @@ class AuthService {
     } = callbackParams;
     const sessionUser = token?.user as SessionUser | undefined | null;
 
-    let newToken = { ...token };
+    const newToken = { ...token };
     let userData: User | undefined | null = undefined;
 
     if (trigger === "update") {

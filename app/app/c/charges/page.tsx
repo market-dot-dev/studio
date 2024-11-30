@@ -22,7 +22,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
   const maintainer = await UserService.findUser(tier.userId);
   if (!maintainer) return null;
 
-  let status = 'paid';
+  const status = 'paid';
 
   return (<Card>
     <div className="flex flex-col space-y-2">

@@ -208,7 +208,7 @@ class TierService {
 
     const stripeService = new StripeService(user?.stripeAccountId!);
 
-    let tier = await prisma.tier.findUnique({
+    const tier = await prisma.tier.findUnique({
       where: { id, userId: user.id },
       include: { versions: true },
     });
@@ -232,7 +232,7 @@ class TierService {
       throw new Error("Price is required.");
     }
 
-    let newFeatureSetIds: string[] = newFeatureIds || [];
+    const newFeatureSetIds: string[] = newFeatureIds || [];
     const featuresChanged = newFeatureSetIds
       ? await FeatureService.haveFeatureIdsChanged(id, newFeatureSetIds)
       : false;

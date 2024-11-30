@@ -88,11 +88,11 @@ export default function GithubTiersEmbedSettings({site, settings, setSettings} :
                   onChange={(e) => {
                     setSettings((prev: any) => {
                       if(e.target.checked) {
-                        let tiers = prev.tiers || [];
+                        const tiers = prev.tiers || [];
                         return {...prev, tiers: [...tiers, tier.id]}
                       } else {
                         
-                        let newTiers = prev.tiers.filter((id: string) => id !== tier.id);
+                        const newTiers = prev.tiers.filter((id: string) => id !== tier.id);
                         if(newTiers.length === 0) {
                           const { tiers, ...rest } = prev;  
                           return rest;

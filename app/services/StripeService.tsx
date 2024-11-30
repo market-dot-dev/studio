@@ -451,7 +451,7 @@ export const onClickSubscribe = async (userId: string, tierId: string, annual: b
 
   const customer = new Customer(user, maintainer.id, maintainer.stripeAccountId);
 
-  let stripeCustomerId = await customer.getOrCreateStripeCustomerId();
+  const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
   const stripeService = new StripeService(maintainer.stripeAccountId);
   
   const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;

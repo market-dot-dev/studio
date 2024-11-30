@@ -55,7 +55,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const [lookupCount, setLookupCount] = useState<number>(0);
 
     const [filters, setFilters] = useState<FiltersState>((() => {
-        let initialFilters: FiltersState = {} as FiltersState;
+        const initialFilters: FiltersState = {} as FiltersState;
         Object.keys(emptyFilters).forEach((key: string) => {
             initialFilters[key as keyof FiltersState] = searchParams.get(key) || '';
         });
@@ -385,7 +385,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         <div className="cursor-pointer" 
                             onClick={() => {
                                 setFilters((prev: FiltersState) => {
-                                    let newFilters = { ...prev };
+                                    const newFilters = { ...prev };
                                     newFilters[key as keyof FiltersState] = '';
                                     return newFilters;
                                 });

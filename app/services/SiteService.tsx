@@ -87,10 +87,10 @@ class SiteService {
   static async updateCurrentSite(formData: FormData) {
     const site = (await SiteService.getCurrentSite()) as Site;
     try {
-      let updateData: Partial<Site> = {};
+      const updateData: Partial<Site> = {};
       let hasSubdomainUpdate = false;
 
-      for (let [key, value] of formData.entries()) {
+      for (const [key, value] of formData.entries()) {
         // Handle subdomain separately with validation
         if (key === "subdomain") {
           const subdomain = value.toString();

@@ -100,8 +100,8 @@ type DynamicComponentProps = {
     }
     
     // const className = element.className;
-    let className = element.getAttribute('class') + ' ' + element.getAttribute('classname');
-    let attributes = {} as any;
+    const className = element.getAttribute('class') + ' ' + element.getAttribute('classname');
+    const attributes = {} as any;
 
     Array.from(element.attributes).forEach((item : any) => {
       

@@ -49,7 +49,7 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                                         return [...tiers, tier.id]
                                         } else {
                                         
-                                        let newTiers = tiers.filter((id: string) => id !== tier.id);
+                                        const newTiers = tiers.filter((id: string) => id !== tier.id);
                                         if(newTiers.length === 0) {
                                             return tiers;
                                         }

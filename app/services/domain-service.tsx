@@ -56,14 +56,14 @@ class DomainService {
   }
 
   static isVercelPreview(req: NextRequest) {
-    let host = DomainService.getHostnameFromRequest(req);
+    const host = DomainService.getHostnameFromRequest(req);
     const vercelPreviewUrlPattern = /^gitwallet-web-git-[\w-]+-lab0324\.(?:vercel\.local|vercel\.app)(?::\d+)?$/;
 
     return vercelPreviewUrlPattern.test(host);
   }
 
   static getSubdomainFromRequest(req: NextRequest) {
-    let host = DomainService.getHostnameFromRequest(req);
+    const host = DomainService.getHostnameFromRequest(req);
 
     const parts = host.split('.');
 
