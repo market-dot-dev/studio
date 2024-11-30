@@ -44,7 +44,7 @@ import {
 import useCurrentSession from "@/app/hooks/use-current-session";
 import LinkButton from "../common/link-button";
 import { getRootUrl } from "@/app/services/domain-service";
-import { Check, Copy, UsersRound, Wallet, Mail } from "lucide-react";
+import { Check, Copy, Wallet, Mail } from "lucide-react";
 import TierDeleteButton from "./tier-delete-button";
 
 interface TierFormProps {
@@ -586,61 +586,69 @@ export default function TierForm({
             <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
               Checkout Type
             </label>
-            <div className="flex gap-2">
+            <div className="flex h-full gap-2">
               <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
-                <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
-                  <div className="flex items-center">
-                    <Wallet className="mr-3 h-5 w-5 text-gray-500" />
-                    <span className="text-sm text-gray-900">Gitwallet</span>
+                <div className="flex cursor-pointer flex-col gap-1 rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
+                  <div className="flex w-full items-center justify-between">
+                    <div className="flex items-center">
+                      <Wallet className="mr-3 h-5 w-5 text-gray-500" />
+                      <span className="text-sm text-gray-900">
+                        Standard Checkout
+                      </span>
+                    </div>
+                    <input
+                      type="radio"
+                      name="checkout-type"
+                      value="gitwallet"
+                      className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
+                      checked={tier.checkoutType === "gitwallet"}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "checkoutType",
+                          e.target.checked ? "gitwallet" : "contact-form",
+                        )
+                      }
+                    />
                   </div>
-                  <input
-                    type="radio"
-                    name="checkout-type"
-                    value="gitwallet"
-                    className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
-                    checked={tier.checkoutType === "gitwallet"}
-                    onChange={(e) =>
-                      handleInputChange(
-                        "checkoutType",
-                        e.target.checked ? "gitwallet" : "contact-form",
-                      )
-                    }
-                  />
+                  <div className="block">
+                    <span className="text-xs text-gray-900">
+                      Seamlessly collect and process credit card payments
+                    </span>
+                  </div>
                 </div>
               </label>
-              <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
-                <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
-                  <div className="flex items-center">
-                    <Mail className="mr-3 h-5 w-5 text-gray-500" />
-                    <span className="text-sm text-gray-900">Contact Form</span>
+              <label className="block h-full w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
+                <div className="flex cursor-pointer flex-col gap-1 rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
+                  <div className="flex h-full w-full items-center justify-between">
+                    <div className="flex items-center">
+                      <Mail className="mr-3 h-5 w-5 text-gray-500" />
+                      <span className="text-sm text-gray-900">
+                        Contact Form
+                      </span>
+                    </div>
+                    <input
+                      type="radio"
+                      name="checkout-type"
+                      value="contact-form"
+                      className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
+                      checked={tier.checkoutType === "contact-form"}
+                      onChange={(e) =>
+                        handleInputChange(
+                          "checkoutType",
+                          e.target.checked ? "contact-form" : "gitwallet",
+                        )
+                      }
+                    />
                   </div>
-                  <input
-                    type="radio"
-                    name="checkout-type"
-                    className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
-                    value="contact-form"
-                    checked={tier.checkoutType === "contact-form"}
-                    onChange={(e) => {
-                      handleInputChange(
-                        "checkoutType",
-                        e.target.checked ? "contact-form" : "gitwallet",
-                      );
-                    }}
-                  />
+                  <div className="block">
+                    <span className="text-xs text-gray-900">
+                      Collect customer information and get back to them via
+                      email
+                    </span>
+                  </div>
                 </div>
               </label>
             </div>
-            {tier.checkoutType === "gitwallet" ? (
-              <Text className="mt-2">
-                Your customers will be redirected to Gitwallet&apos;s optimized
-                checkout page where they can securely checkout.
-              </Text>
-            ) : (
-              <Text className="mt-2">
-                Your customers will be redirected to a Contact Us page where
-                they submit their information and you can get back to them.
-              </Text>
-            )}
           </div>
           <div className="mb-4">
             <NewVersionCallout
