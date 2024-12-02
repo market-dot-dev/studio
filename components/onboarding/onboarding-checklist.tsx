@@ -47,9 +47,7 @@ function TodoItem({
     <>
       <div
         className={clsx(
-          "flex w-full flex-row items-start gap-4 p-4 py-2",
-          !isLast &&
-            "relative after:absolute after:left-[23.5px] after:top-[28px] after:z-[-1] after:h-[calc(100%-16px)] after:w-px after:border-l after:border-dotted after:border-gray-300",
+          "flex w-full flex-row items-center gap-4 p-4 py-2",
         )}
       >
         <div className="flex h-5 items-center">
@@ -66,7 +64,7 @@ function TodoItem({
             <Bold
               className={clsx(
                 "w-fit text-sm",
-                completed ? "text-gray-500" : "text-gray-900",
+                completed ? "text-gray-500" : "text-gray-800",
               )}
             >
               {stepTitle}
@@ -95,7 +93,7 @@ function TodoItem({
           )}
         </div>
       </div>
-      <hr className="ml-12 w-full last:hidden" />
+      <hr className="w-full last:hidden" />
     </>
   );
 }
@@ -152,7 +150,7 @@ export default function OnboardingChecklist(): JSX.Element {
           </div>
         )}
       </div>
-      <div className="flex w-full flex-col overflow-hidden rounded-b-lg py-1">
+      <div className="flex w-full flex-col overflow-hidden rounded-b-lg">
         {onboardingSteps.map((step, index) => {
           return (
             <TodoItem
