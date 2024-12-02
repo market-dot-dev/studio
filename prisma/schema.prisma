@@ -163,6 +163,7 @@ model Example {
 model Tier {
   id              String  @id @default(cuid())
   userId          String
+  checkoutType    String @default("gitwallet")
   stripeProductId String? @unique
 
   name        String
@@ -172,7 +173,7 @@ model Tier {
   published Boolean @default(true)
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  price                 Int
+  price                 Int?
   applicationFeePercent Int?
   applicationFeePrice   Int?
   stripePriceId         String?
@@ -200,7 +201,7 @@ model TierVersion {
   id                  String  @id @default(cuid())
   tierId              String
   revision            Int
-  price               Int
+  price               Int?
   trialDays           Int     @default(0)
   stripePriceId       String?
   cadence             String  @default("month")

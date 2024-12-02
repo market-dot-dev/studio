@@ -463,7 +463,7 @@ export const onClickSubscribe = async (userId: string, tierId: string, annual: b
   console.log('[purchase]: maintainer, product check');
 
   if(tier.cadence === 'once') {
-    const charge = await stripeService.createCharge(stripeCustomerId, stripePriceId, tier.price, await customer.getStripePaymentMethodId(), tier.applicationFeePercent || 0, tier.applicationFeePrice || 0);
+    const charge = await stripeService.createCharge(stripeCustomerId, stripePriceId, tier.price!, await customer.getStripePaymentMethodId(), tier.applicationFeePercent || 0, tier.applicationFeePrice || 0);
 
     if(charge.status === 'succeeded') {
       await createLocalCharge(userId, tierId, charge.id);

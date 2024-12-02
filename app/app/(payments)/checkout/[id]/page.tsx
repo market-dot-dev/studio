@@ -15,7 +15,6 @@ interface QueryParams {
 }
 
 const checkoutCurrency = "USD";
-const projectDescriptionDefault = "";
 
 import Image from "next/image";
 import useContract from "@/app/hooks/use-contract";
@@ -93,8 +92,6 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const [features, isFeaturesLoading] = useFeatures(id);
 
   const checkoutProject = maintainer?.projectName || maintainer?.name;
-  const projectDescription =
-    maintainer?.projectDescription || projectDescriptionDefault;
   const checkoutPrice = isAnnual ? tier?.priceAnnual : tier?.price;
   const checkoutTier = tier?.name;
   const checkoutCadence = isAnnual ? "year" : tier?.cadence;
@@ -243,7 +240,6 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                 tier={tier}
                 maintainer={maintainer}
                 annual={isAnnual}
-                // contactUsCheckout={true} TODO(mathusan): pass this based on the type of tier the user has chosen
               />
             )}
           </>
