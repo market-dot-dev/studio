@@ -25,14 +25,10 @@ import clsx from "clsx";
 
 function TodoItem({
   step,
-  index,
-  currentStep,
   completedSteps,
   isLast,
 }: {
   step: onBoardingStepType;
-  index: number;
-  currentStep: number | null;
   completedSteps: OnboardingStepsType;
   isLast: boolean;
 }): JSX.Element {
@@ -44,8 +40,6 @@ function TodoItem({
     urls: stepURL,
     description: stepDescription,
   } = step;
-
-  const activeStep = currentStep === index;
 
   const completed = completedSteps?.[step.name] === true;
 
@@ -64,12 +58,7 @@ function TodoItem({
               <Check size={12} color="white" />
             </div>
           ) : (
-            <div
-              className={clsx(
-                "box-border h-4 w-4 shrink-0 rounded-full border border-gray-400 ring-4 ring-white",
-                activeStep && "border-dashed",
-              )}
-            ></div>
+            <div className="box-border h-4 w-4 shrink-0 rounded-full border border-dashed border-gray-400 ring-4 ring-white"></div>
           )}
         </div>
         <div className="flex w-full flex-wrap items-center justify-between gap-x-8 gap-y-2 lg:flex-nowrap">
@@ -77,14 +66,14 @@ function TodoItem({
             <Bold
               className={clsx(
                 "w-fit text-sm",
-                completed || !activeStep ? "text-gray-500" : "text-gray-900",
+                completed ? "text-gray-500" : "text-gray-900",
               )}
             >
               {stepTitle}
             </Bold>
-            {!activeStep && !completed && <Text>{stepDescription}</Text>}
+            {!completed && <Text>{stepDescription}</Text>}
           </div>
-          {!activeStep && !completed && (
+          {!completed && (
             <Button
               size="xs"
               variant="secondary"
@@ -113,9 +102,7 @@ function TodoItem({
 
 export default function OnboardingChecklist(): JSX.Element {
   const pathName = usePathname();
-  const [currentStep, setCurrentStep] = useState<number | null>(null);
-  const [completedSteps, setCompletedSteps] =
-    useState<OnboardingStepsType>(null);
+  const [completedSteps, setCompletedSteps] = useState<OnboardingStepsType>(null);
   const [isDismissing, setIsDismissing] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 
@@ -127,15 +114,6 @@ export default function OnboardingChecklist(): JSX.Element {
     };
 
     action();
-
-    let currentStep = null;
-    onboardingSteps.forEach((step, index) => {
-      if (step.urls.some((url) => pathName.includes(url))) {
-        currentStep = index;
-      }
-    });
-
-    setCurrentStep(currentStep);
 
     // set a window function that can be called from other components to refresh the onboarding checklist
     if ((window as any)["refreshOnboarding"]) return;
@@ -179,9 +157,7 @@ export default function OnboardingChecklist(): JSX.Element {
           return (
             <TodoItem
               key={index}
-              index={index}
               step={step as onBoardingStepType}
-              currentStep={currentStep}
               completedSteps={completedSteps}
               isLast={index === onboardingSteps.length - 1}
             />
