@@ -103,7 +103,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   }
 
   const directlyProvidedFeatures = !!features && features.length > 0;
-  const tierFeatures = (directlyProvidedFeatures ? features : tier?.features) || [];
+  const tierFeatures = directlyProvidedFeatures ? features : [];
   const parsedDescription = parseTierDescription(tier?.description || "");
 
   const tierInfo = (
