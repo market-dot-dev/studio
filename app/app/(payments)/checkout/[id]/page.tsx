@@ -1,6 +1,6 @@
 "use client";
 
-import { Accordion, AccordionBody, AccordionHeader, Flex } from "@tremor/react";
+import { Flex } from "@tremor/react";
 import RegistrationSection from "./registration-section";
 import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
@@ -134,41 +134,36 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
       {isFeaturesLoading ? (
         <SkeletonLoader className="my-2 h-8 w-full rounded-xl" />
       ) : (
-        <Accordion className="my-2">
-          <AccordionHeader className="my-0 py-1">
-            Package Benefits
-          </AccordionHeader>
-          <AccordionBody>
-            {hasActiveFeatures && tierFeatures.length !== 0 ? (
-              <TierFeatureList features={tierFeatures} />
-            ) : (
-              parsedDescription.map((section, dex) => {
-                if (section.text) {
-                  return (
-                    <div key={dex}>
-                      {section.text.map((text: string, index: number) => (
-                        <Text key={index} className="text-sm text-gray-500">
-                          {text}
-                        </Text>
-                      ))}
-                    </div>
-                  );
-                }
-
+        <div className="flex flex-col gap-4 mb-4">
+          {hasActiveFeatures && tierFeatures.length !== 0 ? (
+            <TierFeatureList features={tierFeatures} />
+          ) : (
+            parsedDescription.map((section, dex) => {
+              if (section.text) {
                 return (
-                  <TierFeatureList
-                    key={dex}
-                    features={section.features.map((feature: string, index: number) => ({
-                      id: `${index}`,
-                      name: feature,
-                      isEnabled: true,
-                    }))}
-                  />
+                  <div key={dex}>
+                    {section.text.map((text: string, index: number) => (
+                      <Text key={index} className="text-sm text-gray-500">
+                        {text}
+                      </Text>
+                    ))}
+                  </div>
                 );
-              })
-            )}
-          </AccordionBody>
-        </Accordion>
+              }
+
+              return (
+                <TierFeatureList
+                  key={dex}
+                  features={section.features.map((feature: string, index: number) => ({
+                    id: `${index}`,
+                    name: feature,
+                    isEnabled: true,
+                  }))}
+                />
+              );
+            })
+          )}
+        </div>
       )}
 
       {/* accept terms of service */}
@@ -176,7 +171,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
         {isFeaturesLoading ? (
           <SkeletonLoader className="mb-4 h-4 w-3/4 rounded-full" />
         ) : (
-          <Text className="mb-4 leading-6">
+          <Text className="leading-6">
             {isContractLoading && !(tier?.id && !tier.contractId) ? (
               <LoadingDots />
             ) : (
