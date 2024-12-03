@@ -102,13 +102,9 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
     return TierNotAvailable();
   }
 
-  const featuresFromDescription =
-    !isTierLoading && tier?.description
-      ? parseTierDescription(tier.description)
-          .filter((section) => section.features)
-          .map((section) => section.features)
-          .flat()
-      : [];
+  const directlyProvidedFeatures = !!features && features.length > 0;
+  const tierFeatures = (directlyProvidedFeatures ? features : tier?.features) || [];
+  const parsedDescription = parseTierDescription(tier?.description || "");
 
   const tierInfo = (
     <Card>
@@ -143,24 +139,33 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
             Package Benefits
           </AccordionHeader>
           <AccordionBody>
-            {hasActiveFeatures ? (
-              features ? (
-                <TierFeatureList features={features || []} />
-              ) : (
-                <Text>No features have been listed in this package.</Text>
-              )
-            ) : featuresFromDescription.length ? (
-              <TierFeatureList
-                features={featuresFromDescription.map(
-                  (feature: string, index: number) => ({
-                    id: `${index}`,
-                    name: feature,
-                    isEnabled: true,
-                  }),
-                )}
-              />
+            {hasActiveFeatures && tierFeatures.length !== 0 ? (
+              <TierFeatureList features={tierFeatures} />
             ) : (
-              <Text>No features have been listed in this package.</Text>
+              parsedDescription.map((section, dex) => {
+                if (section.text) {
+                  return (
+                    <div key={dex}>
+                      {section.text.map((text: string, index: number) => (
+                        <Text key={index} className="text-sm text-gray-500">
+                          {text}
+                        </Text>
+                      ))}
+                    </div>
+                  );
+                }
+
+                return (
+                  <TierFeatureList
+                    key={dex}
+                    features={section.features.map((feature: string, index: number) => ({
+                      id: `${index}`,
+                      name: feature,
+                      isEnabled: true,
+                    }))}
+                  />
+                );
+              })
             )}
           </AccordionBody>
         </Accordion>
