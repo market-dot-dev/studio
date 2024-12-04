@@ -70,7 +70,7 @@ export default function OnboardingForm({ user }: { user: User }) {
   };
 
   return (
-    <div className="flex w-full max-w-lg flex-col gap-8">
+    <div className="flex w-full items-center justify-center">
       {step === "profile" ? (
         <ProfileForm user={user} onSubmit={handleProfileSubmit} />
       ) : (

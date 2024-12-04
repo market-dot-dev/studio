@@ -101,8 +101,8 @@ export default function OfferingsForm({
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="flex w-full max-w-3xl flex-col items-center gap-8">
+    <form className="w-full" onSubmit={handleSubmit}>
+      <div className="flex flex-col items-center gap-8">
         <div className="flex justify-center">
           <Image
             src="/gw-logo-nav.png"
@@ -124,15 +124,15 @@ export default function OfferingsForm({
             ({ id, title, description, icon: Icon, isComingSoon }) => (
               <label
                 key={id}
-                className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-1 focus-within:ring-gray-300"
+                className="block h-full w-full rounded-tremor-default focus-within:outline-none focus-within:ring-1 focus-within:ring-gray-300"
               >
-                <div className="relative">
+                <div className="relative h-full">
                   {isComingSoon && (
                     <span className="absolute right-px top-px z-10 h-5 rounded-bl-[6px] border-b border-l border-black/5 bg-marketing-swamp pl-[7px] pr-2 text-[9px] font-bold uppercase leading-[19px] tracking-wider text-white shadow-sm md:rounded-tr-[5px]">
                       Coming Soon
                     </span>
                   )}
-                  <div className="relative flex h-full cursor-pointer flex-col items-center rounded-tremor-default border bg-white p-6 text-center shadow-sm transition-colors focus-within:border-gray-300 hover:bg-gray-50 hover:focus-within:bg-white [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
+                  <div className="relative flex h-full w-full cursor-pointer flex-col items-center rounded-tremor-default border bg-white p-6 text-center shadow-sm transition-colors focus-within:border-gray-300 hover:bg-gray-50 hover:focus-within:bg-white [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
                     <Icon className="mb-3 h-6 w-6 text-gray-500" />
                     <h3 className="mb-2 font-bold text-gray-900">{title}</h3>
                     <p className="text-sm text-gray-500">{description}</p>

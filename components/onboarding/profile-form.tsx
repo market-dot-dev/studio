@@ -68,8 +68,8 @@ export default function ProfileForm({ user, onSubmit }: ProfileFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
+    <form className="w-full max-w-lg" onSubmit={handleSubmit}>
+      <div className="flex flex-col gap-8">
         <div className="flex justify-center">
           <Image
             src="/gw-logo-nav.png"
