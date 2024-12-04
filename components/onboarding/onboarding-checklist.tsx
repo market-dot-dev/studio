@@ -1,15 +1,6 @@
 "use client";
 
-import {
-  Card,
-  Text,
-  Flex,
-  Bold,
-  Button,
-  Divider,
-  Icon,
-  Badge,
-} from "@tremor/react";
+import { Text, Bold, Button } from "@tremor/react";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
@@ -45,11 +36,7 @@ function TodoItem({
 
   return (
     <>
-      <div
-        className={clsx(
-          "flex w-full flex-row items-center gap-4 p-4 py-2",
-        )}
-      >
+      <div className={clsx("flex w-full flex-row items-center gap-4 p-4 py-2")}>
         <div className="flex h-5 items-center">
           {completed ? (
             <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-500 ring-4 ring-white">
@@ -100,7 +87,8 @@ function TodoItem({
 
 export default function OnboardingChecklist(): JSX.Element {
   const pathName = usePathname();
-  const [completedSteps, setCompletedSteps] = useState<OnboardingStepsType>(null);
+  const [completedSteps, setCompletedSteps] =
+    useState<OnboardingStepsType>(null);
   const [isDismissing, setIsDismissing] = useState(false);
   const [isDismissed, setIsDismissed] = useState(false);
 

@@ -10,23 +10,30 @@ import SessionService from "@/app/services/SessionService";
 import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
 import SessionRefresher from "@/components/common/session-refresher";
 import FeatureService from "@/app/services/feature-service";
+import OnboardingForm from "@/components/onboarding/onboarding-form";
+import UserService from "@/app/services/UserService";
+import Modal from "@/components/common/modal";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const user = await SessionService.getSessionUser();
+  const user = await UserService.getCurrentUser();
   const onboarding = user?.onboarding;
   if (!user?.id) {
     redirect("/login");
   }
+
   const site = await getOnlySiteFromUserId(user.id);
   const activeFeatures = await FeatureService.findActiveByCurrentUser();
 
   return (
     <DashboardProvider siteId={site?.id ?? null}>
       <SessionRefresher />
+      <Modal isOpen={true} showCloseButton={false}>
+        <OnboardingForm user={user} />
+      </Modal>
       <div>
         <Nav
           siteId={site?.id ?? null}
