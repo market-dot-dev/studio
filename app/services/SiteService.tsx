@@ -84,6 +84,34 @@ class SiteService {
     return site;
   }
 
+  static async validateSubdomain(subdomain: string, currentSite?: Site) {
+    if (reservedSubdomains.includes(subdomain)) {
+      throw new Error(
+        `The subdomain "${subdomain}" is reserved and cannot be used.`,
+      );
+    }
+
+    const existingSite = await prisma.site.findFirst({
+      where: {
+        subdomain,
+        ...(currentSite && { NOT: { id: currentSite.id } }),
+      },
+    });
+
+    if (existingSite) {
+      throw new Error(`The subdomain "${subdomain}" is already taken.`);
+    }
+  }
+
+  static async uploadLogo(file: File) {
+    const filename = `${nanoid()}.${file.type.split("/")[1]}`;
+    const { url } = await put(filename, file, {
+      access: "public",
+    });
+
+    return url;
+  }
+
   static async updateCurrentSite(formData: FormData) {
     const site = (await SiteService.getCurrentSite()) as Site;
     try {
@@ -94,11 +122,7 @@ class SiteService {
         // Handle subdomain separately with validation
         if (key === "subdomain") {
           const subdomain = value.toString();
-          if (reservedSubdomains.includes(subdomain)) {
-            throw new Error(
-              `The subdomain "${subdomain}" is reserved and cannot be used.`,
-            );
-          }
+          await SiteService.validateSubdomain(subdomain, site);
           updateData.subdomain = subdomain;
           hasSubdomainUpdate = true;
         } else if (key === "logo") {
@@ -110,12 +134,7 @@ class SiteService {
 
           const file = value as File;
           // Ensure there's a file to process
-
-          const filename = `${nanoid()}.${file.type.split("/")[1]}`;
-          const { url } = await put(filename, file, {
-            access: "public",
-          });
-
+          const url = await SiteService.uploadLogo(file);
           updateData.logo = url;
         } else if (key === "name") {
           updateData.name = value.toString();
@@ -181,4 +200,6 @@ export const {
   getSiteNav,
   getSiteAndPages,
   deleteSite,
+  validateSubdomain,
+  uploadLogo,
 } = SiteService;

@@ -82,11 +82,7 @@ class RegistrationService {
     }
   }
 
-  static async createSite(
-    user: User,
-    subdomain: string,
-    imageBlurhash: string,
-  ) {
+  static async createSite(user: User, subdomain?: string, logo?: string) {
     const pageData = {
       title: homepageTitle,
       slug: "index",
@@ -105,7 +101,7 @@ class RegistrationService {
         name: siteName,
         description: siteDescription,
         subdomain,
-        imageBlurhash,
+        logo,
         user: {
           connect: {
             id: user.id,

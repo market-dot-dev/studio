@@ -15,7 +15,7 @@ import { createSite } from "@/app/services/registration-service";
 interface ProfileData {
   businessName: string;
   subdomain: string;
-  logo?: File;
+  logo?: string;
   location: string;
   teamType: "team" | "individual";
 }
@@ -48,7 +48,6 @@ export default function OnboardingForm({
 
     setIsLoading(true);
     try {
-      // TODO: Add image to user table
       await updateCurrentUser({
         projectName: profileData.businessName,
         businessLocation: profileData.location,
@@ -56,7 +55,7 @@ export default function OnboardingForm({
       });
 
       if (!currentSite) {
-        await createSite(user, profileData.subdomain, "");
+        await createSite(user, profileData.subdomain, profileData.logo);
       }
 
       const onboardingState: OnboardingState = user.onboarding

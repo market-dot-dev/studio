@@ -4,11 +4,13 @@ import { TextInput, Button } from "@tremor/react";
 import { UsersRound, UserRound, ImageIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { Site, User } from "@prisma/client";
+import { uploadLogo, validateSubdomain } from "@/app/services/SiteService";
+import { toast } from "sonner";
 
 interface ProfileData {
   businessName: string;
   subdomain: string;
-  logo?: File;
+  logo?: string;
   location: string;
   teamType: "team" | "individual";
 }
@@ -28,6 +30,7 @@ export default function ProfileForm({
   const [file, setFile] = useState<File | null>(null);
   const [isDraggingOverDropzone, setIsDraggingOverDropzone] = useState(false);
   const [teamType, setTeamType] = useState<"team" | "individual" | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -59,17 +62,37 @@ export default function ProfileForm({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
+    const subdomain = form.subdomain.value;
 
-    onSubmit({
-      businessName: form.businessName.value,
-      subdomain: form.subdomain.value,
-      location: form.location.value,
-      teamType: teamType!,
-      //   logo: file,
-    });
+    try {
+      setIsLoading(true);
+      await validateSubdomain(subdomain, currentSite);
+
+      let logo: string | undefined;
+      if (file) {
+        logo = await uploadLogo(file);
+      }
+
+      onSubmit({
+        businessName: form.businessName.value,
+        subdomain,
+        location: form.location.value,
+        teamType: teamType!,
+        logo,
+      });
+    } catch (error) {
+      if (error instanceof Error) {
+        // TODO: Want to encapsulate gitwallet errors and only log gitwallet errors here as toats to ensure implementation details are not exposed
+        toast.error(error.message);
+      } else {
+        toast.error("An unknown error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -121,6 +144,9 @@ export default function ProfileForm({
                 .gitwallet.co
               </span>
             </div>
+            {/* {subdomainError && (
+              <p className="text-sm text-red-500">{subdomainError}</p>
+            )} */}
             <p className="text-xs text-gray-500">
               Your landing page will live here. You can change this later.
             </p>
@@ -247,6 +273,8 @@ export default function ProfileForm({
           <Button
             className="bg-gray-900 text-white hover:bg-gray-800"
             type="submit"
+            loading={isLoading}
+            disabled={isLoading}
           >
             Next
           </Button>
