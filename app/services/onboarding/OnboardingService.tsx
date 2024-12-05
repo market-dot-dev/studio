@@ -4,17 +4,14 @@
 
 import prisma from "@/lib/prisma";
 import { getCurrentUserId } from "../SessionService";
-import {
-  defaultOnboardingState,
-  type OnboardingStepsType,
-} from "./onboarding-steps";
+import { defaultOnboardingState, OnboardingState } from "./onboarding-steps";
 import {
   businessName,
   businessDescription,
 } from "@/lib/constants/site-template";
 
 class OnboardingService {
-  static async saveState(state: OnboardingStepsType | null) {
+  static async saveState(state: OnboardingState | null) {
     const id = await getCurrentUserId();
     if (!id) return null;
 
@@ -46,6 +43,8 @@ class OnboardingService {
         onboarding: true,
         projectName: true,
         projectDescription: true,
+        businessLocation: true,
+        businessType: true,
         stripeAccountId: true,
         createdAt: true,
         // select first site
@@ -91,10 +90,14 @@ class OnboardingService {
     });
 
     // Initialize the onboarding guide state
-    const onboardingState = { ...defaultOnboardingState };
+    const onboardingState: OnboardingState = { ...defaultOnboardingState };
 
     if (result) {
       // Check if the project setup step is done
+      if (result.businessLocation && result.businessType) {
+        onboardingState.setupBusiness = true;
+      }
+
       if (
         result.projectName !== businessName &&
         result.projectDescription !== businessDescription
@@ -132,6 +135,14 @@ class OnboardingService {
         }
       }
 
+      if (result.onboarding) {
+        try {
+          const parsed = JSON.parse(result.onboarding);
+          onboardingState.preferredServices = parsed.preferredServices;
+        } catch (error) {
+          console.error("Failed to parse onboarding JSON:", error);
+        }
+      }
       // if all steps are completed, set the onboarding state to null, so that the guide is not shown
       // const completed = Object.values(onboardingState).every((step) => step === true);
       // if (completed) {

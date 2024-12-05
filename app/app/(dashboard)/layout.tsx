@@ -6,13 +6,15 @@ import { getOnlySiteFromUserId } from "@/app/services/SiteService";
 import { Flex } from "@tremor/react";
 import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
 import { DashboardProvider } from "@/components/dashboard/dashboard-context";
-import SessionService from "@/app/services/SessionService";
 import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
 import SessionRefresher from "@/components/common/session-refresher";
 import FeatureService from "@/app/services/feature-service";
-import OnboardingForm from "@/components/onboarding/onboarding-form";
 import UserService from "@/app/services/UserService";
-import Modal from "@/components/common/modal";
+import {
+  defaultOnboardingState,
+  OnboardingState,
+} from "@/app/services/onboarding/onboarding-steps";
+import OnboardingModal from "@/components/onboarding/onboarding-modal";
 
 export default async function DashboardLayout({
   children,
@@ -20,20 +22,27 @@ export default async function DashboardLayout({
   children: ReactNode;
 }) {
   const user = await UserService.getCurrentUser();
-  const onboarding = user?.onboarding;
   if (!user?.id) {
     redirect("/login");
   }
 
+  const onboarding = user.onboarding
+    ? (JSON.parse(user.onboarding) as OnboardingState)
+    : defaultOnboardingState;
+
   const site = await getOnlySiteFromUserId(user.id);
   const activeFeatures = await FeatureService.findActiveByCurrentUser();
+  const showOnboardingModal =
+    !onboarding.setupBusiness || !onboarding.preferredServices;
 
   return (
     <DashboardProvider siteId={site?.id ?? null}>
       <SessionRefresher />
-      <Modal isOpen={true} showCloseButton={false}>
-        <OnboardingForm user={user} />
-      </Modal>
+      <OnboardingModal
+        user={user}
+        currentSite={site ?? undefined}
+        defaultOpen={showOnboardingModal}
+      />
       <div>
         <Nav
           siteId={site?.id ?? null}
@@ -46,7 +55,7 @@ export default async function DashboardLayout({
         </Nav>
         <div className="min-h-screen sm:pl-60">
           <Flex alignItems="stretch" className="flex w-full flex-col gap-4 p-4">
-            {onboarding && <OnboardingChecklist />}
+            {onboarding && !showOnboardingModal && <OnboardingChecklist />}
             {user?.stripeAccountDisabled && user?.stripeAccountId && (
               <StripeDisabledBanner />
             )}

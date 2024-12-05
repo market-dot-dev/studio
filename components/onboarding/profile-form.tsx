@@ -3,7 +3,7 @@ import clsx from "clsx";
 import { TextInput, Button } from "@tremor/react";
 import { UsersRound, UserRound, ImageIcon } from "lucide-react";
 import { useRef, useState } from "react";
-import { User } from "@prisma/client";
+import { Site, User } from "@prisma/client";
 
 interface ProfileData {
   businessName: string;
@@ -16,9 +16,14 @@ interface ProfileData {
 interface ProfileFormProps {
   user: User;
   onSubmit: (data: ProfileData) => void;
+  currentSite?: Site;
 }
 
-export default function ProfileForm({ user, onSubmit }: ProfileFormProps) {
+export default function ProfileForm({
+  user,
+  onSubmit,
+  currentSite,
+}: ProfileFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isDraggingOverDropzone, setIsDraggingOverDropzone] = useState(false);
@@ -61,9 +66,9 @@ export default function ProfileForm({ user, onSubmit }: ProfileFormProps) {
     onSubmit({
       businessName: form.businessName.value,
       subdomain: form.subdomain.value,
-      logo: file,
       location: form.location.value,
       teamType: teamType!,
+      //   logo: file,
     });
   };
 
@@ -106,7 +111,8 @@ export default function ProfileForm({ user, onSubmit }: ProfileFormProps) {
             <div className="flex items-center justify-between gap-4 rounded-tremor-default border border-tremor-border bg-white shadow-tremor-input">
               <TextInput
                 className="rounded-r-none border-none bg-white shadow-none focus:border focus:border-gray-900"
-                defaultValue={user.gh_username ?? ""}
+                defaultValue={currentSite?.subdomain ?? user.gh_username ?? ""}
+                disabled={!!currentSite?.subdomain}
                 placeholder={"Subdomain"}
                 name="subdomain"
                 required

@@ -165,12 +165,20 @@ class SiteService {
       },
     });
   }
+
+  static async deleteSite(siteId: string) {
+    return prisma.site.delete({
+      where: { id: siteId },
+    });
+  }
 }
 
 export default SiteService;
 export const {
+  getCurrentSite,
   updateCurrentSite,
   getOnlySiteFromUserId,
   getSiteNav,
   getSiteAndPages,
+  deleteSite,
 } = SiteService;

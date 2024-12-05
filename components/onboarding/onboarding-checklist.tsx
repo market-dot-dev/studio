@@ -96,7 +96,6 @@ export default function OnboardingChecklist(): JSX.Element {
     const action = async () => {
       const state = (await getState()) as OnboardingStepsType;
       setCompletedSteps(state);
-      console.log(state);
     };
 
     action();

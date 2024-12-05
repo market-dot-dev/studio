@@ -19,7 +19,7 @@ export default function Modal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/50" />
-      <div className="relative z-50 w-full max-w-4xl rounded-lg bg-white p-6 shadow-xl">
+      <div className="relative z-50 max-h-[90vh] w-full max-w-4xl overflow-y-scroll rounded-lg bg-white p-6 shadow-xl">
         {showCloseButton && (
           <button
             onClick={onClose}

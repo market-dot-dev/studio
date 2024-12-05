@@ -1,14 +1,16 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-
-import { User } from "@prisma/client";
-import { useRouter } from "next/navigation";
-
+import { useState } from "react";
+import { Site, User } from "@prisma/client";
 import OfferingsForm from "./offerings-form";
 import ProfileForm from "./profile-form";
-import { createSite } from "@/tests/factories";
 import { updateCurrentUser } from "@/app/services/UserService";
+import {
+  defaultOnboardingState,
+  OnboardingState,
+} from "@/app/services/onboarding/onboarding-steps";
+import { saveState } from "@/app/services/onboarding/OnboardingService";
+import { createSite } from "@/app/services/registration-service";
 
 interface ProfileData {
   businessName: string;
@@ -22,17 +24,19 @@ interface OfferingsData {
   offerings: string[];
 }
 
-export default function OnboardingForm({ user }: { user: User }) {
-  const router = useRouter();
-
+export default function OnboardingForm({
+  user,
+  currentSite,
+  onComplete,
+}: {
+  user: User;
+  currentSite?: Site;
+  onComplete: () => Promise<void>;
+}) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [step, setStep] = useState<"profile" | "offerings">("profile");
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
-
-  useEffect(() => {
-    // TODO: Add logic to check if the user has already completed onboarding and redirect to dashboard if so
-  }, [user.projectName, router]);
 
   const handleProfileSubmit = (data: ProfileData) => {
     setProfileData(data);
@@ -44,23 +48,29 @@ export default function OnboardingForm({ user }: { user: User }) {
 
     setIsLoading(true);
     try {
-      // Submit both profile and offerings data
+      // TODO: Add image to user table
       await updateCurrentUser({
         projectName: profileData.businessName,
         businessLocation: profileData.location,
         businessType: profileData.teamType,
-        offerings: offeringsData.offerings,
       });
 
-      await createSite(user.id, {
-        name: profileData.businessName,
-        subdomain: profileData.subdomain,
-        image: profileData.logo
-          ? URL.createObjectURL(profileData.logo)
-          : undefined,
-      });
+      if (!currentSite) {
+        await createSite(user, profileData.subdomain, "");
+      }
 
-      router.push("/dashboard"); // or wherever you want to redirect after completion
+      const onboardingState: OnboardingState = user.onboarding
+        ? JSON.parse(user.onboarding)
+        : defaultOnboardingState;
+
+      const newState = {
+        ...onboardingState,
+        setupBusiness: true,
+        preferredServices: offeringsData.offerings,
+      };
+
+      await saveState(newState);
+      await onComplete();
     } catch (error) {
       setError("Failed to complete onboarding");
       console.error(error);
@@ -72,7 +82,11 @@ export default function OnboardingForm({ user }: { user: User }) {
   return (
     <div className="flex w-full items-center justify-center">
       {step === "profile" ? (
-        <ProfileForm user={user} onSubmit={handleProfileSubmit} />
+        <ProfileForm
+          user={user}
+          currentSite={currentSite}
+          onSubmit={handleProfileSubmit}
+        />
       ) : (
         <OfferingsForm
           user={user}
