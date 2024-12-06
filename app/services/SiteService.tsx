@@ -10,6 +10,7 @@ import fs from "fs";
 import yaml from "js-yaml";
 import { put } from "@vercel/blob";
 import SessionService from "./SessionService";
+import { GitWalletError } from "@/lib/errors";
 
 const nanoid = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -85,12 +86,27 @@ class SiteService {
   }
 
   static async validateSubdomain(subdomain: string, currentSite?: Site) {
-    if (reservedSubdomains.includes(subdomain)) {
-      throw new Error(
-        `The subdomain "${subdomain}" is reserved and cannot be used.`,
+    // Validate subdomain format
+    const subdomainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/;
+    if (!subdomainRegex.test(subdomain)) {
+      throw new GitWalletError("Subdomain provided is not valid");
+    }
+
+    // Check length constraints
+    if (subdomain.length < 3 || subdomain.length > 63) {
+      throw new GitWalletError(
+        "Subdomain must be between 3 and 63 characters long",
       );
     }
 
+    // Check reserved subdomains
+    if (reservedSubdomains.includes(subdomain)) {
+      throw new GitWalletError(
+        `The subdomain "${subdomain}" is reserved and cannot be used`,
+      );
+    }
+
+    // Check if subdomain is already taken
     const existingSite = await prisma.site.findFirst({
       where: {
         subdomain,
@@ -99,7 +115,9 @@ class SiteService {
     });
 
     if (existingSite) {
-      throw new Error(`The subdomain "${subdomain}" is already taken.`);
+      throw new GitWalletError(
+        `The subdomain "${subdomain}" is already taken.`,
+      );
     }
   }
 
@@ -121,7 +139,7 @@ class SiteService {
       for (let [key, value] of formData.entries()) {
         // Handle subdomain separately with validation
         if (key === "subdomain") {
-          const subdomain = value.toString();
+          const subdomain = value.toString().toLocaleLowerCase();
           await SiteService.validateSubdomain(subdomain, site);
           updateData.subdomain = subdomain;
           hasSubdomainUpdate = true;

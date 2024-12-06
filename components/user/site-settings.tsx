@@ -6,6 +6,8 @@ import { useState } from "react";
 import { updateCurrentSite } from "@/app/services/SiteService"; // Ensure this service is implemented correctly
 import Uploader from "../form/uploader";
 import { toast } from "sonner";
+import * as Sentry from "@sentry/nextjs";
+import { GitWalletError, isGitWalletError } from "@/lib/errors";
 
 export default function SiteSettings({ site }: { site: Partial<Site> }) {
   const [isSaving, setIsSaving] = useState(false);
@@ -24,9 +26,10 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
       await updateCurrentSite(formData); // Assumes your service can handle FormData
       setChanged(false);
     } catch (error) {
-      if (error instanceof Error) {
+      if (isGitWalletError(error)) {
         toast.error(error.message);
       } else {
+        Sentry.captureException(error);
         toast.error("An unknown error occurred");
       }
     } finally {

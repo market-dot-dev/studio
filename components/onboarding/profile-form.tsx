@@ -6,6 +6,8 @@ import { useRef, useState } from "react";
 import { Site, User } from "@prisma/client";
 import { uploadLogo, validateSubdomain } from "@/app/services/SiteService";
 import { toast } from "sonner";
+import { GitWalletError, isGitWalletError } from "@/lib/errors";
+import * as Sentry from "@sentry/nextjs";
 
 interface ProfileData {
   businessName: string;
@@ -65,7 +67,7 @@ export default function ProfileForm({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const form = e.target as HTMLFormElement;
-    const subdomain = form.subdomain.value;
+    const subdomain = (form.subdomain.value as string).toLocaleLowerCase();
 
     try {
       setIsLoading(true);
@@ -84,10 +86,10 @@ export default function ProfileForm({
         logo,
       });
     } catch (error) {
-      if (error instanceof Error) {
-        // TODO: Want to encapsulate gitwallet errors and only log gitwallet errors here as toats to ensure implementation details are not exposed
+      if (isGitWalletError(error)) {
         toast.error(error.message);
       } else {
+        Sentry.captureException(error);
         toast.error("An unknown error occurred");
       }
     } finally {
@@ -184,6 +186,7 @@ export default function ProfileForm({
                     className="h-20 w-auto rounded shadow-sm ring-1 ring-black/10"
                   />
                   <button
+                    type="button"
                     onClick={handleFilePicker}
                     className="mt-4 text-xs text-gray-500 underline"
                   >
@@ -198,6 +201,7 @@ export default function ProfileForm({
                     <p>
                       or{" "}
                       <button
+                        type="button"
                         onClick={handleFilePicker}
                         className="cursor-pointer underline"
                       >
