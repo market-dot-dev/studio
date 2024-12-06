@@ -14,8 +14,6 @@ model User {
   username                    String?
   gh_username                 String?        @unique
   email                       String?        @unique
-  businessLocation            String?
-  businessType                String?
   stripeCustomerIds           Json           @default("{}")
   stripePaymentMethodIds      Json           @default("{}")
   stripeAccountId             String?        @unique

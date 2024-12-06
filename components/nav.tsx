@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import {
-  AppWindowMac,
-  Package,
+  Globe,
+  KanbanSquare,
   Scroll,
   Menu,
   Users,
@@ -36,7 +36,7 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         href: "/",
         isActive: urlSegments.length === 0,
         icon: <Home width={18} />,
-      },
+      }, 
 
       {
         name: "Settings",
@@ -51,21 +51,18 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         href: "",
         isDivider: true,
       },
-      ...(hasFeatures
-        ? [
-            {
-              name: "Services",
-              href: "/features",
-              isActive: urlSegments[0] === "features",
-              icon: <Box width={18} />,
-            },
-          ]
-        : []),
+      ...(hasFeatures ? [
+        {
+          name: "Services",
+          href: "/features",
+          isActive: urlSegments[0] === "features",
+          icon: <Box width={18} />,
+      }] : []),  
       {
         name: "Packages",
         href: "/tiers",
         isActive: urlSegments[0] === "tiers",
-        icon: <Package width={18} />,
+        icon: <KanbanSquare width={18} />,
       },
       {
         name: "Contracts",
@@ -74,7 +71,7 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         isBeta: true,
         icon: <Scroll width={18} />,
       },
-
+  
       // Customers
       {
         name: "Customers",
@@ -100,16 +97,13 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         href: "",
         isDivider: true,
       },
-      ...(siteId
-        ? [
-            {
-              name: "Site",
-              href: `/site/${siteId}`,
-              isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
-              icon: <AppWindowMac width={18} />,
-            },
-          ]
-        : []),
+      ...(siteId ?
+        [{
+          name: "Your Site",
+          href: `/site/${siteId}`,
+          isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
+          icon: <Globe width={18} />
+        }] : []),
       {
         name: "Embeds",
         href: "/channels/embeds",
@@ -117,7 +111,7 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         icon: <Code2 width={18} />,
       },
 
-      // Analytics
+      // Analytics 
       {
         name: "Analytics",
         href: "",
@@ -153,20 +147,18 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         target: "_blank",
         icon: <FaGithubAlt width={18} />,
       },
-      ...(["admin"].includes(roleId || "")
-        ? [
-            {
-              name: "⚠️ DEBUG MENU ⚠️",
-              href: "",
-              isDivider: true,
-            },
-            {
-              name: "Debug",
-              href: `/admin/debug`,
-              icon: <GearIcon width={18} />,
-            },
-          ]
-        : []),
+      ...(['admin'].includes(roleId || '') ?
+        [{
+          name: "⚠️ DEBUG MENU ⚠️",
+          href: "",
+          isDivider: true,
+        },
+        {
+          name: "Debug",
+          href: `/admin/debug`,
+          icon: <GearIcon width={18} />,
+        }
+        ] : []),
     ];
   }, [urlSegments, id, siteId, roleId]);
 
