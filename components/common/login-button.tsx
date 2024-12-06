@@ -21,11 +21,15 @@ export const LoginButton: FC<LoginButtonProps> = ({ children, onClick, isLoading
       onClick={loginOrNavigate}
       className={`${
         isLoading
-          ? "cursor-not-allowed bg-white dark:bg-black"
-          : "bg-white hover:bg-stone-50 active:bg-stone-100 dark:bg-black dark:hover:bg-black dark:hover:shadow"
-      } group flex h-12 w-full items-center justify-center gap-3 rounded-md ring-1 ring-black/5 shadow font-bold text-stone-900 transition-colors duration-75 focus:outline-none dark:border-stone-700 dark:text-stone-400`}
+          ? "cursor-not-allowed bg-stone-50 dark:bg-stone-800"
+          : "bg-white hover:bg-stone-50 active:bg-stone-100 dark:bg-black dark:hover:border-white dark:hover:bg-black"
+      } group my-2 flex h-10 w-full items-center justify-center space-x-2 rounded-md border border-stone-200 transition-colors duration-75 focus:outline-none dark:border-stone-700`}
     >
-      {isLoading ? <LoadingDots color="#A8A29E" /> : children}
+      {isLoading ? (
+        <LoadingDots color="#A8A29E" />
+      ) : (
+        children
+      )}
     </button>
   );
 };

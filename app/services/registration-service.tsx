@@ -1,15 +1,10 @@
-"use server";
+'use server';
 
-import { User } from "@prisma/client";
-import prisma from "@/lib/prisma";
-import {
-  siteName,
-  siteDescription,
-  homepageTitle,
-  homepageTemplate,
-} from "@/lib/constants/site-template";
+import { User } from "@prisma/client"
+import prisma from "@/lib/prisma"
+import { siteName, siteDescription, homepageTitle, homepageTemplate} from "@/lib/constants/site-template";
 import { signIn } from "next-auth/react";
-import { cookies } from "next/headers";
+import { cookies } from 'next/headers'
 
 interface UserDetails {
   id: string;
@@ -21,26 +16,28 @@ interface UserDetails {
 }
 
 class RegistrationService {
-  static async registerCustomer(userAttributes: Partial<User>) {
+  static async registerCustomer(userAttributes: Partial<User> ) {
     return await prisma.user.create({
       data: {
         email: userAttributes.email,
         name: userAttributes.name,
-        roleId: "customer",
+        roleId: 'customer',
       },
     });
   }
 
-  static async registerAndSignInCustomer(userAttributes: Partial<User>) {
+  
+  static async registerAndSignInCustomer(userAttributes: Partial<User> ) { 
     const res = await signIn("email", {
       redirect: false,
-      email: userAttributes.email,
+      email: userAttributes.email
     });
+
   }
 
   static async upsertUser(userDetails: UserDetails) {
     const { id, gh_username, name, email, image } = userDetails;
-
+  
     // Check if a user exists with the given GitHub username
     const existingUser = await prisma.user.findUnique({
       where: { gh_username }, // Assuming gh_username is unique
@@ -59,7 +56,7 @@ class RegistrationService {
           updatedAt: new Date(), // Update the 'updatedAt' field to the current time
         },
       });
-
+  
       return user;
     } else {
       // If the user doesn't exist, create a new one with the provided details
@@ -71,28 +68,30 @@ class RegistrationService {
           email,
           image,
           username: gh_username, // Assuming you want to store the GitHub username here
-          roleId: "customer",
+          roleId: 'customer',
           emailVerified: null, // Set this to the current time if the email is verified at creation
           createdAt: new Date(), // Set to the current time
           updatedAt: new Date(), // Set to the current time
         },
       });
+  
 
       return user;
     }
   }
 
-  static async createSite(user: User, subdomain?: string, logo?: string) {
+
+  static async createSite(user: User) {
     const pageData = {
       title: homepageTitle,
-      slug: "index",
+      slug: 'index',
       content: homepageTemplate,
       draft: false,
       user: {
         connect: {
           id: user.id,
-        },
-      },
+        }
+      }
       // other page fields...
     };
     // You can use this information to perform additional actions in your database
@@ -100,20 +99,19 @@ class RegistrationService {
       data: {
         name: siteName,
         description: siteDescription,
-        subdomain,
-        logo,
+        subdomain: user.gh_username ?? user.id,
         user: {
           connect: {
             id: user.id,
           },
         },
         pages: {
-          create: [pageData],
-        },
+          create: [pageData]
+        }
       },
       include: {
-        pages: true, // Include the pages in the result
-      },
+        pages: true // Include the pages in the result
+      }
     });
 
     const homepageId = site.pages[0].id;
@@ -121,11 +119,11 @@ class RegistrationService {
     // Update the site to set the homepageId
     await prisma.site.update({
       where: {
-        id: site.id,
+        id: site.id
       },
       data: {
-        homepageId: homepageId,
-      },
+        homepageId: homepageId
+      }
     });
   }
 
@@ -138,27 +136,28 @@ class RegistrationService {
   }
 
   static async setSignUp(userAttributes: Partial<User>) {
-    if (!userAttributes.email) {
-      throw new Error("Email is required");
+    if(! userAttributes.email ) {
+      throw new Error('Email is required');
     }
 
-    if (!userAttributes.name) {
-      throw new Error("Name is required");
+    if( !userAttributes.name ) {
+      throw new Error('Name is required');
     }
+
 
     // Check if the user exists
     const exists = await RegistrationService.userExists(userAttributes.email);
 
-    if (exists) {
+    if(exists) {
       return false;
     }
 
-    cookies().set("signup_name", userAttributes.name);
+    cookies().set('signup_name', userAttributes.name);
 
     return true;
+
   }
-}
+};
 
 export default RegistrationService;
-export const { registerAndSignInCustomer, createSite, userExists, setSignUp } =
-  RegistrationService;
+export const { registerAndSignInCustomer, userExists, setSignUp } = RegistrationService;

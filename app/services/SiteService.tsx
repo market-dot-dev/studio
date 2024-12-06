@@ -10,7 +10,6 @@ import fs from "fs";
 import yaml from "js-yaml";
 import { put } from "@vercel/blob";
 import SessionService from "./SessionService";
-import { GitWalletError } from "@/lib/errors";
 
 const nanoid = customAlphabet(
   "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
@@ -85,56 +84,6 @@ class SiteService {
     return site;
   }
 
-  static async validateSubdomain(subdomain: string, currentSite?: Site) {
-    // Validate subdomain format
-    const subdomainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/;
-    if (!subdomainRegex.test(subdomain)) {
-      throw new GitWalletError("Subdomain provided is not valid");
-    }
-
-    // Check length constraints
-    if (subdomain.length < 3 || subdomain.length > 63) {
-      throw new GitWalletError(
-        "Subdomain must be between 3 and 63 characters long",
-      );
-    }
-
-    // Check reserved subdomains
-    if (reservedSubdomains.includes(subdomain)) {
-      throw new GitWalletError(
-        `The subdomain "${subdomain}" is reserved and cannot be used`,
-      );
-    }
-
-    // Check if subdomain is already taken
-    const existingSite = await prisma.site.findFirst({
-      where: {
-        subdomain,
-        ...(currentSite && { NOT: { id: currentSite.id } }),
-      },
-    });
-
-    if (existingSite) {
-      throw new GitWalletError(
-        `The subdomain "${subdomain}" is already taken.`,
-      );
-    }
-  }
-
-  static async uploadLogo(formData: FormData) {
-    const file = formData.get("file") as File;
-    return SiteService.uploadLogoFile(file);
-  }
-
-  static async uploadLogoFile(file: File) {
-    const filename = `${nanoid()}.${file.type.split("/")[1]}`;
-    const { url } = await put(filename, file, {
-      access: "public",
-    });
-
-    return url;
-  }
-
   static async updateCurrentSite(formData: FormData) {
     const site = (await SiteService.getCurrentSite()) as Site;
     try {
@@ -144,8 +93,12 @@ class SiteService {
       for (let [key, value] of formData.entries()) {
         // Handle subdomain separately with validation
         if (key === "subdomain") {
-          const subdomain = value.toString().toLocaleLowerCase();
-          await SiteService.validateSubdomain(subdomain, site);
+          const subdomain = value.toString();
+          if (reservedSubdomains.includes(subdomain)) {
+            throw new Error(
+              `The subdomain "${subdomain}" is reserved and cannot be used.`,
+            );
+          }
           updateData.subdomain = subdomain;
           hasSubdomainUpdate = true;
         } else if (key === "logo") {
@@ -157,7 +110,12 @@ class SiteService {
 
           const file = value as File;
           // Ensure there's a file to process
-          const url = await SiteService.uploadLogoFile(file);
+
+          const filename = `${nanoid()}.${file.type.split("/")[1]}`;
+          const { url } = await put(filename, file, {
+            access: "public",
+          });
+
           updateData.logo = url;
         } else if (key === "name") {
           updateData.name = value.toString();
@@ -207,22 +165,12 @@ class SiteService {
       },
     });
   }
-
-  static async deleteSite(siteId: string) {
-    return prisma.site.delete({
-      where: { id: siteId },
-    });
-  }
 }
 
 export default SiteService;
 export const {
-  getCurrentSite,
   updateCurrentSite,
   getOnlySiteFromUserId,
   getSiteNav,
   getSiteAndPages,
-  deleteSite,
-  validateSubdomain,
-  uploadLogo,
 } = SiteService;

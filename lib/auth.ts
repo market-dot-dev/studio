@@ -13,26 +13,21 @@ import AuthService from "@/app/services/auth-service";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
-const isDevelopment =
-  process.env.NODE_ENV === "development" ||
-  process.env.NEXT_PUBLIC_VERCEL_ENV === "development" ||
-  process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+const isDevelopment = process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_VERCEL_ENV === "development" || process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
 
-const cookieDomain = isPreview
-  ? process.env.VERCEL_BRANCH_URL
-  : `.${process.env.NEXT_PUBLIC_ROOT_HOST}`;
+const cookieDomain = isPreview ? process.env.VERCEL_BRANCH_URL : `.${process.env.NEXT_PUBLIC_ROOT_HOST}`;
 
 export const authOptions: NextAuthOptions = {
   providers: [
     EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.SENDGRID_API_KEY,
-        },
-      },
+			server: {
+				host: process.env.EMAIL_SERVER_HOST,
+				port: process.env.EMAIL_SERVER_PORT,
+				auth: {
+					user: process.env.EMAIL_SERVER_USER,
+					pass: process.env.SENDGRID_API_KEY,
+				}
+			},
       from: process.env.SENDGRID_FROM_EMAIL,
       // the following configuration of EmailProvider makes it use a 6 digit token number instead of a magic link
       maxAge: 5 * 60,
@@ -41,15 +36,16 @@ export const authOptions: NextAuthOptions = {
         // if(isDevelopment) {
         //   return "123456";
         // } else {
-        return Math.floor(100000 + Math.random() * 900000).toString();
+          return Math.floor(100000 + Math.random() * 900000).toString();
         // }
       },
       sendVerificationRequest: ({ identifier: email, token }) => {
         const html = `<p>Your verification code for signing in to Gitwallet.co is <strong>${token}</strong></p>`;
         const text = `Your verification code for signing in to Gitwallet.co is ${token}`;
-        return EmailService.sendEmail(email, `Verification code`, text, html);
-      },
-    }),
+        return EmailService.sendEmail(email, `Verification code`, text, html)
+        
+      }
+		}),
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
       clientSecret: process.env.AUTH_GITHUB_SECRET as string,
@@ -68,16 +64,8 @@ export const authOptions: NextAuthOptions = {
       CredentialsProvider({
         name: "Credentials",
         credentials: {
-          gh_username: {
-            label: "GitHub Username",
-            type: "text",
-            placeholder: "Enter your GitHub username",
-          },
-          password: {
-            label: "Password",
-            type: "password",
-            placeholder: "Enter the override password",
-          },
+          gh_username: { label: "GitHub Username", type: "text", placeholder: "Enter your GitHub username" },
+          password: { label: "Password", type: "password", placeholder: "Enter the override password" },
         },
         async authorize(credentials, req) {
           if (
@@ -89,19 +77,19 @@ export const authOptions: NextAuthOptions = {
           ) {
             // Prepare minimal user details for upserting
             const userDetails = {
-              id: `dev-${credentials.gh_username}`, // Unique ID constructed using the GitHub username
-              gh_username: credentials.gh_username, // GitHub username from the provided credentials
-              name: "", // No default name, it will be set based on existing data or remain empty
-              email: `${credentials.gh_username}@gh.gitwallet.co`, // No default email, it will be set based on existing data or remain empty
-              image: "", // No default image, it will be set based on existing data or remain empty
+              id: `dev-${credentials.gh_username}`,  // Unique ID constructed using the GitHub username
+              gh_username: credentials.gh_username,  // GitHub username from the provided credentials
+              name: "",  // No default name, it will be set based on existing data or remain empty
+              email: `${credentials.gh_username}@gh.gitwallet.co`,  // No default email, it will be set based on existing data or remain empty
+              image: "",  // No default image, it will be set based on existing data or remain empty
               roleId: "admin",
             };
-
+      
             const user = await RegistrationService.upsertUser(userDetails);
-
+      
             return user;
           }
-
+      
           // If verification fails or credentials are missing, return null
           return null;
         },
@@ -131,19 +119,21 @@ export const authOptions: NextAuthOptions = {
     session: AuthService.sessionCallback,
   },
   events: {
-    signIn: async ({ user, account }: any) => {},
-    createUser: async ({ user }: { user: any }) => {
+    signIn: async ({user, account }: any) => {
+    },
+    createUser: async ({user}: {user: any}) => {
       if (!user) {
         return;
       }
-
+      
       // Add onboarding status to a new user
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          onboarding: JSON.stringify(defaultOnboardingState),
+          onboarding: JSON.stringify( defaultOnboardingState )
         },
       });
+      await RegistrationService.createSite(user);
     },
   },
 };
@@ -208,3 +198,5 @@ export function withPostAuth(action: any) {
     return action(formData, post, key);
   };
 }
+
+
