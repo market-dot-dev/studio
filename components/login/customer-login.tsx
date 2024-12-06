@@ -149,9 +149,11 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
     return (
         <>
-            {error ? <div className="flex justify-center w-full text-md">
-                <p className="text-red-500">{error}</p>
-                </div> : null}
+            {error && (
+                <div className="flex justify-center w-full text-md">
+                    <p className="text-red-500">{error}</p>
+                </div>
+            )}
             {currentUser ? (
                 <div className="flex flex-row justify-between w-full items-center">
                     <span>You are logged in as {currentUser.name} ({currentUser.email}).</span>

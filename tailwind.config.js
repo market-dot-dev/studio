@@ -122,8 +122,8 @@ module.exports = {
           "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
       },
       borderRadius: {
-        "tremor-small": "0.375rem",
-        "tremor-default": "0.5rem",
+        "tremor-small": "0.25rem",
+        "tremor-default": "0.375rem",
         "tremor-full": "9999px",
       },
       fontSize: {
@@ -139,7 +139,7 @@ module.exports = {
         'marketing-md': ['24px', { lineHeight: '28px', letterSpacing: '-0.025em' }],
         'marketing-lg': ['30px', { lineHeight: '32px', letterSpacing: '-0.025em' }],
         'marketing-xl': ['37px', { lineHeight: '40px', letterSpacing: '-0.03em' }],
-        'marketing-2xl': ['46px', { lineHeight: '44px', letterSpacing: '-0.035em' }],
+        'marketing-2xl': ['46px', { lineHeight: '48px', letterSpacing: '-0.03em' }],
         'marketing-3xl': ['58px', { lineHeight: '52px', letterSpacing: '-0.035em' }],
         'marketing-4xl': ['72px', { lineHeight: '64px', letterSpacing: '-0.045em' }],
         'marketing-5xl': ['91px', { lineHeight: '80px', letterSpacing: '-0.045em' }],
@@ -201,6 +201,9 @@ module.exports = {
       screens: {
         "xs": "425px",
       },
+      letterSpacing: {
+        tightish: '-0.0125em'
+      }
     },
   },
   safelist: [
