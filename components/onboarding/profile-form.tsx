@@ -75,7 +75,9 @@ export default function ProfileForm({
 
       let logo: string | undefined;
       if (file) {
-        logo = await uploadLogo(file);
+        const formData = new FormData();
+        formData.append("file", file);
+        logo = await uploadLogo(formData);
       }
 
       onSubmit({
@@ -89,6 +91,7 @@ export default function ProfileForm({
       if (isGitWalletError(error)) {
         toast.error(error.message);
       } else {
+        console.error(error);
         Sentry.captureException(error);
         toast.error("An unknown error occurred");
       }

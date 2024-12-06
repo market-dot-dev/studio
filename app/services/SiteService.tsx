@@ -121,7 +121,12 @@ class SiteService {
     }
   }
 
-  static async uploadLogo(file: File) {
+  static async uploadLogo(formData: FormData) {
+    const file = formData.get("file") as File;
+    return SiteService.uploadLogoFile(file);
+  }
+
+  static async uploadLogoFile(file: File) {
     const filename = `${nanoid()}.${file.type.split("/")[1]}`;
     const { url } = await put(filename, file, {
       access: "public",
@@ -152,7 +157,7 @@ class SiteService {
 
           const file = value as File;
           // Ensure there's a file to process
-          const url = await SiteService.uploadLogo(file);
+          const url = await SiteService.uploadLogoFile(file);
           updateData.logo = url;
         } else if (key === "name") {
           updateData.name = value.toString();

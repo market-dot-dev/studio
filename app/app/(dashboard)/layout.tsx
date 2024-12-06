@@ -53,8 +53,8 @@ export default async function DashboardLayout({
             <Profile />
           </Suspense>
         </Nav>
-        <div className="min-h-screen sm:pl-60">
-          <Flex alignItems="stretch" className="flex w-full flex-col gap-4 p-4">
+        <div className="flex min-h-screen w-full flex-col items-center sm:pl-60">
+          <div className="flex w-full flex-col items-center gap-4 p-4">
             {onboarding && !showOnboardingModal && <OnboardingChecklist />}
             {user?.stripeAccountDisabled && user?.stripeAccountId && (
               <StripeDisabledBanner />
@@ -62,7 +62,7 @@ export default async function DashboardLayout({
             <div className="relative mx-auto flex w-full max-w-screen-xl grow flex-col gap-8 p-4">
               {children}
             </div>
-          </Flex>
+          </div>
         </div>
       </div>
     </DashboardProvider>

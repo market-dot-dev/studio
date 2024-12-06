@@ -29,6 +29,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
       if (isGitWalletError(error)) {
         toast.error(error.message);
       } else {
+        console.error(error);
         Sentry.captureException(error);
         toast.error("An unknown error occurred");
       }
