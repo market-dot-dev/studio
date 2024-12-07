@@ -24,7 +24,8 @@ const nextConfig = {
   },
   images: {
     remotePatterns: [
-      { hostname: "zxtd3e8okojshxsg.public.blob.vercel-storage.com" },
+      { hostname: "zxtd3e8okojshxsg.public.blob.vercel-storage.com" }, // staging
+      { hostname: "8wcbwvylaq3j2t5y.public.blob.vercel-storage.com" }, // production
       { hostname: "public.blob.vercel-storage.com" },
       { hostname: "res.cloudinary.com" },
       { hostname: "abs.twimg.com" },
