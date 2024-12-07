@@ -17,13 +17,13 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
     e.preventDefault(); // Prevent the default form submission behavior
     setIsSaving(true);
 
-    const formData = new FormData(e.target); // Create FormData from the form
+    const formData = new FormData(e.target);
     // if not changed, remove the logo from the form data
     if (!changed) {
       formData.delete("logo");
     }
     try {
-      await updateCurrentSite(formData); // Assumes your service can handle FormData
+      await updateCurrentSite(formData);
       setChanged(false);
     } catch (error) {
       if (isGitWalletError(error)) {

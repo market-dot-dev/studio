@@ -162,6 +162,8 @@ class SiteService {
           // Ensure there's a file to process
           const url = await SiteService.uploadLogoFile(file);
           updateData.logo = url;
+        } else if (key === "logoURL") {
+          updateData.logo = value.toString();
         } else if (key === "name") {
           updateData.name = value.toString();
         }

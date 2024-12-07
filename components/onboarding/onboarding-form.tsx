@@ -55,7 +55,7 @@ export default function OnboardingForm({
         const formData = new FormData();
         formData.append("subdomain", profileData.subdomain);
         if (profileData.logo) {
-          formData.append("logo", profileData.logo);
+          formData.append("logoURL", profileData.logo);
         }
         await updateCurrentSite(formData);
       } else {

@@ -6,8 +6,9 @@ import { useRef, useState } from "react";
 import { Site, User } from "@prisma/client";
 import { uploadLogo, validateSubdomain } from "@/app/services/SiteService";
 import { toast } from "sonner";
-import { GitWalletError, isGitWalletError } from "@/lib/errors";
+import { isGitWalletError } from "@/lib/errors";
 import * as Sentry from "@sentry/nextjs";
+import { DEFAULT_LOGO_URL } from "@/lib/user";
 
 interface ProfileData {
   businessName: string;
@@ -179,7 +180,8 @@ export default function ProfileForm({
                 className="hidden"
                 accept="image/*"
               />
-              {file || (currentSite?.logo && currentSite.logo !== "") ? (
+              {file ||
+              (currentSite?.logo && currentSite.logo !== DEFAULT_LOGO_URL) ? (
                 <div className="mx-auto flex flex-col items-center">
                   <Image
                     src={
