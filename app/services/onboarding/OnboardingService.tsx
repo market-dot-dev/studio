@@ -12,18 +12,16 @@ import {
 import { getCurrentUser } from "../UserService";
 
 class OnboardingService {
-  static async saveState(state: OnboardingState | null) {
+  static async saveState(state: OnboardingState) {
     const id = await getCurrentUserId();
     if (!id) throw new Error("User not found");
-
-    const completed = Object.values(state ?? {}).every((step) => step === true);
 
     await prisma?.user.update({
       where: {
         id,
       },
       data: {
-        onboarding: state && !completed ? JSON.stringify(state) : "",
+        onboarding: JSON.stringify(state),
       },
     });
   }
