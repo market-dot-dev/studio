@@ -179,10 +179,12 @@ export default function ProfileForm({
                 className="hidden"
                 accept="image/*"
               />
-              {file ? (
+              {file || (currentSite?.logo && currentSite.logo !== "") ? (
                 <div className="mx-auto flex flex-col items-center">
                   <Image
-                    src={URL.createObjectURL(file)}
+                    src={
+                      file ? URL.createObjectURL(file) : currentSite!.logo ?? ""
+                    }
                     alt="Selected file preview"
                     height={80}
                     width={80}

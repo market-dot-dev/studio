@@ -5,12 +5,9 @@ import { Site, User } from "@prisma/client";
 import OfferingsForm from "./offerings-form";
 import ProfileForm from "./profile-form";
 import { updateCurrentUser } from "@/app/services/UserService";
-import {
-  defaultOnboardingState,
-  OnboardingState,
-} from "@/app/services/onboarding/onboarding-steps";
-import { saveState } from "@/app/services/onboarding/OnboardingService";
 import { createSite } from "@/app/services/registration-service";
+import { updateCurrentSite } from "@/app/services/SiteService";
+import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 
 interface ProfileData {
   businessName: string;
@@ -54,21 +51,18 @@ export default function OnboardingForm({
         businessType: profileData.teamType,
       });
 
-      if (!currentSite) {
+      if (currentSite) {
+        const formData = new FormData();
+        formData.append("subdomain", profileData.subdomain);
+        if (profileData.logo) {
+          formData.append("logo", profileData.logo);
+        }
+        await updateCurrentSite(formData);
+      } else {
         await createSite(user, profileData.subdomain, profileData.logo);
       }
 
-      const onboardingState: OnboardingState = user.onboarding
-        ? JSON.parse(user.onboarding)
-        : defaultOnboardingState;
-
-      const newState = {
-        ...onboardingState,
-        setupBusiness: true,
-        preferredServices: offeringsData.offerings,
-      };
-
-      await saveState(newState);
+      await refreshAndGetState(offeringsData.offerings);
       await onComplete();
     } catch (error) {
       setError("Failed to complete onboarding");

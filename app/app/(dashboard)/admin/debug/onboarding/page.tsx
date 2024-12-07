@@ -1,9 +1,9 @@
 "use client";
 
 import { Card, Title, Button, Badge } from "@tremor/react";
-import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { deleteSite, getCurrentSite } from "@/app/services/SiteService";
+import { resetState } from "@/app/services/onboarding/OnboardingService";
 
 export default function RestoreOnboarding(): JSX.Element {
   return (
@@ -23,7 +23,7 @@ export default function RestoreOnboarding(): JSX.Element {
                 console.error("Error deleting site: ", error);
               }
             }
-            await saveOnboardingState(defaultOnboardingState);
+            await resetState();
           }}
         >
           Restore

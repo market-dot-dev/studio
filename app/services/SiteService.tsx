@@ -81,6 +81,9 @@ class SiteService {
       where: {
         userId,
       },
+      orderBy: {
+        createdAt: "asc",
+      },
     });
     return site;
   }

@@ -5,11 +5,13 @@ export const defaultOnboardingState: OnboardingState = {
   setupTiers: false,
   setupSite: false,
   setupBusiness: false,
+  isDismissed: false,
 };
 
 export interface OnboardingState extends Exclude<OnboardingStepsType, null> {
   setupBusiness: boolean;
   preferredServices?: string[];
+  isDismissed: boolean;
 }
 
 export type OnboardingStepsType = {

@@ -3,13 +3,14 @@
 import { Text, Bold, Button } from "@tremor/react";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { saveState as saveOnboardingState } from "@/app/services/onboarding/OnboardingService";
+import { dismissOnboarding } from "@/app/services/onboarding/OnboardingService";
 import {
   onboardingSteps,
   type OnboardingStepsType,
   onBoardingStepType,
+  OnboardingState,
 } from "@/app/services/onboarding/onboarding-steps";
-import { getState } from "@/app/services/onboarding/OnboardingService";
+import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
 import { Check, X, ChevronRight, Goal } from "lucide-react";
 import clsx from "clsx";
@@ -87,15 +88,16 @@ function TodoItem({
 
 export default function OnboardingChecklist(): JSX.Element {
   const pathName = usePathname();
-  const [completedSteps, setCompletedSteps] =
-    useState<OnboardingStepsType>(null);
-  const [isDismissing, setIsDismissing] = useState(false);
+  const [onboardingState, setOnboardingState] =
+    useState<OnboardingState | null>(null);
+
+  // default to true, so that a blip of the checklist is not shown if the user has  completed any steps
   const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
     const action = async () => {
-      const state = (await getState()) as OnboardingStepsType;
-      setCompletedSteps(state);
+      const state = await refreshAndGetState();
+      setOnboardingState(state);
     };
 
     action();
@@ -107,14 +109,11 @@ export default function OnboardingChecklist(): JSX.Element {
   }, [pathName]);
 
   const dismissChecklist = useCallback(() => {
-    setIsDismissing(true);
-    saveOnboardingState(null).then(() => {
-      setIsDismissing(false);
-      setIsDismissed(true);
-    });
-  }, [setIsDismissing]);
+    setIsDismissed(true);
+    dismissOnboarding();
+  }, []);
 
-  if (completedSteps === null || isDismissed) return <></>;
+  if (onboardingState?.isDismissed || isDismissed) return <></>;
 
   return (
     <div className="flex w-full flex-col items-start rounded-lg bg-white shadow-sm ring-1 ring-black/10">
@@ -125,17 +124,16 @@ export default function OnboardingChecklist(): JSX.Element {
             Get started
           </h3>
         </div>
-        {!isDismissed && (
-          <div className="m-0 flex justify-end">
-            <Button
-              variant="light"
-              onClick={dismissChecklist}
-              className="group -m-1 rounded p-1 text-sm underline transition-colors hover:bg-gray-200"
-            >
-              <X size={16} className="text-gray-500" />
-            </Button>
-          </div>
-        )}
+
+        <div className="m-0 flex justify-end">
+          <Button
+            variant="light"
+            onClick={dismissChecklist}
+            className="group -m-1 rounded p-1 text-sm underline transition-colors hover:bg-gray-200"
+          >
+            <X size={16} className="text-gray-500" />
+          </Button>
+        </div>
       </div>
       <div className="flex w-full flex-col overflow-hidden rounded-b-lg">
         {onboardingSteps.map((step, index) => {
@@ -143,7 +141,7 @@ export default function OnboardingChecklist(): JSX.Element {
             <TodoItem
               key={index}
               step={step as onBoardingStepType}
-              completedSteps={completedSteps}
+              completedSteps={onboardingState}
               isLast={index === onboardingSteps.length - 1}
             />
           );

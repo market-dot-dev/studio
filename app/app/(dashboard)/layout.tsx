@@ -55,7 +55,9 @@ export default async function DashboardLayout({
         </Nav>
         <div className="flex min-h-screen w-full flex-col items-center sm:pl-60">
           <div className="flex w-full flex-col items-center gap-4 p-4">
-            {onboarding && !showOnboardingModal && <OnboardingChecklist />}
+            {!onboarding.isDismissed && !showOnboardingModal && (
+              <OnboardingChecklist />
+            )}
             {user?.stripeAccountDisabled && user?.stripeAccountId && (
               <StripeDisabledBanner />
             )}
