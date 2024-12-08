@@ -13,7 +13,7 @@ import {
   Radar,
   Box,
   Home,
-  Eye,
+  UserSearch,
 } from "lucide-react";
 import {
   useParams,
@@ -25,7 +25,17 @@ import { GearIcon } from "@radix-ui/react-icons";
 import { FaDiscord, FaGithubAlt, FaTelegramPlane } from "react-icons/fa";
 import { Badge } from "@tremor/react";
 
-export default function Nav({ children, siteId, roleId, hasFeatures }: { children: ReactNode, siteId: string | null, roleId: string | null, hasFeatures: boolean | null}) {
+export default function Nav({
+  children,
+  siteId,
+  roleId,
+  hasFeatures,
+}: {
+  children: ReactNode;
+  siteId: string | null;
+  roleId: string | null;
+  hasFeatures: boolean | null;
+}) {
   const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
 
@@ -86,6 +96,12 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
         href: "/customers",
         isActive: urlSegments[0] === "customers",
         icon: <Users width={18} />,
+      },
+      {
+        name: "Prospects",
+        href: "/prospects",
+        isActive: urlSegments[0] === "prospects",
+        icon: <UserSearch width={18} />,
       },
       {
         name: "Research",
@@ -187,39 +203,61 @@ export default function Nav({ children, siteId, roleId, hasFeatures }: { childre
           urlSegments[0] === "post" && urlSegments.length === 2 && !showSidebar
             ? "left-5 top-5"
             : "right-5 top-7"
-          } sm:hidden`}
+        } sm:hidden`}
         onClick={() => setShowSidebar(!showSidebar)}
       >
         <Menu width={20} />
       </button>
       <div
-        className={`transform ${showSidebar ? "w-full translate-x-0" : "-translate-x-full"
-          } fixed z-20 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-4 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
+        className={`transform ${
+          showSidebar ? "w-full translate-x-0" : "-translate-x-full"
+        } fixed z-20 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-4 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
       >
         <div className="grid gap-2">
           <div className="flex items-center space-x-2 rounded-lg py-1.5">
             <div className="text-md font-medium">
-              <Link href="/" ><img src="/gw-logo-nav.png" className="h-8 hover:scale-110" /></Link>
+              <Link href="/">
+                <img src="/gw-logo-nav.png" className="h-8 hover:scale-110" />
+              </Link>
             </div>
           </div>
           <div className="grid gap-0.5">
-            {tabs.map(({ name, href, target, isActive, isBeta, icon }, index: number) => (
-              href === "" ? (
-                <span key={name} className="text-xs font-small uppercase mt-4">{name}</span>
-              ) : (
-                <Link
-                  key={name + index}
-                  href={href}
-                  target={target}
-                  className={`flex items-center space-x-3 ${isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
+            {tabs.map(
+              (
+                { name, href, target, isActive, isBeta, icon },
+                index: number,
+              ) =>
+                href === "" ? (
+                  <span
+                    key={name}
+                    className="font-small mt-4 text-xs uppercase"
+                  >
+                    {name}
+                  </span>
+                ) : (
+                  <Link
+                    key={name + index}
+                    href={href}
+                    target={target}
+                    className={`flex items-center space-x-3 ${
+                      isActive
+                        ? "bg-stone-200 text-black dark:bg-stone-700"
+                        : ""
                     } rounded-lg px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
-                >
-                  {icon}
-                  <span className="text-sm font-medium">{name}</span>
-                  {isBeta && <Badge size={'xs'} tooltip="This feature is still in Beta">Beta</Badge>}
-                </Link>
-              )
-            ))}
+                  >
+                    {icon}
+                    <span className="text-sm font-medium">{name}</span>
+                    {isBeta && (
+                      <Badge
+                        size={"xs"}
+                        tooltip="This feature is still in Beta"
+                      >
+                        Beta
+                      </Badge>
+                    )}
+                  </Link>
+                ),
+            )}
           </div>
         </div>
         <div>

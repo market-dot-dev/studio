@@ -7,6 +7,20 @@ import EmailService from "./EmailService";
 import UserService from "./UserService";
 
 class ProspectService {
+  static async getProspects(
+    userId: string,
+  ): Promise<(Prospect & { tier: Tier })[]> {
+    const response = await prisma.prospect.findMany({
+      where: { userId },
+      include: { tiers: true },
+    });
+
+    return response.map((prospect) => ({
+      ...prospect,
+      tier: prospect.tiers[0],
+    }));
+  }
+
   static async addNewProspectForPackage(
     prospect: { email: string; name: string },
     tier: Tier,
