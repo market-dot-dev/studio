@@ -91,6 +91,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   );
   const [features, isFeaturesLoading] = useFeatures(id);
 
+  const checkoutType = tier?.checkoutType;
   const checkoutProject = maintainer?.projectName || maintainer?.name;
   const checkoutPrice = isAnnual ? tier?.priceAnnual : tier?.price;
   const checkoutTier = tier?.name;
@@ -114,7 +115,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
           <SkeletonLoader className="mb-2 h-4 w-3/5 rounded-full leading-6" />
           <SkeletonLoader className="mb-4 h-4 w-1/2 rounded-full leading-6" />
         </div>
-      ) : (
+      ) : checkoutType === "gitwallet" ? (
         <div>
           <div className="mb-2 text-lg">
             <Bold className="text-gray-800">
@@ -129,12 +130,18 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
             </Text>
           </div>
         </div>
+      ) : (
+        <div className="mb-2 text-lg">
+          <Bold className="text-gray-800">
+            {checkoutProject}: {checkoutTier}
+          </Bold>
+        </div>
       )}
 
       {isFeaturesLoading ? (
         <SkeletonLoader className="my-2 h-8 w-full rounded-xl" />
       ) : (
-        <div className="flex flex-col gap-4 mb-4">
+        <div className="mb-4 flex flex-col gap-4">
           {hasActiveFeatures && tierFeatures.length !== 0 ? (
             <TierFeatureList features={tierFeatures} />
           ) : (
@@ -154,11 +161,13 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               return (
                 <TierFeatureList
                   key={dex}
-                  features={section.features.map((feature: string, index: number) => ({
-                    id: `${index}`,
-                    name: feature,
-                    isEnabled: true,
-                  }))}
+                  features={section.features.map(
+                    (feature: string, index: number) => ({
+                      id: `${index}`,
+                      name: feature,
+                      isEnabled: true,
+                    }),
+                  )}
                 />
               );
             })
@@ -167,22 +176,24 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
       )}
 
       {/* accept terms of service */}
-      <div className="flex flex-row items-center gap-2">
-        {isFeaturesLoading ? (
-          <SkeletonLoader className="mb-4 h-4 w-3/4 rounded-full" />
-        ) : (
-          <Text className="leading-6">
-            {isContractLoading && !(tier?.id && !tier.contractId) ? (
-              <LoadingDots />
-            ) : (
-              <ContractText
-                checkoutProject={checkoutProject || ""}
-                contract={contract}
-              />
-            )}
-          </Text>
-        )}
-      </div>
+      {checkoutType === "gitwallet" && (
+        <div className="flex flex-row items-center gap-2">
+          {isFeaturesLoading ? (
+            <SkeletonLoader className="mb-4 h-4 w-3/4 rounded-full" />
+          ) : (
+            <Text className="leading-6">
+              {isContractLoading && !(tier?.id && !tier.contractId) ? (
+                <LoadingDots />
+              ) : (
+                <ContractText
+                  checkoutProject={checkoutProject || ""}
+                  contract={contract}
+                />
+              )}
+            </Text>
+          )}
+        </div>
+      )}
     </Card>
   );
 
