@@ -34,6 +34,14 @@ function TodoItem({
   } = step;
 
   const completed = completedSteps?.[step.name] === true;
+  
+  const navigateToStep = () => {
+    router.push(
+      step.name === "setupSite" && siteId
+        ? stepURL[0] + siteId
+        : stepURL[0],
+    );
+  };
 
   return (
     <>
@@ -51,9 +59,10 @@ function TodoItem({
           <div className="flex flex-col items-start">
             <Bold
               className={clsx(
-                "w-fit text-sm",
-                completed ? "text-gray-500" : "text-gray-800",
+                "w-fit text-sm cursor-pointer",
+                completed ? "text-gray-500" : "text-gray-800 hover:text-gray-600",
               )}
+              onClick={navigateToStep}
             >
               {stepTitle}
             </Bold>
@@ -64,13 +73,7 @@ function TodoItem({
               size="xs"
               variant="secondary"
               className="group w-fit border-gray-200 bg-white py-1 pr-1.5 transition-colors"
-              onClick={() =>
-                router.push(
-                  step.name === "setupSite" && siteId
-                    ? stepURL[0] + siteId
-                    : stepURL[0],
-                )
-              }
+              onClick={navigateToStep}
             >
               <span>{stepTitle}</span>
               <ChevronRight
