@@ -8,7 +8,7 @@ import {
   BriefcaseBusiness,
   BookOpen,
   BookLock,
-  AppWindowMac,
+  Book,
 } from "lucide-react";
 import { useState } from "react";
 import { User } from "@prisma/client";
@@ -54,10 +54,10 @@ const offerings: Offering[] = [
     isComingSoon: true,
   },
   {
-    id: "sass-tools",
-    title: "SaaS Tools",
+    id: "e-books",
+    title: "Ebooks",
     description: "Write and publish digital books",
-    icon: AppWindowMac,
+    icon: Book,
     isComingSoon: true,
   },
 ];
