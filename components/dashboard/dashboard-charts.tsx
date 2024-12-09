@@ -2,6 +2,7 @@ import { Metric, Card, Text, Flex, BarChart, LineChart, Button, Badge } from "@t
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import Link from "next/link";
 import RevenueLineChart from "./revenue-line-chart";
+import SecondaryButton from "@/components/common/secondary-button";
 
 export default function DashboardCharts({ customers }: { customers: CustomerWithChargesAndSubscriptions[] }) {
 
@@ -205,9 +206,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
           {isUsingDummyData && <Badge size='sm' className="p-1 h-fit rounded-full">Sample Data</Badge>}
         </div>
         <Link href='/reports' className="ml-auto">
-          <Button size="xs" className="h-6" variant="secondary">
-            More Details →
-          </Button>
+          <SecondaryButton label="More Details" />
         </Link>
       </div>
       <div className="flex max-w-screen-xl flex-col space-y-4">

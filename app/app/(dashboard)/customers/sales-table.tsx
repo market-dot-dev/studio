@@ -17,6 +17,7 @@ import PurchaseStatusBadge from './purchase-state';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { InfoIcon } from 'lucide-react';
+import SecondaryButton from "@/components/common/secondary-button";
 
 export type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
@@ -84,9 +85,7 @@ const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChar
         {!showAll && maxInitialRows && (
           <div className="grid justify-items-end">
             <Link href='/customers'>
-              <Button size="xs" className="h-6" variant="secondary">
-                View More Customers →
-              </Button>
+              <SecondaryButton label="View More Customers" />
             </Link>
           </div>
         )}
