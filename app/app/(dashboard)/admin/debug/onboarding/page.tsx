@@ -3,8 +3,28 @@
 import { Card, Title, Button, Badge, Text } from "@tremor/react";
 import { deleteSite, getCurrentSite } from "@/app/services/SiteService";
 import { resetState } from "@/app/services/onboarding/OnboardingService";
+import { useState } from "react";
 
 export default function RestoreOnboarding(): JSX.Element {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleReset = async () => {
+    setIsLoading(true);
+    try {
+      const currentSite = await getCurrentSite();
+      if (currentSite) {
+        try {
+          await deleteSite(currentSite.id);
+        } catch (error) {
+          console.error("Error deleting site: ", error);
+        }
+      }
+      await resetState();
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <div className="w-1/2">
       <Card className="border-2 border-slate-800 bg-slate-50">
@@ -14,18 +34,8 @@ export default function RestoreOnboarding(): JSX.Element {
         <Title>Restore Onboarding State</Title>
         <Text>User onboarding state, subdomain, location, logo will be reset to original settings at signup.</Text>
         <Button
-          onClick={async () => {
-            const currentSite = await getCurrentSite();
-            if (currentSite) {
-              try {
-                await deleteSite(currentSite.id);
-              } catch (error) {
-                console.error("Error deleting site: ", error);
-              }
-            }
-            await resetState();
-          }}
-          
+          loading={isLoading}
+          onClick={handleReset}
         >
           Restore Onboarding State
         </Button>
