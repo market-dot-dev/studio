@@ -80,8 +80,8 @@ const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChar
 
   return (
     <>
-      <div className="flex justify-between">
-        <h3 className="text-xl font-bold mb-2">Latest Sales</h3>
+      <div className="flex justify-between items-end mb-2">
+        <h3 className="text-xl font-bold">Latest Sales</h3>
         {!showAll && maxInitialRows && (
           <div className="grid justify-items-end">
             <Link href='/customers'>

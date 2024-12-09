@@ -31,7 +31,7 @@ export default async function Overview() {
   return (
     <div className="flex max-w-screen-xl flex-col space-y-6">
       <PageHeading title={title} />
-      <div className="flex flex-col">
+      <div className="flex flex-col mb-10">
         <SalesTable customers={customers} maxInitialRows={5} />
         <DashboardCharts customers={customers} />
       </div>

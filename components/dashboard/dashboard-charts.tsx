@@ -200,10 +200,14 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
 
   return (
     <>
-      <div className="flex justify-between">
-        <div className="flex mb-2">
-          <div className="text-xl font-bold mb-2 mr-2">Reports</div>
-          {isUsingDummyData && <Badge size='sm' className="p-1 h-fit rounded-full">Sample Data</Badge>}
+      <div className="flex justify-between items-end mb-2">
+        <div className="flex items-end gap-2">
+          <div className="text-xl font-bold">Reports</div>
+          {isUsingDummyData && (
+            <Badge color={'gray'} size={'xs'} className="mb-1">
+              Sample Data
+            </Badge>
+          )}
         </div>
         <Link href='/reports' className="ml-auto">
           <SecondaryButton label="More Details" />
