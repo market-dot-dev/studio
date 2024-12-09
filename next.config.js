@@ -11,19 +11,21 @@ const nextConfig = {
         "*.gitwallet.co",
         "gitwallet.co",
         "gitwallet.local:3000",
-        process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview' ? "*.vercel.app" : "",
+        process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "*.vercel.app" : "",
       ].filter(Boolean),
       allowedOrigins: [
         "*.gitwallet.local:3000",
         "*.gitwallet.co",
         "gitwallet.co",
         "gitwallet.local:3000",
-        process.env.NEXT_PUBLIC_VERCEL_ENV === 'preview' ? "*.vercel.app" : "",
+        process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "*.vercel.app" : "",
       ].filter(Boolean),
     },
   },
   images: {
     remotePatterns: [
+      { hostname: "zxtd3e8okojshxsg.public.blob.vercel-storage.com" }, // staging
+      { hostname: "8wcbwvylaq3j2t5y.public.blob.vercel-storage.com" }, // production
       { hostname: "public.blob.vercel-storage.com" },
       { hostname: "res.cloudinary.com" },
       { hostname: "abs.twimg.com" },
@@ -33,7 +35,8 @@ const nextConfig = {
       { hostname: "www.google.com" },
       { hostname: "flag.vercel.app" },
       { hostname: "illustrations.popsy.co" },
-    ]
+      { hostname: "www.gitwallet.co" },
+    ],
   },
   logging: {
     fetches: {
@@ -42,12 +45,12 @@ const nextConfig = {
   },
 };
 
-
 // Injected content via Sentry wizard below
 
 const { withSentryConfig } = require("@sentry/nextjs");
 
-if (process.env.NODE_ENV !== 'development') { // Only enable Sentry for production builds
+if (process.env.NODE_ENV !== "development") {
+  // Only enable Sentry for production builds
   module.exports = withSentryConfig(
     nextConfig,
     {
@@ -83,9 +86,8 @@ if (process.env.NODE_ENV !== 'development') { // Only enable Sentry for producti
       // https://docs.sentry.io/product/crons/
       // https://vercel.com/docs/cron-jobs
       automaticVercelMonitors: true,
-    }
-  )
-}
-else {
+    },
+  );
+} else {
   module.exports = nextConfig;
 }

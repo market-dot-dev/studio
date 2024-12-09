@@ -1,13 +1,13 @@
 "use server";
 
-import { Charge, Subscription, User } from '@prisma/client';
+import { Charge, Subscription, User } from "@prisma/client";
 import prisma from "@/lib/prisma";
-import { getSession } from '@/lib/auth';
-import TierService from './TierService';
-import SessionService from './SessionService';
-import Customer from '../models/Customer';
-import { createSessionUser } from '../models/Session';
-import Tier from '../models/Tier';
+import { getSession } from "@/lib/auth";
+import TierService from "./TierService";
+import SessionService from "./SessionService";
+import Customer from "../models/Customer";
+import { createSessionUser } from "../models/Session";
+import Tier from "../models/Tier";
 
 type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
@@ -45,10 +45,9 @@ class UserService {
   }
 
   static async getCustomersMaintainers(): Promise<Partial<User>[]> {
-
     // if current user is admin
     const session = await getSession();
-    if(session?.user.roleId !== 'admin') {
+    if (session?.user.roleId !== "admin") {
       return [];
     }
 
@@ -56,7 +55,7 @@ class UserService {
     return prisma?.user.findMany({
       where: {
         roleId: {
-          in: ['customer', 'maintainer'],
+          in: ["customer", "maintainer"],
         },
       },
       select: {
@@ -69,15 +68,20 @@ class UserService {
     });
   }
 
-  static async findUserByGithubId(gh_username: string): Promise<User | undefined | null> {
+  static async findUserByGithubId(
+    gh_username: string,
+  ): Promise<User | undefined | null> {
     return prisma?.user.findFirst({
       where: {
         gh_username,
       },
     });
   }
-  
-  static async customerOfMaintainer(maintainerId: string, userId: string): Promise<CustomerWithChargesAndSubscriptions | null> {
+
+  static async customerOfMaintainer(
+    maintainerId: string,
+    userId: string,
+  ): Promise<CustomerWithChargesAndSubscriptions | null> {
     const customer = await prisma.user.findFirst({
       where: {
         id: userId,
@@ -129,8 +133,9 @@ class UserService {
     return customer as CustomerWithChargesAndSubscriptions | null;
   }
 
-
-  static async customersOfMaintainer(maintainerId: string): Promise<CustomerWithChargesAndSubscriptions[]> {
+  static async customersOfMaintainer(
+    maintainerId: string,
+  ): Promise<CustomerWithChargesAndSubscriptions[]> {
     const customers = await prisma.user.findMany({
       where: {
         OR: [
@@ -177,13 +182,13 @@ class UserService {
         },
       },
     });
-  
+
     return customers as CustomerWithChargesAndSubscriptions[];
   }
 
   static async updateCurrentUser(userData: Partial<User>) {
-    const userId = await SessionService.getCurrentUserId()
-    if(!userId) return null;
+    const userId = await SessionService.getCurrentUserId();
+    if (!userId) return null;
 
     const attrs = UserService.filterUserAttributes(userData);
 
@@ -203,7 +208,11 @@ class UserService {
     return lookup[maintainerStripeAccountId];
   }
 
-  static async setCustomerId(user: User, maintainerStripeAccountId: string, customerId: string) {
+  static async setCustomerId(
+    user: User,
+    maintainerStripeAccountId: string,
+    customerId: string,
+  ) {
     const lookup = user.stripeCustomerIds as Record<string, string>;
     lookup[maintainerStripeAccountId] = customerId;
 
@@ -224,55 +233,77 @@ class UserService {
   }
 }
 
-export const clearStripeCustomerById = async (userId: string, maintainerUserId: string, maintainerStripeAccountId: string) => {
+export const clearStripeCustomerById = async (
+  userId: string,
+  maintainerUserId: string,
+  maintainerStripeAccountId: string,
+) => {
   const user = await UserService.findUser(userId);
-  if(!user) {
-    throw new Error('User not found.');
+  if (!user) {
+    throw new Error("User not found.");
   }
 
-  const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
+  const customer = new Customer(
+    user,
+    maintainerUserId,
+    maintainerStripeAccountId,
+  );
   return await customer.destroyCustomer();
-}
+};
 
-export const createStripeCustomerById = async (userId: string, maintainerUserId: string, stripeAccountId: string) => {
-  
+export const createStripeCustomerById = async (
+  userId: string,
+  maintainerUserId: string,
+  stripeAccountId: string,
+) => {
   const user = await UserService.findUser(userId);
-  if(!user) {
-    throw new Error('User not found.');
+  if (!user) {
+    throw new Error("User not found.");
   }
 
   const customer = new Customer(user, maintainerUserId, maintainerUserId);
   return await customer.createStripeCustomer();
-}
+};
 
 export const ensureTierId = async (tierId: string) => {
   return new Promise((resolve, reject) => {
-    TierService.findTier(tierId).then((tier) => {
-      if(!tier) {
-        return reject('Tier not found.');
-      }
+    TierService.findTier(tierId)
+      .then((tier) => {
+        if (!tier) {
+          return reject("Tier not found.");
+        }
 
-      if(!tier.stripePriceId) {
-        return reject('Tier missing required stripe keys');
-      }
-      resolve(tierId);
-    }).catch((error) => {
-      reject(error);
-    });
+        if (!tier.stripePriceId) {
+          return reject("Tier missing required stripe keys");
+        }
+        resolve(tierId);
+      })
+      .catch((error) => {
+        reject(error);
+      });
   });
-}
+};
 
-export const customersOfMaintainer = async (maintainerId: string): Promise<CustomerWithChargesAndSubscriptions[]> => {
+export const customersOfMaintainer = async (
+  maintainerId: string,
+): Promise<CustomerWithChargesAndSubscriptions[]> => {
   return UserService.customersOfMaintainer(maintainerId);
-}
+};
 
-export const customers = async (): Promise<CustomerWithChargesAndSubscriptions[]> => {
+export const customers = async (): Promise<
+  CustomerWithChargesAndSubscriptions[]
+> => {
   const sessionUser = await SessionService.getSessionUser();
-  if(!sessionUser) {
-    throw new Error('User not found.');
+  if (!sessionUser) {
+    throw new Error("User not found.");
   }
   return UserService.customersOfMaintainer(sessionUser.id);
-}
+};
 
 export default UserService;
-export const { getCurrentUser, findUser, updateCurrentUser, getCurrentSessionUser } = UserService;
+export const {
+  getCurrentUser,
+  findUser,
+  updateCurrentUser,
+  getCurrentSessionUser,
+} = UserService;
