@@ -119,7 +119,7 @@ export default function OnboardingChecklist(): JSX.Element {
   if (onboardingState?.isDismissed || isDismissed) return <></>;
 
   return (
-    <div className="flex w-full flex-col items-start rounded-lg bg-white shadow-sm ring-1 ring-black/10">
+    <div className="w-full flex flex-col items-start rounded-lg bg-white shadow-sm ring-1 ring-black/10">
       <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-gray-200 bg-gray-50 py-2.5 pl-4 pr-2.5">
         <div className="flex items-center gap-4">
           <Goal size={16} className="text-gray-500" />

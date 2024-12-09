@@ -54,14 +54,14 @@ export default async function DashboardLayout({
           </Suspense>
         </Nav>
         <div className="flex min-h-screen w-full flex-col items-center sm:pl-60">
-          <div className="flex w-full max-w-screen-xl flex-col items-center gap-4 p-4">
+          <div className="flex w-full max-w-screen-xl flex-col items-center p-4 space-y-4">
             {!onboarding.isDismissed && !showOnboardingModal && (
               <OnboardingChecklist />
             )}
             {user?.stripeAccountDisabled && user?.stripeAccountId && (
               <StripeDisabledBanner />
             )}
-            <div className="relative mx-auto flex w-full flex-col gap-8 p-4">
+            <div className="relative w-full flex flex-col gap-8">
               {children}
             </div>
           </div>
