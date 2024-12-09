@@ -4,6 +4,7 @@ import { Card, Title, Button, Badge, Text } from "@tremor/react";
 import { deleteSite, getCurrentSite } from "@/app/services/SiteService";
 import { resetState } from "@/app/services/onboarding/OnboardingService";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function RestoreOnboarding(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
@@ -17,9 +18,14 @@ export default function RestoreOnboarding(): JSX.Element {
           await deleteSite(currentSite.id);
         } catch (error) {
           console.error("Error deleting site: ", error);
+          toast.error("Failed to delete site");
+          return;
         }
       }
       await resetState();
+      toast.success("Successfully reset onboarding state");
+    } catch (error) {
+      toast.error("Failed to reset onboarding state");
     } finally {
       setIsLoading(false);
     }
