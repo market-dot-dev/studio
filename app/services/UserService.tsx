@@ -1,6 +1,6 @@
 "use server";
 
-import { Charge, Subscription, User } from "@prisma/client";
+import { Charge, Prospect, Subscription, User } from "@prisma/client";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
 import TierService from "./TierService";
@@ -12,6 +12,12 @@ import Tier from "../models/Tier";
 type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
   subscriptions: (Subscription & { tier: Tier })[];
+};
+
+type CustomerWithChargesSubscriptionsAndProspects = User & {
+  charges: (Charge & { tier: Tier })[];
+  subscriptions: (Subscription & { tier: Tier })[];
+  prospects: (Prospect & { tiers: Tier[] })[];
 };
 
 class UserService {
@@ -186,6 +192,94 @@ class UserService {
     return customers as CustomerWithChargesAndSubscriptions[];
   }
 
+  static async customersAndProspectsOfMaintainer(
+    maintainerId: string,
+  ): Promise<CustomerWithChargesSubscriptionsAndProspects[]> {
+    const customers = await prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            charges: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+          {
+            subscriptions: {
+              some: {
+                tier: {
+                  userId: maintainerId,
+                },
+              },
+            },
+          },
+          {
+            prospects: {
+              some: {
+                tiers: {
+                  some: {
+                    userId: maintainerId,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        charges: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+          include: {
+            tier: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 5,
+        },
+        subscriptions: {
+          where: {
+            tier: {
+              userId: maintainerId,
+            },
+          },
+          include: {
+            tier: true,
+          },
+          orderBy: {
+            createdAt: "desc",
+          },
+          take: 5,
+        },
+        prospects: {
+          where: {
+            tiers: {
+              some: {
+                userId: maintainerId,
+              },
+            },
+          },
+          include: {
+            tiers: true,
+          },
+          orderBy: {
+            updatedAt: "desc",
+          },
+          take: 5,
+        },
+      },
+    });
+
+    return customers as CustomerWithChargesSubscriptionsAndProspects[];
+  }
+
   static async updateCurrentUser(userData: Partial<User>) {
     const userId = await SessionService.getCurrentUserId();
     if (!userId) return null;
@@ -306,4 +400,5 @@ export const {
   findUser,
   updateCurrentUser,
   getCurrentSessionUser,
+  customersAndProspectsOfMaintainer,
 } = UserService;
