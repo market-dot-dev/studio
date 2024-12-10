@@ -1,10 +1,9 @@
-import {
-  Text,
-} from '@tremor/react';
-import React from 'react';
-import PageHeading from '@/components/common/page-heading';
-import CustomersTable from './customer-table';
-import { customers as getCustomersData } from '@/app/services/UserService';
+import { Text } from "@tremor/react";
+import React from "react";
+import PageHeading from "@/components/common/page-heading";
+import CustomersTable from "./customer-table";
+import { customers as getCustomersData } from "@/app/services/UserService";
+
 const CustomersPage = async () => {
   const customers = await getCustomersData();
   return (
