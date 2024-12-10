@@ -45,14 +45,9 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                                     onChange={(e) => {
                                     setSelectedTiers((tiers: any) => {
                                         if(e.target.checked) {
-                                        return [...tiers, tier.id]
+                                            return [...tiers, tier.id]
                                         } else {
-                                        
-                                        let newTiers = tiers.filter((id: string) => id !== tier.id);
-                                        if(newTiers.length === 0) {
-                                            return tiers;
-                                        }
-                                        return newTiers
+                                            return tiers.filter((id: string) => id !== tier.id);
                                         }
                                     })
                                     }} 
