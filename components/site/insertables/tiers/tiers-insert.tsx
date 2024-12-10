@@ -2,7 +2,6 @@
 import { useModal } from "@/components/modal/provider";
 import { useState, useEffect, useCallback } from "react";
 import { Button, Flex,  Title, Text } from "@tremor/react";
-import { X } from 'lucide-react';
 import { getPublishedTiers } from "@/app/services/TierService";
 import LoadingSpinner from "@/components/form/loading-spinner";
 
@@ -24,7 +23,7 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     useEffect(() => {
         getPublishedTiers().then((tiers: TierProps[]) => {
             setTiers(tiers);
-            setSelectedTiers(tiers.map((tier: any) => tier.id))
+            setSelectedTiers([]);
         });
     }, []);
 
