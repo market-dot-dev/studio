@@ -117,10 +117,14 @@ const SalesTable = ({
             <DropdownMenuContent>
               <DropdownMenuGroup>
                 <DropdownMenuItem>
-                  <Link href="/customers">Customers</Link>
+                  <Link href="/customers" className="w-full">
+                    Customers
+                  </Link>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
-                  <Link href="/prospects">Prospects</Link>
+                  <Link href="/prospects" className="w-full">
+                    Prospects
+                  </Link>
                 </DropdownMenuItem>
               </DropdownMenuGroup>
             </DropdownMenuContent>
