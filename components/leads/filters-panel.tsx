@@ -1,6 +1,6 @@
 'use client'
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type JSX } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { TextInput } from "@tremor/react"
 import countryCodes from "@/lib/constants/country-codes" ;

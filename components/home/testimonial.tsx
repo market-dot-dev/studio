@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from './link';
 
 interface TestimonialProps {
-  quote: ReactElement | string;
+  quote: ReactElement<any> | string;
   quotee: {
     name: string;
     title: string;

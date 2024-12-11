@@ -32,7 +32,7 @@ const CARD_ELEMENT_OPTIONS = {
 };
 
 interface UseStripePaymentCollectorReturns {
-  CardElementComponent: () => ReactElement;
+  CardElementComponent: () => ReactElement<any>;
   stripeCustomerId: string | null;
   handleSubmit: (event?: React.FormEvent<HTMLFormElement>) => Promise<void>;
   handleDetach: () => Promise<void>;

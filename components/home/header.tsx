@@ -24,7 +24,7 @@ interface AnimatedHambugerButtonProps {
 }
 
 interface Product {
-  icon: ReactElement;
+  icon: ReactElement<any>;
   color: Color;
   title: string;
   description: string;

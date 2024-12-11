@@ -4,6 +4,8 @@ import { Check, ChevronRight } from "lucide-react";
 import tierPlaceholderData from "@/lib/constants/placeholder/tiers";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
 
+import type { JSX } from "react";
+
 export default function SkeletonTiers(): JSX.Element {
   return (
     <div className="relative w-full rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8">

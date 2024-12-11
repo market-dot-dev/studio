@@ -1,6 +1,8 @@
 import SkeletonTiers from '../../skeleton-tiers';
 import TierCard from '@/components/tiers/tier-card';
 
+import type { JSX } from "react";
+
 // This renders the actual component for both server and client sides.
 export default function Tiers({ tiers, hasActiveFeatures }: { tiers : any[], hasActiveFeatures?: boolean}) : JSX.Element {
     return (

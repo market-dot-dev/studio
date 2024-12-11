@@ -1,14 +1,18 @@
-import UserService from '@/app/services/UserService';
-import { NextRequest } from 'next/server';
+import UserService from "@/app/services/UserService";
+import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: { userid: string } }) {
-  
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { userid: string } },
+) {
   // const searchParams = req.nextUrl.searchParams;
 
   let user = await UserService.findUser(params.userid);
 
-  const buttonText = 'View';
-  const description = user?.projectName ? `${user.projectName} has premium services available on Gitwallet.` : 'This project has premium services available on Gitwallet.';
+  const buttonText = "View";
+  const description = user?.projectName
+    ? `${user.projectName} has premium services available on Gitwallet.`
+    : "This project has premium services available on Gitwallet.";
   const svg = `
     <svg fill="none" width="700" height="100" xmlns="http://www.w3.org/2000/svg">
       <foreignObject width="100%" height="100%">
@@ -39,10 +43,10 @@ export async function GET(req: NextRequest, { params }: { params: { userid: stri
 
   return new Response(svg, {
     headers: {
-      'Content-Type': 'image/svg+xml',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      "Content-Type": "image/svg+xml",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     },
   });
 }

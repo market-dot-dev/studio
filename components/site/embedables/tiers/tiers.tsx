@@ -1,6 +1,6 @@
 'use client'
 import { Button } from '@tremor/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type JSX } from 'react';
 import { TiersEmbedSettingsProps } from './tiers-embed-settings';
 import SkeletonTiers from '../../skeleton-tiers';
 import TierCard from '@/components/tiers/tier-card';

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState, type JSX } from "react";
 import Editor from "@monaco-editor/react";
 import { Box, Text } from "@radix-ui/themes";
 import { EyeOpenIcon, CodeIcon, InfoCircledIcon, BorderSplitIcon } from "@radix-ui/react-icons";

@@ -5,7 +5,7 @@ import NoNavLayout from "../../../layout";
 import type { ReactElement, ReactNode } from 'react'
 import type { NextPage } from 'next'
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode
+  getLayout?: (page: ReactElement<any>) => ReactNode
 }
 
 type ContractPageProps = {
@@ -51,7 +51,7 @@ const ContractPage: NextPageWithLayout<ContractPageProps> = async ({
   );
 }
 
-ContractPage.getLayout = function getLayout(page: ReactElement) {
+ContractPage.getLayout = function getLayout(page: ReactElement<any>) {
   return (
     <NoNavLayout>
       {page}

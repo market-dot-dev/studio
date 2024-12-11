@@ -2,6 +2,8 @@ import { Grid, Col } from "@tremor/react";
 import  components from "../site/insertables";
 import type { Insertable } from "../site/insertables";
 
+import type { JSX } from "react";
+
 export default function ComponentsPanel({ insertAtCursor }: {insertAtCursor: (prop: string) => void}) {
     return (
       <ComponentsBlock components={components} insertAtCursor={insertAtCursor} />

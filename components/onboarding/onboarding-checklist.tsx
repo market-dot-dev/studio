@@ -1,7 +1,7 @@
 "use client";
 
 import { Text, Bold, Button } from "@tremor/react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type JSX } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { dismissOnboarding } from "@/app/services/onboarding/OnboardingService";
 import {

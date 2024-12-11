@@ -1,4 +1,4 @@
-import { User, Subscription, Charge } from '@prisma/client';
+import { User, Subscription, Charge } from "@prisma/client";
 import {
   Table,
   TableBody,
@@ -7,16 +7,16 @@ import {
   TableHeaderCell,
   TableRow,
   Button,
-} from '@tremor/react';
-import React from 'react';
-import Tier from '@/app/models/Tier';
-import LinkButton from '@/components/common/link-button';
-import DashboardCard from '@/components/common/dashboard-card';
-import SubscriptionStatusBadge from './subscription-state';
-import PurchaseStatusBadge from './purchase-state';
-import { formatDate } from '@/lib/utils';
-import Link from 'next/link';
-import { InfoIcon } from 'lucide-react';
+} from "@tremor/react";
+import React from "react";
+import Tier from "@/app/models/Tier";
+import LinkButton from "@/components/common/link-button";
+import DashboardCard from "@/components/common/dashboard-card";
+import SubscriptionStatusBadge from "./subscription-state";
+import PurchaseStatusBadge from "./purchase-state";
+import { formatDate } from "@/lib/utils";
+import Link from "next/link";
+import { InfoIcon } from "lucide-react";
 import SecondaryButton from "@/components/common/secondary-button";
 
 export type CustomerWithChargesAndSubscriptions = User & {
@@ -32,15 +32,27 @@ type SalesRowProps = {
   userId: string;
 };
 
-const SalesRow = ({ user, tierName, statusBadge, createdAt, userId }: SalesRowProps) => {
+const SalesRow = ({
+  user,
+  tierName,
+  statusBadge,
+  createdAt,
+  userId,
+}: SalesRowProps) => {
   return (
     <TableRow className="m-0 p-2">
       <TableCell className="m-0 p-2">{user.name}</TableCell>
-      <TableCell className="m-0 p-2 text-left">{user.company || '(unknown)'}</TableCell>
-      <TableCell className="m-0 p-2 text-left"><a href={`mailto:${user.email}`}>{user.email}</a></TableCell>
+      <TableCell className="m-0 p-2 text-left">
+        {user.company || "(unknown)"}
+      </TableCell>
+      <TableCell className="m-0 p-2 text-left">
+        <a href={`mailto:${user.email}`}>{user.email}</a>
+      </TableCell>
       <TableCell className="m-0 p-2 text-left">{tierName}</TableCell>
       <TableCell className="m-0 p-2 text-center">{statusBadge}</TableCell>
-      <TableCell className="m-0 p-2 text-center">{formatDate(createdAt)}</TableCell>
+      <TableCell className="m-0 p-2 text-center">
+        {formatDate(createdAt)}
+      </TableCell>
       <TableCell className="m-0 p-2 text-right">
         <div className="flex flex-row justify-end gap-1">
           <LinkButton label="View Customer" href={`/customers/${userId}`} />
@@ -50,13 +62,18 @@ const SalesRow = ({ user, tierName, statusBadge, createdAt, userId }: SalesRowPr
   );
 };
 
-const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChargesAndSubscriptions[], maxInitialRows?: number }) => {
-
+const SalesTable = ({
+  customers,
+  maxInitialRows,
+}: {
+  customers: CustomerWithChargesAndSubscriptions[];
+  maxInitialRows?: number;
+}) => {
   const showAll = false;
 
   const sales = customers.flatMap((customer) => [
     ...customer.subscriptions.map((subscription) => ({
-      type: 'subscription',
+      type: "subscription",
       user: customer,
       tierName: subscription.tier.name,
       statusBadge: <SubscriptionStatusBadge subscription={subscription} />,
@@ -64,13 +81,13 @@ const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChar
       userId: customer.id,
     })),
     ...customer.charges.map((charge) => ({
-      type: 'charge',
+      type: "charge",
       user: customer,
       tierName: charge.tier.name,
       statusBadge: <PurchaseStatusBadge charge={charge} />,
       createdAt: charge.createdAt,
       userId: customer.id,
-    }))
+    })),
   ]);
 
   // Sort by createdAt in descending order (latest first)
@@ -80,11 +97,11 @@ const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChar
 
   return (
     <>
-      <div className="flex justify-between items-end mb-2">
+      <div className="mb-2 flex items-end justify-between">
         <h3 className="text-xl font-bold">Latest Sales</h3>
         {!showAll && maxInitialRows && (
           <div className="grid justify-items-end">
-            <Link href='/customers'>
+            <Link href="/customers">
               <SecondaryButton label="View More Customers" />
             </Link>
           </div>
@@ -92,14 +109,17 @@ const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChar
       </div>
 
       <DashboardCard className="mb-8">
-        {sales.length === 0 ?
+        {sales.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8">
-            <InfoIcon className="h-12 w-12 text-gray-400 mb-4" />
-            <h3 className="text-lg font-semibold text-gray-900 mb-2">No sales data available</h3>
-            <p className="text-gray-500 text-center max-w-md">
+            <InfoIcon className="mb-4 h-12 w-12 text-gray-400" />
+            <h3 className="mb-2 text-lg font-semibold text-gray-900">
+              No sales data available
+            </h3>
+            <p className="max-w-md text-center text-gray-500">
               When you make your first sale, it will appear here.
             </p>
-          </div> : 
+          </div>
+        ) : (
           <Table>
             <TableHead>
               <TableRow>
@@ -107,7 +127,9 @@ const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChar
                 <TableHeaderCell className="text-left">Company</TableHeaderCell>
                 <TableHeaderCell className="text-left">Email</TableHeaderCell>
                 <TableHeaderCell className="text-left">Package</TableHeaderCell>
-                <TableHeaderCell className="text-center">Status</TableHeaderCell>
+                <TableHeaderCell className="text-center">
+                  Status
+                </TableHeaderCell>
                 <TableHeaderCell className="text-center">Date</TableHeaderCell>
                 <TableHeaderCell className="text-right"></TableHeaderCell>
               </TableRow>
@@ -125,7 +147,7 @@ const SalesTable = ({ customers, maxInitialRows }: { customers: CustomerWithChar
               ))}
             </TableBody>
           </Table>
-        }
+        )}
       </DashboardCard>
     </>
   );

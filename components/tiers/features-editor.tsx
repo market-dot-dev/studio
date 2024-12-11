@@ -1,13 +1,13 @@
 import { Flex, Card, TextInput, Button, List, ListItem, Title, Switch, Bold } from "@tremor/react";
 import { IconButton } from "@radix-ui/themes";
-import { useRef, useState } from "react";
+import { useRef, useState, type JSX } from "react";
 
 import { FaEdit, FaCheck } from "react-icons/fa";
 
 function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
     const [isEditing, setIsEditing] = useState(false);
 
-    const inputRef = useRef<any>();
+    const inputRef = useRef<any>(undefined);
 
     const toggleEditing = () =>  {
         setIsEditing(!isEditing);

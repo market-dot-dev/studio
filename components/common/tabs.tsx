@@ -1,6 +1,6 @@
 'use client'
 import { TabGroup, TabList, Tab, TabPanels, TabPanel } from "@tremor/react";
-import { useState } from "react";
+import { useState, type JSX } from "react";
 
 interface TabContent {
   title: JSX.Element;

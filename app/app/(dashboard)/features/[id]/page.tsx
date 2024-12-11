@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { type JSX } from 'react';
 import prisma from '@/lib/prisma';
 import type { Service, Feature } from '@prisma/client';
 import FeatureForm from '@/components/form/feature-form';

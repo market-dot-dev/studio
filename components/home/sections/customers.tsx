@@ -17,12 +17,12 @@ import {
 } from "lucide-react";
 
 interface CustomerCardProps {
-  icon: ReactElement;
+  icon: ReactElement<any>;
   title: string;
   description: string;
   items: {
-    icon: ReactElement;
-    text: ReactElement | string;
+    icon: ReactElement<any>;
+    text: ReactElement<any> | string;
   }[];
 }
 
