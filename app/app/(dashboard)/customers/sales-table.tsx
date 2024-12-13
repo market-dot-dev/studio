@@ -10,7 +10,6 @@ import {
 } from "@tremor/react";
 import React from "react";
 import Tier from "@/app/models/Tier";
-import LinkButton from "@/components/common/link-button";
 import DashboardCard from "@/components/common/dashboard-card";
 import { capitalize, formatDate } from "@/lib/utils";
 import Link from "next/link";
@@ -18,13 +17,13 @@ import { InfoIcon } from "lucide-react";
 import SecondaryButton from "@/components/common/secondary-button";
 import {
   DropdownMenu,
-  DropdownMenuLabel,
   DropdownMenuContent,
   DropdownMenuTrigger,
-  DropdownMenuSeparator,
   DropdownMenuItem,
   DropdownMenuGroup,
 } from "@/components/common/dropdown";
+import SubscriptionStatusBadge from "./subscription-state";
+import PurchaseStatusBadge from "./purchase-state";
 
 export type CustomerWithChargesSubscriptionsAndProspects = User & {
   charges: (Charge & { tier: Tier })[];
@@ -39,9 +38,17 @@ type Sale = {
   tierNames?: string[];
   createdAt: Date;
   userId: string;
+  statusBadge?: JSX.Element;
 };
 
-const SalesRow = ({ user, tierName, tierNames, createdAt, type }: Sale) => {
+const SalesRow = ({
+  user,
+  tierName,
+  tierNames,
+  createdAt,
+  type,
+  statusBadge,
+}: Sale) => {
   return (
     <TableRow className="m-0 p-2">
       <TableCell className="m-0 p-2">{user.name}</TableCell>
@@ -55,10 +62,11 @@ const SalesRow = ({ user, tierName, tierNames, createdAt, type }: Sale) => {
       ) : (
         <TableCell className="m-0 p-2 text-left">{tierName}</TableCell>
       )}
-      <TableCell className="m-0 p-2 text-right">
-        <div className="flex flex-row justify-end gap-1">
-          <Badge color="gray">{type}</Badge>
-        </div>
+      <TableCell className="m-0 p-2 text-left">
+        <Badge color="gray">{type}</Badge>
+      </TableCell>
+      <TableCell className="m-0 p-2 text-left">
+        {statusBadge ?? "N/A"}
       </TableCell>
       <TableCell className="m-0 p-2 text-right">
         {formatDate(createdAt)}
@@ -83,6 +91,7 @@ const SalesTable = ({
       tierName: subscription.tier.name,
       createdAt: subscription.createdAt,
       userId: customer.id,
+      statusBadge: <SubscriptionStatusBadge subscription={subscription} />,
     })),
     ...customer.charges.map((charge) => ({
       type: "charge" as const,
@@ -90,6 +99,7 @@ const SalesTable = ({
       tierName: charge.tier.name,
       createdAt: charge.createdAt,
       userId: customer.id,
+      statusBadge: <PurchaseStatusBadge charge={charge} />,
     })),
     ...customer.prospects.map((prospect) => ({
       type: "prospect" as const,
@@ -156,8 +166,15 @@ const SalesTable = ({
                 <TableHeaderCell className="p-2 text-left">
                   Package
                 </TableHeaderCell>
-                <TableHeaderCell className="text-right">Type</TableHeaderCell>
-                <TableHeaderCell className="text-right">Date</TableHeaderCell>
+                <TableHeaderCell className="p-2 text-left">
+                  Type
+                </TableHeaderCell>
+                <TableHeaderCell className="p-2 text-left">
+                  Status
+                </TableHeaderCell>
+                <TableHeaderCell className="p-2 text-right">
+                  Date
+                </TableHeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -175,6 +192,7 @@ const SalesTable = ({
                   tierNames={purchase.tierNames}
                   createdAt={purchase.createdAt}
                   userId={purchase.userId}
+                  statusBadge={purchase.statusBadge}
                 />
               ))}
             </TableBody>
