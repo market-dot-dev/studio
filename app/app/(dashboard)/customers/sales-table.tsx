@@ -62,12 +62,10 @@ const SalesRow = ({
       ) : (
         <TableCell className="m-0 p-2 text-left">{tierName}</TableCell>
       )}
-      <TableCell className="m-0 p-2 text-right">
-        <div className="flex flex-row justify-end gap-1">
-          <Badge color="gray">{type}</Badge>
-        </div>
+      <TableCell className="m-0 p-2 text-left">
+        <Badge color="gray">{type}</Badge>
       </TableCell>
-      <TableCell className="m-0 p-2 text-right">
+      <TableCell className="m-0 p-2 text-left">
         {statusBadge ?? "N/A"}
       </TableCell>
       <TableCell className="m-0 p-2 text-right">
@@ -168,9 +166,15 @@ const SalesTable = ({
                 <TableHeaderCell className="p-2 text-left">
                   Package
                 </TableHeaderCell>
-                <TableHeaderCell className="text-right">Type</TableHeaderCell>
-                <TableHeaderCell className="text-right">Status</TableHeaderCell>
-                <TableHeaderCell className="text-right">Date</TableHeaderCell>
+                <TableHeaderCell className="p-2 text-left">
+                  Type
+                </TableHeaderCell>
+                <TableHeaderCell className="p-2 text-left">
+                  Status
+                </TableHeaderCell>
+                <TableHeaderCell className="p-2 text-right">
+                  Date
+                </TableHeaderCell>
               </TableRow>
             </TableHead>
             <TableBody>
