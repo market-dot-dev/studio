@@ -75,9 +75,7 @@ const SkeletonLoader = ({ className }: { className?: string }) => (
   <div className={`animate-pulse bg-slate-300 ${className}`}></div>
 );
 
-const CheckoutPage = ({ params }: { params: { id: string } }) => {
-  const { id } = params;
-
+const CheckoutPage = ({ id }: { id: string }) => {
   const searchParams = useSearchParams();
   const queryParams: QueryParams = Object.fromEntries(searchParams.entries());
   const isAnnual = queryParams.annual === "true";

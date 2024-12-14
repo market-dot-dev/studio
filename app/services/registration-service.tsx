@@ -153,7 +153,7 @@ class RegistrationService {
       return false;
     }
 
-    cookies().set("signup_name", userAttributes.name);
+    (await cookies()).set("signup_name", userAttributes.name);
 
     return true;
   }

@@ -7,16 +7,17 @@ import SessionService from "@/app/services/SessionService";
 export default async function SiteAnalytics({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const id = (await params).id;
   const userId = await SessionService.getCurrentUserId();
-  
+
   if (!userId) {
     redirect("/login");
   }
   const data = await prisma.site.findUnique({
     where: {
-      id: decodeURIComponent(params.id),
+      id: decodeURIComponent(id),
     },
   });
   if (!data || data.userId !== userId) {
@@ -24,7 +25,7 @@ export default async function SiteAnalytics({
   }
 
   // const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-  const url = DomainService.getRootUrl(data.subdomain ?? 'app');
+  const url = DomainService.getRootUrl(data.subdomain ?? "app");
   return (
     <>
       <div className="flex items-center justify-center sm:justify-start">

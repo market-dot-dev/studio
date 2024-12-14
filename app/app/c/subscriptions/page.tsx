@@ -17,7 +17,11 @@ import {
 import SubscriptionService from "@/app/services/SubscriptionService";
 import Link from "next/link";
 
-const SubscriptionCard = async ({ subscription }: { subscription: Subscription }) => {
+const SubscriptionCard = async ({
+  subscription,
+}: {
+  subscription: Subscription;
+}) => {
   if (!subscription || !subscription.tierId) return null;
 
   const tier = await TierService.findTier(subscription.tierId!);
@@ -26,53 +30,64 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
   const maintainer = await UserService.findUser(tier.userId);
   if (!maintainer) return null;
 
-  const actualCadence = subscription.priceAnnual ? 'year' : tier.cadence;
+  const actualCadence = subscription.priceAnnual ? "year" : tier.cadence;
   const actualPrice = subscription.priceAnnual ? tier.priceAnnual : tier.price;
 
-  let status = '';
+  let status = "";
   if (subscription.state === SubscriptionStates.renewing) {
-    status = 'Subscribed';
+    status = "Subscribed";
   } else if (subscription.state === SubscriptionStates.cancelled) {
     if (subscription.activeUntil && subscription.activeUntil <= new Date()) {
-      status = 'Cancelled';
+      status = "Cancelled";
     } else if (subscription.activeUntil) {
-      const daysRemaining = Math.ceil((subscription.activeUntil.getTime() - new Date().getTime()) / (1000 * 3600 * 24));
-      status = `Cancelled -- usable for ${daysRemaining} more day${daysRemaining !== 1 ? 's' : ''}`;
+      const daysRemaining = Math.ceil(
+        (subscription.activeUntil.getTime() - new Date().getTime()) /
+          (1000 * 3600 * 24),
+      );
+      status = `Cancelled -- usable for ${daysRemaining} more day${daysRemaining !== 1 ? "s" : ""}`;
     } else {
-      status = 'Cancelled';
+      status = "Cancelled";
     }
   }
 
-  return (<Card>
-    <div className="flex flex-col space-y-2">
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-row space-x-2 items-center">
-          <Bold>{maintainer.projectName}</Bold>
+  return (
+    <Card>
+      <div className="flex flex-col space-y-2">
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-row items-center space-x-2">
+            <Bold>{maintainer.projectName}</Bold>
+          </div>
+        </div>
+
+        <Bold>
+          Tier: {tier.name}
+          {subscription.priceAnnual ? ` (annual)` : ""}
+        </Bold>
+
+        <Text>
+          Status:&nbsp;
+          {status}
+        </Text>
+        <Text>Description: {tier.tagline}</Text>
+        <p>
+          ${actualPrice} / {actualCadence}
+        </p>
+        <p>{subscription.tierVersionId}</p>
+        <div className="flex flex-row space-x-2">
+          <Link href={`/subscriptions/${subscription.id}`}>
+            <Button>Tier Details</Button>
+          </Link>
         </div>
       </div>
+    </Card>
+  );
+};
 
-      <Bold>Tier: {tier.name}{ subscription.priceAnnual ? ` (annual)` : ''}</Bold>
+export default async function SubscriptionsList() {
+  const subscriptions = (await SubscriptionService.findSubscriptions()) || [];
 
-      <Text>Status:&nbsp;
-        { status}
-      </Text>
-      <Text>Description: {tier.tagline}</Text>
-      <p>${actualPrice} / {actualCadence}</p>
-      <p>{subscription.tierVersionId}</p>
-      <div className="flex flex-row space-x-2">
-        <Link href={`/subscriptions/${subscription.id}`}>
-          <Button>Tier Details</Button>
-        </Link>
-      </div>
-    </div>
-  </Card>)
-}
-
-export default async function SubscriptionsList({ params }: { params: { id: string } }) {
-  const subscriptions = await SubscriptionService.findSubscriptions() || [];
-
-  const activeSubscriptions = subscriptions.filter(sub => sub.isActive());
-  const pastSubscriptions = subscriptions.filter(sub => !sub.isActive());
+  const activeSubscriptions = subscriptions.filter((sub) => sub.isActive());
+  const pastSubscriptions = subscriptions.filter((sub) => !sub.isActive());
 
   const anyActive = activeSubscriptions.length > 0;
   const anyPast = pastSubscriptions.length > 0;
@@ -88,16 +103,24 @@ export default async function SubscriptionsList({ params }: { params: { id: stri
           </TabList>
           <TabPanels className="pt-6">
             <TabPanel>
-              {activeSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
-              {!anyActive && <div className="flex flex-col space-y-2">
-                <h2>No active subscriptions</h2>
-              </div>}
+              {activeSubscriptions.map((element) => (
+                <SubscriptionCard subscription={element} key={element.id} />
+              ))}
+              {!anyActive && (
+                <div className="flex flex-col space-y-2">
+                  <h2>No active subscriptions</h2>
+                </div>
+              )}
             </TabPanel>
             <TabPanel>
-              {pastSubscriptions.map(element => <SubscriptionCard subscription={element} key={element.id} />)}
-              {!anyPast && <div className="flex flex-col space-y-2">
-                <h2>No past subscriptions</h2>
-              </div>}
+              {pastSubscriptions.map((element) => (
+                <SubscriptionCard subscription={element} key={element.id} />
+              ))}
+              {!anyPast && (
+                <div className="flex flex-col space-y-2">
+                  <h2>No past subscriptions</h2>
+                </div>
+              )}
             </TabPanel>
           </TabPanels>
         </TabGroup>

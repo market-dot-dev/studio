@@ -7,19 +7,19 @@ import { getRootUrl } from "@/app/services/domain-service";
 export async function generateMetadata({
   params,
 }: {
-  params: { domain: string };
+  params: Promise<{ domain: string }>;
 }): Promise<Metadata | null> {
-  const domain = decodeURIComponent(params.domain);
+  const { domain } = await params;
   const data = await getSiteData(domain);
   if (!data) {
     return null;
   }
-  const image = await getRootUrl(data?.subdomain ?? 'app', `/api/og/${data.id}`);
-  
-  const {
-    logo,
-    user
-  } = data as {
+  const image = await getRootUrl(
+    data?.subdomain ?? "app",
+    `/api/og/${data.id}`,
+  );
+
+  const { logo, user } = data as {
     image: string;
     logo: string;
     user: {
@@ -28,10 +28,7 @@ export async function generateMetadata({
     };
   };
 
-  const {
-    projectName : title,
-    projectDescription: description,
-  } = user as {
+  const { projectName: title, projectDescription: description } = user as {
     projectName: string;
     projectDescription: string;
   };
@@ -42,7 +39,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      
+
       images: [image],
     },
     twitter: {
@@ -68,10 +65,10 @@ export default async function SiteLayout({
   params,
   children,
 }: {
-  params: { domain: string };
+  params: Promise<{ domain: string }>;
   children: ReactNode;
 }) {
-  const domain = decodeURIComponent(params.domain);
+  const { domain } = await params;
   const data = await getSiteData(domain);
 
   if (!data) {
@@ -87,9 +84,5 @@ export default async function SiteLayout({
     return redirect(`https://${data.customDomain}`);
   }
 
-  return (
-    <>
-    {children}  
-    </>
-  );
+  return <>{children}</>;
 }

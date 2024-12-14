@@ -1,34 +1,34 @@
-import FeatureService from '@/app/services/feature-service';
-import TierService from '@/app/services/TierService';
-import { parseTierDescription } from '@/lib/utils';
-import { NextRequest } from 'next/server';
+import FeatureService from "@/app/services/feature-service";
+import TierService from "@/app/services/TierService";
+import { parseTierDescription } from "@/lib/utils";
+import { NextRequest } from "next/server";
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { userid: string } },
+  { params }: { params: Promise<{ userid: string }> },
 ) {
-  
+  const userid = (await params).userid;
   const searchParams = req.nextUrl.searchParams;
-  const onlyTiersString = searchParams.get('tiers');
-  const onlyTiers = onlyTiersString ? onlyTiersString.split(',') : [];
-  const darkmode = searchParams.get('darkmode') === 'true';
-  const heightParam = searchParams.get('height') 
+  const onlyTiersString = searchParams.get("tiers");
+  const onlyTiers = onlyTiersString ? onlyTiersString.split(",") : [];
+  const darkmode = searchParams.get("darkmode") === "true";
+  const heightParam = searchParams.get("height");
   let enforceHeight = heightParam ? parseInt(heightParam) : 0;
-  if(isNaN(enforceHeight)) {
+  if (isNaN(enforceHeight)) {
     enforceHeight = 0;
   }
 
   // const tiersForUser = await TierService.getTiersForUser(params.userid);
   // const activeFeatures = await FeatureService.findActiveByUser(params.userid);
   const [tiersForUser, activeFeatures] = await Promise.all([
-    TierService.getTiersForUser(params.userid),
-    FeatureService.findActiveByUser(params.userid),
+    TierService.getTiersForUser(userid),
+    FeatureService.findActiveByUser(userid),
   ]);
 
   // if(onlyTiers.length) {
-    const tiers = tiersForUser.filter((tier) => {
-      return onlyTiers.includes(tier.id);
-    });
+  const tiers = tiersForUser.filter((tier) => {
+    return onlyTiers.includes(tier.id);
+  });
   // }
 
   // find heighest number of features a tier among all tiers
@@ -37,8 +37,10 @@ export async function GET(
   }, 0);
 
   const width = (250 + 100) * tiers.length;
-  const height = enforceHeight ? enforceHeight : 300 + ((activeFeatures.length ? maxFeatures : 7) * 24);
-  
+  const height = enforceHeight
+    ? enforceHeight
+    : 300 + (activeFeatures.length ? maxFeatures : 7) * 24;
+
   const darkModeStyles = `
   .tierWrap {
     background: rgb(31, 41, 55);
@@ -60,21 +62,25 @@ export async function GET(
   }
 `;
 
-const featuresList = (features: any[]) => {
-  return `<div class="features">
+  const featuresList = (features: any[]) => {
+    return `<div class="features">
             <ul>
-          ${features.filter(feature => feature.isEnabled).map((feature: any) => {
-            return `<li>
+          ${features
+            .filter((feature) => feature.isEnabled)
+            .map((feature: any) => {
+              return `<li>
               <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="min-width: 24px; margin-top: -2px" fill="none" stroke="rgb(14, 159, 110)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="m9 12 2 2 4-4"></path></svg>
-              ${feature.name}</li>`
-          }).join(' ')}
+              ${feature.name}</li>`;
+            })
+            .join(" ")}
             </ul>
-          </div>`
-}
+          </div>`;
+  };
 
-  const tiersMarkup = tiers.map(tier => {
-    const parsedDescription = parseTierDescription(tier.description || '');
-    return `
+  const tiersMarkup = tiers
+    .map((tier) => {
+      const parsedDescription = parseTierDescription(tier.description || "");
+      return `
       <div class="tierWrap">
         <div class="tierInfo">
           <h3 class="title">${tier.name}</h3>
@@ -86,24 +92,37 @@ const featuresList = (features: any[]) => {
           <p class="included">What's Included:</p>
           <div class="features-wrap">
           ${
-            activeFeatures?.length ? featuresList(tier.features) : parsedDescription.map((section: any) => {
-              if(section.text) {
-                return section.text.map((text: string) => `<p>${text}</p>`).join('');
-              } else {
-                return featuresList(section.features.map((feature: string, index: number) => ({ id: index, name: feature, isEnabled: true })));
-              }
-            }).join('')
+            activeFeatures?.length
+              ? featuresList(tier.features)
+              : parsedDescription
+                  .map((section: any) => {
+                    if (section.text) {
+                      return section.text
+                        .map((text: string) => `<p>${text}</p>`)
+                        .join("");
+                    } else {
+                      return featuresList(
+                        section.features.map(
+                          (feature: string, index: number) => ({
+                            id: index,
+                            name: feature,
+                            isEnabled: true,
+                          }),
+                        ),
+                      );
+                    }
+                  })
+                  .join("")
           }
           </div>
           <div class="button">Get Started</div>
         </div>
       </div>
-    `
-  }).join('');
-        
-  
+    `;
+    })
+    .join("");
 
-  const svg = `<svg fill="none" width="${width+4}" height="${height+4}" xmlns="http://www.w3.org/2000/svg">
+  const svg = `<svg fill="none" width="${width + 4}" height="${height + 4}" xmlns="http://www.w3.org/2000/svg">
     <foreignObject width="100%" height="100%">
       <div xmlns="http://www.w3.org/1999/xhtml">
         <style>
@@ -186,7 +205,7 @@ const featuresList = (features: any[]) => {
           .button:hover {
             background: rgb(31, 41, 55);
           }
-          ${darkmode ? darkModeStyles : ''}
+          ${darkmode ? darkModeStyles : ""}
         </style>
 
         <div class="container">
@@ -198,10 +217,10 @@ const featuresList = (features: any[]) => {
 
   return new Response(svg, {
     headers: {
-      'Content-Type': 'image/svg+xml',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type',
+      "Content-Type": "image/svg+xml",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
     },
   });
 }

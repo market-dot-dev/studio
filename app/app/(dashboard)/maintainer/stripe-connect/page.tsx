@@ -2,7 +2,7 @@
 
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Card, Flex, Text, Button } from "@tremor/react";
+import { Card, Flex, Text } from "@tremor/react";
 import UserService from "@/app/services/UserService";
 import StripeService from "@/app/services/StripeService";
 import LinkButton from "@/components/common/link-button";
@@ -15,12 +15,11 @@ const StripeOauthButton = async ({ userId }: { userId: string }) => {
 };
 
 export default async function StripeConnect({
-  params,
-  searchParams = {},
+  searchParams,
 }: {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const params = await searchParams;
   const session = await getSession();
 
   if (!session) {
@@ -35,8 +34,8 @@ export default async function StripeConnect({
     return null;
   }
 
-  const code = searchParams["code"] as string;
-  const state = searchParams["state"] as string;
+  const code = params["code"] as string;
+  const state = params["state"] as string;
 
   // Check for OAuth callback
   if (code && state) {
@@ -65,23 +64,27 @@ export default async function StripeConnect({
         </h1>
         <Card className="p-10">
           <Flex flexDirection="col" alignItems="start" className="gap-4">
-            { !stripeConnected && <>
-              <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
-              <Text>
-                Connect your Stripe account to manage and receive payments.
-              </Text>
-              <StripeOauthButton userId={session.user.id!} />
-            </> }
-            { stripeConnected && <>
-              <h2 className="font-cal text-xl dark:text-white">Stripe Account</h2>
-              <Text>
-                Your stripe account is connected.
-              </Text>
-              <DisconnectStripeAccountButton user={user} />
-              <pre>
-                { user.stripeAccountId }
-              </pre>
-            </> }
+            {!stripeConnected && (
+              <>
+                <h2 className="font-cal text-xl dark:text-white">
+                  Connect Stripe Account
+                </h2>
+                <Text>
+                  Connect your Stripe account to manage and receive payments.
+                </Text>
+                <StripeOauthButton userId={session.user.id!} />
+              </>
+            )}
+            {stripeConnected && (
+              <>
+                <h2 className="font-cal text-xl dark:text-white">
+                  Stripe Account
+                </h2>
+                <Text>Your stripe account is connected.</Text>
+                <DisconnectStripeAccountButton user={user} />
+                <pre>{user.stripeAccountId}</pre>
+              </>
+            )}
           </Flex>
         </Card>
       </div>

@@ -1,22 +1,28 @@
-import embedables from "@/components/site/embedables"
-import { getSiteData } from "@/lib/fetchers"
-import { notFound } from "next/navigation"
+import embedables from "@/components/site/embedables";
+import { getSiteData } from "@/lib/fetchers";
+import { notFound } from "next/navigation";
 
+export default async function EmbedServe({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ domain: string; embed: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const param = await params;
+  const searchParam = await searchParams;
 
+  if (!embedables[param.embed] || !param.domain) {
+    notFound();
+  }
 
-export default async function EmbedServe({params, searchParams}: {params: {domain: string, embed: string}, searchParams: any}) {
-    
-    if(!embedables[params.embed] || !params.domain) {
-        notFound()
-    }
+  const site = await getSiteData(decodeURIComponent(param.domain));
 
-    const site = await getSiteData(decodeURIComponent(params.domain))
-    
-    const Component = embedables[params.embed].element;
-    
-    return (
-        <>
-            <Component site={site} searchParams={searchParams} />
-        </>
-    )
+  const Component = embedables[param.embed].element;
+
+  return (
+    <>
+      <Component site={site} searchParams={searchParam} />
+    </>
+  );
 }

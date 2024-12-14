@@ -1,10 +1,15 @@
-import { findTier } from '@/app/services/TierService';
+import { findTier } from "@/app/services/TierService";
 import PageHeading from "@/components/common/page-heading";
 import { Card } from "@tremor/react";
-import TierForm from './admin-tier-form';
+import TierForm from "./admin-tier-form";
 
-export default async function AdminEditTier({ params }: { params: { id: string } }) {
-  const tier = await findTier(params.id);
+export default async function AdminEditTier({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const id = (await params).id;
+  const tier = await findTier(id);
   if (!tier || !tier.id) return null;
 
   return (

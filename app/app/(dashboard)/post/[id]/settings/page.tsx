@@ -8,15 +8,17 @@ import DeletePostForm from "@/components/form/delete-post-form";
 export default async function PostSettings({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
   const session = await getSession();
   if (!session) {
     redirect("/login");
   }
+
+  const id = (await params).id;
   const data = await prisma.post.findUnique({
     where: {
-      id: decodeURIComponent(params.id),
+      id: decodeURIComponent(id),
     },
   });
   if (!data || data.userId !== session.user.id) {

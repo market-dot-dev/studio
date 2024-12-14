@@ -1,13 +1,11 @@
 import UserService from "@/app/services/UserService";
-import { NextRequest } from "next/server";
 
 export async function GET(
-  req: NextRequest,
-  { params }: { params: { userid: string } },
+  req: Request,
+  { params }: { params: Promise<{ userid: string }> },
 ) {
-  // const searchParams = req.nextUrl.searchParams;
-
-  let user = await UserService.findUser(params.userid);
+  const userId = (await params).userid;
+  const user = await UserService.findUser(userId);
 
   const buttonText = "View";
   const description = user?.projectName

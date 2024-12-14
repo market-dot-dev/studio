@@ -9,21 +9,18 @@ import { notFound } from "next/navigation";
 export default async function ContractEditPage({
   params,
 }: {
-  params?: { id: string };
+  params: Promise<{ id: string }>;
 }) {
+  const id = (await params).id;
   const session = await getSession();
 
   if (!session) {
     redirect("/login");
   }
 
-  let contract = null;
-  if (params?.id) {
-    contract = await getContractById(params.id);
-    console.log(contract);
-    if (!contract || contract.maintainerId !== session.user.id) {
-      notFound();
-    }
+  const contract = await getContractById(id);
+  if (!contract || contract.maintainerId !== session.user.id) {
+    notFound();
   }
 
   return (

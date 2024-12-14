@@ -1,16 +1,16 @@
 "use server";
 import SessionService from "./SessionService";
-import { nanoid } from 'nanoid';
+import { nanoid } from "nanoid";
 import prisma from "@/lib/prisma";
-import jwt from 'jsonwebtoken';
-import { cookies } from 'next/headers'
+import jwt from "jsonwebtoken";
+import { cookies } from "next/headers";
 import { GithubAppInstallation, Lead } from "@prisma/client";
 import LeadsService from "./LeadsService";
 
-const privateKey = process.env.GITHUB_APP_PRIVATE_KEY?.replace(/\\n/g, '\n') ?? '';
+const privateKey =
+  process.env.GITHUB_APP_PRIVATE_KEY?.replace(/\\n/g, "\n") ?? "";
 
 class RepoService {
-
   static getJWT() {
     // Create a JWT to authenticate the GitHub App
     const now = Math.floor(Date.now() / 1000);
@@ -19,27 +19,32 @@ class RepoService {
       // issued at time
       iat: now,
       // JWT expiration time (10 minute maximum)
-      exp: now + (10 * 60),
+      exp: now + 10 * 60,
       // GitHub App's identifier
-      iss: process.env.GITHUB_APP_ID
+      iss: process.env.GITHUB_APP_ID,
     };
 
-    return jwt.sign(payload, privateKey, { algorithm: 'RS256' });
+    return jwt.sign(payload, privateKey, { algorithm: "RS256" });
   }
 
-  static async createInstallation(id: number, login: string, maybeUserId: number | null) {
-
+  static async createInstallation(
+    id: number,
+    login: string,
+    maybeUserId: number | null,
+  ) {
     const res = await RepoService.generateInstallationToken(id);
-    
+
     if (!res) {
-      throw new Error('Failed to create installation token');
+      throw new Error("Failed to create installation token");
     }
 
     const { token, expiresAt } = res;
-    
+
     // if its not an org, then we just have one member i.e., the user himself
-    const members = maybeUserId ? [{ id: maybeUserId }] : await RepoService.getGithubAppOrgMembers(login, token);
-    
+    const members = maybeUserId
+      ? [{ id: maybeUserId }]
+      : await RepoService.getGithubAppOrgMembers(login, token);
+
     // save the installation information in the database
     return prisma.githubAppInstallation.create({
       data: {
@@ -54,10 +59,12 @@ class RepoService {
         },
       },
     });
-
   }
 
-  static async removeGithubOrgMember(githubAppInstallationId: number, gh_id: number) {
+  static async removeGithubOrgMember(
+    githubAppInstallationId: number,
+    gh_id: number,
+  ) {
     return await prisma.githubOrgMember.deleteMany({
       where: {
         githubAppInstallationId,
@@ -67,23 +74,24 @@ class RepoService {
   }
 
   static async addGithubOrgMembers(installationId: number, org: string) {
-      
-      const token = await RepoService.getInstallationToken(installationId);
-      
-      const members = await RepoService.getGithubAppOrgMembers(org, token);
+    const token = await RepoService.getInstallationToken(installationId);
 
-      if(members?.length) {
-        await prisma.githubOrgMember.createMany({
-          data: members.map((member: any) => ({
-            githubAppInstallationId: installationId,
-            gh_id: member.id,
-          })),
-        });
-      }
-    
+    const members = await RepoService.getGithubAppOrgMembers(org, token);
+
+    if (members?.length) {
+      await prisma.githubOrgMember.createMany({
+        data: members.map((member: any) => ({
+          githubAppInstallationId: installationId,
+          gh_id: member.id,
+        })),
+      });
+    }
   }
 
-  static async addGithubOrgMember(githubAppInstallationId: number, gh_id: number) {
+  static async addGithubOrgMember(
+    githubAppInstallationId: number,
+    gh_id: number,
+  ) {
     return await prisma.githubOrgMember.create({
       data: {
         githubAppInstallationId,
@@ -118,16 +126,15 @@ class RepoService {
       },
     });
   }
-  
-  static async getGithubAppOrgMembers(org: string, installationToken: string) {
 
+  static async getGithubAppOrgMembers(org: string, installationToken: string) {
     try {
       const res = await fetch(`https://api.github.com/orgs/${org}/members`, {
-        method: 'GET',
+        method: "GET",
         headers: {
-          'Authorization': `Bearer ${installationToken}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
+          Authorization: `Bearer ${installationToken}`,
+          Accept: "application/vnd.github.v3+json",
+        },
       });
 
       const data = await res.json();
@@ -146,13 +153,16 @@ class RepoService {
     const jwtToken = RepoService.getJWT();
 
     try {
-      const res = await fetch(`https://api.github.com/app/installations/${id}`, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
+      const res = await fetch(
+        `https://api.github.com/app/installations/${id}`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: "application/vnd.github.v3+json",
+          },
+        },
+      );
 
       const data = await res.json();
 
@@ -167,17 +177,19 @@ class RepoService {
   }
 
   static async generateInstallationToken(id: number) {
-
     const jwtToken = RepoService.getJWT();
 
     try {
-      const res = await fetch(`https://api.github.com/app/installations/${id}/access_tokens`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${jwtToken}`,
-          'Accept': 'application/vnd.github.v3+json'
-        }
-      });
+      const res = await fetch(
+        `https://api.github.com/app/installations/${id}/access_tokens`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${jwtToken}`,
+            Accept: "application/vnd.github.v3+json",
+          },
+        },
+      );
 
       const data = await res.json();
 
@@ -188,17 +200,16 @@ class RepoService {
       return {
         token,
         expiresAt: expires_at,
-      }
+      };
     } catch (error) {
       throw new Error("unable to generate installation token.");
     }
-
   }
 
-
   static async getInstallationToken(id: number) {
-    
-    let installation = await RepoService.getInstallation(id) as GithubAppInstallation;
+    let installation = (await RepoService.getInstallation(
+      id,
+    )) as GithubAppInstallation;
 
     // check if the token is still valid
     const expiresAt = new Date(installation.expiresAt).getTime();
@@ -228,8 +239,8 @@ class RepoService {
   static async getGithubAppInstallState() {
     const state = nanoid();
     // set a httpOnly cookie with the state
-    cookies().set('ghstate', state, { httpOnly: true })
-    
+    (await cookies()).set("ghstate", state, { httpOnly: true });
+
     return state;
   }
 
@@ -237,17 +248,17 @@ class RepoService {
     const userId = await SessionService.getCurrentUserId();
 
     const account = await prisma.account.findFirst({
-      where: { 
+      where: {
         userId,
-        provider: 'github',
+        provider: "github",
       },
       select: { providerAccountId: true },
     });
-  
+
     if (!account || !account.providerAccountId) {
       return [];
     }
-  
+
     return await prisma.githubAppInstallation.findMany({
       where: {
         members: {
@@ -265,29 +276,27 @@ class RepoService {
 
   // get the repositories for a given installation
   static async getInstallationRepos(installationId: number) {
-
-    const installationToken = await RepoService.getInstallationToken(installationId);
+    const installationToken =
+      await RepoService.getInstallationToken(installationId);
 
     try {
-      const repos = await fetch(`https://api.github.com/installation/repositories`, {
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${installationToken}`,
-        }
-      }).then(res => res.json());
-
+      const repos = await fetch(
+        `https://api.github.com/installation/repositories`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${installationToken}`,
+          },
+        },
+      ).then((res) => res.json());
 
       return repos.repositories;
-
     } catch (error) {
       console.error(error);
-      return new Response('Failed to create access token', { status: 500 });
+      return new Response("Failed to create access token", { status: 500 });
     }
-
   }
-
-  
 
   // get the connected (verified) repos for the current user
   static async getRepos() {
@@ -295,7 +304,7 @@ class RepoService {
     const userId = await SessionService.getCurrentUserId();
 
     if (!userId) {
-      throw new Error('No user found.');
+      throw new Error("No user found.");
     }
 
     return RepoService.getReposFromUserId(userId);
@@ -308,15 +317,15 @@ class RepoService {
         userId,
       },
       orderBy: {
-        createdAt: 'asc'
-      }
+        createdAt: "asc",
+      },
     });
   }
 
   static async getRepo(repoId: string) {
     const accessToken = await SessionService.getAccessToken();
     if (!accessToken) {
-      throw new Error('No access token found.');
+      throw new Error("No access token found.");
     }
 
     try {
@@ -324,40 +333,45 @@ class RepoService {
       const url = `https://api.github.com/repositories/${repoId}`;
       const response = await fetch(url, {
         headers: {
-          'Authorization': `Bearer ${accessToken}`,
-          'Accept': 'application/vnd.github+json',
+          Authorization: `Bearer ${accessToken}`,
+          Accept: "application/vnd.github+json",
         },
       });
 
       if (!response.ok) {
-        throw new Error(`GitHub API responded with status code ${response.status}`);
+        throw new Error(
+          `GitHub API responded with status code ${response.status}`,
+        );
       }
 
       const repoDetails = await response.json();
       return repoDetails;
     } catch (error) {
-      console.error('Failed to get repo:', error);
-      throw new Error('Failed to get repo');
+      console.error("Failed to get repo:", error);
+      throw new Error("Failed to get repo");
     }
   }
 
   // verify and connect a repo to the current user
   static async verifyAndConnectRepo(repoId: string, installationId: string) {
-
     const userId = await SessionService.getCurrentUserId();
 
     if (!userId) {
-      throw new Error('No user found.');
+      throw new Error("No user found.");
     }
 
     const githubAppInstallationId = parseInt(installationId);
-    
-    const installationRepos = await RepoService.getInstallationRepos(githubAppInstallationId);
+
+    const installationRepos = await RepoService.getInstallationRepos(
+      githubAppInstallationId,
+    );
     // check if the repo is part of the installation
-    const repoDetails = installationRepos.find((repo: any) => repo.id === parseInt(repoId));
+    const repoDetails = installationRepos.find(
+      (repo: any) => repo.id === parseInt(repoId),
+    );
 
     if (!repoDetails) {
-      throw new Error('The repository is not part of the installation.');
+      throw new Error("The repository is not part of the installation.");
     }
 
     let radarId = null;
@@ -365,11 +379,11 @@ class RepoService {
       const repoSetupResult = await LeadsService.setup(repoDetails.html_url);
       radarId = repoSetupResult.data.id;
     } catch (error) {
-      console.error('Failed to setup repository:', error);
+      console.error("Failed to setup repository:", error);
     }
 
     if (!radarId) {
-      throw new Error('Failed to setup repository.');
+      throw new Error("Failed to setup repository.");
     }
 
     // Insert the repo information into the database
@@ -379,8 +393,8 @@ class RepoService {
         radarId,
         name: repoDetails.name,
         url: repoDetails.html_url,
-        userId
-      }
+        userId,
+      },
     });
   }
 
@@ -396,4 +410,12 @@ class RepoService {
 }
 
 export default RepoService;
-export const { getRepos, verifyAndConnectRepo, disconnectRepo, getInstallationsList, getInstallationRepos, getRepo, getGithubAppInstallState } = RepoService;
+export const {
+  getRepos,
+  verifyAndConnectRepo,
+  disconnectRepo,
+  getInstallationsList,
+  getInstallationRepos,
+  getRepo,
+  getGithubAppInstallState,
+} = RepoService;

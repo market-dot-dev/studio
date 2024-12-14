@@ -18,8 +18,12 @@ import UserService from "@/app/services/UserService";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button";
 
-const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
-  const userId = params.id;
+const CustomerDetailPage = async ({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) => {
+  const userId = (await params).id;
   const maintainerUserId = (await UserService.getCurrentSessionUser())?.id;
 
   if (!maintainerUserId || !userId) {

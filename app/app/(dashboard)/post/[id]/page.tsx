@@ -3,14 +3,20 @@ import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import Editor from "@/components/editor";
 
-export default async function PostPage({ params }: { params: { id: string } }) {
+export default async function PostPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const session = await getSession();
   if (!session) {
     redirect("/login");
   }
+
+  const id = (await params).id;
   const data = await prisma.post.findUnique({
     where: {
-      id: decodeURIComponent(params.id),
+      id: decodeURIComponent(id),
     },
     include: {
       site: {

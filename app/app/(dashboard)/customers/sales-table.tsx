@@ -8,7 +8,7 @@ import {
   TableRow,
   Button,
 } from "@tremor/react";
-import React from "react";
+import React, { ReactElement } from "react";
 import Tier from "@/app/models/Tier";
 import LinkButton from "@/components/common/link-button";
 import DashboardCard from "@/components/common/dashboard-card";
@@ -27,7 +27,7 @@ export type CustomerWithChargesAndSubscriptions = User & {
 type SalesRowProps = {
   user: User;
   tierName: string;
-  statusBadge: JSX.Element;
+  statusBadge: ReactElement;
   createdAt: Date;
   userId: string;
 };
