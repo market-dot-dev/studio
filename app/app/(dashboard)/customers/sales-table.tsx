@@ -65,10 +65,8 @@ const SalesRow = ({
       <TableCell className="m-0 p-2 text-left">
         <Badge color="gray">{type}</Badge>
       </TableCell>
+      <TableCell className="m-0 p-2 text-left">{statusBadge ?? "-"}</TableCell>
       <TableCell className="m-0 p-2 text-left">
-        {statusBadge ?? "N/A"}
-      </TableCell>
-      <TableCell className="m-0 p-2 text-right">
         {formatDate(createdAt)}
       </TableCell>
     </TableRow>
@@ -172,7 +170,7 @@ const SalesTable = ({
                 <TableHeaderCell className="p-2 text-left">
                   Status
                 </TableHeaderCell>
-                <TableHeaderCell className="p-2 text-right">
+                <TableHeaderCell className="p-2 text-left">
                   Date
                 </TableHeaderCell>
               </TableRow>
