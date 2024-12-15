@@ -9,20 +9,64 @@ import githubEmbeds from "@/components/site/github-embeds";
 import GithubEmbedItem from "@/components/github/github-embed-item";
 import { getRootUrl } from "@/app/services/domain-service";
 import FeatureService from "@/app/services/feature-service";
+import PackageEmbeddings from "./package-embeddings/package-embeddings";
 
-export default async function EmbedChannel({ params }: { params: { id: string } }) {
+export default async function EmbedChannel({
+  params,
+}: {
+  params: { id: string };
+}) {
+  const [site, activeFeatures] = (await Promise.all([
+    getSite(),
+    FeatureService.findActiveByCurrentUser(),
+  ])) as any;
 
-    const [site, activeFeatures] = await Promise.all([
-      getSite(),
-      FeatureService.findActiveByCurrentUser(),
-    ]) as any;
+  const rootUrl = getRootUrl(site?.subdomain ?? "app");
+  return (
+    <Flex flexDirection="col" alignItems="start" className="gap-6">
+      <PageHeading title="Embeds" />
 
-    const rootUrl = getRootUrl(site?.subdomain ?? 'app');
-    return (
-      <Flex flexDirection="col" alignItems="start" className="gap-6">
-        <PageHeading title="Embeds" />
+      <Tabs
+        tabs={[
+          {
+            title: (
+              <div className="flex items-center gap-2">
+                <Code2 size={18} /> <span>Packages</span>
+              </div>
+            ),
+            content: <PackageEmbeddings />,
+          },
+          {
+            title: (
+              <div className="flex items-center gap-2">
+                <Spline size={18} /> <span>Generic</span>
+              </div>
+            ),
+            content: (
+              <div>
+                <Flex flexDirection="col" alignItems="start" className="gap-6">
+                  <Text>Embed services in your Github Readme.</Text>
+                  <Flex flexDirection="col" className="w-full gap-12">
+                    {Object.keys(githubEmbeds).map((index) => (
+                      <div key={index} className="w-full">
+                        <GithubEmbedItem
+                          index={index}
+                          site={site}
+                          rootUrl={rootUrl}
+                          hasActiveFeatures={!!activeFeatures?.length}
+                        />
+                        <Divider />
+                      </div>
+                    ))}
+                  </Flex>
+                </Flex>
+              </div>
+            ),
+          },
+        ]}
+      />
 
-        <Tabs tabs = {
+      {/* <Tabs tabs = {
           [
             {
               title: (<div className="flex gap-2 items-center"><Code2 size={18} /> <span>HTML</span></div>), 
@@ -54,8 +98,7 @@ export default async function EmbedChannel({ params }: { params: { id: string } 
                 </Flex>   </div>)
             },
           ]
-        } />
-          
-      </Flex>   
-    );
+        } /> */}
+    </Flex>
+  );
 }

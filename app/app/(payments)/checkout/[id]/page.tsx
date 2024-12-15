@@ -21,6 +21,7 @@ import useContract from "@/app/hooks/use-contract";
 import LoadingDots from "@/components/icons/loading-dots";
 import { Contract } from "@prisma/client";
 import { parseTierDescription } from "@/lib/utils";
+import SkeletonLoader from "@/components/common/skeleton-loader";
 
 const TierNotAvailable = () => {
   return (
@@ -70,10 +71,6 @@ const ContractText = ({
     </>
   );
 };
-
-const SkeletonLoader = ({ className }: { className?: string }) => (
-  <div className={`animate-pulse bg-slate-300 ${className}`}></div>
-);
 
 const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const { id } = params;

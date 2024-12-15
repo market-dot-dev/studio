@@ -1,17 +1,15 @@
-'use client'
-import { Title } from '@tremor/react';
-import { CopyBlock, a11yDark } from 'react-code-blocks';
+"use client";
+
+import { CodeBlock } from "@/components/common/code-block";
 
 export default function CodeSnippet({ code }: { code: string }) {
   return (
-  <div className='w-full flex flex-col gap-2 items-stretch text-sm'>
-    <Title>Copy the embed code below</Title>
-    <CopyBlock
-        text={code}
-        language='html'
-        theme={a11yDark}
-        wrapLongLines={true}
+    <div className="flex w-full flex-col items-stretch gap-2 text-sm">
+      <CodeBlock
+        code={code}
+        language="html"
+        fileName="Copy the embed code below"
       />
-  </div>
-  )
+    </div>
+  );
 }
