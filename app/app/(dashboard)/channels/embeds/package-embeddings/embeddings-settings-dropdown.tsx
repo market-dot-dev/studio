@@ -14,6 +14,8 @@ import { Package, Settings, Moon, Sun } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useModal } from "@/components/modal/provider";
 import PublishedPackagesSelectionModal from "./published-packages-selection-modal";
+import { useState } from "react";
+import { TierWithFeatures } from "@/app/services/TierService";
 
 export default function EmbeddingsSettingsDropdown({
   darkMode,
@@ -23,11 +25,19 @@ export default function EmbeddingsSettingsDropdown({
   darkModeCallback: () => void;
 }) {
   const { show, hide } = useModal();
+  const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>([]);
+  console.log("selectedTiers", selectedTiers);
   const header = <Title>Select packages to embed</Title>;
 
   const showPublishedPackagesSelectionModal = () => {
     show(
-      <PublishedPackagesSelectionModal hide={hide} />,
+      <PublishedPackagesSelectionModal
+        hide={hide}
+        initTiers={selectedTiers}
+        onDoneCallback={(tiers: TierWithFeatures[]) => {
+          setSelectedTiers(tiers);
+        }}
+      />,
       undefined,
       undefined,
       header,
