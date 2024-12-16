@@ -1,6 +1,4 @@
-import EmbedItem from "@/components/embedables/embed-item";
 import { Divider, Flex, Text } from "@tremor/react";
-import embedables from "@/components/site/embedables/";
 import { getSite } from "@/lib/site/fetchers";
 import { Code2, Spline } from "lucide-react";
 import PageHeading from "@/components/common/page-heading";
