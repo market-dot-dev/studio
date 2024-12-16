@@ -18,15 +18,15 @@ export default function PublishedPackagesSelectionModal({
   initTiers?: TierWithFeatures[];
   onDoneCallback: (tiers: TierWithFeatures[]) => void;
 }) {
-  const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>([]);
-  const [publishedPackages, setPublishedPackages] = useState<
-    TierWithFeatures[]
-  >(initTiers || []);
+  const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>(
+    initTiers || [],
+  );
+  const [publishedTiers, setPublishedTiers] = useState<TierWithFeatures[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getPublishedTiers().then((tiers) => {
-      setPublishedPackages(tiers as any as TierWithFeatures[]);
+      setPublishedTiers(tiers as any as TierWithFeatures[]);
       setIsLoading(false);
     });
   }, []);
@@ -47,7 +47,7 @@ export default function PublishedPackagesSelectionModal({
         <PublishedPackagesSelectionModalContent
           selectedTiers={selectedTiers}
           onTierSelect={toggleTier}
-          publishedPackages={publishedPackages}
+          publishedTiers={publishedTiers}
           onDone={() => {
             onDoneCallback(selectedTiers);
             hide();
@@ -61,18 +61,18 @@ export default function PublishedPackagesSelectionModal({
 function PublishedPackagesSelectionModalContent({
   selectedTiers,
   onTierSelect,
-  publishedPackages,
+  publishedTiers,
   onDone,
 }: {
   selectedTiers: TierWithFeatures[];
   onTierSelect: (tier: TierWithFeatures) => void;
-  publishedPackages: TierWithFeatures[];
+  publishedTiers: TierWithFeatures[];
   onDone: () => void;
 }) {
   return (
     <div className="flex w-full flex-col gap-4 p-10">
       <div className="grid grid-cols-1 gap-2 sm:gap-6 lg:grid-cols-2 xl:grid-cols-3">
-        {publishedPackages.map((tier) => (
+        {publishedTiers.map((tier) => (
           <div
             key={tier.id}
             onClick={() => onTierSelect(tier)}

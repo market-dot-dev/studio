@@ -20,13 +20,16 @@ import { TierWithFeatures } from "@/app/services/TierService";
 export default function EmbeddingsSettingsDropdown({
   darkMode,
   darkModeCallback,
+  selectedTiers,
+  setSelectedTiers,
 }: {
   darkMode: boolean;
   darkModeCallback: () => void;
+  selectedTiers: TierWithFeatures[];
+  setSelectedTiers: (tiers: TierWithFeatures[]) => void;
 }) {
   const { show, hide } = useModal();
-  const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>([]);
-  console.log("selectedTiers", selectedTiers);
+
   const header = <Title>Select packages to embed</Title>;
 
   const showPublishedPackagesSelectionModal = () => {
