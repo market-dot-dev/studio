@@ -57,9 +57,18 @@ export default function PackageEmbeddings() {
 
               <TabPanel>
                 <div className="flex w-full flex-col gap-4">
-                  <CodeSnippet
-                    code={`<script src="https://embed.site.com/embed.js"></script>`}
-                  />
+                  {/* <CodeSnippet
+                    code={
+                      `<script 
+                        data-domain='${domain}' 
+                        data-widget='${index}'
+                        ` +
+                      (Object.keys(settings)?.length
+                        ? `data-settings='${JSON.stringify(settings, null, 6)}'`
+                        : "") +
+                      ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`
+                    }
+                  /> */}
                 </div>
               </TabPanel>
             </TabPanels>
