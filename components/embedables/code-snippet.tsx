@@ -1,6 +1,6 @@
 "use client";
 
-import { CodeBlock } from "@/components/common/code-block";
+import CodeBlock from "@/components/common/code-block";
 
 export default function CodeSnippet({ code }: { code: string }) {
   return (

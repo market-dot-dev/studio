@@ -140,6 +140,9 @@ importers:
       openai-edge:
         specifier: ^1.2.2
         version: 1.2.2
+      prettier:
+        specifier: ^3.2.5
+        version: 3.2.5
       prism-react-renderer:
         specifier: ^2.4.1
         version: 2.4.1(react@18.2.0)
@@ -243,9 +246,6 @@ importers:
       postcss:
         specifier: ^8.4.49
         version: 8.4.49
-      prettier:
-        specifier: ^3.2.5
-        version: 3.2.5
       prettier-plugin-tailwindcss:
         specifier: ^0.6.8
         version: 0.6.8(prettier@3.2.5)

@@ -14,15 +14,16 @@ import {
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 import { useState } from "react";
 import { TierWithFeatures } from "@/app/services/TierService";
-import Tiers from "@/components/site/embedables/tiers/tiers";
+import embeddables from "@/components/site/embedables";
 
-export default function PackageEmbeddings() {
+export default function PackageEmbeddings({ site }: { site: any }) {
   const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>([]);
+  const domain = `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   const [darkMode, setDarkMode] = useState(false);
   const handleDarkMode = () => setDarkMode(!darkMode);
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex w-full flex-col gap-6">
       <Text>Published packages that you can embed into your site.</Text>
       <Flex flexDirection="col" className="w-full gap-12">
         <Card>
@@ -43,13 +44,13 @@ export default function PackageEmbeddings() {
             <TabPanels>
               <TabPanel>
                 <div className="relative w-full overflow-hidden">
-                  <Tiers
-                    tiers={selectedTiers}
-                    subdomain={""}
+                  <embeddables.tiers.preview
+                    site={""}
                     settings={{
                       darkmode: darkMode,
                       tiers: selectedTiers.map((tier) => tier.id),
                     }}
+                    tiers={selectedTiers}
                     hasActiveFeatures={false}
                   />
                 </div>
@@ -57,18 +58,21 @@ export default function PackageEmbeddings() {
 
               <TabPanel>
                 <div className="flex w-full flex-col gap-4">
-                  {/* <CodeSnippet
-                    code={
-                      `<script 
-                        data-domain='${domain}' 
-                        data-widget='${index}'
-                        ` +
-                      (Object.keys(settings)?.length
-                        ? `data-settings='${JSON.stringify(settings, null, 6)}'`
-                        : "") +
-                      ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`
-                    }
-                  /> */}
+                  <CodeSnippet
+                    code={`<script
+                      data-domain="${domain}"
+                      data-widget="tiers"
+                      data-settings='${JSON.stringify(
+                        {
+                          darkmode: darkMode,
+                          tiers: selectedTiers.map((tier) => tier.id),
+                        },
+                        null,
+                        2,
+                      )}'
+                      src="//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js"
+                    ></script>`}
+                  />
                 </div>
               </TabPanel>
             </TabPanels>

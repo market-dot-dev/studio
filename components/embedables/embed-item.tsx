@@ -41,7 +41,7 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
                     hasActiveFeatures={hasActiveFeatures}
                   />
                 ) : null}
-                {/* 
+
                 <CodeSnippet
                   code={
                     `<script 
@@ -53,7 +53,7 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
                       : "") +
                     ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`
                   }
-                /> */}
+                />
               </Flex>
             </DashboardCard>
             <Flex

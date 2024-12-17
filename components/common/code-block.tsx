@@ -1,9 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { Highlight, themes } from "prism-react-renderer";
 import { Check, Copy, FileCode2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { format as prettierFormat } from "prettier/standalone";
+import * as parserHtml from "prettier/plugins/html";
 
 interface CodeBlockProps {
   code: string;
@@ -11,8 +13,36 @@ interface CodeBlockProps {
   fileName?: string;
 }
 
-export function CodeBlock({ code, language, fileName }: CodeBlockProps) {
+export default function CodeBlock({
+  code,
+  language,
+  fileName,
+}: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
+  const [formattedCode, setFormattedCode] = useState(code);
+
+  useEffect(() => {
+    const format = async () => {
+      if (language === "html") {
+        try {
+          const formatted = await prettierFormat(code, {
+            parser: "html",
+            plugins: [parserHtml],
+            printWidth: 80,
+            tabWidth: 2,
+            htmlWhitespaceSensitivity: "css",
+          });
+          setFormattedCode(formatted);
+        } catch (err) {
+          console.warn("Failed to format HTML:", err);
+          setFormattedCode(code.trim());
+        }
+      } else {
+        setFormattedCode(code.trim());
+      }
+    };
+    format();
+  }, [code, language]);
 
   const copyToClipboard = () => {
     if (typeof navigator !== "undefined" && navigator.clipboard) {
@@ -79,7 +109,7 @@ export function CodeBlock({ code, language, fileName }: CodeBlockProps) {
             { types: ["tag"], style: { color: "#E06C75" } },
           ],
         }}
-        code={code.trim()}
+        code={formattedCode}
         language={language}
       >
         {({ className, style, tokens, getLineProps, getTokenProps }) => (

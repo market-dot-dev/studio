@@ -21,82 +21,20 @@ export default async function EmbedChannel({
 
   const rootUrl = getRootUrl(site?.subdomain ?? "app");
   return (
-    <Flex flexDirection="col" alignItems="start" className="gap-6">
+    <Flex flexDirection="col" alignItems="start" className="w-full gap-6">
       <PageHeading title="Embeds" />
-
-      <Tabs
-        tabs={[
-          {
-            title: (
-              <div className="flex items-center gap-2">
-                <Code2 size={18} /> <span>Packages</span>
-              </div>
-            ),
-            content: <PackageEmbeddings />,
-          },
-          {
-            title: (
-              <div className="flex items-center gap-2">
-                <Spline size={18} /> <span>Generic</span>
-              </div>
-            ),
-            content: (
-              <div>
-                <Flex flexDirection="col" alignItems="start" className="gap-6">
-                  <Text>Embed services in your Github Readme.</Text>
-                  <Flex flexDirection="col" className="w-full gap-12">
-                    {Object.keys(githubEmbeds).map((index) => (
-                      <div key={index} className="w-full">
-                        <GithubEmbedItem
-                          index={index}
-                          site={site}
-                          rootUrl={rootUrl}
-                          hasActiveFeatures={!!activeFeatures?.length}
-                        />
-                        <Divider />
-                      </div>
-                    ))}
-                  </Flex>
-                </Flex>
-              </div>
-            ),
-          },
-        ]}
-      />
-
-      {/* <Tabs tabs = {
-          [
-            {
-              title: (<div className="flex gap-2 items-center"><Code2 size={18} /> <span>HTML</span></div>), 
-              content: (<>
-                <Text>Embed services onto another webpage.</Text>
-                <Flex flexDirection="col" className="gap-12 w-full">
-                  {Object.keys(embedables).map((index) => (
-                    <div key={index} className='w-full' >
-                      <EmbedItem index={index} site={site} hasActiveFeatures={!!activeFeatures?.length} />
-                      <Divider/>
-                    </div>
-                  ))}
-                </Flex>
-                </>)
-
-            },
-            {
-                title: (<div className="flex gap-2 items-center"><Spline size={18} /> <span>SVG</span></div>),
-                content: (<div><Flex flexDirection="col" alignItems="start" className="gap-6">
-                  <Text>Embed services in your Github Readme.</Text>
-                    <Flex flexDirection="col" className="gap-12 w-full">
-                      {Object.keys(githubEmbeds).map((index) => (
-                        <div key={index} className='w-full' >
-                          <GithubEmbedItem index={index} site={site} rootUrl={rootUrl} hasActiveFeatures={!!activeFeatures?.length} />
-                          <Divider/>
-                        </div>
-                      ))}
-                    </Flex>
-                </Flex>   </div>)
-            },
-          ]
-        } /> */}
+      <PackageEmbeddings site={site} />
+      {Object.keys(githubEmbeds).map((index) => (
+        <div key={index} className="w-full">
+          <GithubEmbedItem
+            index={index}
+            site={site}
+            rootUrl={rootUrl}
+            hasActiveFeatures={!!activeFeatures?.length}
+          />
+          <Divider />
+        </div>
+      ))}
     </Flex>
   );
 }
