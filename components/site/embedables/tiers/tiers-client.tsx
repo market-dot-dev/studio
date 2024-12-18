@@ -15,8 +15,6 @@ export default function TiersClient({
   tiers: any[];
   hasActiveFeatures?: boolean;
 }) {
-  console.log("TiersClient", site, settings, tiers, hasActiveFeatures);
-
   const filteredTiers = tiers.filter((tier: any) =>
     (settings.tiers ?? []).includes(tier.id),
   );

@@ -1,56 +1,65 @@
-'use client'
-import { Title, Flex, Grid, Col } from "@tremor/react";
+"use client";
+import {
+  Text,
+  Flex,
+  TabGroup,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel,
+  Title,
+} from "@tremor/react";
 import { useEffect, useState } from "react";
 import githubEmbeds from "../site/github-embeds";
 import CodeSnippet from "../embedables/code-snippet";
-import DashboardCard from "../common/dashboard-card";
 
+export default function GithubEmbedItem({
+  site,
+  index,
+  rootUrl,
+  settings,
+}: any) {
+  const [markdown, setMarkdown] = useState<string>("");
+  const [html, setHtml] = useState<string>("");
 
-export default function GithubEmbedItem({site, index, rootUrl, hasActiveFeatures} : any) {
-    
-  const [active, setActive] = useState(0)
-  const [markdown, setMarkdown] = useState<string>('');
-  const [settings, setSettings] = useState({} as any);
-  const [html, setHtml] = useState<string>('');
-  
-  const Settings = githubEmbeds[index].settings ?? null;
-  
   useEffect(() => {
-
-    githubEmbeds[index]?.callback?.({site, rootUrl, settings}).then(({html, markdown} : {html: string, markdown: string}) => {
-      setHtml(html);
-      setMarkdown(markdown);
-    });
-
-  }, [githubEmbeds[index], settings])
+    githubEmbeds[index]
+      ?.callback?.({ site, rootUrl, settings })
+      .then(({ html, markdown }: { html: string; markdown: string }) => {
+        setHtml(html);
+        setMarkdown(markdown);
+      });
+  }, [githubEmbeds[index], settings]);
 
   return (
-    <Flex flexDirection='col' alignItems="stretch" className='gap-4 grow'>
-      <Title>{githubEmbeds[index].name}</Title>
-      <Grid numItems={1} className="gap-8">
-        <Col numColSpan={1}>
-          
-            <Flex className="w-full gap-6" alignItems="stretch" justifyContent="start">
-              
-              <DashboardCard className="w-3/4">
-                <Flex flexDirection="col" className="grow gap-6">
-                  <div dangerouslySetInnerHTML={{__html: html}} />   
-                  <CodeSnippet code={markdown} /> 
-                </Flex>                
-              </DashboardCard>
-                 
-              
-              { Settings ? 
-                <Flex flexDirection="col" alignItems="start" className="gap-4 w-1/4" justifyContent="start">
-                  <Title>Embed Configuration</Title>
-                  <Settings site={site} settings={settings} setSettings={setSettings} />
-                </Flex>
-               : null }
-            
-            </Flex>
-          
-        </Col>
-      </Grid>
-    </Flex>
-  )
+    <div className="flex w-full flex-col gap-6">
+      <Title className="text-xl font-semibold">GitHub Badge</Title>
+      <Flex flexDirection="col" className="w-full gap-12">
+        <TabGroup>
+          <div className="flex items-center justify-between">
+            <TabList variant="solid">
+              <Tab>Preview</Tab>
+              <Tab>Code</Tab>
+            </TabList>
+          </div>
+
+          <TabPanels className="lg:py-6">
+            <TabPanel>
+              <div className="relative w-full overflow-hidden">
+                <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-center gap-6 rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8">
+                  <div dangerouslySetInnerHTML={{ __html: html }} />
+                </div>
+              </div>
+            </TabPanel>
+
+            <TabPanel>
+              <div className="flex w-full flex-col gap-4">
+                <CodeSnippet code={markdown} />
+              </div>
+            </TabPanel>
+          </TabPanels>
+        </TabGroup>
+      </Flex>
+    </div>
+  );
 }

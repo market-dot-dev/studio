@@ -1,8 +1,6 @@
-import { Divider, Flex, Text } from "@tremor/react";
+import { Divider, Flex } from "@tremor/react";
 import { getSite } from "@/lib/site/fetchers";
-import { Code2, Spline } from "lucide-react";
 import PageHeading from "@/components/common/page-heading";
-import Tabs from "@/components/common/tabs";
 import githubEmbeds from "@/components/site/github-embeds";
 import GithubEmbedItem from "@/components/github/github-embed-item";
 import { getRootUrl } from "@/app/services/domain-service";
@@ -23,18 +21,21 @@ export default async function EmbedChannel({
   return (
     <Flex flexDirection="col" alignItems="start" className="w-full gap-6">
       <PageHeading title="Embeds" />
-      <PackageEmbeddings site={site} />
-      {Object.keys(githubEmbeds).map((index) => (
-        <div key={index} className="w-full">
-          <GithubEmbedItem
-            index={index}
-            site={site}
-            rootUrl={rootUrl}
-            hasActiveFeatures={!!activeFeatures?.length}
-          />
-          <Divider />
-        </div>
-      ))}
+      <div className="flex w-full flex-col gap-6 p-4">
+        <PackageEmbeddings site={site} rootUrl={rootUrl} />
+        {Object.keys(githubEmbeds).map((index) => (
+          <div key={index} className="w-full">
+            <GithubEmbedItem
+              index={index}
+              key={index}
+              site={site}
+              rootUrl={rootUrl}
+              hasActiveFeatures={!!activeFeatures?.length}
+            />
+            <Divider />
+          </div>
+        ))}
+      </div>
     </Flex>
   );
 }

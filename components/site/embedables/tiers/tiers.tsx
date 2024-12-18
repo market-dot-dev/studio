@@ -84,7 +84,7 @@ export default function Tiers({
       <div ref={containerRef} className={cn("w-full", className)}>
         {alteredStyle.scale !== null ? (
           <div
-            className="mx-auto flex w-full justify-center lg:py-6"
+            className="mx-auto flex w-full justify-center"
             style={alteredStyle}
           >
             {tiers.length ? (

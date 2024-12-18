@@ -10,11 +10,10 @@ import {
   DropdownMenuLabel,
 } from "@/components/common/dropdown";
 import { Button, Switch, Title } from "@tremor/react";
-import { Package, Settings, Moon, Sun } from "lucide-react";
+import { Package, Settings, Moon, Sun, PenLine } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useModal } from "@/components/modal/provider";
 import PublishedPackagesSelectionModal from "./published-packages-selection-modal";
-import { useState } from "react";
 import { TierWithFeatures } from "@/app/services/TierService";
 
 export default function EmbeddingsSettingsDropdown({
@@ -22,11 +21,15 @@ export default function EmbeddingsSettingsDropdown({
   darkModeCallback,
   selectedTiers,
   setSelectedTiers,
+  useSVG,
+  setUseSVG,
 }: {
   darkMode: boolean;
   darkModeCallback: () => void;
   selectedTiers: TierWithFeatures[];
   setSelectedTiers: (tiers: TierWithFeatures[]) => void;
+  useSVG: boolean;
+  setUseSVG: (useSVG: boolean) => void;
 }) {
   const { show, hide } = useModal();
 
@@ -90,6 +93,19 @@ export default function EmbeddingsSettingsDropdown({
                 checked={darkMode}
                 color="black"
                 onChange={darkModeCallback}
+              />
+            </div>
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => setUseSVG(!useSVG)}>
+            <div className="flex w-full items-center justify-between text-gray-700">
+              <div className="flex items-center gap-x-2">
+                <PenLine className="size-4 text-gray-700" />
+                <span>SVG</span>
+              </div>
+              <Switch
+                checked={useSVG}
+                color="black"
+                onChange={() => setUseSVG(!useSVG)}
               />
             </div>
           </DropdownMenuItem>
