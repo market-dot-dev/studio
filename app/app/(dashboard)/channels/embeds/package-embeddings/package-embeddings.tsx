@@ -13,6 +13,7 @@ import { useState, useEffect } from "react";
 import { TierWithFeatures } from "@/app/services/TierService";
 import embeddables from "@/components/site/embedables";
 import DashedCard from "@/components/common/dashed-card";
+import { Tooltip } from "@/components/common/tooltip";
 
 export default function PackageEmbeddings({
   site,
@@ -53,7 +54,15 @@ export default function PackageEmbeddings({
           <div className="flex items-center justify-between">
             <TabsList variant="solid">
               <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
+              <Tooltip
+                content="Select packages in settings first"
+                className={selectedTiers.length > 0 ? "hidden" : "block"}
+                side="bottom"
+              >
+                <TabsTrigger value="code" disabled={selectedTiers.length === 0}>
+                  Code
+                </TabsTrigger>
+              </Tooltip>
             </TabsList>
             <EmbeddingsSettingsDropdown
               darkMode={darkmode}

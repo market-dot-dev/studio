@@ -34,6 +34,7 @@ export default function EmbeddingsSettingsDropdown({
   const { show, hide } = useModal();
 
   const header = <Title>Select packages to embed</Title>;
+  const atleastOneTierSelected = selectedTiers.length > 0;
 
   const showPublishedPackagesSelectionModal = () => {
     show(
@@ -66,10 +67,16 @@ export default function EmbeddingsSettingsDropdown({
           <DropdownMenuItem onClick={showPublishedPackagesSelectionModal}>
             <span className="flex items-center gap-x-2 text-gray-700">
               <Package className="size-4 text-gray-700" />
-              <span>Packages</span>
+              <span>
+                Packages{" "}
+                {atleastOneTierSelected ? `(${selectedTiers.length})` : ""}
+              </span>
             </span>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={darkModeCallback}>
+          <DropdownMenuItem
+            onClick={darkModeCallback}
+            disabled={!atleastOneTierSelected}
+          >
             <div className="flex w-full items-center justify-between text-gray-700">
               <div className="flex items-center gap-x-2">
                 <AnimatePresence mode="wait">
@@ -93,10 +100,14 @@ export default function EmbeddingsSettingsDropdown({
                 checked={darkMode}
                 color="black"
                 onChange={darkModeCallback}
+                disabled={!atleastOneTierSelected}
               />
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setUseSVG(!useSVG)}>
+          <DropdownMenuItem
+            onClick={() => setUseSVG(!useSVG)}
+            disabled={!atleastOneTierSelected}
+          >
             <div className="flex w-full items-center justify-between text-gray-700">
               <div className="flex items-center gap-x-2">
                 <PenLine className="size-4 text-gray-700" />
@@ -106,6 +117,7 @@ export default function EmbeddingsSettingsDropdown({
                 checked={useSVG}
                 color="black"
                 onChange={() => setUseSVG(!useSVG)}
+                disabled={!atleastOneTierSelected}
               />
             </div>
           </DropdownMenuItem>
