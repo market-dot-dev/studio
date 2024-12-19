@@ -1,7 +1,7 @@
 "use client";
 
 import Tiers from "./tiers";
-import { TiersEmbedSettingsProps } from "./tiers-embed-settings";
+import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
 
 // This component will be used to prepare data for the preview mode
 export default function TiersClient({

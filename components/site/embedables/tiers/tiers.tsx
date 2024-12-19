@@ -1,10 +1,9 @@
 "use client";
-import { Button } from "@tremor/react";
+
 import { useEffect, useRef, useState } from "react";
-import { TiersEmbedSettingsProps } from "./tiers-embed-settings";
+import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
 import SkeletonTiers from "../../skeleton-tiers";
 import TierCard from "@/components/tiers/tier-card";
-import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const transparentBody = "body {background: transparent}";
