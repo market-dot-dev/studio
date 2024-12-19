@@ -28,11 +28,13 @@ export default function CodeBlock({
           const formatted = await prettierFormat(code, {
             parser: "html",
             plugins: [parserHtml],
-            printWidth: 80,
+            printWidth: 1000,
             tabWidth: 2,
             htmlWhitespaceSensitivity: "css",
+            bracketSameLine: true,
+            singleAttributePerLine: false,
           });
-          setFormattedCode(formatted);
+          setFormattedCode(formatted.trim());
         } catch (err) {
           console.warn("Failed to format HTML:", err);
           setFormattedCode(code.trim());

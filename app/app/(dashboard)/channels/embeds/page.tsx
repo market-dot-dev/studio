@@ -23,7 +23,7 @@ export default async function EmbedChannel({
       <PageHeading title="Embeds" />
       <div className="flex w-full flex-col gap-6 p-4">
         <PackageEmbeddings site={site} rootUrl={rootUrl} />
-        {Object.keys(githubEmbeds).map((index) => (
+        {Object.keys(githubEmbeds).map((index, idx, arr) => (
           <div key={index} className="w-full">
             <GithubEmbedItem
               index={index}
@@ -32,7 +32,7 @@ export default async function EmbedChannel({
               rootUrl={rootUrl}
               hasActiveFeatures={!!activeFeatures?.length}
             />
-            <Divider />
+            {idx < arr.length - 1 && <Divider />}
           </div>
         ))}
       </div>

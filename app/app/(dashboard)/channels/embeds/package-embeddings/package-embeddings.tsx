@@ -1,22 +1,17 @@
 "use client";
 
 import CodeSnippet from "@/components/embedables/code-snippet";
+import { Flex, Title } from "@tremor/react";
 import {
-  Flex,
-  Text,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Title,
-} from "@tremor/react";
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/components/common/tremor-tabs";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 import { useState, useEffect } from "react";
 import { TierWithFeatures } from "@/app/services/TierService";
 import embeddables from "@/components/site/embedables";
-import GithubEmbedItem from "@/components/github/github-embed-item";
-import githubEmbeds from "@/components/site/github-embeds";
 
 export default function PackageEmbeddings({
   site,
@@ -53,12 +48,12 @@ export default function PackageEmbeddings({
     <div className="flex w-full flex-col gap-3">
       <Title className="text-xl font-semibold">Packages</Title>
       <Flex flexDirection="col" className="w-full gap-12">
-        <TabGroup>
+        <Tabs defaultValue="preview" className="w-full">
           <div className="flex items-center justify-between">
-            <TabList variant="solid">
-              <Tab>Preview</Tab>
-              <Tab>Code</Tab>
-            </TabList>
+            <TabsList variant="solid">
+              <TabsTrigger value="preview">Preview</TabsTrigger>
+              <TabsTrigger value="code">Code</TabsTrigger>
+            </TabsList>
             <EmbeddingsSettingsDropdown
               darkMode={darkmode}
               darkModeCallback={handleDarkMode}
@@ -69,8 +64,8 @@ export default function PackageEmbeddings({
             />
           </div>
 
-          <TabPanels className="lg:py-6">
-            <TabPanel>
+          <div className="w-full lg:py-8">
+            <TabsContent value="preview" className="w-full">
               <div className="relative w-full overflow-hidden">
                 {useSVG ? (
                   <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-center gap-6 rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8">
@@ -92,9 +87,9 @@ export default function PackageEmbeddings({
                   />
                 )}
               </div>
-            </TabPanel>
+            </TabsContent>
 
-            <TabPanel>
+            <TabsContent value="code">
               <div className="flex w-full flex-col gap-4">
                 {useSVG ? (
                   <CodeSnippet code={svgCode} />
@@ -116,9 +111,9 @@ export default function PackageEmbeddings({
                   />
                 )}
               </div>
-            </TabPanel>
-          </TabPanels>
-        </TabGroup>
+            </TabsContent>
+          </div>
+        </Tabs>
       </Flex>
     </div>
   );
