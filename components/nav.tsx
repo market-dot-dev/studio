@@ -30,7 +30,6 @@ type Tab = {
   href: string;
   target?: string;
   isActive?: boolean;
-  hideIsActive?: boolean;
   isBeta?: boolean;
   icon?: ReactNode;
   isDivider?: boolean;
@@ -248,7 +247,7 @@ export default function Nav({
                     href={tab.href}
                     target={tab.target}
                     className={`flex items-center space-x-3 ${
-                      tab.isActive && !tab.hideIsActive
+                      tab.isActive
                         ? "bg-stone-200 text-black dark:bg-stone-700"
                         : ""
                     } rounded-lg px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
