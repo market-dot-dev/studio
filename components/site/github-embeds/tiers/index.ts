@@ -1,5 +1,5 @@
 "use client";
-import type { GithubTiersEmbedSettingsProps } from "./github-tiers-embed-settings";
+import type { GithubTiersEmbedSettingsProps } from "./github-tiers-embed-settings-props";
 
 export default async function tiers({
   site,
