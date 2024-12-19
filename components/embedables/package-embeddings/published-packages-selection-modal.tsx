@@ -82,7 +82,7 @@ function PublishedPackagesSelectionModalContent({
                 : ""
             }`}
           >
-            <TierCard tier={tier} />
+            <TierCard tier={tier} buttonDisabled={true} />
           </div>
         ))}
       </div>

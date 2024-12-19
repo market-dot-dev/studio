@@ -96,6 +96,7 @@ export default function Tiers({
                       darkMode={settings.darkmode}
                       hasActiveFeatures={hasActiveFeatures}
                       alignment={tiers.length === 1 ? "center" : "left"}
+                      buttonDisabled={true}
                     />
                   </div>
                 ))}

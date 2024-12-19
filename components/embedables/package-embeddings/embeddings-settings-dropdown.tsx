@@ -56,7 +56,10 @@ export default function EmbeddingsSettingsDropdown({
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className="hover:bg-marketing-primary-hover bg-marketing-primary text-white">
-          <Settings size={18} />
+          <span className="flex items-center gap-x-2">
+            <Settings size={18} />
+            <span>Embed Settings</span>
+          </span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

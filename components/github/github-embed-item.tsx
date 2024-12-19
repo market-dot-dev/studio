@@ -30,7 +30,7 @@ export default function GithubEmbedItem({
   }, [githubEmbeds[index], settings]);
 
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div className="flex w-full flex-col gap-3">
       <Title className="text-xl font-semibold">Badge</Title>
       <Flex flexDirection="col" className="w-full gap-12">
         <Tabs defaultValue="preview" className="w-full border-none">

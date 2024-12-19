@@ -41,6 +41,7 @@ const CheckoutButton = ({
   variant = "primary",
   checkoutType = "gitwallet",
   darkMode = false,
+  disabled = false,
 }: {
   url: string | null;
   tierId: string;
@@ -48,11 +49,12 @@ const CheckoutButton = ({
   variant?: "secondary" | "primary";
   checkoutType?: CheckoutType;
   darkMode?: boolean;
+  disabled?: boolean;
 }) => {
   const checkoutUrl = generateLink(url, tierId, annual);
 
   return (
-    <Link href={checkoutUrl}>
+    <Link href={disabled ? "" : checkoutUrl}>
       <Button
         variant={variant}
         className={cn(
@@ -77,6 +79,7 @@ const TierCard: React.FC<TierCardProps> = ({
   alignment = "left",
   className,
   children,
+  buttonDisabled = false,
 }) => {
   const [showAnnual, setShowAnnual] = useState(false);
 
@@ -209,6 +212,7 @@ const TierCard: React.FC<TierCardProps> = ({
             annual={showAnnual && isntOnce}
             checkoutType={tier.checkoutType as CheckoutType}
             darkMode={darkMode}
+            disabled={buttonDisabled}
           />
         )}
       </div>
