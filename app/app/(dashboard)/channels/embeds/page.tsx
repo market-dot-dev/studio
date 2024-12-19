@@ -5,7 +5,7 @@ import githubEmbeds from "@/components/site/github-embeds";
 import GithubEmbedItem from "@/components/github/github-embed-item";
 import { getRootUrl } from "@/app/services/domain-service";
 import FeatureService from "@/app/services/feature-service";
-import PackageEmbeddings from "./package-embeddings/package-embeddings";
+import PackageEmbeddings from "@/components/embedables/package-embeddings/package-embeddings";
 
 export default async function EmbedChannel({
   params,
