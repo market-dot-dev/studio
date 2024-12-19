@@ -1,5 +1,5 @@
 "use client";
-import { Flex, TabPanel, TabPanels, Title } from "@tremor/react";
+import { Flex, Title } from "@tremor/react";
 import { useEffect, useState } from "react";
 import githubEmbeds from "../site/github-embeds";
 import CodeSnippet from "../embedables/code-snippet";
@@ -9,6 +9,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/common/tremor-tabs";
+import DashedCard from "@/components/common/dashed-card";
 
 export default function GithubEmbedItem({
   site,
@@ -43,9 +44,9 @@ export default function GithubEmbedItem({
           <div className="lg:py-8">
             <TabsContent value="preview">
               <div className="relative w-full overflow-hidden">
-                <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-center gap-6 rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8">
+                <DashedCard>
                   <div dangerouslySetInnerHTML={{ __html: html }} />
-                </div>
+                </DashedCard>
               </div>
             </TabsContent>
 

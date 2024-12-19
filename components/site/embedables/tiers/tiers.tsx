@@ -88,7 +88,7 @@ export default function Tiers({
             style={alteredStyle}
           >
             {tiers.length ? (
-              <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-center gap-6 rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8">
+              <div className="flex justify-center gap-6">
                 {tiers.map((tier: any, index: number) => (
                   <div
                     key={index}

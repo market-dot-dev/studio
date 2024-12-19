@@ -12,6 +12,7 @@ import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 import { useState, useEffect } from "react";
 import { TierWithFeatures } from "@/app/services/TierService";
 import embeddables from "@/components/site/embedables";
+import DashedCard from "@/components/common/dashed-card";
 
 export default function PackageEmbeddings({
   site,
@@ -67,25 +68,25 @@ export default function PackageEmbeddings({
           <div className="w-full lg:py-8">
             <TabsContent value="preview" className="w-full">
               <div className="relative w-full overflow-hidden">
-                {useSVG ? (
-                  <div className="mx-auto flex w-full max-w-screen-2xl flex-wrap justify-center gap-6 rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8">
+                <DashedCard>
+                  {useSVG ? (
                     <a href={rootUrl} target="_blank">
                       <img
                         src={`/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`}
                       />
                     </a>
-                  </div>
-                ) : (
-                  <embeddables.tiers.preview
-                    site={site}
-                    settings={{
-                      darkmode: darkmode,
-                      tiers: selectedTiers.map((tier) => tier.id),
-                    }}
-                    tiers={selectedTiers}
-                    hasActiveFeatures={false}
-                  />
-                )}
+                  ) : (
+                    <embeddables.tiers.preview
+                      site={site}
+                      settings={{
+                        darkmode: darkmode,
+                        tiers: selectedTiers.map((tier) => tier.id),
+                      }}
+                      tiers={selectedTiers}
+                      hasActiveFeatures={false}
+                    />
+                  )}
+                </DashedCard>
               </div>
             </TabsContent>
 
@@ -100,7 +101,7 @@ export default function PackageEmbeddings({
                       data-widget="tiers"
                       data-settings='${JSON.stringify(
                         {
-                          darkmode: darkmode,
+                          darkMode: darkmode,
                           tiers: selectedTiers.map((tier) => tier.id),
                         },
                         null,
