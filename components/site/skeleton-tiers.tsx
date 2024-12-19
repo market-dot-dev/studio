@@ -3,10 +3,20 @@ import Link from "next/link";
 import { Check, ChevronRight } from "lucide-react";
 import tierPlaceholderData from "@/lib/constants/placeholder/tiers";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
+import { cn } from "@/lib/utils";
 
-export default function SkeletonTiers(): JSX.Element {
+export default function SkeletonTiers({
+  className,
+}: {
+  className?: string;
+}): JSX.Element {
   return (
-    <div className="flex w-full flex-col items-center rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8">
+    <div
+      className={cn(
+        "flex w-full flex-col items-center rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8",
+        className,
+      )}
+    >
       <div className="mb-8 flex h-4 items-center whitespace-nowrap rounded-full bg-white px-1.5 font-mono text-[9px] uppercase tracking-wider text-gray-500 ring-1 ring-black/10">
         Sample Data
       </div>

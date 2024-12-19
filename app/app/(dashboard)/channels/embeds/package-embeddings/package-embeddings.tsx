@@ -65,7 +65,7 @@ export default function PackageEmbeddings({
             />
           </div>
 
-          <div className="w-full lg:py-8">
+          <div className="w-full py-8">
             <TabsContent value="preview" className="w-full">
               <div className="relative w-full overflow-hidden">
                 <DashedCard>

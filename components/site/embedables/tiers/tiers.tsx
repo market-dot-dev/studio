@@ -26,6 +26,7 @@ export default function Tiers({
   const [alteredStyle, setAlteredStyle] = useState<any>({
     transformOrigin: "top left",
   });
+  const [containerHeight, setContainerHeight] = useState<number>(0);
 
   useEffect(() => {
     function postHeight() {
@@ -37,46 +38,42 @@ export default function Tiers({
     postHeight();
   }, []);
 
-  // const handleResize = () => {
-  //   if (containerRef.current) {
-  //     // get width of container
-  //     const width = containerRef.current.getBoundingClientRect().width;
+  const handleResize = () => {
+    if (containerRef.current) {
+      const width = containerRef.current.getBoundingClientRect().width;
+      const windowWidth = window.innerWidth;
+      const scale = windowWidth / width;
 
-  //     // window width
-  //     const windowWidth = window.innerWidth;
-  //     const scale = width / windowWidth;
+      if (scale < 1) {
+        setAlteredStyle({
+          transform: `scale(${scale})`,
+          transformOrigin: "center",
+        });
+      } else {
+        setAlteredStyle({
+          transform: "none",
+        });
+      }
 
-  //     // set the scale
-  //     if (scale < 1) {
-  //       setAlteredStyle({
-  //         transform: `scale(${scale})`,
-  //         transformOrigin: "top left",
-  //       });
-  //     } else {
-  //       setAlteredStyle({
-  //         transform: "none",
-  //       });
-  //     }
-
-  //     setContainerHeight(
-  //       containerRef.current.children[0].getBoundingClientRect().height,
-  //     );
-  //   }
-  // };
+      setContainerHeight(
+        containerRef.current.children[0].getBoundingClientRect().height,
+      );
+    }
+  };
 
   useEffect(() => {
     if (!containerRef.current) return;
 
     // Initial call
-    // handleResize();
+    handleResize();
 
-    // // Add resize event listener
-    // window.addEventListener("resize", handleResize);
+    // Add resize event listener
+    window.addEventListener("resize", handleResize);
 
-    // // Cleanup event listener on component unmount
-    // return () => {
-    //   window.removeEventListener("resize", handleResize);
-    // };
+    // Cleanup event listener on component unmount
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
   }, []);
 
   return (
@@ -105,7 +102,7 @@ export default function Tiers({
                 ))}
               </div>
             ) : (
-              <SkeletonTiers />
+              <SkeletonTiers className="border-none" />
             )}
           </div>
         ) : null}

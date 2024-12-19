@@ -37,7 +37,6 @@ export default function GithubTiersEmbedSettings({
 
   useEffect(() => {
     const action = async () => {
-      console.log("getting tiers for user", site.userId);
       const tiers = await getTiersForUser(site.userId);
       setSettingsContext({
         tiers: tiers.map((tier: any) => {

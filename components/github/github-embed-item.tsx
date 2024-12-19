@@ -41,7 +41,7 @@ export default function GithubEmbedItem({
             </TabsList>
           </div>
 
-          <div className="lg:py-8">
+          <div className="py-8">
             <TabsContent value="preview">
               <div className="relative w-full overflow-hidden">
                 <DashedCard>
