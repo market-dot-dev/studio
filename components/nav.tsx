@@ -25,6 +25,17 @@ import { GearIcon } from "@radix-ui/react-icons";
 import { FaDiscord, FaGithubAlt, FaTelegramPlane } from "react-icons/fa";
 import { Badge } from "@tremor/react";
 
+type Tab = {
+  name: string;
+  href: string;
+  target?: string;
+  isActive?: boolean;
+  isBeta?: boolean;
+  icon?: ReactNode;
+  isDivider?: boolean;
+  children?: Omit<Tab, "children">[];
+};
+
 export default function Nav({
   children,
   siteId,
@@ -39,7 +50,7 @@ export default function Nav({
   const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
 
-  const tabs = useMemo(() => {
+  const tabs: Tab[] = useMemo(() => {
     return [
       {
         name: "Home",
@@ -80,7 +91,7 @@ export default function Nav({
       {
         name: "Contracts",
         href: "/contracts",
-        isActive: urlSegments[1] === "contracts",
+        isActive: urlSegments[0] === "contracts",
         isBeta: true,
         icon: <Scroll width={18} />,
       },
@@ -129,8 +140,8 @@ export default function Nav({
       {
         name: "Embeds",
         href: "/channels/embeds",
-        isActive: urlSegments[0] === "embeds",
         icon: <Code2 width={18} />,
+        isActive: urlSegments[1] === "embeds",
       },
 
       // Analytics
@@ -222,41 +233,53 @@ export default function Nav({
             </div>
           </div>
           <div className="grid gap-0.5">
-            {tabs.map(
-              (
-                { name, href, target, isActive, isBeta, icon },
-                index: number,
-              ) =>
-                href === "" ? (
-                  <span
-                    key={name}
-                    className="font-small mt-4 text-xs uppercase"
-                  >
-                    {name}
-                  </span>
-                ) : (
+            {tabs.map((tab, index) =>
+              tab.href === "" ? (
+                <span
+                  key={tab.name}
+                  className="font-small mt-4 text-xs uppercase"
+                >
+                  {tab.name}
+                </span>
+              ) : (
+                <div key={tab.name + index}>
                   <Link
-                    key={name + index}
-                    href={href}
-                    target={target}
+                    href={tab.href}
+                    target={tab.target}
                     className={`flex items-center space-x-3 ${
-                      isActive
+                      tab.isActive
                         ? "bg-stone-200 text-black dark:bg-stone-700"
                         : ""
                     } rounded-lg px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                   >
-                    {icon}
-                    <span className="text-sm font-medium">{name}</span>
-                    {isBeta && (
-                      <Badge
-                        size={"xs"}
-                        tooltip="This feature is still in Beta"
-                      >
+                    {tab.icon}
+                    <span className="text-sm font-medium">{tab.name}</span>
+                    {tab.isBeta && (
+                      <Badge size="xs" tooltip="This feature is still in Beta">
                         Beta
                       </Badge>
                     )}
                   </Link>
-                ),
+                  {tab.children && tab.isActive && (
+                    <div className="ml-6 space-y-1">
+                      {tab.children.map((child) => (
+                        <Link
+                          key={child.name}
+                          href={child.href}
+                          className={`flex items-center space-x-3 ${
+                            child.isActive
+                              ? "bg-stone-200 text-black dark:bg-stone-700"
+                              : ""
+                          } rounded-lg px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                        >
+                          {child.icon}
+                          <span>{child.name}</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ),
             )}
           </div>
         </div>

@@ -3,13 +3,24 @@ import Link from "next/link";
 import { Check, ChevronRight } from "lucide-react";
 import tierPlaceholderData from "@/lib/constants/placeholder/tiers";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
+import { cn } from "@/lib/utils";
 
-export default function SkeletonTiers(): JSX.Element {
+export default function SkeletonTiers({
+  className,
+}: {
+  className?: string;
+}): JSX.Element {
   return (
-    <div className="relative w-full rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8">
-      <span className="absolute -top-2 left-1/2 flex h-4 -translate-x-1/2 items-center whitespace-nowrap rounded-full bg-white px-1.5 font-mono text-[9px] uppercase tracking-wider text-gray-500 ring-1 ring-black/10">
+    <div
+      className={cn(
+        "flex w-full flex-col items-center rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8",
+        className,
+      )}
+    >
+      <div className="mb-8 flex h-4 items-center whitespace-nowrap rounded-full bg-white px-1.5 font-mono text-[9px] uppercase tracking-wider text-gray-500 ring-1 ring-black/10">
         Sample Data
-      </span>
+      </div>
+
       <div className="mx-auto grid w-full max-w-4xl grid-cols-1 gap-6 md:grid-cols-3">
         {tierPlaceholderData.map((tier) => {
           const cadenceShorthand =
@@ -18,7 +29,7 @@ export default function SkeletonTiers(): JSX.Element {
           return (
             <div
               key={tier.id}
-              className="relative z-10 flex h-full w-full flex-col justify-between gap-8 rounded-md bg-white p-6 pt-5 shadow ring-1 ring-gray-500/10"
+              className="flex h-full w-full flex-col justify-between gap-8 rounded-md bg-white p-6 pt-5 shadow ring-1 ring-gray-500/10"
             >
               <div>
                 <h3 className="mb-1 font-semibold">{tier.name}</h3>
@@ -55,7 +66,8 @@ export default function SkeletonTiers(): JSX.Element {
           );
         })}
       </div>
-      <div className="absolute -bottom-2 left-1/2 col-span-full -translate-x-1/2 bg-gradient-to-b from-[#FDFDFD] to-white px-2">
+
+      <div className="mt-8 flex justify-center bg-gradient-to-b from-[#FDFDFD] to-white px-2">
         <Link
           href="/tiers"
           className="group flex items-center gap-0.5 text-xs font-medium tracking-tight text-gray-500 hover:text-gray-600"

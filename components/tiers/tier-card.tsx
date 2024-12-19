@@ -10,7 +10,7 @@ import Link from "next/link";
 import TierFeatureList from "@/components/features/tier-feature-list";
 import { Feature } from "@prisma/client";
 import { useState } from "react";
-import { parseTierDescription } from "@/lib/utils";
+import { cn, parseTierDescription } from "@/lib/utils";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
 import clsx from "clsx";
 
@@ -40,20 +40,29 @@ const CheckoutButton = ({
   annual = false,
   variant = "primary",
   checkoutType = "gitwallet",
+  darkMode = false,
+  disabled = false,
 }: {
   url: string | null;
   tierId: string;
   annual?: boolean;
   variant?: "secondary" | "primary";
   checkoutType?: CheckoutType;
+  darkMode?: boolean;
+  disabled?: boolean;
 }) => {
   const checkoutUrl = generateLink(url, tierId, annual);
 
   return (
-    <Link href={checkoutUrl}>
+    <Link href={disabled ? "" : checkoutUrl}>
       <Button
         variant={variant}
-        className="w-full rounded-md !bg-gradient-to-b from-gray-800 to-gray-950 px-3 py-2 text-center text-sm font-medium text-white shadow-sm ring-1 ring-black/5 transition-shadow hover:bg-gray-700 hover:shadow"
+        className={cn(
+          "w-full rounded-md px-3 py-2 text-center text-sm font-medium shadow-sm ring-1 ring-black/5 transition-shadow hover:shadow",
+          darkMode
+            ? "bg-white text-gray-900 hover:bg-gray-100"
+            : "!bg-gradient-to-b from-gray-800 to-gray-950 text-white hover:bg-gray-700",
+        )}
       >
         {checkoutType === "gitwallet" ? "Get Started" : "Contact Us"}
       </Button>
@@ -70,11 +79,15 @@ const TierCard: React.FC<TierCardProps> = ({
   alignment = "left",
   className,
   children,
+  buttonDisabled = false,
 }) => {
   const [showAnnual, setShowAnnual] = useState(false);
 
-  const containerClasses = darkMode ? "text-white " : "text-gray-900 bg-white";
-  const textClasses = darkMode ? "text-gray-400" : "text-gray-500";
+  const containerClasses = darkMode
+    ? "text-white bg-gray-900"
+    : "text-gray-900 bg-white";
+  const headingClasses = darkMode ? "text-white" : "text-gray-900";
+  const textClasses = darkMode ? "text-gray-300" : "text-gray-500";
 
   const hasAnnual = (tier.priceAnnual || 0) > 0;
   const isntOnce = tier.cadence !== "once";
@@ -103,17 +116,18 @@ const TierCard: React.FC<TierCardProps> = ({
         <div>
           <h3
             className={clsx(
-              "mb-1 font-geist text-lg font-semibold text-gray-900",
+              "mb-1 font-geist text-lg font-semibold",
               alignment === "center" && "text-center",
-              textClasses,
+              headingClasses,
             )}
           >
             {tier.name}
           </h3>
           <p
             className={clsx(
-              "text-sm text-gray-500",
+              "text-sm",
               alignment === "center" && "text-center",
+              textClasses,
             )}
           >
             {tier.tagline}
@@ -165,7 +179,7 @@ const TierCard: React.FC<TierCardProps> = ({
                 return (
                   <div key={dex}>
                     {section.text.map((text: string, index: number) => (
-                      <Text key={index} className="text-sm text-gray-500">
+                      <Text key={index} className={cn("text-sm", textClasses)}>
                         {text}
                       </Text>
                     ))}
@@ -197,6 +211,8 @@ const TierCard: React.FC<TierCardProps> = ({
             tierId={tier.id}
             annual={showAnnual && isntOnce}
             checkoutType={tier.checkoutType as CheckoutType}
+            darkMode={darkMode}
+            disabled={buttonDisabled}
           />
         )}
       </div>
