@@ -1,4 +1,3 @@
-import FeatureService from "@/app/services/feature-service";
 import TierService from "@/app/services/TierService";
 import { parseTierDescription } from "@/lib/utils";
 import { NextRequest } from "next/server";
@@ -40,16 +39,16 @@ export async function GET(
 
   const darkModeStyles = `
   .tierWrap {
-    background: rgb(0, 0, 0);
-    border: rgb(0, 0, 0);
-    color: rgb(255, 255, 255)
+    background: rgb(31, 41, 55);
+    border: rgb(31, 41, 55);
+    color: rgb(156, 163, 175)
   }
   .title, .price, .features ul > li {
-    color: rgb(255, 255, 255)
+    color: rgb(156, 163, 175)
   }
   .button {
-    background: rgb(255, 255, 255);
-    color: rgb(0,0,0);
+    background: rgb(55, 65, 81);
+    color: #fff;
   }
   .button:hover {
     background: rgb(55, 65, 81); 
@@ -76,8 +75,6 @@ export async function GET(
 
   const tiersMarkup = tiers
     .map((tier) => {
-      const parsedDescription = parseTierDescription(tier.description || "");
-      console.log(`parsedDescription: ${JSON.stringify(parsedDescription)}`);
       return `
       <div class="tierWrap">
         <div class="tierInfo">
@@ -124,8 +121,8 @@ export async function GET(
             width: 250px;
             margin-top: 2px;
             padding: 2rem;
-            background: rgb(255, 255, 255);
-            border: 1px solid rgb(255, 255, 255);
+            background: #fff;
+            border: 1px solid rgb(243, 244, 246);
             border-radius: 0.5rem;
             box-shadow: rgb(255, 255, 255) 0px 0px 0px 0px, rgb(229, 231, 235) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1px 2px -1px;
             display: flex;
@@ -134,8 +131,7 @@ export async function GET(
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            align-items: center;
-            color: rgb(0, 0, 0);
+            color: rgb(107, 114, 128);
             flex-grow: 1;
           }
           .title {
@@ -147,12 +143,12 @@ export async function GET(
             font-weight: 300;
           }
           .price > .amount {
-            font-weight: 400;
+            font-weight: 800;
             font-size: 2rem;
           }
           .included {
             font-size: 0.75rem;
-            color: rgb(0, 0, 0);
+            color: rgb(156, 163, 175);
           }
           .features {
             text-align: left;
@@ -179,8 +175,8 @@ export async function GET(
             text-align: center;
             font-size: 14px;
             padding: 0.5rem 0;
-            background: rgb(0, 0, 0);
-            color: rgb(255, 255, 255);
+            background: rgb(55, 65, 81);
+            color: #fff;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.2s ease 0s;
@@ -188,11 +184,10 @@ export async function GET(
             box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px;
           }
           .button:hover {
-            background: rgb(0, 0, 0);
+            background: rgb(31, 41, 55);
           }
           ${darkmode ? darkModeStyles : ""}
         </style>
-
         <div class="container">
           ${tiersMarkup}
         </div>

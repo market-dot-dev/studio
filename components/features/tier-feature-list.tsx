@@ -3,8 +3,17 @@
 import { Feature } from "@prisma/client";
 import { Check } from "lucide-react";
 import clsx from "clsx";
+import { cn } from "@/lib/utils";
 
-const TierFeatureList = ({ features, darkMode = false }: { features: Partial<Feature>[]; darkMode?: boolean }) => {
+const TierFeatureList = ({
+  features,
+  darkMode = false,
+}: {
+  features: Partial<Feature>[];
+  darkMode?: boolean;
+}) => {
+  const textClasses = darkMode ? "text-gray-300" : "text-gray-500";
+
   return (
     <ul className="flex flex-col gap-1 text-left">
       {features
@@ -17,7 +26,7 @@ const TierFeatureList = ({ features, darkMode = false }: { features: Partial<Fea
                 darkMode ? "text-emerald-400" : "text-emerald-600",
               )}
             />
-            <p className="text-gray-500">{feature.name}</p>
+            <p className={cn("text-sm", textClasses)}>{feature.name}</p>
           </li>
         ))}
     </ul>

@@ -77,7 +77,7 @@ export default function PackageEmbeddings({
                   </div>
                 ) : (
                   <embeddables.tiers.preview
-                    site={""}
+                    site={site}
                     settings={{
                       darkmode: darkmode,
                       tiers: selectedTiers.map((tier) => tier.id),
