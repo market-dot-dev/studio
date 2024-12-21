@@ -45,27 +45,17 @@ const ContractText = ({
   checkoutProject: string;
   contract?: Contract;
 }) => {
-  const pathToDefaultMSA = "https://app.gitwallet.co/c/contracts/gitwallet-msa";
-
-  if (!contract) {
-    return (
-      <>
-        {checkoutProject} uses the{" "}
-        <a href={pathToDefaultMSA} className="underline" target="_blank">
-          Standard Gitwallet MSA
-        </a>
-        .
-      </>
-    );
-  }
-
-  const url = `https://app.gitwallet.co/c/contracts/${contract.id}`;
+  const baseUrl = "https://app.gitwallet.co/c/contracts";
+  const url = contract 
+    ? `${baseUrl}/${contract.id}`
+    : `${baseUrl}/gitwallet-msa`;
+  const contractName = contract?.name || "Standard Gitwallet MSA";
 
   return (
     <>
-      {checkoutProject} uses the{" "}
+      By clicking checkout, you agree to the Terms of the agreement outlined in {" "}
       <a href={url} className="underline" target="_blank">
-        {contract?.name}
+        {contractName}
       </a>
       .
     </>
@@ -174,7 +164,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
 
       {/* accept terms of service */}
       {checkoutType === "gitwallet" && (
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center gap-2 bg-gray-100 border border-gray-400 rounded-md p-2">
           {isFeaturesLoading ? (
             <SkeletonLoader className="mb-4 h-4 w-3/4 rounded-full" />
           ) : (
