@@ -3,7 +3,7 @@
 import { Card, Text, Button } from "@tremor/react";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
-import { User } from "@prisma/client";
+import { User, Contract } from "@prisma/client";
 
 import { onClickSubscribe } from "@/app/services/StripeService";
 import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
@@ -17,13 +17,33 @@ const checkoutCurrency = "USD";
 interface RegistrationCheckoutSectionProps {
   tier: Tier;
   maintainer: User;
+  contract?: Contract;
   annual?: boolean;
   userId?: string;
 }
 
+const ContractText = ({ contract }: { contract?: Contract }) => {
+  const baseUrl = "https://app.gitwallet.co/c/contracts";
+  const url = contract 
+    ? `${baseUrl}/${contract.id}`
+    : `${baseUrl}/gitwallet-msa`;
+  const contractName = contract?.name || "Standard Gitwallet MSA";
+
+  return (
+    <>
+      By clicking checkout, you agree to the terms detailed in{" "}
+      <a href={url} className="underline" target="_blank">
+        {contractName}
+      </a>
+      .
+    </>
+  );
+};
+
 export default function RegistrationCheckoutSection({
   tier,
   maintainer,
+  contract,
   annual = false,
   userId,
 }: RegistrationCheckoutSectionProps) {
@@ -110,6 +130,9 @@ export default function RegistrationCheckoutSection({
         </section>
 
         <section className="w-7/8 mb-8 lg:w-5/6">
+          <Text className="my-2 text-center">
+            <ContractText contract={contract} />
+          </Text>
           <Button
             onClick={() => setLoading(true)}
             disabled={loading || !userId}

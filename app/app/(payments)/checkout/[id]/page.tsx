@@ -53,7 +53,7 @@ const ContractText = ({
 
   return (
     <>
-      By clicking checkout, you agree to the Terms of the agreement outlined in {" "}
+      Purchase of this package is governed by the {" "}
       <a href={url} className="underline" target="_blank">
         {contractName}
       </a>
@@ -237,6 +237,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               <RegistrationSection
                 tier={tier}
                 maintainer={maintainer}
+                contract={contract}
                 annual={isAnnual}
               />
             )}
