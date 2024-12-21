@@ -53,7 +53,7 @@ const ContractText = ({
 
   return (
     <>
-      Purchase of this package is governed by the {" "}
+      Terms of this package are detailed in the {" "}
       <a href={url} className="underline" target="_blank">
         {contractName}
       </a>
