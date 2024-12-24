@@ -187,9 +187,11 @@ export default function Header({ className }: { className?: string }) {
         )}
       >
         <div className="relative z-[100] flex items-center justify-between py-3">
-          <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
-            <Logo className="h-[22px] w-auto xs:h-[26px]" />
-          </button>
+          <Link href="/">
+            <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
+              <Logo className="h-[22px] w-auto xs:h-[26px]" />
+            </button>
+          </Link>
           <div className="absolute left-1/2 top-1/2 ml-0.5 hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex">
             <Dropdown
               title="Product"
