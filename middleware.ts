@@ -71,6 +71,9 @@ async function customMiddleware(req: NextRequest) {
     if (url.pathname.startsWith('/design')) {
       return rewrite(`/design${path}`, req.url);
     }
+    if (url.pathname === '/terms' || url.pathname === '/privacy') {
+      return NextResponse.next();
+    }
     return rewrite(`/home${path}`, req.url);
   }
 
