@@ -4,7 +4,9 @@ import PageHeading from "@/components/common/page-heading";
 import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
 import ChargeService from "@/app/services/charge-service";
 import SubscriptionService from "@/app/services/SubscriptionService";
-import { Charge, Feature } from "@prisma/client";
+import { Charge, Feature, Contract } from "@prisma/client";
+import useContract from "@/app/hooks/use-contract";
+import ContractService from "@/app/services/contract-service";
 
 import {
   Card,
@@ -21,6 +23,21 @@ import { parseTierDescription } from "@/lib/utils";
 
 type TierWithFeatures = Tier & { features: Feature[] } | null;
 
+const ContractLink = ({ contract }: { contract?: Contract }) => {
+  const baseUrl = "https://app.gitwallet.co/c/contracts";
+  const url = contract 
+    ? `${baseUrl}/${contract.id}`
+    : `${baseUrl}/gitwallet-msa`;
+  const contractName = contract?.name || "Standard Gitwallet MSA";
+
+  return (
+    <Text>
+      <a href={url} className="underline" target="_blank">
+        {contractName}
+      </a>
+    </Text>
+  );
+};
 
 const ChargeCard = async ({ charge }: { charge: Charge }) => {
   if (!charge || !charge.tierId) return null;
@@ -39,6 +56,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
   
   let status = 'paid';
   
+  const contract = await ContractService.getContractById(tier.contractId || '') || undefined;
 
   return (
     <Card className="mb-4">
@@ -67,6 +85,10 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
               <Badge className="me-2">{status.charAt(0).toUpperCase() + status.slice(1)}</Badge>
               (On {charge.createdAt.toDateString()})
             </Text>
+        </div>
+        <div className="flex flex-col">
+          <Bold>Contract:</Bold>
+          <ContractLink contract={contract} />
         </div>
         <div className="flex gap-4">
           <CustomerPackageFeatures features={hasActiveFeatures ? tier.features : featuresFromDescription} maintainerEmail={maintainer?.email} />
@@ -120,6 +142,8 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
     }
   }
 
+  const contract = await ContractService.getContractById(tier.contractId || '') || undefined;
+
   return (
     <Card className="mb-4">
     <div className="flex flex-col space-y-2">
@@ -149,11 +173,11 @@ const SubscriptionCard = async ({ subscription }: { subscription: Subscription }
         <Text>${actualPrice} / {actualCadence}</Text>
       </div>
 
-      {/* <div className="flex flex-col">
-        <Bold>Subscription Tier Version ID:</Bold>
-        <Text>{subscription.tierVersionId}</Text>
-      </div> */}
-
+      <div className="flex flex-col">
+        <Bold>Terms:</Bold>
+        <ContractLink contract={contract} />
+      </div>
+    
       <div className="flex flex-row space-x-2 justify-between">
         <CustomerPackageFeatures features={hasActiveFeatures ? tier.features : featuresFromDescription} maintainerEmail={maintainer?.email} />
         { subscription.state !== 'cancelled' &&
@@ -217,12 +241,12 @@ export default async function SubscriptionsAndChargesList({ params }: { params: 
         <Tabs tabs={
           [
             {
-              title: <span>One Time Purchases</span>,
-              content: tabOneTimePurchases
-            },
-            {
               title: <span>Active Subscriptions</span>,
               content: tabActiveSubscriptions
+            },
+            {
+              title: <span>One Time Purchases</span>,
+              content: tabOneTimePurchases
             },
             {
               title: <span>Past Subscriptions</span>,
