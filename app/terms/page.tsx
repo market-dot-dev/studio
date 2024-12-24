@@ -1,6 +1,5 @@
 export default function TermsOfService() {
   return (
-    <div className="">
       <div className="mx-auto max-w-3xl px-6 py-16">
         <article className="prose prose-invert">
           <h1 className="font-cal">Terms of Service</h1>
@@ -17,6 +16,5 @@ export default function TermsOfService() {
           </div>
         </article>
       </div>
-    </div>
   );
 } 

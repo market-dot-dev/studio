@@ -19,7 +19,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative mx-auto w-full overflow-hidden px-6 pt-16 pb-36 lg:px-12 lg:pb-48 bg-gradient-to-t from-marketing-camo/[25%]">
+    <footer className="relative mx-auto w-full overflow-hidden px-6 pt-16 pb-24 lg:px-12 lg:pb-24 bg-gradient-to-t from-marketing-camo/[25%]">
       <div className="container relative mx-auto">
         <div className="flex w-full flex-col items-center">
           <GradientHeading
@@ -44,6 +44,15 @@ export default function Footer() {
               Sign up with Github
             </Button>
           </Link>
+
+          <div className="mt-52 flex gap-6 text-sm text-gray-400">
+            <Link href="/terms" className="hover:text-gray-300">
+              Terms of Service
+            </Link>
+            <Link href="/privacy" className="hover:text-gray-300">
+              Privacy Policy
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
