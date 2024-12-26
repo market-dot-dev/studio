@@ -7,7 +7,7 @@ import { toast } from "sonner";
 
 import LoginButton from "@/components/common/login-button";
 
-const GithubLoginButton = () => {
+const GithubLoginButton = ({ callbackUrl }: { callbackUrl?: string }) => {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");
@@ -20,7 +20,7 @@ const GithubLoginButton = () => {
 
   const handleLogin = () => {
     setLoading(true);
-    signIn("github");
+    signIn("github", { callbackUrl });
   };
 
   return (

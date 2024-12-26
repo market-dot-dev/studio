@@ -25,17 +25,6 @@ type JwtCallbackParams = {
   session?: any;
 };
 
-/*
-const isAdmin = currentUser?.roleId === "admin";
-if (session?.roleId && isAdmin) {
-  token.user = {
-    foo: "bar",
-    ...token.user,
-    roleId: session.roleId,
-  };
-} else {
-*/
-
 class AuthService {
   static async jwtCallback(callbackParams: JwtCallbackParams) {
     const { token, user, account, trigger, session, isNewUser } =
@@ -58,7 +47,6 @@ class AuthService {
       userData = await AuthService.onSignIn(account, user || sessionUser);
     } else if (trigger === "signUp") {
       userData = await AuthService.onCreateUser(account, user || sessionUser);
-    } else {
     }
 
     newToken.user = userData ? createSessionUser(userData) : token.user;

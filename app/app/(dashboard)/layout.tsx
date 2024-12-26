@@ -3,7 +3,6 @@ import Profile from "@/components/profile";
 import Nav from "@/components/nav";
 import { redirect } from "next/navigation";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
-import { Flex } from "@tremor/react";
 import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
 import { DashboardProvider } from "@/components/dashboard/dashboard-context";
 import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
@@ -18,13 +17,17 @@ import OnboardingModal from "@/components/onboarding/onboarding-modal";
 
 export default async function DashboardLayout({
   children,
+  params,
 }: {
   children: ReactNode;
+  params: any;
 }) {
   const user = await UserService.getCurrentUser();
   if (!user?.id) {
     redirect("/login");
   }
+
+  console.log(`searchParams from dashboard: ${JSON.stringify(params.test)}`);
 
   const onboarding = user.onboarding
     ? (JSON.parse(user.onboarding) as OnboardingState)
@@ -41,7 +44,7 @@ export default async function DashboardLayout({
       <OnboardingModal
         user={user}
         currentSite={site ?? undefined}
-        defaultOpen={showOnboardingModal}
+        onboardingState={onboarding}
       />
       <div>
         <Nav
@@ -54,14 +57,14 @@ export default async function DashboardLayout({
           </Suspense>
         </Nav>
         <div className="flex min-h-screen w-full flex-col items-center sm:pl-60">
-          <div className="flex w-full max-w-screen-xl flex-col items-center p-4 space-y-4">
+          <div className="flex w-full max-w-screen-xl flex-col items-center space-y-4 p-4">
             {!onboarding.isDismissed && !showOnboardingModal && (
               <OnboardingChecklist />
             )}
             {user?.stripeAccountDisabled && user?.stripeAccountId && (
               <StripeDisabledBanner />
             )}
-            <div className="relative w-full flex flex-col gap-8">
+            <div className="relative flex w-full flex-col gap-8">
               {children}
             </div>
           </div>
