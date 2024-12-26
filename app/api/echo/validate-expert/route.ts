@@ -1,27 +1,16 @@
-import { getCurrentUser } from "@/app/services/UserService";
+import { EchoService } from "@/app/services/echo-service";
+import UserService, { getCurrentUser } from "@/app/services/UserService";
 import { NextResponse } from "next/server";
-
-const API_ENDPOINT = process.env.ECHO_API_ENDPOINT;
-const API_KEY = process.env.ECHO_API_KEY;
 
 export async function POST() {
   const user = await getCurrentUser();
   if (!user) {
-    throw new Error("User not found");
+    return new Response(JSON.stringify({ error: "User not found" }), {
+      status: 404,
+    });
   }
 
-  if (!user.gh_username) {
-    throw new Error("User GitHub username not found");
-  }
-
-  const response = await fetch(`${API_ENDPOINT}experts/${user.gh_username}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${API_KEY}`,
-    },
-  });
-
+  const response = await EchoService.validateAccount();
   if (response.status === 404) {
     return new Response(JSON.stringify({ error: "Not an expert" }), {
       status: 404,
@@ -29,16 +18,15 @@ export async function POST() {
   }
 
   const expert = await response.json();
-  console.log("expert", expert);
-  //   if (response.status === 200) {
-  //     const expert = await response.json();
+  if (response.status === 200) {
+    const expert = await response.json();
 
-  //     if (user) {
-  //       await UserService.updateUser(user.id, {
-  //         echoExpertId: expert.id,
-  //       });
-  //     }
-  //   }
+    if (user) {
+      await UserService.updateUser(user.id, {
+        echoExpertId: expert.id,
+      });
+    }
+  }
 
   return NextResponse.json({
     status: "success",

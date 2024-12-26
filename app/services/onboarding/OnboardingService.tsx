@@ -10,6 +10,7 @@ import {
   businessDescription,
 } from "@/lib/constants/site-template";
 import { getCurrentUser } from "../UserService";
+import { EchoService } from "../echo-service";
 
 class OnboardingService {
   static async saveState(state: OnboardingState) {
@@ -141,6 +142,15 @@ class OnboardingService {
 
     if (preferredServices) {
       onboardingState.preferredServices = preferredServices;
+    }
+
+    try {
+      const response = await EchoService.validateAccount();
+      if (response.status === 200) {
+        onboardingState.echoOnboardingComplete = true;
+      }
+    } catch (error) {
+      console.error("Failed to validate Echo account:", error);
     }
 
     await OnboardingService.saveState(onboardingState);

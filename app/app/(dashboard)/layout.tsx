@@ -27,8 +27,6 @@ export default async function DashboardLayout({
     redirect("/login");
   }
 
-  console.log(`searchParams from dashboard: ${JSON.stringify(params.test)}`);
-
   const onboarding = user.onboarding
     ? (JSON.parse(user.onboarding) as OnboardingState)
     : defaultOnboardingState;
