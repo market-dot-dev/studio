@@ -17,15 +17,22 @@ export async function POST() {
     });
   }
 
-  const expert = await response.json();
-  if (response.status === 200) {
-    const expert = await response.json();
+  if (response.status != 200) {
+    return new Response(
+      JSON.stringify({ error: "Failed to validate Echo account" }),
+      {
+        status: response.status,
+      },
+    );
+  }
 
-    if (user) {
-      await UserService.updateUser(user.id, {
-        echoExpertId: expert.id,
-      });
-    }
+  const expert = await response.json();
+  console.log("expert", expert);
+  console.log("expert Id", expert.id);
+  if (user) {
+    await UserService.updateUser(user.id, {
+      echoExpertId: expert.id.toString(),
+    });
   }
 
   return NextResponse.json({

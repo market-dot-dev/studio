@@ -29,7 +29,12 @@ export default function OnboardingModal({
   return (
     <Modal isOpen={isOpen} showCloseButton={false}>
       {onboardingType === "echo" && !onboardingState.echoOnboardingComplete ? (
-        <EchoOnboardingForm user={user} />
+        <EchoOnboardingForm
+          onComplete={async () => {
+            setIsOpen(false);
+            router.refresh();
+          }}
+        />
       ) : (
         <OnboardingForm
           user={user}

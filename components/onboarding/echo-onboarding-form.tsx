@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { User } from "@prisma/client";
 import Image from "next/image";
 import { Button } from "@tremor/react";
 import { toast } from "sonner";
 import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 
-export default function EchoOnboardingForm({ user }: { user: User }) {
+export default function EchoOnboardingForm({
+  onComplete,
+}: {
+  onComplete: () => void;
+}) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -33,6 +36,8 @@ export default function EchoOnboardingForm({ user }: { user: User }) {
       }
 
       await refreshAndGetState();
+      onComplete();
+      toast.success("Echo account connected successfully");
     } catch (error) {
       toast.error("Error validating your Echo account. Please try again.");
     } finally {
