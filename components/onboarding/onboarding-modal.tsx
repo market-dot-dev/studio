@@ -20,7 +20,7 @@ export default function OnboardingModal({
   const [isOpen, setIsOpen] = useState(
     !onboardingState.setupBusiness ||
       !onboardingState.preferredServices ||
-      (!onboardingState.echoOnboardingComplete &&
+      (!onboardingState.echoProfileConnected &&
         searchParams.get("onboardingType") === "echo"),
   );
   const router = useRouter();
@@ -28,8 +28,10 @@ export default function OnboardingModal({
 
   return (
     <Modal isOpen={isOpen} showCloseButton={false}>
-      {onboardingType === "echo" && !onboardingState.echoOnboardingComplete ? (
+      {onboardingType === "echo" && !onboardingState.echoProfileConnected ? (
         <EchoOnboardingForm
+          user={user}
+          currentSite={currentSite}
           onComplete={async () => {
             setIsOpen(false);
             router.refresh();

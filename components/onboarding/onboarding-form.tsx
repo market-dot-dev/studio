@@ -24,10 +24,12 @@ interface OfferingsData {
 export default function OnboardingForm({
   user,
   currentSite,
+  expeditedEchoOnboarding,
   onComplete,
 }: {
   user: User;
   currentSite?: Site;
+  expeditedEchoOnboarding?: boolean;
   onComplete: () => Promise<void>;
 }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -79,6 +81,7 @@ export default function OnboardingForm({
           user={user}
           currentSite={currentSite}
           onSubmit={handleProfileSubmit}
+          expeditedEchoOnboarding={expeditedEchoOnboarding}
         />
       ) : (
         <OfferingsForm

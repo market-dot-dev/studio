@@ -43,6 +43,7 @@ class OnboardingService {
         businessType: true,
         stripeAccountId: true,
         createdAt: true,
+        echoExpertId: true,
         // select first site
         sites: {
           select: {
@@ -146,8 +147,12 @@ class OnboardingService {
 
     try {
       const response = await EchoService.validateAccount();
-      if (response.status === 200) {
-        onboardingState.echoOnboardingComplete = true;
+      const expert = await response.json();
+      if (
+        response.status === 200 &&
+        result.echoExpertId === expert.id.toString()
+      ) {
+        onboardingState.echoProfileConnected = true;
       }
     } catch (error) {
       console.error("Failed to validate Echo account:", error);

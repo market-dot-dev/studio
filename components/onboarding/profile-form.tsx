@@ -22,12 +22,14 @@ interface ProfileFormProps {
   user: User;
   onSubmit: (data: ProfileData) => void;
   currentSite?: Site;
+  expeditedEchoOnboarding?: boolean;
 }
 
 export default function ProfileForm({
   user,
   onSubmit,
   currentSite,
+  expeditedEchoOnboarding,
 }: ProfileFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
@@ -135,91 +137,99 @@ export default function ProfileForm({
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm text-gray-900">Domain</label>
-            <div className="flex items-center justify-between gap-4 rounded-tremor-default border border-tremor-border bg-white shadow-tremor-input">
-              <TextInput
-                className="rounded-r-none border-none bg-white shadow-none focus:border focus:border-gray-900"
-                defaultValue={currentSite?.subdomain ?? user.gh_username ?? ""}
-                disabled={!!currentSite?.subdomain}
-                placeholder={"Subdomain"}
-                name="subdomain"
-                required
-              />
-              <span className="py-2 pr-3 text-sm text-gray-400">
-                .gitwallet.co
-              </span>
-            </div>
-            {/* {subdomainError && (
-              <p className="text-sm text-red-500">{subdomainError}</p>
-            )} */}
-            <p className="text-xs text-gray-500">
-              Your landing page will live here. You can change this later.
-            </p>
-          </div>
-
-          <div className="space-y-2">
-            <label className="flex items-baseline justify-between text-sm text-gray-900">
-              Logo
-              <span className="ml-2 text-xs text-gray-500">Optional</span>
-            </label>
-            <div
-              className={clsx(
-                "rounded-lg border border-dashed bg-gray-100 p-10 text-center transition-colors",
-                isDraggingOverDropzone ? "border-gray-400" : "border-gray-300",
-              )}
-              onDragEnter={handleDragEnter}
-              onDragOver={handleDragEnter}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            >
-              <input
-                type="file"
-                ref={fileInputRef}
-                onChange={handleFileChange}
-                className="hidden"
-                accept="image/*"
-              />
-              {file ||
-              (currentSite?.logo && currentSite.logo !== DEFAULT_LOGO_URL) ? (
-                <div className="mx-auto flex flex-col items-center">
-                  <Image
-                    src={
-                      file ? URL.createObjectURL(file) : currentSite!.logo ?? ""
+          {!expeditedEchoOnboarding && (
+            <>
+              <div className="space-y-2">
+                <label className="block text-sm text-gray-900">Domain</label>
+                <div className="flex items-center justify-between gap-4 rounded-tremor-default border border-tremor-border bg-white shadow-tremor-input">
+                  <TextInput
+                    className="rounded-r-none border-none bg-white shadow-none focus:border focus:border-gray-900"
+                    defaultValue={
+                      currentSite?.subdomain ?? user.gh_username ?? ""
                     }
-                    alt="Selected file preview"
-                    height={80}
-                    width={80}
-                    className="h-20 w-auto rounded shadow-sm ring-1 ring-black/10"
+                    disabled={!!currentSite?.subdomain}
+                    placeholder={"Subdomain"}
+                    name="subdomain"
+                    required
                   />
-                  <button
-                    type="button"
-                    onClick={handleFilePicker}
-                    className="mt-4 text-xs text-gray-500 underline"
-                  >
-                    Pick another image
-                  </button>
+                  <span className="py-2 pr-3 text-sm text-gray-400">
+                    .gitwallet.co
+                  </span>
                 </div>
-              ) : (
-                <div className="mx-auto flex flex-col items-center">
-                  <ImageIcon className="mx-auto h-6 w-6 text-gray-400" />
-                  <div className="mt-3 text-xs text-gray-500">
-                    <p>Drag & drop a .png or .jpg</p>
-                    <p>
-                      or{" "}
+                <p className="text-xs text-gray-500">
+                  Your landing page will live here. You can change this later.
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="flex items-baseline justify-between text-sm text-gray-900">
+                  Logo
+                  <span className="ml-2 text-xs text-gray-500">Optional</span>
+                </label>
+                <div
+                  className={clsx(
+                    "rounded-lg border border-dashed bg-gray-100 p-10 text-center transition-colors",
+                    isDraggingOverDropzone
+                      ? "border-gray-400"
+                      : "border-gray-300",
+                  )}
+                  onDragEnter={handleDragEnter}
+                  onDragOver={handleDragEnter}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                >
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    className="hidden"
+                    accept="image/*"
+                  />
+                  {file ||
+                  (currentSite?.logo &&
+                    currentSite.logo !== DEFAULT_LOGO_URL) ? (
+                    <div className="mx-auto flex flex-col items-center">
+                      <Image
+                        src={
+                          file
+                            ? URL.createObjectURL(file)
+                            : currentSite!.logo ?? ""
+                        }
+                        alt="Selected file preview"
+                        height={80}
+                        width={80}
+                        className="h-20 w-auto rounded shadow-sm ring-1 ring-black/10"
+                      />
                       <button
                         type="button"
                         onClick={handleFilePicker}
-                        className="cursor-pointer underline"
+                        className="mt-4 text-xs text-gray-500 underline"
                       >
-                        pick an image
+                        Pick another image
                       </button>
-                    </p>
-                  </div>
+                    </div>
+                  ) : (
+                    <div className="mx-auto flex flex-col items-center">
+                      <ImageIcon className="mx-auto h-6 w-6 text-gray-400" />
+                      <div className="mt-3 text-xs text-gray-500">
+                        <p>Drag & drop a .png or .jpg</p>
+                        <p>
+                          or{" "}
+                          <button
+                            type="button"
+                            onClick={handleFilePicker}
+                            className="cursor-pointer underline"
+                          >
+                            pick an image
+                          </button>
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-          </div>
+              </div>
+            </>
+          )}
 
           <div className="space-y-2">
             <label className="block text-sm text-gray-900">
