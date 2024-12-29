@@ -28,7 +28,7 @@ export default function OnboardingModal({
 
   return (
     <Modal isOpen={isOpen} showCloseButton={false}>
-      {onboardingType === "echo" && !onboardingState.echoProfileConnected ? (
+      {onboardingType === "echo" ? (
         <EchoOnboardingForm
           user={user}
           currentSite={currentSite}

@@ -15,8 +15,6 @@ export default function EchoOnboardingForm({
   currentSite?: Site;
   onComplete: () => void;
 }) {
-  console.log("Enters echo onboarding form");
-  console.log("echoExpertId", user.echoExpertId);
   const [step, setStep] = useState<"echo-connection" | "echo-profile">(
     user.echoExpertId ? "echo-profile" : "echo-connection",
   );
