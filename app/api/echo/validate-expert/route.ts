@@ -27,8 +27,6 @@ export async function POST() {
   }
 
   const expert = await response.json();
-  console.log("expert", expert);
-  console.log("expert Id", expert.id);
   if (user) {
     await UserService.updateUser(user.id, {
       echoExpertId: expert.id.toString(),
