@@ -2,6 +2,16 @@ import { EchoService } from "@/app/services/echo-service";
 import UserService, { getCurrentUser } from "@/app/services/UserService";
 import { NextResponse } from "next/server";
 
+interface LinkGitWalletResponse {
+  linked: boolean;
+  expert?: {
+    id: number;
+    name: string;
+    slug: string;
+    github_id: number;
+  };
+}
+
 export async function POST() {
   const user = await getCurrentUser();
   if (!user) {
@@ -26,15 +36,29 @@ export async function POST() {
     );
   }
 
-  const expert = await response.json();
-  if (user) {
-    await UserService.updateUser(user.id, {
-      echoExpertId: expert.id.toString(),
+  const responseData = (await response.json()) as LinkGitWalletResponse;
+  const { linked, expert } = responseData;
+  if (!linked) {
+    return new Response(
+      JSON.stringify({ error: "Failed to validate Echo account" }),
+      {
+        status: 500,
+      },
+    );
+  }
+
+  if (!expert) {
+    return new Response(JSON.stringify({ error: "Not an expert" }), {
+      status: 404,
     });
   }
 
+  await UserService.updateUser(user.id, {
+    echoExpertId: expert.id.toString(),
+  });
+
   return NextResponse.json({
-    status: "success",
+    status: 200,
     expert,
   });
 }

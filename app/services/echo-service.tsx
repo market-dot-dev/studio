@@ -13,12 +13,16 @@ export class EchoService {
       throw new Error("User GitHub username not found");
     }
 
-    const response = await fetch(`${API_ENDPOINT}experts/${user.gh_username}`, {
-      method: "GET",
+    const response = await fetch(`${API_ENDPOINT}users/link_gitwallet`, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
       },
+      body: JSON.stringify({
+        gitwallet_id: user.id,
+        github_id: user.gh_id,
+      }),
     });
 
     return response;

@@ -19,7 +19,6 @@ type JwtCallbackParams = {
   token: JWT;
   user: AdapterUser | NaUser;
   account: Account | null;
-  //profile?: Profile | undefined;
   trigger?: "signIn" | "update" | "signUp" | undefined;
   isNewUser?: boolean | undefined;
   session?: any;
@@ -60,10 +59,22 @@ class AuthService {
   }
 
   static async onSignIn(account: any, naUser: NaUser) {
-    const user = await UserService.findUser(naUser.id);
+    let user = await UserService.findUser(naUser.id);
 
     if (!user) {
       return null;
+    }
+
+    // backfill the gh_id if it is not present
+    if (!user.gh_id && account.provider === "github") {
+      const ghId = account.providerAccountId
+        ? parseInt(account.providerAccountId)
+        : null;
+      if (ghId) {
+        user = await UserService.updateUser(user.id, {
+          gh_id: ghId,
+        });
+      }
     }
 
     // at this point, the user item in table does not have the onboarding data set. So, we can attach the default one to the first token being generated on signup.
