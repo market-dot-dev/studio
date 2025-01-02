@@ -45,7 +45,11 @@ export default async function LoginPage({
             <div className="h-12 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
           }
         >
-          <GithubLoginButton />
+          <GithubLoginButton
+            callbackUrl={
+              loginAndOnboardEchoExpert ? "/?onboardingType=echo" : undefined
+            }
+          />
         </Suspense>
         {LOCAL_AUTH_AVAILABLE && (
           <Suspense>

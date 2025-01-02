@@ -147,10 +147,12 @@ class OnboardingService {
 
     try {
       const response = await EchoService.validateAccount();
-      const expert = await response.json();
+      const responseData = await response.json();
       if (
         response.status === 200 &&
-        result.echoExpertId === expert.id.toString()
+        responseData.linked &&
+        responseData.expert &&
+        result.echoExpertId === responseData.expert.id.toString()
       ) {
         onboardingState.echoProfileConnected = true;
       }
