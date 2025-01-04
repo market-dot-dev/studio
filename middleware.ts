@@ -61,13 +61,8 @@ async function customMiddleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // alpha.gitwallet.co
-  if (reservedSubdomain === 'alpha') {
-    return rewrite(`/alpha${path}`, req.url);
-  }
-
   // gitwallet.co
-  if (bareDomain) {
+  if (bareDomain || reservedSubdomain === 'sell') {
     if (url.pathname.startsWith('/design')) {
       return rewrite(`/design${path}`, req.url);
     }
