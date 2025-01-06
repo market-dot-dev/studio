@@ -18,9 +18,9 @@ const GithubLoginButton = ({ callbackUrl }: { callbackUrl?: string }) => {
     errorMessage && toast.error(errorMessage);
   }, [error]);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setLoading(true);
-    signIn("github", { callbackUrl });
+    await signIn("github", { callbackUrl });
   };
 
   return (

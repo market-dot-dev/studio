@@ -82,7 +82,6 @@ export default function ProfileForm({
       setIsLoading(false);
     }
   };
-
   return (
     <form className="w-full max-w-lg" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-8">
