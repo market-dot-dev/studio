@@ -45,7 +45,7 @@ const ContractText = ({
   checkoutProject: string;
   contract?: Contract;
 }) => {
-  const baseUrl = "https://app.gitwallet.co/c/contracts";
+  const baseUrl = "https://app.gitwallet.co/contracts";
   const url = contract 
     ? `${baseUrl}/${contract.id}`
     : `${baseUrl}/gitwallet-msa`;
