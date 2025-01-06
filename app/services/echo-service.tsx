@@ -9,8 +9,8 @@ export class EchoService {
       throw new Error("User not found");
     }
 
-    if (!user.gh_username) {
-      throw new Error("User GitHub username not found");
+    if (!user.gh_id) {
+      throw new Error("User GitHub ID doesn't exist");
     }
 
     const response = await fetch(`${API_ENDPOINT}users/link_gitwallet`, {

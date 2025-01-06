@@ -86,12 +86,7 @@ async function customMiddleware(req: NextRequest) {
   }
 
   // *.gitwallet.co
-  const loginPaths = [
-    "/login",
-    "/customer-login",
-    "/login/local-auth",
-    "/login/echo",
-  ];
+  const loginPaths = ["/login", "/customer-login", "/login/local-auth"];
 
   // if you're on a login page and already signed in, kick you to /
   if (session && loginPaths.includes(url.pathname)) {

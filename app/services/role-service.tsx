@@ -18,7 +18,6 @@ class RoleService {
     /^\/customer-login$/,
     /^\/login\/local-auth$/,
     /\/checkout\/[A-Za-z0-9]+/,
-    /^\/login\/echo$/,
   ];
 
   static adminOnlyPaths = [/^\/admin(\/|$)/];
