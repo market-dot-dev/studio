@@ -2,7 +2,7 @@
 
 import { NextRequest } from "next/server";
 
-const RESERVED_SUBDOMAINS = ['app', 'alpha'];
+const RESERVED_SUBDOMAINS = ['app', 'sell'];
 const PROTOCOL = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development' ? 'http' : 'https';
 
 class DomainService {

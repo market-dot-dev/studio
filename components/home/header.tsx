@@ -144,10 +144,10 @@ export default function Header({ className }: { className?: string }) {
       icon: <Package />,
       color: colors["green"],
       title: "Sell",
-      description: "Sell products & services, find packages that work.",
+      description: "Create product & service packages that sell.",
       link: {
         text: "Learn more",
-        href: "#sell",
+        href: "/#sell",
         asCard: true,
         onClick: handleLinkClick,
       },
@@ -159,7 +159,7 @@ export default function Header({ className }: { className?: string }) {
       description: "Promote your work with customizable marketing tools.",
       link: {
         text: "Learn more",
-        href: "#promote",
+        href: "/#promote",
         asCard: true,
         onClick: handleLinkClick,
       },
@@ -171,7 +171,7 @@ export default function Header({ className }: { className?: string }) {
       description: "See who's using your stuff & find new customers.",
       link: {
         text: "Learn more",
-        href: "#research",
+        href: "/#research",
         asCard: true,
         onClick: handleLinkClick,
       },
@@ -187,9 +187,11 @@ export default function Header({ className }: { className?: string }) {
         )}
       >
         <div className="relative z-[100] flex items-center justify-between py-3">
-          <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
-            <Logo className="h-[22px] w-auto xs:h-[26px]" />
-          </button>
+          <Link href="/">
+            <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
+              <Logo className="h-[22px] w-auto xs:h-[26px]" />
+            </button>
+          </Link>
           <div className="absolute left-1/2 top-1/2 ml-0.5 hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex">
             <Dropdown
               title="Product"
