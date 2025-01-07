@@ -25,13 +25,13 @@ export default function Research() {
           title="Get listed on a premium marketplace"
           description={
             <>
-              <Link href="https://ecosystems.gitwallet.co/">
+              <Link href="https://market.dev/">
                 <Image
-                  src="/echo-logo.svg"
-                  alt="echo logo"
+                  alt="market.dev logo"
+                  src="/market-dot-dev-logo.svg"
                   height={34}
                   width={118}
-                  aria-labelledby="Echo"
+                  aria-labelledby="market.dev"
                   className="mr-[5px] inline h-[17px] w-auto shrink-0"
                 />
               </Link>
@@ -40,15 +40,15 @@ export default function Research() {
             </>
           }
           image={{
-            src: "/echo.png",
-            alt: "Package cards illustration",
+            src: "/market-screenshot.png",
+            alt: "market.dev screenshot"
           }}
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
           link={{
-            text: "Explore Echo",
-            href: "https://ecosystems.gitwallet.co/",
+            text: "Explore market.dev",
+            href: "https://market.dev/",
           }}
           className="sm:aspect-[4/3] lg:aspect-[5/4]"
         />
