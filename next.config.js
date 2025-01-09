@@ -17,6 +17,9 @@ const nextConfig = {
         "*.gitwallet.local:3000",
         "*.gitwallet.co",
         "gitwallet.co",
+        "app.market.dev",
+        "sell.market.dev",
+        "*.store.dev",
         "gitwallet.local:3000",
         process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "*.vercel.app" : "",
       ].filter(Boolean),
@@ -36,6 +39,7 @@ const nextConfig = {
       { hostname: "flag.vercel.app" },
       { hostname: "illustrations.popsy.co" },
       { hostname: "www.gitwallet.co" },
+      { hostname: "sell.market.dev" },
     ],
   },
   logging: {

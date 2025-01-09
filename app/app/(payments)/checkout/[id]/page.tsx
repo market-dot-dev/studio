@@ -45,15 +45,15 @@ const ContractText = ({
   checkoutProject: string;
   contract?: Contract;
 }) => {
-  const baseUrl = "https://app.gitwallet.co/contracts";
-  const url = contract 
+  const baseUrl = "https://app.market.dev/contracts";
+  const url = contract
     ? `${baseUrl}/${contract.id}`
     : `${baseUrl}/gitwallet-msa`;
   const contractName = contract?.name || "Standard Gitwallet MSA";
 
   return (
     <>
-      Terms of this package are detailed in the {" "}
+      Terms of this package are detailed in the{" "}
       <a href={url} className="underline" target="_blank">
         {contractName}
       </a>
@@ -164,7 +164,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
 
       {/* accept terms of service */}
       {checkoutType === "gitwallet" && (
-        <div className="flex flex-row items-center gap-2 bg-gray-100 border border-gray-400 rounded-md p-2">
+        <div className="flex flex-row items-center gap-2 rounded-md border border-gray-400 bg-gray-100 p-2">
           {isFeaturesLoading ? (
             <SkeletonLoader className="mb-4 h-4 w-3/4 rounded-full" />
           ) : (

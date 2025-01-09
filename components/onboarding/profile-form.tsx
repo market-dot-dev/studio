@@ -147,7 +147,7 @@ export default function ProfileForm({
                 required
               />
               <span className="py-2 pr-3 text-sm text-gray-400">
-                .gitwallet.co
+                .store.dev
               </span>
             </div>
             {/* {subdomainError && (

@@ -37,7 +37,7 @@ export default function HomePage() {
           },
           company: {
             name: "Shipyard",
-            url: "https://ipshipyard.gitwallet.co/",
+            url: "https://ipshipyard.store.dev/",
           },
         }}
       />

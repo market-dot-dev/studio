@@ -23,8 +23,8 @@ interface RegistrationCheckoutSectionProps {
 }
 
 const ContractText = ({ contract }: { contract?: Contract }) => {
-  const baseUrl = "https://app.gitwallet.co/c/contracts";
-  const url = contract 
+  const baseUrl = "https://app.market.dev/c/contracts";
+  const url = contract
     ? `${baseUrl}/${contract.id}`
     : `${baseUrl}/gitwallet-msa`;
   const contractName = contract?.name || "Standard Gitwallet MSA";
