@@ -4,7 +4,7 @@ const loginURL =
     : "https://app.market.dev/login";
 
 const discordURL = "https://discord.gg/ZdSpS4BuGd";
-const blogURL = "https://blog.gitwallet.co";
+const blogURL = "https://blog.market.dev";
 const twitterUrl = "https://x.com/gitwallet";
 
 export { loginURL, discordURL, blogURL, twitterUrl };
