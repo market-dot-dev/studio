@@ -55,7 +55,7 @@ const AnimatedHambugerButton = ({
     <Button
       variant='ghost'
       onClick={toggleMenu}
-      className={clsx('text-marketing-primary', className )}
+      className={clsx('text-marketing-primary m-0', className )}
       aria-label={isOpen ? "Close menu" : "Open menu"}
     >
       <motion.svg
@@ -182,14 +182,14 @@ export default function Header({ className }: { className?: string }) {
     <>
       <header
         className={clsx(
-          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-5 pr-6 pt-1.5 tracking-tight",
+          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] px-6 tracking-tight text-marketing-sm",
           className,
         )}
       >
-        <div className="relative z-[100] flex items-center justify-between py-3">
-          <Link href="/">
+        <div className="relative z-[100] flex items-center justify-between h-16">
+          <Link href="/" className='flex '>
             <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
-              <Logo className="h-[22px] w-auto xs:h-[26px]" />
+              <Logo className="h-[22px] w-auto xs:h-[26px] self-center justify-self-start" />
             </button>
           </Link>
           <div className="absolute left-1/2 top-1/2 ml-0.5 hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex">
@@ -221,11 +221,11 @@ export default function Header({ className }: { className?: string }) {
               <Dropdown.Item href={twitterUrl}>Twitter</Dropdown.Item>
             </Dropdown>
           </div>
-          <div className="flex w-fit items-center gap-[22px] md:gap-6">
+          <div className="flex w-fit items-center gap-2">
             <Link
               href={loginURL}
               variant="primary"
-              className="-mt-0.5 text-marketing-sm xs:text-marketing-base"
+              className='px-2'
             >
               Log in
             </Link>

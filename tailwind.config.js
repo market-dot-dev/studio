@@ -137,12 +137,12 @@ module.exports = {
           { lineHeight: "16px", letterSpacing: "-0.02em" },
         ],
         "marketing-sm": [
-          "15px",
-          { lineHeight: "20px", letterSpacing: "-0.02em" },
+          "16px",
+          { lineHeight: "24px", letterSpacing: "-0.02em" },
         ],
         "marketing-base": [
-          "19px",
-          { lineHeight: "24px", letterSpacing: "-0.025em" },
+          "20px",
+          { lineHeight: "28px", letterSpacing: "-0.025em" },
         ],
         "marketing-md": [
           "24px",

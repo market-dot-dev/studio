@@ -14,7 +14,7 @@ export default function Hero() {
           <br />
           for Open Source.
         </GradientHeading>
-        <p className="mb-4 max-w-[43ch] text-pretty text-center text-marketing-sm xs:mb-5 sm:mb-6 sm:text-[clamp(15px,12vw,19px)] sm:leading-[clamp(16px,12vw,24px)] md:max-w-[48ch]">
+        <p className="mb-4 max-w-[43ch] text-pretty text-center text-marketing-sm/5 xs:mb-5 sm:mb-6 sm:text-[clamp(16px,12vw,20px)] sm:leading-[clamp(16px,12vw,28px)] md:max-w-[48ch]">
           Use Gitwallet to set up premium se
           <span className="tracking-normal">r</span>vices, find
           <br className="hidden xs:inline md:hidden" /> customers & market eve
