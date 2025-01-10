@@ -188,7 +188,7 @@ class EmailService {
     user: RequiredUserProps,
   ): Promise<void> {
     const subject = "Welcome to sell.market.dev!";
-    const text = `Hello ${user.name},\n\nThank you for registering with sell.market.dev! The next steps are to set up your payment information and offerings at app.market.dev in order to start selling your services.\n\nGet started here: app.market.dev`;
+    const text = `Hello ${user.name},\n\nThank you for registering to sell with market.dev! The next steps are to set up your payment information and offerings at app.market.dev in order to start selling your services.\n\nGet started here: app.market.dev`;
     const html = `
       <p>Hello <strong>${user.name}</strong>,</p>
       <p>Thank you for registering with <strong>sell.market.dev</strong>! The next steps are to set up your payment information and offerings at <a href="https://app.market.dev">app.market.dev</a> in order to start selling your services.</p>
@@ -202,7 +202,7 @@ class EmailService {
     user: RequiredUserProps,
   ): Promise<void> {
     const subject = "Welcome to sell.market.dev!";
-    const text = `Hello ${user.name},\n\nThank you for registering with sell.market.dev!\n\nGet started here: sell.market.dev`;
+    const text = `Hello ${user.name},\n\nThank you for registering to sell withmarket.dev!\n\nGet started here: sell.market.dev`;
     const html = `
       <p>Hello <strong>${user.name}</strong>,</p>
       <p>Thank you for registering with <strong>sell.market.dev</strong>!</p>
