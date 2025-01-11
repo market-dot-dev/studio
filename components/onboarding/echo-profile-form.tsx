@@ -31,13 +31,50 @@ interface ProfileFormProps {
   currentSite?: Site;
 }
 
-export default function ProfileForm({
+export default function EchoProfileForm({
   user,
   onComplete,
   currentSite,
 }: ProfileFormProps) {
   const [teamType, setTeamType] = useState<"team" | "individual" | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [validateEchoExpertLoading, setValidateEchoExpertLoading] =
+    useState(false);
+  const [isEchoExpertValidated, setIsEchoExpertValidated] = useState(
+    user.echoExpertId ? true : false,
+  );
+
+  const validateEchoExpert = async () => {
+    setValidateEchoExpertLoading(true);
+    try {
+      const response = await fetch(`/api/echo/validate-expert`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.status === 404) {
+        toast.error(
+          "You are not an expert on Echo. Make sure you have an account created on Echo.",
+        );
+        return;
+      }
+
+      if (response.status !== 200) {
+        toast.error("Failed to validate your Echo account. Please try again.");
+        return;
+      }
+
+      await refreshAndGetState();
+      setIsEchoExpertValidated(true);
+      toast.success("Echo account connected successfully");
+    } catch (error) {
+      toast.error("Error validating your Echo account. Please try again.");
+    } finally {
+      setValidateEchoExpertLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,6 +139,19 @@ export default function ProfileForm({
         </div>
 
         <div className="space-y-8">
+          <div className="space-y-2">
+            <label className="block text-sm text-gray-900">
+              Connect your Echo Expert Profile
+            </label>
+            <Button
+              className="bg-gray-900 text-white hover:bg-gray-800"
+              disabled={isEchoExpertValidated}
+              loading={validateEchoExpertLoading}
+              onClick={validateEchoExpert}
+            >
+              Connect
+            </Button>
+          </div>
           <BusinessNameInput userGithubUsername={user.gh_username} />
           <LocationEntryInput />
           <TeamSelectionRadioGroup
@@ -115,7 +165,7 @@ export default function ProfileForm({
             className="bg-gray-900 text-white hover:bg-gray-800"
             type="submit"
             loading={isLoading}
-            disabled={isLoading}
+            disabled={isLoading || !isEchoExpertValidated}
           >
             Next
           </Button>

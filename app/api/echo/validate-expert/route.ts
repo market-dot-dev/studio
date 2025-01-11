@@ -5,10 +5,11 @@ import { NextResponse } from "next/server";
 interface LinkGitWalletResponse {
   linked: boolean;
   expert?: {
-    id: number;
+    id: string;
     name: string;
     slug: string;
-    github_id: number;
+    uuid: string;
+    host: string;
   };
 }
 
@@ -57,8 +58,10 @@ export async function POST() {
     echoExpertId: expert.id.toString(),
   });
 
-  return NextResponse.json({
-    status: 200,
-    expert,
-  });
+  return new Response(
+    JSON.stringify({
+      status: 200,
+      expert,
+    }),
+  );
 }

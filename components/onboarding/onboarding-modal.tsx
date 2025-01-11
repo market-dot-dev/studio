@@ -34,7 +34,7 @@ export default function OnboardingModal({
           currentSite={currentSite}
           onComplete={async () => {
             setIsOpen(false);
-            router.refresh();
+            // router.refresh();
           }}
         />
       ) : (
