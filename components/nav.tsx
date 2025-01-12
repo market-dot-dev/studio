@@ -14,6 +14,7 @@ import {
   Box,
   Home,
   UserSearch,
+  Store,
 } from "lucide-react";
 import {
   useParams,
@@ -135,15 +136,20 @@ export default function Nav({
               isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
               icon: <AppWindowMac width={18} />,
             },
+            {
+              name: "Embeds",
+              href: "/channels/embeds",
+              icon: <Code2 width={18} />,
+              isActive: urlSegments[1] === "embeds",
+            },
+            {
+              name: "Market",
+              href: "/channels/market",
+              icon: <Store width={18} />,
+              isActive: urlSegments[1] === "channels",
+            },
           ]
         : []),
-      {
-        name: "Embeds",
-        href: "/channels/embeds",
-        icon: <Code2 width={18} />,
-        isActive: urlSegments[1] === "embeds",
-      },
-
       // Analytics
       {
         name: "Analytics",

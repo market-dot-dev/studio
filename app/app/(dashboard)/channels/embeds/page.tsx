@@ -7,11 +7,7 @@ import { getRootUrl } from "@/app/services/domain-service";
 import FeatureService from "@/app/services/feature-service";
 import PackageEmbeddings from "@/components/embedables/package-embeddings/package-embeddings";
 
-export default async function EmbedChannel({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function EmbedChannel() {
   const [site, activeFeatures] = (await Promise.all([
     getSite(),
     FeatureService.findActiveByCurrentUser(),
