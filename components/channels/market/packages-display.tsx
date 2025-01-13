@@ -5,16 +5,16 @@ import DashedCard from "@/components/common/dashed-card";
 import embeddables from "@/components/site/embedables";
 
 export default function PackagesDisplay({
-  site,
+  siteUrl,
   selectedTiers,
 }: {
-  site: any;
+  siteUrl: string;
   selectedTiers: TierWithFeatures[];
 }) {
   return (
     <DashedCard>
       <embeddables.tiers.preview
-        site={site}
+        site={siteUrl}
         settings={{
           darkmode: false,
           tiers: selectedTiers.map((tier) => tier.id),

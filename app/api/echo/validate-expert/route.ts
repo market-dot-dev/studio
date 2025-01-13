@@ -1,6 +1,5 @@
 import { EchoService } from "@/app/services/echo-service";
 import UserService, { getCurrentUser } from "@/app/services/UserService";
-import { NextResponse } from "next/server";
 
 interface LinkGitWalletResponse {
   linked: boolean;

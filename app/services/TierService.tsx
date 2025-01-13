@@ -454,6 +454,29 @@ class TierService {
     return TierService.getTiersForUser(userId, tierIds);
   }
 
+  static async getPublishedTiersWithFeatures(
+    tierIds: string[] = [],
+  ): Promise<TierWithFeatures[]> {
+    if (tierIds.length === 0) {
+      return [];
+    }
+
+    return prisma.tier.findMany({
+      where: {
+        published: true,
+        id: { in: tierIds },
+      },
+      include: {
+        features: true,
+      },
+      orderBy: [
+        {
+          published: "desc",
+        },
+      ],
+    });
+  }
+
   // this pulls all tiers for the admin to manage
   static async getTiersForAdmin() {
     const userId = await SessionService.getCurrentUserId();
@@ -686,6 +709,7 @@ export const {
   getPublishedTiers,
   getTiersForMatrix,
   getTiersForUser,
+  getPublishedTiersWithFeatures,
   getVersionsByTierId,
   shouldCreateNewVersion,
   updateApplicationFee,

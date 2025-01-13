@@ -24,7 +24,7 @@ export default function PackageEmbeddings({
 }) {
   const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>([]);
   const [useSVG, setUseSVG] = useState(false);
-  const domain = `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const domain = `${process.env.VERCEL_ENV === "production" ? "https://" : ""}${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   const [darkmode, setDarkmode] = useState(false);
   const handleDarkMode = () => setDarkmode(!darkmode);
 
