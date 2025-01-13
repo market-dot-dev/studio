@@ -14,7 +14,7 @@ import { createLocalCharge } from './charge-service';
 export type StripeCard = {
   brand: string;
   last4: string;
-}
+} 
 
 import { GLOBAL_APPLICATION_FEE_DOLLARS, GLOBAL_APPLICATION_FEE_PCT } from '@/app/config/stripe-fees';
 
