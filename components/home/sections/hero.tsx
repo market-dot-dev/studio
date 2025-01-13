@@ -15,7 +15,7 @@ export default function Hero() {
           for Developers.
         </GradientHeading>
         <p className="mb-4 max-w-[43ch] text-pretty text-center text-marketing-sm/5 xs:mb-5 sm:mb-6 sm:text-[clamp(16px,12vw,20px)] sm:leading-[clamp(16px,12vw,28px)] md:max-w-[48ch]">
-          Use Gitwallet to set up premium se
+          Use store.dev to set up premium se
           <span className="tracking-normal">r</span>vices, find
           <br className="hidden xs:inline md:hidden" /> customers & market eve
           <span className="tracking-normal">r</span>
@@ -88,7 +88,7 @@ export default function Hero() {
         <div className="-mr-60 h-full w-[calc(100vw+192px)] overflow-visible rounded ring-1 ring-black/[10%] sm:rounded-md md:-mr-72 md:mt-0 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-[1000px] lg:rounded-xl xl:max-w-[1150px]">
           <Image
             src="/home.png"
-            alt="gitwallet logo"
+            alt="store.dev logo"
             height={1600}
             width={2400}
             className="drop-shadow-md"
