@@ -19,7 +19,7 @@ export default function Footer() {
   ];
 
   return (
-    <footer className="relative mx-auto w-full overflow-hidden px-6 pt-16 pb-24 lg:px-12 lg:pb-24 bg-gradient-to-t from-marketing-camo/[25%]">
+    <footer className="relative mx-auto w-full overflow-hidden px-6 pt-20 pb-6 lg:px-12 bg-gradient-to-t from-marketing-camo/[25%]">
       <div className="container relative mx-auto">
         <div className="flex w-full flex-col items-center">
           <GradientHeading
