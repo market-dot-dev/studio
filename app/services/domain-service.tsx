@@ -2,7 +2,7 @@
 
 import { NextRequest } from "next/server";
 
-const RESERVED_SUBDOMAINS = ["app", "sell", "blog", "email", "market", "alpha", "beta", "docs", "support", "deploy", "create", "help", "api", "store"];
+const RESERVED_SUBDOMAINS = ["app", "sell", "blog"];
 const PROTOCOL =
   process.env.NEXT_PUBLIC_VERCEL_ENV === "development" ? "http" : "https";
 
