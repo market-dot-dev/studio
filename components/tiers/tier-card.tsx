@@ -24,7 +24,7 @@ type TierCardProps = {
   hasActiveFeatures?: boolean;
   className?: string;
   children?: React.ReactNode;
-}; 
+};
 
 export const generateLink = (
   url: string | null,
