@@ -8,14 +8,14 @@ export const metadata: Metadata = {
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="flex min-h-screen w-full flex-col justify-center bg-stone-100 px-6 py-12 sm:px-12 items-center h-full">
-      <div className="h-full justify-between items-center lg:justify-center flex w-full max-w-screen-2xl grid-cols-9 flex-col gap-x-12 gap-y-24 lg:grid  2xl:grid-cols-12">
-        <div className="col-span-4 flex flex-col justify-center pb-[72px] 2xl:col-span-6 w-full">
-          <div className="mx-auto w-full max-w-md">{children}</div>
+    <div className="flex h-full min-h-screen w-full flex-col items-center justify-center bg-stone-100 px-6 py-12 sm:px-12">
+      <div className="flex h-full w-full max-w-screen-xl flex-col items-center justify-between gap-x-12 gap-y-24 lg:flex-row lg:justify-center">
+        <div className="flex w-full flex-col justify-center pb-[72px] max-w-md">
+          <div className="w-full mx-auto max-w-sm">{children}</div>
         </div>
-        <div className="col-span-5 hidden lg:flex flex-col justify-center gap-6 text-pretty 2xl:col-span-6 pb-12">
-          <div className="flex flex-col gap-4 md:gap-6 border-black/15 md:border-l md:pl-9">
-            <blockquote className="tracking-tightish text-pretty text-2xl leading-7 lg:text-3xl font-medium text-stone-900 xl:text-4xl">
+        <div className="hidden flex-col justify-center gap-6 text-pretty pb-12 lg:flex w-full">
+          <div className="flex flex-col gap-4 border-black/15 md:gap-6 md:border-l md:pl-9">
+            <blockquote className="text-pretty text-2xl font-medium leading-7 tracking-tightish text-stone-900 lg:text-3xl xl:text-4xl">
               Gitwallet helped our collective of core maintainers{" "}
               <mark className="rounded bg-marketing-swamp/25 px-2">
                 set up our first commercial se
@@ -31,10 +31,10 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
                 src="/bc-avatar.jpg"
                 width={32}
                 height={32}
-                className="rounded-full h-6 w-6 md:h-8 md:w-8"
+                className="h-6 w-6 rounded-full md:h-8 md:w-8"
                 alt="Headshot of Bethany, GM at Shipyard"
               />
-              <p className="tracking-tightish text-base md:text-xl font-medium text-stone-500">
+              <p className="text-base font-medium tracking-tightish text-stone-500 md:text-xl">
                 Bethany, GM at Shipyard
               </p>
             </div>
