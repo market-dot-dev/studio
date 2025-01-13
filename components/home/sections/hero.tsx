@@ -12,7 +12,7 @@ export default function Hero() {
         <GradientHeading className="sm:leading-auto mb-3 whitespace-nowrap text-center text-[clamp(30px,9.5vw,46px)] font-bold leading-[0.9] tracking-[-0.035em] text-marketing-primary xs:mb-4 sm:mb-5 sm:text-marketing-3xl md:mb-6 md:text-marketing-4xl md:tracking-[-0.045em] xl:mb-7 xl:text-marketing-5xl">
           The Business Toolkit
           <br />
-          for Open Source.
+          for Developers.
         </GradientHeading>
         <p className="mb-4 max-w-[43ch] text-pretty text-center text-marketing-sm/5 xs:mb-5 sm:mb-6 sm:text-[clamp(16px,12vw,20px)] sm:leading-[clamp(16px,12vw,28px)] md:max-w-[48ch]">
           Use Gitwallet to set up premium se
