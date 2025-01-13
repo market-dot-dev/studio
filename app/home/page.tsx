@@ -12,13 +12,12 @@ export default function HomePage() {
     <>
       <Hero />
       <Customers />
-      <span id="product" className="hidden"></span>{" "}
-      {/* Anchor for product nav link */}
+      <span id="product" className="hidden"></span>{" "} {/* Anchor for product nav link */}
       <Sell />
       <Testimonial
         quote={
           <>
-            Gitwallet helped our collective of core maintainers{" "}
+            store.dev helped our collective of core maintainers{" "}
             <span className="text-marketing-primary">
               set up our first commercial se
               <span className="tracking-[-0.005em]">r</span>vice tiers in under
