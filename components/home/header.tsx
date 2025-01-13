@@ -141,10 +141,12 @@ export default function Header({ className }: { className?: string }) {
     <>
       <header
         className={clsx(
-          "fixed left-0 right-0 top-0 z-50 w-full rounded-b-lg bg-[#F5F5F4] text-marketing-sm tracking-tight transition-all ease-in-out",
-          isScrolled && !isMenuOpen ? "px-4" : "px-6",
+          "fixed left-0 right-0 top-0 z-50 w-full rounded-b-lg bg-[#F5F5F4] tracking-tight transition-all ease-in-out",
+          isScrolled && !isMenuOpen
+            ? "px-4 text-marketing-sm"
+            : "px-6 text-marketing-sm md:text-marketing-base",
           !isScrolled || (!isMenuOpen && "shadow-border-b"),
-          isMenuOpen && 'duration-150',
+          isMenuOpen && "duration-150",
           className,
         )}
       >
@@ -195,7 +197,7 @@ export default function Header({ className }: { className?: string }) {
               <Dropdown.Item href={twitterUrl}>Twitter</Dropdown.Item>
             </Dropdown>
           </div>
-          <div className="flex w-fit items-center gap-2">
+          <div className="flex w-fit items-center gap-4">
             <Link href={loginURL} variant="primary" className="px-2">
               Log in
             </Link>
