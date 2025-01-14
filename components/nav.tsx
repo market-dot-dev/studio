@@ -174,16 +174,16 @@ export default function Nav({
   const serviceTabs: Tab[] = useMemo(() => {
     return [
       {
-        name: "Join Discord",
-        href: "https://discord.gg/ZdSpS4BuGd",
-        target: "_blank",
-        icon: <FaDiscord width={18} />,
-      },
-      {
         name: "Github",
         href: "https://www.github.com/git-wallet",
         target: "_blank",
         icon: <FaGithubAlt width={18} />,
+      },
+      {
+        name: "Join Discord",
+        href: "https://discord.gg/ZdSpS4BuGd",
+        target: "_blank",
+        icon: <FaDiscord width={18} />,
       },
     ];
   }, [urlSegments, id]);
