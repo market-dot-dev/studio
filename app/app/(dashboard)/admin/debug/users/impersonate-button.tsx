@@ -1,27 +1,29 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
 import { Button } from '@tremor/react';
 import { useSession } from "next-auth/react";
-import { useRouter } from 'next/navigation';
 
 const ImpersonateButton = ({ userId } : { userId : string}) => {
   const [loading, setLoading] = useState(false);
   const { update } = useSession();
 
-  const router = useRouter();
-
   const handleImpersonation = async () => {
-    setLoading(true);
-	await update({
-		impersonate: userId,
-	});
-	
-	router.push('/')
-	
-
-    setLoading(false);
+    try {
+      setLoading(true);
+      
+      // Wait for the session update to complete
+      await update({
+        impersonate: userId,
+      });
+      
+      // Force a full page reload to ensure the layout re-renders with new session
+      window.location.href = '/';
+      
+    } catch (error) {
+      console.error('Impersonation failed:', error);
+      setLoading(false);
+    }
   };
 
   return (
