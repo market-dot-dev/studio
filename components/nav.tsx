@@ -22,7 +22,7 @@ import {
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
-import { FaDiscord, FaGithubAlt, FaTelegramPlane } from "react-icons/fa";
+import { FaDiscord, FaGithubAlt } from "react-icons/fa";
 import { Badge } from "@tremor/react";
 
 type Tab = {
@@ -178,12 +178,6 @@ export default function Nav({
         href: "https://discord.gg/ZdSpS4BuGd",
         target: "_blank",
         icon: <FaDiscord width={18} />,
-      },
-      {
-        name: "DM Founder",
-        href: "https://t.me/tarunsachdeva2",
-        target: "_blank",
-        icon: <FaTelegramPlane width={18} />,
       },
       {
         name: "Github",
