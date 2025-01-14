@@ -222,7 +222,7 @@ export default function Nav({
         } fixed z-20 flex h-[calc(100vh-40px)] flex-col justify-between border-r border-stone-200 bg-stone-100 p-3 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
       >
         <div className="flex flex-col gap-2">
-          <div className="flex flex-col gap-0.5">
+          <div className="flex flex-col">
             {tabs.map((tab, index) =>
               tab.href === "" ? (
                 <span
@@ -240,7 +240,7 @@ export default function Nav({
                       tab.isActive
                         ? "bg-stone-200 text-black dark:bg-stone-700"
                         : ""
-                    } rounded-md px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                    } rounded px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                   >
                     {tab.icon}
                     <span className="text-sm font-medium">{tab.name}</span>
@@ -260,7 +260,7 @@ export default function Nav({
                             child.isActive
                               ? "bg-stone-200 text-black dark:bg-stone-700"
                               : ""
-                          } rounded-md px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                          } rounded px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                         >
                           {child.icon}
                           <span>{child.name}</span>
@@ -291,10 +291,10 @@ export default function Nav({
                     tab.isActive
                       ? "bg-stone-200 text-black dark:bg-stone-700"
                       : ""
-                  } rounded-md px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                  } rounded px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                 >
                   {tab.icon}
-                  <span className="text-sm font-medium">{tab.name}</span>
+                  <span className="text-sm font-medium ">{tab.name}</span>
                   {tab.isBeta && (
                     <Badge size="xs" tooltip="This feature is still in Beta">
                       Beta
@@ -311,7 +311,7 @@ export default function Nav({
                           child.isActive
                             ? "bg-stone-200 text-black dark:bg-stone-700"
                             : ""
-                        } rounded-md px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                        } rounded px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                       >
                         {child.icon}
                         <span>{child.name}</span>
