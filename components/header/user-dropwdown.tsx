@@ -3,6 +3,7 @@
 import React, { useState, Suspense } from 'react'
 import Link from 'next/link';
 import Image from 'next/image';
+import { signOut } from "next-auth/react";
 import { Transition } from "@headlessui/react";
 
 export default function UserDropwdown({ user }: { user: any }) {
@@ -66,12 +67,19 @@ export default function UserDropwdown({ user }: { user: any }) {
               </Link>
             </li>
             <li>
-              <Link
-                href="/logout"
-                className="block w-full rounded-md px-2 py-1.5 transition-all hover:text-red-800 hover:shadow-border focus-visible:text-red-800 focus-visible:shadow-border"
+              <button
+                onClick={() =>
+                  signOut({
+                    callbackUrl:
+                      user.roleId === "maintainer"
+                        ? "/login"
+                        : "/customer-login",
+                  })
+                }
+                className="text-left block w-full rounded-md px-2 py-1.5 transition-all hover:text-red-800 hover:shadow-border focus-visible:text-red-800 focus-visible:shadow-border"
               >
                 Logout
-              </Link>
+              </button>
             </li>
           </ul>
         </Transition>
