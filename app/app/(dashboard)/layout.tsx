@@ -1,6 +1,7 @@
 import { ReactNode, Suspense } from "react";
 import Profile from "@/components/profile";
 import Nav from "@/components/nav";
+import Header from '@/components/header/header'
 import { redirect } from "next/navigation";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
 import { Flex } from "@tremor/react";
@@ -44,25 +45,24 @@ export default async function DashboardLayout({
         defaultOpen={showOnboardingModal}
       />
       <div>
-        <Nav
-          siteId={site?.id ?? null}
-          roleId={user.roleId || "anonymous"}
-          hasFeatures={activeFeatures.length != 0}
-        >
-          <Suspense fallback={<div>Loading...</div>}>
-            <Profile />
-          </Suspense>
-        </Nav>
-        <div className="flex min-h-screen w-full flex-col items-center sm:pl-60">
-          <div className="flex w-full max-w-screen-xl flex-col items-center p-4 space-y-4">
-            {!onboarding.isDismissed && !showOnboardingModal && (
-              <OnboardingChecklist />
-            )}
-            {user?.stripeAccountDisabled && user?.stripeAccountId && (
-              <StripeDisabledBanner />
-            )}
-            <div className="relative w-full flex flex-col gap-8">
-              {children}
+        <Header />
+        <div className="relative pt-10">
+          <Nav
+            siteId={site?.id ?? null}
+            roleId={user.roleId || "anonymous"}
+            hasFeatures={activeFeatures.length != 0}
+          />
+          <div className="flex min-h-screen w-full flex-col items-center sm:pl-60 bg-stone-50">
+            <div className="flex w-full max-w-screen-xl flex-col items-center p-4 sm:p-10 sm:pt-8 space-y-4">
+              {!onboarding.isDismissed && !showOnboardingModal && (
+                <OnboardingChecklist />
+              )}
+              {user?.stripeAccountDisabled && user?.stripeAccountId && (
+                <StripeDisabledBanner />
+              )}
+              <div className="relative w-full flex flex-col gap-8">
+                {children}
+              </div>
             </div>
           </div>
         </div>

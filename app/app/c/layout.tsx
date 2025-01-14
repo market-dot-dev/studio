@@ -5,7 +5,7 @@ import CustomerNav from "@/components/customer-nav";
 
 export default async function DashboardLayout({ children }: { children: ReactNode }) {
     return (
-        <div>
+      <div>
         <CustomerNav>
           <Suspense fallback={<div>Loading...</div>}>
             <Profile />

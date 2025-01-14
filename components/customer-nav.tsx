@@ -96,13 +96,6 @@ export default function CustomerNav({ children }: { children: ReactNode  }) {
             ))}
           </div>
         </div>
-        <div>
-          <div className="grid gap-1">
-            
-          </div>
-          <div className="my-2 border-t border-stone-200 dark:border-stone-700" />
-          {children}
-        </div>
       </div>
     </>
   );
