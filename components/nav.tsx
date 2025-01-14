@@ -176,13 +176,13 @@ export default function Nav({
         name: "Github",
         href: "https://www.github.com/git-wallet",
         target: "_blank",
-        icon: <FaGithubAlt width={18} />,
+        icon: <FaGithubAlt width={18} className="text-stone-700" />,
       },
       {
         name: "Join Discord",
         href: "https://discord.gg/ZdSpS4BuGd",
         target: "_blank",
-        icon: <FaDiscord width={18} />,
+        icon: <FaDiscord width={18} className="text-stone-700" />,
       },
     ];
   }, [urlSegments, id]);
@@ -238,7 +238,7 @@ export default function Nav({
                     {tab.icon}
                     <span className="text-sm font-medium">{tab.name}</span>
                     {tab.isBeta && (
-                      <Badge size="xs" tooltip="This feature is still in Beta">
+                      <Badge size="xs" tooltip="This feature is still in Beta" className="font-medium">
                         Beta
                       </Badge>
                     )}
