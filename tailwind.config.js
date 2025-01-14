@@ -210,13 +210,13 @@ module.exports = {
         DEFAULT: {
           css: {
             h1: {
-              fontFamily: "Helvetica Neue",
+              fontFamily: "Cal Sans",
             },
             h2: {
-              fontFamily: "Helvetica Neue",
+              fontFamily: "Cal Sans",
             },
             h3: {
-              fontFamily: "Helvetica Neue",
+              fontFamily: "Cal Sans",
             },
             "blockquote p:first-of-type::before": { content: "none" },
             "blockquote p:first-of-type::after": { content: "none" },
