@@ -60,7 +60,7 @@ export default function Customers() {
   return (
     <Section
       headline="Tools that grow with your business"
-      description="Indie developers and dev shops use Gitwallet to power their business as it expands."
+      description="Indie developers and dev shops use store.dev to power their business as it expands."
     >
       <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5 sm:gap-8">
         <div className="relative grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
@@ -125,14 +125,14 @@ export default function Customers() {
         <div className="flex items-center justify-center">
           <Link
             href={discordURL}
-            className="text-marketing-sm sm:text-marketing-base group flex items-center gap-0.5 sm:gap-[3px] text-pretty text-center"
-            aria-label="See how people are using Gitwallet in our Discord"
+            className="group flex items-center gap-0.5 text-pretty text-center text-marketing-sm sm:gap-[3px] sm:text-marketing-base"
+            aria-label="See how people are using store.dev in our Discord"
           >
-            See how people are using Gitwallet
+            See how people are using store.dev
             <ChevronRight
               size={20}
               strokeWidth={2.5}
-              className="h-4 sm:h-5 -mr-1 transition-transform group-hover:translate-x-px"
+              className="-mr-1 h-4 transition-transform group-hover:translate-x-px sm:h-5"
             />
           </Link>
         </div>

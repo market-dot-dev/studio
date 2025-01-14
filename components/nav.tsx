@@ -6,14 +6,14 @@ import {
   Package,
   Scroll,
   Menu,
-  Users,
+  UsersRound,
   Settings,
-  BarChart4,
   Code2,
-  Radar,
+  ScanSearch,
   Box,
   Home,
-  UserSearch,
+  UserRoundSearch,
+  ChartNoAxesColumnIncreasing as Chart,
 } from "lucide-react";
 import {
   useParams,
@@ -21,8 +21,7 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { GearIcon } from "@radix-ui/react-icons";
-import { FaDiscord, FaGithubAlt, FaTelegramPlane } from "react-icons/fa";
+import { FaDiscord, FaGithubAlt } from "react-icons/fa";
 import { Badge } from "@tremor/react";
 
 type Tab = {
@@ -37,12 +36,10 @@ type Tab = {
 };
 
 export default function Nav({
-  children,
   siteId,
   roleId,
   hasFeatures,
 }: {
-  children: ReactNode;
   siteId: string | null;
   roleId: string | null;
   hasFeatures: boolean | null;
@@ -106,19 +103,19 @@ export default function Nav({
         name: "Customers",
         href: "/customers",
         isActive: urlSegments[0] === "customers",
-        icon: <Users width={18} />,
+        icon: <UsersRound width={18} />,
       },
       {
         name: "Prospects",
         href: "/prospects",
         isActive: urlSegments[0] === "prospects",
-        icon: <UserSearch width={18} />,
+        icon: <UserRoundSearch width={18} />,
       },
       {
         name: "Research",
         href: "/leads",
         isActive: urlSegments[0] === "leads",
-        icon: <Radar width={18} />,
+        icon: <ScanSearch width={18} />,
       },
 
       // Marketing
@@ -154,31 +151,7 @@ export default function Nav({
         name: "Reports",
         href: "/reports",
         isActive: urlSegments[0] === "reports",
-        icon: <BarChart4 width={18} />,
-      },
-      // SUPPORT
-      {
-        name: "Get Support",
-        href: "",
-        isDivider: true,
-      },
-      {
-        name: "Join Discord",
-        href: "https://discord.gg/ZdSpS4BuGd",
-        target: "_blank",
-        icon: <FaDiscord width={18} />,
-      },
-      {
-        name: "DM Founder",
-        href: "https://t.me/tarunsachdeva2",
-        target: "_blank",
-        icon: <FaTelegramPlane width={18} />,
-      },
-      {
-        name: "Github",
-        href: "https://www.github.com/git-wallet",
-        target: "_blank",
-        icon: <FaGithubAlt width={18} />,
+        icon: <Chart width={18} />,
       },
       ...(["admin"].includes(roleId || "")
         ? [
@@ -190,12 +163,29 @@ export default function Nav({
             {
               name: "Debug",
               href: `/admin/debug`,
-              icon: <GearIcon width={18} />,
+              icon: <Settings width={18} />,
             },
           ]
         : []),
     ];
   }, [urlSegments, id, siteId, roleId]);
+
+  const serviceTabs: Tab[] = useMemo(() => {
+    return [
+      {
+        name: "Github",
+        href: "https://www.github.com/git-wallet",
+        target: "_blank",
+        icon: <FaGithubAlt width={18} className="text-stone-700" />,
+      },
+      {
+        name: "Join Discord",
+        href: "https://discord.gg/ZdSpS4BuGd",
+        target: "_blank",
+        icon: <FaDiscord width={18} className="text-stone-700" />,
+      },
+    ];
+  }, [urlSegments, id]);
 
   const [showSidebar, setShowSidebar] = useState(false);
 
@@ -222,22 +212,15 @@ export default function Nav({
       <div
         className={`transform ${
           showSidebar ? "w-full translate-x-0" : "-translate-x-full"
-        } fixed z-20 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-4 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
+        } fixed z-20 flex h-[calc(100vh-40px)] flex-col justify-between border-r border-stone-200 bg-stone-100 p-3 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
       >
-        <div className="grid gap-2">
-          <div className="flex items-center space-x-2 rounded-lg py-1.5">
-            <div className="text-md font-medium">
-              <Link href="/">
-                <img src="/gw-logo-nav.png" className="h-8 hover:scale-110" />
-              </Link>
-            </div>
-          </div>
-          <div className="grid gap-0.5">
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col">
             {tabs.map((tab, index) =>
               tab.href === "" ? (
                 <span
                   key={tab.name}
-                  className="font-small mt-4 text-xs uppercase"
+                  className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-bold uppercase tracking-wide text-stone-500"
                 >
                   {tab.name}
                 </span>
@@ -250,12 +233,12 @@ export default function Nav({
                       tab.isActive
                         ? "bg-stone-200 text-black dark:bg-stone-700"
                         : ""
-                    } rounded-lg px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                    } rounded px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                   >
                     {tab.icon}
                     <span className="text-sm font-medium">{tab.name}</span>
                     {tab.isBeta && (
-                      <Badge size="xs" tooltip="This feature is still in Beta">
+                      <Badge size="xs" tooltip="This feature is still in Beta" className="font-medium">
                         Beta
                       </Badge>
                     )}
@@ -270,7 +253,7 @@ export default function Nav({
                             child.isActive
                               ? "bg-stone-200 text-black dark:bg-stone-700"
                               : ""
-                          } rounded-lg px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                          } rounded px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                         >
                           {child.icon}
                           <span>{child.name}</span>
@@ -283,9 +266,55 @@ export default function Nav({
             )}
           </div>
         </div>
-        <div>
-          <div className="my-2 border-t border-stone-200 dark:border-stone-700" />
-          {children}
+        <div className="flex flex-col gap-0.5">
+          {serviceTabs.map((tab, index) =>
+            tab.href === "" ? (
+              <span
+                key={tab.name}
+                className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-semibold uppercase tracking-wide text-stone-500"
+              >
+                {tab.name}
+              </span>
+            ) : (
+              <div key={tab.name + index}>
+                <Link
+                  href={tab.href}
+                  target={tab.target}
+                  className={`flex items-center space-x-3 ${
+                    tab.isActive
+                      ? "bg-stone-200 text-black dark:bg-stone-700"
+                      : ""
+                  } rounded px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                >
+                  {tab.icon}
+                  <span className="text-sm font-medium">{tab.name}</span>
+                  {tab.isBeta && (
+                    <Badge size="xs" tooltip="This feature is still in Beta">
+                      Beta
+                    </Badge>
+                  )}
+                </Link>
+                {tab.children && tab.isActive && (
+                  <div className="ml-6 space-y-1">
+                    {tab.children.map((child) => (
+                      <Link
+                        key={child.name}
+                        href={child.href}
+                        className={`flex items-center space-x-3 ${
+                          child.isActive
+                            ? "bg-stone-200 text-black dark:bg-stone-700"
+                            : ""
+                        } rounded px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                      >
+                        {child.icon}
+                        <span>{child.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ),
+          )}
         </div>
       </div>
     </>

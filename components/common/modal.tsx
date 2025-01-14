@@ -1,9 +1,11 @@
 import { ReactNode } from "react";
 import { X } from "lucide-react";
+import clsx from "clsx";
 
 interface ModalProps {
   isOpen: boolean;
   children: ReactNode;
+  maxWidth?: string; 
   showCloseButton?: boolean;
   onClose?: () => void;
 }
@@ -11,6 +13,7 @@ interface ModalProps {
 export default function Modal({
   isOpen,
   children,
+  maxWidth = 'max-w-4xl',
   showCloseButton = true,
   onClose,
 }: ModalProps) {
@@ -19,7 +22,10 @@ export default function Modal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="fixed inset-0 bg-black/50" />
-      <div className="relative z-50 max-h-[90vh] w-full max-w-4xl overflow-y-scroll rounded-lg bg-white p-6 shadow-xl">
+      <div className={clsx(
+        "relative z-50 max-h-[calc(100vh-48px)] md:max-h-[85vh] w-full overflow-y-scroll rounded-lg bg-white p-6 md:p-10 shadow-border-xl",
+        maxWidth
+      )}>
         {showCloseButton && (
           <button
             onClick={onClose}

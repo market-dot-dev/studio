@@ -7,7 +7,7 @@ import { updateCurrentSite } from "@/app/services/SiteService"; // Ensure this s
 import Uploader from "../form/uploader";
 import { toast } from "sonner";
 import * as Sentry from "@sentry/nextjs";
-import { GitWalletError, isGitWalletError } from "@/lib/errors";
+import { isGitWalletError } from "@/lib/errors";
 
 export default function SiteSettings({ site }: { site: Partial<Site> }) {
   const [isSaving, setIsSaving] = useState(false);
@@ -25,6 +25,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
     try {
       await updateCurrentSite(formData);
       setChanged(false);
+      toast.success("Site updated");
     } catch (error) {
       if (isGitWalletError(error)) {
         toast.error(error.message);

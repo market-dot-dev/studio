@@ -52,7 +52,7 @@ function TodoItem({
               <Check size={12} color="white" />
             </div>
           ) : (
-            <div className="box-border h-4 w-4 shrink-0 rounded-full border border-dashed border-gray-400 ring-4 ring-white"></div>
+            <div className="box-border h-4 w-4 shrink-0 rounded-full border border-dashed border-stone-400 ring-4 ring-white"></div>
           )}
         </div>
         <div className="flex w-full flex-wrap items-center justify-between gap-x-8 gap-y-2 lg:flex-nowrap">
@@ -60,7 +60,7 @@ function TodoItem({
             <Bold
               className={clsx(
                 "w-fit text-sm cursor-pointer",
-                completed ? "text-gray-500" : "text-gray-800 hover:text-gray-600",
+                completed ? "text-stone-500" : "text-stone-800 hover:text-stone-600",
               )}
               onClick={navigateToStep}
             >
@@ -72,7 +72,7 @@ function TodoItem({
             <Button
               size="xs"
               variant="secondary"
-              className="group w-fit border-gray-200 bg-white py-1 pr-1.5 transition-colors"
+              className="group w-fit border-stone-200 bg-white py-1 pr-1.5 transition-colors"
               onClick={navigateToStep}
             >
               <span>{stepTitle}</span>
@@ -119,11 +119,11 @@ export default function OnboardingChecklist(): JSX.Element {
   if (onboardingState?.isDismissed || isDismissed) return <></>;
 
   return (
-    <div className="w-full flex flex-col items-start rounded-lg bg-white shadow-sm ring-1 ring-black/10">
-      <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-gray-200 bg-gray-50 py-2.5 pl-4 pr-2.5">
+    <div className="mb-6 flex w-full flex-col items-start rounded-lg bg-white shadow-sm ring-1 ring-black/10">
+      <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-stone-200 bg-stone-50 py-2.5 pl-4 pr-2.5">
         <div className="flex items-center gap-4">
-          <Goal size={16} className="text-gray-500" />
-          <h3 className="text-xs font-bold uppercase tracking-wider text-gray-500">
+          <Goal size={16} className="text-stone-500" />
+          <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500">
             Get started
           </h3>
         </div>
@@ -132,9 +132,9 @@ export default function OnboardingChecklist(): JSX.Element {
           <Button
             variant="light"
             onClick={dismissChecklist}
-            className="group -m-1 rounded p-1 text-sm underline transition-colors hover:bg-gray-200"
+            className="group -m-1 rounded p-1 text-sm underline transition-colors hover:bg-stone-200"
           >
-            <X size={16} className="text-gray-500" />
+            <X size={16} className="text-stone-500" />
           </Button>
         </div>
       </div>

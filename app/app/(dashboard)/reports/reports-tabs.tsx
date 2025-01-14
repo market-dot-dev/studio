@@ -14,7 +14,7 @@ export default function ReportsTabs({repos, customers} : {repos: RepoItem[], cus
 
 	return (
 		<TabGroup defaultIndex={tabIndex} onIndexChange={setTabIndex}>
-			<TabList variant="solid" className="bg-white font-medium flex space-x-4 border-b border-stone-200 pb-4 pt-2 dark:border-stone-700">
+			<TabList variant="solid" className="rounded-none bg-transparent font-medium flex space-x-4 border-b border-stone-200 pb-4 pt-2 dark:border-stone-700">
 				<Tab className={ "py-1 text-stone-600 " + (tabIndex === 0 ? "bg-stone-100" : "")}>Revenue</Tab>
 				<Tab className={ "py-1 text-stone-600 " + (tabIndex === 1 ? "bg-stone-100" : "")}>Repos</Tab>
 			</TabList>

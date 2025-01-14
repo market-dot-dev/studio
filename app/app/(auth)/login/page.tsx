@@ -16,14 +16,14 @@ export default async function LoginPage() {
   return (
     <>
       <Image
-        alt="Gitwallet"
+        alt="store.dev logo"
         width={64}
         height={64}
-        className="relative mx-auto h-14 w-14 md:h-16 md:w-16"
+        className="relative mx-auto h-14 w-14"
         src="/gw-logo-nav.png"
       />
       <h1 className="mt-8 text-center font-bold tracking-tight dark:text-white text-4xl">
-        Login to Gitwallet
+        Login to store.dev
       </h1>
       <p className="mt-3 text-center text-sm text-stone-600 dark:text-stone-400">
         Commerce tools for open source projects

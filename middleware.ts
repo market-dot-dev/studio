@@ -66,24 +66,7 @@ async function customMiddleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // Gitwallet -> Market.dev rebrand: Redirect user subdomains from .gitwallet.co to .store.dev
-  if (ghUsername && url.hostname.endsWith(LEGACY_ROOT_DOMAIN)) {
-    const newUrl = new URL(req.url);
-    newUrl.hostname = newUrl.hostname.replace(
-      LEGACY_ROOT_DOMAIN,
-      CUSTOMER_ROOT_DOMAIN,
-    );
-    return NextResponse.redirect(newUrl, 301);
-  }
-
-  // Gitwallet -> Market.dev rebrand: Redirect from *.gitwallet.co to *.market.dev unless it's a customer domain
-  if (!ghUsername && url.hostname.endsWith(LEGACY_ROOT_DOMAIN)) {
-    const newUrl = new URL(req.url);
-    newUrl.hostname = newUrl.hostname.replace(LEGACY_ROOT_DOMAIN, ROOT_DOMAIN);
-    return NextResponse.redirect(newUrl, 301);
-  }
-
-  // market.dev
+  // gitwallet.co
   if (bareDomain || reservedSubdomain === "sell") {
     if (url.pathname.startsWith("/design")) {
       return rewrite(`/design${path}`, req.url);
@@ -94,7 +77,7 @@ async function customMiddleware(req: NextRequest) {
     return rewrite(`/home${path}`, req.url);
   }
 
-  // $GHUSERNAME.store.dev
+  // $GHUSERNAME.gitwallet.co
   // permit API from users' subdomains
   if (!!ghUsername) {
     if (url.pathname.startsWith("/api")) {
@@ -104,7 +87,7 @@ async function customMiddleware(req: NextRequest) {
     return rewrite(`/maintainer-site/${ghUsername}${path}`, req.url);
   }
 
-  // *.market.dev
+  // *.gitwallet.co
   const loginPaths = ["/login", "/customer-login", "/login/local-auth"];
 
   // if you're on a login page and already signed in, kick you to /
@@ -112,7 +95,7 @@ async function customMiddleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // app.market.dev
+  // app.gitwallet.co
   if (reservedSubdomain === "app" || DomainService.isVercelPreview(req)) {
     // if customer, then lock to /app/c/
 
