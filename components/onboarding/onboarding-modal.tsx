@@ -18,7 +18,7 @@ export default function OnboardingModal({
   const router = useRouter();
 
   return (
-    <Modal isOpen={isOpen} showCloseButton={false}>
+    <Modal isOpen={isOpen} maxWidth="max-w-xl" showCloseButton={false}>
       <OnboardingForm
         user={user}
         currentSite={currentSite}

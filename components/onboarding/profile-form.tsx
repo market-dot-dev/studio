@@ -102,30 +102,34 @@ export default function ProfileForm({
   };
 
   return (
-    <form className="w-full max-w-lg" onSubmit={handleSubmit}>
-      <div className="flex flex-col gap-8">
-        <div className="flex justify-center">
-          <Image
-            src="/gw-logo-nav.png"
-            alt="Gitwallet Logo"
-            className="h-16 w-16 shrink-0"
-            height={48}
-            width={48}
-          />
+    <form className="relative w-full" onSubmit={handleSubmit}>
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-3">
+          <div className="flex justify-center">
+            <Image
+              src="/gw-logo-nav.png"
+              alt="Gitwallet Logo"
+              className="h-11 w-11 shrink-0"
+              height={44}
+              width={44}
+            />
+          </div>
+
+          <div className="space-y-1 text-center">
+            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+              Welcome to Gitwallet
+            </h1>
+            <h2 className="text-base font-normal text-gray-900">
+              Tell us about your business
+            </h2>
+          </div>
         </div>
 
-        <div className="space-y-2 text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-gray-900">
-            Welcome to Gitwallet
-          </h1>
-          <h2 className="text-2xl font-normal text-gray-900">
-            Tell us about your business
-          </h2>
-        </div>
-
-        <div className="space-y-8">
+        <div className="space-y-6">
           <div className="space-y-2">
-            <label className="block text-sm text-gray-900">Business Name</label>
+            <label className="block text-sm font-medium text-gray-900">
+              Business Name
+            </label>
             <TextInput
               name="businessName"
               defaultValue={user.gh_username ?? ""}
@@ -136,7 +140,9 @@ export default function ProfileForm({
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm text-gray-900">Domain</label>
+            <label className="block text-sm font-medium text-gray-900">
+              Domain
+            </label>
             <div className="flex items-center justify-between gap-4 rounded-tremor-default border border-tremor-border bg-white shadow-tremor-input">
               <TextInput
                 className="rounded-r-none border-none bg-white shadow-none focus:border focus:border-gray-900"
@@ -159,13 +165,15 @@ export default function ProfileForm({
           </div>
 
           <div className="space-y-2">
-            <label className="flex items-baseline justify-between text-sm text-gray-900">
+            <label className="flex items-baseline gap-1 text-sm font-medium text-gray-900">
               Logo
-              <span className="ml-2 text-xs text-gray-500">Optional</span>
+              <span className="text-xs font-normal text-gray-500">
+                (Optional)
+              </span>
             </label>
             <div
               className={clsx(
-                "rounded-lg border border-dashed bg-gray-100 p-10 text-center transition-colors",
+                "rounded-lg border border-dashed bg-gray-50 p-10 text-center transition-colors",
                 isDraggingOverDropzone ? "border-gray-400" : "border-gray-300",
               )}
               onDragEnter={handleDragEnter}
@@ -222,7 +230,7 @@ export default function ProfileForm({
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm text-gray-900">
+            <label className="block text-sm font-medium text-gray-900">
               Where are you based out of?
             </label>
             <TextInput
@@ -234,7 +242,7 @@ export default function ProfileForm({
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm text-gray-900">
+            <label className="block text-sm font-medium text-gray-900">
               Are you a team or independent?
             </label>
             <div className="space-y-2">
@@ -242,7 +250,7 @@ export default function ProfileForm({
                 <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
                   <div className="flex items-center">
                     <UsersRound className="mr-3 h-5 w-5 text-gray-500" />
-                    <span className="text-sm text-gray-900">
+                    <span className="text-sm font-medium text-gray-900">
                       We&apos;re a team
                     </span>
                   </div>
@@ -261,7 +269,7 @@ export default function ProfileForm({
                 <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
                   <div className="flex items-center">
                     <UserRound className="mr-3 h-5 w-5 text-gray-500" />
-                    <span className="text-sm text-gray-900">
+                    <span className="text-sm font-medium text-gray-900">
                       It&apos;s just me
                     </span>
                   </div>
@@ -280,7 +288,7 @@ export default function ProfileForm({
           </div>
         </div>
 
-        <div className="flex w-full justify-end pt-6">
+        <div className="flex w-full justify-end pt-4">
           <Button
             className="bg-gray-900 text-white hover:bg-gray-800"
             type="submit"

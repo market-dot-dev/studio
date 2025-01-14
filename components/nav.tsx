@@ -191,20 +191,6 @@ export default function Nav({
         target: "_blank",
         icon: <FaGithubAlt width={18} />,
       },
-      ...(["admin"].includes(roleId || "")
-        ? [
-            {
-              name: "⚠️ DEBUG MENU ⚠️",
-              href: "",
-              isDivider: true,
-            },
-            {
-              name: "Debug",
-              href: `/admin/debug`,
-              icon: <GearIcon width={18} />,
-            },
-          ]
-        : []),
     ];
   }, [urlSegments, id]);
 
