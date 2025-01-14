@@ -238,7 +238,7 @@ export default function Nav({
                     {tab.icon}
                     <span className="text-sm font-medium">{tab.name}</span>
                     {tab.isBeta && (
-                      <Badge size="xs" tooltip="This feature is still in Beta">
+                      <Badge size="xs" tooltip="This feature is still in Beta" className="font-medium">
                         Beta
                       </Badge>
                     )}
