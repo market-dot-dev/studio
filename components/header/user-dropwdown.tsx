@@ -63,7 +63,7 @@ export default function UserDropwdown({ user }: { user: any }) {
                 target="_blank"
                 className="block w-full rounded-md px-2 py-1.5 transition-all hover:text-stone-900 hover:shadow-border focus-visible:text-stone-900 focus-visible:shadow-border"
               >
-                Go to market.dev
+                Explore market.dev
               </Link>
             </li>
             <li>

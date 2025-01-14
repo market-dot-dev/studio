@@ -1,10 +1,8 @@
-import { ReactNode, Suspense } from "react";
-import Profile from "@/components/profile";
+import { ReactNode } from "react";
 import Nav from "@/components/nav";
 import Header from '@/components/header/header'
 import { redirect } from "next/navigation";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
-import { Flex } from "@tremor/react";
 import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
 import { DashboardProvider } from "@/components/dashboard/dashboard-context";
 import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";

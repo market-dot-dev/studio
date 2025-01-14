@@ -227,7 +227,7 @@ export default function Nav({
               tab.href === "" ? (
                 <span
                   key={tab.name}
-                  className="font-small mb-1 ml-1 mt-4 text-xs font-medium uppercase tracking-wide text-stone-500"
+                  className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-bold uppercase tracking-wide text-stone-500"
                 >
                   {tab.name}
                 </span>
@@ -278,7 +278,7 @@ export default function Nav({
             tab.href === "" ? (
               <span
                 key={tab.name}
-                className="font-small mb-1 ml-1 mt-4 text-xs font-medium uppercase tracking-wide text-stone-500"
+                className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-semibold uppercase tracking-wide text-stone-500"
               >
                 {tab.name}
               </span>
@@ -294,7 +294,7 @@ export default function Nav({
                   } rounded px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                 >
                   {tab.icon}
-                  <span className="text-sm font-medium ">{tab.name}</span>
+                  <span className="text-sm font-medium">{tab.name}</span>
                   {tab.isBeta && (
                     <Badge size="xs" tooltip="This feature is still in Beta">
                       Beta
