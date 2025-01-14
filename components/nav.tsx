@@ -6,14 +6,14 @@ import {
   Package,
   Scroll,
   Menu,
-  Users,
+  UsersRound,
   Settings,
-  BarChart4,
   Code2,
-  Radar,
+  ScanSearch,
   Box,
   Home,
-  UserSearch,
+  UserRoundSearch,
+  ChartNoAxesColumnIncreasing as Chart,
 } from "lucide-react";
 import {
   useParams,
@@ -21,7 +21,6 @@ import {
   useSelectedLayoutSegments,
 } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { GearIcon } from "@radix-ui/react-icons";
 import { FaDiscord, FaGithubAlt } from "react-icons/fa";
 import { Badge } from "@tremor/react";
 
@@ -104,19 +103,19 @@ export default function Nav({
         name: "Customers",
         href: "/customers",
         isActive: urlSegments[0] === "customers",
-        icon: <Users width={18} />,
+        icon: <UsersRound width={18} />,
       },
       {
         name: "Prospects",
         href: "/prospects",
         isActive: urlSegments[0] === "prospects",
-        icon: <UserSearch width={18} />,
+        icon: <UserRoundSearch width={18} />,
       },
       {
         name: "Research",
         href: "/leads",
         isActive: urlSegments[0] === "leads",
-        icon: <Radar width={18} />,
+        icon: <ScanSearch width={18} />,
       },
 
       // Marketing
@@ -152,7 +151,7 @@ export default function Nav({
         name: "Reports",
         href: "/reports",
         isActive: urlSegments[0] === "reports",
-        icon: <BarChart4 width={18} />,
+        icon: <Chart width={18} />,
       },
       ...(["admin"].includes(roleId || "")
         ? [
@@ -164,7 +163,7 @@ export default function Nav({
             {
               name: "Debug",
               href: `/admin/debug`,
-              icon: <GearIcon width={18} />,
+              icon: <Settings width={18} />,
             },
           ]
         : []),
