@@ -5,10 +5,6 @@ import RoleService, { Role } from "./app/services/role-service";
 import DomainService from "./app/services/domain-service";
 import { SessionUser } from "./app/models/Session";
 
-const LEGACY_ROOT_DOMAIN = ".gitwallet.co";
-const ROOT_DOMAIN = ".market.dev";
-const CUSTOMER_ROOT_DOMAIN = ".store.dev";
-
 export const config = {
   matcher: [
     /*
