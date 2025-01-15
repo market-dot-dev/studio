@@ -22,6 +22,7 @@ import LoadingDots from "@/components/icons/loading-dots";
 import { Contract } from "@prisma/client";
 import { parseTierDescription } from "@/lib/utils";
 import SkeletonLoader from "@/components/common/skeleton-loader";
+import { getRootUrl } from "@/app/services/domain-service";
 
 const TierNotAvailable = () => {
   return (
@@ -38,14 +39,8 @@ const TierNotAvailable = () => {
   );
 };
 
-const ContractText = ({
-  checkoutProject,
-  contract,
-}: {
-  checkoutProject: string;
-  contract?: Contract;
-}) => {
-  const baseUrl = "https://app.market.dev/contracts";
+const ContractText = ({ contract }: { contract?: Contract }) => {
+  const baseUrl = getRootUrl("app", "/contracts");
   const url = contract
     ? `${baseUrl}/${contract.id}`
     : `${baseUrl}/gitwallet-msa`;
@@ -172,10 +167,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               {isContractLoading && !(tier?.id && !tier.contractId) ? (
                 <LoadingDots />
               ) : (
-                <ContractText
-                  checkoutProject={checkoutProject || ""}
-                  contract={contract}
-                />
+                <ContractText contract={contract} />
               )}
             </Text>
           )}

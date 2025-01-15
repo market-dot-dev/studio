@@ -3,6 +3,7 @@
 import { Button } from "@tremor/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
+import { getRootUrl } from "@/app/services/domain-service";
 
 export default function MobileMenu() {
   const [mobileNavOpen, setMobileNavOpen] = useState<boolean>(false);
@@ -116,7 +117,7 @@ export default function MobileMenu() {
           </li>
           <ul className="flex grow flex-wrap items-center justify-end">
             <li>
-              <Link href="https://app.market.dev/login">
+              <Link href={getRootUrl("app", "/login")}>
                 <Button
                   color="green"
                   variant="primary"

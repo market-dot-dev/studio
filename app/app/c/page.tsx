@@ -15,11 +15,12 @@ import CancelSubscriptionButton from "./subscriptions/cancel-subscription-button
 import Tabs from "../../../components/common/tabs";
 import FeatureService from "@/app/services/feature-service";
 import { parseTierDescription } from "@/lib/utils";
+import { getRootUrl } from "@/app/services/domain-service";
 
 type TierWithFeatures = (Tier & { features: Feature[] }) | null;
 
 const ContractLink = ({ contract }: { contract?: Contract }) => {
-  const baseUrl = "https://app.market.dev/c/contracts";
+  const baseUrl = getRootUrl("app", "/c/contracts");
   const url = contract
     ? `${baseUrl}/${contract.id}`
     : `${baseUrl}/gitwallet-msa`;

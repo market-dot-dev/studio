@@ -2,6 +2,7 @@ import Link from "next/link";
 import Dropdown from "./dropdown";
 import MobileMenu from "../mobile-menu";
 import Image from "next/image";
+import { getRootUrl } from "@/app/services/domain-service";
 
 export default function Header() {
   return (
@@ -36,7 +37,7 @@ export default function Header() {
               </li>
               <li>
                 <Link
-                  href="https://blog.market.dev"
+                  href={getRootUrl("blog", "/")}
                   className="flex items-center px-4 py-2 transition duration-150 ease-in-out"
                 >
                   Changelog
@@ -71,7 +72,7 @@ export default function Header() {
           <div className="hidden md:flex">
             <ul className="flex grow flex-wrap items-center justify-end">
               <li className="group">
-                <Link href="https://app.market.dev/login">
+                <Link href={getRootUrl("app", "/login")}>
                   <button className="rounded-full bg-white/25 px-4 py-2 ring-1 ring-white/40 transition group-hover:bg-white group-hover:text-gray-800">
                     Login →
                   </button>

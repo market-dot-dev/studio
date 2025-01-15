@@ -1,10 +1,12 @@
-"use client"
+"use client";
 
-import React, { useState, Suspense } from 'react'
-import Link from 'next/link';
-import Image from 'next/image';
+import React, { useState, Suspense } from "react";
+import Link from "next/link";
+import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { Transition } from "@headlessui/react";
+import { domainCopy } from "@/lib/copy";
+import { getRootUrl } from "@/app/services/domain-service";
 
 export default function UserDropwdown({ user }: { user: any }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -38,7 +40,7 @@ export default function UserDropwdown({ user }: { user: any }) {
         <Transition
           show={isOpen}
           as="div"
-          className="absolute right-0 top-full ml-4 w-[250px] origin-top-right rounded-md bg-white text-sm font-medium shadow-border-lg"
+          className="shadow-border-lg absolute right-0 top-full ml-4 w-[250px] origin-top-right rounded-md bg-white text-sm font-medium"
           enter="transition ease-out duration-200 transform"
           enterFrom="opacity-0 -translate-y-1"
           enterTo="opacity-100 translate-y-0"
@@ -59,11 +61,11 @@ export default function UserDropwdown({ user }: { user: any }) {
           <ul className="px-2 py-2.5 text-stone-500">
             <li>
               <Link
-                href="https://market.dev/"
+                href={getRootUrl()}
                 target="_blank"
-                className="block w-full rounded-md px-2 py-1.5 transition-all hover:text-stone-900 hover:shadow-border focus-visible:text-stone-900 focus-visible:shadow-border"
+                className="hover:shadow-border focus-visible:shadow-border block w-full rounded-md px-2 py-1.5 transition-all hover:text-stone-900 focus-visible:text-stone-900"
               >
-                Explore market.dev
+                Explore {domainCopy("root")}
               </Link>
             </li>
             <li>
@@ -76,7 +78,7 @@ export default function UserDropwdown({ user }: { user: any }) {
                         : "/customer-login",
                   })
                 }
-                className="text-left block w-full rounded-md px-2 py-1.5 transition-all hover:text-red-800 hover:shadow-border focus-visible:text-red-800 focus-visible:shadow-border"
+                className="hover:shadow-border focus-visible:shadow-border block w-full rounded-md px-2 py-1.5 text-left transition-all hover:text-red-800 focus-visible:text-red-800"
               >
                 Logout
               </button>

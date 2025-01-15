@@ -1,10 +1,12 @@
-import React from 'react'
-import Image from 'next/image'
-import Link from '@/components/home/link';
-import Section from '@/components/home/section';
-import FeatureCard from '@/components/home/feature-card';
-import { ScanSearch, Target, BookOpenCheck } from 'lucide-react';
-import { colors } from '@/lib/home/colors';
+import React from "react";
+import Image from "next/image";
+import Link from "@/components/home/link";
+import Section from "@/components/home/section";
+import FeatureCard from "@/components/home/feature-card";
+import { ScanSearch, Target, BookOpenCheck } from "lucide-react";
+import { colors } from "@/lib/home/colors";
+import { getRootUrl } from "@/app/services/domain-service";
+import { domainCopy } from "@/lib/copy";
 
 export default function Research() {
   return (
@@ -25,13 +27,13 @@ export default function Research() {
           title="Get listed on a premium marketplace"
           description={
             <>
-              <Link href="https://market.dev/">
+              <Link href={getRootUrl("root", "/")}>
                 <Image
-                  alt="market.dev logo"
+                  alt={domainCopy("root") + " logo"}
                   src="/market-dot-dev-logo.svg"
                   height={34}
                   width={118}
-                  aria-labelledby="market.dev"
+                  aria-labelledby={domainCopy("root")}
                   className="mr-[5px] inline h-[17px] w-auto shrink-0"
                 />
               </Link>
@@ -41,14 +43,14 @@ export default function Research() {
           }
           image={{
             src: "/market-screenshot.png",
-            alt: "market.dev screenshot"
+            alt: domainCopy("root") + " screenshot",
           }}
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
           link={{
-            text: "Explore market.dev",
-            href: "https://market.dev/",
+            text: "Explore " + domainCopy("root"),
+            href: getRootUrl("root", "/"),
           }}
           className="sm:aspect-[4/3] lg:aspect-[5/4]"
         />
