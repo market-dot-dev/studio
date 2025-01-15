@@ -11,6 +11,7 @@ import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 import SectionHeader from "./section-header";
+import DomainService from "@/app/services/domain-service";
 
 const checkoutCurrency = "USD";
 
@@ -23,8 +24,9 @@ interface RegistrationCheckoutSectionProps {
 }
 
 const ContractText = ({ contract }: { contract?: Contract }) => {
-  const baseUrl = "https://app.gitwallet.co/c/contracts";
-  const url = contract 
+  const baseUrl = DomainService.getRootUrl("app", "/c/contracts");
+  console.log("baseUrl", baseUrl);
+  const url = contract
     ? `${baseUrl}/${contract.id}`
     : `${baseUrl}/gitwallet-msa`;
   const contractName = contract?.name || "Standard Gitwallet MSA";
