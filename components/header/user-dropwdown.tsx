@@ -58,7 +58,7 @@ export default function UserDropwdown({ user }: { user: any }) {
             <h3 className="font-bold tracking-tight">{user.name}</h3>
           </div>
           <ul className="px-2 py-2.5 text-stone-500">
-            <li>
+            {/* <li>
               <Link
                 href={getRootUrl()}
                 target="_blank"
@@ -66,7 +66,7 @@ export default function UserDropwdown({ user }: { user: any }) {
               >
                 Explore {domainCopy()}
               </Link>
-            </li>
+            </li> */}
             <li>
               <button
                 onClick={() =>

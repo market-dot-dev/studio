@@ -5,9 +5,9 @@ import { Metadata } from "next";
 import "@radix-ui/themes/styles.css";
 import { getRootUrl } from "@/lib/domain";
 
-const title = "Gitwallet";
+const title = "store.dev";
 const description =
-  "Gitwallet: The business builder made for open source projects.";
+  "Storefronts for developers.";
 const image = "/thumbnail.png";
 
 export const metadata: Metadata = {
