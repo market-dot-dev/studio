@@ -1,39 +1,27 @@
-'use server';
+"use server";
 
 import { NextRequest } from "next/server";
 
-const RESERVED_SUBDOMAINS = ['app', 'sell'];
-const PROTOCOL = process.env.NEXT_PUBLIC_VERCEL_ENV === 'development' ? 'http' : 'https';
+const RESERVED_SUBDOMAINS = ["app", "sell", "blog"];
 
 class DomainService {
-  static getRootUrl(subdomain: string = 'app', path: string = '/') {
-    const host = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
-    const uri = `${PROTOCOL}://${subdomain}.${host}`;
-
-    const url = new URL(path, uri);
-    
-    url.port = process.env.PORT || '';
-
-    return url.toString();
-  }
-
-  static getRootUrlFromRequest(req: NextRequest, path: string = '/') {
+  static getRootUrlFromRequest(req: NextRequest, path: string = "/") {
     const protocol = req.nextUrl.protocol;
     const host = this.getHostnameFromRequest(req);
-    
+
     return `${protocol}//${host}${path}`;
   }
 
   static getReservedSubdomainFromRequest(req: NextRequest) {
-    if(this.isVercelPreview(req)) {
-      return 'app';
+    if (this.isVercelPreview(req)) {
+      return "app";
     }
 
     const subdomain = this.getSubdomainFromRequest(req);
-    
+
     console.log("Subdomain: ", subdomain);
 
-    if(!!subdomain && !RESERVED_SUBDOMAINS.includes(subdomain)) {
+    if (!!subdomain && !RESERVED_SUBDOMAINS.includes(subdomain)) {
       return null;
     } else {
       return subdomain;
@@ -44,7 +32,7 @@ class DomainService {
     const subdomain = this.getSubdomainFromRequest(req);
     const isPreview = DomainService.isVercelPreview(req);
 
-    if(isPreview || (!!subdomain && RESERVED_SUBDOMAINS.includes(subdomain))) {
+    if (isPreview || (!!subdomain && RESERVED_SUBDOMAINS.includes(subdomain))) {
       return null;
     } else {
       return subdomain;
@@ -52,12 +40,13 @@ class DomainService {
   }
 
   static getHostnameFromRequest(req: NextRequest) {
-    return req.headers.get('host') || '';
+    return req.headers.get("host") || "";
   }
 
   static isVercelPreview(req: NextRequest) {
     let host = DomainService.getHostnameFromRequest(req);
-    const vercelPreviewUrlPattern = /^gitwallet-web-git-[\w-]+-lab0324\.(?:vercel\.local|vercel\.app)(?::\d+)?$/;
+    const vercelPreviewUrlPattern =
+      /^gitwallet-web-git-[\w-]+-lab0324\.(?:vercel\.local|vercel\.app)(?::\d+)?$/;
 
     return vercelPreviewUrlPattern.test(host);
   }
@@ -65,9 +54,9 @@ class DomainService {
   static getSubdomainFromRequest(req: NextRequest) {
     let host = DomainService.getHostnameFromRequest(req);
 
-    const parts = host.split('.');
+    const parts = host.split(".");
 
-    if(parts.length < 3) {
+    if (parts.length < 3) {
       return null;
     } else {
       return parts[0];
@@ -76,4 +65,3 @@ class DomainService {
 }
 
 export default DomainService;
-export const { getRootUrl } = DomainService;

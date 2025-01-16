@@ -1,13 +1,11 @@
-import DomainService from "@/app/services/domain-service";
 import BlurImage from "@/components/blur-image";
 import { placeholderBlurhash, random } from "@/lib/utils";
 import { Site } from "@prisma/client";
-import { BarChart, ExternalLink } from "lucide-react";
+import { BarChart } from "lucide-react";
 import Link from "next/link";
-
+import { getRootUrl } from "@/lib/domain";
 export default function SiteCard({ data }: { data: Site }) {
-  // const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-  const url = DomainService.getRootUrl(data.subdomain ?? 'app');
+  const url = getRootUrl(data.subdomain ?? "app");
   return (
     <div className="relative rounded-lg border border-stone-200 pb-10 shadow-md transition-all hover:shadow-xl dark:border-stone-700 dark:hover:border-white">
       <Link
@@ -34,7 +32,7 @@ export default function SiteCard({ data }: { data: Site }) {
       </Link>
       <div className="absolute bottom-4 flex w-full justify-between space-x-4 px-4">
         <a
-          href={ url }
+          href={url}
           target="_blank"
           rel="noreferrer"
           className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200 dark:bg-stone-800 dark:text-stone-400 dark:hover:bg-stone-700"

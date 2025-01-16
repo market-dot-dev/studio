@@ -8,7 +8,7 @@ import { uploadLogo, validateSubdomain } from "@/app/services/SiteService";
 import { toast } from "sonner";
 import { isGitWalletError } from "@/lib/errors";
 import * as Sentry from "@sentry/nextjs";
-import { DEFAULT_LOGO_URL } from "@/lib/user";
+import { getRootUrl } from "@/lib/domain";
 
 interface ProfileData {
   businessName: string;
@@ -34,6 +34,7 @@ export default function ProfileForm({
   const [isDraggingOverDropzone, setIsDraggingOverDropzone] = useState(false);
   const [teamType, setTeamType] = useState<"team" | "individual" | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const defaultLogoUrl = `${getRootUrl("/gw-logo.png")}`;
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -153,7 +154,7 @@ export default function ProfileForm({
                 required
               />
               <span className="py-2 pr-3 text-sm text-gray-400">
-                .gitwallet.co
+                .store.dev
               </span>
             </div>
             {/* {subdomainError && (
@@ -189,7 +190,7 @@ export default function ProfileForm({
                 accept="image/*"
               />
               {file ||
-              (currentSite?.logo && currentSite.logo !== DEFAULT_LOGO_URL) ? (
+              (currentSite?.logo && currentSite.logo !== defaultLogoUrl) ? (
                 <div className="mx-auto flex flex-col items-center">
                   <Image
                     src={

@@ -4,92 +4,93 @@ import { notFound, redirect } from "next/navigation";
 
 import PageEditor from "@/components/site/page-editor";
 import PageHeading from "@/components/common/page-heading";
-import DomainServices from "@/app/services/domain-service";
 import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
 import FeatureService from "@/app/services/feature-service";
+import { getRootUrl } from "@/lib/domain";
 export default async function Page({ params }: { params: { id: string } }) {
-	const session = await getSession();
-	if (!session) {
-		redirect("/login");
-	}
-	// const data = await prisma.page.findUnique({
-	// 	where: {
-	// 		id: decodeURIComponent(params.id),
-	// 	},
-	// 	include: {
-	// 		site: {
-	// 			select: {
-	// 				id: true,
-	// 				name: true,
-	// 				description: true,
-	// 				subdomain: true,
-	// 				homepageId: true,
-	// 				user: {
-	// 					select: {
-	// 						name: true,
-	// 						image: true,
-	// 						projectName: true,
-	// 						projectDescription: true,
-	// 					}
-	// 				}
-	// 			},
-	// 		},
-	// 	},
-	// });
+  const session = await getSession();
+  if (!session) {
+    redirect("/login");
+  }
+  // const data = await prisma.page.findUnique({
+  // 	where: {
+  // 		id: decodeURIComponent(params.id),
+  // 	},
+  // 	include: {
+  // 		site: {
+  // 			select: {
+  // 				id: true,
+  // 				name: true,
+  // 				description: true,
+  // 				subdomain: true,
+  // 				homepageId: true,
+  // 				user: {
+  // 					select: {
+  // 						name: true,
+  // 						image: true,
+  // 						projectName: true,
+  // 						projectDescription: true,
+  // 					}
+  // 				}
+  // 			},
+  // 		},
+  // 	},
+  // });
 
-	// const activeFeatures = await FeatureService.findActiveByCurrentUser();
+  // const activeFeatures = await FeatureService.findActiveByCurrentUser();
 
-	const [data, activeFeatures] = await Promise.all([
-		prisma.page.findUnique({
-			where: {
-				id: decodeURIComponent(params.id),
-			},
-			include: {
-				site: {
-					select: {
-						id: true,
-						name: true,
-						description: true,
-						subdomain: true,
-						homepageId: true,
-						user: {
-							select: {
-								name: true,
-								image: true,
-								projectName: true,
-								projectDescription: true,
-							}
-						}
-					},
-				},
-			},
-		}),
-		FeatureService.findActiveByCurrentUser(),
-	]);
-			
-	
-	
+  const [data, activeFeatures] = await Promise.all([
+    prisma.page.findUnique({
+      where: {
+        id: decodeURIComponent(params.id),
+      },
+      include: {
+        site: {
+          select: {
+            id: true,
+            name: true,
+            description: true,
+            subdomain: true,
+            homepageId: true,
+            user: {
+              select: {
+                name: true,
+                image: true,
+                projectName: true,
+                projectDescription: true,
+              },
+            },
+          },
+        },
+      },
+    }),
+    FeatureService.findActiveByCurrentUser(),
+  ]);
 
-    if (!data || data.userId !== session.user.id) {
+  if (!data || data.userId !== session.user.id) {
     notFound();
-
-	
   }
 
-  const siteUrl = DomainServices.getRootUrl(data?.site?.subdomain ?? 'app');
-  
+  const siteUrl = getRootUrl(data?.site?.subdomain ?? "app");
+
   return (
     <FullScreenSwitcher>
-     <div className="flex justify-between w-full">
+      <div className="flex w-full justify-between">
         <div className="flex flex-row">
-          <PageHeading title={'Edit Page' + (data?.title? ": " + data.title : "")} />
+          <PageHeading
+            title={"Edit Page" + (data?.title ? ": " + data.title : "")}
+          />
         </div>
-        <div className="flex flex-row">
-        </div>
+        <div className="flex flex-row"></div>
       </div>
 
-
-    <PageEditor site={data?.site} page={data} siteUrl={siteUrl} homepageId={ data.site?.homepageId || null} hasActiveFeatures={!!activeFeatures?.length} />
+      <PageEditor
+        site={data?.site}
+        page={data}
+        siteUrl={siteUrl}
+        homepageId={data.site?.homepageId || null}
+        hasActiveFeatures={!!activeFeatures?.length}
+      />
     </FullScreenSwitcher>
-  )
+  );
 }
