@@ -4,8 +4,7 @@ import { User } from "@prisma/client";
 import { Prospect } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import UserService from "./UserService";
-import { domainCopy } from "@/lib/copy";
-import { getRootUrl } from "./domain-service";
+import { getRootUrl, domainCopy } from "@/lib/domain";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
 type RequiredUserProps = {
@@ -18,7 +17,7 @@ type RequiredProspectProps = {
   email: Prospect["email"];
 };
 
-const rootURL = domainCopy("root");
+const rootURL = domainCopy();
 const appURL = domainCopy("app");
 const rootURLWithProtocol = getRootUrl();
 const appURLWithProtocol = getRootUrl("app");
@@ -192,7 +191,7 @@ class EmailService {
   static async sendNewMaintainerSignUpEmail(
     user: RequiredUserProps,
   ): Promise<void> {
-    const subject = "Welcome to ${rootURL}!";
+    const subject = `Welcome to ${rootURL}!`;
     const text = `Hello ${user.name},\n\nThank you for registering to sell with ${rootURL}! The next steps are to set up your payment information and offerings at ${appURL} in order to start selling your services.\n\nGet started here: ${appURL}`;
     const html = `
       <p>Hello <strong>${user.name}</strong>,</p>
@@ -206,7 +205,7 @@ class EmailService {
   static async sendNewCustomerSignUpEmail(
     user: RequiredUserProps,
   ): Promise<void> {
-    const subject = "Welcome to ${rootURL}!";
+    const subject = `Welcome to ${rootURL}!`;
     const text = `Hello ${user.name},\n\nThank you for registering to sell with ${rootURL}!\n\nGet started here: ${appURL}`;
     const html = `
       <p>Hello <strong>${user.name}</strong>,</p>

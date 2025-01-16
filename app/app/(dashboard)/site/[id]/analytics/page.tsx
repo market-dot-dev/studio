@@ -1,16 +1,15 @@
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import AnalyticsMockup from "@/components/analytics";
-import DomainService from "@/app/services/domain-service";
 import SessionService from "@/app/services/SessionService";
-
+import { getRootUrl } from "@/lib/domain";
 export default async function SiteAnalytics({
   params,
 }: {
   params: { id: string };
 }) {
   const userId = await SessionService.getCurrentUserId();
-  
+
   if (!userId) {
     redirect("/login");
   }
@@ -24,7 +23,7 @@ export default async function SiteAnalytics({
   }
 
   // const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-  const url = DomainService.getRootUrl(data.subdomain ?? 'app');
+  const url = await getRootUrl(data.subdomain ?? "app");
   return (
     <>
       <div className="flex items-center justify-center sm:justify-start">

@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 import { getSiteData } from "@/lib/fetchers";
 import { Metadata } from "next";
-import { getRootUrl } from "@/app/services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 
 export async function generateMetadata({
   params,
@@ -14,12 +14,12 @@ export async function generateMetadata({
   if (!data) {
     return null;
   }
-  const image = await getRootUrl(data?.subdomain ?? 'app', `/api/og/${data.id}`);
-  
-  const {
-    logo,
-    user
-  } = data as {
+  const image = await getRootUrl(
+    data?.subdomain ?? "app",
+    `/api/og/${data.id}`,
+  );
+
+  const { logo, user } = data as {
     image: string;
     logo: string;
     user: {
@@ -28,10 +28,7 @@ export async function generateMetadata({
     };
   };
 
-  const {
-    projectName : title,
-    projectDescription: description,
-  } = user as {
+  const { projectName: title, projectDescription: description } = user as {
     projectName: string;
     projectDescription: string;
   };
@@ -42,7 +39,7 @@ export async function generateMetadata({
     openGraph: {
       title,
       description,
-      
+
       images: [image],
     },
     twitter: {
@@ -87,9 +84,5 @@ export default async function SiteLayout({
     return redirect(`https://${data.customDomain}`);
   }
 
-  return (
-    <>
-    {children}  
-    </>
-  );
+  return <>{children}</>;
 }

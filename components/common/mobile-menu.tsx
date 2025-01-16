@@ -3,7 +3,7 @@
 import { Button } from "@tremor/react";
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { getRootUrl } from "@/app/services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 
 export default function MobileMenu() {
   const [mobileNavOpen, setMobileNavOpen] = useState<boolean>(false);
@@ -99,11 +99,6 @@ export default function MobileMenu() {
                   Join the Discord
                 </Link>
               </li>
-              {/* <li>
-                  <Link href="#" className="font-medium text-sm text-gray-400 hover:text-purple-600 flex py-2 px-4 leading-tight">
-                    Documentation
-                  </Link>
-                </li> */}
               <li>
                 <Link
                   href="https://x.com/gitwallet"

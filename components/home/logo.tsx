@@ -1,7 +1,7 @@
 import React from "react";
 import Image from "next/image";
 import clsx from "clsx";
-import { domainCopy } from "@/lib/copy";
+import { domainCopy } from "@/lib/domain";
 
 export default function Logo({
   color = "black",
@@ -17,7 +17,7 @@ export default function Logo({
           ? "/store-dot-dev-logo-white.svg"
           : "/store-dot-dev-logo.svg"
       }
-      alt={domainCopy("root") + " logo"}
+      alt={domainCopy() + " logo"}
       height={32}
       width={164}
       className={clsx(className)}

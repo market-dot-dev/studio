@@ -10,7 +10,7 @@ import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-ste
 import RegistrationService from "@/app/services/registration-service";
 import Session from "@/app/models/Session";
 import AuthService from "@/app/services/auth-service";
-import { domainCopy } from "./copy";
+import { domainCopy } from "./domain";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
@@ -41,8 +41,8 @@ export const authOptions: NextAuthOptions = {
         return Math.floor(100000 + Math.random() * 900000).toString();
       },
       sendVerificationRequest: ({ identifier: email, token }) => {
-        const html = `<p>Your verification code for signing in to ${domainCopy("root")} is <strong>${token}</strong></p>`;
-        const text = `Your verification code for signing in to ${domainCopy("root")} is ${token}`;
+        const html = `<p>Your verification code for signing in to ${domainCopy()} is <strong>${token}</strong></p>`;
+        const text = `Your verification code for signing in to ${domainCopy()} is ${token}`;
         return EmailService.sendEmail(email, `Verification code`, text, html);
       },
     }),
@@ -88,7 +88,7 @@ export const authOptions: NextAuthOptions = {
               id: `dev-${credentials.gh_username}`, // Unique ID constructed using the GitHub username
               gh_username: credentials.gh_username, // GitHub username from the provided credentials
               name: "", // No default name, it will be set based on existing data or remain empty
-              email: `${credentials.gh_username}@gh.${domainCopy("root")}`, // No default email, it will be set based on existing data or remain empty
+              email: `${credentials.gh_username}@gh.${domainCopy()}`, // No default email, it will be set based on existing data or remain empty
               image: "", // No default image, it will be set based on existing data or remain empty
               roleId: "admin",
             };

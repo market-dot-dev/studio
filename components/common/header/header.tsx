@@ -2,7 +2,7 @@ import Link from "next/link";
 import Dropdown from "./dropdown";
 import MobileMenu from "../mobile-menu";
 import Image from "next/image";
-import { getRootUrl } from "@/app/services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 
 export default function Header() {
   return (

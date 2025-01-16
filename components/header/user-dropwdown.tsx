@@ -5,8 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { signOut } from "next-auth/react";
 import { Transition } from "@headlessui/react";
-import { domainCopy } from "@/lib/copy";
-import { getRootUrl } from "@/app/services/domain-service";
+import { getRootUrl, domainCopy } from "@/lib/domain";
 
 export default function UserDropwdown({ user }: { user: any }) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -65,7 +64,7 @@ export default function UserDropwdown({ user }: { user: any }) {
                 target="_blank"
                 className="hover:shadow-border focus-visible:shadow-border block w-full rounded-md px-2 py-1.5 transition-all hover:text-stone-900 focus-visible:text-stone-900"
               >
-                Explore {domainCopy("root")}
+                Explore {domainCopy()}
               </Link>
             </li>
             <li>

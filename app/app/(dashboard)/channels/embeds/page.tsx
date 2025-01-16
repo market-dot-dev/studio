@@ -3,7 +3,7 @@ import { getSite } from "@/lib/site/fetchers";
 import PageHeading from "@/components/common/page-heading";
 import githubEmbeds from "@/components/site/github-embeds";
 import GithubEmbedItem from "@/components/github/github-embed-item";
-import { getRootUrl } from "@/app/services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 import FeatureService from "@/app/services/feature-service";
 import PackageEmbeddings from "@/components/embedables/package-embeddings/package-embeddings";
 
@@ -18,6 +18,7 @@ export default async function EmbedChannel({
   ])) as any;
 
   const rootUrl = getRootUrl(site?.subdomain ?? "app");
+  console.log(`root url: ${rootUrl}`);
   return (
     <Flex flexDirection="col" alignItems="start" className="w-full gap-6">
       <PageHeading title="Embeds" />

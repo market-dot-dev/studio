@@ -5,7 +5,6 @@ import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
 import ChargeService from "@/app/services/charge-service";
 import SubscriptionService from "@/app/services/SubscriptionService";
 import { Charge, Feature, Contract } from "@prisma/client";
-import useContract from "@/app/hooks/use-contract";
 import ContractService from "@/app/services/contract-service";
 
 import { Card, Text, Bold, Badge } from "@tremor/react";
@@ -15,7 +14,7 @@ import CancelSubscriptionButton from "./subscriptions/cancel-subscription-button
 import Tabs from "../../../components/common/tabs";
 import FeatureService from "@/app/services/feature-service";
 import { parseTierDescription } from "@/lib/utils";
-import { getRootUrl } from "@/app/services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 
 type TierWithFeatures = (Tier & { features: Feature[] }) | null;
 

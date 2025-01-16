@@ -1,12 +1,12 @@
-'use server';
+"use server";
 
-import DomainService from '@/app/services/domain-service';
+import { getRootUrl } from "@/lib/domain";
 /*
 import PrimaryButton from '@/components/common/link-button';
 import PageHeading from '@/components/common/page-heading';
 import { Card } from '@tremor/react';
 */
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
 
 const SubscriptionSuccess = () => {
   /*
@@ -20,7 +20,7 @@ const SubscriptionSuccess = () => {
     </Card>
   );
   */
-  redirect(DomainService.getRootUrl('app', '/'));
+  redirect(getRootUrl("app", "/"));
 };
 
 export default SubscriptionSuccess;

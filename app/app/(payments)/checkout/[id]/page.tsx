@@ -22,7 +22,7 @@ import LoadingDots from "@/components/icons/loading-dots";
 import { Contract } from "@prisma/client";
 import { parseTierDescription } from "@/lib/utils";
 import SkeletonLoader from "@/components/common/skeleton-loader";
-import { getRootUrl } from "@/app/services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 
 const TierNotAvailable = () => {
   return (

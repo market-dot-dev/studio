@@ -3,7 +3,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { Providers } from "./providers";
 import { Metadata } from "next";
 import "@radix-ui/themes/styles.css";
-import { getRootUrl } from "./services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 
 const title = "Gitwallet";
 const description =
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     images: [image],
     creator: "@gitwallet",
   },
-  metadataBase: new URL(getRootUrl("root")),
+  metadataBase: new URL(getRootUrl()),
 };
 
 export default function RootLayout({

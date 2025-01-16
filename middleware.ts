@@ -4,6 +4,7 @@ import { getToken } from "next-auth/jwt";
 import RoleService, { Role } from "./app/services/role-service";
 import DomainService from "./app/services/domain-service";
 import { SessionUser } from "./app/models/Session";
+import { getRootUrl } from "./lib/domain";
 
 export const config = {
   matcher: [
@@ -40,7 +41,7 @@ const rewrite = (path: string, url: string) => {
 
 async function customMiddleware(req: NextRequest) {
   const url = req.nextUrl;
-  const rootUrl = DomainService.getRootUrl();
+  const rootUrl = getRootUrl();
 
   const ghUsername = DomainService.getGhUsernameFromRequest(req);
   const reservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);

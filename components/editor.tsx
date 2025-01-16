@@ -7,9 +7,8 @@ import { Editor as NovelEditor } from "novel";
 import TextareaAutosize from "react-textarea-autosize";
 import { cn } from "@/lib/utils";
 import LoadingDots from "./icons/loading-dots";
-import { ExternalLink } from "lucide-react";
 import { toast } from "sonner";
-import DomainService from "@/app/services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 
 type PostWithSite = Post & { site: { subdomain: string | null } | null };
 
@@ -17,13 +16,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
   let [isPendingSaving, startTransitionSaving] = useTransition();
   let [isPendingPublishing, startTransitionPublishing] = useTransition();
   const [data, setData] = useState<PostWithSite>(post);
-  const [hydrated, setHydrated] = useState(false);
-
-  // const url = process.env.NEXT_PUBLIC_VERCEL_ENV !== 'development'
-  //   ? `https://${data.site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/${data.slug}`
-  //   : `http://${data.site?.subdomain}.gitwallet.local:3000/${data.slug}`;
-
-  const url = DomainService.getRootUrl(data.site?.subdomain ?? 'app', data.slug);
+  const url = getRootUrl(data.site?.subdomain ?? "app", data.slug);
 
   // listen to CMD + S and override the default behavior
   useEffect(() => {
@@ -50,9 +43,7 @@ export default function Editor({ post }: { post: PostWithSite }) {
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center space-x-1 text-sm text-stone-400 hover:text-stone-500"
-          >
-            
-          </a>
+          ></a>
         )}
         <div className="rounded-lg bg-stone-100 px-2 py-1 text-sm text-stone-400 dark:bg-stone-800 dark:text-stone-500">
           {isPendingSaving ? "Saving..." : "Saved"}
