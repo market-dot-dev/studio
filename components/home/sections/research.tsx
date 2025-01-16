@@ -5,7 +5,6 @@ import Section from "@/components/home/section";
 import FeatureCard from "@/components/home/feature-card";
 import { ScanSearch, Target, BookOpenCheck } from "lucide-react";
 import { colors } from "@/lib/home/colors";
-import { getRootUrl, domainCopy } from "@/lib/domain";
 
 export default function Research() {
   return (
@@ -26,13 +25,13 @@ export default function Research() {
           title="Get listed on a premium marketplace"
           description={
             <>
-              <Link href={getRootUrl("root", "/")}>
+              <Link href={"https://market.dev"}>
                 <Image
-                  alt={domainCopy() + " logo"}
+                  alt={"market.dev logo"}
                   src="/market-dot-dev-logo.svg"
                   height={34}
                   width={118}
-                  aria-labelledby={domainCopy()}
+                  aria-labelledby={"market.dev logo"}
                   className="mr-[5px] inline h-[17px] w-auto shrink-0"
                 />
               </Link>
@@ -42,14 +41,14 @@ export default function Research() {
           }
           image={{
             src: "/market-screenshot.png",
-            alt: domainCopy() + " screenshot",
+            alt: "market.dev screenshot",
           }}
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
           link={{
-            text: "Explore " + domainCopy(),
-            href: getRootUrl("root", "/"),
+            text: "Explore market.dev",
+            href: "https://market.dev",
           }}
           className="sm:aspect-[4/3] lg:aspect-[5/4]"
         />

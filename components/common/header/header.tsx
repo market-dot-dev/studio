@@ -37,7 +37,7 @@ export default function Header() {
               </li>
               <li>
                 <Link
-                  href={getRootUrl("blog", "/")}
+                  href={"https://blog.market.dev"}
                   className="flex items-center px-4 py-2 transition duration-150 ease-in-out"
                 >
                   Changelog
