@@ -18,7 +18,7 @@ export default async function EmbedChannel({
   ])) as any;
 
   const rootUrl = getRootUrl(site?.subdomain ?? "app");
-  console.log(`root url: ${rootUrl}`);
+
   return (
     <Flex flexDirection="col" alignItems="start" className="w-full gap-6">
       <PageHeading title="Embeds" />

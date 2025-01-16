@@ -1,10 +1,10 @@
-'use server';
+"use server";
 
-import DomainService from '@/app/services/domain-service';
-import { redirect } from 'next/navigation';
+import { redirect } from "next/navigation";
+import { getRootUrl } from "@/lib/domain";
 
 const SubscriptionSuccess = () => {
-  redirect(DomainService.getRootUrl('app', '/'));
+  redirect(getRootUrl("app", "/"));
 };
 
 export default SubscriptionSuccess;

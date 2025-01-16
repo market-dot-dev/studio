@@ -32,7 +32,6 @@ export default function SiteAdmin({ id }: { id: string }) {
             ? getRootUrl(data.subdomain ?? "app")
             : "";
 
-          console.log(`root url: ${getRootUrl()}`);
           setSiteData(data);
           setUrl(url);
         } catch (e) {
