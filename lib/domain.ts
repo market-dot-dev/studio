@@ -4,8 +4,8 @@ const PROTOCOL =
 export function getRootUrl(subdomain: string = "app", path: string = "/") {
   const host = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
   const url = subdomain
-    ? `${PROTOCOL}://${subdomain}.${host}`
-    : `${PROTOCOL}://${host}`;
+    ? `${PROTOCOL}://${subdomain}.${host}${path}`
+    : `${PROTOCOL}://${host}${path}`;
 
   return url;
 }
