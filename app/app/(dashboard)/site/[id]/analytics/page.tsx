@@ -23,7 +23,7 @@ export default async function SiteAnalytics({
   }
 
   // const url = `${data.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
-  const url = await getRootUrl(data.subdomain ?? "app");
+  const url = getRootUrl(data.subdomain ?? "app");
   return (
     <>
       <div className="flex items-center justify-center sm:justify-start">

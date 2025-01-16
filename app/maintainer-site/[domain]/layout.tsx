@@ -14,10 +14,7 @@ export async function generateMetadata({
   if (!data) {
     return null;
   }
-  const image = await getRootUrl(
-    data?.subdomain ?? "app",
-    `/api/og/${data.id}`,
-  );
+  const image = getRootUrl(data?.subdomain ?? "app", `/api/og/${data.id}`);
 
   const { logo, user } = data as {
     image: string;
