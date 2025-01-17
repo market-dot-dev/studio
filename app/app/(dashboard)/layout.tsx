@@ -44,14 +44,14 @@ export default async function DashboardLayout({
       />
       <div>
         <Header />
-        <div className="relative pt-10">
+        <div className="pt-10">
           <Nav
             siteId={site?.id ?? null}
             roleId={user.roleId || "anonymous"}
             hasFeatures={activeFeatures.length != 0}
           />
-          <div className="flex min-h-screen w-full flex-col items-center sm:pl-60 bg-stone-50">
-            <div className="flex w-full max-w-screen-xl flex-col items-center p-4 sm:p-10 sm:pt-8 space-y-4">
+          <div className="flex min-h-screen w-full flex-col items-center md:pl-60 bg-stone-50">
+            <div className="flex w-full max-w-screen-xl flex-col items-center p-6 sm:p-10 sm:pt-8 space-y-4">
               {!onboarding.isDismissed && !showOnboardingModal && (
                 <OnboardingChecklist />
               )}

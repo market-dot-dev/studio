@@ -108,6 +108,8 @@ body {
 } */
 @layer base {
   :root {
+    --headerHeight: 40px;
+    --navHeight: calc(100vh - var(--headerHeight));
     --radius: 0.5rem;
   }
 }
