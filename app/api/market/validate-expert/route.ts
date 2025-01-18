@@ -1,4 +1,4 @@
-import { EchoService } from "@/app/services/echo-service";
+import { MarketService } from "@/app/services/market-service";
 import UserService, { getCurrentUser } from "@/app/services/UserService";
 
 interface LinkGitWalletResponse {
@@ -20,7 +20,7 @@ export async function POST() {
     });
   }
 
-  const response = await EchoService.validateAccount();
+  const response = await MarketService.validateAccount();
   if (response.status === 404) {
     return new Response(JSON.stringify({ error: "Not an expert" }), {
       status: 404,
@@ -29,7 +29,7 @@ export async function POST() {
 
   if (response.status != 200) {
     return new Response(
-      JSON.stringify({ error: "Failed to validate Echo account" }),
+      JSON.stringify({ error: "Failed to validate Market.dev account" }),
       {
         status: response.status,
       },
@@ -40,7 +40,7 @@ export async function POST() {
   const { linked, expert } = responseData;
   if (!linked) {
     return new Response(
-      JSON.stringify({ error: "Failed to validate Echo account" }),
+      JSON.stringify({ error: "Failed to validate Market.dev account" }),
       {
         status: 500,
       },
@@ -54,7 +54,7 @@ export async function POST() {
   }
 
   await UserService.updateUser(user.id, {
-    echoExpertId: expert.id.toString(),
+    marketExpertId: expert.id.toString(),
   });
 
   return new Response(

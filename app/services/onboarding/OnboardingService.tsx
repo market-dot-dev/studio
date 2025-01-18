@@ -10,7 +10,7 @@ import {
   businessDescription,
 } from "@/lib/constants/site-template";
 import { getCurrentUser } from "../UserService";
-import { EchoService } from "../echo-service";
+import { MarketService } from "../market-service";
 
 class OnboardingService {
   static async saveState(state: OnboardingState) {
@@ -43,7 +43,7 @@ class OnboardingService {
         businessType: true,
         stripeAccountId: true,
         createdAt: true,
-        echoExpertId: true,
+        marketExpertId: true,
         // select first site
         sites: {
           select: {
@@ -146,18 +146,18 @@ class OnboardingService {
     }
 
     try {
-      const response = await EchoService.validateAccount();
+      const response = await MarketService.validateAccount();
       const responseData = await response.json();
       if (
         response.status === 200 &&
         responseData.linked &&
         responseData.expert &&
-        result.echoExpertId === responseData.expert.id.toString()
+        result.marketExpertId === responseData.expert.id.toString()
       ) {
-        onboardingState.echoProfileConnected = true;
+        onboardingState.marketDevAccountConnected = true;
       }
     } catch (error) {
-      console.error("Failed to validate Echo account:", error);
+      console.error("Failed to validate Market.dev account:", error);
     }
 
     await OnboardingService.saveState(onboardingState);

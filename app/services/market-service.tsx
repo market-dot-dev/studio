@@ -1,13 +1,13 @@
 import { getCurrentUser } from "./UserService";
-const API_ENDPOINT = process.env.ECHO_API_ENDPOINT;
-const API_KEY = process.env.ECHO_API_KEY;
+const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;
+const API_KEY = process.env.MARKET_DEV_API_KEY;
 
 interface ExpertPackages {
   site: string;
   packages: string[];
 }
 
-export class EchoService {
+export class MarketService {
   static async validateAccount() {
     const user = await getCurrentUser();
     if (!user) {
@@ -39,12 +39,12 @@ export class EchoService {
       throw new Error("User not found");
     }
 
-    if (!user.echoExpertId) {
-      throw new Error("User is not an expert on Echo");
+    if (!user.marketExpertId) {
+      throw new Error("User is not an expert on Market.dev");
     }
 
     const response = await fetch(
-      `${API_ENDPOINT}experts/${user.echoExpertId}/packages_for_sale`,
+      `${API_ENDPOINT}experts/${user.marketExpertId}/packages_for_sale`,
       {
         method: "GET",
         headers: {
@@ -71,16 +71,16 @@ export class EchoService {
       throw new Error("User not found");
     }
 
-    if (!user.echoExpertId) {
-      throw new Error("User is not an expert on Echo");
+    if (!user.marketExpertId) {
+      throw new Error("User is not an expert on Market.dev");
     }
 
     console.log(
       `request url`,
-      `${API_ENDPOINT}experts/${user.echoExpertId}/packages_for_sale`,
+      `${API_ENDPOINT}experts/${user.marketExpertId}/packages_for_sale`,
     );
     const response = await fetch(
-      `${API_ENDPOINT}experts/${user.echoExpertId}/packages_for_sale`,
+      `${API_ENDPOINT}experts/${user.marketExpertId}/packages_for_sale`,
       {
         method: "POST",
         headers: {
@@ -103,12 +103,12 @@ export class EchoService {
       throw new Error("User not found");
     }
 
-    if (!user.echoExpertId) {
-      throw new Error("User is not an expert on Echo");
+    if (!user.marketExpertId) {
+      throw new Error("User is not an expert on Market.dev");
     }
 
     const response = await fetch(
-      `${API_ENDPOINT}experts/${user.echoExpertId}/packages_for_sale/site`,
+      `${API_ENDPOINT}experts/${user.marketExpertId}/packages_for_sale/site`,
       {
         method: "POST",
         headers: {
@@ -129,4 +129,4 @@ export const {
   getPublishedPackagesForExpert,
   updatePublishedPackagesForExpert,
   updatePackageSiteForExpert,
-} = EchoService;
+} = MarketService;

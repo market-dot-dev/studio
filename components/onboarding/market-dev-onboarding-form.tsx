@@ -2,13 +2,9 @@
 
 import { User } from "@prisma/client";
 import { Site } from "@prisma/client";
-import EchoProfileForm from "./echo-profile-form";
-import { useEffect, useState, useRef } from "react";
-import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
-import { toast } from "sonner";
-import LoadingDots from "../icons/loading-dots";
+import MarketDevProfileForm from "./market-dev-profile-form";
 
-export default function EchoOnboardingForm({
+export default function MarketDevOnboardingForm({
   user,
   currentSite,
   onComplete,
@@ -19,7 +15,7 @@ export default function EchoOnboardingForm({
 }) {
   return (
     <div className="flex w-full items-center justify-center">
-      <EchoProfileForm
+      <MarketDevProfileForm
         user={user}
         currentSite={currentSite}
         onComplete={onComplete}

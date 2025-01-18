@@ -42,13 +42,11 @@ export default function Nav({
   siteId,
   roleId,
   hasFeatures,
-  isEchoExpert,
 }: {
   children: ReactNode;
   siteId: string | null;
   roleId: string | null;
   hasFeatures: boolean | null;
-  isEchoExpert?: boolean;
 }) {
   const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
@@ -144,16 +142,12 @@ export default function Nav({
               icon: <Code2 width={18} />,
               isActive: urlSegments[1] === "embeds",
             },
-            ...(isEchoExpert
-              ? [
-                  {
-                    name: "Market",
-                    href: "/channels/market",
-                    icon: <Store width={18} />,
-                    isActive: urlSegments[1] === "market",
-                  },
-                ]
-              : []),
+            {
+              name: "Market",
+              href: "/channels/market",
+              icon: <Store width={18} />,
+              isActive: urlSegments[1] === "market",
+            },
           ]
         : []),
       // Analytics

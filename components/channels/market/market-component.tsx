@@ -5,7 +5,7 @@ import SelectPackagesButton from "./select-packages-button";
 import PackagesDisplay from "./packages-display";
 import { TierWithFeatures } from "@/app/services/TierService";
 import { useState } from "react";
-import { updatePublishedPackagesForExpert } from "@/app/services/echo-service";
+import { updatePublishedPackagesForExpert } from "@/app/services/market-service";
 import { getUserSiteRootUrl } from "@/app/services/domain-service";
 
 export default function MarketComponent({

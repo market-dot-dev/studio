@@ -17,6 +17,7 @@ import TeamSelectionRadioGroup, {
 } from "./team-selection-radio-group";
 import LocationEntryInput from "./location-entry-input";
 import BusinessNameInput from "./business-name-input";
+import ConnectMarketDevAccountButton from "../channels/market/connect-market-dev-account-button";
 
 interface ProfileData {
   businessName: string;
@@ -31,50 +32,15 @@ interface ProfileFormProps {
   currentSite?: Site;
 }
 
-export default function EchoProfileForm({
+export default function MarketDevProfileForm({
   user,
   onComplete,
   currentSite,
 }: ProfileFormProps) {
   const [teamType, setTeamType] = useState<"team" | "individual" | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [validateEchoExpertLoading, setValidateEchoExpertLoading] =
+  const [isMarketDevAccountConnected, setIsMarketDevAccountConnected] =
     useState(false);
-  const [isEchoExpertValidated, setIsEchoExpertValidated] = useState(
-    user.echoExpertId ? true : false,
-  );
-
-  const validateEchoExpert = async () => {
-    setValidateEchoExpertLoading(true);
-    try {
-      const response = await fetch(`/api/echo/validate-expert`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.status === 404) {
-        toast.error(
-          "You are not an expert on Echo. Make sure you have an account created on Echo.",
-        );
-        return;
-      }
-
-      if (response.status !== 200) {
-        toast.error("Failed to validate your Echo account. Please try again.");
-        return;
-      }
-
-      await refreshAndGetState();
-      setIsEchoExpertValidated(true);
-      toast.success("Echo account connected successfully");
-    } catch (error) {
-      toast.error("Error validating your Echo account. Please try again.");
-    } finally {
-      setValidateEchoExpertLoading(false);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -141,16 +107,12 @@ export default function EchoProfileForm({
         <div className="space-y-8">
           <div className="space-y-2">
             <label className="block text-sm text-gray-900">
-              Connect your Echo Expert Profile
+              Connect your Market.dev account
             </label>
-            <Button
-              className="bg-gray-900 text-white hover:bg-gray-800"
-              disabled={isEchoExpertValidated}
-              loading={validateEchoExpertLoading}
-              onClick={validateEchoExpert}
-            >
-              Connect
-            </Button>
+            <ConnectMarketDevAccountButton
+              user={user}
+              onComplete={() => setIsMarketDevAccountConnected(true)}
+            />
           </div>
           <BusinessNameInput userGithubUsername={user.gh_username} />
           <LocationEntryInput />
@@ -165,7 +127,7 @@ export default function EchoProfileForm({
             className="bg-gray-900 text-white hover:bg-gray-800"
             type="submit"
             loading={isLoading}
-            disabled={isLoading || !isEchoExpertValidated}
+            disabled={isLoading || !isMarketDevAccountConnected}
           >
             Next
           </Button>

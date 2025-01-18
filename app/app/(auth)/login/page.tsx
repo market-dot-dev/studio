@@ -17,10 +17,10 @@ export default async function LoginPage({
     redirect("/");
   }
 
-  let loginAndOnboardEchoExpert = false;
+  let loginAndOnboardMarketDev = false;
 
-  if (searchParams.source === "echo") {
-    loginAndOnboardEchoExpert = true;
+  if (searchParams.source === "market.dev") {
+    loginAndOnboardMarketDev = true;
   }
 
   return (
@@ -47,7 +47,9 @@ export default async function LoginPage({
         >
           <GithubLoginButton
             callbackUrl={
-              loginAndOnboardEchoExpert ? "/?onboardingType=echo" : undefined
+              loginAndOnboardMarketDev
+                ? "/?onboardingType=market.dev"
+                : undefined
             }
           />
         </Suspense>

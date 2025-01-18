@@ -49,7 +49,6 @@ export default async function DashboardLayout({
           siteId={site?.id ?? null}
           roleId={user.roleId || "anonymous"}
           hasFeatures={activeFeatures.length != 0}
-          isEchoExpert={user.echoExpertId != null}
         >
           <Suspense fallback={<div>Loading...</div>}>
             <Profile />
