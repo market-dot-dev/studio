@@ -54,7 +54,7 @@ model User {
   charges                  Charge[]
   contracts                Contract[]
   prospects                Prospect[]
-  marketExpertId       String?
+  marketExpertId           String?
 }
 
 model Account {

@@ -6,13 +6,13 @@ export const defaultOnboardingState: OnboardingState = {
   setupSite: false,
   setupBusiness: false,
   isDismissed: false,
-  echoProfileConnected: false,
+  marketDevAccountConnected: false,
 };
 
 export interface OnboardingState extends Exclude<OnboardingStepsType, null> {
   setupBusiness: boolean;
   preferredServices?: string[];
-  echoProfileConnected: boolean;
+  marketDevAccountConnected: boolean;
   isDismissed: boolean;
 }
 
