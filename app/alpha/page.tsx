@@ -1,16 +1,20 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Col, Grid, Badge, Divider, Button } from "@tremor/react";
+import { Col, Grid, Badge } from "@tremor/react";
 import DashboardCard from "@/components/common/dashboard-card";
 
 import GithubLoginButton from "@/app/app/(auth)/login/github-login-button";
-import { Accordion, AccordionHeader, AccordionBody, AccordionList } from "@tremor/react";
+import {
+  Accordion,
+  AccordionHeader,
+  AccordionBody,
+  AccordionList,
+} from "@tremor/react";
 import { Suspense } from "react";
-import DomainService from "../services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 
 const surveyLink = "https://form.typeform.com/to/D8fpSsxs";
-// const loginUrl = process.env.NODE_ENV === "development" ? `http://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/customer-login` : `https://app.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/customer-login`;
-const loginUrl = DomainService.getRootUrl('app', '/customer-login');
+
 // Define a type for the testimonial props, including the logo
 type TestimonialProps = {
   ecosystem: string;
@@ -25,22 +29,27 @@ type FAQItem = {
 const frequentlyAskedQuestions: FAQItem[] = [
   {
     question: "What does this mean for my open source license?",
-    answer: "Nothing changes with your OSS code or license. Gitwallet is a toolkit for any services that you personally provide for companies."
+    answer:
+      "Nothing changes with your OSS code or license. Gitwallet is a toolkit for any services that you personally provide for companies.",
   },
   {
     question: "Can I use Gitwallet for anything besides support?",
-    answer: "Soon. Support is where we are starting, but we are working on adding more features to help you build a business around your OSS."
+    answer:
+      "Soon. Support is where we are starting, but we are working on adding more features to help you build a business around your OSS.",
   },
   {
     question: "Who is building Gitwallet?",
-    answer: "Gitwallet is being built by Lab0324, a product studio based in Toronto, with developers and designers around the world. We are also working closely with maintainers across ecosystems. If you want to get in touch, feel free to DM <a href=\"https://www.x.com/tarunsachdeva\" target=\"_blank\"><u>the founder</u></a>!"
+    answer:
+      'Gitwallet is being built by Lab0324, a product studio based in Toronto, with developers and designers around the world. We are also working closely with maintainers across ecosystems. If you want to get in touch, feel free to DM <a href="https://www.x.com/tarunsachdeva" target="_blank"><u>the founder</u></a>!',
   },
   {
     question: "How can I learn more and participate?",
-    answer: "First - thank you for your interest! The best way to participate is join our <a href=\"" + surveyLink + "\" target=\"_blank\"><u>design partnership</u></a> to get early access and help shape Gitwallet with other maintainers."
-  }
+    answer:
+      'First - thank you for your interest! The best way to participate is join our <a href="' +
+      surveyLink +
+      '" target="_blank"><u>design partnership</u></a> to get early access and help shape Gitwallet with other maintainers.',
+  },
 ];
-
 
 const logoPath = "/";
 // A simple component to display each testimonial with a logo
@@ -52,81 +61,136 @@ const EcosystemLogo: React.FC<TestimonialProps> = ({ ecosystem, logoSrc }) => (
 );
 
 const renderSectionHeading = (text: string) => {
-  return (
-    <h3 className="text-2xl font-semibold mb-4">{text}</h3>
-  );
+  return <h3 className="mb-4 text-2xl font-semibold">{text}</h3>;
 };
 
+export default async function HomePage() {
+  const loginUrl = getRootUrl("app", "/customer-login");
 
-export default function HomePage() {
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
-
+    <div className="flex min-h-screen flex-col md:flex-row">
       {/* Left Column */}
-      <div className="md:fixed top-0 left-0 w-full md:w-1/2 h-full bg-slate-800 text-slate-50 flex flex-col justify-center p-8 lg:py-32 xl:px-32" style={{ backgroundImage: "url(/voronoi.png)" }}>
+      <div
+        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 p-8 text-slate-50 md:fixed md:w-1/2 lg:py-32 xl:px-32"
+        style={{ backgroundImage: "url(/voronoi.png)" }}
+      >
         <div className="overflow-y-auto">
           <div className="w-7/8 lg:w-5/6">
-            <Image alt="Gitwallet" src="/logo-white.png" height={0} width={130} className="mb-6" />
-            <Badge size="xs" className="mb-4">Now Open for Alpha Users</Badge>
-            <h1 className="text-4xl font-light leading-8 mb-6">The business builder made for open source projects.</h1>
-            <p className="text-xl font-extralight leading-6 mb-6">Gitwallet is a toolkit to <b>build, sell and manage</b> robust support offerings for your repos and ecosystems.</p>
+            <Image
+              alt="Gitwallet"
+              src="/logo-white.png"
+              height={0}
+              width={130}
+              className="mb-6"
+            />
+            <Badge size="xs" className="mb-4">
+              Now Open for Alpha Users
+            </Badge>
+            <h1 className="mb-6 text-4xl font-light leading-8">
+              The business builder made for open source projects.
+            </h1>
+            <p className="mb-6 text-xl font-extralight leading-6">
+              Gitwallet is a toolkit to <b>build, sell and manage</b> robust
+              support offerings for your repos and ecosystems.
+            </p>
             <div>
               <Suspense>
                 <GithubLoginButton />
               </Suspense>
               <p className="font-bold">Customer Login</p>
-                <p className="font-light mb-8">Already a customer? <a href={loginUrl} className="underline underline-offset-2">Login here</a>.</p>
+              <p className="mb-8 font-light">
+                Already a customer?{" "}
+                <a href={loginUrl} className="underline underline-offset-2">
+                  Login here
+                </a>
+                .
+              </p>
             </div>
           </div>
         </div>
       </div>
 
       {/* Right Column */}
-      <div className="w-full md:w-1/2 ml-auto bg-slate-100 text-slate-800 overflow-y-auto p-8 md:p-16">
-        <section className="mb-8 w-7/8 lg:w-5/6">
+      <div className="ml-auto w-full overflow-y-auto bg-slate-100 p-8 text-slate-800 md:w-1/2 md:p-16">
+        <section className="w-7/8 mb-8 lg:w-5/6">
           {renderSectionHeading("Purpose built for Maintainers")}
-          <p className="mb-4">Gitwallet is a toolkit for open source maintainers to commercialize their services for their repos and ecosystems. We help leading maintainers create robust support offerings, sell across channels, and grow their business.</p>
+          <p className="mb-4">
+            Gitwallet is a toolkit for open source maintainers to commercialize
+            their services for their repos and ecosystems. We help leading
+            maintainers create robust support offerings, sell across channels,
+            and grow their business.
+          </p>
         </section>
 
         <section className="mb-8">
           {renderSectionHeading("A Complete Toolkit")}
 
-          <Grid numItems={1} numItemsLg={3} className="text-sm text-slate-50 w-7/8 lg:w-5/6 gap-4">
+          <Grid
+            numItems={1}
+            numItemsLg={3}
+            className="w-7/8 gap-4 text-sm text-slate-50 lg:w-5/6"
+          >
             <Col>
-              <DashboardCard className="bg-emerald-600 hover:shadow-lg hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-t hover:from-emerald-600 hover:to-emerald-800">
-                <h2 className="font-bold mb-2">Setup Support Tiers</h2>
-                <p className="font-light mb-8">Quickly build robust support offerings that work for you and your customers.</p>
+              <DashboardCard className="bg-emerald-600 duration-100 hover:z-50 hover:scale-105 hover:bg-gradient-to-r hover:bg-gradient-to-t hover:from-emerald-600 hover:to-emerald-800 hover:shadow-lg hover:transition-transform">
+                <h2 className="mb-2 font-bold">Setup Support Tiers</h2>
+                <p className="mb-8 font-light">
+                  Quickly build robust support offerings that work for you and
+                  your customers.
+                </p>
               </DashboardCard>
             </Col>
 
             <Col>
-              <DashboardCard className="bg-emerald-700 hover:shadow-lg hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-b hover:from-emerald-600 hover:to-emerald-700">
-                <h2 className="font-bold mb-2">Sell Across Channels</h2>
-                <p className="font-light mb-8">Setup a hosted site, customizable embeds, and direct sales to market and sell your services.</p>
+              <DashboardCard className="bg-emerald-700 duration-100 hover:z-50 hover:scale-105 hover:bg-gradient-to-b hover:bg-gradient-to-r hover:from-emerald-600 hover:to-emerald-700 hover:shadow-lg hover:transition-transform">
+                <h2 className="mb-2 font-bold">Sell Across Channels</h2>
+                <p className="mb-8 font-light">
+                  Setup a hosted site, customizable embeds, and direct sales to
+                  market and sell your services.
+                </p>
               </DashboardCard>
             </Col>
 
             <Col>
-              <DashboardCard className="bg-emerald-800 hover:scale-105 hover:z-50 hover:transition-transform duration-100 hover:bg-gradient-to-r hover:bg-gradient-to-b hover:from-emerald-700 hover:to-emerald-600">
-                <h2 className="font-bold mb-2">Manage Your Business</h2>
-                <p className="font-light mb-8">All your reports, customers, payments and contract information in one place.</p>
+              <DashboardCard className="bg-emerald-800 duration-100 hover:z-50 hover:scale-105 hover:bg-gradient-to-b hover:bg-gradient-to-r hover:from-emerald-700 hover:to-emerald-600 hover:transition-transform">
+                <h2 className="mb-2 font-bold">Manage Your Business</h2>
+                <p className="mb-8 font-light">
+                  All your reports, customers, payments and contract information
+                  in one place.
+                </p>
               </DashboardCard>
             </Col>
 
             <Col numColSpan={1} numColSpanLg={3}>
               <DashboardCard>
                 <div className="text-slate-800">
-                  <Badge size="xs" className="me-2 mb-1.5">For Software Teams</Badge>
-                <p className="text-slate-800"><b>Manage OSS Relationships:</b> We help companies build and scale commercial relationships with the open source ecosystems most important to them.</p>
-                  </div>
+                  <Badge size="xs" className="mb-1.5 me-2">
+                    For Software Teams
+                  </Badge>
+                  <p className="text-slate-800">
+                    <b>Manage OSS Relationships:</b> We help companies build and
+                    scale commercial relationships with the open source
+                    ecosystems most important to them.
+                  </p>
+                </div>
               </DashboardCard>
             </Col>
           </Grid>
         </section>
 
-        <section className="mb-8  w-7/8 lg:w-5/6">
+        <section className="w-7/8 mb-8 lg:w-5/6">
           {renderSectionHeading("Get Involved")}
-          <p className="mb-8">We are working with maintainers across ecosystems to build Gitwallet. If you want to get involved, <Link href={surveyLink} target="_blank" className="underline underline-offset-2">join our design partnership</Link> to get early access and help shape the early product.</p>
+          <p className="mb-8">
+            We are working with maintainers across ecosystems to build
+            Gitwallet. If you want to get involved,{" "}
+            <Link
+              href={surveyLink}
+              target="_blank"
+              className="underline underline-offset-2"
+            >
+              join our design partnership
+            </Link>{" "}
+            to get early access and help shape the early product.
+          </p>
 
           {/* Iterate over testimonials */}
           <div className="flex flex-row gap-4">
@@ -145,15 +209,17 @@ export default function HomePage() {
           <AccordionList className="w-7/8 lg:w-5/6">
             {frequentlyAskedQuestions.map((item, index) => (
               <Accordion key={index}>
-                <AccordionHeader className="py-2 text-start">{item.question}</AccordionHeader>
-                <AccordionBody dangerouslySetInnerHTML={{ __html: item.answer }}></AccordionBody>
+                <AccordionHeader className="py-2 text-start">
+                  {item.question}
+                </AccordionHeader>
+                <AccordionBody
+                  dangerouslySetInnerHTML={{ __html: item.answer }}
+                ></AccordionBody>
               </Accordion>
             ))}
           </AccordionList>
-
         </section>
       </div>
-
     </div>
   );
 }

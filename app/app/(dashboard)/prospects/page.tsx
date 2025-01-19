@@ -13,7 +13,7 @@ export default async function ProspectsPage() {
     <div className="flex max-w-screen-xl flex-col space-y-12">
       <div className="flex w-full justify-between">
         <div className="flex flex-col">
-          <PageHeading title="All Prospects" />
+          <PageHeading title="Prospects" />
           <Text>
             View all prospects who have submitted an interest on one of your
             packages.

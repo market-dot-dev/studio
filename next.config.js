@@ -6,18 +6,24 @@ const nextConfig = {
     serverActions: {
       allowForwardedHosts: [
         "gitwallet.local:3000",
-        "gitwallet.co",
         "*.gitwallet.local:3000",
-        "*.gitwallet.co",
+        "store.local:3000",
+        "*.store.local:3000",
         "gitwallet.co",
-        "gitwallet.local:3000",
+        "store.dev",
+        "*.gitwallet.co",
+        "*.store.dev",
         process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "*.vercel.app" : "",
       ].filter(Boolean),
       allowedOrigins: [
-        "*.gitwallet.local:3000",
-        "*.gitwallet.co",
-        "gitwallet.co",
         "gitwallet.local:3000",
+        "store.local:3000",
+        "*.gitwallet.local:3000",
+        "*.store.local:3000",
+        "*.gitwallet.co",
+        "*.store.dev",
+        "gitwallet.co",
+        "store.dev",
         process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "*.vercel.app" : "",
       ].filter(Boolean),
     },
@@ -36,12 +42,30 @@ const nextConfig = {
       { hostname: "flag.vercel.app" },
       { hostname: "illustrations.popsy.co" },
       { hostname: "www.gitwallet.co" },
+      { hostname: "www.store.dev" },
     ],
   },
   logging: {
     fetches: {
       fullUrl: true,
     },
+  },
+
+  // Redirect *.gitwallet.co -> *.store.dev
+  async redirects() {
+    return [
+      {
+        source: "/:path*",
+        has: [
+          {
+            type: "host",
+            value: "^(?<subdomain>.*)\\.gitwallet\\.co$",
+          },
+        ],
+        destination: "https://:subdomain.store.dev/:path*",
+        permanent: true,
+      },
+    ];
   },
 };
 

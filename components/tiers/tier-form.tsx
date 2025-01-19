@@ -43,9 +43,9 @@ import {
 } from "@tremor/react";
 import useCurrentSession from "@/app/hooks/use-current-session";
 import LinkButton from "../common/link-button";
-import { getRootUrl } from "@/app/services/domain-service";
 import { Check, Copy, Wallet, Mail } from "lucide-react";
 import TierDeleteButton from "./tier-delete-button";
+import { getRootUrl } from "@/lib/domain";
 
 interface TierFormProps {
   tier?: Partial<Tier>;
@@ -127,21 +127,7 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({
 const TierLinkCopier = ({ tier }: { tier: Tier }) => {
   const [isCopied, setIsCopied] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [link, setLink] = useState("");
-
-  useEffect(() => {
-    const rootUrlPromise = getRootUrl(
-      "app",
-      `/checkout/${tier.id}`,
-    ) as unknown as Promise<string>;
-    rootUrlPromise
-      .then((val) => {
-        setLink(val);
-      })
-      .catch((err) => {
-        setErrorMessage(err.message);
-      });
-  }, [tier.id]);
+  const link = getRootUrl("app", `/checkout/${tier.id}`);
 
   const copyToClipboard = async () => {
     if (window.location.protocol !== "https:") {

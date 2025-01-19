@@ -2,26 +2,9 @@
 
 import { NextRequest } from "next/server";
 
-const RESERVED_SUBDOMAINS = ["app", "sell"];
-const PROTOCOL =
-  process.env.NEXT_PUBLIC_VERCEL_ENV === "development" ? "http" : "https";
+const RESERVED_SUBDOMAINS = ["app", "sell", "blog"];
 
 class DomainService {
-  static getRootUrl(subdomain: string = "app", path: string = "/") {
-    const host = process.env.NEXT_PUBLIC_ROOT_DOMAIN;
-    const uri = `${PROTOCOL}://${subdomain}.${host}`;
-
-    const url = new URL(path, uri);
-
-    url.port = process.env.PORT || "";
-
-    return url.toString();
-  }
-
-  static getUserSiteRootUrl(subdomain: string) {
-    return `${PROTOCOL}://${subdomain}.${process.env.NEXT_PUBLIC_VERCEL_ENV === "development" ? process.env.NEXT_PUBLIC_ROOT_DOMAIN : "gitwallet.co"}`;
-  }
-
   static getRootUrlFromRequest(req: NextRequest, path: string = "/") {
     const protocol = req.nextUrl.protocol;
     const host = this.getHostnameFromRequest(req);
@@ -82,4 +65,3 @@ class DomainService {
 }
 
 export default DomainService;
-export const { getRootUrl, getUserSiteRootUrl } = DomainService;

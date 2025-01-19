@@ -11,22 +11,16 @@ export default function HomePage() {
   return (
     <>
       <Hero />
-      <Customers />
-      <span id="product" className="hidden"></span>{" "}
-      {/* Anchor for product nav link */}
+      <span id="product" className="hidden"></span>{" "} {/* Anchor for product nav link */}
       <Sell />
       <Testimonial
         quote={
           <>
-            Gitwallet helped our collective of core maintainers{" "}
+            Using store.dev, our maintainer collective set up and{" "}
             <span className="text-marketing-primary">
-              set up our first commercial se
-              <span className="tracking-[-0.005em]">r</span>vice tiers in under
-              a week
-            </span>
-            . Their perspective working in and around engineering and creator
-            communities was instrumental in helping us think through the
-            messaging that would resonate most.
+              started selling our first commercial se
+              <span className="tracking-[-0.005em]">r</span>vice tiers within a day
+            </span>. We love working with them.
           </>
         }
         quotee={{
@@ -37,7 +31,7 @@ export default function HomePage() {
           },
           company: {
             name: "Shipyard",
-            url: "https://ipshipyard.gitwallet.co/",
+            url: "https://ipshipyard.store.dev/",
           },
         }}
       />

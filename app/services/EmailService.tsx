@@ -4,7 +4,7 @@ import { User } from "@prisma/client";
 import { Prospect } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import UserService from "./UserService";
-
+import { getRootUrl, domainCopy } from "@/lib/domain";
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
 type RequiredUserProps = {
@@ -17,9 +17,13 @@ type RequiredProspectProps = {
   email: Prospect["email"];
 };
 
+const rootURL = domainCopy();
+const appURL = domainCopy("app");
+const rootURLWithProtocol = getRootUrl();
+const appURLWithProtocol = getRootUrl("app");
+
 class EmailService {
-  static headerImage =
-    '<img src="https://gitwallet.co/gw-logo.png" alt="Gitwallet" style="width:50px; height:auto;"><br /><br />';
+  static headerImage = `<img src="${rootURLWithProtocol}/gw-logo.png" alt="Gitwallet" style="width:50px; height:auto;"><br /><br />`;
   static footerMessage = "<p>Thank you,<br>The Gitwallet Team</p>";
 
   static async sendEmail(
@@ -107,8 +111,8 @@ class EmailService {
     tierName: string,
   ) {
     const subject = `Thank you for purchasing ${tierName}!`;
-    const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at https://app.gitwallet.co to manage your subscription & benefits.`;
-    const html = `Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier. Please visit your <a href="https://app.gitwallet.co/customer-login">dashboard</a> to manage your subscription & benefits.`;
+    const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at ${appURLWithProtocol} to manage your subscription & benefits.`;
+    const html = `Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier. Please visit your <a href="${appURLWithProtocol}/customer-login">dashboard</a> to manage your subscription & benefits.`;
 
     try {
       await this.sendEmail(customer.email, subject, text, html);
@@ -123,8 +127,8 @@ class EmailService {
     tierName: string,
   ) {
     const subject = `Thank you for purchasing ${tierName}!`;
-    const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at https://app.gitwallet.co. to view your package benefits`;
-    const html = `Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier. Please visit your <a href="https://app.gitwallet.co/customer-login">dashboard</a> to view your package benefits.`;
+    const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at ${appURLWithProtocol} to view your package benefits`;
+    const html = `Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier. Please visit your <a href="${appURLWithProtocol}/customer-login">dashboard</a> to view your package benefits.`;
 
     try {
       await this.sendEmail(customer.email, subject, text, html);
@@ -187,12 +191,12 @@ class EmailService {
   static async sendNewMaintainerSignUpEmail(
     user: RequiredUserProps,
   ): Promise<void> {
-    const subject = "Welcome to gitwallet.co!";
-    const text = `Hello ${user.name},\n\nThank you for registering with gitwallet.co! The next steps are to set up your payment information and offerings at app.gitwallet.co in order to start selling your services.\n\nGet started here: app.gitwallet.co`;
+    const subject = `Welcome to ${rootURL}!`;
+    const text = `Hello ${user.name},\n\nThank you for registering to sell with ${rootURL}! The next steps are to set up your payment information and offerings at ${appURL} in order to start selling your services.\n\nGet started here: ${appURL}`;
     const html = `
       <p>Hello <strong>${user.name}</strong>,</p>
-      <p>Thank you for registering with <strong>gitwallet.co</strong>! The next steps are to set up your payment information and offerings at <a href="https://app.gitwallet.co">app.gitwallet.co</a> in order to start selling your services.</p>
-      <p>Get started here: <a href="https://app.gitwallet.co">app.gitwallet.co</a></p>
+      <p>Thank you for registering to sell with <strong>${rootURL}</strong>! The next steps are to set up your payment information and offerings at <a href="${appURLWithProtocol}">${appURL}</a> in order to start selling your services.</p>
+      <p>Get started here: <a href="${appURLWithProtocol}">${appURL}</a></p>
     `;
 
     await this.sendEmail(user.email, subject, text, html);
@@ -201,12 +205,12 @@ class EmailService {
   static async sendNewCustomerSignUpEmail(
     user: RequiredUserProps,
   ): Promise<void> {
-    const subject = "Welcome to gitwallet.co!";
-    const text = `Hello ${user.name},\n\nThank you for registering with gitwallet.co!\n\nGet started here: gitwallet.co`;
+    const subject = `Welcome to ${rootURL}!`;
+    const text = `Hello ${user.name},\n\nThank you for registering to sell with ${rootURL}!\n\nGet started here: ${appURL}`;
     const html = `
       <p>Hello <strong>${user.name}</strong>,</p>
-      <p>Thank you for registering with <strong>gitwallet.co</strong>!</p>
-      <p>Get started here: <a href="https://gitwallet.co">gitwallet.co</a></p>
+      <p>Thank you for registering to sell with <strong>${rootURL}</strong>!</p>
+      <p>Get started here: <a href="${appURLWithProtocol}">${appURL}</a></p>
     `;
 
     await this.sendEmail(user.email, subject, text, html);

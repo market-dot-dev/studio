@@ -5,295 +5,344 @@ import {
   AppWindowMac,
   Package,
   Scroll,
-  Menu,
-  Users,
+  UsersRound,
   Settings,
-  BarChart4,
+  Menu,
   Code2,
-  Radar,
+  ScanSearch,
   Box,
   Home,
-  UserSearch,
+  UserRoundSearch,
+  ChartNoAxesColumnIncreasing as Chart,
+  X,
   Store,
 } from "lucide-react";
-import {
-  useParams,
-  usePathname,
-  useSelectedLayoutSegments,
-} from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { GearIcon } from "@radix-ui/react-icons";
-import { FaDiscord, FaGithubAlt, FaTelegramPlane } from "react-icons/fa";
+import { FaDiscord, FaGithubAlt } from "react-icons/fa";
 import { Badge } from "@tremor/react";
+import { usePathname, useSelectedLayoutSegments } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import clsx from "clsx";
 
-type Tab = {
+interface BaseNavItem {
   name: string;
+}
+
+interface TitleItem extends BaseNavItem {
+  type: "title";
+}
+
+interface LinkItem extends BaseNavItem {
+  type: "link";
   href: string;
   target?: string;
   isActive?: boolean;
   isBeta?: boolean;
   icon?: ReactNode;
-  isDivider?: boolean;
-  children?: Omit<Tab, "children">[];
-};
+  children?: Omit<LinkItem, "children">[];
+}
+
+type NavItem = TitleItem | LinkItem;
+
+function Item({ item }: { item: NavItem }) {
+  if (item.type === "title") {
+    return (
+      <span className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-bold uppercase tracking-wide text-stone-500">
+        {item.name}
+      </span>
+    );
+  }
+
+  return (
+    <div>
+      <Link
+        href={item.href}
+        target={item.target}
+        className={clsx(
+          "flex h-6 items-center space-x-3",
+          "rounded px-1 transition-all duration-150 ease-in-out",
+          "hover:shadow-border hover:bg-white",
+          "focus:shadow-border focus:bg-white focus:outline-none",
+          "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800",
+          item.isActive &&
+            "shadow-border bg-white text-black dark:bg-stone-700",
+        )}
+      >
+        {item.icon}
+        <span className="text-sm font-medium">{item.name}</span>
+        {item.isBeta && (
+          <Badge
+            size="xs"
+            tooltip="This feature is still in Beta"
+            className="p-1.5 py-1 text-xxs font-medium"
+          >
+            Beta
+          </Badge>
+        )}
+      </Link>
+      {item.children && item.isActive && (
+        <div className="ml-6 space-y-1">
+          {item.children.map((child) => (
+            <Link
+              key={child.name}
+              href={child.href}
+              className={`flex items-center space-x-3 ${
+                child.isActive
+                  ? "bg-stone-200 text-black dark:bg-stone-700"
+                  : ""
+              } rounded px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+            >
+              {child.icon}
+              <span>{child.name}</span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Nav({
-  children,
   siteId,
   roleId,
   hasFeatures,
+  isMobile = false,
+  className,
 }: {
-  children: ReactNode;
   siteId: string | null;
   roleId: string | null;
   hasFeatures: boolean | null;
+  isMobile?: boolean;
+  className?: string;
 }) {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const urlSegments = useSelectedLayoutSegments();
-  const { id } = useParams() as { id?: string };
+  const pathname = usePathname();
 
-  const tabs: Tab[] = useMemo(() => {
-    return [
+  const items = useMemo(() => {
+    const featureItems: LinkItem[] = [
       {
+        type: "link",
+        name: "Services",
+        href: "/features",
+        isActive: urlSegments[0] === "features",
+        icon: <Box width={18} />,
+      },
+    ];
+
+    const siteItems: LinkItem[] = [
+      {
+        type: "link",
+        name: "Site",
+        href: `/site/${siteId}`,
+        isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
+        icon: <AppWindowMac width={18} />,
+      },
+      {
+        type: "link",
+        name: "Market",
+        href: "/channels/market",
+        icon: <Store width={18} />,
+        isActive: urlSegments[1] === "market",
+      },
+    ];
+
+    const mainItems: NavItem[] = [
+      {
+        type: "link",
         name: "Home",
         href: "/",
         isActive: urlSegments.length === 0,
         icon: <Home width={18} />,
       },
-
       {
+        type: "link",
         name: "Settings",
         href: "/settings",
         isActive: urlSegments[0] === "settings",
         icon: <Settings width={18} />,
       },
-
-      // Services
       {
+        type: "title",
         name: "Your Services",
-        href: "",
-        isDivider: true,
       },
-      ...(hasFeatures
-        ? [
-            {
-              name: "Services",
-              href: "/features",
-              isActive: urlSegments[0] === "features",
-              icon: <Box width={18} />,
-            },
-          ]
-        : []),
+      ...(hasFeatures ? featureItems : []),
       {
+        type: "link",
         name: "Packages",
         href: "/tiers",
         isActive: urlSegments[0] === "tiers",
         icon: <Package width={18} />,
       },
       {
+        type: "link",
         name: "Contracts",
         href: "/contracts",
         isActive: urlSegments[0] === "contracts",
         isBeta: true,
         icon: <Scroll width={18} />,
       },
-
-      // Customers
       {
+        type: "title",
         name: "Customers",
-        href: "",
-        isDivider: true,
       },
       {
+        type: "link",
         name: "Customers",
         href: "/customers",
         isActive: urlSegments[0] === "customers",
-        icon: <Users width={18} />,
+        icon: <UsersRound width={18} />,
       },
       {
+        type: "link",
         name: "Prospects",
         href: "/prospects",
         isActive: urlSegments[0] === "prospects",
-        icon: <UserSearch width={18} />,
+        icon: <UserRoundSearch width={18} />,
       },
       {
+        type: "link",
         name: "Research",
         href: "/leads",
         isActive: urlSegments[0] === "leads",
-        icon: <Radar width={18} />,
+        icon: <ScanSearch width={18} />,
       },
-
-      // Marketing
       {
+        type: "title",
         name: "Marketing",
-        href: "",
-        isDivider: true,
       },
-      ...(siteId
-        ? [
-            {
-              name: "Site",
-              href: `/site/${siteId}`,
-              isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
-              icon: <AppWindowMac width={18} />,
-            },
-            {
-              name: "Embeds",
-              href: "/channels/embeds",
-              icon: <Code2 width={18} />,
-              isActive: urlSegments[1] === "embeds",
-            },
-            {
-              name: "Market",
-              href: "/channels/market",
-              icon: <Store width={18} />,
-              isActive: urlSegments[1] === "market",
-            },
-          ]
-        : []),
-      // Analytics
+      ...(siteId ? siteItems : []),
       {
+        type: "link",
+        name: "Embeds",
+        href: "/channels/embeds",
+        icon: <Code2 width={18} />,
+        isActive: urlSegments[1] === "embeds",
+      },
+      {
+        type: "title",
         name: "Analytics",
-        href: "",
-        isDivider: true,
       },
       {
+        type: "link",
         name: "Reports",
         href: "/reports",
         isActive: urlSegments[0] === "reports",
-        icon: <BarChart4 width={18} />,
+        icon: <Chart width={18} />,
       },
-      // SUPPORT
+    ] as const;
+
+    const debugItems: NavItem[] = ["admin"].includes(roleId || "")
+      ? [
+          {
+            type: "title",
+            name: "⚠️ DEBUG MENU ⚠️",
+          },
+          {
+            type: "link",
+            name: "Debug",
+            href: `/admin/debug`,
+            icon: <Settings width={18} />,
+          },
+        ]
+      : [];
+
+    return [...mainItems, ...debugItems] as NavItem[];
+  }, [urlSegments, siteId, roleId, hasFeatures]);
+
+  const serviceItems: NavItem[] = useMemo(() => {
+    return [
       {
-        name: "Get Support",
-        href: "",
-        isDivider: true,
-      },
-      {
-        name: "Join Discord",
-        href: "https://discord.gg/ZdSpS4BuGd",
-        target: "_blank",
-        icon: <FaDiscord width={18} />,
-      },
-      {
-        name: "DM Founder",
-        href: "https://t.me/tarunsachdeva2",
-        target: "_blank",
-        icon: <FaTelegramPlane width={18} />,
-      },
-      {
+        type: "link",
         name: "Github",
         href: "https://www.github.com/git-wallet",
         target: "_blank",
-        icon: <FaGithubAlt width={18} />,
+        icon: <FaGithubAlt width={18} className="text-stone-700" />,
       },
-      ...(["admin"].includes(roleId || "")
-        ? [
-            {
-              name: "⚠️ DEBUG MENU ⚠️",
-              href: "",
-              isDivider: true,
-            },
-            {
-              name: "Debug",
-              href: `/admin/debug`,
-              icon: <GearIcon width={18} />,
-            },
-          ]
-        : []),
+      {
+        type: "link",
+        name: "Join Discord",
+        href: "https://discord.gg/ZdSpS4BuGd",
+        target: "_blank",
+        icon: <FaDiscord width={18} className="text-stone-700" />,
+      },
     ];
-  }, [urlSegments, id, siteId, roleId]);
-
-  const [showSidebar, setShowSidebar] = useState(false);
-
-  const pathname = usePathname();
+  }, []);
 
   useEffect(() => {
-    // hide sidebar on path change
-    setShowSidebar(false);
+    setIsSidebarOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (isMobile) {
+      if (isSidebarOpen) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    }
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, [isSidebarOpen, isMobile]);
 
   return (
     <>
-      <button
-        className={`fixed z-[21] ${
-          // left align for Editor, right align for other pages
-          urlSegments[0] === "post" && urlSegments.length === 2 && !showSidebar
-            ? "left-5 top-5"
-            : "right-5 top-7"
-        } sm:hidden`}
-        onClick={() => setShowSidebar(!showSidebar)}
-      >
-        <Menu width={20} />
-      </button>
-      <div
-        className={`transform ${
-          showSidebar ? "w-full translate-x-0" : "-translate-x-full"
-        } fixed z-20 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-4 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
-      >
-        <div className="grid gap-2">
-          <div className="flex items-center space-x-2 rounded-lg py-1.5">
-            <div className="text-md font-medium">
-              <Link href="/">
-                <img src="/gw-logo-nav.png" className="h-8 hover:scale-110" />
-              </Link>
-            </div>
-          </div>
-          <div className="grid gap-0.5">
-            {tabs.map((tab, index) =>
-              tab.href === "" ? (
-                <span
-                  key={tab.name}
-                  className="font-small mt-4 text-xs uppercase"
-                >
-                  {tab.name}
-                </span>
-              ) : (
-                <div key={tab.name + index}>
-                  <Link
-                    href={tab.href}
-                    target={tab.target}
-                    className={`flex items-center space-x-3 ${
-                      tab.isActive
-                        ? "bg-stone-200 text-black dark:bg-stone-700"
-                        : ""
-                    } rounded-lg px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
-                  >
-                    {tab.icon}
-                    <span className="text-sm font-medium">{tab.name}</span>
-                    {tab.isBeta && (
-                      <Badge size="xs" tooltip="This feature is still in Beta">
-                        Beta
-                      </Badge>
-                    )}
-                  </Link>
-                  {tab.children && tab.isActive && (
-                    <div className="ml-6 space-y-1">
-                      {tab.children.map((child) => (
-                        <Link
-                          key={child.name}
-                          href={child.href}
-                          className={`flex items-center space-x-3 ${
-                            child.isActive
-                              ? "bg-stone-200 text-black dark:bg-stone-700"
-                              : ""
-                          } rounded-lg px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
-                        >
-                          {child.icon}
-                          <span>{child.name}</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              ),
+      {isMobile && (
+        <button
+          className="-m-0.5 rounded p-0.5 text-stone-400 transition-colors hover:bg-stone-800 hover:text-stone-300 md:hidden"
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+        >
+          <AnimatePresence initial={false} mode="wait">
+            {isSidebarOpen ? (
+              <motion.div
+                key="close"
+                initial={{ opacity: 0.6, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0.6, scale: 0.95 }}
+                transition={{ duration: 0.1, ease: "easeInOut" }}
+              >
+                <X width={24} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="menu"
+                initial={{ opacity: 0.6, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0.6, scale: 0.95 }}
+                transition={{ duration: 0.1, ease: "easeInOut" }}
+              >
+                <Menu width={24} />
+              </motion.div>
             )}
+          </AnimatePresence>
+        </button>
+      )}
+      <nav
+        className={clsx(
+          `fixed h-[var(--navHeight)] flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 bg-stone-100 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
+          isMobile
+            ? [
+                "inset-0 top-[var(--headerHeight)] z-50 flex w-full transform md:hidden",
+                isSidebarOpen ? "translate-x-0" : "-translate-x-full",
+              ]
+            : "z-20 hidden w-60 md:flex",
+          className,
+        )}
+      >
+        <div className="flex flex-col gap-2">
+          <div className="flex flex-col">
+            {items.map((item, index) => (
+              <Item key={item.name + index} item={item} />
+            ))}
           </div>
         </div>
-        <div>
-          <div className="my-2 border-t border-stone-200 dark:border-stone-700" />
-          {children}
+        <div className="flex flex-col">
+          {serviceItems.map((item, index) => (
+            <Item key={item.name + index} item={item} />
+          ))}
         </div>
-      </div>
+      </nav>
     </>
   );
 }

@@ -102,24 +102,24 @@ export default function OfferingsForm({
 
   return (
     <form className="w-full" onSubmit={handleSubmit}>
-      <div className="flex flex-col items-center gap-8">
-        <div className="flex justify-center">
-          <Image
-            src="/gw-logo-nav.png"
-            alt="Gitwallet Logo"
-            className="h-16 w-16 shrink-0"
-            height={48}
-            width={48}
-          />
-        </div>
+      <div className="flex flex-col items-center gap-9">
+        <div className="flex flex-col items-center gap-3">
+          <div className="flex justify-center">
+            <Image
+              src="/gw-logo-nav.png"
+              alt="Gitwallet Logo"
+              className="h-11 w-11 shrink-0"
+              height={44}
+              width={44}
+            />
+          </div>
 
-        <div className="space-y-2 text-center">
-          <h1 className="text-4xl font-semibold tracking-tight text-gray-900">
-            What are you selling?
+          <h1 className="text-center text-2xl font-bold tracking-tight text-gray-900">
+            Last, what are you selling?
           </h1>
         </div>
 
-        <div className="grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="flex w-full flex-col gap-4">
           {offerings.map(
             ({ id, title, description, icon: Icon, isComingSoon }) => (
               <label
@@ -127,18 +127,20 @@ export default function OfferingsForm({
                 className="block h-full w-full rounded-tremor-default focus-within:outline-none focus-within:ring-1 focus-within:ring-gray-300"
               >
                 <div className="relative h-full">
-                  {isComingSoon && (
-                    <span className="absolute right-px top-px z-10 h-5 rounded-bl-[6px] border-b border-l border-black/5 bg-marketing-swamp pl-[7px] pr-2 text-[9px] font-bold uppercase leading-[19px] tracking-wider text-white shadow-sm md:rounded-tr-[5px]">
-                      Coming Soon
-                    </span>
-                  )}
-                  <div className="relative flex h-full w-full cursor-pointer flex-col items-center rounded-tremor-default border bg-white p-6 text-center shadow-sm transition-colors focus-within:border-gray-300 hover:bg-gray-50 hover:focus-within:bg-white [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
-                    <Icon className="mb-3 h-6 w-6 text-gray-500" />
-                    <h3 className="mb-2 font-bold text-gray-900">{title}</h3>
+                  <div className="relative flex h-full w-full cursor-pointer flex-col gap-1 rounded-tremor-default bg-white px-5 py-4 shadow-border focus-within:border-gray-300 hover:bg-gray-50 hover:focus-within:bg-white [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp transition-all">
+                    <div className="flex items-center gap-2">
+                      <Icon className="h-5 w-5 shrink-0 text-gray-500" />
+                      <h3 className="text-sm font-bold text-gray-900">{title}</h3>
+                      {isComingSoon && (
+                        <span className="flex items-center z-10 h-[18px] rounded-full bg-gray-100 px-1.5 text-[9px] font-bold uppercase tracking-wide text-gray-500 border border-black/10 border-box">
+                          Coming Soon
+                        </span>
+                      )}
+                    </div>
                     <p className="text-sm text-gray-500">{description}</p>
                     <input
                       type="checkbox"
-                      className="sr-only"
+                      className="sr-only hidden"
                       checked={selectedOfferings.has(id)}
                       onChange={() => toggleOffering(id)}
                     />
@@ -150,7 +152,7 @@ export default function OfferingsForm({
         </div>
 
         {/* Navigation */}
-        <div className="flex w-full max-w-lg justify-between pt-6">
+        <div className="flex w-full justify-between pt-4">
           <Button variant="light" onClick={onBack} type="button">
             Back
           </Button>
@@ -159,6 +161,7 @@ export default function OfferingsForm({
             type="submit"
             loading={isLoading}
             disabled={isLoading}
+            className="bg-gray-900 text-white hover:bg-gray-800"
           >
             Finish
           </Button>

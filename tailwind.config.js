@@ -119,6 +119,12 @@ module.exports = {
           "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
         "dark-tremor-dropdown":
           "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        'border-sm': '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 2px 0 rgb(0 0 0 / 0.05)',
+        'border': '0 0 0 1px rgba(0, 0, 0, 0.05), 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
+        'border-md': '0 0 0 1px rgba(0, 0, 0, 0.05), 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+        'border-lg': '0 0 0 1px rgba(0, 0, 0, 0.05), 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+        'border-xl': '0 0 0 1px rgba(0, 0, 0, 0.05), 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+        'border-b': '0 1px 0 0 rgba(0, 0, 0, 0.1)',
       },
       borderRadius: {
         "tremor-small": "0.25rem",
@@ -126,7 +132,7 @@ module.exports = {
         "tremor-full": "9999px",
       },
       fontSize: {
-        xxs: ["10px", "12px"],
+        xxs: ["11px", "12px"],
         "tremor-label": ["0.75rem"],
         "tremor-default": ["0.875rem", { lineHeight: "1.25rem" }],
         "tremor-title": ["1.125rem", { lineHeight: "1.75rem" }],
@@ -137,12 +143,12 @@ module.exports = {
           { lineHeight: "16px", letterSpacing: "-0.02em" },
         ],
         "marketing-sm": [
-          "15px",
-          { lineHeight: "20px", letterSpacing: "-0.02em" },
+          "16px",
+          { lineHeight: "24px", letterSpacing: "-0.02em" },
         ],
         "marketing-base": [
-          "19px",
-          { lineHeight: "24px", letterSpacing: "-0.025em" },
+          "20px",
+          { lineHeight: "28px", letterSpacing: "-0.025em" },
         ],
         "marketing-md": [
           "24px",

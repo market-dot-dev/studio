@@ -6,7 +6,7 @@ import PackagesDisplay from "./packages-display";
 import { TierWithFeatures } from "@/app/services/TierService";
 import { useState } from "react";
 import { updatePublishedPackagesForExpert } from "@/app/services/market-service";
-import { getUserSiteRootUrl } from "@/app/services/domain-service";
+import { getRootUrl } from "@/lib/domain";
 
 export default function MarketComponent({
   subdomain,
@@ -18,7 +18,7 @@ export default function MarketComponent({
   const [selectedTiers, setSelectedTiers] =
     useState<TierWithFeatures[]>(publishedPackages);
   const [isLoading, setIsLoading] = useState(false);
-  const siteUrl = getUserSiteRootUrl(subdomain);
+  const siteUrl = getRootUrl(subdomain);
 
   const stateIsUpdateable = () => {
     const publishedIds = new Set(publishedPackages.map((pkg) => pkg.id));

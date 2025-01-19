@@ -3,7 +3,7 @@
 import type { Color } from '@/lib/home/colors';
 import type { ReactElement } from "react";
 import type { FeatureCardLinkProps } from "./feature-card";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Image from 'next/image';
 import Link from "@/components/home/link";
 import { useRouter } from 'next/navigation';
@@ -12,7 +12,7 @@ import Button from '@/components/home/button';
 import FeatureCard from "./feature-card";
 import Dropdown from '@/components/home/dropdown';
 import clsx from "clsx";
-import { Package, Speech, ScanSearch } from "lucide-react";
+import { Menu, X, Package, Speech, ScanSearch } from "lucide-react";
 import { colors } from "@/lib/home/colors";
 import { loginURL, discordURL, blogURL, twitterUrl } from '@/lib/home/social-urls';
 import { motion, AnimatePresence } from "framer-motion";
@@ -35,75 +35,34 @@ const AnimatedHambugerButton = ({
   isOpen,
   toggleMenu,
   className,
-}: AnimatedHambugerButtonProps) => {
-  const topBarVariants = {
-    closed: { rotate: 0, y: 0, transformOrigin: "21px 50%" },
-    open: { rotate: -45, y: 6, transformOrigin: "21px 50%" },
-  };
-
-  const middleBarVariants = {
-    closed: { opacity: 1, x: 0 },
-    open: { opacity: 0, x: 22 },
-  };
-
-  const bottomBarVariants = {
-    closed: { rotate: 0, y: 0, transformOrigin: "3px 50%" },
-    open: { rotate: 45, y: -6, transformOrigin: "3px 50%" },
-  };
-
-  return (
-    <Button
-      variant='ghost'
-      onClick={toggleMenu}
-      className={clsx('text-marketing-primary', className )}
-      aria-label={isOpen ? "Close menu" : "Open menu"}
-    >
-      <motion.svg
-        width="24"
-        height="24"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-      >
-        <motion.line
-          x1="3"
-          x2="21"
-          y1="6"
-          y2="6"
-          variants={topBarVariants}
-          animate={isOpen ? "open" : "closed"}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-        />
-        <motion.line
-          x1="3"
-          x2="21"
-          y1="12"
-          y2="12"
-          variants={middleBarVariants}
-          animate={isOpen ? "open" : "closed"}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-        />
-        <motion.line
-          x1="3"
-          x2="21"
-          y1="18"
-          y2="18"
-          variants={bottomBarVariants}
-          animate={isOpen ? "open" : "closed"}
-          transition={{ duration: 0.2, ease: "easeInOut" }}
-        />
-      </motion.svg>
-    </Button>
-  );
-};
+}: AnimatedHambugerButtonProps) => (
+  <Button
+    variant="ghost"
+    onClick={toggleMenu}
+    className={clsx("-m-2 text-marketing-primary", className)}
+    aria-label={isOpen ? "Close menu" : "Open menu"}
+  >
+    <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+      {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+    </span>
+  </Button>
+);
 
 export default function Header({ className }: { className?: string }) {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleScroll = useCallback(() => {
+    setIsScrolled(window.scrollY > 0);
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   useEffect(() => {
     isMenuOpen 
@@ -182,14 +141,31 @@ export default function Header({ className }: { className?: string }) {
     <>
       <header
         className={clsx(
-          "fixed left-0 right-0 top-0 z-50 w-full bg-[#F5F5F4] pl-5 pr-6 pt-1.5 tracking-tight",
+          "fixed left-0 right-0 top-0 z-50 w-full rounded-b-lg bg-marketing-background tracking-tight transition-all ease-in-out",
+          isScrolled && !isMenuOpen
+            ? "px-4 text-marketing-sm"
+            : "px-6 text-marketing-sm md:text-marketing-base",
+          !isScrolled || (!isMenuOpen && "shadow-border-b"),
+          isMenuOpen && "duration-150",
           className,
         )}
       >
-        <div className="relative z-[100] flex items-center justify-between py-3">
-          <Link href="/">
+        <div
+          className={clsx(
+            "relative z-[100] flex items-center justify-between transition-[height]",
+            isScrolled && !isMenuOpen ? "h-12" : "h-16",
+          )}
+        >
+          <Link href="/" className="flex">
             <button onClick={() => isMenuOpen && setIsMenuOpen(false)}>
-              <Logo className="h-[22px] w-auto xs:h-[26px]" />
+              <Logo
+                className={clsx(
+                  "w-auto self-center justify-self-start transition-[height]",
+                  isScrolled && !isMenuOpen
+                    ? "h-[22px]"
+                    : "h-[22px] xs:h-[26px]",
+                )}
+              />
             </button>
           </Link>
           <div className="absolute left-1/2 top-1/2 ml-0.5 hidden -translate-x-1/2 -translate-y-1/2 gap-9 lg:flex">
@@ -221,12 +197,8 @@ export default function Header({ className }: { className?: string }) {
               <Dropdown.Item href={twitterUrl}>Twitter</Dropdown.Item>
             </Dropdown>
           </div>
-          <div className="flex w-fit items-center gap-[22px] md:gap-6">
-            <Link
-              href={loginURL}
-              variant="primary"
-              className="-mt-0.5 text-marketing-sm xs:text-marketing-base"
-            >
+          <div className="flex w-fit items-center gap-4">
+            <Link href={loginURL} variant="primary" className="px-2">
               Log in
             </Link>
             <AnimatedHambugerButton

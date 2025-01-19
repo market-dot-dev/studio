@@ -27,14 +27,13 @@ export default function OnboardingModal({
   const onboardingType = searchParams.get("onboardingType");
 
   return (
-    <Modal isOpen={isOpen} showCloseButton={false}>
+    <Modal isOpen={isOpen} maxWidth="max-w-xl" showCloseButton={false}>
       {onboardingType === "market.dev" ? (
         <MarketDevOnboardingForm
           user={user}
           currentSite={currentSite}
           onComplete={async () => {
             setIsOpen(false);
-            // router.refresh();
           }}
         />
       ) : (

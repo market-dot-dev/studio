@@ -1,21 +1,19 @@
 import "@/styles/globals.css";
-import { cal, inter } from "@/styles/fonts";
 import { Analytics } from "@vercel/analytics/react";
 import { Providers } from "./providers";
 import { Metadata } from "next";
-import { cn } from "@/lib/utils";
-import '@radix-ui/themes/styles.css';
+import "@radix-ui/themes/styles.css";
+import { getRootUrl } from "@/lib/domain";
 
-const title =
-  "Gitwallet";
+const title = "store.dev";
 const description =
-  "Gitwallet: The business builder made for open source projects.";
-const image = "https://gitwallet.co/thumbnail.png";
+  "Storefronts for developers.";
+const image = "/thumbnail.png";
 
 export const metadata: Metadata = {
   title,
   description,
-  icons: ["https://gitwallet.co/favicon.ico"],
+  icons: ["/favicon.ico"],
   openGraph: {
     title,
     description,
@@ -28,7 +26,7 @@ export const metadata: Metadata = {
     images: [image],
     creator: "@gitwallet",
   },
-  metadataBase: new URL("https://gitwallet.co"),
+  metadataBase: new URL(getRootUrl()),
 };
 
 export default function RootLayout({
@@ -42,7 +40,7 @@ export default function RootLayout({
         <link href="https://cdn.tailwindcss.com" rel="stylesheet" />
         {/* <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp,container-queries"></script> */}
       </head>
-      <body className={cn(cal.variable, inter.variable)}>
+      <body className="font-sans">
         <Providers>
           {children}
           <Analytics />
