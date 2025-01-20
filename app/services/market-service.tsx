@@ -16,7 +16,6 @@ interface PackageForSaleOnMarketDev {
   package_description: string | null;
   package_price: number | null;
   currency: string;
-  site_url: string;
   created_at: string;
   updated_at: string;
 }
@@ -112,13 +111,8 @@ export class MarketService {
           package_description: tier.description,
           package_price: tier.price,
           currency: "usd",
-          site_url: getRootUrl(site.subdomain!),
         };
       });
-
-    console.log(
-      `packages for sale being updated: ${JSON.stringify(packageForSaleOnMarketDevParams)}`,
-    );
 
     const response = await fetch(
       `${API_ENDPOINT}store/users/${user.id}/packages_for_sale`,
@@ -130,6 +124,7 @@ export class MarketService {
         },
         body: JSON.stringify({
           gitwallet_id: user.id,
+          site_url: getRootUrl(site.subdomain!),
           packages: packageForSaleOnMarketDevParams,
         }),
       },
