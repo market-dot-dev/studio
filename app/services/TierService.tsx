@@ -4,11 +4,14 @@ import prisma from "@/lib/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService, { SubscriptionCadence } from "./StripeService";
 import UserService, { getCurrentUser } from "./UserService";
-import { Feature, TierVersion, User } from "@prisma/client";
+import { Channel, Feature, TierVersion, User } from "@prisma/client";
 import SessionService from "./SessionService";
 import FeatureService from "./feature-service";
 import SubscriptionService from "./SubscriptionService";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
+import { MarketService } from "./market-service";
+import { getCurrentSite } from "./SiteService";
+import { getRootUrl } from "@/lib/domain";
 
 export type TierWithFeatures = Tier & {
   features?: Feature[];
@@ -158,9 +161,13 @@ class TierService {
       attrs.stripePriceId = price.id;
     }
 
-    return await prisma.tier.create({
+    // TODO: Consider wrapping the following block in a transaction
+    const createdTier = await prisma.tier.create({
       data: attrs as Tier,
     });
+
+    await MarketService.updatePackagesForSale();
+    return createdTier;
   }
 
   static async destroyTier(id: string) {
@@ -340,13 +347,17 @@ class TierService {
       }
     }
 
+    // TODO: Consider wrapping the following block in a transaction
     const row = await TierService.toTierRow(attrs);
     // console.debug("============= updating", { tier, attrs, stripeConnected, createNewversion, priceChanged, row });
 
-    return await prisma.tier.update({
+    const updatedTier = await prisma.tier.update({
       where: { id },
       data: row,
     });
+
+    await MarketService.updatePackagesForSale();
+    return updatedTier;
   }
 
   static shouldCreateNewVersion = async (
@@ -408,12 +419,17 @@ class TierService {
   }
 
   // this pulls published tiers to display on the front end site for customers to subscribe to
-  static async getTiersForUser(userId: string, tierIds: string[] = []) {
+  static async getTiersForUser(
+    userId: string,
+    tierIds: string[] = [],
+    channel?: Channel,
+  ) {
     return prisma.tier.findMany({
       where: {
         userId,
         published: true,
         ...(tierIds.length > 0 && { id: { in: tierIds } }),
+        ...(channel && { channels: { has: channel } }),
       },
       select: {
         id: true,

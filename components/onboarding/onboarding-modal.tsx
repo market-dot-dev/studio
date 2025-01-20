@@ -20,7 +20,7 @@ export default function OnboardingModal({
   const [isOpen, setIsOpen] = useState(
     !onboardingState.setupBusiness ||
       !onboardingState.preferredServices ||
-      (!onboardingState.marketDevAccountConnected &&
+      (!user.marketExpertId &&
         searchParams.get("onboardingType") === "market.dev"),
   );
   const router = useRouter();

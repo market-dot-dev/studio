@@ -89,7 +89,12 @@ async function customMiddleware(req: NextRequest) {
 
   // if you're on a login page and already signed in, kick you to /
   if (session && loginPaths.includes(url.pathname)) {
-    return NextResponse.redirect(new URL("/", req.url));
+    const searchParams = url.searchParams.toString();
+    const redirectUrl = new URL("/", req.url);
+    if (searchParams) {
+      redirectUrl.search = searchParams;
+    }
+    return NextResponse.redirect(redirectUrl);
   }
 
   // app.gitwallet.co

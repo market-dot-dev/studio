@@ -145,21 +145,6 @@ class OnboardingService {
       onboardingState.preferredServices = preferredServices;
     }
 
-    try {
-      const response = await MarketService.validateAccount();
-      const responseData = await response.json();
-      if (
-        response.status === 200 &&
-        responseData.linked &&
-        responseData.expert &&
-        result.marketExpertId === responseData.expert.id.toString()
-      ) {
-        onboardingState.marketDevAccountConnected = true;
-      }
-    } catch (error) {
-      console.error("Failed to validate Market.dev account:", error);
-    }
-
     await OnboardingService.saveState(onboardingState);
     return onboardingState;
   }
