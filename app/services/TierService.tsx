@@ -198,9 +198,12 @@ class TierService {
       throw new Error("Tier has existing charges, subscriptions or features");
     }
 
-    return await prisma.tier.delete({
+    const response = await prisma.tier.delete({
       where: { id },
     });
+
+    await MarketService.updatePackagesForSale();
+    return response;
   }
 
   static async updateTier(
