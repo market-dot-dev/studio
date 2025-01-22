@@ -166,7 +166,7 @@ class TierService {
       data: attrs as Tier,
     });
 
-    await MarketService.updatePackagesForSale();
+    await MarketService.updateServicesForSale();
     return createdTier;
   }
 
@@ -202,7 +202,7 @@ class TierService {
       where: { id },
     });
 
-    await MarketService.updatePackagesForSale();
+    await MarketService.updateServicesForSale();
     return response;
   }
 
@@ -359,7 +359,7 @@ class TierService {
       data: row,
     });
 
-    await MarketService.updatePackagesForSale();
+    await MarketService.updateServicesForSale();
     return updatedTier;
   }
 

@@ -138,13 +138,6 @@ export default function Nav({
         isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
         icon: <AppWindowMac width={18} />,
       },
-      {
-        type: "link",
-        name: "Market",
-        href: "/channels/market",
-        icon: <Store width={18} />,
-        isActive: urlSegments[1] === "market",
-      },
     ];
 
     const mainItems: NavItem[] = [

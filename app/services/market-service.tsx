@@ -6,23 +6,23 @@ import { getRootUrl } from "@/lib/domain";
 const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;
 const API_KEY = process.env.MARKET_DEV_API_KEY;
 
-interface PackagesForSaleOnMarketDev {
-  packages: PackageForSaleOnMarketDev[];
+interface ServicesForSaleOnMarketDev {
+  services: ServiceForSaleOnMarketDev[];
 }
 
-interface PackageForSaleOnMarketDev {
-  package_id: string;
-  package_name: string;
-  package_description: string | null;
-  package_price: number | null;
+interface ServiceForSaleOnMarketDev {
+  service_id: string;
+  service_name: string;
+  service_description: string | null;
+  service_price: number | null;
   currency: string;
   created_at: string;
   updated_at: string;
 }
 
-interface PackageForSaleOnMarketDevParams
+interface ServiceForSaleOnMarketDevParams
   extends Omit<
-    PackageForSaleOnMarketDev,
+    ServiceForSaleOnMarketDev,
     "user_id" | "created_at" | "updated_at"
   > {}
 
@@ -37,13 +37,14 @@ export class MarketService {
       throw new Error("User GitHub ID doesn't exist");
     }
 
-    const response = await fetch(`${API_ENDPOINT}store/users/${user.id}/link`, {
+    const response = await fetch(`${API_ENDPOINT}store/experts/link`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${API_KEY}`,
       },
       body: JSON.stringify({
+        store_id: user.id,
         github_id: user.gh_id,
       }),
     });
@@ -51,7 +52,7 @@ export class MarketService {
     return response;
   }
 
-  static async getPublishedPackages(): Promise<PackagesForSaleOnMarketDev | null> {
+  static async getPublishedServices(): Promise<ServicesForSaleOnMarketDev | null> {
     const user = await getCurrentUser();
     if (!user) {
       throw new Error("User not found");
@@ -62,7 +63,7 @@ export class MarketService {
     }
 
     const response = await fetch(
-      `${API_ENDPOINT}users/${user.id}/packages_for_sale`,
+      `${API_ENDPOINT}store/experts/${user.marketExpertId}/services`,
       {
         method: "GET",
         headers: {
@@ -73,14 +74,14 @@ export class MarketService {
     );
 
     const data = await response.json();
-    if (!data.packages) {
+    if (!data.services) {
       return null;
     }
 
-    return data as PackagesForSaleOnMarketDev;
+    return data as ServicesForSaleOnMarketDev;
   }
 
-  static async updatePackagesForSale() {
+  static async updateServicesForSale() {
     const user = await getCurrentUser();
     if (!user) {
       throw new Error("User not found");
@@ -103,19 +104,19 @@ export class MarketService {
       undefined,
       Channel.market,
     );
-    const packageForSaleOnMarketDevParams: PackageForSaleOnMarketDevParams[] =
+    const serviceForSaleOnMarketDevParams: ServiceForSaleOnMarketDevParams[] =
       tiers.map((tier) => {
         return {
-          package_id: tier.id,
-          package_name: tier.name,
-          package_description: tier.description,
-          package_price: tier.price,
+          service_id: tier.id,
+          service_name: tier.name,
+          service_description: tier.description,
+          service_price: tier.price,
           currency: "usd",
         };
       });
 
     const response = await fetch(
-      `${API_ENDPOINT}store/users/${user.id}/packages_for_sale`,
+      `${API_ENDPOINT}store/experts/${user.marketExpertId}/sync_services`,
       {
         method: "POST",
         headers: {
@@ -125,7 +126,7 @@ export class MarketService {
         body: JSON.stringify({
           gitwallet_id: user.id,
           site_url: getRootUrl(site.subdomain!),
-          packages: packageForSaleOnMarketDevParams,
+          services: serviceForSaleOnMarketDevParams,
         }),
       },
     );
@@ -134,4 +135,4 @@ export class MarketService {
   }
 }
 
-export const { getPublishedPackages } = MarketService;
+export const { getPublishedServices } = MarketService;
