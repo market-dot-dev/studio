@@ -24,7 +24,7 @@ export default function Hero() {
           />
         </Link>
         <GradientHeading className="mb-3 whitespace-nowrap text-center text-[clamp(24px,8vw,37px)] font-bold !leading-[0.95] tracking-[-0.045em] text-marketing-primary xs:mb-4 xs:text-marketing-xl sm:mb-5 sm:text-marketing-2xl md:mb-6 md:text-marketing-3xl md:tracking-[-0.045em] lg:text-marketing-4xl xl:text-marketing-5xl">
-          All-in-One Storefront <br /> Built for Developers.
+          All-in-One Storefronts, <br /> Built for Developers.
         </GradientHeading>
         <p className="mb-4 max-w-[44ch] text-balance text-center text-marketing-sm !leading-[1.25] xs:mb-5 sm:mb-6 sm:text-[clamp(16px,12vw,20px)] lg:text-marketing-md">
           Offer your premium services, sell digital products, and manage your
