@@ -160,11 +160,11 @@ module.exports = {
         ],
         "marketing-xl": [
           "37px",
-          { lineHeight: "40px", letterSpacing: "-0.03em" },
+          { lineHeight: "40px", letterSpacing: "-0.035em" },
         ],
         "marketing-2xl": [
           "46px",
-          { lineHeight: "48px", letterSpacing: "-0.03em" },
+          { lineHeight: "48px", letterSpacing: "-0.035em" },
         ],
         "marketing-3xl": [
           "58px",
@@ -268,6 +268,7 @@ module.exports = {
           "slideRightAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
       },
       screens: {
+        xxs: '375px',
         xs: "425px",
       },
       letterSpacing: {
