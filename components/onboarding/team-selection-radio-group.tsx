@@ -11,7 +11,7 @@ export default function TeamSelectionRadioGroup({
 }) {
   return (
     <div className="space-y-2">
-      <label className="block text-sm text-gray-900">
+      <label className="block text-sm font-medium text-gray-900">
         Are you a team or independent?
       </label>
       <div className="space-y-2">
@@ -19,7 +19,9 @@ export default function TeamSelectionRadioGroup({
           <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
             <div className="flex items-center">
               <UsersRound className="mr-3 h-5 w-5 text-gray-500" />
-              <span className="text-sm text-gray-900">We&apos;re a team</span>
+              <span className="text-sm font-medium text-gray-900">
+                We&apos;re a team
+              </span>
             </div>
             <input
               type="radio"
@@ -36,7 +38,9 @@ export default function TeamSelectionRadioGroup({
           <div className="flex cursor-pointer items-center justify-between rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
             <div className="flex items-center">
               <UserRound className="mr-3 h-5 w-5 text-gray-500" />
-              <span className="text-sm text-gray-900">It&apos;s just me</span>
+              <span className="text-sm font-medium text-gray-900">
+                It&apos;s just me
+              </span>
             </div>
             <input
               type="radio"
