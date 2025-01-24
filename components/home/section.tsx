@@ -31,7 +31,7 @@ export default function FeatureSection({
   return (
     <div
       className={clsx(
-        "scroll-mt-16 relative mx-auto flex w-full max-w-[800px] flex-col items-center px-6 lg:max-w-[1300px] lg:px-16 ",
+        "relative mx-auto flex w-full max-w-[800px] scroll-mt-16 flex-col items-center px-6 md:scroll-mt-24 lg:max-w-[1300px] lg:px-16",
         className,
       )}
       {...attributes}
@@ -53,7 +53,7 @@ export default function FeatureSection({
       {headline && (
         <GradientHeading
           as="h2"
-          className="mb-3 max-w-[17ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4 sm:text-marketing-2xl lg:text-marketing-3xl"
+          className="mb-3 max-w-[25ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4 sm:text-marketing-2xl lg:text-marketing-3xl"
         >
           {headline}
         </GradientHeading>
