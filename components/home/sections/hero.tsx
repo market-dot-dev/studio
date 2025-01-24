@@ -7,7 +7,7 @@ import { loginURL } from '@/lib/home/social-urls';
 
 export default function Hero() {
   return (
-    <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-6 tracking-tight sm:gap-y-[72px] sm:pt-10 lg:max-w-[1300px] lg:gap-y-[72px] lg:px-12 lg:pt-12">
+    <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-6 tracking-tight sm:gap-y-[72px] sm:pt-10 lg:max-w-[1300px] lg:gap-y-16 lg:px-12 lg:pt-12">
       <div className="flex h-full w-full flex-col items-center">
         <Link
           href="https://market.dev"
