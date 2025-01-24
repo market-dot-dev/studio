@@ -43,6 +43,7 @@ const nextConfig = {
       { hostname: "illustrations.popsy.co" },
       { hostname: "www.gitwallet.co" },
       { hostname: "www.store.dev" },
+      { hostname: "store.dev" },
     ],
   },
   logging: {
