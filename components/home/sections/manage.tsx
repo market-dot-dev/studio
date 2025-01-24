@@ -30,7 +30,7 @@ export default function Manage() {
         />
         <FeatureCard
           icon={<ChartLine />}
-          title="Sales reports & insights"
+          title="Analytics"
           description="Track sales and see how your services are performing."
           color={colors.orange}
           orientation="vertical"
@@ -40,7 +40,7 @@ export default function Manage() {
         <FeatureCard
           icon={<ScrollText />}
           title="Templated contracts"
-          description="Work with clients faster using our ready-made contracts for open source agreements."
+          description="Create & send service agreements in minutes using our ready-made, open source contracts."
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
@@ -48,8 +48,8 @@ export default function Manage() {
         />
         <FeatureCard
           icon={<ScanSearch />}
-          title="In-depth repo reports"
-          description="Create, share, and sign service agreements in minutes."
+          title="Market research"
+          description="Find potential customers using dependency data."
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
