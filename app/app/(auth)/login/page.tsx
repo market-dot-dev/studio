@@ -17,12 +17,6 @@ export default async function LoginPage({
     redirect("/");
   }
 
-  let loginAndOnboardMarketDev = false;
-
-  if (searchParams.source === "market.dev") {
-    loginAndOnboardMarketDev = true;
-  }
-
   return (
     <>
       <Image
@@ -47,7 +41,7 @@ export default async function LoginPage({
         >
           <GithubLoginButton
             callbackUrl={
-              loginAndOnboardMarketDev
+              searchParams.source === "market.dev"
                 ? "/?onboardingType=market.dev"
                 : undefined
             }
