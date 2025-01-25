@@ -42,7 +42,7 @@ export default async function LoginPage({
           <GithubLoginButton
             callbackUrl={
               searchParams.source === "market.dev"
-                ? "/?onboardingType=market.dev"
+                ? "/?source=market.dev"
                 : undefined
             }
           />

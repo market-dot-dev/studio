@@ -21,15 +21,14 @@ export default function OnboardingModal({
   const [isOpen, setIsOpen] = useState(
     !onboardingState.setupBusiness ||
       !onboardingState.preferredServices ||
-      (!user.marketExpertId &&
-        searchParams.get("onboardingType") === "market.dev"),
+      (!user.marketExpertId && searchParams.get("source") === "market.dev"),
   );
   const router = useRouter();
-  const onboardingType = searchParams.get("onboardingType");
+  const source = searchParams.get("source");
 
   return (
     <Modal isOpen={isOpen} maxWidth="max-w-xl" showCloseButton={false}>
-      {onboardingType === "market.dev" ? (
+      {source === "market.dev" ? (
         <MarketDevOnboardingForm
           user={user}
           currentSite={currentSite}
