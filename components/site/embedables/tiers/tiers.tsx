@@ -27,14 +27,14 @@ export default function Tiers({
   });
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
-  useEffect(() => {
-    function postHeight() {
-      const height = document.body.scrollHeight;
-      window.parent.postMessage({ height: height }, "*"); // Adjust as needed for security
-    }
+  function postHeight(height: number) {
+    window.parent.postMessage({ height: height }, "*"); // Adjust as needed for security
+  }
 
+  useEffect(() => {
     // Call the function to post height to parent
-    postHeight();
+    const height = document.body.scrollHeight;
+    postHeight(height);
   }, []);
 
   const handleResize = () => {
@@ -54,7 +54,7 @@ export default function Tiers({
         });
       }
 
-      setContainerHeight(
+      postHeight(
         containerRef.current.children[0].getBoundingClientRect().height,
       );
     }
@@ -77,7 +77,7 @@ export default function Tiers({
 
   return (
     <>
-      <div ref={containerRef} className={cn("w-full", className)}>
+      <div ref={containerRef} className={cn("w-full p-1", className)}>
         {alteredStyle.scale !== null ? (
           <div
             className="mx-auto flex w-full justify-center"

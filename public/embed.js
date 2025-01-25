@@ -25,7 +25,10 @@
     iframe.style.border = "none";
     iframe.style.overflow = "hidden";
     iframe.scrolling = "no";
-    document.body.appendChild(iframe); // Adjust this to insert the iframe where you want
+
+    // Insert the script where the script is placed
+    currentScript.parentNode.insertBefore(iframe, currentScript);
+    currentScript.parentNode.removeChild(currentScript);
 
     return iframe;
   }
@@ -41,10 +44,10 @@
       "message",
       function (event) {
         // Validate the origin of the message
-        if (event.origin === server) {
+        if (event.origin.endsWith(server)) {
           var data = event.data;
           if (data && data.height) {
-            resizeIframe(iframe, data.height);
+            resizeIframe(iframe, data.height + 10);
           }
         }
       },

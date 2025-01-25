@@ -4,11 +4,14 @@ import prisma from "@/lib/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import StripeService, { SubscriptionCadence } from "./StripeService";
 import UserService, { getCurrentUser } from "./UserService";
-import { Feature, TierVersion, User } from "@prisma/client";
+import { Channel, Feature, TierVersion, User } from "@prisma/client";
 import SessionService from "./SessionService";
 import FeatureService from "./feature-service";
 import SubscriptionService from "./SubscriptionService";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
+import { MarketService } from "./market-service";
+import { getCurrentSite } from "./SiteService";
+import { getRootUrl } from "@/lib/domain";
 
 export type TierWithFeatures = Tier & {
   features?: Feature[];
@@ -158,9 +161,13 @@ class TierService {
       attrs.stripePriceId = price.id;
     }
 
-    return await prisma.tier.create({
+    // TODO: Consider wrapping the following block in a transaction
+    const createdTier = await prisma.tier.create({
       data: attrs as Tier,
     });
+
+    await MarketService.updateServicesForSale();
+    return createdTier;
   }
 
   static async destroyTier(id: string) {
@@ -191,9 +198,12 @@ class TierService {
       throw new Error("Tier has existing charges, subscriptions or features");
     }
 
-    return await prisma.tier.delete({
+    const response = await prisma.tier.delete({
       where: { id },
     });
+
+    await MarketService.updateServicesForSale();
+    return response;
   }
 
   static async updateTier(
@@ -340,13 +350,17 @@ class TierService {
       }
     }
 
+    // TODO: Consider wrapping the following block in a transaction
     const row = await TierService.toTierRow(attrs);
     // console.debug("============= updating", { tier, attrs, stripeConnected, createNewversion, priceChanged, row });
 
-    return await prisma.tier.update({
+    const updatedTier = await prisma.tier.update({
       where: { id },
       data: row,
     });
+
+    await MarketService.updateServicesForSale();
+    return updatedTier;
   }
 
   static shouldCreateNewVersion = async (
@@ -408,12 +422,17 @@ class TierService {
   }
 
   // this pulls published tiers to display on the front end site for customers to subscribe to
-  static async getTiersForUser(userId: string, tierIds: string[] = []) {
+  static async getTiersForUser(
+    userId: string,
+    tierIds: string[] = [],
+    channel?: Channel,
+  ) {
     return prisma.tier.findMany({
       where: {
         userId,
         published: true,
         ...(tierIds.length > 0 && { id: { in: tierIds } }),
+        ...(channel && { channels: { has: channel } }),
       },
       select: {
         id: true,
@@ -452,6 +471,29 @@ class TierService {
     }
 
     return TierService.getTiersForUser(userId, tierIds);
+  }
+
+  static async getPublishedTiersWithFeatures(
+    tierIds: string[] = [],
+  ): Promise<TierWithFeatures[]> {
+    if (tierIds.length === 0) {
+      return [];
+    }
+
+    return prisma.tier.findMany({
+      where: {
+        published: true,
+        id: { in: tierIds },
+      },
+      include: {
+        features: true,
+      },
+      orderBy: [
+        {
+          published: "desc",
+        },
+      ],
+    });
   }
 
   // this pulls all tiers for the admin to manage
@@ -686,6 +728,7 @@ export const {
   getPublishedTiers,
   getTiersForMatrix,
   getTiersForUser,
+  getPublishedTiersWithFeatures,
   getVersionsByTierId,
   shouldCreateNewVersion,
   updateApplicationFee,
