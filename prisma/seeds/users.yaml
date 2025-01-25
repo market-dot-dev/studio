@@ -16,7 +16,3 @@ objects:
     email: "andrew@gitwallet.co"
     name: "Andrew Nesbitt"
     gh_username: "andrew"
-  - id: "dev-mathusan"
-    email: "mathusans52@gmail.com"
-    name: "Mathusan Selvarajah"
-    gh_username: "mathu97"

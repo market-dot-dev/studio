@@ -13,6 +13,7 @@ import { cookies } from "next/headers";
 
 interface UserDetails {
   id: string;
+  gh_id?: number;
   gh_username: string;
   name: string;
   email: string;
@@ -39,7 +40,7 @@ class RegistrationService {
   }
 
   static async upsertUser(userDetails: UserDetails) {
-    const { id, gh_username, name, email, image } = userDetails;
+    const { id, gh_username, gh_id, name, email, image } = userDetails;
 
     // Check if a user exists with the given GitHub username
     const existingUser = await prisma.user.findUnique({
@@ -55,6 +56,7 @@ class RegistrationService {
           name: existingUser.name ? existingUser.name : name,
           email: existingUser.email ? existingUser.email : email,
           image: existingUser.image ? existingUser.image : image,
+          gh_id: existingUser.gh_id ? existingUser.gh_id : gh_id,
           username: existingUser.username ? existingUser.username : gh_username,
           updatedAt: new Date(), // Update the 'updatedAt' field to the current time
         },
@@ -67,6 +69,7 @@ class RegistrationService {
         data: {
           id, // This should be a unique identifier, ensure you generate or provide this
           gh_username,
+          gh_id,
           name,
           email,
           image,

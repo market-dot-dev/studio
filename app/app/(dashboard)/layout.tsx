@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import Nav from "@/components/nav";
-import Header from '@/components/header/header'
+import Header from "@/components/header/header";
 import { redirect } from "next/navigation";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
 import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
@@ -17,8 +17,10 @@ import OnboardingModal from "@/components/onboarding/onboarding-modal";
 
 export default async function DashboardLayout({
   children,
+  params,
 }: {
   children: ReactNode;
+  params: any;
 }) {
   const user = await UserService.getCurrentUser();
   if (!user?.id) {
@@ -40,7 +42,7 @@ export default async function DashboardLayout({
       <OnboardingModal
         user={user}
         currentSite={site ?? undefined}
-        defaultOpen={showOnboardingModal}
+        onboardingState={onboarding}
       />
       <div>
         <Header />
@@ -50,15 +52,15 @@ export default async function DashboardLayout({
             roleId={user.roleId || "anonymous"}
             hasFeatures={activeFeatures.length != 0}
           />
-          <div className="flex min-h-screen w-full flex-col items-center md:pl-60 bg-stone-50">
-            <div className="flex w-full max-w-screen-xl flex-col items-center p-6 sm:p-10 sm:pt-8 space-y-4">
+          <div className="flex min-h-screen w-full flex-col items-center bg-stone-50 md:pl-60">
+            <div className="flex w-full max-w-screen-xl flex-col items-center space-y-4 p-6 sm:p-10 sm:pt-8">
               {!onboarding.isDismissed && !showOnboardingModal && (
                 <OnboardingChecklist />
               )}
               {user?.stripeAccountDisabled && user?.stripeAccountId && (
                 <StripeDisabledBanner />
               )}
-              <div className="relative w-full flex flex-col gap-8">
+              <div className="relative flex w-full flex-col gap-8">
                 {children}
               </div>
             </div>

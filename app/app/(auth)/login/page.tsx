@@ -6,7 +6,11 @@ import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { LOCAL_AUTH_AVAILABLE } from "@/app/config/local-auth";
 
-export default async function LoginPage() {
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: { [key: string]: string | string[] | undefined };
+}) {
   const session = await getSession();
 
   if (session) {
@@ -22,27 +26,31 @@ export default async function LoginPage() {
         className="relative mx-auto h-14 w-14"
         src="/gw-logo-nav.png"
       />
-      <h1 className="mt-8 text-center font-bold tracking-tight dark:text-white text-4xl">
+      <h1 className="mt-8 text-center text-4xl font-bold tracking-tight dark:text-white">
         Login to store.dev
       </h1>
       <p className="mt-3 text-center text-sm text-stone-600 dark:text-stone-400">
         Commerce tools for open source projects
       </p>
 
-      <div className="flex flex-col gap-2 mx-auto mt-8 w-full max-w-sm">
+      <div className="mx-auto mt-8 flex w-full max-w-sm flex-col gap-2">
         <Suspense
           fallback={
             <div className="h-12 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
           }
         >
-          <GithubLoginButton />
+          <GithubLoginButton
+            callbackUrl={
+              searchParams.source === "market.dev"
+                ? "/?source=market.dev"
+                : undefined
+            }
+          />
         </Suspense>
         {LOCAL_AUTH_AVAILABLE && (
           <Suspense>
             <LoginButton href="/login/local-auth" isLoading={false}>
-              <p>
-                Log in with Local Auth
-              </p>
+              <p>Log in with Local Auth</p>
             </LoginButton>
           </Suspense>
         )}
