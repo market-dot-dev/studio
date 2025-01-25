@@ -17,7 +17,6 @@ import TeamSelectionRadioGroup, {
 } from "./team-selection-radio-group";
 import LocationEntryInput from "./location-entry-input";
 import BusinessNameInput from "./business-name-input";
-import ConnectMarketDevAccountButton from "../channels/market/connect-market-dev-account-button";
 
 interface ProfileData {
   businessName: string;
@@ -39,8 +38,6 @@ export default function MarketDevProfileForm({
 }: ProfileFormProps) {
   const [teamType, setTeamType] = useState<"team" | "individual" | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isMarketDevAccountConnected, setIsMarketDevAccountConnected] =
-    useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,15 +102,6 @@ export default function MarketDevProfileForm({
         </div>
 
         <div className="space-y-8">
-          <div className="space-y-2">
-            <label className="block text-sm text-gray-900">
-              Connect your Market.dev account
-            </label>
-            <ConnectMarketDevAccountButton
-              user={user}
-              onComplete={() => setIsMarketDevAccountConnected(true)}
-            />
-          </div>
           <BusinessNameInput userGithubUsername={user.gh_username} />
           <LocationEntryInput />
           <TeamSelectionRadioGroup
@@ -127,7 +115,7 @@ export default function MarketDevProfileForm({
             className="bg-gray-900 text-white hover:bg-gray-800"
             type="submit"
             loading={isLoading}
-            disabled={isLoading || !isMarketDevAccountConnected}
+            disabled={isLoading}
           >
             Next
           </Button>
