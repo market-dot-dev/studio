@@ -102,10 +102,44 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   text-decoration: line-through;
   text-decoration-thickness: 2px;
 }
-/* 
-body {
-  top: unset !important;
-} */
+
+/* New styles for infinite scroll animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll var(--scroll-duration) linear infinite;
+}
+
+.pause-animation {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-scroll {
+    animation: none;
+    transform: translateX(0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .group:hover .animate-scroll {
+    animation-play-state: paused;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .group:active .animate-scroll {
+    animation-play-state: paused;
+  }
+}
+
 @layer base {
   :root {
     --headerHeight: 40px;
@@ -113,3 +147,4 @@ body {
     --radius: 0.5rem;
   }
 }
+

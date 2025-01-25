@@ -12,7 +12,7 @@ import Button from '@/components/home/button';
 import FeatureCard from "./feature-card";
 import Dropdown from '@/components/home/dropdown';
 import clsx from "clsx";
-import { Menu, X, Package, Speech, ScanSearch } from "lucide-react";
+import { Menu, X, Package, Speech, ListCheck } from "lucide-react";
 import { colors } from "@/lib/home/colors";
 import { loginURL, discordURL, blogURL, twitterUrl } from '@/lib/home/social-urls';
 import { motion, AnimatePresence } from "framer-motion";
@@ -124,13 +124,13 @@ export default function Header({ className }: { className?: string }) {
       },
     },
     {
-      icon: <ScanSearch />,
+      icon: <ListCheck />,
       color: colors["orange"],
-      title: "Research",
-      description: "See who's using your stuff & find new customers.",
+      title: "Manage",
+      description: "Run your business with powerful tools & insights.",
       link: {
         text: "Learn more",
-        href: "/#research",
+        href: "/#manage",
         asCard: true,
         onClick: handleLinkClick,
       },

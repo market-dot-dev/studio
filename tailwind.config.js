@@ -266,6 +266,7 @@ module.exports = {
         slideUpAndFade: "slideUpAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
         slideRightAndFade:
           "slideRightAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
+        scroll: 'scroll 40s linear infinite',
       },
       screens: {
         xxs: '375px',

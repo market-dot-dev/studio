@@ -15,7 +15,7 @@ export interface FeatureCardLinkProps {
 
 interface FeatureCardProps {
   icon: ReactElement;
-  title: string;
+  title: ReactElement | string;
   description: ReactElement | string;
   color: Color;
   image?: {
@@ -56,7 +56,7 @@ export default function FeatureCard({
         "relative flex h-full w-full overflow-hidden",
         borderRadius,
         link?.asCard &&
-          "duration-200 ring-inset ring-black/[18%] transition hover:ring-1",
+          "duration-200 ring-inset ring-black/25 transition hover:ring-1",
         className,
         span,
       )}
@@ -107,20 +107,18 @@ export default function FeatureCard({
         <div
           className={clsx(
             "z-10 flex flex-col gap-x-4 gap-y-3 p-6",
-            image && "sm:gap-y-4 sm:pt-5 lg:gap-3",
             orientation === "horizontal" ? "max-w-[25ch]" : "w-full",
           )}
         >
           <div
             className={clsx(
               "flex h-6 items-center justify-between",
-              image && "sm:h-7 lg:h-6",
             )}
           >
             {React.cloneElement(icon, {
               size: 28,
               color: color["100"],
-              className: `h-6 w-auto ${image ? "sm:h-7 lg:h-6" : ""}`,
+              className: `h-6 w-auto`,
             })}
             {link && !link.asCard && (
               <Link
@@ -141,7 +139,7 @@ export default function FeatureCard({
             <h3
               className={clsx(
                 "text-marketing-primary text-marketing-base text-pretty font-bold tracking-tight  ",
-                image && "sm:text-2xl sm:leading-7 lg:text-[19px] lg:leading-6",
+                image && "sm:text-xl xl:text-[19px] xl:leading-6",
               )}
             >
               {title}
@@ -160,7 +158,7 @@ export default function FeatureCard({
         {image && (
           <div
             className={clsx(
-              "xs:pl-12 z-[-2] ml-auto justify-self-end overflow-visible pl-6 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] sm:pl-24",
+              "xs:pl-12 z-[-2] ml-auto justify-self-end overflow-visible pl-6 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] sm:pl-24 max-w-screen-lg",
               orientation === "horizontal" ? "md:pt-3" : "w-full sm:pt-3",
               imageMaxWidth,
             )}
