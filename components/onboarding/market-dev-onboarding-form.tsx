@@ -35,33 +35,38 @@ export default function MarketDevOnboardingForm({
   const mounted = useMounted();
 
   const validateMarketExpert = async () => {
+    if (user.marketExpertId) {
+      setValidateMarketExpertLoading(false);
+      return;
+    }
+
     setValidateMarketExpertLoading(true);
     try {
       const response = await fetch(`/api/market/validate-expert`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
       });
 
-      if (response.status === 404) {
-        const errorMessage =
-          "You are not an expert on Market.dev. Make sure you have an account created on Market.dev.";
-        setValidateMarketExpertError(errorMessage);
-        return;
-      }
+      const errorMessages = {
+        404: "You are not an expert on Market.dev. Make sure you have an account created on Market.dev.",
+        default: "Failed to validate your Market.dev account.",
+      };
 
-      if (response.status !== 200) {
-        const errorMessage = "Failed to validate your Market.dev account.";
-        setValidateMarketExpertError(errorMessage);
-        return;
+      if (!response.ok) {
+        throw new Error(
+          errorMessages[response.status as keyof typeof errorMessages] ||
+            errorMessages.default,
+        );
       }
 
       await refreshAndGetState();
       toast.success("Market.dev account connected successfully");
     } catch (error) {
-      const errorMessage = "Error validating your Market.dev account.";
-      setValidateMarketExpertError(errorMessage);
+      setValidateMarketExpertError(
+        error instanceof Error
+          ? error.message
+          : "Error validating your Market.dev account.",
+      );
     } finally {
       setValidateMarketExpertLoading(false);
     }
