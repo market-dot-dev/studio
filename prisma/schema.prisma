@@ -8,6 +8,11 @@ datasource db {
   directUrl = env("POSTGRES_URL_NON_POOLING")
 }
 
+enum Channel {
+  site
+  market
+}
+
 model User {
   id                          String         @id @default(cuid())
   name                        String?
@@ -175,6 +180,7 @@ model Tier {
   tagline     String?
 
   published Boolean @default(true)
+  channels Channel[] @default([site])
   user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   price                 Int?
