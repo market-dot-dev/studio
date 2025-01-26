@@ -6,7 +6,6 @@ import { Site, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { toast } from "sonner";
 import LoadingDots from "../icons/loading-dots";
 import { AlertCircleIcon } from "lucide-react";
@@ -69,7 +68,6 @@ export default function OnboardingModal({
         );
       }
 
-      await refreshAndGetState();
       if (sourceIsMarketDev) {
         toast.success("Market.dev account connected successfully");
       }
