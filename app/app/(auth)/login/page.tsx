@@ -47,6 +47,7 @@ export default async function LoginPage({
             }
           />
         </Suspense>
+
         {LOCAL_AUTH_AVAILABLE && (
           <Suspense>
             <LoginButton href="/login/local-auth" isLoading={false}>
