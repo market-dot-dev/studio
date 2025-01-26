@@ -41,8 +41,8 @@ export default async function LoginPage({
         >
           <GithubLoginButton
             callbackUrl={
-              searchParams.source === "market.dev"
-                ? "/?source=market.dev"
+              Object.keys(searchParams).length > 0
+                ? `/?${(searchParams ?? "").toString()}`
                 : undefined
             }
           />
