@@ -42,6 +42,7 @@ class OnboardingService {
         businessType: true,
         stripeAccountId: true,
         createdAt: true,
+        marketExpertId: true,
         // select first site
         sites: {
           select: {

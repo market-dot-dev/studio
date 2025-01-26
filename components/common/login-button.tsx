@@ -11,7 +11,12 @@ interface LoginButtonProps {
   href?: string;
 }
 
-export const LoginButton: FC<LoginButtonProps> = ({ children, onClick, isLoading, href }) => {
+export const LoginButton: FC<LoginButtonProps> = ({
+  children,
+  onClick,
+  isLoading,
+  href,
+}) => {
   const router = useRouter();
   const loginOrNavigate = href ? () => router.push(href) : onClick;
 
@@ -23,7 +28,7 @@ export const LoginButton: FC<LoginButtonProps> = ({ children, onClick, isLoading
         isLoading
           ? "cursor-not-allowed bg-white dark:bg-black"
           : "bg-white hover:bg-stone-50 active:bg-stone-100 dark:bg-black dark:hover:bg-black dark:hover:shadow"
-      } group flex h-12 w-full items-center justify-center gap-3 rounded-md ring-1 ring-black/5 shadow font-bold text-stone-900 transition-colors duration-75 focus:outline-none dark:border-stone-700 dark:text-stone-400`}
+      } group flex h-12 w-full items-center justify-center gap-3 rounded-md font-bold text-stone-900 shadow ring-1 ring-black/5 transition-colors duration-75 focus:outline-none dark:border-stone-700 dark:text-stone-400`}
     >
       {isLoading ? <LoadingDots color="#A8A29E" /> : children}
     </button>
