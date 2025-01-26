@@ -11,10 +11,10 @@ interface ServicesForSaleOnMarketDev {
 }
 
 interface ServiceForSaleOnMarketDev {
-  service_id: string;
-  service_name: string;
-  service_description: string | null;
-  service_price: number | null;
+  store_package_id: string;
+  name: string;
+  description: string | null;
+  price: number | null;
   currency: string;
   created_at: string;
   updated_at: string;
@@ -107,10 +107,10 @@ export class MarketService {
     const serviceForSaleOnMarketDevParams: ServiceForSaleOnMarketDevParams[] =
       tiers.map((tier) => {
         return {
-          service_id: tier.id,
-          service_name: tier.name,
-          service_description: tier.description,
-          service_price: tier.price,
+          store_package_id: tier.id,
+          name: tier.name,
+          description: tier.description,
+          price: tier.price,
           currency: "usd",
         };
       });
