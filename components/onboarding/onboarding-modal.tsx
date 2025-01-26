@@ -79,6 +79,7 @@ export default function OnboardingModal({
           ? error.message
           : "Error validating your Market.dev account.",
       );
+      throw error;
     } finally {
       setValidateMarketExpertLoading(false);
     }
@@ -86,7 +87,9 @@ export default function OnboardingModal({
 
   useEffect(() => {
     if (!mounted) return;
-    validateMarketExpert();
+    validateMarketExpert().catch(() => {
+      setValidateMarketExpertLoading(false);
+    });
   }, [mounted]);
 
   // Note: unless source is market.dev where user is intentionally trying to connect their market.dev account, we shouldn't surface connection errors
