@@ -463,14 +463,14 @@ class TierService {
     });
   }
   // published tiers of the current admin
-  static async getPublishedTiers(tierIds: string[] = []) {
+  static async getPublishedTiers(tierIds: string[] = [], channel?: Channel) {
     const userId = await SessionService.getCurrentUserId();
 
     if (!userId) {
       throw new Error("User not authenticated");
     }
 
-    return TierService.getTiersForUser(userId, tierIds);
+    return TierService.getTiersForUser(userId, tierIds, channel);
   }
 
   static async getPublishedTiersWithFeatures(
