@@ -13,7 +13,8 @@ const featureCards = [
   {
     icon: <BookOpenCheck />,
     title: "Get listed on market.dev",
-    description: "market.dev is a marketplace of services & resources from top open source developers in any ecosystem.",
+    description:
+      "market.dev is a marketplace of services & resources from top open source developers in any ecosystem.",
     image: {
       src: "/market-dot-dev.png",
       alt: "market.dev screenshot",
@@ -37,7 +38,7 @@ const featureCards = [
     icon: <ShoppingCart />,
     title: "Checkout links",
     description:
-      "Use single-purpose, customizable embeds to promote services on your repo, read.me, or anywhere really.",
+      "Share payment links to let people buy with one click. Great for selling through social media & emails.",
     image: {
       src: "/checkout.png",
       alt: "Package cards illustration",

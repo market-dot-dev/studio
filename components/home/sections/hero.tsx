@@ -7,12 +7,12 @@ import { loginURL } from '@/lib/home/social-urls';
 
 export default function Hero() {
   return (
-    <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-6 tracking-tight sm:gap-y-[72px] sm:pt-10 lg:max-w-[1300px] lg:gap-y-16 lg:px-12 lg:pt-12">
+    <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-6 tracking-tight sm:gap-y-16 sm:pt-10 lg:max-w-[1300px] lg:px-12 lg:pt-12">
       <div className="flex h-full w-full flex-col items-center">
         <Link
           href="https://market.dev"
           target="_blank"
-          className="mb-5 md:mb-6 flex h-8 shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-full bg-black/5 px-3 text-[13px] !text-marketing-primary ring-1 ring-inset ring-black/5 transition hover:bg-black/[7%]  md:h-9 md:px-4 md:text-[15px]"
+          className="mb-5 md:mb-9 flex h-8 shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-full bg-black/5 px-3 text-[13px] !text-marketing-primary ring-1 ring-inset ring-black/5 transition hover:bg-black/[7%]  md:h-9 md:px-4 md:text-[15px]"
         >
           <span className="-mt-px">Made by</span>
           <Image
