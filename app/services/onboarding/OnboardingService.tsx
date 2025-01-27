@@ -10,7 +10,6 @@ import {
   businessDescription,
 } from "@/lib/constants/site-template";
 import { getCurrentUser } from "../UserService";
-import { MarketService } from "../market-service";
 
 class OnboardingService {
   static async saveState(state: OnboardingState) {

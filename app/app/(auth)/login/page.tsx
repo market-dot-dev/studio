@@ -41,12 +41,13 @@ export default async function LoginPage({
         >
           <GithubLoginButton
             callbackUrl={
-              Object.keys(searchParams).length > 0
-                ? `/?${(searchParams ?? "").toString()}`
+              searchParams.source
+                ? `/?source=${searchParams.source}`
                 : undefined
             }
           />
         </Suspense>
+
         {LOCAL_AUTH_AVAILABLE && (
           <Suspense>
             <LoginButton href="/login/local-auth" isLoading={false}>
