@@ -238,7 +238,7 @@ class TierService {
       throw new Error("Tier name is required.");
     }
 
-    if (!attrs.price && attrs.checkoutType !== "contact-form") {
+    if (!attrs.price) {
       throw new Error("Price is required.");
     }
 
@@ -318,12 +318,7 @@ class TierService {
 
     await FeatureService.setFeatureCollection(id, newFeatureSetIds, "tier");
 
-    if (
-      stripeConnected &&
-      attrs.published &&
-      attrs.price &&
-      attrs.checkoutType !== "contact-form"
-    ) {
+    if (stripeConnected && attrs.published) {
       if (!attrs.stripeProductId) {
         const product = await stripeService.createProduct(
           attrs.name,
