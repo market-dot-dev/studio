@@ -48,6 +48,8 @@ import TierDeleteButton from "./tier-delete-button";
 import { getRootUrl } from "@/lib/domain";
 import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
 import ChannelsSelectionInput from "./channels-selection-input";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface TierFormProps {
   tier?: Partial<Tier>;
@@ -202,16 +204,17 @@ const calcDiscount = (price: number, annualPrice: number) => {
 };
 
 const DuplicateTierButton = ({ tierId }: { tierId: string }) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
 
   const handleDuplicate = async () => {
     setIsLoading(true);
     const newTier = await duplicateTier(tierId);
     if (newTier) {
-      window.location.href = `/tiers/${newTier.id}`;
+      toast.success("Package duplicated successfully");
+      router.push(`/tiers/${newTier.id}`);
     } else {
-      // Handle error case
-      console.error("Failed to duplicate package");
+      toast.error("Failed to duplicate package");
     }
     setIsLoading(false);
   };
@@ -426,6 +429,7 @@ export default function TierForm({
   contracts,
   hasActiveFeatures = false,
 }: TierFormProps) {
+  const router = useRouter();
   const [tier, setTier] = useState<TierWithFeatures>(
     (tierObj ? tierObj : newTier()) as Tier,
   );
@@ -489,8 +493,10 @@ export default function TierForm({
           Array.from(selectedFeatureIds),
         );
       }
-      window.location.href = `/tiers/${savedTier.id}`;
+      toast.success("Package updated successfully");
+      router.push(`/tiers/${savedTier.id}`);
     } catch (error) {
+      toast.error(`Failed to update package: ${(error as Error).message}`);
       console.log(error);
     } finally {
       setIsSaving(false);
