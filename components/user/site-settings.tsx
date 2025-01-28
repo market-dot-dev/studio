@@ -76,7 +76,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
               Name
             </label>
             <TextInput
-              placeholder="Title of your store"
+              placeholder="Your store title"
               name="name"
               id="name"
               defaultValue={site.name ?? ""}

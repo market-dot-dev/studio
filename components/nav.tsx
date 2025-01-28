@@ -131,7 +131,7 @@ export default function Nav({
     const siteItems: LinkItem[] = [
       {
         type: "link",
-        name: "Site",
+        name: "Storefront",
         href: `/site/${siteId}`,
         isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
         icon: <AppWindowMac width={18} />,

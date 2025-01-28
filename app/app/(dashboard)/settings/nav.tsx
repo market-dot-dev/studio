@@ -20,7 +20,7 @@ export default function SettingsNav() {
       segment: "project",
     },
     {
-      name: "Your Store",
+      name: "Storeront Settings",
       href: `/settings/site`,
       segment: "site",
     },

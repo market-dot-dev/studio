@@ -54,7 +54,7 @@ export default function SiteAdmin({ id }: { id: string }) {
     <>
       <div className="flex w-full justify-between">
         <div className="flex flex-row">
-          <PageHeading title="Site Content" />
+          <PageHeading title="Your Storefront" />
         </div>
         <div className="flex flex-row">
           {url ? <ExternalLinkChip href={url} label={url + " ↗"} /> : null}
@@ -77,7 +77,7 @@ export default function SiteAdmin({ id }: { id: string }) {
           </div>
           <div className="flex-column ms-[300px]">
             <div className="mb-2">
-              <Bold className="me-2">Your Homepage</Bold>
+              <Bold className="me-2">Store Homepage</Bold>
 
               {homepage?.draft ? (
                 <Badge color="gray" size="xs">
