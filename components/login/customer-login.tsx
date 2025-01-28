@@ -164,7 +164,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                     {isSignUp ? (
                         <>
                         <div className="mb-4">
-                            <div className="mb-4">Please provide your details to create a Gitwallet account.</div>
+                            <div className="mb-4 text-center">Enter your details to create an account.</div>
 
                             <Bold>Name:</Bold>
                             <TextInput placeholder="Enter your name" value={name} onChange={(e) => {
@@ -174,15 +174,14 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                         </div>
                         </>
                     ) :
-                    <div className="mb-4">Please enter your email to receive a verification code.</div>
+                    <div className="mb-4 text-center">Please enter your email to receive a verification code.</div>
                     }
                     
                     <div className="flex flex-col gap-4 w-full">
                         <div className="items-center w-full">
-                            <Bold>Email Address:</Bold>
-
+                            <Bold>Email:</Bold>
                             <TextInput 
-                                placeholder="Enter your email"
+                                placeholder="Your email address"
                                 autoFocus={!isSignUp}
                                 value={verificationEmail} 
                                 onChange={(e) => {

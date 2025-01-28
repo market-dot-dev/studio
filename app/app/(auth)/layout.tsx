@@ -21,10 +21,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
                 set up our first commercial se
                 <span className="tracking-[-0.005em]">r</span>vice tiers in
                 under a week
-              </mark>
-              . Their perspective working in and around engineering and creator
-              communities was instrumental in helping us think through the
-              messaging that would resonate most.
+              </mark>.
             </blockquote>
             <div className="flex w-fit items-center gap-2 md:gap-3">
               <Image
