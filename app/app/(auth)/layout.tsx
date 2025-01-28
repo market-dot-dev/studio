@@ -13,15 +13,15 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         <div className="flex w-full max-w-md flex-col justify-center pb-[72px]">
           <div className="mx-auto w-full max-w-sm">{children}</div>
         </div>
+        
         <div className="hidden w-full flex-col justify-center gap-6 text-pretty pb-12 lg:flex">
           <div className="flex flex-col gap-4 border-black/15 md:gap-6 md:border-l md:pl-9">
             <blockquote className="text-pretty text-2xl font-semibold leading-7 tracking-tightish text-stone-900/50 lg:text-3xl xl:text-4xl">
-              store.dev helped our collective of core maintainers{" "}
-              <mark className="text-stone-900 bg-transparent">
-                set up our first commercial se
-                <span className="tracking-[-0.005em]">r</span>vice tiers in
-                under a week
-              </mark>.
+            Using store.dev, our maintainer collective set up and{" "}
+            <span className="text-marketing-primary">
+              started selling our first commercial se
+              <span className="tracking-[-0.005em]">r</span>vice tiers within a day
+            </span>. We love working with them.
             </blockquote>
             <div className="flex w-fit items-center gap-2 md:gap-3">
               <Image
