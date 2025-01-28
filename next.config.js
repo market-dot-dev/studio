@@ -84,8 +84,8 @@ if (process.env.NODE_ENV !== "development") {
 
       // Suppresses source map uploading logs during build
       silent: true,
-      org: "gitwallet",
-      project: "gitwallet-web",
+      org: "marketdotdev",
+      project: "storedotdev",
     },
     {
       // For all available options, see:
