@@ -62,7 +62,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
               defaultValue={site.subdomain ?? ""}
             />
             <Text>
-              Your site will appear at{" "}
+              Your store will appear at{" "}
               <Link className="underline" href={siteURL}>
                 {siteURL}.
               </Link>
@@ -76,7 +76,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
               Name
             </label>
             <TextInput
-              placeholder="Title of your site"
+              placeholder="Title of your store"
               name="name"
               id="name"
               defaultValue={site.name ?? ""}
@@ -90,7 +90,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
               Logo
             </label>
             <Text>
-              Your site logo is used in your site, for favicons and Open Graph
+              Your store logo is used in your web storefront, for favicons and Open Graph
               images.
             </Text>
 
