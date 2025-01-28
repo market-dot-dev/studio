@@ -25,7 +25,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
     try {
       await updateCurrentSite(formData);
       setChanged(false);
-      toast.success("Site updated");
+      toast.success("Store updated");
     } catch (error) {
       if (isGitWalletError(error)) {
         toast.error(error.message);
