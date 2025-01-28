@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import {
-  AppWindowMac,
   Package,
   Scroll,
   UsersRound,
@@ -14,7 +13,8 @@ import {
   Home,
   UserRoundSearch,
   ChartNoAxesColumnIncreasing as Chart,
-  X
+  X,
+  Store
 } from "lucide-react";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { FaDiscord, FaGithubAlt } from "react-icons/fa";
@@ -134,7 +134,7 @@ export default function Nav({
         name: "Storefront",
         href: `/site/${siteId}`,
         isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
-        icon: <AppWindowMac width={18} />,
+        icon: <Store width={18} />,
       },
     ];
 

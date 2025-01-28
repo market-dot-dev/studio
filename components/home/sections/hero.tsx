@@ -12,7 +12,7 @@ export default function Hero() {
         <Link
           href="https://market.dev"
           target="_blank"
-          className="mb-5 md:mb-9 flex h-8 shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-full bg-black/5 px-3 text-[13px] !text-marketing-primary ring-1 ring-inset ring-black/5 transition hover:bg-black/[7%]  md:h-9 md:px-4 md:text-[15px]"
+          className="mb-5 xs:mb-6 lg:mb-8 flex h-8 shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-full bg-black/5 px-3 text-[13px] !text-marketing-primary ring-1 ring-inset ring-black/5 transition hover:bg-black/[7%]  md:h-9 md:px-4 md:text-[15px]"
         >
           <span className="-mt-px">Made by</span>
           <Image
