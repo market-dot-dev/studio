@@ -14,12 +14,14 @@ export default function Tiers({
   settings,
   hasActiveFeatures,
   className,
+  disableButtons,
 }: {
   tiers: any[];
   subdomain: string;
   settings: TiersEmbedSettingsProps;
   hasActiveFeatures?: boolean;
   className?: string;
+  disableButtons?: boolean;
 }): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const [alteredStyle, setAlteredStyle] = useState<any>({
@@ -91,12 +93,12 @@ export default function Tiers({
                     className="min-w-xxs w-full md:max-w-sm lg:max-w-xs"
                   >
                     <TierCard
+                      openUrlInNewTab={true}
                       tier={tier}
-                      url={subdomain}
                       darkMode={settings.darkmode}
                       hasActiveFeatures={hasActiveFeatures}
                       alignment={tiers.length === 1 ? "center" : "left"}
-                      buttonDisabled={true}
+                      buttonDisabled={disableButtons}
                     />
                   </div>
                 ))}

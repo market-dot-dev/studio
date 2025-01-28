@@ -1,14 +1,14 @@
-import PageHeading from '@/components/common/page-heading';
-import TierService from '@/app/services/TierService';
-import { Badge, Text } from '@tremor/react';
-import { Pencil } from 'lucide-react';
-import Link from 'next/link';
-import TierCard from '@/components/tiers/tier-card';
-import SessionService from '@/app/services/SessionService';
-import FeatureService from '@/app/services/feature-service';
-import TiersEmptyState from './empty-state';
-import NewTierModal from '@/components/tiers/new-tier-modal';
-import clsx from 'clsx';
+import PageHeading from "@/components/common/page-heading";
+import TierService from "@/app/services/TierService";
+import { Badge, Text } from "@tremor/react";
+import { Pencil } from "lucide-react";
+import Link from "next/link";
+import TierCard from "@/components/tiers/tier-card";
+import SessionService from "@/app/services/SessionService";
+import FeatureService from "@/app/services/feature-service";
+import TiersEmptyState from "./empty-state";
+import NewTierModal from "@/components/tiers/new-tier-modal";
+import clsx from "clsx";
 
 export default async function Tiers() {
   const currentUserId = await SessionService.getCurrentUserId();
@@ -22,9 +22,12 @@ export default async function Tiers() {
   const tiersDashboardTitleArea = (
     <div className="flex flex-col">
       <PageHeading title="Packages" />
-      <Text>Packages are what you sell to your customers. You can inlcude them on your website or send them to customers directly using a checkout link.</Text>
+      <Text>
+        Packages are what you sell to your customers. You can inlcude them on
+        your website or send them to customers directly using a checkout link.
+      </Text>
     </div>
-  )
+  );
   return (
     <div className="max-w flex max-w-screen-xl flex-col space-y-12">
       <div className="flex items-start justify-between">
@@ -56,25 +59,32 @@ export default async function Tiers() {
                     <div className="flex items-center gap-2">
                       <span
                         className={clsx(
-                          "h-2 w-2 rounded-full ring-inset ring-1 ring-black/5",
+                          "h-2 w-2 rounded-full ring-1 ring-inset ring-black/5",
                           tier.published ? "bg-emerald-600" : "bg-stone-400",
                         )}
                       ></span>
-                      <p className={clsx(
-                        "text-sm font-medium",
-                        tier.published ? 'text-emerald-700' : 'text-stone-500'
-                      )}>{tier.published ? "Active" : "Inactive"}</p>
+                      <p
+                        className={clsx(
+                          "text-sm font-medium",
+                          tier.published
+                            ? "text-emerald-700"
+                            : "text-stone-500",
+                        )}
+                      >
+                        {tier.published ? "Active" : "Inactive"}
+                      </p>
                     </div>
                     <Link
                       href={`tiers/${tier.id}`}
-                      className="flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-sm font-medium hover:bg-stone-200 active:bg-stone-300 transition-colors duration-200 ease-in-out"
+                      className="flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
                     >
                       <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
                       Edit
                     </Link>
                   </div>
-                  <div className="flex items-center justify-center p-6 pb-10 pt-0 h-full">
+                  <div className="flex h-full items-center justify-center p-6 pb-10 pt-0">
                     <TierCard
+                      buttonDisabled={true}
                       tier={tier}
                       hasActiveFeatures={!!activeFeatures?.length}
                       className="m-auto max-w-xs sm:scale-90"
