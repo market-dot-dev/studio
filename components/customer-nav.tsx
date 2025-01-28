@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import {
-  ArrowLeft,
   Menu,
   Settings,
-  Package
+  Package,
+  Banknote
 } from "lucide-react";
 import {
   useParams,
@@ -21,10 +21,10 @@ export default function CustomerNav() {
   const tabs = useMemo(() => {
     return [
       {
-        name: "Home",
+        name: "Purchases",
         href: "/",
         isActive: urlSegments.length === 0,
-        icon: <ArrowLeft width={18} />,
+        icon: <Banknote width={18} />,
       },
       {
         name: "Subscriptions",
