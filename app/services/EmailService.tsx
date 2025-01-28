@@ -24,7 +24,7 @@ const appURLWithProtocol = getRootUrl("app");
 
 class EmailService {
   static headerImage = `<img src="${rootURLWithProtocol}/gw-logo.png" alt="Gitwallet" style="width:50px; height:auto;"><br /><br />`;
-  static footerMessage = "<p>Thank you,<br>The Gitwallet Team</p>";
+  static footerMessage = "<p>Thank you,<br>The store.dev team</p>";
 
   static async sendEmail(
     email: string | null,
