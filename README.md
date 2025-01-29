@@ -5,7 +5,7 @@ Gitwallet is a commerce platform for open source projects.
 - Clone this repo
 - Run `pnpm install`
 - Run `pnpm dev`
-- Go To http://gitwallet.local:3000 (See Hosts file instructions below)
+- Go To http://store.local:3000 (See Hosts file instructions below)
 
 ## Deploying
 
@@ -75,7 +75,9 @@ pnpm sync:services
 6. Set up hosts
 
 ```
-127.0.0.1 gitwallet.local agraves.gitwallet.local app.gitwallet.local alpha.gitwallet.local
+127.0.0.1 store.local
+127.0.0.1 app.store.local
+127.0.0.1 YOUR_GITHUB_USERNAME_OR_SUBDOMAIN.store.local
 ```
 
 7. Launch the server:

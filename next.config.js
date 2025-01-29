@@ -5,8 +5,6 @@ const nextConfig = {
   experimental: {
     serverActions: {
       allowForwardedHosts: [
-        "gitwallet.local:3000",
-        "*.gitwallet.local:3000",
         "store.local:3000",
         "*.store.local:3000",
         "gitwallet.co",
@@ -16,9 +14,7 @@ const nextConfig = {
         process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "*.vercel.app" : "",
       ].filter(Boolean),
       allowedOrigins: [
-        "gitwallet.local:3000",
         "store.local:3000",
-        "*.gitwallet.local:3000",
         "*.store.local:3000",
         "*.gitwallet.co",
         "*.store.dev",
