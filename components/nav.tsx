@@ -200,7 +200,7 @@ export default function Nav({
       },
       {
         type: "title",
-        name: "Marketing",
+        name: "Channels",
       },
       ...(siteId ? siteItems : []),
       {
