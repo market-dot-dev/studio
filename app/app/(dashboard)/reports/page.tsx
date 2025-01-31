@@ -1,7 +1,7 @@
 
 import PageHeading from "@/components/common/page-heading";
 import RepoService from "@/app/services/RepoService";
-import ReportsTabs from "./reports-tabs";
+import RevenueReports from "./reports-tabs";
 import { customers as getCustomersData } from "@/app/services/UserService";
 
 export default async function ReportsPage() {
@@ -21,7 +21,7 @@ export default async function ReportsPage() {
       <div className="flex justify-between w-full">
         <div className="flex flex-col space-y-6 w-full">
           <PageHeading title="Reports" />
-          <ReportsTabs repos={repos} customers={customers} />
+          <RevenueReports customers={customers} />
         </div>
       </div>
     </div>
