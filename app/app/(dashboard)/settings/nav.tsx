@@ -25,19 +25,14 @@ export default function SettingsNav() {
       segment: "site",
     },
     {
-        name: "Connected Repositories",
-        href: `/settings/repos`,
-        segment: "repos",
-    },
-    {
         name: "Payout Info",
         href: `/settings/payment`,
         segment: "payment",
     },
     {
-        name: "Gitwallet Plan",
-        href: `/settings/plan`,
-        segment: "plan",
+        name: "Connected Repositories",
+        href: `/settings/repos`,
+        segment: "repos",
     }
   ];
 
