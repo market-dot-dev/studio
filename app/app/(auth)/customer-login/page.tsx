@@ -6,7 +6,7 @@ import CustomerLogin from "@/components/login/customer-login";
 import { LOCAL_AUTH_AVAILABLE } from "@/app/config/local-auth";
 
 export const metadata: Metadata = {
-  title: "Login | Gitwallet",
+  title: "Customer Login",
 };
 
 export default async function LoginPage() {

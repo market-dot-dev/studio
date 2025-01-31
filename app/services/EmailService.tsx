@@ -206,10 +206,10 @@ class EmailService {
     user: RequiredUserProps,
   ): Promise<void> {
     const subject = `Welcome to ${rootURL}!`;
-    const text = `Hello ${user.name},\n\nThank you for registering to sell with ${rootURL}!\n\nGet started here: ${appURL}`;
+    const text = `Hello ${user.name},\n\nThank you for registering with ${rootURL}!\n\nGet started here: ${appURL}`;
     const html = `
       <p>Hello <strong>${user.name}</strong>,</p>
-      <p>Thank you for registering to sell with <strong>${rootURL}</strong>!</p>
+      <p>Thank you for registering with <strong>${rootURL}</strong>!</p>
       <p>Get started here: <a href="${appURLWithProtocol}">${appURL}</a></p>
     `;
 

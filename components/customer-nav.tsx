@@ -27,12 +27,6 @@ export default function CustomerNav() {
         icon: <Banknote width={18} />,
       },
       {
-        name: "Subscriptions",
-        href: "/subscriptions",
-        isActive: urlSegments[0] === "subscriptions",
-        icon: <Package width={18} />,
-      },
-      {
         name: "Settings",
         href: "/settings",
         isActive: urlSegments[0] === "settings",
