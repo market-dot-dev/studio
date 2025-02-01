@@ -14,12 +14,14 @@ export default function Tiers({
   settings,
   hasActiveFeatures,
   className,
+  disableButtons,
 }: {
   tiers: any[];
   subdomain: string;
   settings: TiersEmbedSettingsProps;
   hasActiveFeatures?: boolean;
   className?: string;
+  disableButtons?: boolean;
 }): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const [alteredStyle, setAlteredStyle] = useState<any>({
@@ -27,14 +29,14 @@ export default function Tiers({
   });
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
-  useEffect(() => {
-    function postHeight() {
-      const height = document.body.scrollHeight;
-      window.parent.postMessage({ height: height }, "*"); // Adjust as needed for security
-    }
+  function postHeight(height: number) {
+    window.parent.postMessage({ height: height }, "*"); // Adjust as needed for security
+  }
 
+  useEffect(() => {
     // Call the function to post height to parent
-    postHeight();
+    const height = document.body.scrollHeight;
+    postHeight(height);
   }, []);
 
   const handleResize = () => {
@@ -54,7 +56,7 @@ export default function Tiers({
         });
       }
 
-      setContainerHeight(
+      postHeight(
         containerRef.current.children[0].getBoundingClientRect().height,
       );
     }
@@ -77,7 +79,7 @@ export default function Tiers({
 
   return (
     <>
-      <div ref={containerRef} className={cn("w-full", className)}>
+      <div ref={containerRef} className={cn("w-full p-1", className)}>
         {alteredStyle.scale !== null ? (
           <div
             className="mx-auto flex w-full justify-center"
@@ -91,12 +93,12 @@ export default function Tiers({
                     className="min-w-xxs w-full md:max-w-sm lg:max-w-xs"
                   >
                     <TierCard
+                      openUrlInNewTab={true}
                       tier={tier}
-                      url={subdomain}
                       darkMode={settings.darkmode}
                       hasActiveFeatures={hasActiveFeatures}
                       alignment={tiers.length === 1 ? "center" : "left"}
-                      buttonDisabled={true}
+                      buttonDisabled={disableButtons}
                     />
                   </div>
                 ))}

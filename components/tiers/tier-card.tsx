@@ -16,6 +16,7 @@ import clsx from "clsx";
 
 type TierCardProps = {
   url?: string;
+  openUrlInNewTab?: boolean;
   tier: TierWithFeatures;
   buttonDisabled?: boolean;
   alignment?: "left" | "center";
@@ -36,6 +37,7 @@ export const generateLink = (
 
 const CheckoutButton = ({
   url,
+  openUrlInNewTab = false,
   tierId,
   annual = false,
   variant = "primary",
@@ -44,6 +46,7 @@ const CheckoutButton = ({
   disabled = false,
 }: {
   url: string | null;
+  openUrlInNewTab?: boolean;
   tierId: string;
   annual?: boolean;
   variant?: "secondary" | "primary";
@@ -54,7 +57,10 @@ const CheckoutButton = ({
   const checkoutUrl = generateLink(url, tierId, annual);
 
   return (
-    <Link href={disabled ? "" : checkoutUrl}>
+    <Link
+      href={disabled ? "" : checkoutUrl}
+      target={openUrlInNewTab ? "_blank" : "_self"}
+    >
       <Button
         variant={variant}
         className={cn(
@@ -80,6 +86,7 @@ const TierCard: React.FC<TierCardProps> = ({
   className,
   children,
   buttonDisabled = false,
+  openUrlInNewTab = false,
 }) => {
   const [showAnnual, setShowAnnual] = useState(false);
 
@@ -208,6 +215,7 @@ const TierCard: React.FC<TierCardProps> = ({
         {children || (
           <CheckoutButton
             url={url}
+            openUrlInNewTab={openUrlInNewTab}
             tierId={tier.id}
             annual={showAnnual && isntOnce}
             checkoutType={tier.checkoutType as CheckoutType}
