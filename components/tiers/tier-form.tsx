@@ -55,6 +55,7 @@ interface TierFormProps {
   tier?: Partial<Tier>;
   contracts: Contract[];
   hasActiveFeatures?: boolean;
+  userIsMarketExpert: boolean;
 }
 
 const TierVersionCard = ({
@@ -428,6 +429,7 @@ export default function TierForm({
   tier: tierObj,
   contracts,
   hasActiveFeatures = false,
+  userIsMarketExpert,
 }: TierFormProps) {
   const router = useRouter();
   const [tier, setTier] = useState<TierWithFeatures>(
@@ -636,6 +638,7 @@ export default function TierForm({
               Channels
             </label>
             <ChannelsSelectionInput
+              userIsMarketExpert={userIsMarketExpert}
               selectedChannels={tier.channels}
               handleInputChange={(channel) => {
                 let channels: Channel[] = tier.channels;

@@ -52,6 +52,14 @@ export class MarketService {
     return response;
   }
 
+  static async userIsMarketExpert(): Promise<boolean> {
+    const user = await getCurrentUser();
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return !!user.marketExpertId;
+  }
+
   static async getPublishedServices(): Promise<ServicesForSaleOnMarketDev | null> {
     const user = await getCurrentUser();
     if (!user) {
@@ -135,4 +143,4 @@ export class MarketService {
   }
 }
 
-export const { getPublishedServices } = MarketService;
+export const { getPublishedServices, userIsMarketExpert } = MarketService;
