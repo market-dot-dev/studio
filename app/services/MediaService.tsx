@@ -62,7 +62,7 @@ class MediaService {
       const siteId = currentSite?.id;
 
       if( !siteId ) {
-          console.error("No site found.");
+          console.error("No store found.");
           return null;
       }
 
@@ -109,7 +109,7 @@ class MediaService {
 
         
       if( !siteId ) {
-          console.error("No site found.");
+          console.error("No store found.");
           return [];
       }
 

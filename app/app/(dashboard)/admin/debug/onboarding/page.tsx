@@ -17,8 +17,8 @@ export default function RestoreOnboarding(): JSX.Element {
         try {
           await deleteSite(currentSite.id);
         } catch (error) {
-          console.error("Error deleting site: ", error);
-          toast.error("Failed to delete site");
+          console.error("Error deleting store: ", error);
+          toast.error("Failed to delete store");
           return;
         }
       }

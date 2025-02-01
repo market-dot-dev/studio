@@ -1,11 +1,11 @@
-Gitwallet is a commerce platform for open source projects. 
+store.dev is a commerce platform for developers. 
 
 ## Getting Started
 
 - Clone this repo
 - Run `pnpm install`
 - Run `pnpm dev`
-- Go To http://gitwallet.local:3000 (See Hosts file instructions below)
+- Go To http://store.local:3000 (See Hosts file instructions below)
 
 ## Deploying
 
@@ -29,7 +29,7 @@ Tests are located under `cypress/e2e/`.
 NB preview builds use their own db, so it does not affect prod
 
 1. Push any build to a branch that builds successfully
-1. CD will automatically deploy a [preview build](https://vercel.com/lab0324/gitwallet-web/deployments?environment=preview)
+1. CD will automatically deploy a [preview build](https://vercel.com/marketdotdev/store/deployments?environment=preview)
 
 ## Local Development
 
@@ -75,7 +75,9 @@ pnpm sync:services
 6. Set up hosts
 
 ```
-127.0.0.1 gitwallet.local agraves.gitwallet.local app.gitwallet.local alpha.gitwallet.local
+127.0.0.1 store.local
+127.0.0.1 app.store.local
+127.0.0.1 YOUR_GITHUB_USERNAME_OR_SUBDOMAIN.store.local
 ```
 
 7. Launch the server:
@@ -102,7 +104,7 @@ to skip a destructive migration
 
 ## Backups
 
-visit [vercel](https://vercel.com/lab0324/gitwallet-web/stores/postgres/store_3VM9LMSgYfiNtAI0/data) to get the DB_SERVER_URL, USERNAME and password
+visit [vercel](https://vercel.com/marketdotdev/store/stores/postgres/store_3VM9LMSgYfiNtAI0/data) to get the DB_SERVER_URL, USERNAME and password
 
 `$ pg_dump -h DB_SERVER_URL.us-east-1.aws.neon.tech -p 5432 -U USERNAME -d verceldb -W --no-owner --no-acl -F c > gitwallet_prod.dump`
 

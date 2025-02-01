@@ -170,7 +170,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
 
                 <DashboardCard className="w-4/5">
                     <Bold>Connected Github Repositories</Bold>
-                    <Text className="mb-4"> A Connected repository is a loose connection, and are used to set up your Gitwallet Site.</Text>
+                    <Text className="mb-4"> A Connected repository is a loose connection - this allows you to do research dependents your open source projects.</Text>
                     {repos.length === 0 && <Text>No connected repositories. Connect a Github account on the left and select repositories to link.</Text>}
                     <Grid numItems={1} className="gap-2 mb-4">
                         {repos.map((repo, index) => (

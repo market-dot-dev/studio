@@ -30,7 +30,7 @@ export default async function LoginPage({
         Login to store.dev
       </h1>
       <p className="mt-3 text-center text-sm text-stone-600 dark:text-stone-400">
-        Commerce tools for open source projects
+        All-in-One Storefronts, built for Developers.
       </p>
 
       <div className="mx-auto mt-8 flex w-full max-w-sm flex-col gap-2">

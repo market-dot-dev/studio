@@ -67,7 +67,7 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
               Business Description
             </label>
             <Text>
-              Your business description is used in your site homepage (and other
+              Your business description is used in your store homepage (and other
               pages where you embed the {`<SiteDescription>`} component).
             </Text>
             <Textarea

@@ -13,7 +13,8 @@ const featureCards = [
   {
     icon: <BookOpenCheck />,
     title: "Get listed on market.dev",
-    description: "market.dev is a marketplace of services & resources from top open source developers in any ecosystem.",
+    description:
+      "market.dev is a marketplace of services & resources from top open source developers in any ecosystem.",
     image: {
       src: "/market-dot-dev.png",
       alt: "market.dev screenshot",
@@ -27,7 +28,7 @@ const featureCards = [
     icon: <StoreIcon />,
     title: "Custom storefronts",
     description:
-      "Sell with your own standalone site. Start with a beautiful template or pop the hood with a full-screen code editor.",
+      "Sell with your own standalone store. Start with a beautiful template or pop the hood with a full-screen code editor.",
     image: {
       src: "/landing-page.png",
       alt: "Package cards illustration",
@@ -37,7 +38,7 @@ const featureCards = [
     icon: <ShoppingCart />,
     title: "Checkout links",
     description:
-      "Use single-purpose, customizable embeds to promote services on your repo, read.me, or anywhere really.",
+      "Share payment links to let people buy with one click. Great for selling through social media & emails.",
     image: {
       src: "/checkout.png",
       alt: "Package cards illustration",
@@ -71,7 +72,7 @@ export default function Promote() {
           Market Eve<span className="tracking-normal">ry</span>where
         </>
       }
-      description="It doesn't have to be hard. Promote on your site, in repos & across marketplaces — all from a single source of truth."
+      description="It doesn't have to be hard. Promote on your storefront, in repos & across marketplaces — all from a single source of truth."
       isFullBleed
     >
       <div className="relative grid w-full grid-cols-1 flex-col gap-6 lg:hidden">

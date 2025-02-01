@@ -6,22 +6,19 @@ import CustomerLogin from "@/components/login/customer-login";
 import { LOCAL_AUTH_AVAILABLE } from "@/app/config/local-auth";
 
 export const metadata: Metadata = {
-  title: "Login | Gitwallet",
+  title: "Customer Login",
 };
 
 export default async function LoginPage() {
   return (
     <>
-        <Image
-          alt="Gitwallet"
-          width={520}
-          height={142}
-          className="relative mx-auto h-12 w-auto dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
-          src="/wordmark.png"
-        />
-        <p className="mt-2 text-center text-md text-stone-600 dark:text-stone-400">
-          Manage and secure your open source.<br />
-        </p>
+      <Image
+        alt="store.dev logo"
+        width={162}
+        height={36}
+        className="relative mx-auto"
+        src="/store-dot-dev-logo.svg"
+      />
 
         <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
           <Suspense

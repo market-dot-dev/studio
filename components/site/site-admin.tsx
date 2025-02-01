@@ -52,16 +52,14 @@ export default function SiteAdmin({ id }: { id: string }) {
 
   return (
     <>
-      <div className="flex w-full justify-between">
+      <div className="flex w-full justify-between pb-[72px]">
         <div className="flex flex-row">
-          <PageHeading title="Site Content" />
+          <PageHeading title="Your Storefront" />
         </div>
         <div className="flex flex-row">
           {url ? <ExternalLinkChip href={url} label={url + " ↗"} /> : null}
         </div>
       </div>
-
-      <div className="my-2">&nbsp;</div>
 
       <Card>
         <div className="flex w-full justify-between">
@@ -72,12 +70,12 @@ export default function SiteAdmin({ id }: { id: string }) {
               height={220}
               screenWidth={1600}
               screenHeight={1250}
-              className="rounded-t-lg border"
+              className="rounded-t-lg border border-b-0"
             />
           </div>
           <div className="flex-column ms-[300px]">
             <div className="mb-2">
-              <Bold className="me-2">Your Homepage</Bold>
+              <Bold className="me-2">Homepage</Bold>
 
               {homepage?.draft ? (
                 <Badge color="gray" size="xs">
@@ -110,10 +108,10 @@ export default function SiteAdmin({ id }: { id: string }) {
           </div>
         </div>
       </Card>
-
-      <div className="flex w-full justify-between">
+      
+      <div className="flex w-full justify-between pt-6">
         <div className="flex flex-row">
-          <Bold>All Pages</Bold>
+          <Bold>Pages</Bold>
         </div>
         <div className="flex flex-row">
           <CreatePageButton />

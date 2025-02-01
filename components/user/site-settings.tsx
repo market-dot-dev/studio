@@ -25,7 +25,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
     try {
       await updateCurrentSite(formData);
       setChanged(false);
-      toast.success("Site updated");
+      toast.success("Store updated");
     } catch (error) {
       if (isGitWalletError(error)) {
         toast.error(error.message);
@@ -62,7 +62,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
               defaultValue={site.subdomain ?? ""}
             />
             <Text>
-              Your site will appear at{" "}
+              Your store will appear at{" "}
               <Link className="underline" href={siteURL}>
                 {siteURL}.
               </Link>
@@ -76,7 +76,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
               Name
             </label>
             <TextInput
-              placeholder="Title of your site"
+              placeholder="Your store title"
               name="name"
               id="name"
               defaultValue={site.name ?? ""}
@@ -90,7 +90,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
               Logo
             </label>
             <Text>
-              Your site logo is used in your site, for favicons and Open Graph
+              Your store logo is used in your web storefront, for favicons and Open Graph
               images.
             </Text>
 

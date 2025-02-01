@@ -20,14 +20,9 @@ export default function SettingsNav() {
       segment: "project",
     },
     {
-      name: "Your Site",
+      name: "Storeront Settings",
       href: `/settings/site`,
       segment: "site",
-    },
-    {
-        name: "Connected Repositories",
-        href: `/settings/repos`,
-        segment: "repos",
     },
     {
         name: "Payout Info",
@@ -35,9 +30,9 @@ export default function SettingsNav() {
         segment: "payment",
     },
     {
-        name: "Gitwallet Plan",
-        href: `/settings/plan`,
-        segment: "plan",
+        name: "Connected Repositories",
+        href: `/settings/repos`,
+        segment: "repos",
     }
   ];
 
