@@ -122,7 +122,7 @@ export default function ProfileForm({
 
           <div className="space-y-1 text-center">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-              Welcome to Gitwallet
+              Welcome to store.dev
             </h1>
             <h2 className="text-base font-normal text-gray-900">
               Tell us about your business
