@@ -104,7 +104,7 @@
     "jest-mock-extended": "^3.0.7",
     "postcss": "^8.4.49",
     "prettier-plugin-tailwindcss": "^0.6.8",
-    "prisma": "^5.9.1",
+    "prisma": "^6.3.1",
     "prisma-factory": "link:dist/prisma-factory",
     "tailwindcss": "^3.4.14",
     "tailwindcss-animate": "^1.0.7",
