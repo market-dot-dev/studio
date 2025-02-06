@@ -22,7 +22,12 @@ class ProspectService {
   }
 
   static async addNewProspectForPackage(
-    prospect: { email: string; name: string },
+    prospect: { 
+      email: string; 
+      name: string;
+      organization: string;
+      context: string;
+    },
     tier: Tier,
   ): Promise<Prospect> {
     const user = await UserService.findUser(tier.userId);
