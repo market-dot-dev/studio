@@ -1,0 +1,31 @@
+name: "Announcement Checklist"
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  issues: write
+
+jobs:
+  add-announce-checklist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Add checklist when "announce" label is added
+        if: ${{ github.event.label.name == 'announce' }}
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = context.issue.number;
+            const checklist = `
+              - [ ] Write blog post
+              - [ ] Share on X
+              - [ ] Post on HN
+            `;
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+              body: checklist
+            });
