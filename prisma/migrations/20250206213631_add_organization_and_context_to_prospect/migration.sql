@@ -1,13 +1,6 @@
-/*
-  Warnings:
-
-  - Added the required column `context` to the `Prospect` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `organization` to the `Prospect` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- AlterTable
-ALTER TABLE "Prospect" ADD COLUMN     "context" TEXT NOT NULL,
-ADD COLUMN     "organization" TEXT NOT NULL;
+ALTER TABLE "Prospect" ADD COLUMN     "context" TEXT,
+ADD COLUMN     "organization" TEXT;
 
 -- AlterTable
 ALTER TABLE "_FeatureToTier" ADD CONSTRAINT "_FeatureToTier_AB_pkey" PRIMARY KEY ("A", "B");
