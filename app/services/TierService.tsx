@@ -166,7 +166,9 @@ class TierService {
       data: attrs as Tier,
     });
 
-    await MarketService.updateServicesForSale();
+    if (user.marketExpertId) {
+      await MarketService.updateServicesForSale();
+    }
     return createdTier;
   }
 
@@ -202,7 +204,9 @@ class TierService {
       where: { id },
     });
 
-    await MarketService.updateServicesForSale();
+    if (user.marketExpertId) {
+      await MarketService.updateServicesForSale();
+    }
     return response;
   }
 
@@ -359,7 +363,9 @@ class TierService {
       data: row,
     });
 
-    await MarketService.updateServicesForSale();
+    if (user.marketExpertId) {
+      await MarketService.updateServicesForSale();
+    }
     return updatedTier;
   }
 
