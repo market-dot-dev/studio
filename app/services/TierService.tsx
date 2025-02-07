@@ -215,22 +215,16 @@ class TierService {
     tierData: Partial<Tier>,
     newFeatureIds?: string[],
   ) {
-    const user = await this.validateUserAndGetTier(id);
-    const tier = await this.findAndValidateTier(id, user.id);
-    const attrs = this.prepareAttributes(tier, tierData);
+    const user = await TierService.validateUserAndGetTier(id);
+    const tier = await TierService.findAndValidateTier(id, user.id);
+    const attrs = TierService.prepareAttributes(tier, tierData);
 
-    const context = await this.buildUpdateContext(
+    const context = await TierService.buildUpdateContext(
       user,
       tier,
       attrs,
       newFeatureIds,
     );
-
-    if (context.createNewVersion) {
-      await this.handleVersioning(id, tier, attrs, context);
-    } else {
-      await this.handlePriceUpdates(user, tier, attrs, context);
-    }
 
     await FeatureService.setFeatureCollection(
       id,
@@ -238,8 +232,16 @@ class TierService {
       "tier",
     );
 
-    if (context.stripeConnected && attrs.published) {
-      await this.handleStripeProducts(attrs, user.stripeAccountId!);
+    if (tierData.checkoutType === "gitwallet") {
+      if (context.createNewVersion) {
+        await TierService.handleVersioning(id, tier, attrs, context);
+      } else {
+        await TierService.handlePriceUpdates(user, tier, attrs, context);
+      }
+
+      if (context.stripeConnected && attrs.published) {
+        await TierService.handleStripeProducts(attrs, user.stripeAccountId!);
+      }
     }
 
     const row = await TierService.toTierRow(attrs);
@@ -273,7 +275,8 @@ class TierService {
   private static prepareAttributes(tier: Tier, tierData: Partial<Tier>) {
     const attrs: Partial<Tier> = newTier({ ...tier, ...tierData });
     if (!attrs.name) throw new Error("Tier name is required.");
-    if (!attrs.price) throw new Error("Price is required.");
+    if (tierData.checkoutType === "gitwallet" && !attrs.price)
+      throw new Error("Price is required.");
     return attrs;
   }
 
@@ -341,7 +344,11 @@ class TierService {
     attrs.revision = tier.revision + 1;
     attrs.cadence = (attrs.cadence || "month") as SubscriptionCadence;
 
-    const tierAttributes = this.buildTierAttributes(tier, attrs, context);
+    const tierAttributes = TierService.buildTierAttributes(
+      tier,
+      attrs,
+      context,
+    );
     await prisma.tier.update({ where: { id }, data: tierAttributes });
   }
 
