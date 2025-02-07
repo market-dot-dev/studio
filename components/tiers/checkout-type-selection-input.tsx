@@ -1,15 +1,23 @@
 import { TierWithFeatures } from "@/app/services/TierService";
 import { Wallet, Mail } from "lucide-react";
+import { User } from "@prisma/client";
+import { Tooltip } from "../common/tooltip";
 
 export default function CheckoutTypeSelectionInput({
+  user,
   tier,
   handleInputChange,
 }: {
+  user: User;
   tier: TierWithFeatures;
   handleInputChange: (key: string, value: string) => void;
 }) {
-  return (
-    <div className="flex h-full gap-2">
+  const gitwalletCheckoutEnabled = !!user.stripeAccountId;
+
+  function GitWalletCheckout() {
+    const disabled = !gitwalletCheckoutEnabled;
+
+    const inputComponent = (
       <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
         <div className="flex cursor-pointer flex-col gap-1 rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
           <div className="flex w-full items-center justify-between">
@@ -18,6 +26,7 @@ export default function CheckoutTypeSelectionInput({
               <span className="text-sm text-gray-900">Standard Checkout</span>
             </div>
             <input
+              disabled={!gitwalletCheckoutEnabled}
               type="radio"
               name="checkout-type"
               value="gitwallet"
@@ -38,6 +47,24 @@ export default function CheckoutTypeSelectionInput({
           </div>
         </div>
       </label>
+    );
+
+    if (disabled) {
+      return (
+        <Tooltip
+          content="Connect your Stripe account in Settings to use Standard Checkout"
+          side="bottom"
+        >
+          {inputComponent}
+        </Tooltip>
+      );
+    }
+    return inputComponent;
+  }
+
+  return (
+    <div className="flex h-full gap-2">
+      <GitWalletCheckout />
       <label className="block h-full w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
         <div className="flex cursor-pointer flex-col gap-1 rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
           <div className="flex h-full w-full items-center justify-between">
