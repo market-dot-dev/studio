@@ -19,7 +19,7 @@ const defaultTiers = [
       price: 0,
       cadence: "month",
       description: "",
-      checkoutType: "gitwallet",
+      checkoutType: "contact-form",
     },
     metaDescription: "A blank package to start from scratch.",
   },
@@ -36,7 +36,7 @@ const supportTiers = [
 - Access to private support channels
 - Assistance with bug fixes and minor issues
 `,
-      checkoutType: "gitwallet",
+      checkoutType: "contact-form",
     },
     metaDescription: "Provide essential support for your project.",
   },
@@ -52,7 +52,7 @@ const supportTiers = [
 - Monthly office hours for your team
 - Regular project status updates and performance monitoring
 `,
-      checkoutType: "gitwallet",
+      checkoutType: "contact-form",
     },
     metaDescription: "Provide premium support and quicker response times.",
   },
@@ -72,7 +72,7 @@ const supportTiers = [
 - Assistance with major issues and project optimization
 - Monthly performance reviews and strategic planning sessions
 `,
-      checkoutType: "gitwallet",
+      checkoutType: "contact-form",
     },
     metaDescription:
       "Provide the highest level of support & rapid response to your customers.",
@@ -90,7 +90,7 @@ const trainingTiers = [
 - Upto 5 hours of training sessions per month
 - Access to private repos and training materials
 `,
-      checkoutType: "gitwallet",
+      checkoutType: "contact-form",
     },
     metaDescription:
       "Offer training sessions for users of your open source project.",
@@ -106,7 +106,7 @@ const trainingTiers = [
 - Access to private repos and training materials
 - Availability in your Slack server
 `,
-      checkoutType: "gitwallet",
+      checkoutType: "contact-form",
     },
     metaDescription:
       "Offer a comprehensive training package to larger companies.",
@@ -125,7 +125,7 @@ const consultingTiers = [
 - Performance audits
 - Recommendations for performance enhancements
 - Regular performance reports`,
-      checkoutType: "gitwallet",
+      checkoutType: "contact-form",
     },
     metaDescription:
       "Offer performance optimization services for a specific ecosystem.",
@@ -143,7 +143,7 @@ const consultingTiers = [
 - Penetration testing
 - Setting up security monitoring tools
 `,
-      checkoutType: "gitwallet",
+      checkoutType: "contact-form",
     },
     metaDescription: "Offer security auditing services for a specific .",
   },
