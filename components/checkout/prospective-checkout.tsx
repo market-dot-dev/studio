@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import SectionHeader from "./section-header";
-import { Bold, Button, Card, TextInput } from "@tremor/react";
+import { Bold, Button, Card, TextInput, Textarea } from "@tremor/react";
 import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Tier } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+
 export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
@@ -19,6 +20,8 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
     const newProspect = {
       email: formData.get("email") as string,
       name: formData.get("name") as string,
+      organization: formData.get("organization") as string,
+      context: formData.get("context") as string,
     };
 
     try {
@@ -26,7 +29,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
       toast.success("We've received your request. We'll be in touch soon!");
       router.push("/");
     } catch (error) {
-      // TODO(mathusan): handle this error better.
+      toast.error("Something went wrong. Please try again.");
       console.error(error);
     } finally {
       setIsSubmitting(false);
@@ -38,8 +41,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
       <section className="text-md mb-8 text-slate-600 lg:w-5/6">
         <SectionHeader headerName="Contact Us" />
         <span>
-          Please provide your email address and name below so we can get in
-          touch with you.
+          Please provide your details below so we can get in touch with you.
         </span>
       </section>
       <section>
@@ -56,9 +58,29 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
             </div>
             <div className="w-full items-center">
               <Bold>Name:</Bold>
-              <TextInput name="name" placeholder="Enter your name" required />
+              <TextInput 
+                name="name" 
+                placeholder="Enter your name" 
+                required 
+              />
             </div>
-
+            <div className="w-full items-center">
+              <Bold>Organization:</Bold>
+              <TextInput
+                name="organization"
+                placeholder="Enter your organization name"
+                required
+              />
+            </div>
+            <div className="w-full items-center">
+              <Bold>Additional Context:</Bold>
+              <Textarea
+                name="context"
+                placeholder="Tell us more about your project needs and how we can help"
+                required
+                className="min-h-[100px]"
+              />
+            </div>
             <div className="items-center">
               <Button
                 disabled={isSubmitting}
