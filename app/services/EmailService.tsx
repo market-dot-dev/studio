@@ -185,24 +185,6 @@ class EmailService {
 
     await this.sendEmail(user.email, subject, text, html);
   }
-
-  static async sendNewSubscriberEmail(user: RequiredUserProps) {
-    console.log(
-      `Sending new subscription email to new subscriber: ${user.email}`,
-    );
-  }
-
-  static async sendPasswordResetEmail(user: RequiredUserProps) {
-    console.log(`Sending password reset email to: ${user.email}`);
-    // integration with email provider
-  }
-
-  static async sendSubscriptionRenewalReminder(user: RequiredUserProps) {
-    console.log(`Sending subscription renewal reminder to: ${user.email}`);
-    // integration with email provider
-  }
-
-  // other email functions here
 }
 
 export default EmailService;
