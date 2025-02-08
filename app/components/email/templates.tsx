@@ -1,4 +1,8 @@
 import { BaseEmailTemplate } from './base-template';
+import { getRootUrl } from '@/lib/domain';
+
+// Helper to get URLs
+const appUrl = getRootUrl();
 
 export const createNewSubscriptionEmail = (customerName: string, tierName: string) => {
   const content = `
@@ -6,7 +10,7 @@ export const createNewSubscriptionEmail = (customerName: string, tierName: strin
       Congratulations! <b>${customerName}</b> has purchased your <b>${tierName}</b> tier.
     </p>
     <a
-      href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard"
+      href="${appUrl}"
       style="line-height:100%;text-decoration:none;display:block;max-width:100%;background-color:#000000;border-radius:5px;color:#fff;font-size:16px;font-weight:bold;text-align:center;width:100%;padding:10px 10px"
       target="_blank"
     >
@@ -29,7 +33,7 @@ export const createWelcomeEmail = (userName: string) => {
       Thank you for registering with <strong>store.dev</strong>!
     </p>
     <a
-      href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard"
+      href="${appUrl}"
       style="line-height:100%;text-decoration:none;display:block;max-width:100%;background-color:#000000;border-radius:5px;color:#fff;font-size:16px;font-weight:bold;text-align:center;width:100%;padding:10px 10px"
       target="_blank"
     >
@@ -49,7 +53,7 @@ export const createNewPurchaseEmail = (customerName: string, tierName: string) =
       Congratulations! <b>${customerName}</b> has purchased your <b>${tierName}</b> package.
     </p>
     <a
-      href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard"
+      href="${appUrl}"
       style="line-height:100%;text-decoration:none;display:block;max-width:100%;background-color:#000000;border-radius:5px;color:#fff;font-size:16px;font-weight:bold;text-align:center;width:100%;padding:10px 10px"
       target="_blank"
     >
@@ -69,7 +73,7 @@ export const createPurchaseConfirmationEmail = (tierName: string) => {
       Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier.
     </p>
     <a
-      href="${process.env.NEXT_PUBLIC_APP_URL}/customer-login"
+      href="${appUrl}"
       style="line-height:100%;text-decoration:none;display:block;max-width:100%;background-color:#000000;border-radius:5px;color:#fff;font-size:16px;font-weight:bold;text-align:center;width:100%;padding:10px 10px"
       target="_blank"
     >
@@ -132,7 +136,7 @@ export const createNewCustomerSignUpEmail = (userName: string) => {
       Thank you for registering with <strong>store.dev</strong>!
     </p>
     <a
-      href="${process.env.NEXT_PUBLIC_APP_URL}/dashboard"
+      href="${appUrl}"
       style="line-height:100%;text-decoration:none;display:block;max-width:100%;background-color:#000000;border-radius:5px;color:#fff;font-size:16px;font-weight:bold;text-align:center;width:100%;padding:10px 10px"
       target="_blank"
     >
@@ -152,7 +156,7 @@ export const createSubscriptionConfirmationEmail = (tierName: string) => {
       Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier.
     </p>
     <a
-      href="${process.env.NEXT_PUBLIC_APP_URL}/customer-login"
+      href="${appUrl}"
       style="line-height:100%;text-decoration:none;display:block;max-width:100%;background-color:#000000;border-radius:5px;color:#fff;font-size:16px;font-weight:bold;text-align:center;width:100%;padding:10px 10px"
       target="_blank"
     >
@@ -162,6 +166,25 @@ export const createSubscriptionConfirmationEmail = (tierName: string) => {
 
   return BaseEmailTemplate({
     previewText: `Thank you for purchasing ${tierName}!`,
+    children: content,
+  });
+};
+
+export const createVerificationEmail = (token: string, domain: string) => {
+  const content = `
+    <p style="font-size:16px;line-height:24px;margin:16px 0;color:#525f7f;text-align:left">
+      Your verification code for signing in to <strong>${domain}</strong> is:
+    </p>
+    <p style="font-size:24px;line-height:32px;margin:24px 0;color:#000000;text-align:center;font-weight:bold;letter-spacing:2px">
+      ${token}
+    </p>
+    <p style="font-size:14px;line-height:24px;margin:16px 0;color:#525f7f;text-align:center">
+      This code will expire in 5 minutes
+    </p>
+  `;
+
+  return BaseEmailTemplate({
+    previewText: `Your verification code: ${token}`,
     children: content,
   });
 }; 
