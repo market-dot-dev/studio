@@ -144,4 +144,24 @@ export const createNewCustomerSignUpEmail = (userName: string) => {
     previewText: `Welcome to store.dev!`,
     children: content,
   });
+};
+
+export const createSubscriptionConfirmationEmail = (tierName: string) => {
+  const content = `
+    <p style="font-size:16px;line-height:24px;margin:16px 0;color:#525f7f;text-align:left">
+      Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier.
+    </p>
+    <a
+      href="${process.env.NEXT_PUBLIC_APP_URL}/customer-login"
+      style="line-height:100%;text-decoration:none;display:block;max-width:100%;background-color:#000000;border-radius:5px;color:#fff;font-size:16px;font-weight:bold;text-align:center;width:100%;padding:10px 10px"
+      target="_blank"
+    >
+      Manage Subscription & Benefits
+    </a>
+  `;
+
+  return BaseEmailTemplate({
+    previewText: `Thank you for purchasing ${tierName}!`,
+    children: content,
+  });
 }; 

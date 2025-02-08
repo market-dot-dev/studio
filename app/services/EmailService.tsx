@@ -105,8 +105,8 @@ class EmailService {
     tierName: string,
   ) {
     const subject = `Thank you for purchasing ${tierName}!`;
+    const html = EmailTemplates.createSubscriptionConfirmationEmail(tierName);
     const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at ${appURLWithProtocol} to manage your subscription & benefits.`;
-    const html = `Thank you for purchasing the <b>${tierName}</b> tier. You now have access to all the benefits of this tier. Please visit your <a href="${appURLWithProtocol}/customer-login">dashboard</a> to manage your subscription & benefits.`;
 
     try {
       await this.sendEmail(customer.email, subject, text, html);
