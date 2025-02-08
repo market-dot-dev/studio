@@ -6,6 +6,7 @@ import sgMail from "@sendgrid/mail";
 import UserService from "./UserService";
 import { getRootUrl, domainCopy } from "@/lib/domain";
 import * as EmailTemplates from '@/app/components/email/templates';
+
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
 type RequiredUserProps = {
@@ -184,6 +185,14 @@ class EmailService {
     const text = `Hello ${user.name},\n\nThank you for registering with store.dev!`;
 
     await this.sendEmail(user.email, subject, text, html);
+  }
+
+  static async sendVerificationEmail(email: string, token: string, domain: string): Promise<void> {
+    const subject = `Verification code`;
+    const html = EmailTemplates.createVerificationEmail(token, domain);
+    const text = `Your verification code for signing in to ${domain} is ${token}`;
+
+    await this.sendEmail(email, subject, text, html);
   }
 }
 

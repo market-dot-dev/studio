@@ -41,9 +41,7 @@ export const authOptions: NextAuthOptions = {
         return Math.floor(100000 + Math.random() * 900000).toString();
       },
       sendVerificationRequest: ({ identifier: email, token }) => {
-        const html = `<p>Your verification code for signing in to ${domainCopy()} is <strong>${token}</strong></p>`;
-        const text = `Your verification code for signing in to ${domainCopy()} is ${token}`;
-        return EmailService.sendEmail(email, `Verification code`, text, html);
+        return EmailService.sendVerificationEmail(email, token, domainCopy());
       },
     }),
     GitHubProvider({
