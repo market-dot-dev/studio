@@ -14,7 +14,8 @@ import {
   UserRoundSearch,
   ChartNoAxesColumnIncreasing as Chart,
   X,
-  Store
+  Store,
+  ShoppingBag,
 } from "lucide-react";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { FaDiscord, FaGithubAlt } from "react-icons/fa";
@@ -58,12 +59,13 @@ function Item({ item }: { item: NavItem }) {
         href={item.href}
         target={item.target}
         className={clsx(
-          "flex items-center space-x-3 h-6",
+          "flex h-6 items-center space-x-3",
           "rounded px-1 transition-all duration-150 ease-in-out",
           "hover:bg-white hover:shadow-border",
           "focus:bg-white focus:shadow-border focus:outline-none",
           "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800",
-          item.isActive && "bg-white text-black shadow-border dark:bg-stone-700",
+          item.isActive &&
+            "bg-white text-black shadow-border dark:bg-stone-700",
         )}
       >
         {item.icon}
@@ -135,6 +137,13 @@ export default function Nav({
         href: `/site/${siteId}`,
         isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
         icon: <Store width={18} />,
+      },
+      {
+        type: "link",
+        name: "Market",
+        href: "/channels/market",
+        icon: <ShoppingBag width={18} />,
+        isActive: urlSegments[1] === "market",
       },
     ];
 
@@ -311,7 +320,7 @@ export default function Nav({
       )}
       <nav
         className={clsx(
-          `fixed h-[var(--navHeight)] flex-col gap-12 justify-between border-r border-stone-200 bg-stone-100 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900 overflow-y-scroll`,
+          `fixed h-[var(--navHeight)] flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 bg-stone-100 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
           isMobile
             ? [
                 "inset-0 top-[var(--headerHeight)] z-50 flex w-full transform md:hidden",

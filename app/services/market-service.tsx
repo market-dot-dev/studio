@@ -6,6 +6,14 @@ import { getRootUrl } from "@/lib/domain";
 const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;
 const API_KEY = process.env.MARKET_DEV_API_KEY;
 
+interface Expert {
+  id: string;
+  name: string;
+  slug: string;
+  uuid: string;
+  host: string;
+}
+
 interface ServicesForSaleOnMarketDev {
   services: ServiceForSaleOnMarketDev[];
 }
@@ -27,6 +35,34 @@ interface ServiceForSaleOnMarketDevParams
   > {}
 
 export class MarketService {
+  static async getExpert(): Promise<Expert | null> {
+    const user = await getCurrentUser();
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    try {
+      const response = await fetch(
+        `${API_ENDPOINT}store/experts/${user.gh_id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${API_KEY}`,
+          },
+        },
+      );
+
+      const data = await response.json();
+      return data as Expert;
+    } catch (error) {
+      console.error(
+        `Error getting Market expert for user ${user.gh_id}:`,
+        error,
+      );
+      return null;
+    }
+  }
+
   static async validateAccount() {
     const user = await getCurrentUser();
     if (!user) {
