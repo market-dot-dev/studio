@@ -106,14 +106,14 @@ export default function Nav({
   siteId,
   roleId,
   hasFeatures,
-  isConnectedToMarket,
+  isMarketExpert,
   isMobile = false,
   className,
 }: {
   siteId: string | null;
   roleId: string | null;
   hasFeatures: boolean | null;
-  isConnectedToMarket: boolean | null;
+  isMarketExpert: boolean | null;
   isMobile?: boolean;
   className?: string;
 }) {
@@ -217,7 +217,7 @@ export default function Nav({
         name: "Channels",
       },
       ...(siteId ? siteItems : []),
-      ...(isConnectedToMarket ? marketItems : []),
+      ...(isMarketExpert ? marketItems : []),
       {
         type: "link",
         name: "Embeds",
