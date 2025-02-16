@@ -30,7 +30,6 @@ export default function ConnectionRequired({ user }: { user: User }) {
     });
   };
 
-  console.log("isConnecting", isConnecting);
   return (
     <div className="from-muted/50 to-muted/30 relative space-y-8 rounded-lg border bg-gradient-to-b p-8">
       <div
