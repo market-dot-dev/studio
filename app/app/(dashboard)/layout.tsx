@@ -51,6 +51,7 @@ export default async function DashboardLayout({
             siteId={site?.id ?? null}
             roleId={user.roleId || "anonymous"}
             hasFeatures={activeFeatures.length != 0}
+            isConnectedToMarket={user.marketExpertId ? true : false}
           />
           <div className="flex min-h-screen w-full flex-col items-center bg-stone-50 md:pl-60">
             <div className="flex w-full max-w-screen-xl flex-col items-center space-y-4 p-6 sm:p-10 sm:pt-8">

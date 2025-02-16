@@ -106,12 +106,14 @@ export default function Nav({
   siteId,
   roleId,
   hasFeatures,
+  isConnectedToMarket,
   isMobile = false,
   className,
 }: {
   siteId: string | null;
   roleId: string | null;
   hasFeatures: boolean | null;
+  isConnectedToMarket: boolean | null;
   isMobile?: boolean;
   className?: string;
 }) {
@@ -138,6 +140,9 @@ export default function Nav({
         isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
         icon: <Store width={18} />,
       },
+    ];
+
+    const marketItems: LinkItem[] = [
       {
         type: "link",
         name: "Market",
@@ -212,6 +217,7 @@ export default function Nav({
         name: "Channels",
       },
       ...(siteId ? siteItems : []),
+      ...(isConnectedToMarket ? marketItems : []),
       {
         type: "link",
         name: "Embeds",
