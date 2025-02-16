@@ -10,9 +10,6 @@ export default async function MarketChannel() {
   if (!currentUser) {
     return <div>Not logged in</div>;
   }
-  if (!currentUser.marketExpertId) {
-    return <div>Not connected to Market.dev</div>;
-  }
 
   const isConnectedToMarket = currentUser.marketExpertId != null;
 
