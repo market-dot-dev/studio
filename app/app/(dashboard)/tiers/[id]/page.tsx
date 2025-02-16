@@ -4,7 +4,7 @@ import { findTier } from "@/app/services/TierService";
 import ContractService from "@/app/services/contract-service";
 import TierForm from "@/components/tiers/tier-form";
 import FeatureService from "@/app/services/feature-service";
-import { userIsMarketExpert } from "@/app/services/market-service";
+import { getCurrentUser } from "@/app/services/UserService";
 export default async function EditTierPage({
   params,
 }: {
@@ -22,7 +22,7 @@ export default async function EditTierPage({
 
   if (!tier || !tier.id) return null;
 
-  const userIsExpert = await userIsMarketExpert();
+  const user = await getCurrentUser();
 
   return (
     <div className="flex max-w-screen-xl flex-col">
@@ -30,7 +30,7 @@ export default async function EditTierPage({
         tier={tier}
         contracts={contracts}
         hasActiveFeatures={!!activeFeatures?.length}
-        userIsMarketExpert={userIsExpert}
+        user={user!}
       />
     </div>
   );

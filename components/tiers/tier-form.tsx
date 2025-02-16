@@ -29,7 +29,7 @@ import TierFeaturePicker from "../features/tier-feature-picker";
 import { attachMany } from "@/app/services/feature-service";
 import Link from "next/link";
 import DashboardCard from "../common/dashboard-card";
-import { Channel, Contract, Feature } from "@prisma/client";
+import { Channel, Contract, Feature, User } from "@prisma/client";
 import LoadingDots from "@/components/icons/loading-dots";
 import {
   Select,
@@ -55,7 +55,7 @@ interface TierFormProps {
   tier?: Partial<Tier>;
   contracts: Contract[];
   hasActiveFeatures?: boolean;
-  userIsMarketExpert: boolean;
+  user: User;
 }
 
 const TierVersionCard = ({
@@ -429,7 +429,7 @@ export default function TierForm({
   tier: tierObj,
   contracts,
   hasActiveFeatures = false,
-  userIsMarketExpert,
+  user,
 }: TierFormProps) {
   const router = useRouter();
   const [tier, setTier] = useState<TierWithFeatures>(
@@ -583,6 +583,7 @@ export default function TierForm({
               Checkout Type
             </label>
             <CheckoutTypeSelectionInput
+              user={user}
               tier={tier}
               handleInputChange={handleInputChange}
             />
@@ -638,7 +639,7 @@ export default function TierForm({
               Channels
             </label>
             <ChannelsSelectionInput
-              userIsMarketExpert={userIsMarketExpert}
+              userIsMarketExpert={!!user.marketExpertId}
               selectedChannels={tier.channels}
               handleInputChange={(channel) => {
                 let channels: Channel[] = tier.channels;

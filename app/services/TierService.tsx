@@ -215,149 +215,36 @@ class TierService {
     tierData: Partial<Tier>,
     newFeatureIds?: string[],
   ) {
-    // Ensure the current user is the owner of the tier or has permissions to update it
-    const user = await UserService.getCurrentUser();
+    const user = await TierService.validateUserAndGetTier(id);
+    const tier = await TierService.findAndValidateTier(id, user.id);
+    const attrs = TierService.prepareAttributes(tier, tierData);
 
-    if (!user) throw new Error("User not authenticated");
-
-    const stripeService = new StripeService(user?.stripeAccountId!);
-
-    let tier = await prisma.tier.findUnique({
-      where: { id, userId: user.id },
-      include: { versions: true },
-    });
-
-    if (!tier) throw new Error(`Tier with ID ${id} not found`);
-
-    const attrs: Partial<Tier> = newTier({
-      ...tier,
-      ...tierData,
-    });
-
-    // console.debug("============= payload", { tierData, attrs });
-
-    let newVersion: TierVersion | null = null;
-
-    if (!attrs.name) {
-      throw new Error("Tier name is required.");
-    }
-
-    if (!attrs.price) {
-      throw new Error("Price is required.");
-    }
-
-    let newFeatureSetIds: string[] = newFeatureIds || [];
-    const featuresChanged = newFeatureSetIds
-      ? await FeatureService.haveFeatureIdsChanged(id, newFeatureSetIds)
-      : false;
-
-    const hasSubscribers = await SubscriptionService.hasSubscribers(
-      id,
-      tier.revision,
+    const context = await TierService.buildUpdateContext(
+      user,
+      tier,
+      attrs,
+      newFeatureIds,
     );
-    const cadenceChanged = attrs.cadence !== tier.cadence;
-    const priceChanged = attrs.price !== tier.price || cadenceChanged;
-    const annualPriceChanged = attrs.priceAnnual !== tier.priceAnnual;
-    const materialChange =
-      priceChanged || annualPriceChanged || featuresChanged;
-    const createNewversion =
-      hasSubscribers && attrs.published && materialChange;
-    const stripeConnected = !!user.stripeAccountId;
 
-    if (createNewversion) {
-      newVersion = await prisma.tierVersion.create({
-        data: {
-          tierId: id,
-          price: tier.price,
-          stripePriceId: tier.stripePriceId,
-          cadence: tier.cadence,
-          priceAnnual: tier.priceAnnual,
-          stripePriceIdAnnual: tier.stripePriceIdAnnual,
-          revision: tier.revision,
-        },
-      });
+    await FeatureService.setFeatureCollection(
+      id,
+      context.newFeatureSetIds,
+      "tier",
+    );
 
-      const existingFeatureSetIds = (await FeatureService.findByTierId(id)).map(
-        (f) => f.id,
-      );
-      await FeatureService.setFeatureCollection(
-        newVersion.id,
-        existingFeatureSetIds,
-        "tierVersion",
-      );
-
-      // clear old price from tier and version
-      attrs.revision = tier.revision + 1;
-      attrs.cadence = (attrs.cadence || "month") as SubscriptionCadence;
-
-      const tierAttributes = {
-        revision: tier.revision + 1,
-      } as Partial<Tier>;
-
-      if (featuresChanged || priceChanged) {
-        attrs.stripePriceId = null;
-        tierAttributes.stripePriceId = null;
+    if (tierData.checkoutType === "gitwallet") {
+      if (context.createNewVersion) {
+        await TierService.handleVersioning(id, tier, attrs, context);
+      } else {
+        await TierService.handlePriceUpdates(user, tier, attrs, context);
       }
 
-      if (featuresChanged || annualPriceChanged) {
-        attrs.stripePriceIdAnnual = null;
-        tierAttributes.stripePriceIdAnnual = null;
-      }
-
-      await prisma.tier.update({
-        where: { id },
-        data: tierAttributes,
-      });
-    } else {
-      if (priceChanged && tier.stripePriceId) {
-        attrs.stripePriceId = null;
-        await stripeService.destroyPrice(tier.stripePriceId);
-      }
-
-      if (annualPriceChanged && tier.stripePriceIdAnnual) {
-        attrs.stripePriceIdAnnual = null;
-        await stripeService.destroyPrice(tier.stripePriceIdAnnual);
+      if (context.stripeConnected && attrs.published) {
+        await TierService.handleStripeProducts(attrs, user.stripeAccountId!);
       }
     }
 
-    await FeatureService.setFeatureCollection(id, newFeatureSetIds, "tier");
-
-    if (stripeConnected && attrs.published) {
-      if (!attrs.stripeProductId) {
-        const product = await stripeService.createProduct(
-          attrs.name,
-          attrs.description || attrs.tagline || undefined,
-        );
-        attrs.stripeProductId = product.id;
-
-        if (!attrs.stripeProductId) {
-          throw new Error("Failed to create stripe product id.");
-        }
-      }
-
-      if (!attrs.stripePriceId) {
-        const price = await stripeService.createPrice(
-          attrs.stripeProductId,
-          attrs.price,
-          attrs.cadence as SubscriptionCadence,
-        );
-        attrs.stripePriceId = price.id;
-      }
-
-      if (!attrs.stripePriceIdAnnual && attrs.priceAnnual) {
-        const priceAnnual = await stripeService.createPrice(
-          attrs.stripeProductId,
-          attrs.priceAnnual,
-          "year",
-        );
-        attrs.stripePriceIdAnnual = priceAnnual.id;
-      }
-    }
-
-    // TODO: Consider wrapping the following block in a transaction
     const row = await TierService.toTierRow(attrs);
-    // console.debug("============= updating", { tier, attrs, stripeConnected, createNewversion, priceChanged, row });
-
     const updatedTier = await prisma.tier.update({
       where: { id },
       data: row,
@@ -367,6 +254,178 @@ class TierService {
       await MarketService.updateServicesForSale();
     }
     return updatedTier;
+  }
+
+  // Helper methods
+  private static async validateUserAndGetTier(id: string) {
+    const user = await UserService.getCurrentUser();
+    if (!user) throw new Error("User not authenticated");
+    return user;
+  }
+
+  private static async findAndValidateTier(id: string, userId: string) {
+    const tier = await prisma.tier.findUnique({
+      where: { id, userId },
+      include: { versions: true },
+    });
+    if (!tier) throw new Error(`Tier with ID ${id} not found`);
+    return tier;
+  }
+
+  private static prepareAttributes(tier: Tier, tierData: Partial<Tier>) {
+    const attrs: Partial<Tier> = newTier({ ...tier, ...tierData });
+    if (!attrs.name) throw new Error("Tier name is required.");
+    if (tierData.checkoutType === "gitwallet" && !attrs.price)
+      throw new Error("Price is required.");
+    return attrs;
+  }
+
+  private static async buildUpdateContext(
+    user: User,
+    tier: Tier,
+    attrs: Partial<Tier>,
+    newFeatureIds?: string[],
+  ) {
+    const newFeatureSetIds = newFeatureIds || [];
+    const featuresChanged = newFeatureSetIds
+      ? await FeatureService.haveFeatureIdsChanged(tier.id, newFeatureSetIds)
+      : false;
+
+    const hasSubscribers = await SubscriptionService.hasSubscribers(
+      tier.id,
+      tier.revision,
+    );
+    const cadenceChanged = attrs.cadence !== tier.cadence;
+    const priceChanged = attrs.price !== tier.price || cadenceChanged;
+    const annualPriceChanged = attrs.priceAnnual !== tier.priceAnnual;
+
+    return {
+      newFeatureSetIds,
+      featuresChanged,
+      hasSubscribers,
+      priceChanged,
+      annualPriceChanged,
+      materialChange: priceChanged || annualPriceChanged || featuresChanged,
+      createNewVersion:
+        hasSubscribers &&
+        attrs.published &&
+        (priceChanged || annualPriceChanged || featuresChanged),
+      stripeConnected: !!user.stripeAccountId,
+    };
+  }
+
+  private static async handleVersioning(
+    id: string,
+    tier: Tier,
+    attrs: Partial<Tier>,
+    context: any,
+  ) {
+    const newVersion = await prisma.tierVersion.create({
+      data: {
+        tierId: id,
+        price: tier.price,
+        stripePriceId: tier.stripePriceId,
+        cadence: tier.cadence,
+        priceAnnual: tier.priceAnnual,
+        stripePriceIdAnnual: tier.stripePriceIdAnnual,
+        revision: tier.revision,
+      },
+    });
+
+    const existingFeatureSetIds = (await FeatureService.findByTierId(id)).map(
+      (f) => f.id,
+    );
+    await FeatureService.setFeatureCollection(
+      newVersion.id,
+      existingFeatureSetIds,
+      "tierVersion",
+    );
+
+    attrs.revision = tier.revision + 1;
+    attrs.cadence = (attrs.cadence || "month") as SubscriptionCadence;
+
+    const tierAttributes = TierService.buildTierAttributes(
+      tier,
+      attrs,
+      context,
+    );
+    await prisma.tier.update({ where: { id }, data: tierAttributes });
+  }
+
+  private static async handlePriceUpdates(
+    user: User,
+    tier: Tier,
+    attrs: Partial<Tier>,
+    context: any,
+  ) {
+    const stripeService = new StripeService(user.stripeAccountId!);
+
+    if (context.priceChanged && tier.stripePriceId) {
+      attrs.stripePriceId = null;
+      await stripeService.destroyPrice(tier.stripePriceId);
+    }
+
+    if (context.annualPriceChanged && tier.stripePriceIdAnnual) {
+      attrs.stripePriceIdAnnual = null;
+      await stripeService.destroyPrice(tier.stripePriceIdAnnual);
+    }
+  }
+
+  private static async handleStripeProducts(
+    attrs: Partial<Tier>,
+    stripeAccountId: string,
+  ) {
+    const stripeService = new StripeService(stripeAccountId);
+
+    if (!attrs.stripeProductId) {
+      const product = await stripeService.createProduct(
+        attrs.name!,
+        attrs.description || attrs.tagline || undefined,
+      );
+      attrs.stripeProductId = product.id;
+      if (!attrs.stripeProductId)
+        throw new Error("Failed to create stripe product id.");
+    }
+
+    if (!attrs.stripePriceId) {
+      const price = await stripeService.createPrice(
+        attrs.stripeProductId,
+        attrs.price!,
+        attrs.cadence as SubscriptionCadence,
+      );
+      attrs.stripePriceId = price.id;
+    }
+
+    if (!attrs.stripePriceIdAnnual && attrs.priceAnnual) {
+      const priceAnnual = await stripeService.createPrice(
+        attrs.stripeProductId,
+        attrs.priceAnnual,
+        "year",
+      );
+      attrs.stripePriceIdAnnual = priceAnnual.id;
+    }
+  }
+
+  private static buildTierAttributes(
+    tier: Tier,
+    attrs: Partial<Tier>,
+    context: any,
+  ) {
+    const tierAttributes = {
+      revision: tier.revision + 1,
+    } as Partial<Tier>;
+
+    if (context.featuresChanged || context.priceChanged) {
+      attrs.stripePriceId = null;
+      tierAttributes.stripePriceId = null;
+    }
+
+    if (context.featuresChanged || context.annualPriceChanged) {
+      attrs.stripePriceIdAnnual = null;
+      tierAttributes.stripePriceIdAnnual = null;
+    }
+
+    return tierAttributes;
   }
 
   static shouldCreateNewVersion = async (
