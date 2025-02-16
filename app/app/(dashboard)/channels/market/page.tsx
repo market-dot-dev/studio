@@ -14,13 +14,13 @@ export default async function MarketChannel() {
     return <div>Not connected to Market.dev</div>;
   }
 
-  const hasListings = true;
+  const isConnectedToMarket = currentUser.marketExpertId != null;
 
   return (
     <Flex flexDirection="col" alignItems="start" className="w-full gap-6">
       <PageHeading title="Market" />
 
-      {!hasListings ? (
+      {!isConnectedToMarket ? (
         <ConnectionRequired user={currentUser} />
       ) : (
         <div className="flex w-full flex-col gap-4">
