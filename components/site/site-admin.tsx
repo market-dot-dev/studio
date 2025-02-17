@@ -52,18 +52,11 @@ export default function SiteAdmin({ id }: { id: string }) {
 
   return (
     <>
-      <div className="flex w-full justify-between pb-[72px]">
-        <div className="flex flex-row">
-          <PageHeading title="Your Storefront" />
-        </div>
-        <div className="flex flex-row">
-          {url ? <ExternalLinkChip href={url} label={url + " ↗"} /> : null}
-        </div>
-      </div>
+      <PageHeading title="Your Storefront" />
 
       <Card>
-        <div className="flex w-full justify-between">
-          <div className="absolute bottom-0 left-4">
+        <div className="flex w-full flex-col md:flex-row md:justify-between">
+          <div className="absolute bottom-0 left-4 hidden md:block">
             <PreviewSection
               content={homepage?.content ?? ""}
               width={280}
@@ -73,38 +66,41 @@ export default function SiteAdmin({ id }: { id: string }) {
               className="rounded-t-lg border border-b-0"
             />
           </div>
-          <div className="flex-column ms-[300px]">
-            <div className="mb-2">
-              <Bold className="me-2">Homepage</Bold>
+          <div className="flex-column w-full md:ms-[300px]">
+            <div className="mb-4">
+              <div className="mb-2 flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Bold className="me-2">Homepage</Bold>
+                  {homepage?.draft ? (
+                    <Badge color="gray" size="xs">
+                      Draft
+                    </Badge>
+                  ) : (
+                    <Badge color="green" size="xs">
+                      Live
+                    </Badge>
+                  )}
+                </div>
+              </div>
+              <div className="mb-2">
+                {url ? <ExternalLinkChip href={url} label={url + " ↗"} /> : null}
+              </div>
 
-              {homepage?.draft ? (
-                <Badge color="gray" size="xs">
-                  Draft
-                </Badge>
-              ) : (
-                <Badge color="green" size="xs">
-                  Live
-                </Badge>
-              )}
+              <Text className="mt-2">
+                Title: {homepage?.title ?? "No Home Page Set"}
+              </Text>
+              <Text>
+                Last Updated:{" "}
+                {homepage?.updatedAt
+                  ? formatDistanceToNow(new Date(homepage.updatedAt), {
+                      addSuffix: true,
+                    })
+                  : "Unknown"}
+              </Text>
             </div>
-            <div>
-              {url ? <ExternalLinkChip href={url} label={url + " ↗"} /> : null}
+            <div className="mt-auto">
+              <PrimaryButton label="Edit" href={`/page/${siteData.homepageId}`} />
             </div>
-
-            <Text className="mt-2">
-              Title: {homepage?.title ?? "No Home Page Set"}
-            </Text>
-            <Text>
-              Last Updated:{" "}
-              {homepage?.updatedAt
-                ? formatDistanceToNow(new Date(homepage.updatedAt), {
-                    addSuffix: true,
-                  })
-                : "Unknown"}
-            </Text>
-          </div>
-          <div className="flex flex-row">
-            <PrimaryButton label="Edit" href={`/page/${siteData.homepageId}`} />
           </div>
         </div>
       </Card>
@@ -118,11 +114,13 @@ export default function SiteAdmin({ id }: { id: string }) {
         </div>
       </div>
 
-      <Pages
-        pages={siteData.pages}
-        url={url ?? ""}
-        homepageId={siteData.homepageId ?? null}
-      />
+      <div className="overflow-x-auto">
+        <Pages
+          pages={siteData.pages}
+          url={url ?? ""}
+          homepageId={siteData.homepageId ?? null}
+        />
+      </div>
     </>
   );
 }
