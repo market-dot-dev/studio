@@ -42,7 +42,7 @@ export default function CreatePageButton() {
           <p>Creating Page</p>
           <LoadingDots color="#808080" />
         </> : 
-        <p>Create New Page</p>}
+        <p>New Page</p>}
     </Button>
   );
 }

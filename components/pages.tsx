@@ -7,7 +7,7 @@ import { Badge } from "@tremor/react";
 
 export default function Pages({ pages, homepageId, url }: { pages: any, homepageId: string | null, url?: string }) {
 	
-	return pages.length > 0 ? (
+	return (
 		<Table.Root>
 			<Table.Header>
 				<Table.Row>
@@ -46,18 +46,5 @@ export default function Pages({ pages, homepageId, url }: { pages: any, homepage
 			</Table.Body>
 
 		</Table.Root>
-	) : (
-		<div className="flex flex-col items-center space-x-4">
-			<h1 className="font-cal text-4xl">No Posts Yet</h1>
-			<Image
-				alt="missing pages"
-				src="https://illustrations.popsy.co/gray/graphic-design.svg"
-				width={400}
-				height={400}
-			/>
-			<p className="text-lg text-stone-500">
-				You do not have any pages yet. Create one to get started.
-			</p>
-		</div>
-	);
+	)
 }

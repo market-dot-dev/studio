@@ -55,8 +55,8 @@ export default function SiteAdmin({ id }: { id: string }) {
       <PageHeading title="Your Storefront" />
 
       <Card>
-        <div className="flex w-full flex-col md:flex-row md:justify-between">
-          <div className="absolute bottom-0 left-4 hidden md:block">
+        <div className="flex w-full flex-col lg:flex-row lg:justify-between">
+          <div className="absolute bottom-0 left-4 hidden lg:block">
             <PreviewSection
               content={homepage?.content ?? ""}
               width={280}
@@ -66,9 +66,9 @@ export default function SiteAdmin({ id }: { id: string }) {
               className="rounded-t-lg border border-b-0"
             />
           </div>
-          <div className="flex-column w-full md:ms-[300px]">
+          <div className="flex-column w-full lg:ms-[300px]">
             <div className="mb-4">
-              <div className="mb-2 flex items-center justify-between">
+              <div className="mb-2 flex">
                 <div className="flex items-center gap-2">
                   <Bold className="me-2">Homepage</Bold>
                   {homepage?.draft ? (
@@ -82,7 +82,7 @@ export default function SiteAdmin({ id }: { id: string }) {
                   )}
                 </div>
               </div>
-              <div className="mb-2">
+              <div className="mb-2 flex justify-start">
                 {url ? <ExternalLinkChip href={url} label={url + " ↗"} /> : null}
               </div>
 
@@ -99,28 +99,38 @@ export default function SiteAdmin({ id }: { id: string }) {
               </Text>
             </div>
             <div className="mt-auto">
-              <PrimaryButton label="Edit" href={`/page/${siteData.homepageId}`} />
+              <PrimaryButton label="Edit Homepage" href={`/page/${siteData.homepageId}`} />
             </div>
           </div>
         </div>
       </Card>
       
-      <div className="flex w-full justify-between pt-6">
-        <div className="flex flex-row">
-          <Bold>Pages</Bold>
+      <Card>
+        <div className="flex w-full justify-between">
+          <div className="flex flex-row">
+            <Bold>Other Pages</Bold>
+          </div>
+          <div className="flex flex-row">
+            <CreatePageButton />
+          </div>
         </div>
-        <div className="flex flex-row">
-          <CreatePageButton />
-        </div>
-      </div>
 
-      <div className="overflow-x-auto">
-        <Pages
-          pages={siteData.pages}
-          url={url ?? ""}
-          homepageId={siteData.homepageId ?? null}
-        />
-      </div>
+        <div className="overflow-x-auto">
+          {siteData.pages.length > 1 ? (
+            <Pages
+              pages={siteData.pages}
+              url={url ?? ""}
+              homepageId={siteData.homepageId ?? null}
+            />
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full pt-6">
+              <p className="text-lg text-stone-500">
+                You do not have any other pages yet. Create more pages to start building your store.
+              </p>
+            </div>
+          )}
+        </div>
+      </Card>
     </>
   );
 }
