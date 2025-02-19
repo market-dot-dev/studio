@@ -1,4 +1,4 @@
-store.dev is a commerce platform for developers. 
+market.dev is a commerce platform for developers. 
 
 ## Getting Started
 
