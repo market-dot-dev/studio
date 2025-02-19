@@ -122,7 +122,7 @@ export default function ProfileForm({
 
           <div className="space-y-1 text-center">
             <h1 className="text-2xl font-bold tracking-tight text-gray-900">
-              Welcome to store.dev
+              Welcome to market.dev
             </h1>
             <h2 className="text-base font-normal text-gray-900">
               Tell us about your business
@@ -158,7 +158,7 @@ export default function ProfileForm({
                 required
               />
               <span className="py-2 pr-3 text-sm text-gray-400">
-                .store.dev
+                .market.dev
               </span>
             </div>
             {/* {subdomainError && (
