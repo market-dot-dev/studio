@@ -8,8 +8,10 @@ const nextConfig = {
         "store.local:3000",
         "*.store.local:3000",
         "gitwallet.co",
-        "store.dev",
         "*.gitwallet.co",
+        "market.dev",
+        "*.market.dev",
+        "store.dev",
         "*.store.dev",
         process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "*.vercel.app" : "",
       ].filter(Boolean),
@@ -20,6 +22,8 @@ const nextConfig = {
         "*.store.dev",
         "gitwallet.co",
         "store.dev",
+        "market.dev",
+        "*.market.dev",
         process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "*.vercel.app" : "",
       ].filter(Boolean),
     },
@@ -40,6 +44,8 @@ const nextConfig = {
       { hostname: "www.gitwallet.co" },
       { hostname: "www.store.dev" },
       { hostname: "store.dev" },
+      { hostname: "www.market.dev" },
+      { hostname: "market.dev" },
     ],
   },
   logging: {
@@ -48,7 +54,7 @@ const nextConfig = {
     },
   },
 
-  // Redirect *.gitwallet.co -> *.store.dev
+  // Redirect *.gitwallet.co -> *.market.dev
   async redirects() {
     return [
       {
@@ -59,7 +65,7 @@ const nextConfig = {
             value: "^(?<subdomain>.*)\\.gitwallet\\.co$",
           },
         ],
-        destination: "https://:subdomain.store.dev/:path*",
+        destination: "https://:subdomain.market.dev/:path*",
         permanent: true,
       },
     ];
@@ -81,7 +87,7 @@ if (process.env.NODE_ENV !== "development") {
       // Suppresses source map uploading logs during build
       silent: true,
       org: "marketdotdev",
-      project: "storedotdev",
+      project: "store",
     },
     {
       // For all available options, see:
