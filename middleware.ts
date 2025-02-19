@@ -63,7 +63,7 @@ async function customMiddleware(req: NextRequest) {
     return NextResponse.next();
   }
 
-  // gitwallet.co
+  // market.dev
   if (bareDomain || reservedSubdomain === "sell") {
     if (url.pathname.startsWith("/design")) {
       return rewrite(`/design${path}`, req.url);
@@ -74,7 +74,7 @@ async function customMiddleware(req: NextRequest) {
     return rewrite(`/home${path}`, req.url);
   }
 
-  // $GHUSERNAME.gitwallet.co
+  // $GHUSERNAME.market.dev
   // permit API from users' subdomains
   if (!!ghUsername) {
     if (url.pathname.startsWith("/api")) {
@@ -84,7 +84,7 @@ async function customMiddleware(req: NextRequest) {
     return rewrite(`/maintainer-site/${ghUsername}${path}`, req.url);
   }
 
-  // *.gitwallet.co
+  // *.market.dev
   const loginPaths = ["/login", "/customer-login", "/login/local-auth"];
 
   // if you're on a login page and already signed in, kick you to /
@@ -97,7 +97,7 @@ async function customMiddleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // app.gitwallet.co
+  // app.market.dev
   if (reservedSubdomain === "app" || DomainService.isVercelPreview(req)) {
     // if customer, then lock to /app/c/
     if (roleId === "customer") {
