@@ -12,7 +12,7 @@ export const BaseEmailTemplate = ({
         <link
           rel="preload"
           as="image"
-          href="https://store.dev/store-dot-dev-logo.png"
+          href="https://market.dev/market-dot-dev-logo.png"
         />
         <meta content="text/html; charset=UTF-8" http-equiv="Content-Type" />
         <meta name="x-apple-disable-message-reformatting" />
@@ -53,9 +53,9 @@ export const BaseEmailTemplate = ({
                     <tr>
                       <td>
                         <img
-                          alt="store.dev"
+                          alt="market.dev"
                           height="27"
-                          src="https://store.dev/store-dot-dev-logo.png"
+                          src="https://market.dev/market-dot-dev-logo.png"
                           style="display:block;outline:none;border:none;text-decoration:none"
                           width="120"
                         />
@@ -69,7 +69,7 @@ export const BaseEmailTemplate = ({
                         <p
                           style="font-size:12px;line-height:16px;margin:16px 0;color:#8898aa"
                         >
-                          Powered by store.dev
+                          Powered by market.dev
                         </p>
                       </td>
                     </tr>
