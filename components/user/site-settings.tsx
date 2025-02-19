@@ -38,7 +38,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
       setIsSaving(false);
     }
   };
-  const siteURL = `https://` + site.subdomain + `.store.dev`;
+  const siteURL = `https://` + site.subdomain + `.market.dev`;
 
   return (
     <>

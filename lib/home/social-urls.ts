@@ -1,7 +1,7 @@
 const loginURL =
   process.env.NODE_ENV === "development"
     ? "http://app.store.local:3000/login"
-    : "https://app.store.dev/login";
+    : "https://app.market.dev/login";
 
 const discordURL = "https://discord.gg/ZdSpS4BuGd";
 const blogURL = "https://blog.market.dev";
