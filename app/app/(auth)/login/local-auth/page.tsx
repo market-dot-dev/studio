@@ -13,14 +13,14 @@ export default function LoginPage() {
   return (
     <div className="mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
       <Image
-        alt="Gitwallet"
+        alt="market.dev"
         width={100}
         height={100}
         className="relative mx-auto h-12 w-auto dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
         src="/gw-logo.png"
       />
       <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">
-        Gitwallet
+        market.dev
       </h1>
       <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
         Log in with local auth credentials<br />

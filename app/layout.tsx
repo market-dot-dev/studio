@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title,
     description,
     images: [image],
-    creator: "@gitwallet",
+    creator: "@marketdotdev",
   },
   metadataBase: new URL(getRootUrl()),
 };
