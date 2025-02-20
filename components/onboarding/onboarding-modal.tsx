@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import LoadingDots from "../icons/loading-dots";
 import { AlertCircleIcon } from "lucide-react";
 import { Button } from "@tremor/react";
+import { validateMarketExpert } from "@/lib/market";
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
@@ -43,49 +44,22 @@ export default function OnboardingModal({
   const sourceIsMarketDev = source === "market.dev";
   const mounted = useMounted();
 
-  const validateMarketExpert = async () => {
-    if (user.marketExpertId) {
-      setValidateMarketExpertLoading(false);
-      return;
-    }
-
-    setValidateMarketExpertLoading(true);
-    try {
-      const response = await fetch(`/api/market/validate-expert`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      });
-
-      const errorMessages = {
-        404: "You are not an expert on Market.dev. Make sure you have an account created on Market.dev.",
-        default: "Failed to validate your Market.dev account.",
-      };
-
-      if (!response.ok) {
-        throw new Error(
-          errorMessages[response.status as keyof typeof errorMessages] ||
-            errorMessages.default,
-        );
-      }
-
-      if (sourceIsMarketDev) {
-        toast.success("Market.dev account connected successfully");
-      }
-    } catch (error) {
-      setValidateMarketExpertError(
-        error instanceof Error
-          ? error.message
-          : "Error validating your Market.dev account.",
-      );
-      throw error;
-    } finally {
-      setValidateMarketExpertLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (!mounted) return;
-    validateMarketExpert().catch(() => {
+    validateMarketExpert(
+      user,
+      () => {
+        setValidateMarketExpertLoading(false);
+      },
+      (error) => {
+        setValidateMarketExpertError(error);
+      },
+      () => {
+        if (sourceIsMarketDev) {
+          toast.success("Market.dev account connected successfully");
+        }
+      },
+    ).catch(() => {
       setValidateMarketExpertLoading(false);
     });
   }, [mounted]);

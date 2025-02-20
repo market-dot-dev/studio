@@ -6,6 +6,7 @@ import FeatureService from "@/app/services/feature-service";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { MarketService } from "@/app/services/market-service";
 
 export default async function Header() {
   const session = await getSession();
@@ -16,6 +17,7 @@ export default async function Header() {
   const user = session.user;
   const site = await getOnlySiteFromUserId(user.id);
   const activeFeatures = await FeatureService.findActiveByCurrentUser();
+  const isMarketExpert = (await MarketService.getExpert()) != null;
 
   return (
     <header className="fixed inset-x-0 top-0 z-[31] flex h-[var(--headerHeight)] items-center justify-between bg-black px-4 shadow-border-b">
@@ -28,6 +30,7 @@ export default async function Header() {
           siteId={site?.id ?? null}
           roleId={user.roleId || "anonymous"}
           hasFeatures={activeFeatures.length != 0}
+          isMarketExpert={isMarketExpert}
           isMobile={true}
         />
       </div>
