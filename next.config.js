@@ -87,7 +87,7 @@ if (process.env.NODE_ENV !== "development") {
       // Suppresses source map uploading logs during build
       silent: true,
       org: "marketdotdev",
-      project: "store",
+      project: "storedotdev",
     },
     {
       // For all available options, see:
