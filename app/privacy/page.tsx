@@ -6,13 +6,13 @@ export default function PrivacyPolicy() {
   
         <div className="space-y-6 text-marketing-secondary">
           <p>
-            Gitwallet is committed to the highest standards of privacy and security to ensure that any personal information you entrust to us when using our Services is fully protected.&nbsp; This policy sets out our practices when collecting, using and disclosing any of your information in the course of providing you Services through the Gitwallet Platform (<strong>“Privacy Policy”</strong>).
+            market.dev is committed to the highest standards of privacy and security to ensure that any personal information you entrust to us when using our Services is fully protected.&nbsp; This policy sets out our practices when collecting, using and disclosing any of your information in the course of providing you Services through the market.dev Platform (<strong>“Privacy Policy”</strong>).
           </p>
   
           <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Information we collect and use in delivery Services</h2>
   
           <p>
-            When you set up an account with us, we collect your identification and contact information, such as first name, last name, telephone number and email address, and we use this information when providing Services to you, including when using and communicating through the Gitwallet Platform and accessing customer support.&nbsp; The purposes for which we use your information, include, but may not be limited to, enabling and supporting:
+            When you set up an account with us, we collect your identification and contact information, such as first name, last name, telephone number and email address, and we use this information when providing Services to you, including when using and communicating through the market.dev Platform and accessing customer support.&nbsp; The purposes for which we use your information, include, but may not be limited to, enabling and supporting:
           </p>
   
           <ul className="list-disc list-inside space-y-2">
@@ -58,27 +58,27 @@ export default function PrivacyPolicy() {
   
           <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Safeguarding your information</h2>
           <p>
-            Gitwallet uses industry-leading technical and organizational security measures to protect your information held by us from unauthorized access, disclosure, modification, and accidental loss and destruction.
+            market.dev uses industry-leading technical and organizational security measures to protect your information held by us from unauthorized access, disclosure, modification, and accidental loss and destruction.
           </p>
   
           <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Data Retention</h2>
           <p>
-            Gitwallet retains personal information only as long as necessary to provide and improve the Services or to meet legal obligations. Your information retained by Gitwallet will be de-identified, aggregated, and/or securely deleted once it is no longer needed for such purposes.
+            market.dev retains personal information only as long as necessary to provide and improve the Services or to meet legal obligations. Your information retained by market.dev will be de-identified, aggregated, and/or securely deleted once it is no longer needed for such purposes.
           </p>
   
           <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Cookies and other similar technologies</h2>
           <p>
-            Gitwallet uses cookies and similar tracking technologies on our website and the Gitwallet Platform to enhance user experience.&nbsp; Should you have any questions about how we use cookies, please use the contact information in the <strong>“Contact Us”</strong> section at the end of this policy to reach us.
+            market.dev uses cookies and similar tracking technologies on our website and the market.dev Platform to enhance user experience.&nbsp; Should you have any questions about how we use cookies, please use the contact information in the <strong>“Contact Us”</strong> section at the end of this policy to reach us.
           </p>
   
           <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Third Party links</h2>
           <p>
-            The Gitwallet Platform may contain links or enable maintainers to link to other websites that are not under our control and we assume no responsibility for those links or the privacy practices of the websites should you choose to navigate to them.
+            The market.dev Platform may contain links or enable maintainers to link to other websites that are not under our control and we assume no responsibility for those links or the privacy practices of the websites should you choose to navigate to them.
           </p>
   
           <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Updates</h2>
           <p>
-            We may update this Privacy Policy from time to time to reflect changes to how we handle your information held by us. Your continued use of our website, the Gitwallet Platform or Services will be deemed acceptance by you of the updated Privacy Policy.
+            We may update this Privacy Policy from time to time to reflect changes to how we handle your information held by us. Your continued use of our website, the market.dev Platform or Services will be deemed acceptance by you of the updated Privacy Policy.
           </p>
   
           <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Contact Us</h2>
