@@ -60,7 +60,7 @@ export default function Customers() {
   return (
     <Section
       headline="Tools that grow with your business"
-      description="Indie developers and dev shops use store.dev to power their business as it expands."
+      description="Indie developers and dev shops use market.dev to power their business as it expands."
     >
       <div className="mx-auto flex w-full max-w-[1000px] flex-col gap-5 sm:gap-8">
         <div className="relative grid grid-cols-1 gap-x-6 gap-y-4 md:grid-cols-2">
@@ -126,9 +126,9 @@ export default function Customers() {
           <Link
             href={discordURL}
             className="group flex items-center gap-0.5 text-pretty text-center text-marketing-sm sm:gap-[3px] sm:text-marketing-base"
-            aria-label="See how people are using store.dev in our Discord"
+            aria-label="See how people are using market.dev in our Discord"
           >
-            See how people are using store.dev
+            See how people are using market.dev
             <ChevronRight
               size={20}
               strokeWidth={2.5}

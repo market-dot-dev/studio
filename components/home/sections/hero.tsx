@@ -47,7 +47,7 @@ export default function Hero() {
         <div className="-mr-60 h-full w-[calc(100vw+192px)] overflow-visible  sm:rounded-md md:-mr-72 md:mt-0 lg:mx-auto lg:mt-0 lg:w-full lg:max-w-[1050px] lg:rounded-xl">
           <Image
             src="/home.png"
-            alt="store.dev logo"
+            alt="market.dev logo"
             height={1600}
             width={2400}
             className="drop-shadow"

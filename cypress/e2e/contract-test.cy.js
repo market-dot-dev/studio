@@ -5,9 +5,9 @@ describe('Contract Management', () => {
     // Login and navigate to contracts page
     cy.login('agraves', 'hunter2');
     cy.visit('/login');
-    cy.contains('Login to Gitwallet').should('not.exist');
+    cy.contains('Login to market.dev').should('not.exist');
     cy.visit('/contracts');
-    cy.contains('GitWallet Standard MSA').should('exist');
+    cy.contains('Standard MSA').should('exist');
 
     // Create new contract
     cy.contains('button', 'New Contract').click();
@@ -20,7 +20,7 @@ describe('Contract Management', () => {
     // Verify contract creation
     cy.contains('created successfully', { timeout: 10000 }).should('exist');
     cy.visit('/contracts');
-    cy.contains('GitWallet Standard MSA').should('exist');
+    cy.contains('Standard MSA').should('exist');
     cy.contains('Sample Contract').should('exist');
 
     // Check contract details
@@ -55,7 +55,7 @@ describe('Contract Management', () => {
 
       // Verify contract deletion
       cy.url().should('include', '/contracts', { timeout: 10000 });
-      cy.contains('GitWallet Standard MSA').should('exist');
+      cy.contains('Standard MSA').should('exist');
       cy.contains('h1', 'Sample Contract').should('not.exist');
     });
   });

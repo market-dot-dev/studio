@@ -172,17 +172,17 @@ class EmailService {
   static async sendNewMaintainerSignUpEmail(
     user: RequiredUserProps,
   ): Promise<void> {
-    const subject = `Welcome to store.dev!`;
+    const subject = `Welcome to market.dev!`;
     const html = EmailTemplates.createWelcomeEmail(user.name || "");
-    const text = `Hello ${user.name},\n\nThank you for registering with store.dev!`;
+    const text = `Hello ${user.name},\n\nThank you for registering with market.dev!`;
 
     await this.sendEmail(user.email, subject, text, html);
   }
 
   static async sendNewCustomerSignUpEmail(user: RequiredUserProps): Promise<void> {
-    const subject = `Welcome to store.dev!`;
+    const subject = `Welcome to market.dev!`;
     const html = EmailTemplates.createNewCustomerSignUpEmail(user.name || "");
-    const text = `Hello ${user.name},\n\nThank you for registering with store.dev!`;
+    const text = `Hello ${user.name},\n\nThank you for registering with market.dev!`;
 
     await this.sendEmail(user.email, subject, text, html);
   }

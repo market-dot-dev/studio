@@ -22,8 +22,8 @@ const ContractLink = ({ contract }: { contract?: Contract }) => {
   const baseUrl = getRootUrl("app", "/c/contracts");
   const url = contract
     ? `${baseUrl}/${contract.id}`
-    : `${baseUrl}/gitwallet-msa`;
-  const contractName = contract?.name || "Standard Gitwallet MSA";
+    : `${baseUrl}/standard-msa`;
+  const contractName = contract?.name || "Standard MSA";
 
   return (
     <Text>
@@ -290,7 +290,7 @@ export default async function SubscriptionsAndChargesList({
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
         <PageHeading title="Purchases" />
-        <Text>All your subscriptions and one time purchases from store.dev will appear here.</Text>
+        <Text>All your subscriptions and one time purchases from market.dev will appear here.</Text>
 
         <Tabs
           tabs={[

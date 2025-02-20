@@ -8,7 +8,7 @@ export async function GET(req: NextRequest, { params }: { params: { userid: stri
   let user = await UserService.findUser(params.userid);
 
   const buttonText = 'View';
-  const description = user?.projectName ? `${user.projectName} has premium services available on Gitwallet.` : 'This project has premium services available on Gitwallet.';
+  const description = user?.projectName ? `${user.projectName} has premium services available on market.dev` : 'This project has premium services available on market.dev.';
   const svg = `
     <svg fill="none" width="700" height="100" xmlns="http://www.w3.org/2000/svg">
       <foreignObject width="100%" height="100%">

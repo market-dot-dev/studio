@@ -5,9 +5,9 @@ import { Metadata } from "next";
 import "@radix-ui/themes/styles.css";
 import { getRootUrl } from "@/lib/domain";
 
-const title = "store.dev";
+const title = "market.dev";
 const description =
-  "Storefronts for developers.";
+  "Business tools for developers.";
 const image = "/thumbnail.png";
 
 export const metadata: Metadata = {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
     title,
     description,
     images: [image],
-    creator: "@gitwallet",
+    creator: "@marketdotdev",
   },
   metadataBase: new URL(getRootUrl()),
 };

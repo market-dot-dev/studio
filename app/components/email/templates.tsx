@@ -30,7 +30,7 @@ export const createWelcomeEmail = (userName: string) => {
       Hello <strong>${userName}</strong>,
     </p>
     <p style="font-size:16px;line-height:24px;margin:16px 0;color:#525f7f;text-align:left">
-      Thank you for registering with <strong>store.dev</strong>!
+      Thank you for registering with <strong>market.dev</strong>!
     </p>
     <a
       href="${appUrl}"
@@ -42,7 +42,7 @@ export const createWelcomeEmail = (userName: string) => {
   `;
 
   return BaseEmailTemplate({
-    previewText: `Welcome to store.dev!`,
+    previewText: `Welcome to market.dev!`,
     children: content,
   });
 };
@@ -133,7 +133,7 @@ export const createNewCustomerSignUpEmail = (userName: string) => {
       Hello <strong>${userName}</strong>,
     </p>
     <p style="font-size:16px;line-height:24px;margin:16px 0;color:#525f7f;text-align:left">
-      Thank you for registering with <strong>store.dev</strong>!
+      Thank you for registering with <strong>market.dev</strong>!
     </p>
     <a
       href="${appUrl}"
@@ -145,7 +145,7 @@ export const createNewCustomerSignUpEmail = (userName: string) => {
   `;
 
   return BaseEmailTemplate({
-    previewText: `Welcome to store.dev!`,
+    previewText: `Welcome to market.dev!`,
     children: content,
   });
 };

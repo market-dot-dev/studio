@@ -262,7 +262,7 @@ const StandardCheckoutForm = ({
           placeholder="Choose contract"
           required
           name="contractId"
-          value={tier.contractId || "gitwallet-msa"}
+          value={tier.contractId || "standard-msa"}
           onValueChange={(v) => handleTierDataChange("contractId", v)}
         >
           {contracts.map((c, index) => (

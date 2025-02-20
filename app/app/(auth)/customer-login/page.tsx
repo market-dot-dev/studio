@@ -13,11 +13,11 @@ export default async function LoginPage() {
   return (
     <>
       <Image
-        alt="store.dev logo"
+        alt="market.dev logo"
         width={162}
         height={36}
         className="relative mx-auto"
-        src="/store-dot-dev-logo.svg"
+        src="/market-dot-dev-logo.svg"
       />
 
         <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">

@@ -47,7 +47,7 @@ const loadUsers = async () => {
         stripePaymentMethodIds: {},
         emailVerified: new Date().toISOString(),
         roleId: "admin",
-        company: user.company || "Gitwallet",
+        company: user.company || "market.dev",
       },
     });
     createdUsers.push(createdUser);

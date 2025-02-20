@@ -81,7 +81,7 @@ class TierService {
         ...defaultTier,
         published: false,
         revision: 0,
-        contractId: "gitwallet-msa",
+        contractId: "standard-msa",
       };
 
       const createdTier = await TierService.createTier(tier);

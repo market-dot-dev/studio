@@ -72,7 +72,7 @@ export async function GET(
             marginBottom: "50px",
           }}
         >
-          {site.subdomain ? `${site.subdomain}.store.dev` : ""}
+          {site.subdomain ? `${site.subdomain}.market.dev` : ""}
         </div>
       </div>
     ),
