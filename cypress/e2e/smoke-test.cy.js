@@ -1,11 +1,11 @@
 /// <reference types="cypress" />
 
-describe('gitwallet smoke test', () => {
+describe('market.dev smoke test', () => {
   it('admin user can log in', () => {
     // log in
     cy.login('agraves', 'hunter2');
     cy.visit('/login');
-    cy.contains('Login to Gitwallet').should('not.exist');
+    cy.contains('Login to market.dev').should('not.exist');
 
     // check stripe is connected
     cy.visit('/settings/payment');
