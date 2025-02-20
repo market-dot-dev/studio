@@ -27,9 +27,9 @@ const ContractText = ({ contract }: { contract?: Contract }) => {
   const baseUrl = getRootUrl("app", "/c/contracts");
   const url = contract
     ? `${baseUrl}/${contract.id}`
-    : `${baseUrl}/gitwallet-msa`;
+    : `${baseUrl}/standard-msa`;
 
-  const contractName = contract?.name || "Standard Gitwallet MSA";
+  const contractName = contract?.name || "Standard MSA";
 
   return (
     <>
