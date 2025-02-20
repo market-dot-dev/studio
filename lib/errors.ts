@@ -1,4 +1,4 @@
-// errors that are expected to be thrown by gitwallet
+// errors that are expected to be thrown by market.dev
 export class GitWalletError extends Error {
   public readonly originalError?: Error;
   public readonly code = "GW_ERROR";
