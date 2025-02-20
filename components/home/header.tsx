@@ -189,6 +189,9 @@ export default function Header({ className }: { className?: string }) {
                 </Dropdown.Item>
               ))}
             </Dropdown>
+            <Link href="https://explore.market.dev" target="_blank" className="whitespace-nowrap">
+              Marketplace
+            </Link>
             <Link href={blogURL} target="_blank" className="whitespace-nowrap">
               Changelog
             </Link>
@@ -249,6 +252,16 @@ export default function Header({ className }: { className?: string }) {
                     ))}
                   </div>
                 </div>
+                <hr className="border-black/15" />
+                <Link
+                  href="https://explore.market.dev"
+                  target="_blank"
+                  variant="primary"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                  onClick={(e) => handleLinkClick(e)}
+                >
+                  Marketplace
+                </Link>
                 <hr className="border-black/15" />
                 <Link
                   href={blogURL}
