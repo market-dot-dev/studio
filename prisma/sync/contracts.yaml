@@ -1,6 +1,6 @@
 contracts:
-  - id: "gitwallet-msa"
-    name: "GitWallet Standard MSA"
+  - id: "standard-msa"
+    name: "Standard MSA"
     description: "Standard MSA contract."
-    url: "https://gitwallet.co/GitwalletMSA-Feb2024.pdf"
+    url: "https://market.dev/StandardMSA-Feb2024.pdf"
     storage: "link"
