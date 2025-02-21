@@ -64,14 +64,23 @@ async function customMiddleware(req: NextRequest) {
   }
 
   // market.dev
-  if (bareDomain || reservedSubdomain === "sell") {
-    if (url.pathname.startsWith("/design")) {
-      return rewrite(`/design${path}`, req.url);
-    }
+  if (bareDomain) {
     if (url.pathname === "/terms" || url.pathname === "/privacy") {
       return NextResponse.next();
     }
+    if (url.pathname === "/" || url.pathname.startsWith("/home")) {
     return rewrite(`/home${path}`, req.url);
+    }
+
+    // Redirect all other paths to explore.market.dev
+    const targetHost = process.env.NODE_ENV === "development" 
+      ? "localhost:4000"
+      : "explore.market.dev";
+
+    return NextResponse.redirect(
+      `http${process.env.NODE_ENV === "development" ? "" : "s"}://${targetHost}${url.pathname}`,
+      { status: 301 }
+    );
   }
 
   // $GHUSERNAME.market.dev
