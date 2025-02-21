@@ -69,7 +69,7 @@ async function customMiddleware(req: NextRequest) {
       return NextResponse.next();
     }
     if (url.pathname === "/" || url.pathname.startsWith("/home")) {
-    return rewrite(`/home${path}`, req.url);
+      return rewrite(`/home${path}`, req.url);
     }
 
     // Redirect all other paths to explore.market.dev

@@ -10,6 +10,8 @@ class RoleService {
     /^\/api\/og\//,
     /^\/api\/tiers\//,
     /^\/api\/buybutton\//,
+    /^\/terms/,
+    /^\/privacy/,    
     /^\/home$/,
     /^\/design/,
     /^\/alpha\/login$/,
@@ -18,10 +20,14 @@ class RoleService {
     /^\/customer-login$/,
     /^\/login\/local-auth$/,
     /\/checkout\/[A-Za-z0-9]+/,
+
+    // These allowed paths redirect to explore.market.dev
     /^\/ecosystems(\/|$)/,
     /^\/experts(\/|$)/,
     /^\/projects(\/|$)/,
     /^\/events(\/|$)/,
+    /^\/organizations(\/|$)/,
+    /^\/trending(\/|$)/,
   ];
 
   static adminOnlyPaths = [
