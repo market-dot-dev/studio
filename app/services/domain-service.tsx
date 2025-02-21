@@ -2,7 +2,7 @@
 
 import { NextRequest } from "next/server";
 
-const RESERVED_SUBDOMAINS = ["app", "sell", "blog"];
+const RESERVED_SUBDOMAINS = ["app", "sell", "blog", "explore"];
 
 class DomainService {
   static getRootUrlFromRequest(req: NextRequest, path: string = "/") {
