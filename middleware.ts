@@ -25,12 +25,6 @@ export default withAuth(
   {
     callbacks: {
       authorized: async ({ token, req }) => {
-        // Skip auth check for explore subdomain
-        const reservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);
-        if (reservedSubdomain === "explore") {
-          return true;
-        }
-        
         const user = token?.user as SessionUser;
         return await RoleService.canViewPath(
           req.nextUrl.pathname,
