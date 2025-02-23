@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from '../link';
 import Button from '@/components/home/button';
 import GradientHeading from '@/components/home/gradient-heading';
+import { ChevronRight } from 'lucide-react';
 import { loginURL } from '@/lib/home/social-urls';
 
 export default function Hero() {
@@ -10,20 +11,14 @@ export default function Hero() {
     <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-6 tracking-tight sm:gap-y-16 sm:pt-10 lg:max-w-[1300px] lg:px-12 lg:pt-12">
       <div className="flex h-full w-full flex-col items-center">
         <Link
-          href="https://market.dev"
+          href="https://explore.market.dev/"
           target="_blank"
-          className="mb-5 xs:mb-6 lg:mb-8 flex h-8 shrink-0 cursor-pointer items-center gap-2 whitespace-nowrap rounded-full bg-black/5 px-3 text-[13px] !text-marketing-primary ring-1 ring-inset ring-black/5 transition hover:bg-black/[7%]  md:h-9 md:px-4 md:text-[15px]"
+          className="mb-5 xs:mb-6 lg:mb-8 flex h-8 shrink-0 cursor-pointer items-center gap-1 whitespace-nowrap rounded-full bg-black/5 px-3 text-[13px] !text-marketing-primary ring-1 ring-inset ring-black/5 transition hover:bg-black/[7%]  md:h-9 md:px-4 md:text-[15px]"
         >
-          <span className="-mt-px">Made by</span>
-          <Image
-            src="/market-dot-dev-logo.svg"
-            alt="market.dev logo"
-            height={20}
-            width={103}
-            className="-mb-px h-[18px] w-auto shrink-0 md:h-5"
-          />
+          <span className="-mt-px">NEW: Explore Our New Marketplace</span>
+          <ChevronRight className="h-4 w-4" />
         </Link>
-        <GradientHeading className="mb-3 whitespace-nowrap text-center text-[clamp(24px,8vw,37px)] font-bold !leading-[0.95] tracking-[-0.045em] text-marketing-primary xs:mb-4 xs:text-marketing-xl sm:mb-5 sm:text-marketing-2xl md:mb-6 md:text-marketing-3xl md:tracking-[-0.045em] lg:text-marketing-4xl xl:text-marketing-5xl">
+        <GradientHeading className="mb-3 whitespace-nowrap text-center text-[clamp(24px,8vw,37px)] font-bold !leading-[0.95] tracking-[-0.045em] text-marketing-primary xs:mb-4 xs:text-marketing-xl sm:mb-5 sm:text-marketing-2xl md:mb-6 md:text-marketing-3xl md:tracking-[-0.045em] lg:text-marketing-4xl xl:text-marketing-4xl">
           All-in-One Storefronts, <br /> Built for Developers.
         </GradientHeading>
         <p className="mb-4 max-w-[44ch] text-balance text-center text-marketing-sm !leading-[1.25] xs:mb-5 sm:mb-6 sm:text-[clamp(16px,12vw,20px)] lg:text-marketing-md">

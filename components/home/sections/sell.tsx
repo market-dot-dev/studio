@@ -63,17 +63,7 @@ const featureCards = [
       src: "/course.png",
       alt: "Course illustration",
     },
-  },
-  {
-    icon: <Key />,
-    title: "Access Keys",
-    description:
-      "Generate and manage tokens that let users access your private APIs.",
-    image: {
-      src: "/access-key.png",
-      alt: "Contract template illustration",
-    },
-  },
+  }
 ];
 
 export default function Sell() {
