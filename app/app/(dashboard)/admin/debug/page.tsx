@@ -1,10 +1,10 @@
-
 "use server";
 
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
 import RoleSwitcher from "@/components/user/role-switcher";
-import Link from "next/link";
+import { Card, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import LinkButton from "@/components/common/link-button";
 
 const StripeDebug = async () => {
   const user = await UserService.getCurrentUser();
@@ -12,26 +12,50 @@ const StripeDebug = async () => {
     return <div>Not logged in</div>;
   }
 
+  const debugLinks = [
+    { name: "View All Users", href: "/admin/debug/users" },
+    { name: "Onboarding State", href: "/admin/debug/onboarding" },
+    { name: "Stripe Debug", href: "/admin/debug/stripe-debug" },
+    { name: "Stripe Connect", href: "/settings/payment" },
+    { name: "Stripe Validation", href: `/admin/debug/${user?.id}/validation` },
+    { name: "Direct Payments Migration", href: "/admin/debug/stripe-migration" },
+    { name: "Active Subscriptions", href: "/subscriptions" },
+    { name: "Session Viewer", href: "/admin/debug/session" },
+    { name: "Sentry Example", href: "/admin/debug/sentry-example-page" },
+  ];
+
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex justify-between w-full">
-        <div className="flex flex-row">
-          <PageHeading title="Debug Tools" />
-        </div>
+        <PageHeading title="Debug Tools" />
       </div>
-      <div>
-        <Link href="/admin/debug/stripe-debug">Stripe</Link> <br/>
-        <Link href="/admin/debug/sentry-example-page">Sentry</Link> <br/>
-        <Link href="/services">Feature Index</Link> <br/>
-        <Link href="/settings/payment">Stripe Connect</Link> <br/>
-        <Link href="/subscriptions">Your active subscriptions</Link> <br/>
-        <Link href="/admin/debug/onboarding">Onboarding State</Link> <br/>
-        <Link href="/admin/debug/session">Session Viewer</Link> <br/>
-        <Link href={`/admin/debug/${user?.id}/validation`}>Stripe Validation</Link> <br/>
-        <Link href="/admin/debug/stripe-migration">Direct Payments Migration</Link> <br/>
-        <Link href="/admin/debug/users">Users</Link> <br/>
-        <RoleSwitcher />
-      </div>
+      
+      <Card>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableHeaderCell>Debug Tool</TableHeaderCell>
+              <TableHeaderCell>Action</TableHeaderCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {debugLinks.map((link) => (
+              <TableRow key={link.href}>
+                <TableCell>{link.name}</TableCell>
+                <TableCell>
+                  <LinkButton href={link.href} label="View" className="w-24" />
+                </TableCell>
+              </TableRow>
+            ))}
+            <TableRow>
+              <TableCell>Switch Role</TableCell>
+              <TableCell>
+                <RoleSwitcher />
+              </TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </Card>
     </div>
   );
 };
