@@ -18,11 +18,12 @@ import clsx from "clsx";
 function TodoItem({
   step,
   completedSteps,
-  isLast,
+  variant = "default",
 }: {
   step: onBoardingStepType;
   completedSteps: OnboardingStepsType;
   isLast: boolean;
+  variant?: "default" | "mini";
 }): JSX.Element {
   const router = useRouter();
   const siteId = useSiteId();
@@ -42,6 +43,21 @@ function TodoItem({
         : stepURL[0],
     );
   };
+
+  if (variant === "mini") {
+    return (
+      <div
+        className="group bg-white rounded shadow-border flex w-full cursor-pointer items-center justify-between pl-2 pr-0.5 py-1 text-sm font-medium text-stone-800 hover:bg-stone-50 transition-colors"
+        onClick={navigateToStep}
+      >
+        <span>Next: {stepTitle}</span>
+        <ChevronRight
+          size={16}
+          className="ml-0.5 inline-block transition-transform group-hover:translate-x-px"
+        />
+      </div>
+    );
+  }
 
   return (
     <>
@@ -89,13 +105,14 @@ function TodoItem({
   );
 }
 
-export default function OnboardingChecklist(): JSX.Element {
+export default function OnboardingChecklist({ variant = "default" }: { variant?: "default" | "mini" }): JSX.Element {
   const pathName = usePathname();
   const [onboardingState, setOnboardingState] =
     useState<OnboardingState | null>(null);
 
-  // default to true, so that a blip of the checklist is not shown if the user has  completed any steps
+  // default to true, so that a blip of the checklist is not shown if the user has completed any steps
   const [isDismissed, setIsDismissed] = useState(false);
+  const isHomepage = pathName === "/";
 
   useEffect(() => {
     const action = async () => {
@@ -117,6 +134,20 @@ export default function OnboardingChecklist(): JSX.Element {
   }, []);
 
   if (onboardingState?.isDismissed || isDismissed) return <></>;
+
+  // For mini variant, only show if we're not on homepage
+  if (variant === "mini") {
+    if (isHomepage) return <></>;
+    // Find the first incomplete step for mini variant
+    const nextStep = onboardingSteps.find(
+      (step) => !onboardingState?.[step.name]
+    );
+    if (!nextStep || !onboardingState) return <></>;
+    return <TodoItem step={nextStep} completedSteps={onboardingState} isLast={true} variant="mini" />;
+  }
+
+  // For default variant, only show if we are on homepage
+  if (!isHomepage) return <></>;
 
   return (
     <div className="mb-6 flex w-full flex-col items-start rounded-lg bg-white shadow-sm ring-1 ring-black/10">
@@ -146,6 +177,7 @@ export default function OnboardingChecklist(): JSX.Element {
               step={step as onBoardingStepType}
               completedSteps={onboardingState}
               isLast={index === onboardingSteps.length - 1}
+              variant="default"
             />
           );
         })}
