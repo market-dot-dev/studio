@@ -23,6 +23,8 @@ import { Badge } from "@tremor/react";
 import { usePathname, useSelectedLayoutSegments } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
+import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
+import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
 
 interface BaseNavItem {
   name: string;
@@ -35,11 +37,16 @@ interface TitleItem extends BaseNavItem {
 interface LinkItem extends BaseNavItem {
   type: "link";
   href: string;
-  target?: string;
+  icon: ReactNode;
   isActive?: boolean;
   isBeta?: boolean;
-  icon?: ReactNode;
-  children?: Omit<LinkItem, "children">[];
+  target?: string;
+  children?: Array<{
+    name: string;
+    href: string;
+    icon: ReactNode;
+    isActive?: boolean;
+  }>;
 }
 
 type NavItem = TitleItem | LinkItem;
@@ -102,6 +109,17 @@ function Item({ item }: { item: NavItem }) {
   );
 }
 
+interface NavProps {
+  siteId: string | null;
+  roleId: string | null;
+  hasFeatures: boolean | null;
+  isMarketExpert: boolean | null;
+  isMobile?: boolean;
+  className?: string;
+  onboarding: OnboardingState;
+  showOnboardingModal: boolean;
+}
+
 export default function Nav({
   siteId,
   roleId,
@@ -109,17 +127,13 @@ export default function Nav({
   isMarketExpert,
   isMobile = false,
   className,
-}: {
-  siteId: string | null;
-  roleId: string | null;
-  hasFeatures: boolean | null;
-  isMarketExpert: boolean | null;
-  isMobile?: boolean;
-  className?: string;
-}) {
+  onboarding,
+  showOnboardingModal,
+}: NavProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const urlSegments = useSelectedLayoutSegments();
   const pathname = usePathname();
+  const isHomepage = urlSegments.length === 0;
 
   const items = useMemo(() => {
     const featureItems: LinkItem[] = [
@@ -326,13 +340,13 @@ export default function Nav({
       )}
       <nav
         className={clsx(
-          `fixed h-[var(--navHeight)] flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 bg-stone-100 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
+          `fixed flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 bg-stone-100 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
           isMobile
             ? [
-                "inset-0 top-[var(--headerHeight)] z-50 flex w-full transform md:hidden",
+                "inset-0 top-[var(--headerHeight)] z-50 flex w-full h-[calc(100vh-var(--headerHeight))] transform md:hidden",
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full",
               ]
-            : "z-20 hidden w-60 md:flex",
+            : "z-20 hidden w-60 h-[var(--navHeight)] md:flex",
           className,
         )}
       >
@@ -344,6 +358,28 @@ export default function Nav({
           </div>
         </div>
         <div className="flex flex-col">
+          <AnimatePresence mode="wait">
+            {(isMobile || !isHomepage) &&
+              onboarding?.isDismissed !== undefined &&
+              !onboarding.isDismissed &&
+              !showOnboardingModal && (
+                <motion.span
+                  key="onboarding-checklist"
+                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 200,
+                    damping: 20,
+                    duration: 0.8,
+                  }}
+                  className="mb-4"
+                >
+                  <OnboardingChecklist variant="mini" />
+                </motion.span>
+              )}
+          </AnimatePresence>
           {serviceItems.map((item, index) => (
             <Item key={item.name + index} item={item} />
           ))}
@@ -351,4 +387,4 @@ export default function Nav({
       </nav>
     </>
   );
-}
+} 
