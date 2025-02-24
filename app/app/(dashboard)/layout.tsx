@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import Nav from "@/components/nav";
+import Nav from "@/app/components/nav";
 import Header from "@/components/header/header";
 import { redirect } from "next/navigation";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
@@ -39,6 +39,8 @@ export default async function DashboardLayout({
   const showOnboardingModal =
     !onboarding.setupBusiness || !onboarding.preferredServices;
 
+  const segments = params?.segments || [];
+
   return (
     <DashboardProvider siteId={site?.id ?? null}>
       <SessionRefresher />
@@ -55,6 +57,8 @@ export default async function DashboardLayout({
             roleId={user.roleId || "anonymous"}
             hasFeatures={activeFeatures.length != 0}
             isMarketExpert={isMarketExpert}
+            onboarding={onboarding}
+            showOnboardingModal={showOnboardingModal}
           />
           <div className="flex min-h-screen w-full flex-col items-center bg-stone-50 md:pl-60">
             <div className="flex w-full max-w-screen-xl flex-col items-center space-y-4 p-6 sm:p-10 sm:pt-8">
