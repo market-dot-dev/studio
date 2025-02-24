@@ -57,7 +57,7 @@ export const BaseEmailTemplate = ({
                           height="27"
                           src="https://market.dev/market-dot-dev-logo.png"
                           style="display:block;outline:none;border:none;text-decoration:none"
-                          width="120"
+                          width="140"
                         />
                         <hr
                           style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#e6ebf1;margin:20px 0"
