@@ -48,7 +48,7 @@ export const onboardingSteps: onBoardingStepType[] = [
   {
     name: "setupSite",
     description:
-      "Your store is your first sales channel. Customize it to match your brand and start selling.",
+      "Your store is your first sales channel. Make it match your brand & start selling.",
     urls: ["/site/", "/page/"],
     title: "Customize your storefront",
   },

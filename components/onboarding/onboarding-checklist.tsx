@@ -70,7 +70,7 @@ function TodoItem({
             <div className="box-border h-4 w-4 shrink-0 rounded-full border border-dashed border-stone-400 ring-4 ring-white"></div>
           )}
         </div>
-        <div className="flex w-full flex-wrap items-center justify-between gap-x-8 gap-y-2 lg:flex-nowrap">
+        <div className="flex flex-col lg:flex-row w-full items-start lg:items-center justify-between gap-x-8 gap-y-1">
           <div className="flex flex-col items-start">
             <Bold
               className={clsx(
@@ -81,13 +81,13 @@ function TodoItem({
             >
               {stepTitle}
             </Bold>
-            {!completed && <Text>{stepDescription}</Text>}
+            {!completed && <Text className="text-pretty">{stepDescription}</Text>}
           </div>
           {!completed && (
             <Button
               size="xs"
               variant="secondary"
-              className="group w-fit border-stone-200 bg-white py-1 pr-1.5 transition-colors"
+              className="group w-fit border-black/[12%] bg-white py-1 my-1 pr-1.5 transition-colors"
               onClick={navigateToStep}
             >
               <span>{stepTitle}</span>
