@@ -34,16 +34,16 @@ export type onBoardingStepType = {
 // enumerate the steps that the user needs to complete
 export const onboardingSteps: onBoardingStepType[] = [
   {
-    name: "setupTiers",
-    description: "Define your service offerings and create a package for sale.",
-    urls: ["/tiers"],
-    title: "List your services",
-  },
-  {
     name: "setupPayment",
     description: "Connect a Stripe account to start receiving payments.",
     urls: ["/settings/payment"],
     title: "Connect Stripe",
+  },
+  {
+    name: "setupTiers",
+    description: "Define your service offerings and create a package to sell.",
+    urls: ["/tiers"],
+    title: "Create a Package",
   },
   {
     name: "setupSite",
