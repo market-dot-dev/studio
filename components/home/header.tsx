@@ -190,7 +190,7 @@ export default function Header({ className }: { className?: string }) {
               ))}
             </Dropdown>
             <Link href="https://explore.market.dev" target="_blank" className="whitespace-nowrap">
-              Marketplace
+              Explore
             </Link>
             <Link href={blogURL} target="_blank" className="whitespace-nowrap">
               Changelog
@@ -260,7 +260,7 @@ export default function Header({ className }: { className?: string }) {
                   className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                   onClick={(e) => handleLinkClick(e)}
                 >
-                  Marketplace
+                  Explore
                 </Link>
                 <hr className="border-black/15" />
                 <Link
