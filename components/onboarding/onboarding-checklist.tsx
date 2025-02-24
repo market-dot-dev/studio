@@ -22,7 +22,6 @@ function TodoItem({
 }: {
   step: onBoardingStepType;
   completedSteps: OnboardingStepsType;
-  isLast: boolean;
   variant?: "default" | "mini";
 }): JSX.Element {
   const router = useRouter();
@@ -47,7 +46,7 @@ function TodoItem({
   if (variant === "mini") {
     return (
       <div
-        className="group bg-white rounded shadow-border flex w-full cursor-pointer items-center justify-between pl-2 pr-0.5 py-1 text-sm font-medium text-stone-800 hover:bg-stone-50 transition-colors"
+        className="group bg-white rounded shadow-border flex w-full cursor-pointer items-center justify-between pl-2 pr-0.5 py-1 text-xs font-medium text-stone-900 hover:bg-stone-50 transition-colors"
         onClick={navigateToStep}
       >
         <span>Next: {stepTitle}</span>
@@ -143,14 +142,14 @@ export default function OnboardingChecklist({ variant = "default" }: { variant?:
       (step) => !onboardingState?.[step.name]
     );
     if (!nextStep || !onboardingState) return <></>;
-    return <TodoItem step={nextStep} completedSteps={onboardingState} isLast={true} variant="mini" />;
+    return <TodoItem step={nextStep} completedSteps={onboardingState} variant="mini" />;
   }
 
   // For default variant, only show if we are on homepage
   if (!isHomepage) return <></>;
 
   return (
-    <div className="mb-6 flex w-full flex-col items-start rounded-lg bg-white shadow-sm ring-1 ring-black/10">
+    <div className="mb-6 flex w-full flex-col items-start rounded-lg bg-white shadow-border">
       <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-stone-200 bg-stone-50 py-2.5 pl-4 pr-2.5">
         <div className="flex items-center gap-4">
           <Goal size={16} className="text-stone-500" />
@@ -163,7 +162,7 @@ export default function OnboardingChecklist({ variant = "default" }: { variant?:
           <Button
             variant="light"
             onClick={dismissChecklist}
-            className="group -m-1 rounded p-1 text-sm underline transition-colors hover:bg-stone-200"
+            className="group -m-1 rounded p-1 text-sm underline transition-colors hover:bg-black/5"
           >
             <X size={16} className="text-stone-500" />
           </Button>
@@ -176,7 +175,6 @@ export default function OnboardingChecklist({ variant = "default" }: { variant?:
               key={index}
               step={step as onBoardingStepType}
               completedSteps={onboardingState}
-              isLast={index === onboardingSteps.length - 1}
               variant="default"
             />
           );
