@@ -15,14 +15,67 @@ import { useSiteId } from "../dashboard/dashboard-context";
 import { Check, X, ChevronRight, Goal } from "lucide-react";
 import clsx from "clsx";
 
+function calculateCompletionPercentage(completedSteps: OnboardingStepsType): number {
+  if (!completedSteps) return 0;
+  
+  const totalSteps = onboardingSteps.length;
+  const completedCount = onboardingSteps.filter(step => completedSteps[step.name]).length;
+  
+  return totalSteps > 0 ? (completedCount / totalSteps) * 100 : 0;
+}
+
+function DonutProgress({ percentage }: { percentage: number }): JSX.Element {
+  if (percentage === 0) {
+    return (
+      <span className="h-3 w-3 flex-shrink-0 rounded-full border border-dashed border-stone-400"></span>
+    );
+  }
+  
+  const size = 12;
+  const strokeWidth = 2;
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const dash = (percentage * circumference) / 100;
+  
+  return (
+    <div className="relative h-3 w-3 flex-shrink-0">
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="rotate-[-90deg] text-marketing-swamp">
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="transparent"
+          stroke="#E7E5E4"
+          strokeWidth={strokeWidth}
+          strokeDashoffset="0"
+          strokeLinecap="round"
+        />
+        <circle
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          fill="transparent"
+          stroke="currentColor"
+          strokeWidth={strokeWidth}
+          strokeDasharray={circumference}
+          strokeDashoffset={circumference - dash}
+          strokeLinecap="round"
+        />
+      </svg>
+    </div>
+  );
+}
+
 function TodoItem({
   step,
   completedSteps,
   variant = "default",
+  completionPercentage,
 }: {
   step: onBoardingStepType;
   completedSteps: OnboardingStepsType;
   variant?: "default" | "mini";
+  completionPercentage?: number;
 }): JSX.Element {
   const router = useRouter();
   const siteId = useSiteId();
@@ -46,12 +99,15 @@ function TodoItem({
   if (variant === "mini") {
     return (
       <div
-        className="group bg-white rounded shadow-border flex w-full cursor-pointer items-center justify-between pl-2 pr-0.5 py-1 text-xs font-medium text-stone-900 hover:bg-stone-50 transition-colors"
+        className="group bg-white rounded shadow-border flex w-full cursor-pointer items-center justify-between p-1 pl-1.5 text-xs font-medium text-stone-900 hover:bg-stone-50 transition-colors"
         onClick={navigateToStep}
       >
-        <span>Next: {stepTitle}</span>
+        <div className="flex items-center gap-[7px]">
+          <DonutProgress percentage={completionPercentage ?? 0} />
+          <span>Next: {stepTitle}</span>
+        </div>
         <ChevronRight
-          size={16}
+          size={14}
           className="ml-0.5 inline-block transition-transform group-hover:translate-x-px"
         />
       </div>
@@ -63,7 +119,7 @@ function TodoItem({
       <div className={clsx("flex w-full flex-row items-center gap-4 p-4 py-2")}>
         <div className="flex h-5 items-center">
           {completed ? (
-            <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-green-500 ring-4 ring-white">
+            <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-marketing-swamp ring-4 ring-white">
               <Check size={12} color="white" />
             </div>
           ) : (
@@ -99,7 +155,7 @@ function TodoItem({
           )}
         </div>
       </div>
-      <hr className="w-full last:hidden" />
+      <hr className=" border-stone-200 w-full last:hidden" />
     </>
   );
 }
@@ -109,7 +165,6 @@ export default function OnboardingChecklist({ variant = "default" }: { variant?:
   const [onboardingState, setOnboardingState] =
     useState<OnboardingState | null>(null);
 
-  // default to true, so that a blip of the checklist is not shown if the user has completed any steps
   const [isDismissed, setIsDismissed] = useState(false);
   const isHomepage = pathName === "/";
 
@@ -121,11 +176,24 @@ export default function OnboardingChecklist({ variant = "default" }: { variant?:
 
     action();
 
-    // set a window function that can be called from other components to refresh the onboarding checklist
     if ((window as any)["refreshOnboarding"]) return;
 
     (window as any)["refreshOnboarding"] = () => action();
   }, [pathName]);
+
+  useEffect(() => {
+    const handleRefresh = () => {
+      if ((window as any)["refreshOnboarding"]) {
+        (window as any)["refreshOnboarding"]();
+      }
+    };
+
+    window.addEventListener("refreshOnboarding", handleRefresh);
+
+    return () => {
+      window.removeEventListener("refreshOnboarding", handleRefresh);
+    };
+  }, []);
 
   const dismissChecklist = useCallback(() => {
     setIsDismissed(true);
@@ -134,18 +202,24 @@ export default function OnboardingChecklist({ variant = "default" }: { variant?:
 
   if (onboardingState?.isDismissed || isDismissed) return <></>;
 
-  // For mini variant, only show if we're not on homepage
   if (variant === "mini") {
     if (isHomepage) return <></>;
-    // Find the first incomplete step for mini variant
     const nextStep = onboardingSteps.find(
       (step) => !onboardingState?.[step.name]
     );
+    
     if (!nextStep || !onboardingState) return <></>;
-    return <TodoItem step={nextStep} completedSteps={onboardingState} variant="mini" />;
+    
+    const completionPercentage = calculateCompletionPercentage(onboardingState);
+    
+    return <TodoItem 
+      step={nextStep} 
+      completedSteps={onboardingState} 
+      variant="mini" 
+      completionPercentage={completionPercentage}
+    />;
   }
 
-  // For default variant, only show if we are on homepage
   if (!isHomepage) return <></>;
 
   return (
