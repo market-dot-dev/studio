@@ -111,7 +111,7 @@ export default function Sell() {
                 image={card.image}
                 color={colors.green}
                 orientation="vertical"
-                imageMaxWidth="max-w-[390px] sm:max-w-[clamp(350px,85%,480px)]"
+                imageMaxWidth="max-w-[clamp(300px,85%,400px)] sm:max-w-[clamp(350px,85%,480px)]"
                 className="mx-auto aspect-[3/4] max-h-[420px] w-full"
               />
             </div>
@@ -119,13 +119,13 @@ export default function Sell() {
         </div>
         <div
           ref={scrollContainerRef}
-          className="animate-scroll scroll-container group-hover:pause-animation group-active:pause-animation hidden md:flex"
+          className="scroll-container group-hover:pause-animation group-active:pause-animation hidden animate-scroll md:flex"
         >
           {[
-            ...featureCards.slice(-1), 
-            ...featureCards.slice(0, -1), 
-            ...featureCards.slice(-1), 
-            ...featureCards.slice(0, -1)
+            ...featureCards.slice(-1),
+            ...featureCards.slice(0, -1),
+            ...featureCards.slice(-1),
+            ...featureCards.slice(0, -1),
           ].map((card, index) => (
             <div key={index} className="max-w-[360px] flex-shrink-0 px-3">
               <FeatureCard
