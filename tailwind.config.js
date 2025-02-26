@@ -176,7 +176,7 @@ module.exports = {
         ],
         "marketing-5xl": [
           "91px",
-          { lineHeight: "80px", letterSpacing: "-0.045em" },
+          { lineHeight: "72px", letterSpacing: "-0.045em" },
         ],
       },
       width: {
@@ -270,7 +270,7 @@ module.exports = {
       },
       screens: {
         xxs: '375px',
-        xs: "425px",
+        xs: "410px",
       },
       letterSpacing: {
         tightish: "-0.0125em",

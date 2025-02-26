@@ -145,6 +145,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --headerHeight: 40px;
     --navHeight: calc(100vh - var(--headerHeight));
     --radius: 0.5rem;
+    --marketing-max-width: 1200px;
   }
 }
 

@@ -95,7 +95,7 @@ export default function Promote() {
         ))}
       </div>
 
-      <div className="mx-auto hidden w-full max-w-[1100px] rounded-lg lg:grid lg:grid-cols-[290px_1fr]">
+      <div className="mx-auto hidden w-full max-w-[var(--marketing-max-width)] rounded-lg lg:grid lg:grid-cols-[290px_1fr]">
         <div className="-mr-4 flex flex-col overflow-hidden rounded-l-lg border border-r-0 border-black/10 bg-black/[2%]">
           {featureCards.map((feature, index) => (
             <React.Fragment key={feature.title}>

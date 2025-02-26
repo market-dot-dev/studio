@@ -310,7 +310,7 @@ export default function Nav({
     <>
       {isMobile && (
         <button
-          className="-m-0.5 rounded p-0.5 text-stone-400 transition-colors hover:bg-stone-800 hover:text-stone-300 md:hidden"
+          className="-m-0.5 rounded p-0.5 text-stone-300 transition-colors hover:bg-stone-800 hover:text-white md:hidden"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           <AnimatePresence initial={false} mode="wait">
@@ -322,7 +322,7 @@ export default function Nav({
                 exit={{ opacity: 0.6, scale: 0.95 }}
                 transition={{ duration: 0.1, ease: "easeInOut" }}
               >
-                <X width={24} />
+                <X width={20} />
               </motion.div>
             ) : (
               <motion.div
@@ -332,7 +332,7 @@ export default function Nav({
                 exit={{ opacity: 0.6, scale: 0.95 }}
                 transition={{ duration: 0.1, ease: "easeInOut" }}
               >
-                <Menu width={24} />
+                <Menu width={20} />
               </motion.div>
             )}
           </AnimatePresence>
@@ -343,10 +343,10 @@ export default function Nav({
           `fixed flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 bg-stone-100 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
           isMobile
             ? [
-                "inset-0 top-[var(--headerHeight)] z-50 flex w-full h-[calc(100vh-var(--headerHeight))] transform md:hidden",
+                "inset-0 top-[var(--headerHeight)] z-50 flex h-[calc(100vh-var(--headerHeight))] w-full transform md:hidden",
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full",
               ]
-            : "z-20 hidden w-60 h-[var(--navHeight)] md:flex",
+            : "z-20 hidden h-[var(--navHeight)] w-60 md:flex",
           className,
         )}
       >

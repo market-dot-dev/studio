@@ -74,17 +74,10 @@ export default function Sell() {
     if (!container) return;
 
     const setScrollDuration = () => {
-      // Calculate the total width of the content
       const scrollWidth = container.scrollWidth;
-      const viewportWidth = container.offsetWidth;
-      
-      // Set a base speed (px per second) - adjust this value to change scroll speed
       const pxPerSecond = 50;
-      
-      // Calculate duration based on content width
       const duration = scrollWidth / pxPerSecond;
       
-      // Set the CSS variable
       container.style.setProperty('--scroll-duration', `${duration}s`);
     };
 
@@ -118,7 +111,7 @@ export default function Sell() {
                 image={card.image}
                 color={colors.green}
                 orientation="vertical"
-                imageMaxWidth="max-w-[clamp(310px,75%,390px)] sm:max-w-[clamp(350px,85%,480px)]"
+                imageMaxWidth="max-w-[390px] sm:max-w-[clamp(350px,85%,480px)]"
                 className="mx-auto aspect-[3/4] max-h-[420px] w-full"
               />
             </div>
