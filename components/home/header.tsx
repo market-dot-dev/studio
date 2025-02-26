@@ -63,6 +63,7 @@ export default function Header({ className }: { className?: string }) {
   const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = useState(false);
   const desktopMenuButtonRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
+  const [isScrolled, setIsScrolled] = useState(false);
   
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 60, right: 16 });
   
@@ -70,6 +71,20 @@ export default function Header({ className }: { className?: string }) {
     vertical: 14,
     horizontal: 0,
   };
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+    
+    handleScroll();
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
   useEffect(() => {
     isMobileMenuOpen 
@@ -230,7 +245,8 @@ export default function Header({ className }: { className?: string }) {
         <div className="mx-auto w-full px-4 lg:max-w-[var(--marketing-max-width)] xl:px-16">
           <div
             className={clsx(
-              "relative z-[100] flex h-12 w-full items-center justify-between text-[19px] shadow-border-b",
+              "relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow",
+              isScrolled && "shadow-border-b"
             )}
           >
             <Link href="/" className="flex">
