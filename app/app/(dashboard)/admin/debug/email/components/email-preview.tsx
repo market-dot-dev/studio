@@ -33,9 +33,15 @@ export default function EmailPreviewStep({
   const [message, setMessage] = useState("");
   
   const formatContent = (content: string, user: User): string => {
-    return content
+    // Replace variables with user data
+    let formatted = content
       .replace(/{name}/g, user.name || "there")
       .replace(/{email}/g, user.email || "");
+    
+    // Convert newlines to <br/> tags for HTML rendering
+    formatted = formatted.replace(/\n/g, '<br/>');
+    
+    return formatted;
   };
   
   const sendEmails = async () => {

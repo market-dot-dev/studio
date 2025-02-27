@@ -55,9 +55,12 @@ export async function POST(req: NextRequest) {
     
     // Create HTML email template using BaseEmailTemplate
     const createEmailContent = (user: any) => {
-      const formattedContent = content
+      let formattedContent = content
         .replace(/{name}/g, user.name || "there")
         .replace(/{email}/g, user.email || "");
+      
+      // Convert newlines to <br/> tags for HTML emails
+      formattedContent = formattedContent.replace(/\n/g, '<br/>');
       
       return BaseEmailTemplate({
         previewText: subject,
