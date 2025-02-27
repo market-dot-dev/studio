@@ -230,38 +230,47 @@ export default function Header({ className }: { className?: string }) {
       >
         <Link
           href="https://explore.market.dev/"
-          className="group flex gap-0.5 h-9 items-center justify-center bg-black px-4 text-sm font-medium tracking-normal !text-white"
+          className="group flex h-10 items-center justify-center gap-0.5 bg-black px-4 text-sm font-medium tracking-normal !text-white"
         >
-          <BookOpenCheck className='size-4 mr-2 opacity-60 group-hover:opacity-100 transition-opacity' />
-          <span className='sm:hidden'>
+          <BookOpenCheck className="mr-2 size-4 opacity-60 transition-opacity group-hover:opacity-100" />
+          <span className="sm:hidden">
             Get listed on our developer marketplace
           </span>
-          <span className='hidden sm:inline'>
+          <span className="hidden sm:inline">
             List your products & services on our developer marketplace
           </span>
-          <ChevronRight className="h-4 w-4 transition-transform group-hover:translate-x-px mt-px" />
+          <ChevronRight className="mt-px h-4 w-4 transition-transform group-hover:translate-x-px" />
         </Link>
 
         <div className="mx-auto w-full px-4 lg:max-w-[var(--marketing-max-width)] xl:px-16">
           <div
             className={clsx(
-              "relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow duration-[500ms] ease-in-out",
-              isScrolled && "shadow-border-b"
+              "duration-[500ms] relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow ease-in-out",
+              isScrolled && "shadow-border-b",
             )}
           >
             <Link href="/" className="flex">
-              <button onClick={() => {
-                isMobileMenuOpen && setIsMobileMenuOpen(false);
-                isDesktopDropdownOpen && setIsDesktopDropdownOpen(false);
-              }}>
+              <button
+                onClick={() => {
+                  isMobileMenuOpen && setIsMobileMenuOpen(false);
+                  isDesktopDropdownOpen && setIsDesktopDropdownOpen(false);
+                }}
+              >
                 <Logo
                   className={clsx(
-                    " w-auto self-center justify-self-start h-[25px]",
+                    "hidden h-[26px] w-auto self-center justify-self-start md:block",
                   )}
+                />
+                <Image
+                  src="/logo.svg"
+                  alt="market.dev logo"
+                  width={22}
+                  height={22}
+                  className="self-center justify-self-start md:hidden"
                 />
               </button>
             </Link>
-            <div className="absolute left-1/2 top-1/2 ml-0.5 hidden -translate-x-1/2 -translate-y-1/2 gap-7 sm:flex">
+            <div className="flex justify-center absolute left-1/2 top-1/2  -translate-x-1/2 -translate-y-1/2 gap-7 max-w-0">
               <Link
                 href="/"
                 className="whitespace-nowrap !text-marketing-primary"
@@ -276,11 +285,18 @@ export default function Header({ className }: { className?: string }) {
               </Link>
             </div>
             <div className="flex w-fit items-center gap-4">
-              <Link href={loginURL} variant="primary" className="px-2">
+              <Link
+                href={loginURL}
+                variant="primary"
+                className="hidden px-2 sm:block"
+              >
                 Log in
               </Link>
               {/* Desktop menu button */}
-              <div className="hidden lg:flex relative items-center justify-center" ref={desktopMenuButtonRef}>
+              <div
+                className="relative hidden items-center justify-center lg:flex"
+                ref={desktopMenuButtonRef}
+              >
                 <AnimatedHambugerButton
                   isOpen={isDesktopDropdownOpen}
                   toggleMenu={toggleDesktopDropdown}
@@ -288,7 +304,7 @@ export default function Header({ className }: { className?: string }) {
                 />
               </div>
               {/* Mobile menu button */}
-              <div className="lg:hidden flex items-center justify-center">
+              <div className="flex items-center justify-center lg:hidden">
                 <AnimatedHambugerButton
                   isOpen={isMobileMenuOpen}
                   toggleMenu={toggleMobileMenu}
@@ -313,15 +329,15 @@ export default function Header({ className }: { className?: string }) {
             transition={{
               type: "tween",
               duration: 0.2,
-              ease: "easeOut"
+              ease: "easeOut",
             }}
             style={{
               top: dropdownPosition.top,
-              right: dropdownPosition.right
+              right: dropdownPosition.right,
             }}
           >
             {/* Product feature cards */}
-            <div className="flex flex-row max-w-[550px] p-3 gap-3">
+            <div className="flex max-w-[550px] flex-row gap-3 p-3">
               {products.map((product, index) => (
                 <div key={product.title}>
                   <FeatureCard
@@ -332,34 +348,34 @@ export default function Header({ className }: { className?: string }) {
                     description={product.description}
                     link={product.link}
                     borderRadius="rounded-lg"
-                    className="h-full text-marketing-xs !leading-tighter"
+                    className="!leading-tighter h-full text-marketing-xs"
                     size="small"
                   />
                 </div>
               ))}
             </div>
-            
+
             <div className="border-t border-black/10"></div>
-            
-            <div className="flex flex-col py-2 min-w-[175px] text-marketing-sm">
+
+            <div className="flex min-w-[175px] flex-col py-2 text-marketing-sm">
               <Link
                 href={blogURL}
                 variant="primary"
-                className="flex w-full items-center py-1.5 px-5 transition-colors hover:text-marketing-secondary"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Changelog
               </Link>
               <Link
                 href={discordURL}
                 variant="primary"
-                className="flex w-full items-center py-1.5 px-5 transition-colors hover:text-marketing-secondary"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Discord
               </Link>
               <Link
                 href={twitterUrl}
                 variant="primary"
-                className="flex w-full items-center py-1.5 px-5 transition-colors hover:text-marketing-secondary"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Twitter
               </Link>
@@ -371,20 +387,20 @@ export default function Header({ className }: { className?: string }) {
         {isMobileMenuOpen && (
           <motion.div
             key="mobile-menu"
-            className="fixed inset-x-0 bottom-0 z-[40] overflow-y-auto bg-marketing-background shadow-t text-left text-marketing-md lg:hidden"
+            className="shadow-t fixed inset-x-0 bottom-0 z-[40] overflow-y-auto bg-marketing-background text-left text-marketing-md lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
             style={{
               top: "calc(var(--header-height, 84px))",
-              height: "calc(100vh - var(--header-height, 84px))"
+              height: "calc(100vh - var(--header-height, 84px))",
             }}
           >
-            <div className="relative h-full flex flex-col">
+            <div className="relative flex h-full flex-col">
               {/* Product feature cards */}
               <div className="p-4">
-                <div className="flex flex-col sm:flex-row sm:gap-4 gap-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:gap-4">
                   {products.map((product) => (
                     <div key={product.title} className="flex-1">
                       <FeatureCard
@@ -402,19 +418,10 @@ export default function Header({ className }: { className?: string }) {
                   ))}
                 </div>
               </div>
-              
-              <div className="border-t border-black/10 mt-2"></div>
-              
-              <div className="flex-grow flex flex-col p-6 pt-2">
-                <Link
-                  href="https://explore.market.dev"
-                  variant="primary"
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5 sm:hidden"
-                  onClick={(e) => handleLinkClick(e)}
-                >
-                  Explore
-                </Link>
-                <hr className="flex border-black/15 sm:hidden" />
+
+              <div className="mt-2 border-t border-black/10"></div>
+
+              <div className="flex flex-grow flex-col p-6 pt-2">
                 <Link
                   href={blogURL}
                   variant="primary"
@@ -438,9 +445,16 @@ export default function Header({ className }: { className?: string }) {
                 >
                   Twitter
                 </Link>
-                <hr className="border-black/15" />
+                <hr className="border-black/15 sm:hidden" />
+                <Link
+                  href={loginURL}
+                  variant="primary"
+                  className="flex sm:hidden h-[60px] w-full items-center bg-marketing-background leading-5"
+                >
+                  Log in
+                </Link>
               </div>
-              <div className="sticky bottom-0 left-0 right-0 p-6 bg-marketing-background ">
+              <div className="sticky bottom-0 left-0 right-0 border-t border-black/10 bg-marketing-background p-6">
                 <Button className="w-full">
                   <Image
                     src="/github.svg"
