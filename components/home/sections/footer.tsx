@@ -4,10 +4,11 @@ import { loginURL } from "@/lib/home/social-urls";
 import GradientHeading from "@/components/home/gradient-heading";
 import Button from "@/components/home/button";
 import Logo from "@/components/home/logo";
+import ClaimStoreForm from "@/components/home/claim-store-form";
 
 export default function Footer() {
   return (
-    <footer className="relative w-full overflow-hidden bg-gradient-to-t from-marketing-camo/[33%] pb-6 pt-20">
+    <footer className="relative w-full overflow-hidden bg-gradient-to-t from-marketing-camo/[25%] pb-7 pt-20">
       <div className="mx-auto w-full max-w-[800px] px-6 lg:max-w-[var(--marketing-max-width)] lg:px-16">
         <div className="flex w-full flex-col items-center">
           <GradientHeading
@@ -20,18 +21,9 @@ export default function Footer() {
           <p className="mb-6 max-w-[45ch] text-pretty text-center tracking-[-0.035em] md:mb-8 md:text-[clamp(19px,12vw,24px)] md:leading-[clamp(20px,12vw,28px)] md:tracking-tight">
             Get started for free, no credit card required.
           </p>
-          <Link href={loginURL} className="md:mx-6 md:pt-1">
-            <Button>
-              <Image
-                src="/github.svg"
-                alt="github logo"
-                height={24}
-                width={24}
-                className="h-[22px] w-auto md:h-6"
-              />
-              Sign up with Github
-            </Button>
-          </Link>
+          <div className="md:mx-6 md:pt-1">
+            <ClaimStoreForm id="footer" />
+          </div>
 
           <div className="mt-44 w-full border-t border-black/10 pt-5">
             <div className="grid grid-cols-1 gap-6 divide-y divide-black/[7%] text-marketing-primary xs:grid-cols-3 xs:divide-y-0 lg:grid-cols-5">
