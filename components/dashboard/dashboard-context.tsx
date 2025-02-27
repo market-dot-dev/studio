@@ -27,9 +27,12 @@ export function DashboardProvider({ children, siteId }: { children: ReactNode; s
 
 export function useSiteId() {
   const context = useContext(DashboardContext);
-  if (context.siteId === null) {
-    throw new Error("useSiteId must be used within a DashboardProvider");
+
+  // this was previously throwing an error if the context was not found
+  if (!context || context.siteId === null) {
+    return null;
   }
+
   return context.siteId;
 }
 
