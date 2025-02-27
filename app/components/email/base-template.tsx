@@ -35,10 +35,10 @@ export const BaseEmailTemplate = ({
           cellpadding="0"
           cellspacing="0"
           role="presentation"
-          style="max-width:37.5em;background-color:#ffffff;margin:0 auto;padding:48px 0 48px;margin-bottom:64px;border-radius:10px;"
+          style="padding:0 16px"
         >
           <tbody>
-            <tr style="width:100%">
+            <tr>
               <td>
                 <table
                   align="center"
@@ -47,30 +47,46 @@ export const BaseEmailTemplate = ({
                   cellpadding="0"
                   cellspacing="0"
                   role="presentation"
-                  style="padding:0 48px"
+                  style="max-width:37.5em;background-color:#ffffff;margin:0 auto;padding:48px 0 48px;margin-bottom:64px;border-radius:10px;"
                 >
                   <tbody>
-                    <tr>
+                    <tr style="width:100%">
                       <td>
-                        <img
-                          alt="market.dev"
-                          height="27"
-                          src="https://market.dev/market-dot-dev-logo.png"
-                          style="display:block;outline:none;border:none;text-decoration:none"
-                          width="140"
-                        />
-                        <hr
-                          style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#e6ebf1;margin:20px 0"
-                        />
-                        ${children}
-                        <hr
-                          style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#e6ebf1;margin:20px 0"
-                        />
-                        <p
-                          style="font-size:12px;line-height:16px;margin:16px 0;color:#8898aa"
+                        <table
+                          align="center"
+                          width="100%"
+                          border="0"
+                          cellpadding="0"
+                          cellspacing="0"
+                          role="presentation"
+                          style="padding:0 48px"
                         >
-                          Powered by market.dev
-                        </p>
+                          <tbody>
+                            <tr>
+                              <td>
+                                <img
+                                  alt="market.dev"
+                                  height="27"
+                                  src="https://market.dev/market-dot-dev-logo.png"
+                                  style="display:block;outline:none;border:none;text-decoration:none"
+                                  width="140"
+                                />
+                                <hr
+                                  style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#e6ebf1;margin:20px 0"
+                                />
+                                ${children}
+                                <hr
+                                  style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#e6ebf1;margin:20px 0"
+                                />
+                                <p
+                                  style="font-size:12px;line-height:16px;margin:16px 0;color:#8898aa"
+                                >
+                                  Powered by market.dev
+                                </p>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </td>
                     </tr>
                   </tbody>
