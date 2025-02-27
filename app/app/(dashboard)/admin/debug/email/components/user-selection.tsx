@@ -24,6 +24,7 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
         const response = await fetch("/api/admin/users");
         
         if (!response.ok) {
+          // Get error details from response
           const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
         }

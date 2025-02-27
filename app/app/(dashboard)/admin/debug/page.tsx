@@ -14,6 +14,7 @@ const StripeDebug = async () => {
 
   const debugLinks = [
     { name: "View All Users", href: "/admin/debug/users" },
+    { name: "Bulk Email Tool", href: "/admin/debug/email" },
     { name: "Onboarding State", href: "/admin/debug/onboarding" },
     { name: "Stripe Debug", href: "/admin/debug/stripe-debug" },
     { name: "Stripe Connect", href: "/settings/payment" },
