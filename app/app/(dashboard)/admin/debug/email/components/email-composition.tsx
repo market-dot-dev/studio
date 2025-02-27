@@ -51,8 +51,8 @@ export default function EmailCompositionStep({
             Available Variables
           </h3>
           <ul className="text-sm text-gray-600 space-y-1">
-            <li><code>{'{name}'}</code> - User's name</li>
-            <li><code>{'{email}'}</code> - User's email</li>
+            <li><code>{'{name}'}</code> - User name</li>
+            <li><code>{'{email}'}</code> - User email</li>
           </ul>
         </Card>
       </div>
