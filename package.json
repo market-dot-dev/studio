@@ -60,7 +60,7 @@
     "lucide-react": "^0.436.0",
     "nanoid": "^5.0.7",
     "next": "^14.2.20",
-    "next-auth": "^4.24.10",
+    "next-auth": "^4.24.11",
     "next-mdx-remote": "^5.0.0",
     "nodemailer": "^6.9.9",
     "novel": "^0.1.22",
