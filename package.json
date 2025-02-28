@@ -60,7 +60,7 @@
     "lucide-react": "^0.436.0",
     "nanoid": "^5.0.7",
     "next": "^14.2.20",
-    "next-auth": "^4.24.10",
+    "next-auth": "^4.24.11",
     "next-mdx-remote": "^5.0.0",
     "nodemailer": "^6.9.9",
     "novel": "^0.1.22",
@@ -85,7 +85,7 @@
     "use-debounce": "^10.0.4"
   },
   "devDependencies": {
-    "@tailwindcss/forms": "^0.5.7",
+    "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
     "@types/aos": "^3.0.7",
     "@types/jest": "^29.5.14",
