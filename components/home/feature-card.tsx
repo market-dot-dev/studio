@@ -74,7 +74,7 @@ export default function FeatureCard({
       ></div>
       <div
         className={clsx(
-          "flex h-full w-full flex-col items-start justify-between gap-x-6",
+          "flex h-full w-full flex-col items-start justify-between gap-x-6 min-h-0",
           orientation === "horizontal"
             ? "sm:max-h-[500px] md:max-h-[300px] md:flex-row lg:max-h-[320px]"
             : "max-h-[450px]",
@@ -181,7 +181,7 @@ export default function FeatureCard({
               alt={image.alt}
               height={800}
               width={600}
-              className={`h-full w-full justify-self-end drop-shadow-sm ${
+              className={`h-full w-full justify-self-end drop-shadow-sm min-h-0 ${
                 orientation === "horizontal" ? "object-contain" : "object-cover"
               }`}
             />
