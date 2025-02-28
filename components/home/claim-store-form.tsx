@@ -21,9 +21,9 @@ export default function ClaimStoreForm({
   };
 
   return (
-    <div className="flex w-[272px] flex-col items-center rounded-lg bg-black/[4%] ring-1 ring-black/[15%] xs:w-[320px] sm:w-[420px] sm:flex-row md:w-[550px]">
-      <div className="relative flex w-full items-center justify-between px-4 md:px-5">
-        <div className="flex items-center gap-3 md:gap-4">
+    <div className="flex w-[272px] flex-col items-center rounded-lg bg-black/[4%] ring-1 ring-black/[15%] xs:w-[320px] sm:w-[420px] sm:flex-row md:w-[500px]">
+      <div className="relative flex w-full items-center justify-between pl-3.5 pr-4 md:pl-[18px] md:pr-5">
+        <div className="flex items-center gap-3 md:gap-3.5">
           <StoreIcon className="h-5 w-5 text-marketing-green md:h-7 md:w-7" />
           <input
             id={`${id}-store-name`}
@@ -31,7 +31,7 @@ export default function ClaimStoreForm({
             value={storeInput}
             onChange={handleInputChange}
             placeholder={placeholder}
-            className="h-full w-full appearance-none overflow-hidden text-clip border-none bg-transparent !px-0 py-3 text-marketing-sm text-marketing-secondary placeholder:opacity-[55%] focus:outline-none focus:ring-0 md:text-marketing-base"
+            className="placeholder:text-marketing-secondary/[66%] h-full w-full appearance-none overflow-hidden text-clip border-none bg-transparent !px-0 py-3 text-marketing-sm text-marketing-secondary focus:outline-none focus:ring-0 md:text-marketing-base"
           />
         </div>
         <span className="whitespace-nowrap text-marketing-sm text-marketing-secondary md:text-marketing-base">
@@ -39,8 +39,8 @@ export default function ClaimStoreForm({
         </span>
       </div>
       <Link href={loginURL} className="flex w-full sm:w-fit">
-        <Button fullWidth={true} className='!gap-2'>
-          Start your store
+        <Button fullWidth={true} className="!gap-2">
+          Start selling
         </Button>
       </Link>
     </div>
