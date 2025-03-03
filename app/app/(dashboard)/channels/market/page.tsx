@@ -15,7 +15,7 @@ export default async function MarketChannel() {
 
   return (
     <Flex flexDirection="col" alignItems="start" className="w-full gap-6">
-      <PageHeading title="Market" />
+      <PageHeading title="explore.market.dev" />
 
       {!isConnectedToMarket ? (
         <ConnectionRequired user={currentUser} />
@@ -23,7 +23,7 @@ export default async function MarketChannel() {
         <div className="flex w-full flex-col gap-4">
           <div className="flex w-full items-center justify-between">
             <Text className="text-black">
-              Your packages are live on Market.dev!{" "}
+              You have an expert profile on explore.market.dev, and can use it to advertise products and services to sell.{" "}
               <Link
                 className="underline"
                 href={`${process.env.NEXT_PUBLIC_MARKET_DEV_BASE_URL}/experts/${currentUser.gh_username}`}
