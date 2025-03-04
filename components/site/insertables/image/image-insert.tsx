@@ -2,7 +2,7 @@
 import { useModal } from "@/components/modal/provider";
 import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; import { useState, useEffect, useCallback } from "react";
 import { Media as DBMedia } from "@prisma/client";
-import { Button,  NumberInput, TextInput, Bold } from "@tremor/react";
+import { Button,  NumberInput, TextInput } from "@tremor/react";
 import { format } from 'date-fns'
 
 import { useDropzone } from 'react-dropzone';
@@ -26,7 +26,7 @@ const StyledDropzone = ({ onFileAccepted, isUploading } : any) => {
             className="flex flex-col p-4 gap-2 border-2 rounded-md border-dashed dropzone cursor-pointer min-h-30"
         >
             <input {...getInputProps()} />
-            <Bold>Files Upload</Bold>
+            <strong>Files Upload</strong>
             {isUploading ? <Spinner /> :
             
                 <p className="text-sm text-stone-500 py-1">Drop files here or <strong>Click</strong> to select files</p>

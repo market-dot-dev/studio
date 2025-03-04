@@ -1,6 +1,6 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { Bold, Badge, Button, SelectItem, Select, TextInput } from "@tremor/react";
+import { Badge, Button, SelectItem, Select, TextInput } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Search, XCircle, Trash2 } from "lucide-react";
@@ -479,7 +479,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
             </div>
 
-            <Bold>Search Results{ repoOrgName ? ' for ' + repoOrgName : ''}:</Bold>
+            <strong>Search Results{ repoOrgName ? ' for ' + repoOrgName : ''}:</strong>
             {searchError ? <p className="text-sm text-red-500">{searchError}</p> : null}
             {radarResults.length ?
                 <div className="flex flex-col gap-4 items-stretch sticky -top-1 z-10 bg-white p-4 shadow-sm border rounded-md -mr-1 -ml-1">

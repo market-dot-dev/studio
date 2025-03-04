@@ -1,6 +1,6 @@
 "use client";
 
-import { Bold, Badge } from "@tremor/react";
+import { Badge } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import CreatePageButton from "@/components/create-page-button";
 import Pages from "@/components/pages";
@@ -71,7 +71,7 @@ export default function SiteAdmin({ id }: { id: string }) {
             <div className="mb-4">
               <div className="mb-2 flex">
                 <div className="flex items-center gap-2">
-                  <Bold className="me-2">Homepage</Bold>
+                  <strong className="me-2">Homepage</strong>
                   {homepage?.draft ? (
                     <Badge color="gray" size="xs">
                       Draft
@@ -109,7 +109,7 @@ export default function SiteAdmin({ id }: { id: string }) {
       <Card>
         <div className="flex w-full justify-between">
           <div className="flex flex-row">
-            <Bold>Other Pages</Bold>
+            <strong>Other Pages</strong>
           </div>
           <div className="flex flex-row">
             <CreatePageButton />

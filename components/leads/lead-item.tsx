@@ -1,5 +1,5 @@
 import { Lead } from "@prisma/client";
-import { Badge, Bold, Button, ProgressCircle } from "@tremor/react";
+import { Badge, Button, ProgressCircle } from "@tremor/react";
 import { useState } from "react";
 import Link from "next/link";
 
@@ -57,14 +57,14 @@ export default function LeadItem({ lead }: { lead: Lead }) {
                     <div className="flex gap-4">
                         <Badge>{lead.kind && lead.kind.charAt(0).toUpperCase() + lead.kind.slice(1)}</Badge>
                     </div>
-                    <Bold>{lead.name}</Bold>
+                    <strong>{lead.name}</strong>
                     <p className="text-sm text-stone-500">{lead.description}</p>
                     <p className="text-sm text-stone-500"><a href={lead.html_url} target="_blank" className="underline">{lead.html_url}</a></p>
                 </div>
             </div>
             <div className="flex flex-row gap-8 my-4">
                 <div className="w-1/2">
-                    <Bold>Contact Information</Bold>
+                    <strong>Contact Information</strong>
                     <p className="text-sm text-stone-500">Website: {formattedWebsite ? <a href={formattedWebsite} target="_blank" rel="noopener noreferrer" className="underline">{formattedWebsite}</a> : null }</p>
                     <p className="text-sm text-stone-500">Email: {lead.email ? <a href={`mailto:${lead.email}`} className="underline">{lead.email}</a> : null }</p>
                     <p className="text-sm text-stone-500">Twitter: {lead.twitter}</p>
@@ -76,7 +76,7 @@ export default function LeadItem({ lead }: { lead: Lead }) {
                     <div>
                         <div>
                             <div className="flex gap-2 items-center mb-3">
-                                <Bold>Dependency:</Bold>
+                                <strong>Dependency:</strong>
                                 <Badge>{getDependencyScoreBadge(lead.dependent_repos_count)}</Badge>
                             </div>
 

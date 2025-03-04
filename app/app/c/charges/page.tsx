@@ -1,7 +1,7 @@
 import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
-import { Button, Bold } from "@tremor/react";
+import { Button } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import ChargeService from "@/app/services/charge-service";
@@ -23,11 +23,11 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
       <div className="flex flex-col space-y-2">
         <div className="flex flex-row justify-between">
           <div className="flex flex-row space-x-2 items-center">
-            <Bold>{maintainer.projectName}</Bold>
+            <strong>{maintainer.projectName}</strong>
           </div>
         </div>
 
-        <Bold>Tier: {tier.name}</Bold>
+        <strong>Tier: {tier.name}</strong>
 
         <p className="text-sm text-stone-500">Status:&nbsp;
           { status}

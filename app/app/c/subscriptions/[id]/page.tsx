@@ -7,7 +7,6 @@ import prisma from "@/lib/prisma";
 import LinkButton from "@/components/common/link-button";
 import UserService from "@/app/services/UserService";
 import { CheckSquare2 as CheckSquare } from "lucide-react";
-import { Bold } from "@tremor/react";
 import { getRootUrl } from "@/lib/domain";
 
 const formatFeatureLink = async (feature: Feature) => {
@@ -77,7 +76,7 @@ export default async function SubscriptionDetail({
 
         {cancelled && (
           <>
-            <Bold>Your subscription has been cancelled.</Bold>
+            <strong>Your subscription has been cancelled.</strong>
             <div>
               You can view and resubscribe to the plan here:{" "}
               <LinkButton href={resubUrl} label="View Plan" />
@@ -92,7 +91,7 @@ export default async function SubscriptionDetail({
                 <FeatureAction feature={f} key={f.id} />
               ))}
 
-              <Bold>Manage your Subscription</Bold>
+              <strong>Manage your Subscription</strong>
               <CancelSubscriptionButton subscriptionId={subscription.id} />
             </div>
           </>

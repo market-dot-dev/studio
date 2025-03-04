@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import {
   Button,
-  Bold,
   Badge,
   NumberInput,
   Callout,
@@ -152,7 +151,7 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
 
   return (
     <div className="mt-4 flex flex-col rounded-lg border border-gray-400 bg-gray-100 px-2 py-4 text-gray-700">
-      <Bold>Checkout Link</Bold>
+      <strong>Checkout Link</strong>
       {tier.published ? (
         <>
           <p className="text-sm text-stone-500">
@@ -887,7 +886,7 @@ export default function TierForm({
           <TierLinkCopier tier={tier} />
           {!newRecord && (
             <div className="mt-4 flex flex-col items-center rounded-lg border border-gray-400 bg-gray-100 px-2 py-4 text-gray-700">
-              <Bold>Admin Options</Bold>
+              <strong>Admin Options</strong>
 
               <div className="my-2 flex justify-center gap-2">
                 <DuplicateTierButton tierId={tier.id} />

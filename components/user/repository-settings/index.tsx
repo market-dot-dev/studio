@@ -1,7 +1,7 @@
 'use client'
 import { getInstallationsList, getInstallationRepos, getGithubAppInstallState } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { TextInput, Button, Grid, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+import { TextInput, Button, Grid, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
 
 import { Github, SearchIcon, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -118,7 +118,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
           <div className="w-2/5 ps-2 pt-2">
             <div className="flex flex-col items-start gap-4">
               <div className="w-full">
-                <Bold>Github Accounts</Bold>
+                <strong>Github Accounts</strong>
                 <p className="text-sm text-stone-500">
                   Your Github accounts and organizations in which you are a
                   member.
@@ -149,7 +149,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
               </div>
 
               <div className="relative w-full">
-                <Bold>Repositories</Bold>
+                <strong>Repositories</strong>
                 <div className="relative mt-2 w-full">
                   <TextInput
                     icon={SearchIcon}
@@ -192,7 +192,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
           </div>
 
           <Card className="w-4/5 p-6 pt-5">
-            <Bold>Connected Github Repositories</Bold>
+            <strong>Connected Github Repositories</strong>
             <p className="text-sm text-stone-500">
               {" "}
               A Connected repository is a loose connection - this allows you to

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import SectionHeader from "./section-header";
-import { Bold, Button, TextInput, Textarea } from "@tremor/react";
+import { Button, TextInput, Textarea } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Tier } from "@prisma/client";
@@ -49,7 +49,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
         <Card>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="w-full items-center">
-              <Bold>Email Address:</Bold>
+              <strong>Email Address:</strong>
               <TextInput
                 name="email"
                 type="email"
@@ -58,7 +58,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
               />
             </div>
             <div className="w-full items-center">
-              <Bold>Name:</Bold>
+              <strong>Name:</strong>
               <TextInput 
                 name="name" 
                 placeholder="Enter your name" 
@@ -66,7 +66,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
               />
             </div>
             <div className="w-full items-center">
-              <Bold>Organization:</Bold>
+              <strong>Organization:</strong>
               <TextInput
                 name="organization"
                 placeholder="Enter your organization name"
@@ -74,7 +74,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
               />
             </div>
             <div className="w-full items-center">
-              <Bold>Additional Context:</Bold>
+              <strong>Additional Context:</strong>
               <Textarea
                 name="context"
                 placeholder="Tell us more about your project needs and how we can help"

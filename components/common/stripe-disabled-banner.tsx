@@ -1,5 +1,4 @@
 import LinkButton from "./link-button";
-import { Bold } from "@tremor/react";
 import { AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
@@ -11,7 +10,7 @@ const StripeDisabledBanner = () => {
       <div className="flex flex-row items-center">
         <AlertCircle size={24} className="mr-2 h-full" />
         <div className="flex flex-col">
-          <Bold>There is an issue with your Stripe Account.</Bold>
+          <strong>There is an issue with your Stripe Account.</strong>
           <p className="text-sm text-stone-500">Your Stripe account is not connected or has an issue that may prevent sales. Please visit your <a href="/settings/payment" className="underline">Payment Settings</a> to resolve this issue.</p>
         </div>
       </div>

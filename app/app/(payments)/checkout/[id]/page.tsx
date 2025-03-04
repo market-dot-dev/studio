@@ -5,7 +5,6 @@ import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
-import { Bold } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import { useSearchParams } from "next/navigation";
 
@@ -99,9 +98,9 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
       ) : checkoutType === "gitwallet" ? (
         <div>
           <div className="mb-2 text-lg">
-            <Bold className="text-gray-800">
+            <strong className="text-gray-800">
               {checkoutProject}: {checkoutTier} {isAnnual ? `(annual)` : ""}
-            </Bold>
+            </strong>
           </div>
           <div className="mb-2 text-lg leading-6">
             <p className="text-sm text-stone-500">
@@ -113,9 +112,9 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
         </div>
       ) : (
         <div className="mb-2 text-lg">
-          <Bold className="text-gray-800">
+          <strong className="text-gray-800">
             {checkoutProject}: {checkoutTier}
-          </Bold>
+          </strong>
         </div>
       )}
 

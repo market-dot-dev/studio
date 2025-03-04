@@ -3,7 +3,6 @@
 import {
   BarList,
   Grid,
-  Bold,
   AreaChart,
 } from "@tremor/react";
 import { Card } from "@/components/ui/card";
@@ -103,10 +102,10 @@ export default function AnalyticsMockup() {
             <h2 className="text-xl font-bold">Restore Onboarding State</h2>
             <div className="flex mt-4">
               <p className="text-sm text-stone-500">
-                <Bold>{subtitle}</Bold>
+                <strong>{subtitle}</strong>
               </p>
               <p className="text-sm text-stone-500">
-                <Bold>Visitors</Bold>
+                <strong>Visitors</strong>
               </p>
             </div>
             <BarList

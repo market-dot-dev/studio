@@ -1,5 +1,5 @@
 'use client'
-import { TextInput, Button, Bold } from "@tremor/react";
+import { TextInput, Button } from "@tremor/react";
 import { useRef, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
@@ -166,7 +166,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                         <div className="mb-4">
                             <div className="mb-4 text-center">Enter your details to create an account.</div>
 
-                            <Bold>Name:</Bold>
+                            <strong>Name:</strong>
                             <TextInput placeholder="Enter your name" value={name} onChange={(e) => {
                                 setName(e.target.value)
                                 setError(null);
@@ -179,7 +179,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                     
                     <div className="flex flex-col gap-4 w-full">
                         <div className="items-center w-full">
-                            <Bold>Email:</Bold>
+                            <strong>Email:</strong>
                             <TextInput 
                                 placeholder="Your email address"
                                 autoFocus={!isSignUp}

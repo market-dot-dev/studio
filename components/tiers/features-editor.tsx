@@ -1,4 +1,4 @@
-import { TextInput, Button, List, ListItem, Switch, Bold } from "@tremor/react";
+import { TextInput, Button, List, ListItem, Switch } from "@tremor/react";
 import { IconButton } from "@radix-ui/themes";
 import { useRef, useState } from "react";
 
@@ -71,7 +71,7 @@ export default function FeaturesEditor({features, setFeatures}: any) : JSX.Eleme
     return (
         <>        
             <div className="flex flex-col items-start gap-1">
-                <Bold>Features</Bold>
+                <strong>Features</strong>
                 <div className="flex gap-4">
                     <TextInput value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Enter feature text"/>
                     <Button onClick={addFeature}>Add</Button>
