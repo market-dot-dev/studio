@@ -1,8 +1,7 @@
 import { useCallback, useState } from "react";
 import ComponentsPanel from "./components-panel";
 import ThemesPanel from "./themes-panel";
-import { Bold, Divider, Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
-import { text } from "stream/consumers";
+import { Divider } from "@tremor/react";
 
 export default function PageEditorSidebar({editorRef, monacoRef}: {editorRef: any, monacoRef: any}) {
     const [activeTab, setActiveTab] = useState(0);

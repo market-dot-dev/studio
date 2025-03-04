@@ -5,7 +5,8 @@ import type {
   CheckoutType,
   TierWithFeatures,
 } from "@/app/services/TierService";
-import { Card, Button, Text, Switch } from "@tremor/react";
+import { Button, Text, Switch } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import TierFeatureList from "@/components/features/tier-feature-list";
 import { Feature } from "@prisma/client";
@@ -109,7 +110,7 @@ const TierCard: React.FC<TierCardProps> = ({
   return (
     <Card
       className={clsx(
-        "relative flex h-full w-full flex-col justify-between rounded-md bg-white p-6 pt-5 shadow ring-1 ring-gray-500/10",
+        "relative flex h-full w-full flex-col justify-between p-6 pt-5",
         containerClasses,
         className,
       )}

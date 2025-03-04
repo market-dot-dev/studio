@@ -90,7 +90,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const parsedDescription = parseTierDescription(tier?.description || "");
 
   const tierInfo = (
-    <Card className="p-4">
+    <Card className="p-6">
       <Text>Package Details</Text>
       {isTierLoading ? (
         <div className="opacity-50">

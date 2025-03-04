@@ -1,6 +1,7 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { Bold, Card, Badge, Button, Text, SelectItem, Select, TextInput } from "@tremor/react";
+import { Bold, Badge, Button, Text, SelectItem, Select, TextInput } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Search, XCircle, Trash2 } from "lucide-react";
 

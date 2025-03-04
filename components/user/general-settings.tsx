@@ -1,5 +1,5 @@
 "use client";
-import { Flex, Card, TextInput, Button } from "@tremor/react";
+import { Flex, TextInput, Button } from "@tremor/react";
 import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";

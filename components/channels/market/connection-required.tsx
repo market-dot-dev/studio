@@ -2,7 +2,8 @@
 
 import { validateMarketExpert } from "@/lib/market";
 import { User } from "@prisma/client";
-import { Card, Button } from "@tremor/react";
+import { Button } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";

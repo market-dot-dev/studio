@@ -1,6 +1,7 @@
 "use client";
 
-import { Bold, Card, Badge, Text } from "@tremor/react";
+import { Bold, Badge, Text } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import CreatePageButton from "@/components/create-page-button";
 import Pages from "@/components/pages";
 import PageHeading from "@/components/common/page-heading";

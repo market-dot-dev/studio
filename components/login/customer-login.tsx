@@ -1,5 +1,5 @@
 'use client'
-import { TextInput, Button, Text, Bold } from "@tremor/react";
+import { TextInput, Button, Bold } from "@tremor/react";
 import { useRef, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'

@@ -1,7 +1,7 @@
 import Image from "next/image";
 import clsx from "clsx";
 import { TextInput, Button } from "@tremor/react";
-import { ImageIcon, UserRound, UsersRound } from "lucide-react";
+import { ImageIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { Site, User } from "@prisma/client";
 import { uploadLogo, validateSubdomain } from "@/app/services/SiteService";

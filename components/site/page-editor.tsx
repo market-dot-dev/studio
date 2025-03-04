@@ -8,9 +8,22 @@ import { EyeOpenIcon, CodeIcon, InfoCircledIcon, BorderSplitIcon } from "@radix-
 import renderElement from "./page-renderer";
 import { useRouter } from "next/navigation";
 
-import { Flex, Grid, Col, Badge, Callout, Button, Bold, TextInput } from "@tremor/react";
+import {
+  Flex,
+  Grid,
+  Col,
+  Badge,
+  Callout,
+  Button,
+  Bold,
+  TextInput,
+  Tab,
+  TabGroup,
+  TabList,
+  TabPanel,
+  TabPanels,
+} from "@tremor/react";
 import { Card } from "@/components/ui/card"
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import {
   setHomepage,
   deletePage,

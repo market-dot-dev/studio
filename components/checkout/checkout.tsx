@@ -1,6 +1,7 @@
 "use client";
 
-import { Card, Text, Button } from "@tremor/react";
+import { Text, Button } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
 import { User, Contract } from "@prisma/client";
@@ -110,14 +111,14 @@ export default function RegistrationCheckoutSection({
 
         <section className="w-7/8 text-md mb-8 text-slate-600 lg:w-5/6">
           <SectionHeader headerName="Your Account" />
-          <Card>
+          <Card className="p-4">
             <CustomerLoginComponent signup={true} />
           </Card>
         </section>
 
         <section className="w-7/8 mb-8 lg:w-5/6">
           <SectionHeader headerName="Payment Information" />
-          <Card>
+          <Card className="p-4">
             {error && <div className="mb-4 text-red-500">{error}</div>}
             {maintainer.stripeAccountId && (
               <UserPaymentMethodWidget

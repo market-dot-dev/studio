@@ -6,7 +6,7 @@ import TierCard from "./tier-card"
 import { useCallback, useState } from "react";
 import { createTemplateTier } from "@/app/services/TierService";
 import { useModal } from "../modal/provider";
-import { X, CheckSquare2 as CheckSquare, Square, Plus } from 'lucide-react';
+import { CheckSquare2 as CheckSquare, Square, Plus } from 'lucide-react';
 
 
 export default function NewTierModal({ children, multiple }: { children: React.ReactNode, multiple?: boolean }) {

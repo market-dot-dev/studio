@@ -1,4 +1,4 @@
-import { Flex, Card, TextInput, Button, List, ListItem, Title, Switch, Bold } from "@tremor/react";
+import { Flex, TextInput, Button, List, ListItem, Switch, Bold } from "@tremor/react";
 import { IconButton } from "@radix-ui/themes";
 import { useRef, useState } from "react";
 

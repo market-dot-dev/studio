@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Card, Button, Text } from '@tremor/react';
+import { Button, Text } from '@tremor/react';
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
 import { canBuy, getPaymentMethod, StripeCard } from '@/app/services/StripeService';
 import useCurrentSession from '@/app/hooks/use-current-session';

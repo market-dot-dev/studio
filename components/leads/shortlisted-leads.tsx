@@ -1,7 +1,8 @@
 'use client'
 
 import { Lead } from "@prisma/client";
-import { Button, Card } from "@tremor/react";
+import { Button } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import LeadItem from "./lead-item";
 import { useCallback, useState } from "react";
 import { removeLeadFromShortlist } from "@/app/services/LeadsService";

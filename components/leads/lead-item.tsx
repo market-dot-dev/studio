@@ -1,9 +1,7 @@
 import { Lead } from "@prisma/client";
-import { Badge, Text, Bold, Button } from "@tremor/react";
+import { Badge, Text, Bold, Button, ProgressCircle } from "@tremor/react";
 import { useState } from "react";
 import Link from "next/link";
-import { ProgressCircle } from '@tremor/react';
-
 
 function getDependencyScoreBadge(dependentReposCount: number) {
     return dependentReposCount > 5 ? "High" : "Low";

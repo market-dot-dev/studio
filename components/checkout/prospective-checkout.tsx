@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import SectionHeader from "./section-header";
-import { Bold, Button, Card, TextInput, Textarea } from "@tremor/react";
+import { Bold, Button, TextInput, Textarea } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Tier } from "@prisma/client";
 import { useRouter } from "next/navigation";
