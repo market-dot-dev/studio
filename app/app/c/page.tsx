@@ -7,7 +7,7 @@ import SubscriptionService from "@/app/services/SubscriptionService";
 import { Charge, Feature, Contract } from "@prisma/client";
 import ContractService from "@/app/services/contract-service";
 
-import { Badge } from "@tremor/react";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
 import Tier from "@/app/models/Tier";
@@ -91,7 +91,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
         <div className="mb-4 flex flex-col">
           <strong>Status:</strong>
           <p className="text-sm text-stone-500">
-            <Badge className="me-2">
+            <Badge variant="secondary" className="me-2">
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Badge>
             (On {charge.createdAt.toDateString()})
@@ -181,7 +181,7 @@ const SubscriptionCard = async ({
         <div className="flex flex-col">
           <strong>Status:</strong>
           <p className="text-sm text-stone-500">
-            <Badge className="me-2">
+            <Badge variant="secondary" className="me-2">
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Badge>
             (On {subscription.createdAt.toDateString()})

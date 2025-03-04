@@ -1,4 +1,5 @@
-import { Metric, BarChart, Badge } from "@tremor/react";
+import { Metric, BarChart } from "@tremor/react";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import Link from "next/link";
@@ -205,7 +206,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
         <div className="flex items-end gap-2">
           <div className="text-xl font-bold">Reports</div>
           {isUsingDummyData && (
-            <Badge color={"gray"} size={"xs"} className="mb-1">
+            <Badge variant="secondary" size="sm" className="mb-1">
               Sample Data
             </Badge>
           )}

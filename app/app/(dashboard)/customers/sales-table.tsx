@@ -1,6 +1,5 @@
 import { User, Subscription, Charge, Prospect } from "@prisma/client";
 import {
-  Badge,
   Table,
   TableBody,
   TableCell,
@@ -24,6 +23,7 @@ import {
 import SubscriptionStatusBadge from "./subscription-state";
 import PurchaseStatusBadge from "./purchase-state";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export type CustomerWithChargesSubscriptionsAndProspects = User & {
   charges: (Charge & { tier: Tier })[];
@@ -63,7 +63,7 @@ const SalesRow = ({
         <TableCell className="m-0 p-2 text-left">{tierName}</TableCell>
       )}
       <TableCell className="m-0 p-2 text-left">
-        <Badge color="gray">{type}</Badge>
+        <Badge variant="secondary">{type}</Badge>
       </TableCell>
       <TableCell className="m-0 p-2 text-left">{statusBadge ?? "-"}</TableCell>
       <TableCell className="m-0 p-2 text-left">

@@ -1,9 +1,9 @@
 import { Charge } from "@prisma/client";
-import { Badge } from "@tremor/react";
+import { Badge } from "@/components/ui/badge";
 
 const PurchaseStatusBadge = ({ charge }: { charge: Charge; }) => {
   return (
-    <Badge color="green">Purchased</Badge>
+    <Badge variant="success">Purchased</Badge>
   );
 };
 

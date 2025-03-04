@@ -1,7 +1,8 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { Badge, Button, SelectItem, Select, TextInput } from "@tremor/react";
+import { Button, SelectItem, Select, TextInput } from "@tremor/react";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Search, XCircle, Trash2 } from "lucide-react";
 
@@ -380,21 +381,26 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
     const filterBadges = Object.keys(filters).map((key: string) => {
         if (filters[key as keyof FiltersState]) {
             return (
-                <Badge key={key} className="pr-1 mr-1 mb-1">
-                    <div className="flex flex-nowrap gap-1">
-                        <p className="text-sm text-stone-500">{key}: {filters[key as keyof FiltersState]}</p>
-                        <div className="cursor-pointer" 
-                            onClick={() => {
-                                setFilters((prev: FiltersState) => {
-                                    let newFilters = { ...prev };
-                                    newFilters[key as keyof FiltersState] = '';
-                                    return newFilters;
-                                });
-                            }}
-                        ><XCircle className="h-5 w-5 flex-shrink-0" /></div>
-                    </div>
-                </Badge>
-            )
+              <Badge key={key} variant="secondary" className="mb-1 mr-1 pr-1">
+                <div className="flex flex-nowrap gap-1">
+                  <p className="text-sm text-stone-500">
+                    {key}: {filters[key as keyof FiltersState]}
+                  </p>
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setFilters((prev: FiltersState) => {
+                        let newFilters = { ...prev };
+                        newFilters[key as keyof FiltersState] = "";
+                        return newFilters;
+                      });
+                    }}
+                  >
+                    <XCircle className="h-5 w-5 flex-shrink-0" />
+                  </div>
+                </div>
+              </Badge>
+            );
         }
     }).filter(Boolean);
 
@@ -560,18 +566,20 @@ function SearchResult({ lead, isShortlisted, setShortListedLeads }: { lead: Lead
     }, [lead])
 
     return (
-        <Card className="flex flex-col my-2 z-0 relative">
-            <LeadItem lead={lead} />
-            <div className="flex flex-col absolute right-10 gap-4">
-                {isShortlisted && <Badge>Shortlisted</Badge>}
-                <Button
-                    loading={isAddingToShortlist}
-                    disabled={isShortlisted || isAddingToShortlist}
-                    onClick={addToShortlist}
-                >Add to Shortlist</Button>
-            </div>
-        </Card>
-    )
+      <Card className="relative z-0 my-2 flex flex-col">
+        <LeadItem lead={lead} />
+        <div className="absolute right-10 flex flex-col gap-4">
+          {isShortlisted && <Badge variant="secondary">Shortlisted</Badge>}
+          <Button
+            loading={isAddingToShortlist}
+            disabled={isShortlisted || isAddingToShortlist}
+            onClick={addToShortlist}
+          >
+            Add to Shortlist
+          </Button>
+        </div>
+      </Card>
+    );
 }
 
 

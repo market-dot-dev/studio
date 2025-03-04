@@ -10,7 +10,6 @@ import renderElement from "./page-renderer";
 import { useRouter } from "next/navigation";
 
 import {
-  Badge,
   Callout,
   Button,
   TextInput,
@@ -21,6 +20,7 @@ import {
   TabPanels,
 } from "@tremor/react";
 import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge";
 import {
   setHomepage,
   deletePage,
@@ -510,7 +510,7 @@ export default function PageEditor({
       {!fullscreen ? (
         <>
           <div className={clsx("md:col-span-9", fullscreen ? "p-4" : "")}>
-            <div className="grid grid-cols-12 mb-4 gap-2">
+            <div className="mb-4 grid grid-cols-12 gap-2">
               <div className="md:col-span-8">
                 <strong>Page Title</strong>
                 <TextInput
@@ -573,25 +573,27 @@ export default function PageEditor({
 
           <div className={clsx("md:col-span-3", fullscreen ? "p-4" : "")}>
             <Card className="mb-2 p-2">
-              <Box className="text-sm text-stone-500">
-                <p>This page is currently</p>
+              <Box className="text-sm">
+                <span className="text-stone-500">This page is currently</span>
                 {data.draft ? (
                   <>
                     {" "}
                     in{" "}
-                    <Badge color="gray" size="xs">
+                    <Badge variant="secondary" size="sm">
                       Draft
                     </Badge>{" "}
                   </>
                 ) : (
                   <>
                     {" "}
-                    <Badge color="green" size="xs">
+                    <Badge variant="success" size="sm">
                       Live
                     </Badge>{" "}
                   </>
                 )}
-                and was last updated on {lastUpdateDate}.
+                <span className="text-stone-500">
+                  and was last updated on {lastUpdateDate}.
+                </span>
               </Box>
             </Card>
 

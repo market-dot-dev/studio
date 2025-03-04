@@ -1,7 +1,7 @@
 "use client";
 
-import { Badge } from "@tremor/react";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import CreatePageButton from "@/components/create-page-button";
 import Pages from "@/components/pages";
 import PageHeading from "@/components/common/page-heading";
@@ -70,24 +70,26 @@ export default function SiteAdmin({ id }: { id: string }) {
           <div className="flex-column w-full lg:ms-[300px]">
             <div className="mb-4">
               <div className="mb-2 flex">
-                <div className="flex items-center gap-2">
-                  <strong className="me-2">Homepage</strong>
+                <div className="flex items-center gap-x-2.5 gap-y-2">
+                  <strong>Homepage</strong>
                   {homepage?.draft ? (
-                    <Badge color="gray" size="xs">
+                    <Badge variant="secondary" size="sm">
                       Draft
                     </Badge>
                   ) : (
-                    <Badge color="green" size="xs">
+                    <Badge variant="success" size="sm">
                       Live
                     </Badge>
                   )}
                 </div>
               </div>
               <div className="mb-2 flex justify-start">
-                {url ? <ExternalLinkChip href={url} label={url + " ↗"} /> : null}
+                {url ? (
+                  <ExternalLinkChip href={url} label={url + " ↗"} />
+                ) : null}
               </div>
 
-              <p className="text-sm text-stone-500 mt-2">
+              <p className="mt-2 text-sm text-stone-500">
                 Title: {homepage?.title ?? "No Home Page Set"}
               </p>
               <p className="text-sm text-stone-500">
@@ -100,13 +102,16 @@ export default function SiteAdmin({ id }: { id: string }) {
               </p>
             </div>
             <div className="mt-auto">
-              <PrimaryButton label="Edit Homepage" href={`/page/${siteData.homepageId}`} />
+              <PrimaryButton
+                label="Edit Homepage"
+                href={`/page/${siteData.homepageId}`}
+              />
             </div>
           </div>
         </div>
       </Card>
-      
-      <Card className="p-6 pt-5"> 
+
+      <Card className="p-6 pt-5">
         <div className="flex w-full justify-between">
           <div className="flex flex-row">
             <strong>Other Pages</strong>
@@ -124,9 +129,10 @@ export default function SiteAdmin({ id }: { id: string }) {
               homepageId={siteData.homepageId ?? null}
             />
           ) : (
-            <div className="flex flex-col items-center justify-center h-full pt-6">
+            <div className="flex h-full flex-col items-center justify-center pt-6">
               <p className="text-lg text-stone-500">
-                You do not have any other pages yet. Create more pages to start building your store.
+                You do not have any other pages yet. Create more pages to start
+                building your store.
               </p>
             </div>
           )}

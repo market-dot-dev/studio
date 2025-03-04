@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { FaDiscord, FaGithubAlt } from "react-icons/fa";
-import { Badge } from "@tremor/react";
+import { Badge } from "@/components/ui/badge";
 import { usePathname, useSelectedLayoutSegments } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
@@ -79,9 +79,9 @@ function Item({ item }: { item: NavItem }) {
         <span className="text-sm font-medium">{item.name}</span>
         {item.isBeta && (
           <Badge
-            size="xs"
-            tooltip="This feature is still in Beta"
-            className="p-1.5 py-1 text-xxs font-medium"
+            size="sm"
+            variant="outline"
+            tooltipText="This feature is still in Beta"
           >
             Beta
           </Badge>

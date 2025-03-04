@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import {
   Button,
-  Badge,
   NumberInput,
   Callout,
   TextInput,
@@ -17,6 +16,7 @@ import {
   TableRow,
   TableCell,
 } from "@tremor/react";
+import { Badge } from "@/components/ui/badge";
 import Tier, { newTier } from "@/app/models/Tier";
 import { subscriberCount } from "@/app/services/SubscriptionService";
 import {
@@ -804,11 +804,7 @@ export default function TierForm({
                         <TableRow>
                           <TableCell className="m-0 p-1 ps-0">
                             {tier.createdAt.toDateString()}
-                            <Badge
-                              color="gray"
-                              size="xs"
-                              className="ms-1 text-xs font-medium uppercase"
-                            >
+                            <Badge variant="success" size="sm" className="ms-1">
                               Current
                             </Badge>
                           </TableCell>
