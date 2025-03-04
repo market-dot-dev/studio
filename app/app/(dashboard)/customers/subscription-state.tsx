@@ -1,6 +1,6 @@
 import { formatDate } from "@/lib/utils";
 import { Subscription } from "@prisma/client";
-import { Badge, Text } from "@tremor/react";
+import { Badge } from "@tremor/react";
 
 const SubscriptionStatusBadge = ({ subscription }: { subscription: Subscription }) => {
     

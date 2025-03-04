@@ -1,4 +1,3 @@
-import { Divider } from "@tremor/react";
 import { getSite } from "@/lib/site/fetchers";
 import PageHeading from "@/components/common/page-heading";
 import githubEmbeds from "@/components/site/github-embeds";
@@ -29,7 +28,7 @@ export default async function EmbedChannel() {
               rootUrl={rootUrl}
               hasActiveFeatures={!!activeFeatures?.length}
             />
-            {idx < arr.length - 1 && <Divider />}
+            {idx < arr.length - 1 && <hr className="h-px w-full bg-black/10" />}
           </div>
         ))}
       </div>
