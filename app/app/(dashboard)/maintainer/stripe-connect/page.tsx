@@ -2,7 +2,6 @@
 
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Text } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import UserService from "@/app/services/UserService";
 import StripeService from "@/app/services/StripeService";
@@ -66,9 +65,9 @@ export default async function StripeConnect({
             {stripeConnected ? (
               <>
                 <h2 className="font-cal text-xl dark:text-white">Stripe Account</h2>
-                <Text>
+                <p className="text-sm text-stone-500">
                   Your stripe account is connected.
-                </Text>
+                </p>
                 <DisconnectStripeAccountButton user={user} />
                 <pre>
                   { user.stripeAccountId }
@@ -77,9 +76,9 @@ export default async function StripeConnect({
             ) : (
               <>
                 <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
-                <Text>
+                <p className="text-sm text-stone-500">
                   Connect your Stripe account to manage and receive payments.
-                </Text>
+                </p>
                 <StripeOauthButton userId={session.user.id!} />
               </>
             )}

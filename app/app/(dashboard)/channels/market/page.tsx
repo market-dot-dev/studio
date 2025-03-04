@@ -1,4 +1,4 @@
-import { Text, Button } from "@tremor/react";
+import { Button } from "@tremor/react";
 import PageHeading from "@/components/common/page-heading";
 import { getCurrentUser } from "@/app/services/UserService";
 import ConnectionRequired from "@/components/channels/market/connection-required";
@@ -22,7 +22,7 @@ export default async function MarketChannel() {
       ) : (
         <div className="flex w-full flex-col gap-4">
           <div className="flex w-full items-center justify-between">
-            <Text className="text-black">
+            <p className="text-sm text-black">
               You have an expert profile on explore.market.dev, and can use it to advertise products and services to sell.{" "}
               <Link
                 className="underline"
@@ -31,7 +31,7 @@ export default async function MarketChannel() {
               >
                 Check it out
               </Link>
-            </Text>
+            </p>
 
             <Link href="/tiers">
               <Button className="bg-black">Manage packages</Button>

@@ -4,7 +4,6 @@
 import React, { useState, useEffect } from "react";
 import { Feature, Tier } from "@prisma/client";
 import FeatureAddRemoveToggle from "@/components/features/feature-add-remove-toggle";
-import { Text } from "@tremor/react";
 import { TierWithFeatures, getTiersForMatrix } from "@/app/services/TierService";
 import { findByCurrentUser } from "@/app/services/feature-service";
 import LoadingDots from "../icons/loading-dots";
@@ -124,10 +123,12 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
       <div className="overflow-x-auto">
         { featuresLoading && 
           <>
-            <Text><LoadingDots />&nbsp;Loading Features</Text>
+            <p className="text-sm text-stone-500"><LoadingDots />&nbsp;Loading Features</p>
           </>
         }
-        { !featuresLoading && !anyFeatures && <Text>You haven&apos;t listed the services you offer yet. You can do that <a href="/features" className="underline">here</a>.</Text> }
+        { !featuresLoading && !anyFeatures && (
+          <p className="text-sm text-stone-500">You haven&apos;t listed the services you offer yet. You can do that <a href="/features" className="underline">here</a>.</p>
+        ) }
         { anyFeatures &&
           <table className="min-w-full divide-y divide-gray-200">
             <thead>

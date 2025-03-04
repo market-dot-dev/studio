@@ -2,7 +2,7 @@
 import { verifyAndConnectRepo, disconnectRepo } from "@/app/services/RepoService";
 import { extractGitHubRepoInfo, gitHubRepoOrgAndName } from "@/lib/utils";
 import { Repo } from "@prisma/client";
-import {  Text, Button } from "@tremor/react";
+import { Button } from "@tremor/react";
 import { Github } from "lucide-react";
 import { useState, useCallback } from "react";
 
@@ -29,7 +29,7 @@ export function SearchResultRepo({ repo, setRepos, isConnected, installationId }
         <div className={`flex items-center ${classNames}`}>
             <div className="flex items-center justify-start grow">
                 <Github size={16} className="me-2" />
-                <Text className="text-sm">{repo.name}</Text>
+                <p className="text-sm text-stone-500">{repo.name}</p>
             </div>
             <div className="text-right">
                 <Button size="xs" onClick={connect} loading={connecting} disabled={isConnected || connecting}>{isConnected ? 'Connected' : 'Connect'}</Button>
@@ -57,7 +57,7 @@ export function RepoItem({ repo, setRepos }: { repo: Partial<Repo>, setRepos: an
     return (
         <div className="flex flex-row justify-items-center text-center">
             <Github size={16} className="me-2" />
-            <Text>{repoOrgName || repo.name}</Text>
+            <p className="text-sm text-stone-500">{repoOrgName || repo.name}</p>
             <div className='grow text-right'>
                 <Button size='xs' onClick={disconnect} loading={disconnecting} disabled={disconnecting}>Disconnect</Button>
             </div>

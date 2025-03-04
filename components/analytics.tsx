@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Text,
   Title,
   BarList,
   Grid,
@@ -104,12 +103,12 @@ export default function AnalyticsMockup() {
           <Card key={title} className="max-w-lg">
             <Title>{title}</Title>
             <div className="flex mt-4">
-              <Text>
+              <p className="text-sm text-stone-500">
                 <Bold>{subtitle}</Bold>
-              </Text>
-              <Text>
+              </p>
+              <p className="text-sm text-stone-500">
                 <Bold>Visitors</Bold>
-              </Text>
+              </p>
             </div>
             <BarList
               // @ts-ignore

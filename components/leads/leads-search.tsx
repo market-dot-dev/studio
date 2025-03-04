@@ -1,6 +1,6 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { Bold, Badge, Button, Text, SelectItem, Select, TextInput } from "@tremor/react";
+import { Bold, Badge, Button, SelectItem, Select, TextInput } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import { Search, XCircle, Trash2 } from "lucide-react";
@@ -382,7 +382,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             return (
                 <Badge key={key} className="pr-1 mr-1 mb-1">
                     <div className="flex flex-nowrap gap-1">
-                        <Text>{key}: {filters[key as keyof FiltersState]}</Text>
+                        <p className="text-sm text-stone-500">{key}: {filters[key as keyof FiltersState]}</p>
                         <div className="cursor-pointer" 
                             onClick={() => {
                                 setFilters((prev: FiltersState) => {
@@ -456,7 +456,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
                 {repos.length ?
                     <div className="flex-col gap-2 mt-2 md:flex-row">
-                        <Text>Search for your connected repos: (<Link href="/settings/repos" className="underline">Connect More</Link>)</Text>
+                        <p className="text-sm text-stone-500">Search for your connected repos: (<Link href="/settings/repos" className="underline">Connect More</Link>)</p>
                         <div className="flex gap-2 mt-2 flex-wrap w-full">
                             {repos.map((repo, index) => {
                                 const repoOrgName = gitHubRepoOrgAndName(repo.url);
@@ -480,7 +480,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             </div>
 
             <Bold>Search Results{ repoOrgName ? ' for ' + repoOrgName : ''}:</Bold>
-            {searchError ? <Text className="text-red-500">{searchError}</Text> : null}
+            {searchError ? <p className="text-sm text-red-500">{searchError}</p> : null}
             {radarResults.length ?
                 <div className="flex flex-col gap-4 items-stretch sticky -top-1 z-10 bg-white p-4 shadow-sm border rounded-md -mr-1 -ml-1">
                     <div className="flex w-full items-start">

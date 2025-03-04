@@ -1,6 +1,5 @@
 import PageHeading from "@/components/common/page-heading";
 import TierService from "@/app/services/TierService";
-import { Badge, Text } from "@tremor/react";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
 import TierCard from "@/components/tiers/tier-card";
@@ -22,10 +21,10 @@ export default async function Tiers() {
   const tiersDashboardTitleArea = (
     <div className="flex flex-col">
       <PageHeading title="Packages" />
-      <Text>
+      <p className="text-sm text-stone-500">
         Packages are what you sell to your customers. You can inlcude them on
         your website or send them to customers directly using a checkout link.
-      </Text>
+      </p>
     </div>
   );
   return (

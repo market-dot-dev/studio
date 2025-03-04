@@ -1,7 +1,7 @@
 "use client";
 
 import { cancelSubscription } from "@/app/services/SubscriptionService";
-import { Button, Text, Title } from "@tremor/react";
+import { Button, Title } from "@tremor/react";
 import { useCallback, useState } from "react";
 import { useModal } from "@/components/modal/provider";
 
@@ -42,7 +42,7 @@ function CancelSubscriptionContent({ subscriptionId, hide, setParentLoading }: {
   return (
 
     <div className="flex flex-col gap-12 p-4">
-      <Text>Are you sure, you want to cancel your subscription?</Text>
+      <p className="text-sm text-stone-500">Are you sure, you want to cancel your subscription?</p>
       <div className="flex gap-4">
         <Button size="xs" className="w-min" variant="primary" color="red" loading={loading} disabled={loading} onClick={handleCancelSubscription} >
           {loading ? "Cancelling Subscription" : "Cancel Subscription"}

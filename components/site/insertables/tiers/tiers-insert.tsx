@@ -1,7 +1,7 @@
 'use client';
 import { useModal } from "@/components/modal/provider";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Title, Text } from "@tremor/react";
+import { Button, Title } from "@tremor/react";
 import { getPublishedTiers } from "@/app/services/TierService";
 import LoadingSpinner from "@/components/form/loading-spinner";
 
@@ -48,9 +48,9 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                                     }
                                 })}} 
                             />
-                            <Text>{tier.name}</Text>
+                            <p className="text-sm text-stone-500">{tier.name}</p>
                             </div>
-                        )}) : <Text>No tiers found</Text>
+                        )}) : <p className="text-sm text-stone-500">No tiers found</p>
                     ) : (
                         <LoadingSpinner />
                     )

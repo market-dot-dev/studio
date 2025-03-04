@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Box, Text } from "@radix-ui/themes";
+import { Box } from "@radix-ui/themes";
 import { EyeOpenIcon, CodeIcon, InfoCircledIcon, BorderSplitIcon } from "@radix-ui/react-icons";
 
 import renderElement from "./page-renderer";
@@ -558,9 +558,9 @@ export default function PageEditor({
             </Col>
 
             <Col numColSpanMd={3} className={fullscreen ? "p-4" : ""}>
-              <Card className="p-2 mb-2">
-                <Box>
-                  <Text>This page is currently</Text>
+              <Card className="mb-2 p-2">
+                <Box className="text-sm text-stone-500">
+                  <p>This page is currently</p>
                   {data.draft ? (
                     <>
                       {" "}

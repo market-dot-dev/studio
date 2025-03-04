@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Button, Text } from '@tremor/react';
+import { Button } from '@tremor/react';
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
 import { canBuy, getPaymentMethod, StripeCard } from '@/app/services/StripeService';
 import useCurrentSession from '@/app/hooks/use-current-session';
@@ -60,7 +60,7 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
   if(invalidCard){
     return (
       <div className="flex flex-row justify-between items-center">
-        <Text>Invalid payment method. Please update your payment method.</Text>
+        <p className="text-sm text-stone-500">Invalid payment method. Please update your payment method.</p>
         <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshSession).then(() => setCardInfo(undefined))}>
           Remove
         </Button>
@@ -71,7 +71,7 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
   if(!!cardInfo){
     return (
         <div className="flex flex-row justify-between items-center">
-          <Text>Use saved {cardInfo?.brand.toUpperCase()} ending in {cardInfo?.last4}</Text>
+          <p className="text-sm text-stone-500">Use saved {cardInfo?.brand.toUpperCase()} ending in {cardInfo?.last4}</p>
           <br />
           <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshSession).then(refreshSession).then(() => setCardInfo(undefined))}>
             Remove

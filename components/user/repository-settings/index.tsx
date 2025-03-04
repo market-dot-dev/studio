@@ -1,7 +1,7 @@
 'use client'
 import { getInstallationsList, getInstallationRepos, getGithubAppInstallState } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { Text, TextInput, Button, Grid, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+import { TextInput, Button, Grid, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
 
 import { Github, SearchIcon, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -114,16 +114,15 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
 
     return (
       <div className="flex flex-col items-stretch gap-4">
-        {/* { error ? <Text className="text-red-500">{error}</Text> : null } */}
         <div className="flex flex-row gap-4">
           <div className="w-2/5 ps-2 pt-2">
             <div className="flex flex-col items-start gap-4">
               <div className="w-full">
                 <Bold>Github Accounts</Bold>
-                <Text>
+                <p className="text-sm text-stone-500">
                   Your Github accounts and organizations in which you are a
                   member.
-                </Text>
+                </p>
                 <div className="relative mt-2 flex w-full items-center">
                   <SearchSelect onValueChange={handleInstallationSelect}>
                     <div
@@ -140,7 +139,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                       >
                         <div className="flex items-center">
                           <Icon icon={Github} />{" "}
-                          <Text>{installation.login}</Text>
+                          <p className="text-sm text-stone-500">{installation.login}</p>
                         </div>
                       </SearchSelectItem>
                     ))}
@@ -194,16 +193,16 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
 
           <Card className="w-4/5 p-6 pt-5">
             <Bold>Connected Github Repositories</Bold>
-            <Text className="mb-4">
+            <p className="text-sm text-stone-500">
               {" "}
               A Connected repository is a loose connection - this allows you to
               do research dependents your open source projects.
-            </Text>
+            </p>
             {repos.length === 0 && (
-              <Text>
+              <p className="text-sm text-stone-500">
                 No connected repositories. Connect a Github account on the left
                 and select repositories to link.
-              </Text>
+              </p>
             )}
             <Grid numItems={1} className="mb-4 gap-2">
               {repos.map((repo, index) => (

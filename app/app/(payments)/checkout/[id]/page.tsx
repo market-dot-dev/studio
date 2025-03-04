@@ -5,7 +5,7 @@ import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
-import { Text, Bold } from "@tremor/react";
+import { Bold } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import { useSearchParams } from "next/navigation";
 
@@ -90,7 +90,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
 
   const tierInfo = (
     <Card className="p-6">
-      <Text>Package Details</Text>
+      <p className="text-sm text-stone-500">Package Details</p>
       {isTierLoading ? (
         <div className="opacity-50">
           <SkeletonLoader className="mb-2 h-4 w-3/5 rounded-full leading-6" />
@@ -104,11 +104,11 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
             </Bold>
           </div>
           <div className="mb-2 text-lg leading-6">
-            <Text>
+            <p className="text-sm text-stone-500">
               {checkoutCurrency + " " + checkoutPrice}{" "}
               {checkoutCadence !== "once" ? `per ${checkoutCadence}` : ""}
               {trialOffered && <>&nbsp;with {trialDays}d free trial</>}
-            </Text>
+            </p>
           </div>
         </div>
       ) : (
@@ -131,9 +131,9 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                 return (
                   <div key={dex}>
                     {section.text.map((text: string, index: number) => (
-                      <Text key={index} className="text-sm text-gray-500">
+                      <p key={index} className="text-sm text-stone-500">
                         {text}
-                      </Text>
+                      </p>
                     ))}
                   </div>
                 );
@@ -162,13 +162,13 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
           {isFeaturesLoading ? (
             <SkeletonLoader className="mb-4 h-4 w-3/4 rounded-full" />
           ) : (
-            <Text className="leading-6">
+            <p className="text-sm text-stone-500 leading-6">
               {isContractLoading && !(tier?.id && !tier.contractId) ? (
                 <LoadingDots />
               ) : (
                 <ContractText contract={contract} />
               )}
-            </Text>
+            </p>
           )}
         </div>
       )}

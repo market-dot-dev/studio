@@ -1,5 +1,5 @@
 "use client";
-import { Text, TextInput, Button } from "@tremor/react";
+import { TextInput, Button } from "@tremor/react";
 import { Site } from "@prisma/client";
 import Link from "next/link";
 import { useState } from "react";
@@ -56,12 +56,12 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
             id="subdomain"
             defaultValue={site.subdomain ?? ""}
           />
-          <Text>
+          <p className="text-sm text-stone-500">
             Your store will appear at{" "}
             <Link className="underline" href={siteURL}>
               {siteURL}.
             </Link>
-          </Text>
+          </p>
         </div>
         <div className="flex flex-col items-start w-1/2 gap-2">
           <label
@@ -84,10 +84,10 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
           >
             Logo
           </label>
-          <Text>
+          <p className="text-sm text-stone-500">
             Your store logo is used in your web storefront, for favicons and Open Graph
             images.
-          </Text>
+          </p>
 
           <Uploader
             defaultValue={site.logo ?? null}

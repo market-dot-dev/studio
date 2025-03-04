@@ -39,7 +39,7 @@ export default function RestoreOnboarding(): JSX.Element {
           FOR DEBUGGING PURPOSES ONLY
         </Badge>
         <Title>Restore Onboarding State</Title>
-        <Text>User onboarding state, subdomain, location, logo will be reset to original settings at signup.</Text>
+        <p className="text-sm text-stone-500">User onboarding state, subdomain, location, logo will be reset to original settings at signup.</p>
         <Button
           loading={isLoading}
           onClick={handleReset}

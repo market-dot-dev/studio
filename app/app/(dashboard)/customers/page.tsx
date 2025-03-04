@@ -1,4 +1,3 @@
-import { Text } from "@tremor/react";
 import React from "react";
 import PageHeading from "@/components/common/page-heading";
 import CustomersTable from "./customer-table";
@@ -11,7 +10,7 @@ const CustomersPage = async () => {
       <div className="flex w-full justify-between">
         <div className="flex flex-col">
           <PageHeading title="Customers" />
-          <Text>Manage your customers and their tiers here.</Text>
+          <p className="text-sm text-stone-500">Manage your customers and their tiers here.</p>
         </div>
       </div>
       <CustomersTable customers={customers} />

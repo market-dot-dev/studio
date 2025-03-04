@@ -1,4 +1,3 @@
-import { Text } from "@tremor/react";
 import React from "react";
 import PageHeading from "@/components/common/page-heading";
 import ProspectsTable from "./prospects-table";
@@ -14,10 +13,10 @@ export default async function ProspectsPage() {
       <div className="flex w-full justify-between">
         <div className="flex flex-col">
           <PageHeading title="Prospects" />
-          <Text>
+          <p className="text-sm text-stone-500">
             View all prospects who have submitted an interest on one of your
             packages.
-          </Text>
+          </p>
         </div>
       </div>
       <ProspectsTable prospects={prospects} />

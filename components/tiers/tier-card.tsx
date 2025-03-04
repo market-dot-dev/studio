@@ -5,7 +5,7 @@ import type {
   CheckoutType,
   TierWithFeatures,
 } from "@/app/services/TierService";
-import { Button, Text, Switch } from "@tremor/react";
+import { Button, Switch } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import TierFeatureList from "@/components/features/tier-feature-list";
@@ -187,9 +187,9 @@ const TierCard: React.FC<TierCardProps> = ({
                 return (
                   <div key={dex}>
                     {section.text.map((text: string, index: number) => (
-                      <Text key={index} className={cn("text-sm", textClasses)}>
+                      <p key={index} className={cn("text-sm text-stone-500", textClasses)}>
                         {text}
-                      </Text>
+                      </p>
                     ))}
                   </div>
                 );

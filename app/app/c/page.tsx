@@ -7,7 +7,7 @@ import SubscriptionService from "@/app/services/SubscriptionService";
 import { Charge, Feature, Contract } from "@prisma/client";
 import ContractService from "@/app/services/contract-service";
 
-import { Text, Bold, Badge } from "@tremor/react";
+import { Bold, Badge } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
 import Tier from "@/app/models/Tier";
@@ -27,11 +27,11 @@ const ContractLink = ({ contract }: { contract?: Contract }) => {
   const contractName = contract?.name || "Standard MSA";
 
   return (
-    <Text>
+    <p className="text-sm text-stone-500">
       <a href={url} className="underline" target="_blank">
         {contractName}
       </a>
-    </Text>
+    </p>
   );
 };
 
@@ -78,24 +78,24 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
         <Bold>Purchased From: {maintainer.projectName}</Bold>
         <div className="flex flex-col">
           <Bold>Description:</Bold>
-          <Text>{tier.tagline}</Text>
+          <p className="text-sm text-stone-500">{tier.tagline}</p>
         </div>
 
         <div className="flex flex-col">
           <Bold>Pricing:</Bold>
-          <Text>
+          <p className="text-sm text-stone-500">
             ${tier.price} / {tier.cadence}
-          </Text>
+          </p>
         </div>
 
         <div className="mb-4 flex flex-col">
           <Bold>Status:</Bold>
-          <Text>
+          <p className="text-sm text-stone-500">
             <Badge className="me-2">
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Badge>
             (On {charge.createdAt.toDateString()})
-          </Text>
+          </p>
         </div>
         <div className="flex flex-col">
           <Bold>Contract:</Bold>
@@ -111,7 +111,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
         </div>
 
         {/* Commenting out Tier Version ID */}
-        {/* <Text>{charge.tierVersionId}</Text> */}
+        {/* <p className="text-sm text-stone-500">{charge.tierVersionId}</p> */}
 
         {/* <div className="flex flex-row space-x-2">
           <Link href={`/charges/${charge.id}`}>
@@ -189,24 +189,24 @@ const SubscriptionCard = async ({
 
         <div className="flex flex-col">
           <Bold>Status:</Bold>
-          <Text>
+          <p className="text-sm text-stone-500">
             <Badge className="me-2">
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Badge>
             (On {subscription.createdAt.toDateString()})
-          </Text>
+          </p>
         </div>
 
         <div className="flex flex-col">
           <Bold>Description:</Bold>
-          <Text>{tier.tagline}</Text>
+          <p className="text-sm text-stone-500">{tier.tagline}</p>
         </div>
 
         <div className="flex flex-col">
           <Bold>Pricing:</Bold>
-          <Text>
+          <p className="text-sm text-stone-500">
             ${actualPrice} / {actualCadence}
-          </Text>
+          </p>
         </div>
 
         <div className="flex flex-col">
@@ -291,7 +291,7 @@ export default async function SubscriptionsAndChargesList({
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
         <PageHeading title="Purchases" />
-        <Text>All your subscriptions and one time purchases from market.dev will appear here.</Text>
+        <p className="text-sm text-stone-500">All your subscriptions and one time purchases from market.dev will appear here.</p>
 
         <Tabs
           tabs={[

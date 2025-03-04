@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  Text,
   Button,
   Bold,
   Badge,
@@ -156,9 +155,9 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
       <Bold>Checkout Link</Bold>
       {tier.published ? (
         <>
-          <Text>
+          <p className="text-sm text-stone-500">
             You can send this link directly to any potential customers.
-          </Text>
+          </p>
           <div className="mt-4 flex flex-row items-center justify-center">
             <TextInput
               id="checkoutLink"
@@ -180,13 +179,13 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
           </div>
         </>
       ) : (
-        <Text>
+        <p className="text-sm text-stone-500">
           To create a checkout link, this package needs to be marked as
           available for sale.
-        </Text>
+        </p>
       )}
       {errorMessage && (
-        <Text className="mt-2 text-red-500">{errorMessage}</Text>
+        <p className="mt-2 text-red-500">{errorMessage}</p>
       )}
     </div>
   );
@@ -603,7 +602,7 @@ export default function TierForm({
               value={tier.name}
               onValueChange={(v) => handleInputChange("name", v)}
             />
-            {errors["name"] ? <Text color="red">{errors["name"]}</Text> : null}
+            {errors["name"] ? <p className="text-sm text-stone-500">{errors["name"]}</p> : null}
           </div>
           <div className="mb-4">
             <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
@@ -670,7 +669,7 @@ export default function TierForm({
                 {canPublishLoading && (
                   <>
                     <LoadingDots />
-                    <Text>Checking Stripe Eligiblity</Text>
+                    <p className="text-sm text-stone-500">Checking Stripe Eligiblity</p>
                   </>
                 )}
                 {!canPublishLoading && (
@@ -763,7 +762,7 @@ export default function TierForm({
               </label>
 
               {!!versions && versions.length === 0 && (
-                <Text>
+                <p className="text-sm text-stone-500">
                   {tier.name} has{" "}
                   {currentRevisionSubscriberCount === 0
                     ? "no customers yet"
@@ -772,12 +771,12 @@ export default function TierForm({
                   has customers, your changes to the previous package will be
                   kept as a package version. Customers will be charged what they
                   originally purchased.
-                </Text>
+                </p>
               )}
 
               {!!versions && versions.length > 0 && (
                 <>
-                  <Text className="my-4">
+                  <p className="text-sm text-stone-500 my-4">
                     {tier.name} has{" "}
                     {currentRevisionSubscriberCount === 0
                       ? "no customers yet"
@@ -785,7 +784,7 @@ export default function TierForm({
                     for the most recent version. There are {versions.length}{" "}
                     versions and {tierSubscriberCount} customers across
                     versions.
-                  </Text>
+                  </p>
                   <Card>
                     <Table>
                       <TableHead>
@@ -846,12 +845,12 @@ export default function TierForm({
                     </Table>
                   </Card>
 
-                  <Text className="my-4">
+                  <p className="text-sm text-stone-500 my-4">
                     Please note that package versions are only recorded when you
                     make feature or price changes to a package where you have
                     existing customers. Customers will be charged what they
                     originally purchased.
-                  </Text>
+                  </p>
                 </>
               )}
             </div>
@@ -877,13 +876,13 @@ export default function TierForm({
             hasActiveFeatures={hasActiveFeatures}
           />
           {tier.id && tier.published ? (
-            <Text className="mt-2">
+            <p className="text-sm text-stone-500 mt-2">
               This package is currently published and available for sale.
-            </Text>
+            </p>
           ) : (
-            <Text className="mt-2">
+            <p className="text-sm text-stone-500 mt-2">
               This package is not published and is not available for sale.
-            </Text>
+            </p>
           )}
           <TierLinkCopier tier={tier} />
           {!newRecord && (
@@ -907,10 +906,10 @@ export default function TierForm({
                 )}
               </div>
               {!tier._count?.Charge && !tier._count?.subscriptions && (
-                <Text className="mt-2 text-sm text-gray-500">
+                <p className="text-sm text-stone-500 mt-2">
                   This package can be deleted as it has no active customers or
                   features.
-                </Text>
+                </p>
               )}
             </div>
           )}

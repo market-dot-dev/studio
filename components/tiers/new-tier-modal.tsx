@@ -1,7 +1,7 @@
 'use client'
 
 import { categorizedTiers } from "@/lib/constants/tiers/default-tiers"
-import { Button, Title, Text } from "@tremor/react"
+import { Button, Title } from "@tremor/react"
 import TierCard from "./tier-card"
 import { useCallback, useState } from "react";
 import { createTemplateTier } from "@/app/services/TierService";
@@ -139,9 +139,9 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
                       </div>
                     ) : null}
                     <div className="flex aspect-[3/2] flex-col justify-between gap-4 overflow-hidden px-5 pt-4">
-                      <Text className="text-xs text-stone-600">
+                      <p className="text-sm text-stone-500">
                         {metaDescription}
-                      </Text>
+                      </p>
                       <svg
                         className="aspect-[100/56] w-full"
                         fill="none"

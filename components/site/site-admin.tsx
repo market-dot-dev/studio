@@ -1,6 +1,6 @@
 "use client";
 
-import { Bold, Badge, Text } from "@tremor/react";
+import { Bold, Badge } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import CreatePageButton from "@/components/create-page-button";
 import Pages from "@/components/pages";
@@ -87,17 +87,17 @@ export default function SiteAdmin({ id }: { id: string }) {
                 {url ? <ExternalLinkChip href={url} label={url + " ↗"} /> : null}
               </div>
 
-              <Text className="mt-2">
+              <p className="text-sm text-stone-500 mt-2">
                 Title: {homepage?.title ?? "No Home Page Set"}
-              </Text>
-              <Text>
+              </p>
+              <p className="text-sm text-stone-500">
                 Last Updated:{" "}
                 {homepage?.updatedAt
                   ? formatDistanceToNow(new Date(homepage.updatedAt), {
                       addSuffix: true,
                     })
                   : "Unknown"}
-              </Text>
+              </p>
             </div>
             <div className="mt-auto">
               <PrimaryButton label="Edit Homepage" href={`/page/${siteData.homepageId}`} />

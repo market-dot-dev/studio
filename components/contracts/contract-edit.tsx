@@ -1,10 +1,10 @@
 "use client";
 
-import { Text, TextInput, Button, Textarea } from "@tremor/react";
+import { TextInput, Button, Textarea } from "@tremor/react";
 import { Contract } from "@prisma/client";
 import Link from "next/link";
 import PageHeading from "@/components/common/page-heading";
-import { startTransition, useCallback, useState } from "react";
+import { startTransition, useState } from "react";
 import {
   updateContract,
   createContract,
@@ -115,8 +115,8 @@ export default function ContractEdit({
       </div>
       <PageHeading title={editing ? "Edit Contract" : "Create Contract"} />
       <form>
-        {error && <Text className="text-red-500">{error?.message}</Text>}
-        {info && <Text className="text-green-500">{info}</Text>}
+        {error && <p className="text-sm text-stone-500 text-red-500">{error?.message}</p>}
+        {info && <p className="text-sm text-stone-500 text-green-500">{info}</p>}
         <div className="flex flex-col items-start w-full space-y-6">
           <div className="flex flex-col items-start w-1/2 gap-2">
             <label
@@ -188,7 +188,7 @@ export default function ContractEdit({
                   </p>
                 <div className="flex flex-col mt-3 mb-1 border items-center justify-center p-8 gap-3 rounded-md border-gray-300 min-h-72">
                   
-                    <Text>{contract.attachmentUrl.split('/').pop()}</Text>
+                    <p className="text-sm text-stone-500">{contract.attachmentUrl.split('/').pop()}</p>
                     <Button size="xs" onClick={handleRemoveAttachment} variant="light" color="red">
                       <FaRegTrashAlt />
                     </Button>

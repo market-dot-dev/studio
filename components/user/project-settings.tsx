@@ -1,5 +1,5 @@
 "use client";
-import { TextInput, Textarea, Button, Text } from "@tremor/react";
+import { TextInput, Textarea, Button } from "@tremor/react";
 import { User } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
@@ -39,7 +39,7 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
             >
               Business Name
             </label>
-            <Text>Provide a name for your business, if you have one.</Text>
+            <p className="text-sm text-stone-500">Provide a name for your business, if you have one.</p>
             <TextInput
               placeholder=""
               name="project-name"
@@ -58,10 +58,10 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
             >
               Business Description
             </label>
-            <Text>
+            <p className="text-sm text-stone-500">
               Your business description is used in your store homepage (and other
               pages where you embed the {`<SiteDescription>`} component).
-            </Text>
+            </p>
             <Textarea
               className="h-52"
               placeholder=""

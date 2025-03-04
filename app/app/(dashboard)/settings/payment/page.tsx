@@ -1,13 +1,13 @@
 "use server";
+
 import { redirect } from "next/navigation";
-import { Text, Button } from "@tremor/react";
+import { Button } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import StripeService from "@/app/services/StripeService";
 import LinkButton from "@/components/common/link-button";
 import DisconnectStripeAccountButton from "../../maintainer/stripe-connect/disconnect-stripe-account-button";
 import UserService from "@/app/services/UserService";
-import { ExternalLink } from "lucide-react";
 
 const StripeOauthButton = async ({ userId }: { userId: string }) => {
   const oauthUrl = await StripeService.getOAuthLink(userId);
@@ -71,25 +71,25 @@ export default async function PaymentSettings({
         <div className="flex flex-col items-start gap-4">
           {!stripeConnected && <>
             <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
-            <Text>
+            <p className="text-sm text-stone-500">
               Connect your Stripe account to manage and receive payments.If you have made changes recently, try refreshing this page to see the latest status.
-            </Text>
+            </p>
             <StripeOauthButton userId={user.id!} />
           </>}
           {stripeConnected ?
             <>
               <h2 className="font-cal text-xl dark:text-white">Stripe Account</h2>
-              <Text>
+              <p className="text-sm text-stone-500">
                 Your Stripe account is connected. Your account ID is: {user.stripeAccountId}
-              </Text>
+              </p>
               <DisconnectStripeAccountButton user={user} />
               <>
                 { canSell && (
                   <Card
                     className="mb-4 flex flex-col bg-green-100 border border-green-400 px-4 py-3 text-green-700"
                   >
-                    <Text className="font-semibold">Your Stripe account in good standing</Text>
-                    <Text className="mt-2">You can sell your services and receive payments.</Text>
+                    <p className="text-sm text-stone-500 font-semibold">Your Stripe account in good standing</p>
+                    <p className="text-sm text-stone-500 mt-2">You can sell your services and receive payments.</p>
                   </Card>
                 )}
                 {!canSell && (
@@ -101,7 +101,7 @@ export default async function PaymentSettings({
                       <AccountCheck key={index} status='fail'>{StripeService.getErrorMessage(message)}</AccountCheck>
                     ))}
 
-                    {disabledReasons && <Text className="mt-2">Stripe Error Codes (These specific codes provide a hint about what may be wrong with the account).</Text>}
+                    {disabledReasons && <p className="text-sm text-stone-500 mt-2">Stripe Error Codes (These specific codes provide a hint about what may be wrong with the account).</p>}
                     {disabledReasons?.map((message, index) => (
                       <AccountCheck key={index} status='fail'>{message}</AccountCheck>
                     ))}

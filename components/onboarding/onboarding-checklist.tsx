@@ -1,6 +1,6 @@
 "use client";
 
-import { Text, Bold, Button } from "@tremor/react";
+import { Bold, Button } from "@tremor/react";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { dismissOnboarding } from "@/app/services/onboarding/OnboardingService";
@@ -137,7 +137,7 @@ function TodoItem({
             >
               {stepTitle}
             </Bold>
-            {!completed && <Text className="text-pretty">{stepDescription}</Text>}
+            {!completed && <p className="text-sm text-stone-500 text-pretty">{stepDescription}</p>}
           </div>
           {!completed && (
             <Button

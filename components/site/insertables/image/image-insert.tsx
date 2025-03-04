@@ -2,7 +2,7 @@
 import { useModal } from "@/components/modal/provider";
 import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; import { useState, useEffect, useCallback } from "react";
 import { Media as DBMedia } from "@prisma/client";
-import { Button,  NumberInput, Title, TextInput, Text, Bold } from "@tremor/react";
+import { Button,  NumberInput, Title, TextInput, Bold } from "@tremor/react";
 import { format } from 'date-fns'
 
 import { useDropzone } from 'react-dropzone';
@@ -29,7 +29,7 @@ const StyledDropzone = ({ onFileAccepted, isUploading } : any) => {
             <Bold>Files Upload</Bold>
             {isUploading ? <Spinner /> :
             
-                <Text className="py-1">Drop files here or <strong>Click</strong> to select files</Text>
+                <p className="text-sm text-stone-500 py-1">Drop files here or <strong>Click</strong> to select files</p>
             }
         </div>
     );
@@ -153,7 +153,7 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                                 <img src={selectedMedia.url} className="object-cover w-full h-full" alt="Thumbnail" />
                             </div>
                             <div className="flex flex-col gap-4 basis-1/2 items-start">
-                                <Text className="color-black text-wrap">Uploaded:<br /> {selectedMedia.createdAt ? format(new Date(selectedMedia.createdAt), 'PPP') : null}</Text>
+                                <p className="text-sm text-stone-500">Uploaded:<br /> {selectedMedia.createdAt ? format(new Date(selectedMedia.createdAt), 'PPP') : null}</p>
                                 <Button color="red" size="xs" loading={isDeleting} disabled={isDeleting} onClick={deleteSelected}>Delete</Button>
                             </div>
                         </div>

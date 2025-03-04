@@ -1,6 +1,6 @@
 "use client";
 
-import { Text, Button } from "@tremor/react";
+import { Button } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
@@ -133,9 +133,9 @@ export default function RegistrationCheckoutSection({
         </section>
 
         <section className="w-7/8 mb-8 lg:w-5/6">
-          <Text className="my-2 text-center">
+          <p className="text-sm text-stone-500 my-2 text-center">
             <ContractText contract={contract} />
-          </Text>
+          </p>
           <Button
             onClick={() => setLoading(true)}
             disabled={loading || !userId}
@@ -145,7 +145,7 @@ export default function RegistrationCheckoutSection({
           >
             {loading ? <LoadingDots color="#A8A29E" /> : "Checkout"}
           </Button>
-          <Text className="my-2 text-center">
+          <p className="text-sm text-stone-500 my-2 text-center">
             {tier.trialDays
               ? "You will not be charged now. After your " +
                 tier.trialDays +
@@ -159,7 +159,7 @@ export default function RegistrationCheckoutSection({
                 " " +
                 checkoutPrice +
                 "."}
-          </Text>
+          </p>
         </section>
       </>
     );
@@ -168,7 +168,7 @@ export default function RegistrationCheckoutSection({
 const AlreadySubscribedCard = () => {
   return (
     <Card>
-      <Text>You&apos;re already subscribed to this product.</Text>
+      <p className="text-sm text-stone-500">You&apos;re already subscribed to this product.</p>
     </Card>
   );
 };
