@@ -128,15 +128,15 @@ function TodoItem({
         </div>
         <div className="flex flex-col lg:flex-row w-full items-start lg:items-center justify-between gap-x-8 gap-y-1">
           <div className="flex flex-col items-start">
-            <Bold
+            <strong 
               className={clsx(
-                "w-fit text-sm cursor-pointer",
+                "new-bold-tag w-fit text-sm cursor-pointer",
                 completed ? "text-stone-500" : "text-stone-800 hover:text-stone-600",
               )}
               onClick={navigateToStep}
             >
               {stepTitle}
-            </Bold>
+            </strong>
             {!completed && <p className="text-sm text-stone-500 text-pretty">{stepDescription}</p>}
           </div>
           {!completed && (

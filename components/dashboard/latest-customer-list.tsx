@@ -8,7 +8,6 @@ import {
   TableHeaderCell,
   TableBody,
   BadgeDelta,
-  Bold,
   Badge,
 } from "@tremor/react";
 import SubscriptionService from "@/app/services/SubscriptionService";
