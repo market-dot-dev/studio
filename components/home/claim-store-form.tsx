@@ -40,7 +40,7 @@ export default function ClaimStoreForm({
       </div>
       <Link href={loginURL} className="flex w-full sm:w-fit">
         <Button fullWidth={true} className="!gap-2">
-          Start selling
+          Setup For Free
         </Button>
       </Link>
     </div>
