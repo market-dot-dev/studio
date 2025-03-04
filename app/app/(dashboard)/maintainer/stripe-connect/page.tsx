@@ -2,7 +2,8 @@
 
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Card, Flex, Text, Button } from "@tremor/react";
+import { Flex, Text } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import UserService from "@/app/services/UserService";
 import StripeService from "@/app/services/StripeService";
 import LinkButton from "@/components/common/link-button";
@@ -25,14 +26,12 @@ export default async function StripeConnect({
 
   if (!session) {
     redirect("/login");
-    return null;
   }
 
   let user = await UserService.findUser(session.user.id!);
 
   if (!user) {
     redirect("/login");
-    return null;
   }
 
   const code = searchParams["code"] as string;
@@ -52,7 +51,6 @@ export default async function StripeConnect({
 
   if (!user) {
     redirect("/login");
-    return null;
   }
 
   const stripeConnected = !!user.stripeAccountId;

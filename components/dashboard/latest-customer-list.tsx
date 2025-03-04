@@ -10,11 +10,10 @@ import {
   BadgeDelta,
   Bold,
   Badge,
-  Card,
 } from "@tremor/react";
 import SubscriptionService from "@/app/services/SubscriptionService";
 import { SubscriptionWithUser } from "@/app/models/Subscription";
-import DashboardCard from "@/components/common/dashboard-card";
+import { Card } from "@/components/ui/card";
 import TierService from "@/app/services/TierService";
 import PrimaryLinkButton from "../common/link-button";
 import Link from "next/link";

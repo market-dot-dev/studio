@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Card, Title } from "@tremor/react";
+import { Button } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import UserSelectionStep from "./components/user-selection";
 import EmailCompositionStep from "./components/email-composition";
 import EmailPreviewStep from "./components/email-preview";

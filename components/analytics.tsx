@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Card,
   Text,
   Title,
   BarList,
@@ -10,6 +9,7 @@ import {
   Bold,
   AreaChart,
 } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
 const chartdata = [

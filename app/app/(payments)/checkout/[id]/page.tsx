@@ -6,8 +6,8 @@ import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
-import { Text, Bold, Card } from "@tremor/react";
-
+import { Text, Bold } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import { useSearchParams } from "next/navigation";
 
 interface QueryParams {
@@ -90,7 +90,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const parsedDescription = parseTierDescription(tier?.description || "");
 
   const tierInfo = (
-    <Card>
+    <Card className="p-4">
       <Text>Package Details</Text>
       {isTierLoading ? (
         <div className="opacity-50">

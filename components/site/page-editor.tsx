@@ -8,8 +8,8 @@ import { EyeOpenIcon, CodeIcon, InfoCircledIcon, BorderSplitIcon } from "@radix-
 import renderElement from "./page-renderer";
 import { useRouter } from "next/navigation";
 
-import { Flex, Grid, Col, Badge, Callout, Button, Bold, TextInput, Card } from "@tremor/react";
-import DashboardCard from "../common/dashboard-card";
+import { Flex, Grid, Col, Badge, Callout, Button, Bold, TextInput } from "@tremor/react";
+import { Card } from "@/components/ui/card"
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
 import {
   setHomepage,
@@ -481,156 +481,171 @@ export default function PageEditor({
   return (
     <>
       <Grid numItems={12} className="gap-2">
-        { ! fullscreen ?
+        {!fullscreen ? (
           <>
-          <Col numColSpanMd={9} className={ fullscreen ? ' p-4' : '' }>
-            <Grid numItems={12} className="mb-4 gap-2">
-              <Col numColSpanMd={8}>
-                <Bold>Page Title</Bold>
-                <TextInput
-                  placeholder="Title"
-                  error={titleError ? true : false}
-                  errorMessage={titleError ? titleError : ""}
-                  defaultValue={data?.title || ""}
-                  onChange={(e) => {
-                    setTitleError(null);
-                    setData({ ...data, title: e.target.value });
-                  }}
-                ></TextInput>
-              </Col>
-
-              <Col numColSpanMd={4}>
-                <Flex>
-                  <Bold>URL Slug</Bold>
-                </Flex>
-
-                <Flex>
+            <Col numColSpanMd={9} className={fullscreen ? "p-4" : ""}>
+              <Grid numItems={12} className="mb-4 gap-2">
+                <Col numColSpanMd={8}>
+                  <Bold>Page Title</Bold>
                   <TextInput
-                    placeholder="Path"
-                    error={slugError ? true : false}
-                    errorMessage={slugError ? slugError : ""}
-                    defaultValue={data?.slug || ""}
+                    placeholder="Title"
+                    error={titleError ? true : false}
+                    errorMessage={titleError ? titleError : ""}
+                    defaultValue={data?.title || ""}
                     onChange={(e) => {
-                      setSlugError(null);
-                      setSlugVirgin(false);
-                      setData({ ...data, slug: e.target.value });
+                      setTitleError(null);
+                      setData({ ...data, title: e.target.value });
                     }}
                   ></TextInput>
-                </Flex>
-              </Col>
-            </Grid>
+                </Col>
 
-            <Flex className="mb-2" justifyContent="between">
-              <Box>
-                <Bold>Page Content</Bold>
-              </Box>
-              <Box>{ data.slug ? previewLink : null}</Box>
-            </Flex>
+                <Col numColSpanMd={4}>
+                  <Flex>
+                    <Bold>URL Slug</Bold>
+                  </Flex>
 
-            <Flex className="mb-2" justifyContent="between">
-              <Box>
-                <Bold>Page Status</Bold>
-              </Box>
-              <Box>
-                <DraftSelectBox
-                  inProgress={inProgress}
-                  isDeleting={isDeleting}
-                  draft={data.draft}
-                  handleChange={async (draft) => {
-                    setData({ ...data, draft });
-                    await updatePage(data.id, { draft });
-                  }}
-                />
-              </Box>
-            </Flex>
+                  <Flex>
+                    <TextInput
+                      placeholder="Path"
+                      error={slugError ? true : false}
+                      errorMessage={slugError ? slugError : ""}
+                      defaultValue={data?.slug || ""}
+                      onChange={(e) => {
+                        setSlugError(null);
+                        setSlugVirgin(false);
+                        setData({ ...data, slug: e.target.value });
+                      }}
+                    ></TextInput>
+                  </Flex>
+                </Col>
+              </Grid>
 
-          </Col>
-
-          <Col numColSpanMd={3} className={ fullscreen ? ' p-4' : '' }>
-            <DashboardCard>
-              <Box>
-                <Text>This page is currently</Text>
-                {data.draft ? (
-                  <>
-                    {" "}
-                    in{" "}
-                    <Badge color="gray" size="xs">
-                      Draft
-                    </Badge>{" "}
-                  </>
-                ) : (
-                  <>
-                    {" "}
-                    <Badge color="green" size="xs">
-                      Live
-                    </Badge>{" "}
-                  </>
-                )}
-                and was last updated on {lastUpdateDate}.
-              </Box>
-            </DashboardCard>
-
-            {status.message ? (
-              <TimedAlert {...status} refresh={forceStatusRefresh} />
-            ) : null}
-
-            <DashboardCard>
-              <Box mb="2">{saveButton('w-full')}</Box>
-              <Flex className='gap-2'>
-                <Box mb="2" className='grow'>{makeHomepageButton}</Box>
-                <Box mb="2">{deleteButton}</Box>
+              <Flex className="mb-2" justifyContent="between">
+                <Box>
+                  <Bold>Page Content</Bold>
+                </Box>
+                <Box>{data.slug ? previewLink : null}</Box>
               </Flex>
-            </DashboardCard>
-          </Col>
+
+              <Flex className="mb-2" justifyContent="between">
+                <Box>
+                  <Bold>Page Status</Bold>
+                </Box>
+                <Box>
+                  <DraftSelectBox
+                    inProgress={inProgress}
+                    isDeleting={isDeleting}
+                    draft={data.draft}
+                    handleChange={async (draft) => {
+                      setData({ ...data, draft });
+                      await updatePage(data.id, { draft });
+                    }}
+                  />
+                </Box>
+              </Flex>
+            </Col>
+
+            <Col numColSpanMd={3} className={fullscreen ? "p-4" : ""}>
+              <Card className="p-2 mb-2">
+                <Box>
+                  <Text>This page is currently</Text>
+                  {data.draft ? (
+                    <>
+                      {" "}
+                      in{" "}
+                      <Badge color="gray" size="xs">
+                        Draft
+                      </Badge>{" "}
+                    </>
+                  ) : (
+                    <>
+                      {" "}
+                      <Badge color="green" size="xs">
+                        Live
+                      </Badge>{" "}
+                    </>
+                  )}
+                  and was last updated on {lastUpdateDate}.
+                </Box>
+              </Card>
+
+              {status.message ? (
+                <TimedAlert {...status} refresh={forceStatusRefresh} />
+              ) : null}
+
+              <div>
+                <Box mb="2">{saveButton("w-full")}</Box>
+                <Flex className="gap-2">
+                  <Box mb="2" className="grow">
+                    {makeHomepageButton}
+                  </Box>
+                  <Box mb="2">{deleteButton}</Box>
+                </Flex>
+              </div>
+            </Col>
           </>
-        : null }
+        ) : null}
         <Col numColSpanMd={12}>
-        <Card className={"p-0" + (fullscreen ? " ring-0 shadow-none rounded-none" : "")}>
+          <Card
+            className={
+              "p-0" + (fullscreen ? " rounded-none shadow-none ring-0" : "")
+            }
+          >
             <TabGroup
               defaultIndex={viewMode}
               onIndexChange={(index) => {
                 setViewMode(index);
               }}
             >
-              <div className={"flex justify-between items-center p-4 border border-x-0" + (fullscreen ? " bg-white py-2 z-10" : " border-t-0")}>
+              <div
+                className={
+                  "flex items-center justify-between border border-x-0 p-4" +
+                  (fullscreen ? " z-10 bg-white py-2" : " border-t-0")
+                }
+              >
                 <TabList variant="solid" className="font-bold">
-                  <Tab className={viewMode === 0 ? "bg-white" : ""} icon={EyeOpenIcon}>
+                  <Tab
+                    className={viewMode === 0 ? "bg-white" : ""}
+                    icon={EyeOpenIcon}
+                  >
                     Preview
                   </Tab>
-                  <Tab className={viewMode === 1 ? "bg-white" : ""} icon={CodeIcon}>
+                  <Tab
+                    className={viewMode === 1 ? "bg-white" : ""}
+                    icon={CodeIcon}
+                  >
                     Code
                   </Tab>
-                  <Tab className={viewMode === 2 ? "bg-white" : ""} icon={BorderSplitIcon}>
+                  <Tab
+                    className={viewMode === 2 ? "bg-white" : ""}
+                    icon={BorderSplitIcon}
+                  >
                     Split
                   </Tab>
                 </TabList>
 
-                { fullscreen ?
-                  <div className="flex">
-                  { data.slug ? previewLink : null}
-                  </div> : <></>
-                }
+                {fullscreen ? (
+                  <div className="flex">{data.slug ? previewLink : null}</div>
+                ) : (
+                  <></>
+                )}
 
                 <div className="flex gap-4">
-                  { fullscreen && saveButton() }
+                  {fullscreen && saveButton()}
                   <Button onClick={() => setFullscreen(!fullscreen)}>
-                    {fullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                    {fullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
                   </Button>
                 </div>
               </div>
               <TabPanels>
-                <TabPanel>
-                  {preview}
-                </TabPanel>
-                <TabPanel className="mt-0">
-                  {codeview(true)}
-                </TabPanel>
+                <TabPanel>{preview}</TabPanel>
+                <TabPanel className="mt-0">{codeview(true)}</TabPanel>
                 <TabPanel className="mt-0">
                   <Grid numItems={2} className="gap-4">
                     <Col numColSpan={1}>{preview}</Col>
                     <Col numColSpan={1}>
-                    <div className="w-full sticky top-0 h-[100vh]">
-                      {codeview(false)}
+                      <div className="sticky top-0 h-[100vh] w-full">
+                        {codeview(false)}
                       </div>
                     </Col>
                   </Grid>

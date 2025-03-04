@@ -1,13 +1,13 @@
 "use client";
 
-import { Button, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { Contract } from "@prisma/client";
 import { useState } from "react";
 
 import useCurrentSession from "@/app/hooks/use-current-session";
 import Link from "next/link";
 
-import DashboardCard from "@/components/common/dashboard-card";
+import { Card } from "@/components/ui/card";
 import { SessionUser } from "@/app/models/Session";
 
 const ContractRow = ({ contract, currentUser, handleView }: {
@@ -61,29 +61,27 @@ export default function ContractSettings({ contracts }: { contracts: Contract[] 
   };
 
   return (
-    <>
-      <DashboardCard>
-        {error && <p className="text-red-500">{error.message}</p>}
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell>Description</TableHeaderCell>
-              <TableHeaderCell></TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {contracts.map((contract) => (
-              <ContractRow
-                key={contract.id}
-                contract={contract}
-                currentUser={currentUser}
-                handleView={handleView}
-              />
-            ))}
-          </TableBody>
-        </Table>
-      </DashboardCard>
-    </>
+    <Card>
+      {error && <p className="text-red-500 p-2">{error.message}</p>}
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableHeaderCell>Name</TableHeaderCell>
+            <TableHeaderCell>Description</TableHeaderCell>
+            <TableHeaderCell></TableHeaderCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {contracts.map((contract) => (
+            <ContractRow
+              key={contract.id}
+              contract={contract}
+              currentUser={currentUser}
+              handleView={handleView}
+            />
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
   );
 }

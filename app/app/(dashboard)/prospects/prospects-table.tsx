@@ -7,11 +7,10 @@ import {
   TableHeaderCell,
   TableRow,
   Button,
-  Text,
 } from "@tremor/react";
 import React from "react";
 import Tier from "@/app/models/Tier";
-import DashboardCard from "@/components/common/dashboard-card";
+import { Card } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 
@@ -58,7 +57,7 @@ export const ProspectsTable: React.FC<{
 
   return (
     <>
-      <DashboardCard>
+      <Card>
         <Table>
           <TableHead>
             <TableRow>
@@ -81,7 +80,7 @@ export const ProspectsTable: React.FC<{
           </TableHead>
           <TableBody>{visibleRows}</TableBody>
         </Table>
-      </DashboardCard>
+      </Card>
       {!showAll && maxInitialRows && rows.length > maxInitialRows && (
         <div className="grid justify-items-end">
           <Link href="/prospects">

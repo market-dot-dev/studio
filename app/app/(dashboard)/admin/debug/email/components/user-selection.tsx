@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Button, TextInput, Card } from "@tremor/react";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Button, TextInput } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import { User } from "@prisma/client";
 
 interface UserSelectionStepProps {

@@ -28,7 +28,7 @@ import PageHeading from "../common/page-heading";
 import TierFeaturePicker from "../features/tier-feature-picker";
 import { attachMany } from "@/app/services/feature-service";
 import Link from "next/link";
-import DashboardCard from "../common/dashboard-card";
+import { Card } from "@/components/ui/card"
 import { Channel, Contract, Feature, User } from "@prisma/client";
 import LoadingDots from "@/components/icons/loading-dots";
 import {
@@ -725,7 +725,7 @@ export default function TierForm({
               <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
                 Features
               </label>
-              <DashboardCard>
+              <Card className="p-2">
                 {tier?.id ? (
                   <TierFeaturePicker
                     tierId={tier.id}
@@ -743,7 +743,7 @@ export default function TierForm({
                     setFeatureObjs={setFeatureObjs}
                   />
                 )}
-              </DashboardCard>
+              </Card>
             </div>
           )}
           {isAdmin() && tier?.id && (
@@ -752,10 +752,10 @@ export default function TierForm({
                 <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
                   Admin Panel
                 </label>
-                <DashboardCard>
+                <Card className="p-2">
                   View admin-only options:{" "}
                   <LinkButton href={`/admin/tiers/${tier.id}`}>Go</LinkButton>
-                </DashboardCard>
+                </Card>
               </div>
             </>
           )}
@@ -789,7 +789,7 @@ export default function TierForm({
                     versions and {tierSubscriberCount} customers across
                     versions.
                   </Text>
-                  <DashboardCard>
+                  <Card>
                     <Table>
                       <TableHead>
                         <TableRow className="border-b-2 border-gray-400">
@@ -847,7 +847,7 @@ export default function TierForm({
                         ))}
                       </TableBody>
                     </Table>
-                  </DashboardCard>
+                  </Card>
 
                   <Text className="my-4">
                     Please note that package versions are only recorded when you

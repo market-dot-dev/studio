@@ -7,7 +7,8 @@ import SubscriptionService from "@/app/services/SubscriptionService";
 import { Charge, Feature, Contract } from "@prisma/client";
 import ContractService from "@/app/services/contract-service";
 
-import { Card, Text, Bold, Badge } from "@tremor/react";
+import { Text, Bold, Badge } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
 import Tier from "@/app/models/Tier";
 import CancelSubscriptionButton from "./subscriptions/cancel-subscription-button";

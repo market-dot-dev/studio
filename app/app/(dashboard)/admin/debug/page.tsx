@@ -3,7 +3,8 @@
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
 import RoleSwitcher from "@/components/user/role-switcher";
-import { Card, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import { Card } from "@/components/ui/card"
 import LinkButton from "@/components/common/link-button";
 
 const StripeDebug = async () => {

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Card, Button, Callout } from "@tremor/react";
+import { Button, Callout } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import { User } from "@prisma/client";
 
 // SVG icons as components
@@ -111,7 +112,7 @@ export default function EmailPreviewStep({
       <div className="space-y-6">
         <div>
           <h3 className="text-sm font-medium text-gray-700 mb-2">Email Preview</h3>
-          <Card className="p-4 bg-gray-50">
+          <Card>
             <div className="mb-2">
               <span className="text-sm font-medium text-gray-500">Subject:</span>
               <span className="text-sm ml-2">{emailSubject}</span>
@@ -127,7 +128,7 @@ export default function EmailPreviewStep({
         
         <div>
           <h3 className="text-sm font-medium text-gray-700 mb-2">Recipients ({selectedUsers.length})</h3>
-          <Card className="p-4 bg-gray-50 max-h-40 overflow-y-auto">
+          <Card className="max-h-40 overflow-y-auto">
             <ul className="text-sm">
               {selectedUsers.map((user) => (
                 <li key={user.id} className="mb-1">

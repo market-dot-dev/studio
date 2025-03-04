@@ -3,7 +3,7 @@ import { Title, Flex, Grid, Col } from "@tremor/react";
 import { useEffect, useState } from "react";
 import embedables from "../site/embedables";
 import CodeSnippet from "./code-snippet";
-import DashboardCard from "../common/dashboard-card";
+import { Card } from "@/components/ui/card"
 
 export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
   const [settings, setSettings] = useState({} as any);
@@ -31,7 +31,7 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
             alignItems="stretch"
             justifyContent="start"
           >
-            <DashboardCard className="w-3/4">
+            <Card className="w-3/4">
               <Flex flexDirection="col" className="grow gap-6">
                 {previewProps ? (
                   <Component
@@ -55,7 +55,7 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
                   }
                 />
               </Flex>
-            </DashboardCard>
+            </Card>
             <Flex
               flexDirection="col"
               alignItems="start"
@@ -77,3 +77,4 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
     </Flex>
   );
 }
+

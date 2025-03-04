@@ -10,7 +10,6 @@ import {
 } from "@tremor/react";
 import React from "react";
 import Tier from "@/app/models/Tier";
-import DashboardCard from "@/components/common/dashboard-card";
 import { capitalize, formatDate } from "@/lib/utils";
 import Link from "next/link";
 import { InfoIcon } from "lucide-react";
@@ -24,6 +23,7 @@ import {
 } from "@/components/common/dropdown";
 import SubscriptionStatusBadge from "./subscription-state";
 import PurchaseStatusBadge from "./purchase-state";
+import { Card } from "@/components/ui/card";
 
 export type CustomerWithChargesSubscriptionsAndProspects = User & {
   charges: (Charge & { tier: Tier })[];
@@ -116,7 +116,7 @@ const SalesTable = ({
   return (
     <>
       <div className="mb-2 flex w-full items-end justify-between">
-        <h3 className="text-xl font-bold">Latest Sales and Prospects</h3>
+        <h3 className="text-xl font-bold">Sales & Prospects</h3>
         <Link href="/customers">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -140,7 +140,7 @@ const SalesTable = ({
         </Link>
       </div>
 
-      <DashboardCard className="mb-8">
+      <Card className="p-6 mb-8">
         {sales.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8">
             <InfoIcon className="mb-4 h-12 w-12 text-gray-400" />
@@ -196,7 +196,7 @@ const SalesTable = ({
             </TableBody>
           </Table>
         )}
-      </DashboardCard>
+      </Card>
     </>
   );
 };

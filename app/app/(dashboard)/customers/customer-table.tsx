@@ -11,7 +11,7 @@ import {
 import React from "react";
 import Tier from "@/app/models/Tier";
 import LinkButton from "@/components/common/link-button";
-import DashboardCard from "@/components/common/dashboard-card";
+import { Card } from "@/components/ui/card";
 import SubscriptionStatusBadge from "./subscription-state";
 import PurchaseStatusBadge from "./purchase-state";
 import { formatDate } from "@/lib/utils";
@@ -106,7 +106,7 @@ export const CustomersTable: React.FC<{
 
   return (
     <>
-      <DashboardCard>
+      <Card>
         <Table>
           <TableHead>
             <TableRow>
@@ -130,7 +130,7 @@ export const CustomersTable: React.FC<{
           </TableHead>
           <TableBody>{visibleRows}</TableBody>
         </Table>
-      </DashboardCard>
+      </Card>
       {!showAll && maxInitialRows && rows.length > maxInitialRows && (
         <div className="grid justify-items-end">
           <Link href="/customers">

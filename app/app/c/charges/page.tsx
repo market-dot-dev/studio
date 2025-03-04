@@ -2,13 +2,8 @@ import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
 import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
-
-import {
-  Card,
-  Button,
-  Text,
-  Bold,
-} from "@tremor/react";
+import { Button, Text, Bold } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import ChargeService from "@/app/services/charge-service";
 import { Charge } from "@prisma/client";
@@ -24,29 +19,31 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
 
   let status = 'paid';
 
-  return (<Card>
-    <div className="flex flex-col space-y-2">
-      <div className="flex flex-row justify-between">
-        <div className="flex flex-row space-x-2 items-center">
-          <Bold>{maintainer.projectName}</Bold>
+  return (
+    <Card className="p-2">
+      <div className="flex flex-col space-y-2">
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-row space-x-2 items-center">
+            <Bold>{maintainer.projectName}</Bold>
+          </div>
+        </div>
+
+        <Bold>Tier: {tier.name}</Bold>
+
+        <Text>Status:&nbsp;
+          { status}
+        </Text>
+        <Text>Description: {tier.tagline}</Text>
+        <p>${tier.price} / {tier.cadence}</p>
+        <p>{charge.tierVersionId}</p>
+        <div className="flex flex-row space-x-2">
+          <Link href={`/charges/${charge.id}`}>
+            <Button>Tier Details</Button>
+          </Link>
         </div>
       </div>
-
-      <Bold>Tier: {tier.name}</Bold>
-
-      <Text>Status:&nbsp;
-        { status}
-      </Text>
-      <Text>Description: {tier.tagline}</Text>
-      <p>${tier.price} / {tier.cadence}</p>
-      <p>{charge.tierVersionId}</p>
-      <div className="flex flex-row space-x-2">
-        <Link href={`/charges/${charge.id}`}>
-          <Button>Tier Details</Button>
-        </Link>
-      </div>
-    </div>
-  </Card>)
+    </Card>
+  )
 }
 
 export default async function SubscriptionsList({ params }: { params: { id: string } }) {

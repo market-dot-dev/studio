@@ -7,7 +7,7 @@ import { Github, SearchIcon, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
 
 import LoadingSpinner from "../../form/loading-spinner";
-import DashboardCard from "../../common/dashboard-card";
+import { Card } from "@/components/ui/card";
 import { RepoItem, SearchResultRepo } from "./repo-items";
 
 const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
@@ -113,72 +113,105 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
 
 
     return (
-        <div className="flex flex-col items-stretch gap-4">
-            {/* { error ? <Text className="text-red-500">{error}</Text> : null } */}
-            <div className="flex flex-row gap-4">
-                <div className="w-2/5 pt-2 ps-2">
-                    <Flex flexDirection="col" alignItems="start" className="gap-4">
-                        <div className="w-full">
-                            <Bold>Github Accounts</Bold>
-                            <Text>Your Github accounts and organizations in which you are a member.</Text>
-                            <div className='mt-2 flex items-center w-full relative'>
-                                    <SearchSelect onValueChange={handleInstallationSelect}>
-                                        <div key='add-github-account' className="w-full p-2 cursor-pointer flex items-center justify-start" onClick={handleAddAccount}>
-                                            + Add Github Account
-                                        </div>
-                                        {installations.map((installation, index) => (
-                                            <SearchSelectItem value={`${installation.id}`} key={index}>
-                                                <Flex alignItems="center">
-                                                    <Icon icon={Github} /> <Text>{installation.login}</Text>
-                                                </Flex>
-                                            </SearchSelectItem>
-                                        ))}
-                                        
-
-                                    </SearchSelect>
-                                    { isPendingInstallationsList ? <LoadingSpinner/> : null }
-                                
-                            </div>
-                        </div>
-
-                        <div className='w-full relative'>
-                            <Bold>Repositories</Bold>
-                            <div className='mt-2 w-full relative'>
-                                <TextInput icon={SearchIcon} placeholder="Filter..." value={filter} onChange={(e) => setFilter(e.target.value)} />
-                                {filter?.length ?
-                                    <div className="absolute right-2 top-2">
-                                        <Button variant="light" icon={XCircle} onClick={() => setFilter('')} />
-                                    </div>
-                                    : null
-                                }
-                            </div>
-                            {isPendingInstallationRepos ?   
-                                <LoadingSpinner className="mx-auto" />
-                                 : null
-                            }
-                            {installations.find(({id}) => `${id}` === currentInstallationId) && installationRepos?.length ?
-                                <Flex flexDirection="col" className="w-full gap-0">
-                                    {filteredInstallationRepos.map((repo: Repo, index: number) => (
-                                        <SearchResultRepo repo={repo} key={index} setRepos={setRepos} installationId={currentInstallationId} isConnected={isRepoConnected(repo.id)} />
-                                    ))}
-                                </Flex>
-                                : null
-                            }
-                        </div>
-                    </Flex>
+      <div className="flex flex-col items-stretch gap-4">
+        {/* { error ? <Text className="text-red-500">{error}</Text> : null } */}
+        <div className="flex flex-row gap-4">
+          <div className="w-2/5 ps-2 pt-2">
+            <Flex flexDirection="col" alignItems="start" className="gap-4">
+              <div className="w-full">
+                <Bold>Github Accounts</Bold>
+                <Text>
+                  Your Github accounts and organizations in which you are a
+                  member.
+                </Text>
+                <div className="relative mt-2 flex w-full items-center">
+                  <SearchSelect onValueChange={handleInstallationSelect}>
+                    <div
+                      key="add-github-account"
+                      className="flex w-full cursor-pointer items-center justify-start p-2"
+                      onClick={handleAddAccount}
+                    >
+                      + Add Github Account
+                    </div>
+                    {installations.map((installation, index) => (
+                      <SearchSelectItem
+                        value={`${installation.id}`}
+                        key={index}
+                      >
+                        <Flex alignItems="center">
+                          <Icon icon={Github} />{" "}
+                          <Text>{installation.login}</Text>
+                        </Flex>
+                      </SearchSelectItem>
+                    ))}
+                  </SearchSelect>
+                  {isPendingInstallationsList ? <LoadingSpinner /> : null}
                 </div>
+              </div>
 
-                <DashboardCard className="w-4/5">
-                    <Bold>Connected Github Repositories</Bold>
-                    <Text className="mb-4"> A Connected repository is a loose connection - this allows you to do research dependents your open source projects.</Text>
-                    {repos.length === 0 && <Text>No connected repositories. Connect a Github account on the left and select repositories to link.</Text>}
-                    <Grid numItems={1} className="gap-2 mb-4">
-                        {repos.map((repo, index) => (
-                            <RepoItem repo={repo} key={index} setRepos={setRepos} />
-                        ))}
-                    </Grid>
-                </DashboardCard>
-            </div>
+              <div className="relative w-full">
+                <Bold>Repositories</Bold>
+                <div className="relative mt-2 w-full">
+                  <TextInput
+                    icon={SearchIcon}
+                    placeholder="Filter..."
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                  />
+                  {filter?.length ? (
+                    <div className="absolute right-2 top-2">
+                      <Button
+                        variant="light"
+                        icon={XCircle}
+                        onClick={() => setFilter("")}
+                      />
+                    </div>
+                  ) : null}
+                </div>
+                {isPendingInstallationRepos ? (
+                  <LoadingSpinner className="mx-auto" />
+                ) : null}
+                {installations.find(
+                  ({ id }) => `${id}` === currentInstallationId,
+                ) && installationRepos?.length ? (
+                  <Flex flexDirection="col" className="w-full gap-0">
+                    {filteredInstallationRepos.map(
+                      (repo: Repo, index: number) => (
+                        <SearchResultRepo
+                          repo={repo}
+                          key={index}
+                          setRepos={setRepos}
+                          installationId={currentInstallationId}
+                          isConnected={isRepoConnected(repo.id)}
+                        />
+                      ),
+                    )}
+                  </Flex>
+                ) : null}
+              </div>
+            </Flex>
+          </div>
+
+          <Card className="w-4/5 p-6 pt-5">
+            <Bold>Connected Github Repositories</Bold>
+            <Text className="mb-4">
+              {" "}
+              A Connected repository is a loose connection - this allows you to
+              do research dependents your open source projects.
+            </Text>
+            {repos.length === 0 && (
+              <Text>
+                No connected repositories. Connect a Github account on the left
+                and select repositories to link.
+              </Text>
+            )}
+            <Grid numItems={1} className="mb-4 gap-2">
+              {repos.map((repo, index) => (
+                <RepoItem repo={repo} key={index} setRepos={setRepos} />
+              ))}
+            </Grid>
+          </Card>
         </div>
-    )
+      </div>
+    );
 }

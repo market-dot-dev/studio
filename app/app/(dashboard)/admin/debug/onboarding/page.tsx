@@ -1,6 +1,7 @@
 "use client";
 
-import { Card, Title, Button, Badge, Text } from "@tremor/react";
+import { Title, Button, Badge, Text } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import { deleteSite, getCurrentSite } from "@/app/services/SiteService";
 import { resetState } from "@/app/services/onboarding/OnboardingService";
 import { useState } from "react";
@@ -33,7 +34,7 @@ export default function RestoreOnboarding(): JSX.Element {
 
   return (
     <div className="w-1/2">
-      <Card className="border-2 border-slate-800 bg-slate-50">
+      <Card className="p-6">
         <Badge size="xs" className="mb-1.5 me-2">
           FOR DEBUGGING PURPOSES ONLY
         </Badge>

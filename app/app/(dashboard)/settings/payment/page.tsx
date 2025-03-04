@@ -1,6 +1,7 @@
 "use server";
 import { redirect } from "next/navigation";
-import { Flex, Text, Card, Button } from "@tremor/react";
+import { Flex, Text, Button } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import StripeService from "@/app/services/StripeService";
 import LinkButton from "@/components/common/link-button";

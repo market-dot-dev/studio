@@ -1,6 +1,7 @@
 "use client";
 
-import { TextInput, Textarea, Card } from "@tremor/react";
+import { TextInput, Textarea } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 
 interface EmailCompositionStepProps {
   emailSubject: string;
@@ -46,7 +47,7 @@ export default function EmailCompositionStep({
           </p>
         </div>
         
-        <Card className="p-4 bg-gray-50">
+        <Card>
           <h3 className="text-sm font-medium text-gray-700 mb-2">
             Available Variables
           </h3>
