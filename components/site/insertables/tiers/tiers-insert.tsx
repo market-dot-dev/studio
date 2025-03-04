@@ -1,7 +1,7 @@
 'use client';
 import { useModal } from "@/components/modal/provider";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Flex,  Title, Text } from "@tremor/react";
+import { Button, Title, Text } from "@tremor/react";
 import { getPublishedTiers } from "@/app/services/TierService";
 import LoadingSpinner from "@/components/form/loading-spinner";
 
@@ -28,46 +28,36 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     }, []);
 
     return (
-        
-            
-            <Flex flexDirection="col" alignItems="start" justifyContent="between" className="grow gap-2 p-4">
-                <Flex flexDirection="col" alignItems="stretch" justifyContent="start" className="grow gap-2">
-                    
-                    {
-                    tiers ?
-                        tiers.length ? tiers.map((tier: TierProps) => {
-                            return (
-                            
-                                <Flex key={tier.id} className="gap-2" justifyContent="start">
-                                <input
-                                    type="checkbox"
-                                    checked={ selectedTiers?.includes(tier.id) }
-                                    onChange={(e) => {
-                                    setSelectedTiers((tiers: any) => {
-                                        if(e.target.checked) {
-                                            return [...tiers, tier.id]
-                                        } else {
-                                            return tiers.filter((id: string) => id !== tier.id);
-                                        }
-                                    })
-                                    }} 
-                                    />
-                                <Text>{tier.name}</Text>
-                                </Flex>
+        <div className="flex flex-col items-start justify-between grow gap-2 p-4">
+            <div className="flex flex-col items-stretch justify-start grow gap-2">
+                {tiers ? (
 
-                            )
-                            })
-                            : <Text>No tiers found</Text>
-                        : 
+                    tiers.length ? tiers.map((tier: TierProps) => {
+                        return (
                         
+                            <div key={tier.id} className="flex gap-2 justify-start">
+                            <input
+                                type="checkbox"
+                                checked={ selectedTiers?.includes(tier.id) }
+                                onChange={(e) => {
+                                setSelectedTiers((tiers: any) => {
+                                    if(e.target.checked) {
+                                        return [...tiers, tier.id]
+                                    } else {
+                                        return tiers.filter((id: string) => id !== tier.id);
+                                    }
+                                })}} 
+                            />
+                            <Text>{tier.name}</Text>
+                            </div>
+                        )}) : <Text>No tiers found</Text>
+                    ) : (
                         <LoadingSpinner />
-                    }
-                </Flex>
-                <Button onClick={handleInsertTiers} disabled={!tiers}>Insert</Button>
-            </Flex>
-            
-            
-        
+                    )
+                }
+            </div>
+            <Button onClick={handleInsertTiers} disabled={!tiers}>Insert</Button>
+        </div>
     )
 }
 

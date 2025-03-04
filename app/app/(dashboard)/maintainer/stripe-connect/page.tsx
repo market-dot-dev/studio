@@ -2,7 +2,7 @@
 
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { Flex, Text } from "@tremor/react";
+import { Text } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import UserService from "@/app/services/UserService";
 import StripeService from "@/app/services/StripeService";
@@ -62,25 +62,28 @@ export default async function StripeConnect({
           Stripe Integration
         </h1>
         <Card className="p-10">
-          <Flex flexDirection="col" alignItems="start" className="gap-4">
-            { !stripeConnected && <>
-              <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
-              <Text>
-                Connect your Stripe account to manage and receive payments.
-              </Text>
-              <StripeOauthButton userId={session.user.id!} />
-            </> }
-            { stripeConnected && <>
-              <h2 className="font-cal text-xl dark:text-white">Stripe Account</h2>
-              <Text>
-                Your stripe account is connected.
-              </Text>
-              <DisconnectStripeAccountButton user={user} />
-              <pre>
-                { user.stripeAccountId }
-              </pre>
-            </> }
-          </Flex>
+          <div className="flex flex-col items-start gap-4">
+            {stripeConnected ? (
+              <>
+                <h2 className="font-cal text-xl dark:text-white">Stripe Account</h2>
+                <Text>
+                  Your stripe account is connected.
+                </Text>
+                <DisconnectStripeAccountButton user={user} />
+                <pre>
+                  { user.stripeAccountId }
+                </pre>
+              </>
+            ) : (
+              <>
+                <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
+                <Text>
+                  Connect your Stripe account to manage and receive payments.
+                </Text>
+                <StripeOauthButton userId={session.user.id!} />
+              </>
+            )}
+          </div>  
         </Card>
       </div>
     </div>

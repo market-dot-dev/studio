@@ -1,6 +1,6 @@
 "use client";
 
-import { Flex, Text, TextInput, Button, Textarea } from "@tremor/react";
+import { Text, TextInput, Button, Textarea } from "@tremor/react";
 import { Contract } from "@prisma/client";
 import Link from "next/link";
 import PageHeading from "@/components/common/page-heading";
@@ -117,12 +117,8 @@ export default function ContractEdit({
       <form>
         {error && <Text className="text-red-500">{error?.message}</Text>}
         {info && <Text className="text-green-500">{info}</Text>}
-        <Flex
-          flexDirection="col"
-          alignItems="start"
-          className="w-full space-y-6"
-        >
-          <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
+        <div className="flex flex-col items-start w-full space-y-6">
+          <div className="flex flex-col items-start w-1/2 gap-2">
             <label
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
@@ -136,8 +132,8 @@ export default function ContractEdit({
               defaultValue={contract?.name ?? ""}
               onChange={(e) => handleInputChange("name", e.target.value)}
             />
-          </Flex>
-          <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
+          </div>
+          <div className="flex flex-col items-start w-1/2 gap-2">
             <label
               htmlFor="description"
               className="block text-sm font-medium text-gray-700"
@@ -152,7 +148,7 @@ export default function ContractEdit({
               defaultValue={contract?.description ?? ""}
               onChange={(e) => handleInputChange("description", e.target.value)}
             />
-          </Flex>
+          </div>
           <div className="flex items-center space-x-4">
             <label className="flex items-center">
               <input
@@ -185,24 +181,24 @@ export default function ContractEdit({
             contract.storage === "upload" ? 
             <>
             { contract.attachmentUrl ? 
-              <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-1">
+              <div className="flex flex-col items-start w-1/2 gap-1">
                   <h2 className="text-xl font-semibold">Uploaded File</h2>
                   <p className="text-sm text-gray-500">
                     Attachment
                   </p>
-                <Flex flexDirection="col" alignItems="start" className="mt-3 mb-1 border items-center justify-center p-8 gap-3 rounded-md border-gray-300 min-h-72">
+                <div className="flex flex-col mt-3 mb-1 border items-center justify-center p-8 gap-3 rounded-md border-gray-300 min-h-72">
                   
                     <Text>{contract.attachmentUrl.split('/').pop()}</Text>
                     <Button size="xs" onClick={handleRemoveAttachment} variant="light" color="red">
                       <FaRegTrashAlt />
                     </Button>
                   
-                </Flex>
-              </Flex>
+                </div>
+              </div>
              :
               null 
             }
-              <Flex flexDirection="col" alignItems="start" className={ "w-1/2 gap-2" + (contract?.attachmentUrl ? ' hidden' : '') }>
+              <div className={"flex flex-col items-start w-1/2 gap-2" + (contract?.attachmentUrl ? ' hidden' : '')}>
                 
                 <Uploader
                   allowedTypes={["pdf"]}
@@ -213,11 +209,11 @@ export default function ContractEdit({
                   setUploading={setIsUploading}
                   autoUpload={true}
                 />
-              </Flex>
+              </div>
             </>
           : null}
           {contract.storage === "link" && (
-            <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
+            <div className="flex flex-col items-start w-1/2 gap-2">
               <label
                 htmlFor="url"
                 className="block text-sm font-medium text-gray-700"
@@ -231,7 +227,7 @@ export default function ContractEdit({
                 defaultValue={contract.url || undefined}
                 onChange={(e) => handleInputChange("url", e.target.value)}
               />
-            </Flex>
+            </div>
           )}
           <div className="flex items-center justify-between w-full">
             <Button onClick={handleSubmit} disabled={isSaving || isDeleting || isUploading}>
@@ -253,7 +249,7 @@ export default function ContractEdit({
               />: null
             }
           </div>
-        </Flex>
+        </div>
       </form>
     </>
   );

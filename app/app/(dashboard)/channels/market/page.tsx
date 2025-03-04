@@ -1,4 +1,4 @@
-import { Flex, Text, Button } from "@tremor/react";
+import { Text, Button } from "@tremor/react";
 import PageHeading from "@/components/common/page-heading";
 import { getCurrentUser } from "@/app/services/UserService";
 import ConnectionRequired from "@/components/channels/market/connection-required";
@@ -14,7 +14,7 @@ export default async function MarketChannel() {
   const isConnectedToMarket = currentUser.marketExpertId != null;
 
   return (
-    <Flex flexDirection="col" alignItems="start" className="w-full gap-6">
+    <div className="flex flex-col items-start w-full gap-6">
       <PageHeading title="explore.market.dev" />
 
       {!isConnectedToMarket ? (
@@ -43,6 +43,6 @@ export default async function MarketChannel() {
           />
         </div>
       )}
-    </Flex>
+    </div>
   );
 }

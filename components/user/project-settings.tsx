@@ -1,5 +1,5 @@
 "use client";
-import { Flex, TextInput, Textarea, Button, Text } from "@tremor/react";
+import { TextInput, Textarea, Button, Text } from "@tremor/react";
 import { User } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
@@ -30,17 +30,9 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
 
   return (
     <>
-      <Flex
-        justifyContent="between"
-        alignItems="start"
-        className="w-full gap-12"
-      >
-        <Flex
-          flexDirection="col"
-          alignItems="start"
-          className="w-1/2 space-y-6"
-        >
-          <Flex flexDirection="col" alignItems="start" className="w-full gap-2">
+      <div className="flex justify-between items-start w-full gap-12">
+        <div className="flex flex-col items-start w-1/2 space-y-6">
+          <div className="flex flex-col items-start w-full gap-2">
             <label
               htmlFor="project-name"
               className="block text-sm font-medium text-gray-700"
@@ -57,9 +49,9 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
                 setUserData({ ...userData, projectName: e.target.value });
               }}
             />
-          </Flex>
+          </div>
 
-          <Flex flexDirection="col" alignItems="start" className="w-full gap-2">
+          <div className="flex flex-col items-start w-full gap-2">
             <label
               htmlFor="project-description"
               className="block text-sm font-medium text-gray-700"
@@ -83,13 +75,13 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
                 });
               }}
             />
-          </Flex>
+          </div>
 
           <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>
             Save Changes
           </Button>
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </>
   );
 }

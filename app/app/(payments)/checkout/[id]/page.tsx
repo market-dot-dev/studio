@@ -1,6 +1,5 @@
 "use client";
 
-import { Flex } from "@tremor/react";
 import RegistrationSection from "./registration-section";
 import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
@@ -186,17 +185,13 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
         <div className="overflow-y-auto">
           <div className="w-7/8">
             {isMaintainerLoading ? (
-              <Flex
-                flexDirection="col"
-                alignItems="start"
-                className="mb-6 gap-10 opacity-50"
-              >
+              <div className="flex flex-col items-start mb-6 gap-10 opacity-50">
                 <SkeletonLoader className="h-6 w-3/4 rounded-xl" />
-                <Flex flexDirection="col" alignItems="start" className="gap-2">
+                <div className="flex flex-col items-start gap-2">
                   <SkeletonLoader className="h-4 w-full rounded-full" />
                   <SkeletonLoader className="h-4 w-1/2 rounded-full" />
-                </Flex>
-              </Flex>
+                </div>
+              </div>
             ) : (
               <>
                 <h1 className="mb-8 text-4xl font-semibold text-slate-50">
@@ -213,15 +208,11 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
       <div className="ml-auto w-full overflow-y-auto bg-white p-8 text-slate-800 md:w-3/5 md:p-16">
         {isTierLoading ? (
           <>
-            <Flex
-              flexDirection="col"
-              alignItems="start"
-              className="gap-12 opacity-50"
-            >
+            <div className="flex flex-col items-start gap-12 opacity-50">
               <SkeletonLoader className="h-16 w-5/6 rounded-xl" />
               <SkeletonLoader className="h-36 w-5/6 rounded-xl" />
               <SkeletonLoader className="h-12 w-5/6 rounded-xl" />
-            </Flex>
+            </div>
           </>
         ) : (
           <>

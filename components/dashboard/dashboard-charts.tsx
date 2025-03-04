@@ -1,4 +1,4 @@
-import { Metric, Flex, BarChart, Badge } from "@tremor/react";
+import { Metric, BarChart, Badge } from "@tremor/react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import Link from "next/link";
@@ -226,15 +226,11 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Flex
-                className="space-x-3 truncate"
-                justifyContent="start"
-                alignItems="baseline"
-              >
+              <div className="flex space-x-3 truncate items-baseline justify-start">
                 <Metric className="font-cal leading-none">
                   {totalNewCustomers}
                 </Metric>
-              </Flex>
+              </div>
               <BarChart
                 className="mt-4 h-72"
                 data={customerTotals}
@@ -268,13 +264,9 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Flex
-                className="space-x-3 truncate"
-                justifyContent="start"
-                alignItems="baseline"
-              >
+              <div className="flex space-x-3 truncate items-baseline justify-start">
                 <Metric className="font-cal">${`${totalRevenue}`}</Metric>
-              </Flex>
+              </div>
 
               <RevenueLineChart
                 revenueData={revenueData}

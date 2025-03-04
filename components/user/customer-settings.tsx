@@ -1,5 +1,6 @@
 'use client'
-import { Flex, TextInput, Button } from "@tremor/react";
+
+import { TextInput, Button } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import { User } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
@@ -38,30 +39,30 @@ export default function CustomerSettings() {
 
     return (
         <Card>
-            <Flex flexDirection="col" alignItems="start" className="space-y-6 w-full">
-                <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
+            <div className="flex flex-col items-start space-y-6 w-full">
+                <div className="flex flex-col items-start w-1/2 gap-2">
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
                     <TextInput placeholder="" name="name" id="name" value={userData.name ?? ''} onChange={(e) => {
                         setUserData({ ...userData, name: e.target.value });
                     }} />
-                </Flex>
+                </div>
         
-                <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
+                <div className="flex flex-col items-start w-1/2 gap-2">
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
                     <TextInput placeholder="" type="email" name="email" id="email" value={userData.email ?? ''} onChange={(e) => {
                         setUserData({ ...userData, email: e.target.value });
                     }} />
-                </Flex>
+                </div>
         
-                <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
+                <div className="flex flex-col items-start w-1/2 gap-2">
                     <label htmlFor="company" className="block text-sm font-medium text-gray-700">Company</label>
                     <TextInput placeholder="" name="company" id="company" value={userData.company ?? ''} onChange={(e) => {
                         setUserData({ ...userData, company: e.target.value });
                     }} />
-                </Flex>
+                </div>
         
                 <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>Save Changes</Button>
-            </Flex>
+            </div>
         </Card>
     )
 }

@@ -1,4 +1,4 @@
-import { Flex, TextInput, Button, List, ListItem, Switch, Bold } from "@tremor/react";
+import { TextInput, Button, List, ListItem, Switch, Bold } from "@tremor/react";
 import { IconButton } from "@radix-ui/themes";
 import { useRef, useState } from "react";
 
@@ -44,13 +44,13 @@ function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
                 <div onDoubleClick={toggleEditing} className="grow">{feature.content}</div>
             )}
             <div>
-                <Flex className="gap-4">
+                <div className="flex gap-4">
                     <IconButton size="1" variant="ghost" onClick={toggleEditing}>
                         { isEditing ? <FaCheck height="14" width="14" /> : <FaEdit height="14" width="14" /> }
                     </IconButton>
                     <Switch checked={!feature.disconnect} onChange={() => toggleConnect(index)} />
                     
-                </Flex>
+                </div>
             </div>
         </ListItem>
     )
@@ -68,26 +68,22 @@ export default function FeaturesEditor({features, setFeatures}: any) : JSX.Eleme
         setNewFeature('');
 	}
 
-    
     return (
         <>        
-                <Flex flexDirection="col" alignItems="start" className="gap-1">
-                    <Bold>Features</Bold>
-                    <Flex className="gap-4">
-                        <TextInput value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Enter feature text"/>
-                        <Button onClick={addFeature}>Add</Button>
-                    </Flex>
-                </Flex>
-                <div className="px-2 w-full">
-                    <List>
-                        { features.map((feature : any, index: number) => (
-                            <EditableListItem key={index} index={index} feature={feature} setFeatures={setFeatures} />
-                        ))}						
-                    </List>
+            <div className="flex flex-col items-start gap-1">
+                <Bold>Features</Bold>
+                <div className="flex gap-4">
+                    <TextInput value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Enter feature text"/>
+                    <Button onClick={addFeature}>Add</Button>
                 </div>
-
-
+            </div>
+            <div className="px-2 w-full">
+                <List>
+                    { features.map((feature : any, index: number) => (
+                        <EditableListItem key={index} index={index} feature={feature} setFeatures={setFeatures} />
+                    ))}						
+                </List>
+            </div>
         </>
     )
-
 }

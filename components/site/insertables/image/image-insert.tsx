@@ -2,7 +2,7 @@
 import { useModal } from "@/components/modal/provider";
 import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; import { useState, useEffect, useCallback } from "react";
 import { Media as DBMedia } from "@prisma/client";
-import { Button, Flex,  NumberInput, Title, TextInput, Text, Bold } from "@tremor/react";
+import { Button,  NumberInput, Title, TextInput, Text, Bold } from "@tremor/react";
 import { format } from 'date-fns'
 
 import { useDropzone } from 'react-dropzone';
@@ -21,14 +21,17 @@ const StyledDropzone = ({ onFileAccepted, isUploading } : any) => {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
     return (
-        <Flex {...getRootProps()} flexDirection="col" className="p-4 gap-2 border-2 rounded-md border-dashed dropzone cursor-pointer min-h-30" justifyContent="start">
+        <div 
+            {...getRootProps()} 
+            className="flex flex-col p-4 gap-2 border-2 rounded-md border-dashed dropzone cursor-pointer min-h-30"
+        >
             <input {...getInputProps()} />
             <Bold>Files Upload</Bold>
             {isUploading ? <Spinner /> :
             
                 <Text className="py-1">Drop files here or <strong>Click</strong> to select files</Text>
             }
-        </Flex>
+        </div>
     );
 };
 
@@ -114,13 +117,13 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     }, [selectedMedia, setMediaList]);
 
     return (
-        <Flex className="grow" alignItems="stretch">
-            <Flex flexDirection="col" alignItems="stretch">
-                <Flex flexDirection="col" justifyContent="center" alignItems="center" className='w-full p-4 gap-2'>
+        <div className="flex grow items-stretch">
+            <div className="flex flex-col items-stretch">
+                <div className="flex flex-col justify-center items-center w-full p-4 gap-2">
                     <StyledDropzone onFileAccepted={handleFileUpload} isUploading={isUploading} />    
-                </Flex>
+                </div>
 
-                <Flex justifyContent="start" alignItems="start" className="gap-4 grow p-4 flex-wrap max-h-[60vh] overflow-auto" >
+                <div className="flex justify-start items-start gap-4 grow p-4 flex-wrap max-h-[60vh] overflow-auto">
                     {isLoading && <Spinner />}
                     {mediaList.map((media) => {
                         const classes = `border ${selectedMedia?.id === media.id ? 'border-blue-500' : 'border-transparent'} cursor-pointer`;
@@ -135,27 +138,27 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                             </div>
                         )
                     })}
-                </Flex>
+                </div>
                 
 
                 
-            </Flex>
-            <Flex flexDirection="col" justifyContent="between" className="w-1/3 bg-stone-100 p-4 gap-6">
-                <Flex flexDirection="col" className="grow gap-4 min-h-[60vh]" justifyContent="start">
+            </div>
+            <div className="flex flex-col justify-between w-1/3 bg-stone-100 p-4 gap-6">
+                <div className="flex flex-col grow gap-4 min-h-[60vh] justify-start">
                 {selectedMedia && (
                     <>
                         <Title>Selected Image</Title>
-                        <Flex className="gap-4">
+                        <div className="flex gap-4">
                             <div style={{ width: '137px', height: '137px', flexBasis: '50%' }} >
                                 <img src={selectedMedia.url} className="object-cover w-full h-full" alt="Thumbnail" />
                             </div>
-                            <Flex flexDirection="col" className="gap-4 basis-1/2" alignItems="start">
+                            <div className="flex flex-col gap-4 basis-1/2 items-start">
                                 <Text className="color-black text-wrap">Uploaded:<br /> {selectedMedia.createdAt ? format(new Date(selectedMedia.createdAt), 'PPP') : null}</Text>
                                 <Button color="red" size="xs" loading={isDeleting} disabled={isDeleting} onClick={deleteSelected}>Delete</Button>
-                            </Flex>
-                        </Flex>
-                        <Flex flexDirection="col" className="gap-2">
-                            <Flex className="gap-2" flexDirection="col">
+                            </div>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <div className="flex flex-col gap-2">
                                 <label>Alt Text</label>
                                 <TextInput
                                     type="text"
@@ -163,9 +166,9 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                                     onChange={(e) => setAlt(e.target.value)}
                                     placeholder="Alt Text"
                                 />
-                            </Flex>
+                            </div>
                             
-                            <Flex className="gap-2" flexDirection="col">
+                            <div className="flex flex-col gap-2">
                                 <label>Width (px)</label>
                                 <NumberInput
                                     value={width}
@@ -173,8 +176,8 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                                     onChange={(e) => setWidth(e.target.value)}
                                     placeholder="Width"
                                 />
-                            </Flex>
-                            <Flex className="gap-2" flexDirection="col">
+                            </div>
+                            <div className="flex flex-col gap-2">
                                 <label>Height (px)</label>
                                 <NumberInput
                                     value={height}
@@ -182,18 +185,18 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                                     onChange={(e) => setHeight(e.target.value)}
                                     placeholder="Height"
                                 />
-                            </Flex>
+                            </div>
                             
-                        </Flex>
+                        </div>
                     </>
                 )}
-                </Flex>
+                </div>
                 <Button onClick={handleInsertImage}
                     disabled={!selectedMedia}
                 >Insert</Button>
                 
-            </Flex>
-        </Flex>
+            </div>
+        </div>
     )
 }
 

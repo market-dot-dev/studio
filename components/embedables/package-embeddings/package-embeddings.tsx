@@ -1,7 +1,7 @@
 "use client";
 
 import CodeSnippet from "@/components/embedables/code-snippet";
-import { Flex, Title } from "@tremor/react";
+import { Title } from "@tremor/react";
 import {
   Tabs,
   TabsContent,
@@ -49,7 +49,7 @@ export default function PackageEmbeddings({
   return (
     <div className="flex w-full flex-col gap-3">
       <Title className="text-xl font-semibold">Packages</Title>
-      <Flex flexDirection="col" className="w-full gap-12">
+      <div className="flex flex-col w-full gap-12">
         <Tabs defaultValue="preview" className="w-full">
           <div className="flex items-center justify-between">
             <TabsList variant="solid">
@@ -124,7 +124,7 @@ export default function PackageEmbeddings({
             </TabsContent>
           </div>
         </Tabs>
-      </Flex>
+      </div>
     </div>
   );
 }

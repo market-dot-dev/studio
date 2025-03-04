@@ -1,6 +1,6 @@
 "use server";
 import { redirect } from "next/navigation";
-import { Flex, Text, Button } from "@tremor/react";
+import { Text, Button } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import StripeService from "@/app/services/StripeService";
@@ -68,7 +68,7 @@ export default async function PaymentSettings({
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12">
       <div className="flex flex-col space-y-6">
-        <Flex flexDirection="col" alignItems="start" className="gap-4">
+        <div className="flex flex-col items-start gap-4">
           {!stripeConnected && <>
             <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
             <Text>
@@ -115,7 +115,7 @@ export default async function PaymentSettings({
             </> :
             null
           }
-        </Flex>
+        </div>
       </div>
     </div>
   );

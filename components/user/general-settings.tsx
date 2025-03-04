@@ -1,5 +1,6 @@
 "use client";
-import { Flex, TextInput, Button } from "@tremor/react";
+
+import { TextInput, Button } from "@tremor/react";
 import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
@@ -24,8 +25,8 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
 
   return (
     <>
-      <Flex flexDirection="col" alignItems="start" className="w-full space-y-6">
-        <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
+      <div className="flex flex-col items-start w-full space-y-6">
+        <div className="flex flex-col items-start w-1/2 gap-2">
           <label
             htmlFor="name"
             className="block text-sm font-medium text-gray-700"
@@ -41,9 +42,9 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
               setUserData({ ...userData, name: e.target.value });
             }}
           />
-        </Flex>
+        </div>
 
-        <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
+        <div className="flex flex-col items-start w-1/2 gap-2">
           <label
             htmlFor="email"
             className="block text-sm font-medium text-gray-700"
@@ -60,12 +61,12 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
               setUserData({ ...userData, email: e.target.value });
             }}
           />
-        </Flex>
+        </div>
 
         <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>
           Save Changes
         </Button>
-      </Flex>
+      </div>
     </>
   );
 }

@@ -4,7 +4,6 @@ import {
   Text,
   Title,
   BarList,
-  Flex,
   Grid,
   Bold,
   AreaChart,
@@ -104,14 +103,14 @@ export default function AnalyticsMockup() {
         {categories.map(({ title, subtitle, data }) => (
           <Card key={title} className="max-w-lg">
             <Title>{title}</Title>
-            <Flex className="mt-4">
+            <div className="flex mt-4">
               <Text>
                 <Bold>{subtitle}</Bold>
               </Text>
               <Text>
                 <Bold>Visitors</Bold>
               </Text>
-            </Flex>
+            </div>
             <BarList
               // @ts-ignore
               data={data.map(({ name, value, code }) => ({

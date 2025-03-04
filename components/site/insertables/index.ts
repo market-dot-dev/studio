@@ -4,7 +4,7 @@ import TiersInsert from "./tiers/tiers-insert";
 import SiteName from "./site-name/site-name";
 import SiteDescription from "./site-description/site-description";
 import { 
-    Flex, Box, Grid, Container,
+    Box, Grid, Container,
     Text, Heading, Blockquote, Code, Em, Link, Quote
 } from '@radix-ui/themes'
 import { Card } from "@/components/ui/card";
@@ -109,8 +109,10 @@ export const standardComponents = {
 export const layoutComponents = {
     flex: {
         name: 'Flex',
-        tag: 'Flex',
-        element: Flex,
+        tag: 'div',
+        attributes: {
+            class: "flex flex-row gap-4"
+        },
         ui: true, // This is a UI component, not a site component, so props like site and pages are not available
         hidden: true
     },

@@ -1,7 +1,7 @@
 'use client'
 import { getInstallationsList, getInstallationRepos, getGithubAppInstallState } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { Flex, Text, TextInput, Button, Grid, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+import { Text, TextInput, Button, Grid, Bold, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
 
 import { Github, SearchIcon, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -117,7 +117,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
         {/* { error ? <Text className="text-red-500">{error}</Text> : null } */}
         <div className="flex flex-row gap-4">
           <div className="w-2/5 ps-2 pt-2">
-            <Flex flexDirection="col" alignItems="start" className="gap-4">
+            <div className="flex flex-col items-start gap-4">
               <div className="w-full">
                 <Bold>Github Accounts</Bold>
                 <Text>
@@ -138,10 +138,10 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                         value={`${installation.id}`}
                         key={index}
                       >
-                        <Flex alignItems="center">
+                        <div className="flex items-center">
                           <Icon icon={Github} />{" "}
                           <Text>{installation.login}</Text>
-                        </Flex>
+                        </div>
                       </SearchSelectItem>
                     ))}
                   </SearchSelect>
@@ -174,7 +174,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                 {installations.find(
                   ({ id }) => `${id}` === currentInstallationId,
                 ) && installationRepos?.length ? (
-                  <Flex flexDirection="col" className="w-full gap-0">
+                  <div className="flex flex-col w-full gap-0">
                     {filteredInstallationRepos.map(
                       (repo: Repo, index: number) => (
                         <SearchResultRepo
@@ -186,10 +186,10 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                         />
                       ),
                     )}
-                  </Flex>
+                  </div>
                 ) : null}
               </div>
-            </Flex>
+            </div>
           </div>
 
           <Card className="w-4/5 p-6 pt-5">

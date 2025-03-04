@@ -9,7 +9,6 @@ import renderElement from "./page-renderer";
 import { useRouter } from "next/navigation";
 
 import {
-  Flex,
   Grid,
   Col,
   Badge,
@@ -427,7 +426,7 @@ export default function PageEditor({
   const linkWithSlug = siteUrl + ( isHome ? '' : data.slug )
   
   const previewLink = (
-      <Flex className={ data.draft ? 'pointer-events-none opacity-50' : '' }>
+      <div className={`flex ${data.draft ? 'pointer-events-none opacity-50' : ''}`}>
         <a
           href={ linkWithSlug }
           target="_blank"
@@ -436,7 +435,7 @@ export default function PageEditor({
         >
           {linkWithSlug} ↗
         </a>
-      </Flex>
+      </div>
     );
   
 
@@ -513,11 +512,11 @@ export default function PageEditor({
                 </Col>
 
                 <Col numColSpanMd={4}>
-                  <Flex>
+                  <div className="flex">
                     <Bold>URL Slug</Bold>
-                  </Flex>
+                  </div>
 
-                  <Flex>
+                  <div className="flex">
                     <TextInput
                       placeholder="Path"
                       error={slugError ? true : false}
@@ -529,18 +528,18 @@ export default function PageEditor({
                         setData({ ...data, slug: e.target.value });
                       }}
                     ></TextInput>
-                  </Flex>
+                  </div>
                 </Col>
               </Grid>
 
-              <Flex className="mb-2" justifyContent="between">
+              <div className="mb-2 flex justify-between">
                 <Box>
                   <Bold>Page Content</Bold>
                 </Box>
                 <Box>{data.slug ? previewLink : null}</Box>
-              </Flex>
+              </div>
 
-              <Flex className="mb-2" justifyContent="between">
+              <div className="mb-2 flex justify-between">
                 <Box>
                   <Bold>Page Status</Bold>
                 </Box>
@@ -555,7 +554,7 @@ export default function PageEditor({
                     }}
                   />
                 </Box>
-              </Flex>
+              </div>
             </Col>
 
             <Col numColSpanMd={3} className={fullscreen ? "p-4" : ""}>
@@ -588,12 +587,12 @@ export default function PageEditor({
 
               <div>
                 <Box mb="2">{saveButton("w-full")}</Box>
-                <Flex className="gap-2">
+                <div className="flex gap-2">
                   <Box mb="2" className="grow">
                     {makeHomepageButton}
                   </Box>
                   <Box mb="2">{deleteButton}</Box>
-                </Flex>
+                </div>
               </div>
             </Col>
           </>

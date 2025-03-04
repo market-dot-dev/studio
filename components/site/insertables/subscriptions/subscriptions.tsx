@@ -1,5 +1,4 @@
 import {
-    Flex,
     Title,
     Table,
     TableHead,
@@ -11,7 +10,7 @@ import Subscription from "./subscription";
 
 export default function Subscriptions({subscriptions} : { subscriptions : any[] }) {
     return (
-        <Flex flexDirection="col" className="bg-slate-100 p-6">
+        <div className="flex flex-col bg-slate-100 p-6">
             <Title>My Subscriptions</Title>
             <Table className="mt-5">
                 <TableHead>
@@ -28,7 +27,6 @@ export default function Subscriptions({subscriptions} : { subscriptions : any[] 
 
                 </TableBody>
             </Table>
-
-        </Flex>
+        </div>
     )
 }

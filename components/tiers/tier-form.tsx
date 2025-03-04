@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  Flex,
   Text,
   Button,
   Bold,
@@ -296,7 +295,7 @@ const StandardCheckoutForm = ({
           <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
             Monthly Price (USD)
           </label>
-          <Flex className="gap-2" justifyContent="start">
+          <div className="flex gap-2">
             <NumberInput
               value={tier.price || 0}
               name="price"
@@ -312,7 +311,7 @@ const StandardCheckoutForm = ({
                 handleTierDataChange("price", v);
               }}
             />
-          </Flex>
+          </div>
         </div>
 
         {tier.cadence === "month" && (
@@ -667,7 +666,7 @@ export default function TierForm({
               Package Status
             </label>
             <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
-              <Flex className="gap-2" justifyContent="start">
+              <div className="flex gap-2">
                 {canPublishLoading && (
                   <>
                     <LoadingDots />
@@ -699,7 +698,7 @@ export default function TierForm({
                     </span>
                   </>
                 )}
-              </Flex>
+              </div>
               {!canPublish && !canPublishLoading && (
                 <>
                   <Callout
