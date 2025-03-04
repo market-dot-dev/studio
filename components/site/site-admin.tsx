@@ -55,7 +55,7 @@ export default function SiteAdmin({ id }: { id: string }) {
     <>
       <PageHeading title="Your Storefront" />
 
-      <Card>
+      <Card className="p-6 pt-5">
         <div className="flex w-full flex-col lg:flex-row lg:justify-between">
           <div className="absolute bottom-0 left-4 hidden lg:block">
             <PreviewSection
@@ -106,7 +106,7 @@ export default function SiteAdmin({ id }: { id: string }) {
         </div>
       </Card>
       
-      <Card>
+      <Card className="p-6 pt-5"> 
         <div className="flex w-full justify-between">
           <div className="flex flex-row">
             <strong>Other Pages</strong>

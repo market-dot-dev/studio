@@ -109,15 +109,6 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
             maintainerEmail={maintainer?.email}
           />
         </div>
-
-        {/* Commenting out Tier Version ID */}
-        {/* <Text>{charge.tierVersionId}</Text> */}
-
-        {/* <div className="flex flex-row space-x-2">
-          <Link href={`/charges/${charge.id}`}>
-            <Button>Package Details</Button>
-          </Link>
-        </div> */}
       </div>
     </Card>
   );
