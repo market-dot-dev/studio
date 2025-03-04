@@ -554,9 +554,7 @@ export default function TierForm({
 
   return (
     <>
-      {/* Grid layout for responsiveness */}
       <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-        {/* Form Fields Section */}
         <div className="space-y-6 md:col-span-2">
           <div className="flex justify-between">
             <div>

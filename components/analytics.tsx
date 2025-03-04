@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  BarList,
-  Grid,
-  AreaChart,
-} from "@tremor/react";
+import { BarList, AreaChart } from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
@@ -96,7 +92,7 @@ export default function AnalyticsMockup() {
           }
         />
       </Card>
-      <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map(({ title, subtitle, data }) => (
           <Card key={title} className="max-w-lg">
             <h2 className="text-xl font-bold">Restore Onboarding State</h2>
@@ -143,7 +139,7 @@ export default function AnalyticsMockup() {
             />
           </Card>
         ))}
-      </Grid>
+      </div>
     </div>
   );
 }

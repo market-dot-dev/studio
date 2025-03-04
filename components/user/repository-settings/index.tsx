@@ -1,7 +1,7 @@
 'use client'
 import { getInstallationsList, getInstallationRepos, getGithubAppInstallState } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { TextInput, Button, Grid, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+import { TextInput, Button, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
 
 import { Github, SearchIcon, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -204,11 +204,11 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                 and select repositories to link.
               </p>
             )}
-            <Grid numItems={1} className="mb-4 gap-2">
+            <div className="grid grid-cols-1 mb-4 gap-2">
               {repos.map((repo, index) => (
                 <RepoItem repo={repo} key={index} setRepos={setRepos} />
               ))}
-            </Grid>
+            </div>
           </Card>
         </div>
       </div>
