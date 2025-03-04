@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Title } from "@tremor/react";
+import { Button } from "@tremor/react";
 import { useState } from "react";
 import LoadingDots from "@/components/icons/loading-dots";
 import { useModal } from "@/components/modal/provider";
@@ -14,7 +14,7 @@ const ContractDeleteButton = ({ contractId, onConfirm, onSuccess, onError }: { c
   const showWarning = (e: any) => {
 	e.preventDefault();
 	e.stopPropagation();
-  const modalHeader = <Title>Delete Contract</Title>
+  const modalHeader = <h2 className="text-xl font-bold">Restore Onboarding State</h2>
     show(
         <div className="flex flex-col gap-12 p-6">
           <p className="text-sm text-stone-500">Are you sure, you want to delete this contract?</p>

@@ -1,7 +1,7 @@
 'use client'
 
 import { categorizedTiers } from "@/lib/constants/tiers/default-tiers"
-import { Button, Title } from "@tremor/react"
+import { Button } from "@tremor/react"
 import TierCard from "./tier-card"
 import { useCallback, useState } from "react";
 import { createTemplateTier } from "@/app/services/TierService";
@@ -17,8 +17,8 @@ export default function NewTierModal({ children, multiple }: { children: React.R
 	// }, []);
 
 	const header = (
-			<Title>Create{multiple ? '' : ' a'} new package{multiple ? 's' : ''}</Title>
-	)
+    <h2 className="text-xl font-bold">Create{multiple ? '' : ' a'} new package{multiple ? 's' : ''}</h2>
+  );
     const showModal = () => {
         show(<TiersTemplatesModal hide={hide} multiple={multiple} />, undefined, undefined, header, 'w-full md:w-5/6 max-h-[80vh]');
     };
@@ -110,7 +110,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
       <div className="flex grow flex-col items-stretch justify-start gap-4 overflow-auto">
         {categorizedTiers.map((category, cIndex) => (
           <div className="flex flex-col gap-4 p-4" key={cIndex}>
-            <Title>{category.name}</Title>
+            <h2 className="text-xl font-bold">{category.name}</h2>
             <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {category.tiers.map(({ metaDescription, data: tier }, index) => {
                 const determinedIndex = determineIndex(cIndex, index);

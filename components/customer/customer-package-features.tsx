@@ -2,10 +2,7 @@
 import { useModal } from "@/components/modal/provider";
 import { Feature } from "@prisma/client";
 import styles from './features.module.css';
-import { Title } from "@tremor/react";
-import {
-    CheckSquare2 as CheckSquare,
-  } from "lucide-react";
+import { CheckSquare2 as CheckSquare } from "lucide-react";
 
 export default function CustomerPackageFeatures({ features, maintainerEmail }: { features: Partial<Feature>[], maintainerEmail: string | null }) {
     const { show, hide } = useModal();
@@ -20,7 +17,7 @@ export default function CustomerPackageFeatures({ features, maintainerEmail }: {
                 {[{id: 0, name: 'Contact Maintainers', uri: maintainerEmail}, ...features].map((feature) => (
 					feature.uri ?
 						<div key={feature.id} className={styles.feature_item + ' flex flex-col gap-2'}>
-							<Title>{feature.name}</Title>
+							<h2 className="text-xl font-bold">Restore Onboarding State</h2>
 							<div className="text-sm border rounded-sm p-2 flex justify-between items-center gap-4">
 								
 								{

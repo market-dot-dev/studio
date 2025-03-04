@@ -1,5 +1,5 @@
 import UserService from "@/app/services/UserService";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Title } from "@tremor/react";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import ImpersonateButton from "./impersonate-button";
 import { Card } from "@/components/ui/card";
 
@@ -8,7 +8,7 @@ export default async function UsersList() {
 	
 	return (
 		<>
-			<Title className="mb-4">Users</Title>
+			<h2 className="text-xl font-bold mb-4">Users</h2>
 			<Card className="container mx-auto p-4">
 				<Table>
 					<TableHead>

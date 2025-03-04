@@ -1,6 +1,5 @@
 "use client";
 
-import { Title } from "@tremor/react";
 import { useEffect, useState } from "react";
 import githubEmbeds from "../site/github-embeds";
 import CodeSnippet from "../embedables/code-snippet";
@@ -32,7 +31,7 @@ export default function GithubEmbedItem({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <Title className="text-xl font-semibold">Badge</Title>
+      <h2 className="text-xl font-bold">Restore Onboarding State</h2>
       <div className="flex flex-col w-full gap-12">
         <Tabs defaultValue="preview" className="w-full border-none">
           <div className="flex items-center justify-between">

@@ -1,7 +1,7 @@
 'use client';
 import { useModal } from "@/components/modal/provider";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Title } from "@tremor/react";
+import { Button } from "@tremor/react";
 import { getPublishedTiers } from "@/app/services/TierService";
 import LoadingSpinner from "@/components/form/loading-spinner";
 
@@ -64,9 +64,11 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
 export default function TiersInsert({ insertAtCursor, children }: { insertAtCursor: (prop: any) => void, children: any}) {
     const { show, hide } = useModal();
     const showModal = () => {
-        const modalHeader = <div className="grow">
-            <Title>Select Tiers to be displayed</Title>
-        </div>
+        const modalHeader = (
+            <div className="grow">
+                <h2 className="text-xl font-bold">Restore Onboarding State</h2>
+            </div>
+        );
         show(<TiersInsertModal insertAtCursor={insertAtCursor} hide={hide} />, undefined, undefined, modalHeader, 'w-1/4 min-h-[50vh]');
     };
     return (

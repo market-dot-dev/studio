@@ -3,7 +3,7 @@
 import { Service, Feature } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import FeatureForm from '@/components/form/feature-form';
-import { Badge, Button, Title } from '@tremor/react';
+import { Badge, Button } from '@tremor/react';
 import { useModal } from "@/components/modal/provider";
 
 import {
@@ -176,7 +176,7 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
       const feature = featuresList.find((f) => f.serviceId === selectedService.id);
       const modalHeader = (
           <div className="flex justify-between items-center grow">
-            <Title>Details</Title>
+            <h2 className="text-xl font-bold">Restore Onboarding State</h2>
             { feature?.isEnabled ? <Badge size="xs" color="green">Enabled</Badge> : null }
           </div>
         )

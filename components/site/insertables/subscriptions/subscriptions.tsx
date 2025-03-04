@@ -1,5 +1,4 @@
 import {
-    Title,
     Table,
     TableHead,
     TableHeaderCell,
@@ -11,7 +10,7 @@ import Subscription from "./subscription";
 export default function Subscriptions({subscriptions} : { subscriptions : any[] }) {
     return (
         <div className="flex flex-col bg-slate-100 p-6">
-            <Title>My Subscriptions</Title>
+            <h2 className="text-xl font-bold">Restore Onboarding State</h2>
             <Table className="mt-5">
                 <TableHead>
                     <TableRow>

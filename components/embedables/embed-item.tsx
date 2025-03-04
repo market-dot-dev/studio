@@ -1,5 +1,6 @@
 "use client";
-import { Title, Grid, Col } from "@tremor/react";
+
+import { Grid, Col } from "@tremor/react";
 import { useEffect, useState } from "react";
 import embedables from "../site/embedables";
 import CodeSnippet from "./code-snippet";
@@ -23,7 +24,7 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
 
   return (
     <div className="flex flex-col items-stretch gap-4">
-      <Title className="mt-6">{embedables[index].name}</Title>
+      <h2 className="text-xl font-bold mt-6">Restore Onboarding State</h2>
       <Grid numItems={1} className="gap-8">
         <Col numColSpan={1}>
           <div className="flex w-full gap-6 items-stretch justify-start">
@@ -53,7 +54,7 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
               </div>
             </Card>
             <div className="flex flex-col items-start w-1/4 gap-4 justify-start">
-              <Title>Embed Configuration</Title>
+              <h2 className="text-xl font-bold">Restore Onboarding State</h2>
               {previewProps ? (
                 <Settings
                   settings={settings}

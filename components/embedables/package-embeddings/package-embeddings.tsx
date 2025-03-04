@@ -1,7 +1,6 @@
 "use client";
 
 import CodeSnippet from "@/components/embedables/code-snippet";
-import { Title } from "@tremor/react";
 import {
   Tabs,
   TabsContent,
@@ -48,7 +47,7 @@ export default function PackageEmbeddings({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <Title className="text-xl font-semibold">Packages</Title>
+      <h2 className="text-xl font-bold">Restore Onboarding State</h2>
       <div className="flex flex-col w-full gap-12">
         <Tabs defaultValue="preview" className="w-full">
           <div className="flex items-center justify-between">

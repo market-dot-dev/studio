@@ -1,6 +1,5 @@
 import { getSubscriptions } from "@/lib/tiers/fetchers";
 import Subscriptions from "./subscriptions";
-import { Title } from "@tremor/react";
 import SessionService from "@/app/services/SessionService";
 
 // This is the component that will render at the frontend of the site, facing the customer
@@ -17,7 +16,7 @@ export async function SubscriptionsServer({
   const userId = await SessionService.getCurrentUserId();
 
   if (!userId) {
-    return <Title>You need to be logged in to view your subscriptions</Title>;
+    return <h2 className="text-xl font-bold">You need to be logged in to view your subscriptions</h2>;
   }
 
   const subs = site?.userId

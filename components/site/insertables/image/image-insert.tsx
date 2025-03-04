@@ -2,7 +2,7 @@
 import { useModal } from "@/components/modal/provider";
 import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; import { useState, useEffect, useCallback } from "react";
 import { Media as DBMedia } from "@prisma/client";
-import { Button,  NumberInput, Title, TextInput, Bold } from "@tremor/react";
+import { Button,  NumberInput, TextInput, Bold } from "@tremor/react";
 import { format } from 'date-fns'
 
 import { useDropzone } from 'react-dropzone';
@@ -147,7 +147,7 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                 <div className="flex flex-col grow gap-4 min-h-[60vh] justify-start">
                 {selectedMedia && (
                     <>
-                        <Title>Selected Image</Title>
+                        <h2 className="text-xl font-bold">Restore Onboarding State</h2>
                         <div className="flex gap-4">
                             <div style={{ width: '137px', height: '137px', flexBasis: '50%' }} >
                                 <img src={selectedMedia.url} className="object-cover w-full h-full" alt="Thumbnail" />
@@ -202,9 +202,7 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
 
 export default function ImageInsert({ insertAtCursor, children }: { insertAtCursor: (prop: any) => void, children: any }) {
     const { show, hide } = useModal();
-    const header = (
-        <Title>Select or Upload Image</Title>
-    )
+    const header = <h2 className="text-xl font-bold">Restore Onboarding State</h2>;
     const showModal = () => {
         show(<ImageInsertModal insertAtCursor={insertAtCursor} hide={hide} />, undefined, undefined, header, 'w-full md:w-5/6 max-h-[80vh]');
     };

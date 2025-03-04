@@ -1,7 +1,7 @@
 "use client";
 
 import { cancelSubscription } from "@/app/services/SubscriptionService";
-import { Button, Title } from "@tremor/react";
+import { Button } from "@tremor/react";
 import { useCallback, useState } from "react";
 import { useModal } from "@/components/modal/provider";
 
@@ -11,7 +11,7 @@ const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }
   const { show, hide } = useModal();
 
   const showWarning = () => {
-    const modalHeader = <Title>Cancel Subscription</Title>;
+    const modalHeader = <h2 className="text-xl font-bold">Restore Onboarding State</h2>;
     show(
       <CancelSubscriptionContent subscriptionId={subscriptionId} hide={hide} setParentLoading={setLoading} />,
       hide,

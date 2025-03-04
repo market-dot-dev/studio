@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Title,
   BarList,
   Grid,
   Bold,
@@ -86,7 +85,7 @@ export default function AnalyticsMockup() {
   return (
     <div className="grid gap-6">
       <Card>
-        <Title>Visitors</Title>
+        <h2 className="text-xl font-bold">Restore Onboarding State</h2>
         <AreaChart
           className="mt-4 h-72"
           data={chartdata}
@@ -101,7 +100,7 @@ export default function AnalyticsMockup() {
       <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
         {categories.map(({ title, subtitle, data }) => (
           <Card key={title} className="max-w-lg">
-            <Title>{title}</Title>
+            <h2 className="text-xl font-bold">Restore Onboarding State</h2>
             <div className="flex mt-4">
               <p className="text-sm text-stone-500">
                 <Bold>{subtitle}</Bold>

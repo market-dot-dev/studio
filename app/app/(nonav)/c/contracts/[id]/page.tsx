@@ -1,5 +1,4 @@
 import ContractService from "@/app/services/contract-service";
-import { Title } from "@tremor/react";
 import NoNavLayout from "../../../layout";
 
 import type { ReactElement, ReactNode } from 'react'
@@ -31,7 +30,7 @@ const ContractPage: NextPageWithLayout<ContractPageProps> = async ({
         className="flex flex-col gap-2 justify-center bg-slate-800 p-8 md:h-screen text-slate-50 md:w-2/5 lg:py-32 xl:px-32"
         style={{ backgroundImage: "url(/voronoi.png)" }}
       >
-        <Title className="text-stone-300">{name}</Title>
+        <h2 className="text-xl font-bold text-stone-300">Restore Onboarding State</h2>
         <p className="text-sm text-stone-500">{description}</p>
       </div>
 
