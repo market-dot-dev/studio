@@ -17,7 +17,7 @@ export default async function EmbedChannel() {
   return (
     <div className="flex flex-col items-start w-full gap-6">
       <PageHeading title="Embeds" />
-      <div className="flex w-full flex-col gap-6 p-4">
+      <div className="flex w-full flex-col gap-6">
         <PackageEmbeddings site={site} rootUrl={rootUrl} />
         {Object.keys(githubEmbeds).map((index, idx, arr) => (
           <div key={index} className="w-full">

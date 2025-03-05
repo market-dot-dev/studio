@@ -218,7 +218,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
       <div className="flex max-w-screen-xl flex-col space-y-4">
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
-            <CardHeader className="pb-5">
+            <CardHeader className="pb-4">
               <CardTitle>
                 <span className="mr-2">New Customers</span>
                 <span className="text-sm font-normal text-stone-500">
@@ -256,7 +256,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
           </Card>
 
           <Card>
-            <CardHeader className="pb-5">
+            <CardHeader className="pb-4">
               <CardTitle>
                 <span className="mr-2">Revenue</span>
                 <span className="text-sm font-normal text-stone-500">

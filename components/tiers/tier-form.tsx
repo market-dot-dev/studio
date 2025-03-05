@@ -249,7 +249,7 @@ const StandardCheckoutForm = ({
     <div>
       {" "}
       <div className="mb-4">
-        <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+        <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
           Contract
         </label>
         <Select
@@ -269,7 +269,7 @@ const StandardCheckoutForm = ({
       </div>
       <div className="mb-4">
         <div className="mb-4">
-          <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
             Billing type
           </label>
           <Select
@@ -290,7 +290,7 @@ const StandardCheckoutForm = ({
         </div>
 
         <div className="mb-4">
-          <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
             Monthly Price (USD)
           </label>
           <div className="flex gap-2">
@@ -335,14 +335,14 @@ const StandardCheckoutForm = ({
                   }
                 }}
               />
-              <label className="mb-0.5 flex items-center text-sm font-medium text-gray-900 dark:text-white">
+              <label className="mb-1 flex items-center text-sm font-medium text-gray-900 dark:text-white">
                 Offer Annual Plan
               </label>
             </div>
 
             {annualPlanEnabled && (
               <div className="mb-4">
-                <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+                <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
                   Annual Price &nbsp;
                 </label>
                 <NumberInput
@@ -392,14 +392,14 @@ const StandardCheckoutForm = ({
                 checked={trialEnabled}
                 onChange={(e) => setTrialEnabled(e.target.checked)}
               />
-              <label className="mb-0.5 flex items-center text-sm font-medium text-gray-900 dark:text-white">
+              <label className="mb-1 flex items-center text-sm font-medium text-gray-900 dark:text-white">
                 Offer Trial Period
               </label>
             </div>
 
             {trialEnabled && (
               <div className="mb-4">
-                <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+                <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
                   Trial Length (Days)
                 </label>
                 <NumberInput
@@ -572,7 +572,7 @@ export default function TierForm({
       <div className="mt-4 grid grid-cols-1 gap-8 pb-20 md:grid-cols-3">
         <div className="space-y-6 md:col-span-2">
           <div className="mb-4">
-            <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
               Checkout Type
             </label>
             <CheckoutTypeSelectionInput
@@ -588,7 +588,7 @@ export default function TierForm({
               featuresChanged={featuresChanged}
             />
 
-            <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
               Package Name
             </label>
             <TextInput
@@ -602,7 +602,7 @@ export default function TierForm({
             {errors["name"] ? <p className="text-sm text-stone-500">{errors["name"]}</p> : null}
           </div>
           <div className="mb-4">
-            <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
               Package Tagline
             </label>
             <TextInput
@@ -615,7 +615,7 @@ export default function TierForm({
             />
           </div>
           <div className="mb-4">
-            <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
               Package Description
             </label>
             <Textarea
@@ -628,7 +628,7 @@ export default function TierForm({
             />
           </div>
           <div className="mb-4">
-            <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
               Channels
             </label>
             <ChannelsSelectionInput
@@ -658,10 +658,10 @@ export default function TierForm({
             />
           )}
           <div className="mb-4">
-            <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
               Package Status
             </label>
-            <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
               <div className="flex gap-2">
                 {canPublishLoading && (
                   <>
@@ -715,7 +715,7 @@ export default function TierForm({
           </div>
           {hasActiveFeatures && (
             <div className="mb-4">
-              <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
                 Features
               </label>
               <Card className="p-2">
@@ -742,7 +742,7 @@ export default function TierForm({
           {isAdmin() && tier?.id && (
             <>
               <div className="mb-4">
-                <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+                <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
                   Admin Panel
                 </label>
                 <Card className="p-2">
@@ -754,7 +754,7 @@ export default function TierForm({
           )}
           {tier.checkoutType === "gitwallet" && (
             <div className="mb-4">
-              <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
                 Package Version History
               </label>
 
@@ -859,7 +859,7 @@ export default function TierForm({
 
         {/* Preview Section */}
         <div className="mb-auto text-center md:w-[300px]">
-          <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
+          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
             Preview
           </label>
           <TierCard
