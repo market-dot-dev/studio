@@ -17,7 +17,7 @@ const badgeVariants = cva(
         default:
           "border-transparent bg-primary !text-primary-foreground shadow",
         secondary:
-          "border-transparent bg-stone-200 !text-stone-700",
+          "border-transparent bg-stone-200 !text-stone-600",
         success:
           "border-transparent bg-marketing-swamp !text-primary-foreground shadow",
         destructive:
@@ -25,8 +25,8 @@ const badgeVariants = cva(
         outline: "text-foreground",
       },
       size: {
-        default: "py-1 px-2.5 text-xs rounded-md",
-        sm: "py-0.5 px-1.5 text-xxs tracking-[-0.02em] rounded",
+        default: "py-1 px-2 text-xs rounded-md",
+        sm: "py-0.5 px-1 text-xxs tracking-[-0.02em] rounded",
       },
     },
     defaultVariants: {

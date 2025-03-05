@@ -36,7 +36,7 @@ export default function RestoreOnboarding(): JSX.Element {
   return (
     <div className="w-1/2">
       <Card className="p-6">
-        <Badge variant="success" className="mb-1.5 me-2">
+        <Badge variant="secondary" className="mb-1.5 me-2">
           For debugging purposes only
         </Badge>
         <h2 className="text-xl font-bold">Restore Onboarding State</h2>
