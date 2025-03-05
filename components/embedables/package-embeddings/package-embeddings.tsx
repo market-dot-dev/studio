@@ -10,9 +10,14 @@ import {
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 import { useState, useEffect } from "react";
 import { TierWithFeatures } from "@/app/services/TierService";
-import embeddables from "@/components/site/embedables";
+import embeddables from "@/components/site/embedables/index";
 import DashedCard from "@/components/common/dashed-card";
-import { Tooltip } from "@/components/common/tooltip";
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipProvider,
+  TooltipContent,
+} from "@/components/ui/tooltip";
 
 export default function PackageEmbeddings({
   site,
@@ -48,20 +53,27 @@ export default function PackageEmbeddings({
   return (
     <div className="flex w-full flex-col gap-3">
       <h2 className="text-xl font-bold">Restore Onboarding State</h2>
-      <div className="flex flex-col w-full gap-12">
+      <div className="flex w-full flex-col gap-12">
         <Tabs defaultValue="preview" className="w-full">
           <div className="flex items-center justify-between">
             <TabsList variant="solid">
               <TabsTrigger value="preview">Preview</TabsTrigger>
-              <Tooltip
-                content="Select packages in settings first"
-                className={selectedTiers.length > 0 ? "hidden" : "block"}
-                side="bottom"
-              >
-                <TabsTrigger value="code" disabled={selectedTiers.length === 0}>
-                  Code
-                </TabsTrigger>
-              </Tooltip>
+              {selectedTiers.length > 0 ? (
+                <TabsTrigger value="code">Code</TabsTrigger>
+              ) : (
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger className="cursor-default">
+                      <TabsTrigger value="code" disabled>
+                        Code
+                      </TabsTrigger>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      Select packages in settings first
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              )}
             </TabsList>
             <EmbeddingsSettingsDropdown
               darkMode={darkmode}
@@ -83,7 +95,7 @@ export default function PackageEmbeddings({
                         src={`/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`}
                       />
                     </a>
-                  ) : (
+                  ) : embeddables?.tiers?.preview ? (
                     <embeddables.tiers.preview
                       site={site}
                       settings={{
@@ -93,6 +105,8 @@ export default function PackageEmbeddings({
                       tiers={selectedTiers}
                       hasActiveFeatures={false}
                     />
+                  ) : (
+                    <div>Preview component not available</div>
                   )}
                 </DashedCard>
               </div>
