@@ -58,7 +58,7 @@ async function customMiddleware(req: NextRequest) {
   // exempt from middleware rewrites
   if (
     url.pathname.startsWith("/monitoring") ||
-    url.pathname.startsWith("/design")
+    url.pathname.startsWith("/api/users/verify")
   ) {
     return NextResponse.next();
   }
