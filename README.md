@@ -5,7 +5,7 @@ market.dev is a commerce platform for developers.
 - Clone this repo
 - Run `pnpm install`
 - Run `pnpm dev`
-- Go To http://store.local:3000 (See Hosts file instructions below)
+- Go To http://market.local:3000 (See Hosts file instructions below)
 
 ## Deploying
 
@@ -72,12 +72,61 @@ pnpm prisma db push
 pnpm sync:services
 ```
 
-6. Set up hosts
+5. Setup Nginx 
+
+We use a reverse proxy in production, which sends traffic from [market.dev](https://market.dev) to our [NextJS app](https://github.com/market-dot-dev/store), and for [explore.market.dev](https://explore.market.dev) to this app. We use a similar reverse proxy in development, pointing to [market.local](http://market.local) and [explore.market.local](http://explore.market.local). This is only required if you're running both apps locally (required for shared login). If not, you can skip and just run it on `localhost:4000`. The easiest way to get Nginx running (assuming you're on a Mac) is with Brew:
+
+i. Install Nginx via Homebrew
+```
+brew install nginx
+brew services start nginx
+```
+
+ii. Create a server config file at `/opt/homebrew/etc/nginx/servers/market.conf`, and add the following:
 
 ```
-127.0.0.1 store.local
-127.0.0.1 app.store.local
-127.0.0.1 YOUR_GITHUB_USERNAME_OR_SUBDOMAIN.store.local
+server {
+    listen 80;
+    server_name market.local YOUR_GITHUB_USERNAME.market.local app.market.local;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+
+server {
+    listen 80;
+    server_name explore.market.local;
+
+    location / {
+        proxy_pass http://localhost:4000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    }
+}
+```
+
+iii. Verify things are running:
+
+```
+nginx -t
+brew services list 
+sudo nginx -s reload
+```
+
+6. Set up hosts (`/etc/hosts` on a mac)
+
+```
+127.0.0.1       market.local
+127.0.0.1       app.market.local
+127.0.0.1       YOUR_GITHUB_USERNAME_OR_SUBDOMAIN.market.local
+127.0.0.1       explore.market.local
+255.255.255.255 broadcasthost
+::1             localhost
 ```
 
 7. Launch the server:
