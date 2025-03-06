@@ -1,7 +1,8 @@
 "use client";
-import { TextInput, Textarea, Button } from "@tremor/react";
+import { TextInput, Textarea } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { User } from "@prisma/client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { toast } from "sonner";
 
@@ -77,7 +78,11 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
             />
           </div>
 
-          <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>
+          <Button 
+            loading={isSaving} 
+            loadingText="Saving Changes"
+            onClick={saveChanges}
+          >
             Save Changes
           </Button>
         </div>

@@ -1,8 +1,11 @@
 'use client';
+
+import { useState, useEffect, useCallback } from "react";
 import { useModal } from "@/components/modal/provider";
-import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; import { useState, useEffect, useCallback } from "react";
+import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; 
+import { NumberInput, TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Media as DBMedia } from "@prisma/client";
-import { Button,  NumberInput, TextInput } from "@tremor/react";
 import { format } from 'date-fns'
 
 import { useDropzone } from 'react-dropzone';
@@ -171,10 +174,10 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                         : null}
                     </p>
                     <Button
-                      color="red"
-                      size="xs"
+                      size="sm"
+                      variant="destructive"
                       loading={isDeleting}
-                      disabled={isDeleting}
+                      loadingText="Deleting"
                       onClick={deleteSelected}
                     >
                       Delete

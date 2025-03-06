@@ -1,7 +1,7 @@
 'use client'
 
 import { Lead } from "@prisma/client";
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import LeadItem from "./lead-item";
 import { useCallback, useState } from "react";
@@ -41,10 +41,13 @@ export default function ShortlistedLeads({ leads : loadedLeads }: { leads: Lead[
                     <div className="flex flex-col absolute top-10 right-10">
                         
                         <Button
+                            variant="outline"
                             loading={isRemoving}
-                            disabled={isRemoving}
+                            loadingText="Removing"
                             onClick={() => removeLead(lead.id)} 
-                        >Remove</Button>
+                        >
+                            Remove
+                        </Button>
                     </div>
                 </Card>
             ))}

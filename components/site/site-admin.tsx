@@ -5,16 +5,15 @@ import { Badge } from "@/components/ui/badge";
 import CreatePageButton from "@/components/create-page-button";
 import Pages from "@/components/pages";
 import PageHeading from "@/components/common/page-heading";
-import PrimaryButton from "@/components/common/link-button";
 import { ExternalLinkChip } from "@/components/common/external-link";
-
 import { formatDistanceToNow } from "date-fns";
-
 import { getSiteAndPages } from "@/app/services/SiteService";
 import { Page, Site } from "@prisma/client";
 import { useEffect, useState } from "react";
 import PreviewSection from "./preview-section";
 import { getRootUrl } from "@/lib/domain";
+import Link from "next/link";
+import { buttonVariants } from "../ui/button";
 
 type SiteData = Partial<Site> & {
   pages: Page[];
@@ -102,10 +101,7 @@ export default function SiteAdmin({ id }: { id: string }) {
               </p>
             </div>
             <div className="mt-auto">
-              <PrimaryButton
-                label="Edit Homepage"
-                href={`/page/${siteData.homepageId}`}
-              />
+              <Link href={`/page/${siteData.homepageId}`} className={buttonVariants({ variant: 'outline' })}>Edit Homepage</Link>
             </div>
           </div>
         </div>

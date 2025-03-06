@@ -6,6 +6,7 @@ import { Check, Copy, FileCode2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { format as prettierFormat } from "prettier/standalone";
 import * as parserHtml from "prettier/plugins/html";
+import { Button } from "@/components/ui/button";
 
 interface CodeBlockProps {
   code: string;
@@ -73,10 +74,12 @@ export default function CodeBlock({
             <FileCode2 className="h-4 w-4 text-zinc-400" />
             <span className="font-mono text-sm text-zinc-400">{fileName}</span>
           </div>
-          <button
-            onClick={copyToClipboard}
-            className="relative text-zinc-400 transition-colors hover:text-zinc-300"
+          <Button
+            variant="ghost"
+            size="icon"
             aria-label="Copy code"
+            className="relative text-zinc-400 transition-colors hover:text-zinc-300 hover:bg-white/15"
+            onClick={copyToClipboard}
           >
             <div className="p-2">
               <div
@@ -89,14 +92,14 @@ export default function CodeBlock({
               </div>
               <div
                 className={cn(
-                  "absolute inset-0 p-2 transition-all",
+                  "absolute inset-0 -left-0.5 -top-px p-2 transition-all",
                   copied ? "scale-100 opacity-100" : "scale-50 opacity-0",
                 )}
               >
                 <Check className="h-4 w-4 text-green-500" />
               </div>
             </div>
-          </button>
+          </Button>
         </div>
       )}
       <Highlight

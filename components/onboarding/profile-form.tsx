@@ -1,6 +1,7 @@
 import Image from "next/image";
 import clsx from "clsx";
-import { TextInput, Button } from "@tremor/react";
+import { TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { ImageIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { Site, User } from "@prisma/client";
@@ -205,13 +206,15 @@ export default function ProfileForm({
                     width={80}
                     className="h-20 w-auto rounded shadow-sm ring-1 ring-black/10"
                   />
-                  <button
+                  <Button
                     type="button"
+                    size="sm"
+                    variant="outline"
                     onClick={handleFilePicker}
                     className="mt-4 text-xs text-gray-500 underline"
                   >
                     Pick another image
-                  </button>
+                  </Button>
                 </div>
               ) : (
                 <div className="mx-auto flex flex-col items-center">
@@ -220,13 +223,14 @@ export default function ProfileForm({
                     <p>Drag & drop a .png or .jpg</p>
                     <p>
                       or{" "}
-                      <button
+                      <Button
                         type="button"
+                        variant="link"
                         onClick={handleFilePicker}
                         className="cursor-pointer underline"
                       >
                         pick an image
-                      </button>
+                      </Button>
                     </p>
                   </div>
                 </div>
@@ -243,10 +247,8 @@ export default function ProfileForm({
 
         <div className="flex w-full justify-end pt-4">
           <Button
-            className="bg-gray-900 text-white hover:bg-gray-800"
             type="submit"
             loading={isLoading}
-            disabled={isLoading}
           >
             Next
           </Button>

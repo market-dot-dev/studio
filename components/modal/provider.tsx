@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import Modal from ".";
 import { ReactNode, createContext, useContext, useEffect, useState } from "react";
 import { X } from "lucide-react";
@@ -52,15 +52,25 @@ export function ModalProvider({ children }: { children: ReactNode }) {
     <ModalContext.Provider value={{ show, hide }}>
       {children}
       {showModal && (
-        <Modal showModal={showModal} setShowModal={setShowModal} ignoreFocusTrap={ignoreFocusTrap}>
-          <div className={"bg-white border rounded-md overflow-auto shadow-lg flex flex-col items-stretch " + modalClasses}>
-            <div className=" bg-stone-100 h-12 border border-x-0 gap-4 flex p-4 justify-between items-center">
+        <Modal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          ignoreFocusTrap={ignoreFocusTrap}
+        >
+          <div
+            className={
+              "flex flex-col items-stretch overflow-auto rounded-md border bg-white shadow-lg " +
+              modalClasses
+            }
+          >
+            <div className="flex h-12 items-center justify-between gap-4 border border-x-0 bg-stone-100 p-4">
               {modalHeader}
-              <Button onClick={hide} icon={X} variant="light" />
+              <Button size="icon" variant="ghost" onClick={hide}>
+                <X />
+              </Button>
             </div>
             {modalContent}
           </div>
-          
         </Modal>
       )}
     </ModalContext.Provider>

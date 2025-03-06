@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Button, Callout } from "@tremor/react";
+import { Callout } from "@tremor/react";
+import { Button } from "@/components/ui/button";
+
 import { Card } from "@/components/ui/card";
 import { User } from "@prisma/client";
 
@@ -102,7 +104,6 @@ export default function EmailPreviewStep({
           onClick={sendEmails}
           disabled={sending}
           loading={sending}
-          color="green"
           className="mt-2"
         >
           Send Emails

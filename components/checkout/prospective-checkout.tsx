@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import SectionHeader from "./section-header";
-import { Button, TextInput, Textarea } from "@tremor/react";
+import { TextInput, Textarea } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Tier } from "@prisma/client";
@@ -84,12 +85,12 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
             </div>
             <div className="items-center">
               <Button
-                disabled={isSubmitting}
                 type="submit"
                 className="w-full"
                 loading={isSubmitting}
+                disabled={isSubmitting}
               >
-                Get In Touch →
+                Get in touch
               </Button>
             </div>
           </form>

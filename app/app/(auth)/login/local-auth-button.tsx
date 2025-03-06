@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import LoadingDots from "@/components/icons/loading-dots";
+import { Button } from "@/components/ui/button";
 
 export default function LocalAuthButton() {
   const [loading, setLoading] = useState(false);
@@ -43,7 +43,10 @@ export default function LocalAuthButton() {
   return (
     <form onSubmit={handleSignIn} className="space-y-4">
       <div>
-        <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="username"
+          className="block text-sm font-medium text-gray-700"
+        >
           GitHub Username
         </label>
         <input
@@ -58,7 +61,10 @@ export default function LocalAuthButton() {
         />
       </div>
       <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="password"
+          className="block text-sm font-medium text-gray-700"
+        >
           Password
         </label>
         <input
@@ -72,17 +78,9 @@ export default function LocalAuthButton() {
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className={`group my-2 flex w-full items-center justify-center rounded-md border border-stone-200 px-4 py-2 text-sm font-medium text-stone-600 transition-colors duration-75 focus:outline-none ${
-          loading
-            ? "cursor-not-allowed bg-stone-50 dark:bg-stone-800"
-            : "bg-white hover:bg-stone-50 active:bg-stone-100 dark:bg-black dark:hover:border-white dark:hover:bg-black"
-        }`}
-      >
-        {loading ? <LoadingDots color="#A8A29E" /> : "Sign in with Local Auth"}
-      </button>
+      <Button type="submit" disabled={loading} loading={loading} className="w-full">
+        Sign in with Local Auth
+      </Button>
     </form>
   );
 }

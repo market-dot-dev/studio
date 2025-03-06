@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { deletePost } from "@/lib/actions";
+import { Button } from "@/components/ui/button";
 import va from "@vercel/analytics";
 
 export default function DeletePostForm({ postName }: { postName: string }) {
@@ -60,16 +61,8 @@ export default function DeletePostForm({ postName }: { postName: string }) {
 function FormButton() {
   const { pending } = useFormStatus();
   return (
-    <button
-      className={cn(
-        "flex h-8 w-32 items-center justify-center space-x-2 rounded-md border text-sm transition-all focus:outline-none sm:h-10",
-        pending
-          ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
-          : "border-red-600 bg-red-600 text-white hover:bg-white hover:text-red-600 dark:hover:bg-transparent",
-      )}
-      disabled={pending}
-    >
-      {pending ? <LoadingDots color="#808080" /> : <p>Confirm Delete</p>}
-    </button>
+    <Button variant="destructive" loading={pending} loadingText="Deleting">
+      Delete Post
+    </Button>
   );
 }

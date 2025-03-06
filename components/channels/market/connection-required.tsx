@@ -2,7 +2,7 @@
 
 import { validateMarketExpert } from "@/lib/market";
 import { User } from "@prisma/client";
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { useState } from "react";
@@ -32,7 +32,7 @@ export default function ConnectionRequired({ user }: { user: User }) {
   };
 
   return (
-    <div className="from-muted/50 to-muted/30 relative space-y-8 rounded-lg border bg-gradient-to-b p-8">
+    <div className="relative space-y-8 rounded-lg border bg-gradient-to-b from-muted/50 to-muted/30 p-8">
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -44,13 +44,13 @@ export default function ConnectionRequired({ user }: { user: User }) {
         <h2 className="text-4xl font-bold tracking-tight">
           Get listed on market.dev
         </h2>
-        <p className="text-muted-foreground max-w-2xl text-xl">
+        <p className="max-w-2xl text-xl text-muted-foreground">
           Join a marketplace of services & resources from top open source
           developers in any ecosystem.
         </p>
       </div>
 
-      <Card className="bg-background/95 relative overflow-hidden border backdrop-blur">
+      <Card className="relative overflow-hidden border bg-background/95 backdrop-blur">
         <Image
           src="/market-dot-dev.png"
           alt="Market.dev"
@@ -61,12 +61,11 @@ export default function ConnectionRequired({ user }: { user: User }) {
 
       <div className="relative flex flex-col gap-4 sm:flex-row">
         <Button
-          size="lg"
-          className="gap-2 bg-black font-medium"
           loading={isConnecting}
+          loadingText="Connecting to market.dev"
           onClick={() => handleConnect()}
         >
-          Connect to market.dev now
+          Connect to market.dev
         </Button>
       </div>
     </div>

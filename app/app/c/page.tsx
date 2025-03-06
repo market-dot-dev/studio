@@ -6,7 +6,6 @@ import ChargeService from "@/app/services/charge-service";
 import SubscriptionService from "@/app/services/SubscriptionService";
 import { Charge, Feature, Contract } from "@prisma/client";
 import ContractService from "@/app/services/contract-service";
-
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
@@ -215,9 +214,6 @@ const SubscriptionCard = async ({
           {subscription.state !== "cancelled" && (
             <CancelSubscriptionButton subscriptionId={subscription.id} />
           )}
-          {/* <Link href={`/subscriptions/${subscription.id}`}>
-          <Button>Tier Details</Button>
-        </Link> */}
         </div>
       </div>
     </Card>

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  Button,
   NumberInput,
   Callout,
   TextInput,
@@ -17,6 +16,7 @@ import {
   TableCell,
 } from "@tremor/react";
 import { Badge } from "@/components/ui/badge";
+import { Button, buttonVariants } from "@/components/ui/button";
 import Tier, { newTier } from "@/app/models/Tier";
 import { subscriberCount } from "@/app/services/SubscriptionService";
 import {
@@ -37,7 +37,6 @@ import { Card } from "@/components/ui/card"
 import { Channel, Contract, Feature, User } from "@prisma/client";
 import LoadingDots from "@/components/icons/loading-dots";
 import useCurrentSession from "@/app/hooks/use-current-session";
-import LinkButton from "../common/link-button";
 import { Check, Copy } from "lucide-react";
 import TierDeleteButton from "./tier-delete-button";
 import { getRootUrl } from "@/lib/domain";
@@ -165,14 +164,15 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
               value={link}
             />
             <Button
-              icon={isCopied ? Check : Copy}
+              variant="outline"
               onClick={copyToClipboard}
               disabled={isCopied}
               className={
-                `rounded-l-none ` +
+                `rounded-l-none h-9 ` +
                 `${isCopied ? "cursor-not-allowed opacity-50" : ""}`
               }
             >
+              {isCopied ? <Check /> : <Copy />}
               {isCopied ? "Copied!" : ""}
             </Button>
           </div>
@@ -183,9 +183,7 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
           available for sale.
         </p>
       )}
-      {errorMessage && (
-        <p className="mt-2 text-red-500">{errorMessage}</p>
-      )}
+      {errorMessage && <p className="mt-2 text-red-500">{errorMessage}</p>}
     </div>
   );
 };
@@ -217,12 +215,11 @@ const DuplicateTierButton = ({ tierId }: { tierId: string }) => {
 
   return (
     <Button
-      variant="secondary"
+      variant="outline"
       onClick={handleDuplicate}
-      disabled={isLoading}
       loading={isLoading}
-      icon={Copy}
     >
+      <Copy />
       Duplicate
     </Button>
   );
@@ -747,7 +744,7 @@ export default function TierForm({
                 </label>
                 <Card className="p-2">
                   View admin-only options:{" "}
-                  <LinkButton href={`/admin/tiers/${tier.id}`}>Go</LinkButton>
+                  <Link href={`/admin/tiers/${tier.id}`} className={buttonVariants({ variant: "outline" })}>Go</Link>
                 </Card>
               </div>
             </>

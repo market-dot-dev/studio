@@ -2,7 +2,7 @@
 
 import useCurrentSession from "@/app/hooks/use-current-session";
 import PageHeading from "@/components/common/page-heading";
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 

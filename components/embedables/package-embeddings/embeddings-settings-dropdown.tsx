@@ -9,7 +9,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/common/dropdown";
-import { Button, Switch } from "@tremor/react";
+import { Switch } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Package, Settings, Moon, Sun, PenLine } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useModal } from "@/components/modal/provider";
@@ -33,7 +34,9 @@ export default function EmbeddingsSettingsDropdown({
 }) {
   const { show, hide } = useModal();
 
-  const header = <h2 className="text-xl font-bold">Restore Onboarding State</h2>;
+  const header = (
+    <h2 className="text-xl font-bold">Select packages to embed</h2>
+  );
   const atleastOneTierSelected = selectedTiers.length > 0;
 
   const showPublishedPackagesSelectionModal = () => {
@@ -55,11 +58,9 @@ export default function EmbeddingsSettingsDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="hover:bg-marketing-primary-hover bg-marketing-primary text-white">
-          <span className="flex items-center gap-x-2">
-            <Settings size={18} />
-            <span>Embed Settings</span>
-          </span>
+        <Button>
+          <Settings />
+          Embed Settings
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

@@ -1,5 +1,7 @@
 "use client";
-import { TextInput, Button } from "@tremor/react";
+
+import { TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Site } from "@prisma/client";
 import Link from "next/link";
 import { useState } from "react";
@@ -96,7 +98,11 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
           />
         </div>
 
-        <Button type="submit" loading={isSaving} disabled={isSaving}>
+        <Button 
+          type="submit" 
+          loading={isSaving}
+          loadingText="Saving Changes"
+        >
           Save Changes
         </Button>
       </div>

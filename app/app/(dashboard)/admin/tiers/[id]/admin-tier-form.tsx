@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { TierWithFeatures, updateApplicationFee } from '@/app/services/TierService';
-import { Button, NumberInput } from "@tremor/react";
+import { NumberInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { GLOBAL_APPLICATION_FEE_DOLLARS, GLOBAL_APPLICATION_FEE_PCT } from '@/app/config/stripe-fees';
 import { calculateApplicationFee } from '@/app/services/StripeService';
 

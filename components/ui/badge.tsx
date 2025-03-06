@@ -16,17 +16,16 @@ const badgeVariants = cva(
       variant: {
         default:
           "border-transparent bg-primary !text-primary-foreground shadow",
-        secondary:
-          "border-transparent bg-stone-200 !text-stone-600",
+        secondary: "border-transparent bg-stone-200 !text-stone-600",
         success:
           "border-transparent bg-marketing-swamp !text-primary-foreground shadow",
         destructive:
           "border-transparent bg-destructive !text-destructive-foreground shadow",
-        outline: "text-foreground",
+        outline: "!text-stone-600",
       },
       size: {
-        default: "py-1 px-2 text-xs rounded-md",
-        sm: "py-0.5 px-1 text-xxs tracking-[-0.02em] rounded",
+        default: "py-1 px-2 text-xs rounded",
+        sm: "py-0.5 px-1 text-xxs tracking-[-0.02em] rounded-sm",
       },
     },
     defaultVariants: {
@@ -39,7 +38,7 @@ const badgeVariants = cva(
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {
-  tooltipText?: string;
+  tooltip?: string;
   tooltipSide?: "top" | "right" | "bottom" | "left";
   tooltipAlign?: "start" | "center" | "end";
 }
@@ -62,14 +61,14 @@ function Badge({
   className, 
   variant, 
   size,
-  tooltipText, 
+  tooltip, 
   tooltipSide = "top", 
   tooltipAlign = "center", 
   ...props 
 }: BadgeProps) {
   const badgeClasses = cn(badgeVariants({ variant, size }), className);
   
-  if (tooltipText) {
+  if (tooltip) {
     return (
       <TooltipProvider>
         <StyledTooltip className={badgeClasses}>
@@ -77,7 +76,7 @@ function Badge({
             <div className="inline-flex items-center" {...props} />
           </TooltipTrigger>
           <TooltipContent side={tooltipSide} align={tooltipAlign}>
-            {tooltipText}
+            {tooltip}
           </TooltipContent>
         </StyledTooltip>
       </TooltipProvider>

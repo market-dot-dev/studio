@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import stripe from "stripe";
 import StripeService, { migrateCustomer } from "@/app/services/StripeService";

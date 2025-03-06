@@ -1,6 +1,8 @@
 'use client'
-import { TableRow, TableCell, Button } from '@tremor/react';
+
 import { useState } from "react";
+import { TableRow, TableCell } from '@tremor/react';
+import { Button } from "@/components/ui/button";
 
 export default function Subscription({ subscription }: { subscription: any }) {
     const [isDeleting, setIsDeleting] = useState(false);
@@ -28,7 +30,7 @@ export default function Subscription({ subscription }: { subscription: any }) {
             {deleted ? null : <TableRow >
                 <TableCell>{subscription.tierVersion.tier.name}</TableCell>
                 <TableCell>
-                    <Button color='red' onClick={onDelete} disabled={isDeleting} loading={isDeleting}>Cancel</Button>
+                    <Button onClick={onDelete} disabled={isDeleting} loading={isDeleting}>Cancel</Button>
                 </TableCell>
             </TableRow>}
         </>

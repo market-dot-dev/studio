@@ -1,6 +1,7 @@
 "use client";
 
-import { TextInput, Button } from "@tremor/react";
+import { TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
@@ -63,7 +64,12 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
           />
         </div>
 
-        <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>
+        <Button 
+          loading={isSaving} 
+          loadingText="Saving Changes"
+          disabled={isSaving} 
+          onClick={saveChanges}
+        >
           Save Changes
         </Button>
       </div>

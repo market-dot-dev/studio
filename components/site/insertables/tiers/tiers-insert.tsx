@@ -1,7 +1,7 @@
 'use client';
 import { useModal } from "@/components/modal/provider";
 import { useState, useEffect, useCallback } from "react";
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { getPublishedTiers } from "@/app/services/TierService";
 import LoadingSpinner from "@/components/form/loading-spinner";
 

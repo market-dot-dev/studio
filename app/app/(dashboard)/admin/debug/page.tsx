@@ -1,11 +1,12 @@
 "use server";
 
+import Link from 'next/link';
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
 import RoleSwitcher from "@/components/user/role-switcher";
 import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { Card } from "@/components/ui/card"
-import LinkButton from "@/components/common/link-button";
+import { buttonVariants } from '@/components/ui/button';
 
 const StripeDebug = async () => {
   const user = await UserService.getCurrentUser();
@@ -28,10 +29,10 @@ const StripeDebug = async () => {
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
-      <div className="flex justify-between w-full">
+      <div className="flex w-full justify-between">
         <PageHeading title="Debug Tools" />
       </div>
-      
+
       <Card>
         <Table>
           <TableHead>
@@ -45,7 +46,9 @@ const StripeDebug = async () => {
               <TableRow key={link.href}>
                 <TableCell>{link.name}</TableCell>
                 <TableCell>
-                  <LinkButton href={link.href} label="View" className="w-24" />
+                  <Link href={link.href} className={buttonVariants({ variant: 'outline', size: 'sm' })}>
+                    View
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { signIn } from 'next-auth/react';
-import { Button } from '@tremor/react';
+import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation';
 
@@ -25,7 +24,7 @@ const ImpersonateButton = ({ userId } : { userId : string}) => {
   };
 
   return (
-    <Button size="xs" onClick={handleImpersonation} disabled={loading}>
+    <Button size="sm" onClick={handleImpersonation} disabled={loading}>
       {loading ? 'Impersonating...' : 'Impersonate'}
     </Button>
   );

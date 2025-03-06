@@ -26,16 +26,12 @@ export default async function LoginPage() {
               <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
             }
           >
-            
             <CustomerLogin />
-            
           </Suspense>
           {LOCAL_AUTH_AVAILABLE &&
             <Suspense>
               <LoginButton href={'/login/local-auth'} isLoading={false} >
-                <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
-                  Log in with Local Auth
-                </p>
+                Log in with Local Auth
               </LoginButton>
             </Suspense>}
         </div>

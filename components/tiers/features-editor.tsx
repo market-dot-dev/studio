@@ -1,5 +1,5 @@
-import { TextInput, Button, List, ListItem, Switch } from "@tremor/react";
-import { IconButton } from "@radix-ui/themes";
+import { TextInput, List, ListItem, Switch } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
 
 import { FaEdit, FaCheck } from "react-icons/fa";
@@ -35,25 +35,42 @@ function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
     }
 
     return (
-        <ListItem key={index} style={{
-            ...(feature.disconnect ? {opacity: 0.3} : {})
-            }}>
-            {isEditing ? (
-                <TextInput ref={inputRef as any} value={feature.content} onChange={handleChange} onBlur={toggleEditing} className="mr-4"/>
-            ) : (
-                <div onDoubleClick={toggleEditing} className="grow">{feature.content}</div>
-            )}
-            <div>
-                <div className="flex gap-4">
-                    <IconButton size="1" variant="ghost" onClick={toggleEditing}>
-                        { isEditing ? <FaCheck height="14" width="14" /> : <FaEdit height="14" width="14" /> }
-                    </IconButton>
-                    <Switch checked={!feature.disconnect} onChange={() => toggleConnect(index)} />
-                    
-                </div>
-            </div>
-        </ListItem>
-    )
+      <ListItem
+        key={index}
+        style={{
+          ...(feature.disconnect ? { opacity: 0.3 } : {}),
+        }}
+      >
+        {isEditing ? (
+          <TextInput
+            ref={inputRef as any}
+            value={feature.content}
+            onChange={handleChange}
+            onBlur={toggleEditing}
+            className="mr-4"
+          />
+        ) : (
+          <div onDoubleClick={toggleEditing} className="grow">
+            {feature.content}
+          </div>
+        )}
+        <div>
+          <div className="flex gap-4">
+            <Button size="icon" variant="ghost" onClick={toggleEditing}>
+              {isEditing ? (
+                <FaCheck height="14" width="14" />
+              ) : (
+                <FaEdit height="14" width="14" />
+              )}
+            </Button>
+            <Switch
+              checked={!feature.disconnect}
+              onChange={() => toggleConnect(index)}
+            />
+          </div>
+        </div>
+      </ListItem>
+    );
 }
 
 export default function FeaturesEditor({features, setFeatures}: any) : JSX.Element {

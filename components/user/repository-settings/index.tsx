@@ -1,7 +1,8 @@
 'use client'
 import { getInstallationsList, getInstallationRepos, getGithubAppInstallState } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { TextInput, Button, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+import { TextInput, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 
 import { Github, SearchIcon, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
@@ -160,10 +161,12 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                   {filter?.length ? (
                     <div className="absolute right-2 top-2">
                       <Button
-                        variant="light"
-                        icon={XCircle}
+                        size="icon"
+                        variant="secondary"
                         onClick={() => setFilter("")}
-                      />
+                      >
+                        <XCircle />
+                      </Button>
                     </div>
                   ) : null}
                 </div>

@@ -1,7 +1,7 @@
 import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
-import { Button } from "@tremor/react";
+import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import ChargeService from "@/app/services/charge-service";
@@ -22,27 +22,30 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
     <Card className="p-2">
       <div className="flex flex-col space-y-2">
         <div className="flex flex-row justify-between">
-          <div className="flex flex-row space-x-2 items-center">
+          <div className="flex flex-row items-center space-x-2">
             <strong>{maintainer.projectName}</strong>
           </div>
         </div>
 
         <strong>Tier: {tier.name}</strong>
 
-        <p className="text-sm text-stone-500">Status:&nbsp;
-          { status}
+        <p className="text-sm text-stone-500">
+          Status:&nbsp;
+          {status}
         </p>
         <p className="text-sm text-stone-500">Description: {tier.tagline}</p>
-        <p>${tier.price} / {tier.cadence}</p>
+        <p>
+          ${tier.price} / {tier.cadence}
+        </p>
         <p>{charge.tierVersionId}</p>
         <div className="flex flex-row space-x-2">
-          <Link href={`/charges/${charge.id}`}>
-            <Button>Tier Details</Button>
+          <Link href={`/charges/${charge.id}`} className={buttonVariants({ variant: 'default' })}>
+            Tier Details
           </Link>
         </div>
       </div>
     </Card>
-  )
+  );
 }
 
 export default async function SubscriptionsList({ params }: { params: { id: string } }) {

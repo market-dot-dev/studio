@@ -1,6 +1,7 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { Button, SelectItem, Select, TextInput } from "@tremor/react";
+import { SelectItem, Select, TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
@@ -455,7 +456,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         </div>
                     </div>
                     <div className="absolute right-0 top-0 h-full inline-block">
-                        <Button className="rounded-l-none" onClick={handleUrlSearch} disabled={isSearching} loading={isSearching}>Search</Button>
+                        <Button className="rounded-l-none h-9" onClick={handleUrlSearch} disabled={isSearching} loading={isSearching}>Search</Button>
                     </div>
                 </div>
                 
@@ -467,8 +468,15 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                             {repos.map((repo, index) => {
                                 const repoOrgName = gitHubRepoOrgAndName(repo.url);
                                 return (
-                                    <Button size="xs" key={index} className={'rounded-xl py-0 px-2' + (radarId && repo.radarId === radarId ? ' bg-black' : ' bg-gray-600')} onClick={() => handleRepoSelected(index)}>{repoOrgName || repo.name}</Button>
-                                )
+                                  <Button
+                                    key={index}
+                                    size="sm"
+                                    variant={radarId && repo.radarId === radarId ? "default" : "outline"}
+                                    onClick={() => handleRepoSelected(index)}
+                                  >
+                                    {repoOrgName || repo.name}
+                                  </Button>
+                                );
                             })}
                         </div>
                     </div>
@@ -571,7 +579,9 @@ function SearchResult({ lead, isShortlisted, setShortListedLeads }: { lead: Lead
         <div className="absolute right-10 flex flex-col gap-4">
           {isShortlisted && <Badge variant="secondary">Shortlisted</Badge>}
           <Button
+            variant="outline"
             loading={isAddingToShortlist}
+            loadingText="Adding to Shortlist"
             disabled={isShortlisted || isAddingToShortlist}
             onClick={addToShortlist}
           >
@@ -604,55 +614,51 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading, facets
     }, [page])
 
     return (
+      <>
+        <div className="flex items-center justify-start gap-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => changePage(page - 1)}
+            disabled={page === 1 || isLoading}
+          >
+            Prev
+          </Button>
+          <span className="text-sm">
+            Page {page} of {facets ? totalPages : "-"}
+          </span>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => changePage(page + 1)}
+            disabled={page === totalPages || isLoading}
+          >
+            Next
+          </Button>
+        </div>
+        <div className="flex grow items-center justify-end gap-2 lg:justify-center">
+          <input
+            type="number"
+            // enableStepper={false}
+            min={1}
+            max={100}
+            value={inputPage}
+            onChange={(e) => {
+              setInputPage(e.target.valueAsNumber);
+            }}
+            onKeyDown={(e: any) => {
+              if (e.key === "Enter") {
+                handleGoClick();
+              }
+            }}
+            className="w-20 rounded-md border border-gray-300 text-xs"
+            placeholder="Go to page..."
+          />
 
-        <>
-            <div className="flex justify-start items-center gap-2">
-                <Button
-                    size="xs"
-                    onClick={() => changePage(page - 1)}
-                    disabled={page === 1 || isLoading}
-                    className={`${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                    Prev
-                </Button>
-                <span className="text-sm font-medium">Page {page} of {facets ? totalPages : '-'}</span>
-
-                <Button
-                    size="xs"
-                    onClick={() => changePage(page + 1)}
-                    disabled={page === totalPages || isLoading}
-                    className={`${page === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                    Next
-                </Button>
-            </div>
-            <div className="flex justify-end lg:justify-center items-center gap-2 grow">
-
-                <input
-                    type="number"
-                    // enableStepper={false}
-                    min={1}
-                    max={100}
-                    value={inputPage}
-                    onChange={(e) => {
-                        setInputPage(e.target.valueAsNumber)
-                    }}
-                    onKeyDown={(e: any) => {
-                        if (e.key === 'Enter') {
-                            handleGoClick();
-                        }
-                    }}
-                    className="border rounded-md text-xs w-20 border-gray-300"
-                    placeholder="Go to page..."
-                />
-
-                <Button
-                    size="xs"
-                    disabled={isLoading}
-                    onClick={handleGoClick} >
-                    Go to Page
-                </Button>
-            </div>
-        </>
-
-
+          <Button size="sm" disabled={isLoading} onClick={handleGoClick}>
+            Go to Page
+          </Button>
+        </div>
+      </>
     );
 }

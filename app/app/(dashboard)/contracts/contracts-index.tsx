@@ -20,10 +20,10 @@ const ContractRow = ({ contract, currentUser, handleView }: {
   return (
     <TableRow key={contract.id}>
       <TableCell>
-        { ownsContract ? (
-        <Link href={`/contracts/${contract.id}`}>
-          <span className="underline">{contract.name}</span>
-        </Link>
+        {ownsContract ? (
+          <Link href={`/contracts/${contract.id}`}>
+            <span className="underline">{contract.name}</span>
+          </Link>
         ) : (
           <span>{contract.name}</span>
         )}
@@ -31,15 +31,13 @@ const ContractRow = ({ contract, currentUser, handleView }: {
       <TableCell>{contract.description}</TableCell>
       <TableCell>
         <div className="flex flex-row justify-end gap-1">
-          <Link href={`/c/contracts/${contract.id}`} target="_blank">View</Link>
+          <Link href={`/c/contracts/${contract.id}`} target="_blank">
+            View
+          </Link>
           {/* {ownsContract ? (
             <>
-              <Button size='xs' onClick={() => (window.location.href = `/contracts/${contract.id}/edit`)}>Edit</Button>
-              {isDeleting ? (
-                <LoadingDots />
-              ) : (
-                <Button size='xs' color="red" onClick={() => handleDelete(contract.id)} className="ml-2">Delete</Button>
-              )}
+              <Button size='sm' onClick={() => (window.location.href = `/contracts/${contract.id}/edit`)}>Edit</Button>
+              <Button size='sm' variant="destructive" onClick={() => handleDelete(contract.id)} loading={isDeleting} loadingText="Deleting" className="ml-2">Delete</Button>
             </>
           ) : null} */}
         </div>

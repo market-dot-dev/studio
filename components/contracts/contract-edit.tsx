@@ -1,6 +1,7 @@
 "use client";
 
-import { TextInput, Button, Textarea } from "@tremor/react";
+import { TextInput, Textarea } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Contract } from "@prisma/client";
 import Link from "next/link";
 import PageHeading from "@/components/common/page-heading";
@@ -12,7 +13,6 @@ import {
 } from "@/app/services/contract-service";
 import { useRouter } from "next/navigation";
 import Uploader, { Attachment } from "@/components/uploader";
-
 import { FaRegTrashAlt } from "react-icons/fa";
 import ContractDeleteButton from "./contract-delete-button";
 
@@ -109,16 +109,26 @@ export default function ContractEdit({
 
   return (
     <>
-      <div className="flex justify-between w-full items-center">
-        <Link href="/contracts" className="underline">← All Contracts</Link>
-        { editing ? <Link href={`/c/contracts/${contract.id}`} target="_blank" className="underline">View</Link> : null}
+      <div className="flex w-full items-center justify-between">
+        <Link href="/contracts" className="underline">
+          ← All Contracts
+        </Link>
+        {editing ? (
+          <Link
+            href={`/c/contracts/${contract.id}`}
+            target="_blank"
+            className="underline"
+          >
+            View
+          </Link>
+        ) : null}
       </div>
       <PageHeading title={editing ? "Edit Contract" : "Create Contract"} />
       <form>
-        {error && <p className="text-sm text-stone-500 text-red-500">{error?.message}</p>}
-        {info && <p className="text-sm text-stone-500 text-green-500">{info}</p>}
-        <div className="flex flex-col items-start w-full space-y-6">
-          <div className="flex flex-col items-start w-1/2 gap-2">
+        {error && <p className="text-sm text-red-500">{error?.message}</p>}
+        {info && <p className="text-sm text-stone-500">{info}</p>}
+        <div className="flex w-full flex-col items-start space-y-6">
+          <div className="flex w-1/2 flex-col items-start gap-2">
             <label
               htmlFor="name"
               className="block text-sm font-medium text-gray-700"
@@ -133,7 +143,7 @@ export default function ContractEdit({
               onChange={(e) => handleInputChange("name", e.target.value)}
             />
           </div>
-          <div className="flex flex-col items-start w-1/2 gap-2">
+          <div className="flex w-1/2 flex-col items-start gap-2">
             <label
               htmlFor="description"
               className="block text-sm font-medium text-gray-700"
@@ -177,29 +187,32 @@ export default function ContractEdit({
               </span>
             </label>
           </div>
-          {
-            contract.storage === "upload" ? 
+          {contract.storage === "upload" ? (
             <>
-            { contract.attachmentUrl ? 
-              <div className="flex flex-col items-start w-1/2 gap-1">
+              {contract.attachmentUrl ? (
+                <div className="flex w-1/2 flex-col items-start gap-1">
                   <h2 className="text-xl font-semibold">Uploaded File</h2>
-                  <p className="text-sm text-gray-500">
-                    Attachment
-                  </p>
-                <div className="flex flex-col mt-3 mb-1 border items-center justify-center p-8 gap-3 rounded-md border-gray-300 min-h-72">
-                  
-                    <p className="text-sm text-stone-500">{contract.attachmentUrl.split('/').pop()}</p>
-                    <Button size="xs" onClick={handleRemoveAttachment} variant="light" color="red">
+                  <p className="text-sm text-gray-500">Attachment</p>
+                  <div className="mb-1 mt-3 flex min-h-72 flex-col items-center justify-center gap-3 rounded-md border border-gray-300 p-8">
+                    <p className="text-sm text-stone-500">
+                      {contract.attachmentUrl.split("/").pop()}
+                    </p>
+                    <Button
+                      size="icon"
+                      variant="outline"
+                      onClick={handleRemoveAttachment}
+                    >
                       <FaRegTrashAlt />
                     </Button>
-                  
+                  </div>
                 </div>
-              </div>
-             :
-              null 
-            }
-              <div className={"flex flex-col items-start w-1/2 gap-2" + (contract?.attachmentUrl ? ' hidden' : '')}>
-                
+              ) : null}
+              <div
+                className={
+                  "flex w-1/2 flex-col items-start gap-2" +
+                  (contract?.attachmentUrl ? " hidden" : "")
+                }
+              >
                 <Uploader
                   allowedTypes={["pdf"]}
                   acceptTypes="application/pdf"
@@ -211,9 +224,9 @@ export default function ContractEdit({
                 />
               </div>
             </>
-          : null}
+          ) : null}
           {contract.storage === "link" && (
-            <div className="flex flex-col items-start w-1/2 gap-2">
+            <div className="flex w-1/2 flex-col items-start gap-2">
               <label
                 htmlFor="url"
                 className="block text-sm font-medium text-gray-700"
@@ -229,25 +242,29 @@ export default function ContractEdit({
               />
             </div>
           )}
-          <div className="flex items-center justify-between w-full">
-            <Button onClick={handleSubmit} disabled={isSaving || isDeleting || isUploading}>
-              {editing ? "Save Contract" : "Create Contract"}
+          <div className="flex w-full items-center justify-between">
+            <Button
+              onClick={handleSubmit}
+              loading={isSaving || isUploading}
+              disabled={isSaving || isUploading || isDeleting}
+              loadingText={isSaving ? "Saving" : isUploading ? "Uploading" : undefined}
+            >
+              {editing ? "Save" : "Create"}
             </Button>
-            {editing ? 
-            <ContractDeleteButton
-              contractId={contract.id}
-              onConfirm={() => setIsDeleting(true)}
-              onSuccess={() => {
-                setIsDeleting(false);
-                window.location.href = '/contracts';
-              }}
-              onError={(error: any) => {
-                setIsDeleting(false);
-                setError(error as { message: string });
-              }}
-          
-              />: null
-            }
+            {editing ? (
+              <ContractDeleteButton
+                contractId={contract.id}
+                onConfirm={() => setIsDeleting(true)}
+                onSuccess={() => {
+                  setIsDeleting(false);
+                  window.location.href = "/contracts";
+                }}
+                onError={(error: any) => {
+                  setIsDeleting(false);
+                  setError(error as { message: string });
+                }}
+              />
+            ) : null}
           </div>
         </div>
       </form>

@@ -4,7 +4,9 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import Link from "next/link";
 import RevenueLineChart from "./revenue-line-chart";
-import SecondaryButton from "@/components/common/secondary-button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
 
 export default function DashboardCharts({ customers }: { customers: CustomerWithChargesAndSubscriptions[] }) {
 
@@ -211,8 +213,15 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
             </Badge>
           )}
         </div>
-        <Link href="/reports" className="ml-auto">
-          <SecondaryButton label="More Details" />
+        <Link
+          href="/reports"
+          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "group gap-0.5 pr-1")}
+        >
+          More Details
+          <ChevronRight
+            size={10}
+            className="inline-block transition-transform group-hover:translate-x-px"
+          />
         </Link>
       </div>
       <div className="flex max-w-screen-xl flex-col space-y-4">
@@ -227,13 +236,13 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex space-x-3 truncate items-baseline justify-start">
-                <Metric className="font-cal leading-none">
+              <div className="flex items-baseline justify-start space-x-3 truncate">
+                <Metric className="leading-none tracking-tight">
                   {totalNewCustomers}
                 </Metric>
               </div>
               <BarChart
-                className="mt-4 h-72"
+                className="mt-3 h-72"
                 data={customerTotals}
                 index="date"
                 categories={[
@@ -265,8 +274,8 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex space-x-3 truncate items-baseline justify-start">
-                <Metric className="font-cal">${`${totalRevenue}`}</Metric>
+              <div className="flex items-baseline justify-start space-x-3 truncate">
+                <Metric className="tracking-tight">${`${totalRevenue}`}</Metric>
               </div>
 
               <RevenueLineChart

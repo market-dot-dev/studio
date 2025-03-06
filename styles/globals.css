@@ -14,6 +14,20 @@
   }
 }
 
+/* Custom spin animation for loading spinners */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin 2s linear infinite;
+}
+
 .ProseMirror .is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
@@ -160,7 +174,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --muted-foreground: 25 5.3% 44.7%;
     --accent: 60 4.8% 95.9%;
     --accent-foreground: 24 9.8% 10%;
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 345 82% 50%;
     --destructive-foreground: 60 9.1% 97.8%;
     --border: 20 5.9% 90%;
     --input: 20 5.9% 90%;

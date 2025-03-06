@@ -10,7 +10,7 @@ import {
 } from "@tremor/react";
 import Link from "next/link";
 import { Card } from "@/components/ui/card";
-import LinkButton from "@/components/common/link-button";
+import { buttonVariants } from "@/components/ui/button";
 import SubscriptionStatusBadge from "../subscription-state";
 import UserService from "@/app/services/UserService";
 import { formatCurrency, formatDate } from "@/lib/utils";
@@ -93,11 +93,12 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
                 <Link href={`mailto:${customer.email}`} className="underline">
                   {customer.email}
                 </Link>
-                <LinkButton
+                <Link
                   href={`mailto:${customer.email}`}
-                  label="Contact"
-                  className="ms-4"
-                />
+                  className={`ms-4 ${buttonVariants({ variant: "outline" })}`}
+                >
+                  Contact
+                </Link>
               </TableCell>
             </TableRow>
           </TableBody>

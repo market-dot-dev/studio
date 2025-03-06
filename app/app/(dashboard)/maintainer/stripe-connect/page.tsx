@@ -3,15 +3,16 @@
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import { Card } from "@/components/ui/card";
+import { buttonVariants } from "@/components/ui/button";
 import UserService from "@/app/services/UserService";
 import StripeService from "@/app/services/StripeService";
-import LinkButton from "@/components/common/link-button";
+import Link from "next/link";
 import DisconnectStripeAccountButton from "./disconnect-stripe-account-button";
 
 const StripeOauthButton = async ({ userId }: { userId: string }) => {
   const oauthUrl = await StripeService.getOAuthLink(userId);
 
-  return <LinkButton href={oauthUrl} label="Connect to Stripe" />;
+  return <Link href={oauthUrl} className={buttonVariants({ variant: "outline" })}>Connect to Stripe</Link>;
 };
 
 export default async function StripeConnect({

@@ -1,6 +1,6 @@
 "use client";
 
-import LinkButton from "@/components/common/link-button";
+import { buttonVariants } from "@/components/ui/button";
 import { User } from "@prisma/client";
 import { Table, TableBody, TableCell, TableRow } from "@tremor/react";
 import Link from "next/link";
@@ -34,7 +34,7 @@ const CustomerOverview = ({ customer }: { customer: User; }) => (
             <Link href={`mailto:${customer.email}`} className="underline">
               {customer.email}
             </Link>
-            <LinkButton href={`mailto:${customer.email}`} label="Contact" className="ms-4" />
+            <Link href={`mailto:${customer.email}`} className={`ms-4 ${buttonVariants({ variant: "outline" })}`}>Contact</Link>
           </TableCell>
         </TableRow>
       </TableBody>

@@ -6,8 +6,8 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Button,
 } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import React from "react";
 import Tier from "@/app/models/Tier";
 import { Card } from "@/components/ui/card";
@@ -84,7 +84,7 @@ export const ProspectsTable: React.FC<{
       {!showAll && maxInitialRows && rows.length > maxInitialRows && (
         <div className="grid justify-items-end">
           <Link href="/prospects">
-            <Button size="xs" className="h-6" variant="secondary">
+            <Button size="sm" variant="outline">
               View All Prospects →
             </Button>
           </Link>

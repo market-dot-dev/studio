@@ -1,6 +1,7 @@
 "use client";
 
-import { Button, TextInput } from "@tremor/react";
+import { TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { User } from "@prisma/client";
 
 const UserCustomerWidget = ({ user }: { user: User; }) => {

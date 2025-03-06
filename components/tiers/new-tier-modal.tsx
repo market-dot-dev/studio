@@ -1,7 +1,7 @@
 'use client'
 
 import { categorizedTiers } from "@/lib/constants/tiers/default-tiers"
-import { Button } from "@tremor/react"
+import { Button } from "@/components/ui/button";
 import TierCard from "./tier-card"
 import { useCallback, useState } from "react";
 import { createTemplateTier } from "@/app/services/TierService";
@@ -23,7 +23,7 @@ export default function NewTierModal({ children, multiple }: { children: React.R
         show(<TiersTemplatesModal hide={hide} multiple={multiple} />, undefined, undefined, header, 'w-full md:w-5/6 max-h-[80vh]');
     };
     return (
-        <Button size="xs" onClick={showModal}>{children}</Button>
+        <Button onClick={showModal}>{children}</Button>
     )
 }
 
@@ -162,8 +162,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
                     {!multiple && (
                       <div className="absolute left-0 top-0 flex h-full w-full cursor-default items-center justify-center bg-white bg-opacity-50 opacity-0 transition-opacity group-hover:opacity-100">
                         <Button
-                          size="xs"
-                          className="h-10 w-10 bg-stone-800 transition-all hover:scale-105"
+                          size="icon"
                           onClick={() => {
                             createSingleTemplateTier(determinedIndex);
                           }}
@@ -196,8 +195,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
             <ProgressBar done={done} total={total} label={"Creating " + noun} />
           ) : (
             <Button
-              size="xs"
-              className="h-10 w-10 bg-stone-900 hover:scale-105 transition-all"
+              size="icon"
               onClick={() => createTemplateTiers()}
               disabled={selected.length === 0}
             >

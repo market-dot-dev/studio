@@ -11,8 +11,8 @@ import React from "react";
 import Tier from "@/app/models/Tier";
 import { capitalize, formatDate } from "@/lib/utils";
 import Link from "next/link";
-import { InfoIcon } from "lucide-react";
-import SecondaryButton from "@/components/common/secondary-button";
+import { InfoIcon, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button"; 
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -120,7 +120,17 @@ const SalesTable = ({
         <Link href="/customers">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <SecondaryButton label="View All" />
+              <Button
+                variant="outline"
+                size="sm"
+                className="group gap-0.5 pr-1"
+              >
+                View All
+                <ChevronRight
+                  size={10}
+                  className="inline-block transition-transform group-hover:translate-x-px"
+                />
+              </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuGroup>
@@ -140,7 +150,7 @@ const SalesTable = ({
         </Link>
       </div>
 
-      <Card className="p-6 mb-8">
+      <Card className="mb-8 p-6">
         {sales.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-8">
             <InfoIcon className="mb-4 h-12 w-12 text-gray-400" />

@@ -1,5 +1,4 @@
 import {
-  Button,
   Table,
   TableRow,
   TableCell,
@@ -7,12 +6,14 @@ import {
   TableHeaderCell,
   TableBody,
 } from "@tremor/react";
+import { Button, buttonVariants } from "@/components/ui/button";
 import SubscriptionService from "@/app/services/SubscriptionService";
 import { SubscriptionWithUser } from "@/app/models/Subscription";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
-import LinkButton from "../common/link-button";
 import SessionService from "@/app/services/SessionService";
+import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
 
 export default async function LatestCustomersList(props: { numRecords?: number, previewMode?: boolean }) {
 
@@ -49,41 +50,55 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
 
   return (
     <>
-      <div className="flex max-w-screen-xl flex-col mt-4 space-y-4">
-
+      <div className="mt-4 flex max-w-screen-xl flex-col space-y-4">
         <Card>
           {latestSubscriptions.length === 0 ? (
             <Table>
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Company</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Company
+                  </TableHeaderCell>
                   <TableHeaderCell className="text-right">Tier</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Actions
+                  </TableHeaderCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {exampleCustomers.map((customer, index) => (
                   <TableRow className="m-0 p-2" key={index}>
                     <TableCell className="m-0 p-2">{customer.name}</TableCell>
-                    <TableCell className="m-0 p-2 text-right">{customer.company}</TableCell>
-                    <TableCell className="m-0 p-2 text-right">{customer.tier}</TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      {customer.company}
+                    </TableCell>
+                    <TableCell className="m-0 p-2 text-right">
+                      {customer.tier}
+                    </TableCell>
                     <TableCell className="m-0 p-2 text-right">
                       <div className="flex flex-row justify-end gap-1">
-                        <Button className="py-1" disabled>View</Button>
+                        <Button size="sm" variant="outline" disabled>
+                          View
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
-            </Table>) :
-            (<Table className="">
+            </Table>
+          ) : (
+            <Table className="">
               <TableHead>
                 <TableRow>
                   <TableHeaderCell>Name</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Company</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Company
+                  </TableHeaderCell>
                   <TableHeaderCell className="text-right">Tier</TableHeaderCell>
-                  <TableHeaderCell className="text-right">Actions</TableHeaderCell>
+                  <TableHeaderCell className="text-right">
+                    Actions
+                  </TableHeaderCell>
                 </TableRow>
               </TableHead>
 
@@ -102,10 +117,15 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
                         </TableCell>
                         <TableCell className="m-0 p-2 text-right">
                           <div className="flex flex-row justify-end gap-1">
-                            <LinkButton
-                              label="View"
+                            <Link
                               href={`/customers/${subscription.id}`}
-                            />
+                              className={buttonVariants({
+                                variant: "default",
+                                size: "sm",
+                              })}
+                            >
+                              View
+                            </Link>
                           </div>
                         </TableCell>
                       </TableRow>
@@ -113,14 +133,23 @@ export default async function LatestCustomersList(props: { numRecords?: number, 
                   );
                 })}
               </TableBody>
-            </Table>)}
+            </Table>
+          )}
         </Card>
 
         <div className="grid justify-items-end">
-          <Link href='/customers'>
-            <Button size="xs" className="h-6" variant="secondary">
-              All Customers →
-            </Button>
+          <Link
+            href="/customers"
+            className={cn(
+              buttonVariants({ variant: "outline", size: "sm" }),
+              "group gap-0.5 pr-1",
+            )}
+          >
+            All customers
+            <ChevronRight
+              size={10}
+              className="inline-block transition-transform group-hover:translate-x-px"
+            />
           </Link>
         </div>
       </div>

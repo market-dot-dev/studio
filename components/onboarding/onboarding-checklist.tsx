@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { dismissOnboarding } from "@/app/services/onboarding/OnboardingService";
@@ -131,7 +131,7 @@ function TodoItem({
             <strong 
               className={clsx(
                 "new-bold-tag w-fit text-sm cursor-pointer",
-                completed ? "text-stone-500" : "text-stone-800 hover:text-stone-600",
+                completed ? "text-stone-500" : "text-stone-800 hover:text-stone-700",
               )}
               onClick={navigateToStep}
             >
@@ -141,15 +141,15 @@ function TodoItem({
           </div>
           {!completed && (
             <Button
-              size="xs"
-              variant="secondary"
-              className="group w-fit border-black/[12%] bg-white py-1 my-1 pr-1.5 transition-colors"
+              size="sm"
+              variant="outline"
+              className="group w-fit pr-1 gap-[3px]"
               onClick={navigateToStep}
             >
               <span>{stepTitle}</span>
               <ChevronRight
                 size={16}
-                className="mb-0.5 ml-0.5 inline-block transition-transform group-hover:translate-x-px"
+                className="inline-block transition-transform group-hover:translate-x-px"
               />
             </Button>
           )}
@@ -234,11 +234,12 @@ export default function OnboardingChecklist({ variant = "default" }: { variant?:
 
         <div className="m-0 flex justify-end">
           <Button
-            variant="light"
+            variant="ghost"
+            size="icon"
             onClick={dismissChecklist}
-            className="group -m-1 rounded p-1 text-sm underline transition-colors hover:bg-black/5"
+            className="group -m-1 hover:bg-black/5 h-6 w-6"
           >
-            <X size={16} className="text-stone-500" />
+            <X size={16} className="!size-4 text-stone-500" />
           </Button>
         </div>
       </div>

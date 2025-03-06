@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
@@ -133,33 +133,28 @@ export default function RegistrationCheckoutSection({
         </section>
 
         <section className="w-7/8 mb-8 lg:w-5/6">
-          <p className="text-sm text-stone-500 my-2 text-center">
+          <p className="mb-4 text-center text-sm text-stone-500">
             <ContractText contract={contract} />
           </p>
           <Button
-            onClick={() => setLoading(true)}
+            loading={loading}
             disabled={loading || !userId}
-            color="green"
-            className="w-full"
             data-cy="checkout-button"
+            className="w-full"
+            size="lg"
+            onClick={() => setLoading(true)}
           >
-            {loading ? <LoadingDots color="#A8A29E" /> : "Checkout"}
+            {tier.trialDays && tier.trialDays !== 0
+              ? "Checkout"
+              : `Pay $${checkoutPrice} ${checkoutCurrency}`}
           </Button>
-          <p className="text-sm text-stone-500 my-2 text-center">
-            {tier.trialDays
-              ? "You will not be charged now. After your " +
-                tier.trialDays +
-                " day trial, your card will be charged " +
-                checkoutCurrency +
-                " " +
-                checkoutPrice +
-                "."
-              : "Your card will be charged " +
-                checkoutCurrency +
-                " " +
-                checkoutPrice +
-                "."}
-          </p>
+          {tier.trialDays && tier.trialDays !== 0 ? (
+            <p className="mt-4 text-pretty text-center text-sm text-stone-500">
+              <span>{`You will not be charged now. After your ${tier.trialDays} day trial, your card will be charged`}</span>{" "}
+              <strong className="text-stone-900">{`$${checkoutPrice} ${checkoutCurrency}`}</strong>
+              .
+            </p>
+          ) : null}
         </section>
       </>
     );

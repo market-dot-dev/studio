@@ -1,5 +1,6 @@
 import { Lead } from "@prisma/client";
-import { Button, ProgressCircle } from "@tremor/react";
+import { ProgressCircle } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import Link from "next/link";
@@ -151,8 +152,8 @@ export default function LeadItem({ lead }: { lead: Lead }) {
                   </Badge>
                 ))}
                 {(lead.maintainers as [])?.length > 10 && (
-                  <Button size="xs" variant="light" onClick={toggleMaintainers}>
-                    {showAllMaintainers ? "Hide" : "Show More..."}
+                  <Button size="sm" variant="outline" onClick={toggleMaintainers}>
+                    {showAllMaintainers ? "Hide" : "Show more"}
                   </Button>
                 )}
               </>

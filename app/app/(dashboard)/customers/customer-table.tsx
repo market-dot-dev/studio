@@ -6,11 +6,10 @@ import {
   TableHead,
   TableHeaderCell,
   TableRow,
-  Button,
 } from "@tremor/react";
 import React from "react";
 import Tier from "@/app/models/Tier";
-import LinkButton from "@/components/common/link-button";
+import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import SubscriptionStatusBadge from "./subscription-state";
 import PurchaseStatusBadge from "./purchase-state";
@@ -64,7 +63,7 @@ const CustomerRow: React.FC<RowProps> = ({
       <TableCell className="m-0 p-4 text-right">
         {!hideCustomerDetails && (
           <div className="flex flex-row justify-end gap-1">
-            <LinkButton label="View" href={`/customers/${user.id}`} />
+            <Link href={`/customers/${user.id}`} className={buttonVariants({ variant: "outline" })}>View</Link>
           </div>
         )}
       </TableCell>
@@ -133,10 +132,11 @@ export const CustomersTable: React.FC<{
       </Card>
       {!showAll && maxInitialRows && rows.length > maxInitialRows && (
         <div className="grid justify-items-end">
-          <Link href="/customers">
-            <Button size="xs" className="h-6" variant="secondary">
-              View All Customers →
-            </Button>
+          <Link
+            href="/customers"
+            className={buttonVariants({ variant: "secondary", size: "sm" })}
+          >
+            View All Customers
           </Link>
         </div>
       )}

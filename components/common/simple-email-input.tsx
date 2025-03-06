@@ -1,5 +1,6 @@
 'use client'
-import { TextInput, Button } from "@tremor/react";
+import { TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { addUserToWaitlist } from "@/lib/waitlist/actions";
 import { useState } from "react";
 import Link from "next/link";

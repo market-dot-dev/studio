@@ -1,6 +1,7 @@
-import LinkButton from "./link-button";
+import { buttonVariants } from "@/components/ui/button";
 import { AlertCircle } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import Link from "next/link";
 
 const StripeDisabledBanner = () => {
   return (
@@ -14,7 +15,7 @@ const StripeDisabledBanner = () => {
           <p className="text-sm text-stone-500">Your Stripe account is not connected or has an issue that may prevent sales. Please visit your <a href="/settings/payment" className="underline">Payment Settings</a> to resolve this issue.</p>
         </div>
       </div>
-      <LinkButton href="/settings/payment" label="Payment Settings" />
+      <Link href="/settings/payment" className={buttonVariants({ variant: "outline" })}>Payment Settings</Link>
     </Card>
   );
 };

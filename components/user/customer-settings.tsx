@@ -1,6 +1,7 @@
 'use client'
 
-import { TextInput, Button } from "@tremor/react";
+import { TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { User } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
@@ -61,7 +62,13 @@ export default function CustomerSettings() {
                     }} />
                 </div>
         
-                <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>Save Changes</Button>
+                <Button 
+                    loading={isSaving}
+                    loadingText="Saving Changes"
+                    onClick={saveChanges}
+                >
+                    Save Changes
+                </Button>
             </div>
         </Card>
     )

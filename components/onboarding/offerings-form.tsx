@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import {
   HandHelping,
   GraduationCap,
@@ -153,16 +153,10 @@ export default function OfferingsForm({
 
         {/* Navigation */}
         <div className="flex w-full justify-between pt-4">
-          <Button variant="light" onClick={onBack} type="button">
+          <Button variant="ghost" onClick={onBack} type="button">
             Back
           </Button>
-          <Button
-            variant="primary"
-            type="submit"
-            loading={isLoading}
-            disabled={isLoading}
-            className="bg-gray-900 text-white hover:bg-gray-800"
-          >
+          <Button type="submit" loading={isLoading}>
             Finish
           </Button>
         </div>

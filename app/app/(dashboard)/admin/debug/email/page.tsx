@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import UserSelectionStep from "./components/user-selection";
 import EmailCompositionStep from "./components/email-composition";
@@ -91,7 +91,6 @@ export default function EmailTool() {
             Back
           </Button>
           <Button
-            variant="primary"
             onClick={nextStep}
             disabled={
               (currentStep === 0 && selectedUsers.length === 0) ||

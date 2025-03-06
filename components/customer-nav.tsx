@@ -46,6 +46,7 @@ export default function CustomerNav() {
 
   return (
     <>
+      {/* TODO: Remove and unify with header nav toggle button */}
       <button
         className={`fixed z-20 ${
           // left align for Editor, right align for other pages

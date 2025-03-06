@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 
 import {
   Callout,
-  Button,
   TextInput,
   Tab,
   TabGroup,
@@ -21,6 +20,7 @@ import {
 } from "@tremor/react";
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   setHomepage,
   deletePage,
@@ -349,11 +349,9 @@ export default function PageEditor({
 
   const saveButton = (className?: string) => (
     <Button
-      size="xs"
       className={className}
-      disabled={inProgress}
       loading={inProgress}
-      loadingText="Saving..."
+      loadingText="Saving"
       onClick={() => saveContent(page)}
     >
       Save
@@ -362,11 +360,11 @@ export default function PageEditor({
 
   const deleteButton = (
     <Button
-      className="w-full bg-red-500 hover:bg-red-600 border-red-600"
-      size="xs"
+      variant="destructive"
       disabled={inProgress || isDeleting || isHome}
       loading={isDeleting}
-      tooltip={isHome ? "Cannot delete the homepage" : ""}
+      loadingText="Deleting"
+      tooltip={isHome ? "Cannot delete the homepage" : undefined}
       onClick={() => {
         if (window.confirm("Are you sure you want to delete this page?")) {
           doDeletePage();
@@ -409,15 +407,13 @@ export default function PageEditor({
 
   const makeHomepageButton = (
     <Button
-      className="w-full"
-      size="xs"
       disabled={inProgress || isMakingHomepage || isHome}
       loading={isDeleting}
-      tooltip={isHome ? "This page is already the homepage" : ""}
-      
+      tooltip={isHome ? "This page is already the homepage" : undefined}
+      className="w-full"
       onClick={doMakeHomepage}
     >
-      Make Homepage
+      Set to Homepage
     </Button>
   );
 
@@ -579,14 +575,14 @@ export default function PageEditor({
                   <>
                     {" "}
                     in{" "}
-                    <Badge variant="secondary" size="sm">
+                    <Badge size="sm" variant="secondary">
                       Draft
                     </Badge>{" "}
                   </>
                 ) : (
                   <>
                     {" "}
-                    <Badge variant="success" size="sm">
+                    <Badge size="sm" variant="success">
                       Live
                     </Badge>{" "}
                   </>
@@ -660,7 +656,10 @@ export default function PageEditor({
 
               <div className="flex gap-4">
                 {fullscreen && saveButton()}
-                <Button onClick={() => setFullscreen(!fullscreen)}>
+                <Button
+                  variant="outline"
+                  onClick={() => setFullscreen(!fullscreen)}
+                >
                   {fullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
                 </Button>
               </div>

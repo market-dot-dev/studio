@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, Button, TextInput } from "@tremor/react";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { User } from "@prisma/client";
 
@@ -87,7 +88,6 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
           Please ensure you have admin privileges and try again.
         </p>
         <Button
-          color="red"
           onClick={() => window.location.reload()}
           className="mt-4"
         >
@@ -140,7 +140,7 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
         <Button
           variant="secondary"
           onClick={handleSelectAll}
-          size="xs"
+          size="sm"
         >
           {isAllSelected ? "Deselect All" : "Select All"}
         </Button>

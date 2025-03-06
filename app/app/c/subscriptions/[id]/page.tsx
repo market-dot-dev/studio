@@ -4,7 +4,8 @@ import CancelSubscriptionButton from "../cancel-subscription-button";
 import SubscriptionService from "@/app/services/SubscriptionService";
 import FeatureService from "@/app/services/feature-service";
 import prisma from "@/lib/prisma";
-import LinkButton from "@/components/common/link-button";
+import { buttonVariants } from "@/components/ui/button";
+import Link from "next/link";
 import UserService from "@/app/services/UserService";
 import { CheckSquare2 as CheckSquare } from "lucide-react";
 import { getRootUrl } from "@/lib/domain";
@@ -22,11 +23,12 @@ const formatFeatureLink = async (feature: Feature) => {
 
   return (
     <>
-      <LinkButton
-        disabled={!feature.isEnabled}
-        href={uri || ""}
-        label={feature.name || service.name}
-      />
+      <Link 
+        href={uri || ""} 
+        className={`${!feature.isEnabled ? 'opacity-50 pointer-events-none cursor-not-allowed' : ''} ${buttonVariants({ variant: "outline" })}`}
+      >
+        {feature.name || service.name}
+      </Link>
     </>
   );
 };
@@ -79,7 +81,7 @@ export default async function SubscriptionDetail({
             <strong>Your subscription has been cancelled.</strong>
             <div>
               You can view and resubscribe to the plan here:{" "}
-              <LinkButton href={resubUrl} label="View Plan" />
+              <Link href={resubUrl} className={buttonVariants({ variant: "outline" })}>View Plan</Link>
             </div>
           </>
         )}

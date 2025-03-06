@@ -5,7 +5,8 @@ import type {
   CheckoutType,
   TierWithFeatures,
 } from "@/app/services/TierService";
-import { Button, Switch } from "@tremor/react";
+import { Switch } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
 import TierFeatureList from "@/components/features/tier-feature-list";
@@ -41,7 +42,7 @@ const CheckoutButton = ({
   openUrlInNewTab = false,
   tierId,
   annual = false,
-  variant = "primary",
+  variant = "default",
   checkoutType = "gitwallet",
   darkMode = false,
   disabled = false,
@@ -50,7 +51,7 @@ const CheckoutButton = ({
   openUrlInNewTab?: boolean;
   tierId: string;
   annual?: boolean;
-  variant?: "secondary" | "primary";
+  variant?: "secondary" | "default";
   checkoutType?: CheckoutType;
   darkMode?: boolean;
   disabled?: boolean;
@@ -64,12 +65,7 @@ const CheckoutButton = ({
     >
       <Button
         variant={variant}
-        className={cn(
-          "w-full rounded-md px-3 py-2 text-center text-sm font-medium shadow-sm ring-1 ring-black/5 transition-shadow hover:shadow",
-          darkMode
-            ? "bg-white text-gray-900 hover:bg-gray-100"
-            : "!bg-gradient-to-b from-gray-800 to-gray-950 text-white hover:bg-gray-700",
-        )}
+        className={cn("w-full", darkMode && "bg-white text-stone-900 hover:bg-stone-100")}
       >
         {checkoutType === "gitwallet" ? "Get Started" : "Contact Us"}
       </Button>
@@ -117,7 +113,7 @@ const TierCard: React.FC<TierCardProps> = ({
     >
       <div
         className={clsx(
-          "flex flex-col gap-6",
+          "flex flex-col gap-4",
           alignment === "center" && "items-center",
         )}
       >
@@ -148,8 +144,8 @@ const TierCard: React.FC<TierCardProps> = ({
               alignment === "center" && "items-center",
             )}
           >
-            <div className="text-4xl">
-              <span className="font-geist-mono">
+            <p className="text-4xl h-fit">
+              <span className="font-geist-mono tracking-tight">
                 $
                 {showAnnual
                   ? Math.round((tier.priceAnnual || 0) / 12)
@@ -161,7 +157,7 @@ const TierCard: React.FC<TierCardProps> = ({
                   {cadenceShorthand}
                 </span>
               )}
-            </div>
+            </p>
             {hasAnnual && isntOnce ? (
               <div className="flex items-center gap-1.5">
                 <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
@@ -212,7 +208,7 @@ const TierCard: React.FC<TierCardProps> = ({
           )}
         </div>
       </div>
-      <div className="mt-12 w-full">
+      <div className="mt-8 w-full">
         {children || (
           <CheckoutButton
             url={url}
