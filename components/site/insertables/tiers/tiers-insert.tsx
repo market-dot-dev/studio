@@ -65,9 +65,9 @@ export default function TiersInsert({ insertAtCursor, children }: { insertAtCurs
     const { show, hide } = useModal();
     const showModal = () => {
         const modalHeader = (
-            <div className="grow">
-                <h2 className="text-xl font-bold">Restore Onboarding State</h2>
-            </div>
+          <div className="grow">
+            <h2 className="text-xl font-bold">Pick Tiers to show</h2>
+          </div>
         );
         show(<TiersInsertModal insertAtCursor={insertAtCursor} hide={hide} />, undefined, undefined, modalHeader, 'w-1/4 min-h-[50vh]');
     };

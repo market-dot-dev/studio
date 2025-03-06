@@ -31,8 +31,8 @@ export default function GithubEmbedItem({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <h2 className="text-xl font-bold">Restore Onboarding State</h2>
-      <div className="flex flex-col w-full gap-12">
+      <h2 className="text-xl font-bold">Badge</h2>
+      <div className="flex w-full flex-col gap-12">
         <Tabs defaultValue="preview" className="w-full border-none">
           <div className="flex items-center justify-between">
             <TabsList variant="solid">

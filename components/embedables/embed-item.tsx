@@ -23,12 +23,12 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
 
   return (
     <div className="flex flex-col items-stretch gap-4">
-      <h2 className="text-xl font-bold mt-6">Restore Onboarding State</h2>
+      <h2 className="mt-6 text-xl font-bold">{embedables[index].name}</h2>
       <div className="grid gap-8">
         <div className="col-span-1">
-          <div className="flex w-full gap-6 items-stretch justify-start">
+          <div className="flex w-full items-stretch justify-start gap-6">
             <Card className="w-3/4">
-              <div className="flex flex-col grow gap-6">
+              <div className="flex grow flex-col gap-6">
                 {previewProps ? (
                   <Component
                     site={site}
@@ -52,8 +52,8 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
                 />
               </div>
             </Card>
-            <div className="flex flex-col items-start w-1/4 gap-4 justify-start">
-              <h2 className="text-xl font-bold">Restore Onboarding State</h2>
+            <div className="flex w-1/4 flex-col items-start justify-start gap-4">
+              <h2 className="text-xl font-bold">Embed Configuration</h2>
               {previewProps ? (
                 <Settings
                   settings={settings}

@@ -80,7 +80,7 @@ export default function AnalyticsMockup() {
   return (
     <div className="grid gap-6">
       <Card>
-        <h2 className="text-xl font-bold">Restore Onboarding State</h2>
+        <h2 className="text-xl font-bold">Visitors</h2>
         <AreaChart
           className="mt-4 h-72"
           data={chartdata}
@@ -95,7 +95,7 @@ export default function AnalyticsMockup() {
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map(({ title, subtitle, data }) => (
           <Card key={title} className="max-w-lg">
-            <h2 className="text-xl font-bold">Restore Onboarding State</h2>
+            <h2 className="text-xl font-bold">{title}</h2>
             <div className="flex mt-4">
               <p className="text-sm text-stone-500">
                 <strong>{subtitle}</strong>

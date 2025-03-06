@@ -52,7 +52,7 @@ export default function PackageEmbeddings({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <h2 className="text-xl font-bold">Restore Onboarding State</h2>
+      <h2 className="text-xl font-bold">Packages</h2>
       <div className="flex w-full flex-col gap-12">
         <Tabs defaultValue="preview" className="w-full">
           <div className="flex items-center justify-between">
