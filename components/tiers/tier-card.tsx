@@ -65,9 +65,9 @@ const CheckoutButton = ({
     >
       <Button
         variant={variant}
-        className={cn("w-full", darkMode && "bg-white text-stone-900 hover:bg-stone-100")}
+        className={cn("w-full", darkMode && "bg-white text-stone-800 hover:bg-stone-100")}
       >
-        {checkoutType === "gitwallet" ? "Get Started" : "Contact Us"}
+        {checkoutType === "gitwallet" ? "Get Started" : "Get in touch"}
       </Button>
     </Link>
   );

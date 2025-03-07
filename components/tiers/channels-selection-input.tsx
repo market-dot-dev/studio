@@ -12,12 +12,12 @@ export default function ChannelsSelectionInput({
 }) {
   return (
     <div className="grid h-full gap-x-3 gap-y-2 xl:grid-cols-2">
-      <label className="block w-full rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-200">
-        <div className="flex h-full w-full cursor-pointer flex-col gap-2 rounded-md bg-white p-4 shadow-border hover:bg-stone-50 [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
+      <label className="block w-full focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-200">
+        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] hover:bg-stone-50 [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
-              <Store className="mr-3 h-5 w-5 text-stone-500" />
-              <span className="text-left text-sm font-medium text-stone-900">
+              <Store className="mr-2.5 size-[18px] text-stone-500" />
+              <span className="text-left text-sm font-semibold text-stone-800">
                 Storefront
               </span>
             </div>
@@ -36,12 +36,12 @@ export default function ChannelsSelectionInput({
         </div>
       </label>
       {userIsMarketExpert && (
-        <label className="block h-full w-full rounded-md focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-200">
-          <div className="flex h-full w-full cursor-pointer flex-col gap-2 rounded-md bg-white p-4 shadow-border hover:bg-stone-50 [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
+        <label className="block h-full w-full focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-200">
+          <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] hover:bg-stone-50 [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
             <div className="flex h-full w-full items-center justify-between">
               <div className="flex items-center">
-                <ShoppingBag className="mr-3 h-5 w-5 text-stone-500" />
-                <span className="text-left text-sm font-medium text-stone-900">
+                <ShoppingBag className="mr-2.5 size-[18px] text-stone-500" />
+                <span className="text-left text-sm font-semibold text-stone-800">
                   Marketplace
                 </span>
               </div>

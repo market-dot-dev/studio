@@ -19,10 +19,10 @@ export default function CheckoutTypeSelectionInput({
     const disabled = !gitwalletCheckoutEnabled;
 
     const InputComponent = ({ disabled = false }: { disabled?: boolean }) => (
-      <label className="flex h-full w-full focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-swamp">
+      <label className="flex h-full w-full transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-swamp">
         <div
           className={cn(
-            "flex h-full w-full flex-col items-start justify-start gap-2 rounded-md bg-white p-4 [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp",
+            "flex h-full w-full flex-col items-start justify-start gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp",
             disabled
               ? "border-shadow cursor-default opacity-50"
               : "border-shadow cursor-pointer hover:bg-stone-50",
@@ -30,8 +30,8 @@ export default function CheckoutTypeSelectionInput({
         >
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
-              <Wallet className="mr-3 h-5 w-5 text-stone-500" />
-              <span className="text-left text-sm font-medium text-stone-900">
+              <Wallet className="mr-2.5 size-[18px] text-stone-500" />
+              <span className="text-left text-sm font-semibold text-stone-800">
                 Standard Checkout
               </span>
             </div>
@@ -50,7 +50,7 @@ export default function CheckoutTypeSelectionInput({
               }
             />
           </div>
-          <p className="text-left text-xs leading-4 text-stone-900">
+          <p className="text-pretty pr-8 text-left text-xs leading-4 text-stone-500">
             Seamlessly collect and process credit card payments
           </p>
         </div>
@@ -77,12 +77,12 @@ export default function CheckoutTypeSelectionInput({
   return (
     <div className="grid h-full gap-x-3 gap-y-2 xl:grid-cols-2">
       <GitWalletCheckout />
-      <label className="flex h-full w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-swamp">
-        <div className="flex h-full w-full cursor-pointer flex-col gap-2 rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-stone-50 [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-swamp">
+      <label className="flex h-full w-full rounded focus-within:outline-none">
+        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] hover:bg-stone-50 [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp">
           <div className="flex h-full w-full items-center justify-between">
             <div className="flex items-center">
-              <Mail className="mr-3 h-5 w-5 text-stone-500" />
-              <span className="text-left text-sm font-medium text-stone-900">
+              <Mail className="mr-2.5 size-[18px] text-stone-500" />
+              <span className="text-left text-sm font-semibold text-stone-800">
                 Contact Form
               </span>
             </div>
@@ -100,7 +100,7 @@ export default function CheckoutTypeSelectionInput({
               }
             />
           </div>
-          <span className="text-xs leading-4 text-stone-500">
+          <span className="text-pretty pr-8 text-xs leading-4 text-stone-500">
             Collect customer information and get back to them via email
           </span>
         </div>

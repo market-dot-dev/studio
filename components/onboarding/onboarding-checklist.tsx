@@ -99,7 +99,7 @@ function TodoItem({
   if (variant === "mini") {
     return (
       <div
-        className="group bg-white rounded shadow-border flex w-full cursor-pointer items-center justify-between p-1 pl-1.5 text-xs font-medium text-stone-900 hover:bg-stone-50 transition-colors"
+        className="group bg-white rounded shadow-border flex w-full cursor-pointer items-center justify-between p-1 pl-1.5 text-xs font-medium text-stone-800 hover:bg-stone-50 transition-colors"
         onClick={navigateToStep}
       >
         <div className="flex items-center gap-[7px]">

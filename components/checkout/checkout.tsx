@@ -151,7 +151,7 @@ export default function RegistrationCheckoutSection({
           {tier.trialDays && tier.trialDays !== 0 ? (
             <p className="mt-4 text-pretty text-center text-sm text-stone-500">
               <span>{`You will not be charged now. After your ${tier.trialDays} day trial, your card will be charged`}</span>{" "}
-              <strong className="text-stone-900">{`$${checkoutPrice} ${checkoutCurrency}`}</strong>
+              <strong className="text-stone-800">{`$${checkoutPrice} ${checkoutCurrency}`}</strong>
               .
             </p>
           ) : null}

@@ -58,7 +58,7 @@ function Item({ item }: { item: NavItem }) {
       // <span className="mb-1 ml-1 mt-4 text-xs/4 font-bold text-stone-500">
       //   {item.name}
       // </span>
-      <span className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-bold uppercase tracking-wide text-stone-500">
+      <span className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
         {item.name}
       </span>
     );
@@ -84,7 +84,7 @@ function Item({ item }: { item: NavItem }) {
         {item.isBeta && (
           <Badge
             size="sm"
-            variant="outline"
+            variant="secondary"
             tooltip="This feature is still in Beta"
           >
             Beta

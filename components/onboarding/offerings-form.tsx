@@ -114,7 +114,7 @@ export default function OfferingsForm({
             />
           </div>
 
-          <h1 className="text-center text-2xl font-bold tracking-tight text-gray-900">
+          <h1 className="text-center text-2xl font-bold tracking-tight text-stone-900">
             Last, what are you selling?
           </h1>
         </div>
@@ -124,20 +124,22 @@ export default function OfferingsForm({
             ({ id, title, description, icon: Icon, isComingSoon }) => (
               <label
                 key={id}
-                className="block h-full w-full rounded-tremor-default focus-within:outline-none focus-within:ring-1 focus-within:ring-gray-300"
+                className="block h-full w-full rounded focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-300"
               >
                 <div className="relative h-full">
-                  <div className="relative flex h-full w-full cursor-pointer flex-col gap-1 rounded-tremor-default bg-white px-5 py-4 shadow-border focus-within:border-gray-300 hover:bg-gray-50 hover:focus-within:bg-white [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp transition-all">
-                    <div className="flex items-center gap-2">
-                      <Icon className="h-5 w-5 shrink-0 text-gray-500" />
-                      <h3 className="text-sm font-bold text-gray-900">{title}</h3>
+                  <div className="relative flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-all focus-within:border-stone-300 hover:bg-stone-50 hover:focus-within:bg-white [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
+                    <div className="flex items-center gap-2.5">
+                      <Icon className="size-[18px] shrink-0 text-stone-500" />
+                      <h3 className="text-sm font-semibold text-stone-900">
+                        {title}
+                      </h3>
                       {isComingSoon && (
-                        <span className="flex items-center z-10 h-[18px] rounded-full bg-gray-100 px-1.5 text-[9px] font-bold uppercase tracking-wide text-gray-500 border border-black/10 border-box">
+                        <span className="border-box z-10 flex h-[18px] items-center rounded-full border border-black/10 bg-stone-100 px-1.5 text-[9px] font-bold uppercase tracking-wide text-stone-500">
                           Coming Soon
                         </span>
                       )}
                     </div>
-                    <p className="text-sm text-gray-500">{description}</p>
+                    <p className="text-sm text-stone-500">{description}</p>
                     <input
                       type="checkbox"
                       className="sr-only hidden"
@@ -153,10 +155,10 @@ export default function OfferingsForm({
 
         {/* Navigation */}
         <div className="flex w-full justify-between pt-4">
-          <Button variant="ghost" onClick={onBack} type="button">
+          <Button variant="ghost" size="lg" onClick={onBack} type="button">
             Back
           </Button>
-          <Button type="submit" loading={isLoading}>
+          <Button type="submit" size="lg" loading={isLoading}>
             Finish
           </Button>
         </div>
