@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/tooltip"
 
 const badgeVariants = cva(
-  "inline-flex items-center border border-black/10 tracking-[-0.0075em] font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+  "inline-flex items-center border border-black/10 tracking-[-0.0075em] font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
   {
     variants: {
       variant: {
@@ -24,7 +24,7 @@ const badgeVariants = cva(
         outline: "!text-stone-600",
       },
       size: {
-        default: "py-1 px-2 text-xs rounded",
+        default: "py-0.5 px-1.5 text-xs rounded-sm",
         sm: "py-0.5 px-1 text-xxs tracking-[-0.02em] rounded-sm",
       },
     },

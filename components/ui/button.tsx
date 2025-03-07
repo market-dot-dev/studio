@@ -13,7 +13,8 @@ import {
 } from "@/components/ui/tooltip"
 
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-swamp disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&[data-loading=true]_svg:not(.loading-spinner)]:hidden",
+  // "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-swamp disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&[data-loading=true]_svg:not(.loading-spinner)]:hidden",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-swamp disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
@@ -28,7 +29,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default: "h-8 px-3 ",
+        default: "h-9 md:h-8 px-3 ",
         sm: "h-6 px-2 text-xs [&_svg]:size-3.5 gap-1",
         lg: "h-10 px-6",
         icon: "h-8 w-8 [&_svg]:size-5",
@@ -89,8 +90,15 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
               <Loader className="h-3 w-3 loading-spinner animate-spin-slow" />
             </motion.div>
           )}
-        </AnimatePresence> */}
-        {loading && loadingText ? loadingText : children}
+          </AnimatePresence> */}
+        {loading ? (
+          <>
+            <Loader className="h-3 w-3 loading-spinner animate-spin-slow" />
+            {loadingText}
+          </>
+        ) : (
+          children
+        )}
       </Comp>
     )
 
