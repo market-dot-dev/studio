@@ -17,6 +17,9 @@ export default async function LoginPage({
     redirect("/");
   }
 
+  // Get callbackUrl from query parameters
+  const callbackUrl = searchParams.callbackUrl as string || undefined;
+
   return (
     <>
       <Image
@@ -41,9 +44,7 @@ export default async function LoginPage({
         >
           <GithubLoginButton
             callbackUrl={
-              searchParams.source
-                ? `/?source=${searchParams.source}`
-                : undefined
+              callbackUrl || (searchParams.source ? `/?source=${searchParams.source}` : undefined)
             }
           />
         </Suspense>
