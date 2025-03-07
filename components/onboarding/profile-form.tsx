@@ -1,6 +1,7 @@
 import Image from "next/image";
 import clsx from "clsx";
-import { TextInput } from "@tremor/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { ImageIcon } from "lucide-react";
 import { useRef, useState } from "react";
@@ -122,21 +123,22 @@ export default function ProfileForm({
           </div>
 
           <div className="space-y-1 text-center">
-            <h1 className="text-2xl font-bold tracking-tight text-gray-900">
+            <h1 className="text-2xl font-bold tracking-tight text-stone-900">
               Welcome to market.dev
             </h1>
-            <h2 className="text-base font-normal text-gray-900">
+            <h2 className="text-base font-normal text-stone-900">
               Tell us about your business
             </h2>
           </div>
         </div>
 
         <div className="space-y-6">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-900">
+          <div className="space-y-1.5">
+            <Label htmlFor="businessName">
               Business Name
-            </label>
-            <TextInput
+            </Label>
+            <Input
+              id="businessName"
               name="businessName"
               defaultValue={user.gh_username ?? ""}
               placeholder={"Business Name"}
@@ -145,42 +147,43 @@ export default function ProfileForm({
             />
           </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-gray-900">
+          <div className="space-y-1.5">
+            <Label htmlFor="subdomain">
               Domain
-            </label>
+            </Label>
             <div className="flex items-center justify-between gap-4 rounded-tremor-default border border-tremor-border bg-white shadow-tremor-input">
-              <TextInput
-                className="rounded-r-none border-none bg-white shadow-none focus:border focus:border-gray-900"
+              <Input
+                id="subdomain"
+                className="rounded-r-none shadow-none"
                 defaultValue={currentSite?.subdomain ?? user.gh_username ?? ""}
                 disabled={!!currentSite?.subdomain}
                 placeholder={"Subdomain"}
                 name="subdomain"
                 required
               />
-              <span className="py-2 pr-3 text-sm text-gray-400">
+              <span className="pr-3 text-sm text-stone-400">
                 .market.dev
               </span>
             </div>
             {/* {subdomainError && (
               <p className="text-sm text-red-500">{subdomainError}</p>
             )} */}
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-stone-500">
               Your landing page will live here. You can change this later.
             </p>
           </div>
 
-          <div className="space-y-2">
-            <label className="flex items-baseline gap-1 text-sm font-medium text-gray-900">
+          <div className="space-y-1.5">
+            <Label>
               Logo
-              <span className="text-xs font-normal text-gray-500">
+              <span className="ml-1 text-xs font-normal text-stone-500">
                 (Optional)
               </span>
-            </label>
+            </Label>
             <div
               className={clsx(
-                "rounded-lg border border-dashed bg-gray-50 p-10 text-center transition-colors",
-                isDraggingOverDropzone ? "border-gray-400" : "border-gray-300",
+                "rounded-lg border border-dashed bg-stone-50 p-10 text-center transition-colors",
+                isDraggingOverDropzone ? "border-stone-400" : "border-stone-300",
               )}
               onDragEnter={handleDragEnter}
               onDragOver={handleDragEnter}
@@ -211,15 +214,15 @@ export default function ProfileForm({
                     size="sm"
                     variant="outline"
                     onClick={handleFilePicker}
-                    className="mt-4 text-xs text-gray-500 underline"
+                    className="mt-4 text-xs text-stone-500 underline"
                   >
                     Pick another image
                   </Button>
                 </div>
               ) : (
                 <div className="mx-auto flex flex-col items-center">
-                  <ImageIcon className="mx-auto h-6 w-6 text-gray-400" />
-                  <div className="mt-3 text-xs text-gray-500">
+                  <ImageIcon className="mx-auto h-6 w-6 text-stone-400" />
+                  <div className="mt-3 text-xs text-stone-500">
                     <p>Drag & drop a .png or .jpg</p>
                     <p>
                       or{" "}
@@ -227,7 +230,7 @@ export default function ProfileForm({
                         type="button"
                         variant="link"
                         onClick={handleFilePicker}
-                        className="cursor-pointer underline"
+                        className="!h-fit text-xs font-semibold p-0 cursor-pointer underline"
                       >
                         pick an image
                       </Button>
@@ -246,10 +249,7 @@ export default function ProfileForm({
         </div>
 
         <div className="flex w-full justify-end pt-4">
-          <Button
-            type="submit"
-            loading={isLoading}
-          >
+          <Button size="lg" type="submit" loading={isLoading}>
             Next
           </Button>
         </div>

@@ -1,7 +1,8 @@
 "use client";
 
-import { TextInput } from "@tremor/react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
@@ -27,14 +28,9 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
   return (
     <>
       <div className="flex flex-col items-start w-full space-y-6">
-        <div className="flex flex-col items-start w-1/2 gap-2">
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Name
-          </label>
-          <TextInput
+        <div className="flex flex-col items-start w-1/2 gap-1.5">
+          <Label htmlFor="name">Name</Label>
+          <Input
             placeholder=""
             name="name"
             id="name"
@@ -45,14 +41,9 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
           />
         </div>
 
-        <div className="flex flex-col items-start w-1/2 gap-2">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Email
-          </label>
-          <TextInput
+        <div className="flex flex-col items-start w-1/2 gap-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input
             placeholder=""
             type="email"
             name="email"

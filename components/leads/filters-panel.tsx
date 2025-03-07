@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { TextInput } from "@tremor/react"
+import { Input } from "@/components/ui/input"
 import countryCodes from "@/lib/constants/country-codes" ;
 
 type OptionType = {
@@ -169,7 +169,7 @@ function OptionsList({options, filters, handleCheckboxChange, filterName}: {opti
   return (
     <div className="flex flex-col gap-2">
       {options.length > 8 && (
-        <TextInput
+        <Input
           
           placeholder="Search..."
           onChange={(e) => debouncedSearch(e.target.value)}

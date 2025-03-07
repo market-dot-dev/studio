@@ -1,8 +1,8 @@
 'use client'
 
-import { TextInput } from "@tremor/react";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { User } from "@prisma/client";
 import { useCallback, useEffect, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
@@ -39,37 +39,35 @@ export default function CustomerSettings() {
     }, [userData, refreshSession])
 
     return (
-        <Card>
-            <div className="flex flex-col items-start space-y-6 w-full">
-                <div className="flex flex-col items-start w-1/2 gap-2">
-                    <label htmlFor="name" className="block text-sm font-medium text-gray-700">Name</label>
-                    <TextInput placeholder="" name="name" id="name" value={userData.name ?? ''} onChange={(e) => {
-                        setUserData({ ...userData, name: e.target.value });
-                    }} />
-                </div>
-        
-                <div className="flex flex-col items-start w-1/2 gap-2">
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                    <TextInput placeholder="" type="email" name="email" id="email" value={userData.email ?? ''} onChange={(e) => {
-                        setUserData({ ...userData, email: e.target.value });
-                    }} />
-                </div>
-        
-                <div className="flex flex-col items-start w-1/2 gap-2">
-                    <label htmlFor="company" className="block text-sm font-medium text-gray-700">Company</label>
-                    <TextInput placeholder="" name="company" id="company" value={userData.company ?? ''} onChange={(e) => {
-                        setUserData({ ...userData, company: e.target.value });
-                    }} />
-                </div>
-        
-                <Button 
-                    loading={isSaving}
-                    loadingText="Saving Changes"
-                    onClick={saveChanges}
-                >
-                    Save Changes
-                </Button>
+        <div className="flex flex-col items-start space-y-6 w-full">
+            <div className="flex flex-col items-start w-1/2 gap-1.5">
+                <Label htmlFor="name">Name</Label>
+                <Input placeholder="" name="name" id="name" value={userData.name ?? ''} onChange={(e) => {
+                    setUserData({ ...userData, name: e.target.value });
+                }} />
             </div>
-        </Card>
+    
+            <div className="flex flex-col items-start w-1/2 gap-1.5">
+                <Label htmlFor="email">Email</Label>
+                <Input placeholder="" type="email" name="email" id="email" value={userData.email ?? ''} onChange={(e) => {
+                    setUserData({ ...userData, email: e.target.value });
+                }} />
+            </div>
+    
+            <div className="flex flex-col items-start w-1/2 gap-1.5">
+                <Label htmlFor="company">Company</Label>
+                <Input placeholder="" name="company" id="company" value={userData.company ?? ''} onChange={(e) => {
+                    setUserData({ ...userData, company: e.target.value });
+                }} />
+            </div>
+    
+            <Button 
+                loading={isSaving}
+                loadingText="Saving Changes"
+                onClick={saveChanges}
+            >
+                Save Changes
+            </Button>
+        </div>
     )
 }

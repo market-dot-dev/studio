@@ -1,12 +1,11 @@
 "use client";
 
-import LoadingDots from "@/components/icons/loading-dots";
-import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { deletePost } from "@/lib/actions";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import va from "@vercel/analytics";
 
 export default function DeletePostForm({ postName }: { postName: string }) {
@@ -35,14 +34,13 @@ export default function DeletePostForm({ postName }: { postName: string }) {
           Deletes your post permanently. Type in the name of your post{" "}
           <b>{postName}</b> to confirm.
         </p>
-
-        <input
+        <Input
           name="confirm"
           type="text"
           required
           pattern={postName}
           placeholder={postName}
-          className="w-full max-w-md rounded-md border border-stone-300 text-sm text-stone-800 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+          className="w-full max-w-md"
         />
       </div>
 

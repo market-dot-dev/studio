@@ -1,7 +1,8 @@
-import { TextInput, List, ListItem, Switch } from "@tremor/react";
+import { List, ListItem, Switch } from "@tremor/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { useRef, useState } from "react";
-
 import { FaEdit, FaCheck } from "react-icons/fa";
 
 function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
@@ -42,7 +43,7 @@ function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
         }}
       >
         {isEditing ? (
-          <TextInput
+          <Input
             ref={inputRef as any}
             value={feature.content}
             onChange={handleChange}
@@ -88,9 +89,9 @@ export default function FeaturesEditor({features, setFeatures}: any) : JSX.Eleme
     return (
         <>        
             <div className="flex flex-col items-start gap-1">
-                <strong>Features</strong>
+                <Label>Features</Label>
                 <div className="flex gap-4">
-                    <TextInput value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Enter feature text"/>
+                    <Input value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Enter feature text"/>
                     <Button onClick={addFeature}>Add</Button>
                 </div>
             </div>

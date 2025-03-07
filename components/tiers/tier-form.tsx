@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import {
   NumberInput,
   Callout,
-  TextInput,
-  Textarea,
   Select,
   SelectItem,
   Table,
@@ -17,6 +15,9 @@ import {
 } from "@tremor/react";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import Tier, { newTier } from "@/app/models/Tier";
 import { subscriberCount } from "@/app/services/SubscriptionService";
 import {
@@ -157,7 +158,7 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
             You can send this link directly to any potential customers.
           </p>
           <div className="mt-4 flex flex-row items-center justify-center">
-            <TextInput
+            <Input
               id="checkoutLink"
               className="rounded-r-none"
               readOnly
@@ -246,9 +247,9 @@ const StandardCheckoutForm = ({
     <div>
       {" "}
       <div className="mb-4">
-        <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+        <Label htmlFor="contractId" className="mb-1 block">
           Contract
-        </label>
+        </Label>
         <Select
           id="contractId"
           placeholder="Choose contract"
@@ -266,9 +267,9 @@ const StandardCheckoutForm = ({
       </div>
       <div className="mb-4">
         <div className="mb-4">
-          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+          <Label htmlFor="cadence" className="mb-1 block">
             Billing type
-          </label>
+          </Label>
           <Select
             id="cadence"
             placeholder="Billing type"
@@ -287,9 +288,9 @@ const StandardCheckoutForm = ({
         </div>
 
         <div className="mb-4">
-          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+          <Label htmlFor="price" className="mb-2 block">
             Monthly Price (USD)
-          </label>
+          </Label>
           <div className="flex gap-2">
             <NumberInput
               value={tier.price || 0}
@@ -332,16 +333,19 @@ const StandardCheckoutForm = ({
                   }
                 }}
               />
-              <label className="mb-1 flex items-center text-sm font-medium text-gray-900 dark:text-white">
+              <Label
+                htmlFor="annualPlanEnabled"
+                className="mb-2 flex items-center"
+              >
                 Offer Annual Plan
-              </label>
+              </Label>
             </div>
 
             {annualPlanEnabled && (
               <div className="mb-4">
-                <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+                <Label htmlFor="priceAnnual" className="mb-2 block">
                   Annual Price &nbsp;
-                </label>
+                </Label>
                 <NumberInput
                   id="priceAnnual"
                   placeholder="Annual price (dollars)"
@@ -360,12 +364,15 @@ const StandardCheckoutForm = ({
                     setAnnualDiscountPercent(calcDiscount(tier.price || 0, v));
                   }}
                 />
-                <label className="my-1 block text-sm font-medium text-gray-600">
+                <Label
+                  htmlFor="priceAnnual"
+                  className="my-1 block text-sm font-medium text-gray-600"
+                >
                   Effective Discount Rate:{" "}
                   {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"}{" "}
                   (compared to annualized monthly{" "}
                   {<>${(tier.price || 0) * 12}</>})
-                </label>
+                </Label>
               </div>
             )}
 
@@ -389,16 +396,16 @@ const StandardCheckoutForm = ({
                 checked={trialEnabled}
                 onChange={(e) => setTrialEnabled(e.target.checked)}
               />
-              <label className="mb-1 flex items-center text-sm font-medium text-gray-900 dark:text-white">
+              <Label htmlFor="trialEnabled" className="mb-2 flex items-center">
                 Offer Trial Period
-              </label>
+              </Label>
             </div>
 
             {trialEnabled && (
               <div className="mb-4">
-                <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+                <Label htmlFor="trialDays" className="mb-2 block">
                   Trial Length (Days)
-                </label>
+                </Label>
                 <NumberInput
                   id="trialDays"
                   placeholder="Annual price (dollars)"
@@ -569,9 +576,9 @@ export default function TierForm({
       <div className="mt-4 grid grid-cols-1 gap-8 pb-20 md:grid-cols-3">
         <div className="space-y-6 md:col-span-2">
           <div className="mb-4">
-            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+            <Label htmlFor="checkoutType" className="mb-2">
               Checkout Type
-            </label>
+            </Label>
             <CheckoutTypeSelectionInput
               user={user}
               tier={tier}
@@ -585,49 +592,49 @@ export default function TierForm({
               featuresChanged={featuresChanged}
             />
 
-            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+            <Label htmlFor="tierName" className="mb-2">
               Package Name
-            </label>
-            <TextInput
+            </Label>
+            <Input
               id="tierName"
               placeholder="Premium"
               required
               name="name"
               value={tier.name}
-              onValueChange={(v) => handleInputChange("name", v)}
+              onChange={(e) => handleInputChange("name", e.target.value)}
             />
             {errors["name"] ? <p className="text-sm text-stone-500">{errors["name"]}</p> : null}
           </div>
           <div className="mb-4">
-            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+            <Label htmlFor="tierTagline" className="mb-1 block">
               Package Tagline
-            </label>
-            <TextInput
+            </Label>
+            <Input
               id="tierTagline"
               placeholder="Great for startups and smaller companies."
               required
               name="tagline"
               value={tier.tagline || ""}
-              onValueChange={(v) => handleInputChange("tagline", v)}
+              onChange={(e) => handleInputChange("tagline", e.target.value)}
             />
           </div>
           <div className="mb-4">
-            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+            <Label htmlFor="tierDescription" className="mb-1 block">
               Package Description
-            </label>
+            </Label>
             <Textarea
               id="tierDescription"
               rows={4}
               placeholder="Describe your package here. This is for your own use and will not be shown to any potential customers."
               name="description"
               value={tier.description || ""}
-              onValueChange={(v) => handleInputChange("description", v)}
+              onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </div>
           <div className="mb-4">
-            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+            <Label htmlFor="channels" className="mb-1 block">
               Channels
-            </label>
+            </Label>
             <ChannelsSelectionInput
               userIsMarketExpert={!!user.marketExpertId}
               selectedChannels={tier.channels}
@@ -655,66 +662,63 @@ export default function TierForm({
             />
           )}
           <div className="mb-4">
-            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+            <Label htmlFor="packageStatus" className="mb-1 block">
               Package Status
-            </label>
-            <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
-              <div className="flex gap-2">
-                {canPublishLoading && (
-                  <>
-                    <LoadingDots />
-                    <p className="text-sm text-stone-500">Checking Stripe Eligiblity</p>
-                  </>
-                )}
-                {!canPublishLoading && (
-                  <>
-                    <input
-                      type="checkbox"
-                      checked={tier.published}
-                      className="rounded-md border-gray-600 p-3 accent-green-400"
-                      disabled={canPublishDisabled}
-                      data-cy="available-for-sale"
-                      onChange={(e) => {
-                        setTier({
-                          ...tier,
-                          published: e.target.checked,
-                        } as Tier);
-                      }}
-                    />
-                    <span>
-                      <label htmlFor="switch" className="text-sm text-gray-900">
-                        Make this package{" "}
-                        <span className="font-medium text-gray-700">
-                          available for sale.
-                        </span>
-                      </label>
-                    </span>
-                  </>
-                )}
-              </div>
-              {!canPublish && !canPublishLoading && (
+            </Label>
+            <div className="flex gap-2">
+              {canPublishLoading && (
                 <>
-                  <Callout
-                    className="my-2"
-                    title="Payment Setup Required"
-                    color="red"
-                  >
-                    You need to connect your Stripe account to publish a
-                    package. Visit{" "}
-                    <a href="/settings/payment" className="underline">
-                      Payment Settings
-                    </a>{" "}
-                    to get started.
-                  </Callout>
+                  <LoadingDots />
+                  <p className="text-sm text-stone-500">Checking Stripe Eligiblity</p>
                 </>
               )}
-            </label>
+              {!canPublishLoading && (
+                <>
+                  <input
+                    type="checkbox"
+                    id="published"
+                    checked={tier.published}
+                    className="rounded-md border-gray-600 p-3 accent-green-400"
+                    disabled={canPublishDisabled}
+                    data-cy="available-for-sale"
+                    onChange={(e) => {
+                      setTier({
+                        ...tier,
+                        published: e.target.checked,
+                      } as Tier);
+                    }}
+                  />
+                  <Label htmlFor="published" className="text-sm text-gray-900">
+                    Make this package{" "}
+                    <span className="font-medium text-gray-700">
+                      available for sale.
+                    </span>
+                  </Label>
+                </>
+              )}
+            </div>
+            {!canPublish && !canPublishLoading && (
+              <>
+                <Callout
+                  className="my-2"
+                  title="Payment Setup Required"
+                  color="red"
+                >
+                  You need to connect your Stripe account to publish a
+                  package. Visit{" "}
+                  <a href="/settings/payment" className="underline">
+                    Payment Settings
+                  </a>{" "}
+                  to get started.
+                </Callout>
+              </>
+            )}
           </div>
           {hasActiveFeatures && (
             <div className="mb-4">
-              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+              <Label htmlFor="features" className="mb-1 block">
                 Features
-              </label>
+              </Label>
               <Card className="p-2">
                 {tier?.id ? (
                   <TierFeaturePicker
@@ -739,9 +743,9 @@ export default function TierForm({
           {isAdmin() && tier?.id && (
             <>
               <div className="mb-4">
-                <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+                <Label htmlFor="adminPanel" className="mb-1 block">
                   Admin Panel
-                </label>
+                </Label>
                 <Card className="p-2">
                   View admin-only options:{" "}
                   <Link href={`/admin/tiers/${tier.id}`} className={buttonVariants({ variant: "outline" })}>Go</Link>
@@ -751,9 +755,9 @@ export default function TierForm({
           )}
           {tier.checkoutType === "gitwallet" && (
             <div className="mb-4">
-              <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+              <Label htmlFor="versionHistory" className="mb-1 block">
                 Package Version History
-              </label>
+              </Label>
 
               {!!versions && versions.length === 0 && (
                 <p className="text-sm text-stone-500">
@@ -856,9 +860,9 @@ export default function TierForm({
 
         {/* Preview Section */}
         <div className="mb-auto text-center md:w-[300px]">
-          <label className="mb-1 block text-sm font-medium text-gray-900 dark:text-white">
+          <Label htmlFor="preview" className="mb-1 block">
             Preview
-          </label>
+          </Label>
           <TierCard
             tier={tier}
             features={featureObjs}

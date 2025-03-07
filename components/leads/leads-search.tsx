@@ -1,11 +1,12 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { SelectItem, Select, TextInput } from "@tremor/react";
+import { SelectItem, Select } from "@tremor/react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Search, XCircle, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 import { useCallback, useEffect, useState } from "react";
 
@@ -409,8 +410,8 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         <>
             <div className="mb-4">
 
-                <div className="relative">
-                    <TextInput icon={Search} value={inputRepoUrl} placeholder="Enter a Repo URL..." 
+                <div className="flex gap-3">
+                    <Input icon={<Search />} value={inputRepoUrl} placeholder="Enter a Repo URL..." 
                         onFocus={() => {
                             setIsUrlInputFocused(true);
                         }}
@@ -455,9 +456,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                             })}
                         </div>
                     </div>
-                    <div className="absolute right-0 top-0 h-full inline-block">
-                        <Button className="rounded-l-none h-9" onClick={handleUrlSearch} disabled={isSearching} loading={isSearching}>Search</Button>
-                    </div>
+                    <Button loading={isSearching} onClick={handleUrlSearch}>Search</Button>
                 </div>
                 
 

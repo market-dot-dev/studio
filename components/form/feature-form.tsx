@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { TextInput } from '@tremor/react';
 import { Button } from '@/components/ui/button';
-import { TextArea } from "@radix-ui/themes";
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { Feature, Service } from '@prisma/client'; // Assuming Service stays as is, importing it if needed
 import { update, create } from '@/app/services/feature-service';
 import { getCurrentUser } from '@/app/services/UserService';
@@ -87,13 +88,16 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
       className="flex flex-col items-start gap-4 space-y-2 p-4"
     >
       <div className="flex w-full flex-col gap-2">
-        <label htmlFor="name" className="text-sm font-bold text-gray-600">
-          Service Name
-        </label>
-        <div className="text-xs text-gray-600">
-          This is the name that appears on the features list for a Tier.
+        <div>
+          <Label htmlFor="name">
+            Service Name
+          </Label>
+          <div className="text-xs text-stone-500">
+            This is the name that appears on the features list for a Tier.
+          </div>
         </div>
-        <TextInput
+        <Input
+          id="name"
           placeholder=""
           {...register("name", { required: "Service name is required" })}
         />
@@ -104,10 +108,11 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
         )}
       </div>
       <div className="flex w-full flex-col gap-2">
-        <label htmlFor="name" className="text-sm font-bold text-gray-600">
+        <Label htmlFor="uri">
           Relevant Link, Email, or Phone#
-        </label>
-        <TextInput
+        </Label>
+        <Input
+          id="uri"
           placeholder=""
           {...register("uri", {
             required:
@@ -120,13 +125,11 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
         )}
       </div>
       <div className="flex w-full flex-col gap-2">
-        <label
-          htmlFor="description"
-          className="text-sm font-bold text-gray-600"
-        >
+        <Label htmlFor="description">
           Description
-        </label>
-        <TextArea
+        </Label>
+        <Textarea
+          id="description"
           placeholder="Detail fulfillment or workflow information"
           rows={3}
           {...register("description")}

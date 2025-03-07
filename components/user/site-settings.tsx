@@ -1,7 +1,8 @@
 "use client";
 
-import { TextInput } from "@tremor/react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Site } from "@prisma/client";
 import Link from "next/link";
 import { useState } from "react";
@@ -46,33 +47,29 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
     <form onSubmit={handleSubmit}>
       <div className="flex flex-col items-start w-full space-y-6">
         <div className="flex flex-col items-start w-1/2 gap-2">
-          <label
-            htmlFor="subdomain"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Subdomain
-          </label>
-          <TextInput
+          <div>
+            <Label htmlFor="subdomain" className="mb-0.5">
+              Subdomain
+            </Label>
+            <p className="text-xs text-stone-500">
+              Your store will appear at{" "}
+              <Link className="underline" href={siteURL}>
+                {siteURL}.
+              </Link>
+            </p>
+          </div>
+          <Input
             placeholder="Your subdomain"
             name="subdomain"
             id="subdomain"
             defaultValue={site.subdomain ?? ""}
           />
-          <p className="text-sm text-stone-500">
-            Your store will appear at{" "}
-            <Link className="underline" href={siteURL}>
-              {siteURL}.
-            </Link>
-          </p>
         </div>
-        <div className="flex flex-col items-start w-1/2 gap-2">
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
-          >
+        <div className="flex flex-col items-start w-1/2 gap-1.5">
+          <Label htmlFor="name">
             Name
-          </label>
-          <TextInput
+          </Label>
+          <Input
             placeholder="Your store title"
             name="name"
             id="name"
@@ -80,16 +77,15 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
           />
         </div>
         <div className="flex flex-col items-start w-1/2 gap-2">
-          <label
-            htmlFor="logo"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Logo
-          </label>
-          <p className="text-sm text-stone-500">
-            Your store logo is used in your web storefront, for favicons and Open Graph
-            images.
-          </p>
+          <div>
+            <Label htmlFor="logo" className="mb-0.5">
+              Logo
+            </Label>
+            <p className="text-xs text-stone-500">
+              Your store logo is used in your web storefront, for favicons and Open Graph
+              images.
+            </p>
+          </div>
 
           <Uploader
             defaultValue={site.logo ?? null}

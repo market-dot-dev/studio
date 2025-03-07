@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import SectionHeader from "./section-header";
-import { TextInput, Textarea } from "@tremor/react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Tier } from "@prisma/client";
 import { useRouter } from "next/navigation";
@@ -41,7 +43,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
   return (
     <div className="w-7/8 flex flex-col gap-4">
       <section className="text-md mb-8 text-slate-600 lg:w-5/6">
-        <SectionHeader headerName="Contact Us" />
+        <SectionHeader headerName="Get in touch" />
         <span>
           Please provide your details below so we can get in touch with you.
         </span>
@@ -50,8 +52,9 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
         <Card>
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
             <div className="w-full items-center">
-              <strong>Email Address:</strong>
-              <TextInput
+              <Label htmlFor="email">Email Address</Label>
+              <Input
+                id="email"
                 name="email"
                 type="email"
                 placeholder="Enter your email"
@@ -59,24 +62,27 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
               />
             </div>
             <div className="w-full items-center">
-              <strong>Name:</strong>
-              <TextInput 
+              <Label htmlFor="name">Name</Label>
+              <Input 
+                id="name"
                 name="name" 
                 placeholder="Enter your name" 
                 required 
               />
             </div>
             <div className="w-full items-center">
-              <strong>Organization:</strong>
-              <TextInput
+              <Label htmlFor="organization">Organization</Label>
+              <Input
+                id="organization"
                 name="organization"
                 placeholder="Enter your organization name"
                 required
               />
             </div>
             <div className="w-full items-center">
-              <strong>Additional Context:</strong>
+              <Label htmlFor="context">Additional Context</Label>
               <Textarea
+                id="context"
                 name="context"
                 placeholder="Tell us more about your project needs and how we can help"
                 required

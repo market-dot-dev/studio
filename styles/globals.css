@@ -220,7 +220,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-stone-800;
   }
 }
 

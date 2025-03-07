@@ -1,15 +1,17 @@
 'use client'
 import { getInstallationsList, getInstallationRepos, getGithubAppInstallState } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { TextInput, SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
+import { SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
 import { Button } from "@/components/ui/button";
 
-import { Github, SearchIcon, XCircle } from "lucide-react";
+import { Github, SearchIcon, X } from "lucide-react";
 import { useCallback, useEffect, useState, useTransition } from "react";
 
 import LoadingSpinner from "../../form/loading-spinner";
 import { Card } from "@/components/ui/card";
 import { RepoItem, SearchResultRepo } from "./repo-items";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
 
@@ -140,7 +142,9 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                       >
                         <div className="flex items-center">
                           <Icon icon={Github} />{" "}
-                          <p className="text-sm text-stone-500">{installation.login}</p>
+                          <p className="text-sm text-stone-500">
+                            {installation.login}
+                          </p>
                         </div>
                       </SearchSelectItem>
                     ))}
@@ -150,25 +154,28 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
               </div>
 
               <div className="relative w-full">
-                <strong>Repositories</strong>
-                <div className="relative mt-2 w-full">
-                  <TextInput
-                    icon={SearchIcon}
-                    placeholder="Filter..."
-                    value={filter}
-                    onChange={(e) => setFilter(e.target.value)}
-                  />
-                  {filter?.length ? (
-                    <div className="absolute right-2 top-2">
-                      <Button
-                        size="icon"
-                        variant="secondary"
-                        onClick={() => setFilter("")}
-                      >
-                        <XCircle />
-                      </Button>
-                    </div>
-                  ) : null}
+                <div className="flex flex-col gap-1.5">
+                  <Label htmlFor="search">Repositories</Label>
+                  <div className="relative  w-full">
+                    <Input
+                      id="search"
+                      icon={<SearchIcon />}
+                      placeholder="Filter..."
+                      value={filter}
+                      onChange={(e) => setFilter(e.target.value)}
+                    />
+                    {filter?.length ? (
+                      <div className="absolute inset-0 left-auto">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          onClick={() => setFilter("")}
+                        >
+                          <X className="!size-4 text-stone-400 hover:text-stone-600" />
+                        </Button>
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
                 {isPendingInstallationRepos ? (
                   <LoadingSpinner className="mx-auto" />
@@ -176,7 +183,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                 {installations.find(
                   ({ id }) => `${id}` === currentInstallationId,
                 ) && installationRepos?.length ? (
-                  <div className="flex flex-col w-full gap-0">
+                  <div className="flex w-full flex-col gap-0">
                     {filteredInstallationRepos.map(
                       (repo: Repo, index: number) => (
                         <SearchResultRepo
@@ -207,7 +214,7 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                 and select repositories to link.
               </p>
             )}
-            <div className="grid grid-cols-1 mb-4 gap-2">
+            <div className="mb-4 grid grid-cols-1 gap-2">
               {repos.map((repo, index) => (
                 <RepoItem repo={repo} key={index} setRepos={setRepos} />
               ))}

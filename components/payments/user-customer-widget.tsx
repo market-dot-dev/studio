@@ -17,7 +17,7 @@ const UserCustomerWidget = ({ user, maintainer }: { user: User; maintainer: User
   return <></>;
   /*
   return (<>
-    <TextInput
+    <Input
       name="stripeCustomerId"
       placeholder={"Stripe Customer ID"}
       value={stripeCustomerId || ''}

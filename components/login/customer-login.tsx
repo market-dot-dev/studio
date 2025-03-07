@@ -1,13 +1,15 @@
 'use client'
-import { TextInput } from "@tremor/react";
+
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useRef, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'
 import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
 import useCurrentSession from "@/app/hooks/use-current-session";
-
+import { cn } from "@/lib/utils";
 
 // usign a local variable to avoid state update delays
 
@@ -149,103 +151,149 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     const toggleSignUp = () => setIsSignUp(!isSignUp);
 
     return (
-        <>
+      <>
+        {currentUser ? (
+          <>
+            <div className="flex w-full flex-row items-center justify-between">
+              <span>
+                You are logged in as {currentUser.name} ({currentUser.email}).
+              </span>
+              <Button
+                variant="outline"
+                loading={isSubmitting}
+                disabled={isSubmitting}
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </div>
             {error && (
-                <div className="flex justify-center w-full text-md">
-                    <p className="text-red-500">{error}</p>
-                </div>
+              <div className="flex w-full justify-center text-sm">
+                <p className="text-rose-500">{error}</p>
+              </div>
             )}
-            {currentUser ? (
-                <div className="flex flex-row justify-between w-full items-center">
-                    <span>You are logged in as {currentUser.name} ({currentUser.email}).</span>
-                    <Button 
-                        variant="outline" 
-                        loading={isSubmitting} 
-                        disabled={isSubmitting}
-                        onClick={handleLogout} 
-                    >
-                        Logout
-                    </Button>
-                </div>
-            ) : !isSubmitted ? (
-                <div>
-                    {isSignUp ? (
-                        <>
-                        <div className="mb-4">
-                            <div className="mb-4 text-center">Enter your details to create an account.</div>
-
-                            <strong>Name:</strong>
-                            <TextInput placeholder="Enter your name" value={name} onChange={(e) => {
-                                setName(e.target.value)
-                                setError(null);
-                            }} autoFocus />
-                        </div>
-                        </>
-                    ) :
-                    <div className="mb-4 text-center">Please enter your email to receive a verification code.</div>
-                    }
-                    
-                    <div className="flex flex-col gap-4 w-full">
-                        <div className="items-center w-full">
-                            <strong>Email:</strong>
-                            <TextInput 
-                                placeholder="Your email address"
-                                autoFocus={!isSignUp}
-                                value={verificationEmail} 
-                                onChange={(e) => {
-                                    setVerificationEmail(e.target.value)
-                                    setError(null);
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleEmail(e);
-                                    }
-                                }}  />
-                        </div> 
-                        <div className="items-center">
-                            <Button onClick={handleEmail} loading={isSubmitting} disabled={isSubmitting} className="w-full">Continue</Button>
-                        </div>
-                    </div>
-                    <p className="mt-4 text-center text-md text-slate-500 cursor-pointer underline" onClick={toggleSignUp}>
-                        {isSignUp ? "Already have an account? Sign in here" : "Don't have an account? Sign up here"}
-                    </p>
-                </div>
+          </>
+        ) : !isSubmitted ? (
+          <div className="flex flex-col gap-6">
+            {isSignUp ? (
+              <div className="text-center text-sm text-stone-500">
+                Enter your details to create an account.
+              </div>
             ) : (
-                <div>
-                    <label className="block text-md text-slate-500 text-center mb-4">A verification code has been sent to your email. Please enter the value here.</label>
-                    <div className="flex flex-col gap-4 w-full items-center">
-                        <div className="items-center w-full">
-
-                            <OTPInputElement
-                                verifying={isSubmitting}
-                                
-                                onComplete={(code: any) => {
-                                    setError(null);
-                                    handleVerification(code);
-                                    
-                                }}
-
-                                onInput={(e: any) => {
-                                    setError(null);
-                                }}
-
-                                onPaste={(e: any) => {
-                                    
-                                    setTimeout(() => {
-                                        handleVerification(e.target.value)
-                                    }, 0)
-                                    
-                                    setError(null);
-                                }}
-
-
-                             />
-
-                        </div>
-                    </div>
-                </div>
+              <div className="text-center text-sm text-stone-500">
+                Enter your email to receive a verification code.
+              </div>
             )}
-        </>
+
+            <div className="flex w-full flex-col gap-4">
+              {isSignUp && (
+                <div>
+                  <Label htmlFor="name" className="mb-1.5">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setError(null);
+                    }}
+                    autoFocus
+                  />
+                </div>
+              )}
+              <div className="w-full items-center">
+                {isSignUp && (
+                  <Label htmlFor="email" className="mb-1.5">
+                    Email
+                  </Label>
+                )}
+                <Input
+                  id="email"
+                  placeholder="Email"
+                  autoFocus={!isSignUp}
+                  value={verificationEmail}
+                  onChange={(e) => {
+                    setVerificationEmail(e.target.value);
+                    setError(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleEmail(e);
+                    }
+                  }}
+                />
+              </div>
+              <div className={cn("items-center", isSignUp && "mt-2")}>
+                <Button
+                  onClick={handleEmail}
+                  loading={isSubmitting}
+                  className="w-full"
+                >
+                  Continue
+                </Button>
+              </div>
+            </div>
+            <p
+              className="cursor-pointer text-center text-sm text-stone-500"
+              onClick={toggleSignUp}
+            >
+              {isSignUp ? (
+                <>
+                  <span>Already have an account?</span>{" "}
+                  <Button
+                    variant="link"
+                    className="!h-fit p-0"
+                    onClick={toggleSignUp}
+                  >
+                    Sign in
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <span>Don't have an account?</span>{" "}
+                  <Button
+                    variant="link"
+                    className="!h-fit p-0"
+                    onClick={toggleSignUp}
+                  >
+                    Sign up
+                  </Button>
+                </>
+              )}
+            </p>
+          </div>
+        ) : (
+          <div className="">
+            <label className="text-sm block text-center text-stone-500">
+              A verification code has been sent to your email. Please enter the
+              value here.
+            </label>
+            <div className="mt-6 flex w-full flex-col items-center gap-4">
+              <div className="w-full items-center">
+                <OTPInputElement
+                  verifying={isSubmitting}
+                  onComplete={(code: any) => {
+                    setError(null);
+                    handleVerification(code);
+                  }}
+                  onInput={(e: any) => {
+                    setError(null);
+                  }}
+                  onPaste={(e: any) => {
+                    setTimeout(() => {
+                      handleVerification(e.target.value);
+                    }, 0);
+
+                    setError(null);
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        )}
+      </>
     );
 }
 

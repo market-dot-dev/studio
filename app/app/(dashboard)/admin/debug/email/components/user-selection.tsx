@@ -1,9 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow, TextInput } from "@tremor/react";
+import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import { User } from "@prisma/client";
 
 interface UserSelectionStepProps {
@@ -128,7 +129,7 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
             {selectedUsers.length} of {users.length} users selected
           </p>
         </div>
-        <TextInput
+        <Input
           placeholder="Search by name or email"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}

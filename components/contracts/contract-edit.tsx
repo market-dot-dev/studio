@@ -1,7 +1,9 @@
 "use client";
 
-import { TextInput, Textarea } from "@tremor/react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { Contract } from "@prisma/client";
 import Link from "next/link";
 import PageHeading from "@/components/common/page-heading";
@@ -129,13 +131,8 @@ export default function ContractEdit({
         {info && <p className="text-sm text-stone-500">{info}</p>}
         <div className="flex w-full flex-col items-start space-y-6">
           <div className="flex w-1/2 flex-col items-start gap-2">
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Name
-            </label>
-            <TextInput
+            <Label htmlFor="name">Name</Label>
+            <Input
               placeholder="Contract name"
               name="name"
               id="name"
@@ -144,12 +141,7 @@ export default function ContractEdit({
             />
           </div>
           <div className="flex w-1/2 flex-col items-start gap-2">
-            <label
-              htmlFor="description"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Description
-            </label>
+            <Label htmlFor="description">Description</Label>
             <Textarea
               placeholder="Contract description"
               name="description"
@@ -227,13 +219,8 @@ export default function ContractEdit({
           ) : null}
           {contract.storage === "link" && (
             <div className="flex w-1/2 flex-col items-start gap-2">
-              <label
-                htmlFor="url"
-                className="block text-sm font-medium text-gray-700"
-              >
-                URL
-              </label>
-              <TextInput
+              <Label htmlFor="url">URL</Label>
+              <Input
                 placeholder="Contract URL"
                 name="url"
                 id="url"

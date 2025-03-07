@@ -1,14 +1,16 @@
-import { TextInput } from "@tremor/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LocationEntryInput() {
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-gray-900">
+    <div className="space-y-1.5">
+      <Label htmlFor="location">
         Where are you based out of?
-      </label>
-      <TextInput
+      </Label>
+      <Input
+        id="location"
         placeholder="Toronto, Canada"
-        className="bg-white text-gray-900"
+        className="bg-white"
         name="location"
         required
       />

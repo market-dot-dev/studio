@@ -11,7 +11,6 @@ import { useRouter } from "next/navigation";
 
 import {
   Callout,
-  TextInput,
   Tab,
   TabGroup,
   TabList,
@@ -29,6 +28,8 @@ import {
 import { Page, Site } from "@prisma/client";
 import PageEditorSidebar from "./page-editor-sidebar";
 import { useFullscreen } from "../dashboard/dashboard-context";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 let debounceTimeout: any;
 
@@ -507,53 +508,51 @@ export default function PageEditor({
         <>
           <div className={clsx("md:col-span-9", fullscreen ? "p-4" : "")}>
             <div className="mb-4 grid grid-cols-12 gap-2">
-              <div className="md:col-span-8">
-                <strong>Page Title</strong>
-                <TextInput
+              <div className="space-y-1.5 md:col-span-8">
+                <Label htmlFor="page-title">Page Title</Label>
+                <Input
+                  id="page-title"
                   placeholder="Title"
-                  error={titleError ? true : false}
-                  errorMessage={titleError ? titleError : ""}
+                  className={titleError ? "border-red-500" : ""}
                   defaultValue={data?.title || ""}
                   onChange={(e) => {
                     setTitleError(null);
                     setData({ ...data, title: e.target.value });
                   }}
-                ></TextInput>
+                />
+                {titleError && (
+                  <p className="text-sm text-red-500">{titleError}</p>
+                )}
               </div>
 
-              <div className="md:col-span-4">
-                <div className="flex">
-                  <strong>URL Slug</strong>
-                </div>
-
-                <div className="flex">
-                  <TextInput
-                    placeholder="Path"
-                    error={slugError ? true : false}
-                    errorMessage={slugError ? slugError : ""}
-                    defaultValue={data?.slug || ""}
-                    onChange={(e) => {
-                      setSlugError(null);
-                      setSlugVirgin(false);
-                      setData({ ...data, slug: e.target.value });
-                    }}
-                  ></TextInput>
-                </div>
+              <div className="space-y-1.5 md:col-span-4">
+                <Label htmlFor="page-slug">URL Slug</Label>
+                <Input
+                  id="page-slug"
+                  placeholder="Path"
+                  className={slugError ? "border-red-500" : ""}
+                  defaultValue={data?.slug || ""}
+                  onChange={(e) => {
+                    setSlugError(null);
+                    setSlugVirgin(false);
+                    setData({ ...data, slug: e.target.value });
+                  }}
+                />
+                {slugError && (
+                  <p className="text-sm text-red-500">{slugError}</p>
+                )}
               </div>
             </div>
 
             <div className="mb-2 flex justify-between">
               <Box>
-                <strong>Page Content</strong>
+                <Label>Page Content</Label>
               </Box>
               <Box>{data.slug ? previewLink : null}</Box>
             </div>
 
             <div className="mb-2 flex justify-between">
-              <Box>
-                <strong>Page Status</strong>
-              </Box>
-              <Box>
+                <Label>Page Status</Label>
                 <DraftSelectBox
                   inProgress={inProgress}
                   isDeleting={isDeleting}
@@ -563,7 +562,6 @@ export default function PageEditor({
                     await updatePage(data.id, { draft });
                   }}
                 />
-              </Box>
             </div>
           </div>
 

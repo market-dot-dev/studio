@@ -3,10 +3,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { useModal } from "@/components/modal/provider";
 import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; 
-import { NumberInput, TextInput } from "@tremor/react";
+import { NumberInput } from "@tremor/react";
 import { Button } from "@/components/ui/button";
 import { Media as DBMedia } from "@prisma/client";
 import { format } from 'date-fns'
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 import { useDropzone } from 'react-dropzone';
 import { Spinner } from "flowbite-react";
@@ -184,10 +186,10 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                     </Button>
                   </div>
                 </div>
-                <div className="flex flex-col gap-2">
-                  <div className="flex flex-col gap-2">
-                    <label>Alt Text</label>
-                    <TextInput
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1.5">
+                    <Label>Alt Text</Label>
+                    <Input
                       type="text"
                       value={alt}
                       onChange={(e) => setAlt(e.target.value)}
@@ -195,8 +197,8 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                     />
                   </div>
 
-                  <div className="flex flex-col gap-2">
-                    <label>Width (px)</label>
+                  <div className="flex flex-col gap-1.5">
+                    <Label>Width (px)</Label>
                     <NumberInput
                       value={width}
                       min={1}
@@ -204,8 +206,8 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                       placeholder="Width"
                     />
                   </div>
-                  <div className="flex flex-col gap-2">
-                    <label>Height (px)</label>
+                  <div className="flex flex-col gap-1.5">
+                    <Label>Height (px)</Label>
                     <NumberInput
                       value={height}
                       min={1}
