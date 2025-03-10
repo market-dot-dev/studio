@@ -14,6 +14,7 @@ export default function LocalAuthButton() {
   // Get error message added by next/auth in URL.
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");
+  const callbackUrl = searchParams?.get("callbackUrl");
 
   useEffect(() => {
     const errorMessage = Array.isArray(error) ? error.pop() : error;
@@ -35,8 +36,12 @@ export default function LocalAuthButton() {
       toast.error(res.error);
       setLoading(false);
     } else {
-      // Redirect or handle successful login
-      window.location.href = '/';
+      // Redirect to callbackUrl if available, otherwise to home
+      if (callbackUrl) {
+        window.location.href = callbackUrl;
+      } else {
+        window.location.href = '/';
+      }
     }
   };
 
