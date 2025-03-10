@@ -2,7 +2,7 @@
 import { TextInput, Button, Text, Bold } from "@tremor/react";
 import { useRef, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
 import useCurrentSession from "@/app/hooks/use-current-session";
@@ -12,6 +12,11 @@ import useCurrentSession from "@/app/hooks/use-current-session";
 
 export function CustomerLoginComponent({ redirect, signup = false } : { redirect?: string, signup?: boolean }) {
     let handlingVerificationRef = useRef(false);
+    const searchParams = useSearchParams();
+    
+    // Get callbackUrl from URL if available
+    const callbackUrlFromQuery = searchParams?.get('callbackUrl');
+    const finalRedirect = callbackUrlFromQuery || redirect;
 
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -125,8 +130,8 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
         fetch(verificationUrl).then(async (res) => {
             if(res.status === 200 || res.status === 302 || res.status === 0) {
-                if(redirect) {
-                    router.push( redirect )
+                if(finalRedirect) {
+                    router.push(finalRedirect)
                 } else {
                     window.location.reload();
                 }

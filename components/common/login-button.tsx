@@ -1,7 +1,7 @@
 "use client";
 
 import LoadingDots from "@/components/icons/loading-dots";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ReactNode, MouseEventHandler, FC } from "react";
 
 interface LoginButtonProps {
@@ -9,6 +9,7 @@ interface LoginButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   isLoading: boolean;
   href?: string;
+  preserveCallbackUrl?: boolean;
 }
 
 export const LoginButton: FC<LoginButtonProps> = ({
@@ -16,9 +17,20 @@ export const LoginButton: FC<LoginButtonProps> = ({
   onClick,
   isLoading,
   href,
+  preserveCallbackUrl = true,
 }) => {
   const router = useRouter();
-  const loginOrNavigate = href ? () => router.push(href) : onClick;
+  const searchParams = useSearchParams();
+  
+  // Get callbackUrl from current URL if it exists
+  const callbackUrl = preserveCallbackUrl ? searchParams?.get('callbackUrl') : null;
+  
+  // If we have both href and callbackUrl, append callbackUrl as a query parameter
+  const finalHref = href && callbackUrl 
+    ? `${href}${href.includes('?') ? '&' : '?'}callbackUrl=${encodeURIComponent(callbackUrl)}`
+    : href;
+  
+  const loginOrNavigate = finalHref ? () => router.push(finalHref) : onClick;
 
   return (
     <button
