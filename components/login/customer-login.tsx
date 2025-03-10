@@ -123,8 +123,8 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
         fetch(verificationUrl).then(async (res) => {
             if(res.status === 200 || res.status === 302 || res.status === 0) {
-                // Navigate to callbackUrl from query params or fallback to provided redirect
                 const callbackUrl = searchParams?.get('callbackUrl') || redirect;
+                
                 if(callbackUrl) {
                     router.push(callbackUrl);
                 } else {

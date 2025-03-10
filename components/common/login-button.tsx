@@ -9,7 +9,6 @@ interface LoginButtonProps {
   onClick?: MouseEventHandler<HTMLButtonElement>;
   isLoading: boolean;
   href?: string;
-  preserveCallbackUrl?: boolean;
 }
 
 export const LoginButton: FC<LoginButtonProps> = ({
@@ -17,29 +16,27 @@ export const LoginButton: FC<LoginButtonProps> = ({
   onClick,
   isLoading,
   href,
-  preserveCallbackUrl = true,
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Handle click based on props configuration
   const handleClick = () => {
+    // If no href provided, use the onClick handler
     if (!href) {
       onClick && onClick({} as any);
       return;
     }
     
-    // Only append callbackUrl if we need to preserve it and it exists in searchParams
-    if (preserveCallbackUrl) {
-      const callbackUrl = searchParams?.get('callbackUrl');
-      if (callbackUrl) {
-        const separator = href.includes('?') ? '&' : '?';
-        router.push(`${href}${separator}callbackUrl=${encodeURIComponent(callbackUrl)}`);
-        return;
-      }
+    // Check if we have a callbackUrl in the current URL
+    const callbackUrl = searchParams?.get('callbackUrl');
+    if (callbackUrl) {
+      // Append callbackUrl to the href
+      const separator = href.includes('?') ? '&' : '?';
+      router.push(`${href}${separator}callbackUrl=${encodeURIComponent(callbackUrl)}`);
+      return;
     }
     
-    // Default navigation if no callback URL handling needed
+    // Default navigation
     router.push(href);
   };
 
