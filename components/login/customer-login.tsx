@@ -13,11 +13,8 @@ import useCurrentSession from "@/app/hooks/use-current-session";
 export function CustomerLoginComponent({ redirect, signup = false } : { redirect?: string, signup?: boolean }) {
     let handlingVerificationRef = useRef(false);
     const searchParams = useSearchParams();
+    const router = useRouter();
     
-    // Get callbackUrl from URL if available
-    const callbackUrlFromQuery = searchParams?.get('callbackUrl');
-    const finalRedirect = callbackUrlFromQuery || redirect;
-
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -26,8 +23,6 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     
     const [isSignUp, setIsSignUp] = useState(signup); 
     const [name, setName] = useState<string>('');
-    
-    const router = useRouter();
 
     const handleLogout = async () => {
         setIsSubmitting(true);
@@ -117,8 +112,6 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     };
  
     const handleVerification = async (verificationCode: string) => {
-        // e.preventDefault();
-        
         if (!verificationEmail || !verificationCode) return;
         
         if(handlingVerificationRef.current || isSubmitting) return;
@@ -130,8 +123,10 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
         fetch(verificationUrl).then(async (res) => {
             if(res.status === 200 || res.status === 302 || res.status === 0) {
-                if(finalRedirect) {
-                    router.push(finalRedirect)
+                // Navigate to callbackUrl from query params or fallback to provided redirect
+                const callbackUrl = searchParams?.get('callbackUrl') || redirect;
+                if(callbackUrl) {
+                    router.push(callbackUrl);
                 } else {
                     window.location.reload();
                 }

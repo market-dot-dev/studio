@@ -22,20 +22,31 @@ export const LoginButton: FC<LoginButtonProps> = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   
-  // Get callbackUrl from current URL if it exists
-  const callbackUrl = preserveCallbackUrl ? searchParams?.get('callbackUrl') : null;
-  
-  // If we have both href and callbackUrl, append callbackUrl as a query parameter
-  const finalHref = href && callbackUrl 
-    ? `${href}${href.includes('?') ? '&' : '?'}callbackUrl=${encodeURIComponent(callbackUrl)}`
-    : href;
-  
-  const loginOrNavigate = finalHref ? () => router.push(finalHref) : onClick;
+  // Handle click based on props configuration
+  const handleClick = () => {
+    if (!href) {
+      onClick && onClick({} as any);
+      return;
+    }
+    
+    // Only append callbackUrl if we need to preserve it and it exists in searchParams
+    if (preserveCallbackUrl) {
+      const callbackUrl = searchParams?.get('callbackUrl');
+      if (callbackUrl) {
+        const separator = href.includes('?') ? '&' : '?';
+        router.push(`${href}${separator}callbackUrl=${encodeURIComponent(callbackUrl)}`);
+        return;
+      }
+    }
+    
+    // Default navigation if no callback URL handling needed
+    router.push(href);
+  };
 
   return (
     <button
       disabled={isLoading}
-      onClick={loginOrNavigate}
+      onClick={handleClick}
       className={`${
         isLoading
           ? "cursor-not-allowed bg-white dark:bg-black"
