@@ -8,9 +8,8 @@ import { Media as DBMedia } from "@prisma/client";
 import { format } from 'date-fns'
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-
 import { useDropzone } from 'react-dropzone';
-import { Spinner } from "flowbite-react";
+import { Loader } from "lucide-react";
 
 type Media = Partial<DBMedia>;
 
@@ -25,17 +24,20 @@ const StyledDropzone = ({ onFileAccepted, isUploading } : any) => {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
     return (
-        <div 
-            {...getRootProps()} 
-            className="flex flex-col p-4 gap-2 border-2 rounded-md border-dashed dropzone cursor-pointer min-h-30"
-        >
-            <input {...getInputProps()} />
-            <strong>Files Upload</strong>
-            {isUploading ? <Spinner /> :
-            
-                <p className="text-sm text-stone-500 py-1">Drop files here or <strong>Click</strong> to select files</p>
-            }
-        </div>
+      <div
+        {...getRootProps()}
+        className="dropzone min-h-30 flex cursor-pointer flex-col gap-2 rounded-md border-2 border-dashed p-4"
+      >
+        <input {...getInputProps()} />
+        <strong>Files Upload</strong>
+        {isUploading ? (
+          <Loader className="loading-spinner animate-spin-slow h-3 w-3" />
+        ) : (
+          <p className="py-1 text-sm text-stone-500">
+            Drop files here or <strong>Click</strong> to select files
+          </p>
+        )}
+      </div>
     );
 };
 
@@ -131,7 +133,9 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
           </div>
 
           <div className="flex max-h-[60vh] grow flex-wrap items-start justify-start gap-4 overflow-auto p-4">
-            {isLoading && <Spinner />}
+            {isLoading && (
+              <Loader className="loading-spinner animate-spin-slow h-3 w-3" />
+            )}
             {mediaList.map((media) => {
               const classes = `border ${selectedMedia?.id === media.id ? "border-blue-500" : "border-transparent"} cursor-pointer`;
               return (

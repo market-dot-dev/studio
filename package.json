@@ -56,8 +56,6 @@
     "cmdk": "1.0.0",
     "date-fns": "^2.30.0",
     "dotenv-cli": "^7.4.2",
-    "flowbite": "^2.5.2",
-    "flowbite-react": "^0.10.2",
     "focus-trap-react": "^10.3.1",
     "framer-motion": "^11.11.10",
     "gray-matter": "^4.0.3",
