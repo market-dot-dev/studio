@@ -25,7 +25,7 @@ const badgeVariants = cva(
       },
       size: {
         default: "py-0.5 px-1.5 text-xs rounded-sm",
-        sm: "py-0.5 px-1 text-xxs tracking-[-0.02em] rounded-sm",
+        sm: "py-0.5 px-1 text-xxs tracking-[-0.02em] rounded-[3px]",
       },
     },
     defaultVariants: {
