@@ -1,7 +1,7 @@
 'use client'
+
 import { getInstallationsList, getInstallationRepos, getGithubAppInstallState } from "@/app/services/RepoService";
 import { Repo } from "@prisma/client";
-import { SearchSelect, SearchSelectItem, Icon } from "@tremor/react";
 import { Button } from "@/components/ui/button";
 
 import { Github, SearchIcon, X } from "lucide-react";
@@ -12,6 +12,7 @@ import { Card } from "@/components/ui/card";
 import { RepoItem, SearchResultRepo } from "./repo-items";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Combobox } from "@/components/ui/combobox";
 
 const appName = process.env.NEXT_PUBLIC_GITHUB_APP_NAME;
 
@@ -127,28 +128,42 @@ export default function RepositorySettings({ repos: initialRepos }: { repos: Par
                   member.
                 </p>
                 <div className="relative mt-2 flex w-full items-center">
-                  <SearchSelect onValueChange={handleInstallationSelect}>
-                    <div
-                      key="add-github-account"
-                      className="flex w-full cursor-pointer items-center justify-start p-2"
-                      onClick={handleAddAccount}
-                    >
-                      + Add Github Account
-                    </div>
-                    {installations.map((installation, index) => (
-                      <SearchSelectItem
-                        value={`${installation.id}`}
-                        key={index}
-                      >
-                        <div className="flex items-center">
-                          <Icon icon={Github} />{" "}
+                  <Combobox
+                    items={[
+                      { value: "add-account", label: "+ Add Github Account" },
+                      ...installations.map(installation => ({
+                        value: `${installation.id}`,
+                        label: installation.login || "",
+                        installation
+                      }))
+                    ]}
+                    value={currentInstallationId || ""}
+                    onChange={(value) => {
+                      if (value === "add-account") {
+                        handleAddAccount();
+                      } else {
+                        handleInstallationSelect(value);
+                      }
+                    }}
+                    renderItem={(item, isSelected) => {
+                      if (item.value === "add-account") {
+                        return (
+                          <div className="flex w-full cursor-pointer items-center justify-start p-2">
+                            + Add Github Account
+                          </div>
+                        );
+                      }
+                      return (
+                        <div className="flex items-center gap-1">
+                          <Github />
                           <p className="text-sm text-stone-500">
-                            {installation.login}
+                            {item.label}
                           </p>
                         </div>
-                      </SearchSelectItem>
-                    ))}
-                  </SearchSelect>
+                      );
+                    }}
+                    placeholder="Select Github Account"
+                  />
                   {isPendingInstallationsList ? <LoadingSpinner /> : null}
                 </div>
               </div>
