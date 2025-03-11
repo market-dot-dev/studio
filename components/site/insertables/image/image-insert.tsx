@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useModal } from "@/components/modal/provider";
 import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; 
-import { NumberInput } from "@tremor/react";
 import { Button } from "@/components/ui/button";
 import { Media as DBMedia } from "@prisma/client";
 import { format } from 'date-fns'
@@ -187,28 +186,36 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
                   </div>
                 </div>
                 <div className="flex flex-col gap-4">
-                  <div className="flex flex-col gap-1.5">
-                    <Label>Alt Text</Label>
+                  <div className="flex flex-col gap-1">
+                    <Label htmlFor="alt-text">Alt Text</Label>
                     <Input
                       type="text"
+                      id="alt-text"
+                      name="alt-text"
                       value={alt}
                       onChange={(e) => setAlt(e.target.value)}
                       placeholder="Alt Text"
                     />
                   </div>
 
-                  <div className="flex flex-col gap-1.5">
-                    <Label>Width (px)</Label>
-                    <NumberInput
+                  <div className="flex flex-col gap-1">
+                    <Label htmlFor="width">Width (px)</Label>
+                    <Input
+                      id="width"
+                      name="width"
+                      type="number"
                       value={width}
                       min={1}
                       onChange={(e) => setWidth(e.target.value)}
                       placeholder="Width"
                     />
                   </div>
-                  <div className="flex flex-col gap-1.5">
-                    <Label>Height (px)</Label>
-                    <NumberInput
+                  <div className="flex flex-col gap-1">
+                    <Label htmlFor="height">Height (px)</Label>
+                    <Input
+                      id="height"
+                      name="height"
+                      type="number"
                       value={height}
                       min={1}
                       onChange={(e) => setHeight(e.target.value)}
