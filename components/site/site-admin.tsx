@@ -69,7 +69,7 @@ export default function SiteAdmin({ id }: { id: string }) {
           <div className="flex-column w-full lg:ms-[300px]">
             <div className="mb-4">
               <div className="mb-2 flex">
-                <div className="flex items-center gap-x-2.5 gap-y-2">
+                <div className="flex items-center gap-2">
                   <strong>Homepage</strong>
                   {homepage?.draft ? (
                     <Badge variant="secondary" size="sm">

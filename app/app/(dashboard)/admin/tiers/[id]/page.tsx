@@ -8,10 +8,10 @@ export default async function AdminEditTier({ params }: { params: { id: string }
   if (!tier || !tier.id) return null;
 
   return (
-    <Card className='p-6'>
+    <div className='flex flex-col gap-6'>
       <PageHeading>Admin : Edit Tier</PageHeading>
-      <div>Name: {tier.name}</div>
+      <div className='font-semibold text-xl'>{tier.name}</div>
       <TierForm tier={tier} />
-    </Card>
+    </div>
   );
 }
