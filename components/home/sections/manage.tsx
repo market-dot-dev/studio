@@ -21,8 +21,8 @@ export default function Manage() {
       <div className="mx-auto grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
         <FeatureCard
           icon={<UsersRound />}
-          title="CRM for OSS"
-          description="Fully-featured CRM, re-designed for open source services."
+          title="CRM & Client Portals"
+          description="A CRM with only the features you need, with built-in client portals."
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}

@@ -1,9 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { ReactNode, MouseEventHandler, FC } from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 interface LoginButtonProps {
   children: ReactNode;
@@ -23,15 +22,34 @@ export const LoginButton: FC<LoginButtonProps> = ({
   className = ""
 }) => {
   const router = useRouter();
-  const loginOrNavigate = href ? () => router.push(href) : onClick;
+  const searchParams = useSearchParams();
+  
+  const handleClick = () => {
+    // If no href provided, use the onClick handler
+    if (!href) {
+      onClick && onClick({} as any);
+      return;
+    }
+    
+    // Check if we have a callbackUrl in the current URL
+    const callbackUrl = searchParams?.get('callbackUrl');
+    if (callbackUrl) {
+      // Append callbackUrl to the href
+      const separator = href.includes('?') ? '&' : '?';
+      router.push(`${href}${separator}callbackUrl=${encodeURIComponent(callbackUrl)}`);
+      return;
+    }
+    
+    // Default navigation
+    router.push(href);
+  };
 
   return (
     <Button
       variant="outline"
-      disabled={isLoading}
       loading={isLoading}
       loadingText={loadingText}
-      onClick={loginOrNavigate}
+      onClick={handleClick}
       className={className}
     >
       {children}

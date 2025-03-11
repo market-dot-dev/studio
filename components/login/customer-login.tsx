@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRef, useState } from "react";
 import { signIn, signOut } from "next-auth/react";
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
 import useCurrentSession from "@/app/hooks/use-current-session";
@@ -15,7 +15,9 @@ import { cn } from "@/lib/utils";
 
 export function CustomerLoginComponent({ redirect, signup = false } : { redirect?: string, signup?: boolean }) {
     let handlingVerificationRef = useRef(false);
-
+    const searchParams = useSearchParams();
+    const router = useRouter();
+    
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -24,8 +26,6 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     
     const [isSignUp, setIsSignUp] = useState(signup); 
     const [name, setName] = useState<string>('');
-    
-    const router = useRouter();
 
     const handleLogout = async () => {
         setIsSubmitting(true);
@@ -115,8 +115,6 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     };
  
     const handleVerification = async (verificationCode: string) => {
-        // e.preventDefault();
-        
         if (!verificationEmail || !verificationCode) return;
         
         if(handlingVerificationRef.current || isSubmitting) return;
@@ -128,8 +126,10 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
 
         fetch(verificationUrl).then(async (res) => {
             if(res.status === 200 || res.status === 302 || res.status === 0) {
-                if(redirect) {
-                    router.push( redirect )
+                const callbackUrl = searchParams?.get('callbackUrl') || redirect;
+                
+                if(callbackUrl) {
+                    router.push(callbackUrl);
                 } else {
                     window.location.reload();
                 }

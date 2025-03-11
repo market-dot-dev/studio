@@ -124,6 +124,25 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     jwt: AuthService.jwtCallback,
     session: AuthService.sessionCallback,
+    redirect({ url, baseUrl }: { url: string; baseUrl: string }): string {
+      // custom redirect logic 
+      if (!/^https?:\/\//.test(url)) {
+        return url.startsWith(baseUrl) ? url : baseUrl;
+      }
+
+      const rootHost = process.env.NEXT_PUBLIC_ROOT_HOST;
+      if (rootHost) {
+        try {
+          const { host } = new URL(url);
+          if (host.endsWith(rootHost)) {
+            return url;
+          }
+        } catch (error) {
+          console.error('Error parsing redirect URL:', error);
+        }
+      }
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    }
   },
   events: {
     signIn: async ({ user, account }: any) => {},
