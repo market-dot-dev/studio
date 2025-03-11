@@ -1,4 +1,4 @@
-import { Metric, BarChart } from "@tremor/react";
+import { BarChart } from "@tremor/react";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
@@ -237,9 +237,9 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline justify-start space-x-3 truncate">
-                <Metric className="leading-none tracking-tight">
+                <h3 className="text-3xl leading-none tracking-tight">
                   {totalNewCustomers}
-                </Metric>
+                </h3>
               </div>
               <BarChart
                 className="mt-3 h-72"
@@ -275,7 +275,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline justify-start space-x-3 truncate">
-                <Metric className="tracking-tight">${`${totalRevenue}`}</Metric>
+                <h3 className="text-3xl tracking-tight leading-none">${`${totalRevenue}`}</h3>
               </div>
 
               <RevenueLineChart
