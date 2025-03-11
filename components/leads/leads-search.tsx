@@ -1,12 +1,18 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { SelectItem, Select } from "@tremor/react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Search, XCircle, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { useCallback, useEffect, useState } from "react";
 
@@ -280,12 +286,19 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             <div>
                 <Select
                     disabled={isSearching}
-                    value={`${perPage}`} onValueChange={(e: string) => {
+                    value={`${perPage}`} 
+                    onValueChange={(e: string) => {
                         setPerPage(parseInt(e));
-                    }}>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
+                    }}
+                >
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Results per page" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
                 </Select>
             </div>
         </>

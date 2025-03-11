@@ -2,10 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  NumberInput,
-  Callout,
-  Select,
-  SelectItem,
   Table,
   TableHead,
   TableHeaderCell,
@@ -14,10 +10,17 @@ import {
   TableCell,
 } from "@tremor/react";
 import { Badge } from "@/components/ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import Tier, { newTier } from "@/app/models/Tier";
 import { subscriberCount } from "@/app/services/SubscriptionService";
 import {
@@ -34,7 +37,6 @@ import PageHeading from "../common/page-heading";
 import TierFeaturePicker from "../features/tier-feature-picker";
 import { attachMany } from "@/app/services/feature-service";
 import Link from "next/link";
-import { Card } from "@/components/ui/card"
 import { Channel, Contract, Feature, User } from "@prisma/client";
 import LoadingDots from "@/components/icons/loading-dots";
 import useCurrentSession from "@/app/hooks/use-current-session";
@@ -45,6 +47,9 @@ import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
 import ChannelsSelectionInput from "./channels-selection-input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
 
 interface TierFormProps {
   tier?: Partial<Tier>;
@@ -114,10 +119,13 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({
     const reasonsText = reasons.join(" and ");
 
     return (
-      <Callout className="mb-5 mt-2" title="New Version" color="red">
-        You&apos;re changing the <strong>{reasonsText}</strong> of a package
-        with subscribers, which will result in a new version.
-      </Callout>
+      <Alert variant="destructive" className="mb-5 mt-2">
+        <AlertTitle>New Version</AlertTitle>
+        <AlertDescription>
+          You&apos;re changing the <strong>{reasonsText}</strong> of a package
+          with subscribers, which will result in a new version.
+        </AlertDescription>
+      </Alert>
     );
   } else {
     return <></>;
@@ -150,7 +158,7 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
   }
 
   return (
-    <div className="mt-4 flex flex-col rounded-lg border border-gray-400 bg-gray-100 px-2 py-4 text-gray-700">
+    <div className="mt-4 flex flex-col rounded border border-stone-200 bg-stone-100 p-4 text-stone-600">
       <strong>Checkout Link</strong>
       {tier.published ? (
         <>
@@ -169,7 +177,7 @@ const TierLinkCopier = ({ tier }: { tier: Tier }) => {
               onClick={copyToClipboard}
               disabled={isCopied}
               className={
-                `rounded-l-none h-9 ` +
+                `h-9 rounded-l-none ` +
                 `${isCopied ? "cursor-not-allowed opacity-50" : ""}`
               }
             >
@@ -251,18 +259,19 @@ const StandardCheckoutForm = ({
           Contract
         </Label>
         <Select
-          id="contractId"
-          placeholder="Choose contract"
-          required
-          name="contractId"
           value={tier.contractId || "standard-msa"}
           onValueChange={(v) => handleTierDataChange("contractId", v)}
         >
-          {contracts.map((c, index) => (
-            <SelectItem value={c.id} key={index}>
-              {c.name}
-            </SelectItem>
-          ))}
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="Choose contract" />
+          </SelectTrigger>
+          <SelectContent>
+            {contracts.map((c, index) => (
+              <SelectItem value={c.id} key={index}>
+                {c.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
         </Select>
       </div>
       <div className="mb-4">
@@ -271,33 +280,42 @@ const StandardCheckoutForm = ({
             Billing type
           </Label>
           <Select
-            id="cadence"
-            placeholder="Billing type"
-            required
-            name="cadence"
             value={tier.cadence || "month"}
             onValueChange={(v) => handleTierDataChange("cadence", v)}
           >
-            <SelectItem value="month">Recurring</SelectItem>
-            {/*
-                      <SelectItem value="year">year</SelectItem>
-                      <SelectItem value="quarter">quarter</SelectItem>
-                      */}
-            <SelectItem value="once">One Time</SelectItem>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder="Billing type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="month">Recurring</SelectItem>
+              {/*
+              <SelectItem value="year">year</SelectItem>
+              <SelectItem value="quarter">quarter</SelectItem>
+              */}
+              <SelectItem value="once">One Time</SelectItem>
+            </SelectContent>
           </Select>
         </div>
 
         <div className="mb-4">
-          <Label htmlFor="price" className="mb-2 block">
+          <Label htmlFor="price" className="mb-1 block">
             Monthly Price (USD)
           </Label>
           <div className="flex gap-2">
-            <NumberInput
-              value={tier.price || 0}
+            <Input
+              id="price"
               name="price"
-              placeholder="Enter price"
-              enableStepper={false}
-              onValueChange={(v) => {
+              type="number"
+              value={tier.price || 0}
+              placeholder="0"
+              min={0}
+              required
+              onChange={(e) => {
+                console.log("price", e.target.value);
+                console.log("pricetype", typeof e.target.value);
+                console.log("price", Number(e.target.value));
+                console.log("pricetype", typeof Number(e.target.value));
+                const v = Number(e.target.value);
                 if (annualPlanEnabled) {
                   setAnnualDiscountPercent(
                     calcDiscount(v, tier.priceAnnual || 0),
@@ -312,16 +330,15 @@ const StandardCheckoutForm = ({
 
         {tier.cadence === "month" && (
           <>
-            <div className="mb-4 flex gap-2">
-              <input
-                type="checkbox"
-                className="rounded-md border-gray-600 p-3 accent-green-400"
+            <div className="mb-4">
+              <Checkbox
                 id="annualPlanEnabled"
                 checked={annualPlanEnabled}
-                onChange={(e) => {
-                  setAnnualPlanEnabled(e.target.checked);
+                onCheckedChange={(checked) => {
+                  const isChecked = checked === true;
+                  setAnnualPlanEnabled(isChecked);
 
-                  if (e.target.checked) {
+                  if (isChecked) {
                     handleTierDataChange(
                       "priceAnnual",
                       tier.priceAnnual || (tier.price || 0) * 12,
@@ -332,73 +349,74 @@ const StandardCheckoutForm = ({
                     setAnnualDiscountPercent(0);
                   }
                 }}
+                label="Offer annual plan"
               />
-              <Label
-                htmlFor="annualPlanEnabled"
-                className="mb-2 flex items-center"
-              >
-                Offer Annual Plan
-              </Label>
             </div>
 
             {annualPlanEnabled && (
               <div className="mb-4">
                 <Label htmlFor="priceAnnual" className="mb-2 block">
-                  Annual Price &nbsp;
+                  Annual Price (USD)
                 </Label>
-                <NumberInput
+                <Input
                   id="priceAnnual"
-                  placeholder="Annual price (dollars)"
-                  required
                   name="priceAnnual"
+                  type="number"
+                  placeholder="0"
+                  required
                   disabled={!annualPlanEnabled}
-                  enableStepper={false}
-                  error={
+                  value={tier.priceAnnual || 0}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    setAnnualDiscountPercent(calcDiscount(tier.price || 0, v));
+                    handleTierDataChange("priceAnnual", v);
+                  }}
+                  className={
                     !!tier.priceAnnual &&
                     (tier.price || 0) * 12 < (tier.priceAnnual || 0)
+                      ? "border-rose-500"
+                      : ""
                   }
-                  errorMessage={`Your annual plan is equal to or more expensive than the Monthly Plan x 12 (${(tier.price || 0) * 12}). Please adjust.`}
-                  value={tier.priceAnnual || undefined}
-                  onValueChange={(v) => {
-                    handleTierDataChange("priceAnnual", v);
-                    setAnnualDiscountPercent(calcDiscount(tier.price || 0, v));
-                  }}
                 />
-                <Label
-                  htmlFor="priceAnnual"
-                  className="my-1 block text-sm font-medium text-gray-600"
-                >
-                  Effective Discount Rate:{" "}
-                  {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"}{" "}
+                {!!tier.priceAnnual &&
+                  (tier.price || 0) * 12 < (tier.priceAnnual || 0) && (
+                    <p className="mt-2 text-xs text-rose-600">
+                      Your annual plan is equal to or more expensive than the
+                      Monthly Plan x 12 (${(tier.price || 0) * 12}). Please
+                      adjust.
+                    </p>
+                  )}
+                <p className="font-regular mt-2 block text-xs text-stone-500">
+                  <strong className="font-bold">Effective Discount Rate</strong>
+                  : {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"}{" "}
                   (compared to annualized monthly{" "}
                   {<>${(tier.price || 0) * 12}</>})
-                </Label>
+                </p>
               </div>
             )}
 
-            <div className="mb-4">
-              {/* <NumberInput
-                              id="annualDiscountPercent"
-                              placeholder="Annual Discount (%)"
-                              readOnly={true}
-                              disabled={!annualPlanEnabled}
-                              required
-                              name="annualDiscountPercent"
-                              value={annualDiscountPercent}
-                          /> */}
-            </div>
+            {/* <div className="mb-4">
+              <Input
+                id="annualDiscountPercent"
+                placeholder="Annual Discount (%)"
+                readOnly={true}
+                disabled={!annualPlanEnabled}
+                required
+                type="number"
+                min={0}
+                max={100}
+                name="annualDiscountPercent"
+                value={annualDiscountPercent}
+              />
+            </div> */}
 
-            <div className="mb-4 flex gap-2">
-              <input
-                type="checkbox"
-                className="rounded-md border-gray-600 p-3 accent-green-400"
+            <div className="mb-4">
+              <Checkbox
                 id="trialEnabled"
                 checked={trialEnabled}
-                onChange={(e) => setTrialEnabled(e.target.checked)}
+                onCheckedChange={(checked) => setTrialEnabled(checked === true)}
+                label="Offer trial period"
               />
-              <Label htmlFor="trialEnabled" className="mb-2 flex items-center">
-                Offer Trial Period
-              </Label>
             </div>
 
             {trialEnabled && (
@@ -406,14 +424,18 @@ const StandardCheckoutForm = ({
                 <Label htmlFor="trialDays" className="mb-2 block">
                   Trial Length (Days)
                 </Label>
-                <NumberInput
+                <Input
                   id="trialDays"
-                  placeholder="Annual price (dollars)"
-                  required
                   name="trialDays"
+                  type="number"
+                  placeholder="Trial length in days"
+                  required
                   disabled={!trialEnabled}
                   value={tier.trialDays || 0}
-                  onValueChange={(v) => handleTierDataChange("trialDays", v)}
+                  min={0}
+                  onChange={(e) =>
+                    handleTierDataChange("trialDays", Number(e.target.value))
+                  }
                 />
               </div>
             )}
@@ -592,8 +614,8 @@ export default function TierForm({
               featuresChanged={featuresChanged}
             />
 
-            <Label htmlFor="tierName" className="mb-2">
-              Package Name
+            <Label htmlFor="tierName" className="mb-1">
+              Name
             </Label>
             <Input
               id="tierName"
@@ -603,11 +625,13 @@ export default function TierForm({
               value={tier.name}
               onChange={(e) => handleInputChange("name", e.target.value)}
             />
-            {errors["name"] ? <p className="text-sm text-stone-500">{errors["name"]}</p> : null}
+            {errors["name"] ? (
+              <p className="text-sm text-stone-500">{errors["name"]}</p>
+            ) : null}
           </div>
           <div className="mb-4">
             <Label htmlFor="tierTagline" className="mb-1 block">
-              Package Tagline
+              Tagline
             </Label>
             <Input
               id="tierTagline"
@@ -620,7 +644,7 @@ export default function TierForm({
           </div>
           <div className="mb-4">
             <Label htmlFor="tierDescription" className="mb-1 block">
-              Package Description
+              Description
             </Label>
             <Textarea
               id="tierDescription"
@@ -632,7 +656,7 @@ export default function TierForm({
             />
           </div>
           <div className="mb-4">
-            <Label htmlFor="channels" className="mb-1 block">
+            <Label htmlFor="channels" className="mb-2 block">
               Channels
             </Label>
             <ChannelsSelectionInput
@@ -669,48 +693,40 @@ export default function TierForm({
               {canPublishLoading && (
                 <>
                   <LoadingDots />
-                  <p className="text-sm text-stone-500">Checking Stripe Eligiblity</p>
+                  <p className="text-sm text-stone-500">
+                    Checking Stripe Eligiblity
+                  </p>
                 </>
               )}
               {!canPublishLoading && (
-                <>
-                  <input
-                    type="checkbox"
-                    id="published"
-                    checked={tier.published}
-                    className="rounded-md border-gray-600 p-3 accent-green-400"
-                    disabled={canPublishDisabled}
-                    data-cy="available-for-sale"
-                    onChange={(e) => {
-                      setTier({
-                        ...tier,
-                        published: e.target.checked,
-                      } as Tier);
-                    }}
-                  />
-                  <Label htmlFor="published" className="text-sm text-gray-900">
-                    Make this package{" "}
-                    <span className="font-medium text-gray-700">
-                      available for sale.
-                    </span>
-                  </Label>
-                </>
+                <Checkbox
+                  id="published"
+                  checked={tier.published}
+                  disabled={canPublishDisabled}
+                  data-cy="available-for-sale"
+                  onCheckedChange={(checked) => {
+                    setTier({
+                      ...tier,
+                      published: checked === true,
+                    } as Tier);
+                  }}
+                  label="Make this package available for sale"
+                />
               )}
             </div>
             {!canPublish && !canPublishLoading && (
               <>
-                <Callout
-                  className="my-2"
-                  title="Payment Setup Required"
-                  color="red"
-                >
-                  You need to connect your Stripe account to publish a
-                  package. Visit{" "}
-                  <a href="/settings/payment" className="underline">
-                    Payment Settings
-                  </a>{" "}
-                  to get started.
-                </Callout>
+                <Alert variant="destructive" className="my-2">
+                  <AlertTitle>Payment Setup Required</AlertTitle>
+                  <AlertDescription>
+                    You need to connect your Stripe account to publish a package.
+                    Visit{" "}
+                    <a href="/settings/payment" className="underline">
+                      Payment Settings
+                    </a>{" "}
+                    to get started.
+                  </AlertDescription>
+                </Alert>
               </>
             )}
           </div>
@@ -748,7 +764,9 @@ export default function TierForm({
                 </Label>
                 <Card className="p-2">
                   View admin-only options:{" "}
-                  <Link href={`/admin/tiers/${tier.id}`} className={buttonVariants({ variant: "outline" })}>Go</Link>
+                  <Link href={`/admin/tiers/${tier.id}`}>
+                    <Button variant="outline">Admin Panel</Button>
+                  </Link>
                 </Card>
               </div>
             </>
@@ -774,7 +792,7 @@ export default function TierForm({
 
               {!!versions && versions.length > 0 && (
                 <>
-                  <p className="text-sm text-stone-500 my-4">
+                  <p className="my-4 text-sm text-stone-500">
                     {tier.name} has{" "}
                     {currentRevisionSubscriberCount === 0
                       ? "no customers yet"
@@ -839,7 +857,7 @@ export default function TierForm({
                     </Table>
                   </Card>
 
-                  <p className="text-sm text-stone-500 my-4">
+                  <p className="my-4 text-sm text-stone-500">
                     Please note that package versions are only recorded when you
                     make feature or price changes to a package where you have
                     existing customers. Customers will be charged what they
@@ -860,9 +878,6 @@ export default function TierForm({
 
         {/* Preview Section */}
         <div className="mb-auto text-center md:w-[300px]">
-          <Label htmlFor="preview" className="mb-1 block">
-            Preview
-          </Label>
           <TierCard
             tier={tier}
             features={featureObjs}
@@ -870,17 +885,17 @@ export default function TierForm({
             hasActiveFeatures={hasActiveFeatures}
           />
           {tier.id && tier.published ? (
-            <p className="text-sm text-stone-500 mt-2">
+            <p className="mt-2 text-sm text-stone-500">
               This package is currently published and available for sale.
             </p>
           ) : (
-            <p className="text-sm text-stone-500 mt-2">
+            <p className="mt-2 text-sm text-stone-500">
               This package is not published and is not available for sale.
             </p>
           )}
           <TierLinkCopier tier={tier} />
           {!newRecord && (
-            <div className="mt-4 flex flex-col items-center rounded-lg border border-gray-400 bg-gray-100 px-2 py-4 text-gray-700">
+            <div className="mt-4 flex flex-col items-center rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">
               <strong>Admin Options</strong>
 
               <div className="my-2 flex justify-center gap-2">
@@ -900,7 +915,7 @@ export default function TierForm({
                 )}
               </div>
               {!tier._count?.Charge && !tier._count?.subscriptions && (
-                <p className="text-sm text-stone-500 mt-2">
+                <p className="mt-2 text-sm text-stone-500">
                   This package can be deleted as it has no active customers or
                   features.
                 </p>

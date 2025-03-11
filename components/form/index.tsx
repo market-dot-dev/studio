@@ -1,7 +1,5 @@
 "use client";
 
-import LoadingDots from "@/components/icons/loading-dots";
-import { cn } from "@/lib/utils";
 import { useSession } from "next-auth/react";
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
@@ -11,6 +9,13 @@ import DomainConfiguration from "./domain-configuration";
 import Uploader from "./uploader";
 import va from "@vercel/analytics";
 import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function Form({
   title,
@@ -75,15 +80,16 @@ export default function Form({
           />
         ) : inputAttrs.name === "font" ? (
           <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
-            <select
-              name="font"
-              defaultValue={inputAttrs.defaultValue}
-              className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white"
-            >
-              <option value="font-cal">Cal Sans</option>
-              <option value="font-lora">Lora</option>
-              <option value="font-work">Work Sans</option>
-            </select>
+            <Select name="font" defaultValue={inputAttrs.defaultValue}>
+              <SelectTrigger className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white">
+                <SelectValue placeholder="Select font" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="font-cal">Cal Sans</SelectItem>
+                <SelectItem value="font-lora">Lora</SelectItem>
+                <SelectItem value="font-work">Work Sans</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         ) : inputAttrs.name === "subdomain" ? (
           <div className="flex w-full max-w-md">
