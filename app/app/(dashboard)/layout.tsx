@@ -61,12 +61,12 @@ export default async function DashboardLayout({
             showOnboardingModal={showOnboardingModal}
           />
           <div className="flex min-h-screen w-full flex-col items-center bg-stone-50 md:pl-60">
+            {user?.stripeAccountDisabled && user?.stripeAccountId && (
+              <StripeDisabledBanner />
+            )}
             <div className="flex w-full max-w-screen-xl flex-col items-center space-y-4 p-6 sm:p-10 sm:pt-8">
               {!onboarding.isDismissed && !showOnboardingModal && (
                 <OnboardingChecklist />
-              )}
-              {user?.stripeAccountDisabled && user?.stripeAccountId && (
-                <StripeDisabledBanner />
               )}
               <div className="relative flex w-full flex-col gap-8">
                 {children}
