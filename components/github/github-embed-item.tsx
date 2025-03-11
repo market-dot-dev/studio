@@ -8,7 +8,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/common/tremor-tabs";
+} from "@/components/ui/tabs";
 import DashedCard from "@/components/common/dashed-card";
 
 export default function GithubEmbedItem({
@@ -31,31 +31,29 @@ export default function GithubEmbedItem({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <h2 className="text-xl font-bold">Badge</h2>
+      <h2 className="text-2xl font-bold">Badge</h2>
       <div className="flex w-full flex-col gap-12">
-        <Tabs defaultValue="preview" className="w-full border-none">
+        <Tabs defaultValue="preview" className="w-full">
           <div className="flex items-center justify-between">
-            <TabsList variant="solid">
+            <TabsList>
               <TabsTrigger value="preview">Preview</TabsTrigger>
               <TabsTrigger value="code">Code</TabsTrigger>
             </TabsList>
           </div>
 
-          <div className="py-8">
-            <TabsContent value="preview">
-              <div className="relative w-full overflow-hidden">
-                <DashedCard>
-                  <div dangerouslySetInnerHTML={{ __html: html }} />
-                </DashedCard>
-              </div>
-            </TabsContent>
+          <TabsContent value="preview">
+            <div className="relative w-full overflow-hidden">
+              <DashedCard>
+                <div dangerouslySetInnerHTML={{ __html: html }} />
+              </DashedCard>
+            </div>
+          </TabsContent>
 
-            <TabsContent value="code">
-              <div className="flex w-full flex-col gap-4">
-                <CodeSnippet code={markdown} />
-              </div>
-            </TabsContent>
-          </div>
+          <TabsContent value="code">
+            <div className="flex w-full flex-col gap-4">
+              <CodeSnippet code={markdown} />
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

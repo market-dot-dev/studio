@@ -6,7 +6,7 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/components/common/tremor-tabs";
+} from "@/components/ui/tabs";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 import { useState, useEffect } from "react";
 import { TierWithFeatures } from "@/app/services/TierService";
@@ -52,11 +52,21 @@ export default function PackageEmbeddings({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <h2 className="text-xl font-bold">Packages</h2>
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <h2 className="text-2xl font-bold">Packages</h2>
+        <EmbeddingsSettingsDropdown
+          darkMode={darkmode}
+          darkModeCallback={handleDarkMode}
+          selectedTiers={selectedTiers}
+          setSelectedTiers={setSelectedTiers}
+          useSVG={useSVG}
+          setUseSVG={setUseSVG}
+        />
+      </div>
       <div className="flex w-full flex-col gap-12">
         <Tabs defaultValue="preview" className="w-full">
           <div className="flex items-center justify-between">
-            <TabsList variant="solid">
+            <TabsList>
               <TabsTrigger value="preview">Preview</TabsTrigger>
               {selectedTiers.length > 0 ? (
                 <TabsTrigger value="code">Code</TabsTrigger>
@@ -75,67 +85,57 @@ export default function PackageEmbeddings({
                 </TooltipProvider>
               )}
             </TabsList>
-            <EmbeddingsSettingsDropdown
-              darkMode={darkmode}
-              darkModeCallback={handleDarkMode}
-              selectedTiers={selectedTiers}
-              setSelectedTiers={setSelectedTiers}
-              useSVG={useSVG}
-              setUseSVG={setUseSVG}
-            />
           </div>
 
-          <div className="w-full py-8">
-            <TabsContent value="preview" className="w-full">
-              <div className="relative w-full overflow-hidden">
-                <DashedCard>
-                  {useSVG ? (
-                    <a href={rootUrl} target="_blank">
-                      <img
-                        src={`/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`}
-                      />
-                    </a>
-                  ) : embeddables?.tiers?.preview ? (
-                    <embeddables.tiers.preview
-                      site={site}
-                      settings={{
-                        darkmode: darkmode,
-                        tiers: selectedTiers.map((tier) => tier.id),
-                      }}
-                      tiers={selectedTiers}
-                      hasActiveFeatures={false}
-                    />
-                  ) : (
-                    <div>Preview component not available</div>
-                  )}
-                </DashedCard>
-              </div>
-            </TabsContent>
-
-            <TabsContent value="code">
-              <div className="flex w-full flex-col gap-4">
+          <TabsContent value="preview" className="w-full">
+            <div className="relative w-full overflow-hidden">
+              <DashedCard>
                 {useSVG ? (
-                  <CodeSnippet code={svgCode} />
-                ) : (
-                  <CodeSnippet
-                    code={`<script
-                      data-domain="${domain}"
-                      data-widget="tiers"
-                      data-settings='${JSON.stringify(
-                        {
-                          darkMode: darkmode,
-                          tiers: selectedTiers.map((tier) => tier.id),
-                        },
-                        null,
-                        2,
-                      )}'
-                      src="//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js"
-                    ></script>`}
+                  <a href={rootUrl} target="_blank">
+                    <img
+                      src={`/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`}
+                    />
+                  </a>
+                ) : embeddables?.tiers?.preview ? (
+                  <embeddables.tiers.preview
+                    site={site}
+                    settings={{
+                      darkmode: darkmode,
+                      tiers: selectedTiers.map((tier) => tier.id),
+                    }}
+                    tiers={selectedTiers}
+                    hasActiveFeatures={false}
                   />
+                ) : (
+                  <div>Preview component not available</div>
                 )}
-              </div>
-            </TabsContent>
-          </div>
+              </DashedCard>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="code">
+            <div className="flex w-full flex-col gap-4">
+              {useSVG ? (
+                <CodeSnippet code={svgCode} />
+              ) : (
+                <CodeSnippet
+                  code={`<script
+                    data-domain="${domain}"
+                    data-widget="tiers"
+                    data-settings='${JSON.stringify(
+                      {
+                        darkMode: darkmode,
+                        tiers: selectedTiers.map((tier) => tier.id),
+                      },
+                      null,
+                      2,
+                    )}'
+                    src="//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js"
+                  ></script>`}
+                />
+              )}
+            </div>
+          </TabsContent>
         </Tabs>
       </div>
     </div>

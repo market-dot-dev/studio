@@ -2,21 +2,12 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Box } from "@radix-ui/themes";
-import { EyeOpenIcon, CodeIcon, InfoCircledIcon, BorderSplitIcon } from "@radix-ui/react-icons";
+import { Info, Eye, Code, SquareSplitHorizontal, Maximize, Minimize } from "lucide-react";
 import clsx from "clsx";
 
 import renderElement from "./page-renderer";
 import { useRouter } from "next/navigation";
 
-import {
-  Callout,
-  Tab,
-  TabGroup,
-  TabList,
-  TabPanel,
-  TabPanels,
-} from "@tremor/react";
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -30,6 +21,15 @@ import PageEditorSidebar from "./page-editor-sidebar";
 import { useFullscreen } from "../dashboard/dashboard-context";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 let debounceTimeout: any;
 
@@ -61,77 +61,15 @@ function TimedAlert({
     <>
       {showAlert ? (
         <>
-          <Callout title={message} icon={InfoCircledIcon}></Callout>
+          <Alert>
+            <Info />
+            <AlertDescription>{message}</AlertDescription>
+          </Alert>
         </>
       ) : null}
     </>
   );
 }
-const SelectOption = ({
-  value,
-  children,
-}: {
-  value: string;
-  children: React.ReactNode;
-}) => {
-  return <option value={value}>{children}</option>;
-};
-
-const SelectBox = ({
-  value,
-  children,
-  inProgress,
-  isDeleting,
-  handleChange,
-}: {
-  value: string;
-  children: React.ReactNode;
-  inProgress: boolean;
-  isDeleting: boolean;
-  handleChange?: (value: boolean) => void;
-}) => {
-  return (
-    <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
-      <select
-        name="font"
-        value={value}
-        className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white"
-        onChange={(e) => {
-          return handleChange && handleChange(e.target.value === "true");
-        }}
-        disabled={inProgress || isDeleting}
-      >
-        {children}
-      </select>
-    </div>
-  );
-};
-
-const DraftSelectBox = ({
-  inProgress,
-  isDeleting,
-  draft,
-  handleChange,
-}: {
-  inProgress: boolean;
-  isDeleting: boolean;
-  draft: boolean;
-  handleChange: (value: boolean) => void;
-}) => {
-  return (
-    <SelectBox
-      value={String(draft)} // Pass the current value
-      inProgress={inProgress}
-      isDeleting={isDeleting}
-      handleChange={handleChange}
-    >
-      <option value="false">Live</option>
-      <option value="true">Draft</option>
-    </SelectBox>
-  );
-};
-
-
 
 export default function PageEditor({
   site,
@@ -544,51 +482,55 @@ export default function PageEditor({
               </div>
             </div>
 
-            <div className="mb-2 flex justify-between">
-              <Box>
-                <Label>Page Content</Label>
-              </Box>
-              <Box>{data.slug ? previewLink : null}</Box>
+            <div className="mb-2 flex items-center justify-between">
+              <Label>Page Content</Label>
+              {data.slug ? previewLink : null}
             </div>
 
-            <div className="mb-2 flex justify-between">
-                <Label>Page Status</Label>
-                <DraftSelectBox
-                  inProgress={inProgress}
-                  isDeleting={isDeleting}
-                  draft={data.draft}
-                  handleChange={async (draft) => {
-                    setData({ ...data, draft });
-                    await updatePage(data.id, { draft });
-                  }}
-                />
+            <div className="mb-2 flex items-center justify-between">
+              <Label>Page Status</Label>
+              <Select
+                value={String(data.draft)}
+                onValueChange={(val) => {
+                  const draft = val === "true";
+                  setData({ ...data, draft });
+                  updatePage(data.id, { draft });
+                }}
+                disabled={inProgress || isDeleting}
+              >
+                <SelectTrigger className="w-fit">
+                  <SelectValue placeholder={data.draft ? "Draft" : "Live"} />
+                </SelectTrigger>
+                <SelectContent position="item-aligned">
+                  <SelectItem value="false">Live</SelectItem>
+                  <SelectItem value="true">Draft</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
           <div className={clsx("md:col-span-3", fullscreen ? "p-4" : "")}>
-            <Card className="mb-2 p-2">
-              <Box className="text-sm">
-                <span className="text-stone-500">This page is currently</span>
-                {data.draft ? (
-                  <>
-                    {" "}
-                    in{" "}
-                    <Badge size="sm" variant="secondary">
-                      Draft
-                    </Badge>{" "}
-                  </>
-                ) : (
-                  <>
-                    {" "}
-                    <Badge size="sm" variant="success">
-                      Live
-                    </Badge>{" "}
-                  </>
-                )}
-                <span className="text-stone-500">
-                  and was last updated on {lastUpdateDate}.
-                </span>
-              </Box>
+            <Card className="mb-2 p-2 text-sm">
+              <span className="text-stone-500">This page is currently</span>
+              {data.draft ? (
+                <>
+                  {" "}
+                  in{" "}
+                  <Badge size="sm" variant="secondary">
+                    Draft
+                  </Badge>{" "}
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <Badge size="sm" variant="success">
+                    Live
+                  </Badge>{" "}
+                </>
+              )}
+              <span className="text-stone-500">
+                and was last updated on {lastUpdateDate}.
+              </span>
             </Card>
 
             {status.message ? (
@@ -596,88 +538,101 @@ export default function PageEditor({
             ) : null}
 
             <div>
-              <Box mb="2">{saveButton("w-full")}</Box>
+              <div className="mb-2">{saveButton("w-full")}</div>
               <div className="flex gap-2">
-                <Box mb="2" className="grow">
-                  {makeHomepageButton}
-                </Box>
-                <Box mb="2">{deleteButton}</Box>
+                <div className="mb-2 w-full">{makeHomepageButton}</div>
+                <div className="mb-2">{deleteButton}</div>
               </div>
             </div>
           </div>
         </>
       ) : null}
       <div className="md:col-span-12">
-        <Card
-          className={
-            "p-0" + (fullscreen ? " rounded-none shadow-none ring-0" : "")
+        <Tabs
+          defaultValue={
+            viewMode === 0 ? "preview" : viewMode === 1 ? "code" : "split"
           }
+          onValueChange={(value) => {
+            setViewMode(value === "preview" ? 0 : value === "code" ? 1 : 2);
+          }}
+          className="rounded-md border border-stone-200 bg-white"
         >
-          <TabGroup
-            defaultIndex={viewMode}
-            onIndexChange={(index) => {
-              setViewMode(index);
-            }}
-          >
+          <div className="sticky">
             <div
               className={
-                "flex items-center justify-between border border-x-0 p-4" +
-                (fullscreen ? " z-10 bg-white py-2" : " border-t-0")
+                "relative flex items-center justify-between border-b border-stone-200 bg-stone-100 p-1 pr-2 " +
+                (fullscreen ? "z-10" : "rounded-t-md")
               }
             >
-              <TabList variant="solid" className="font-bold">
-                <Tab
-                  className={viewMode === 0 ? "bg-white" : ""}
-                  icon={EyeOpenIcon}
+              <TabsList variant="background" className="bg-transparent">
+                <TabsTrigger
+                  variant="background"
+                  value="preview"
+                  className="flex items-center gap-1.5"
                 >
+                  <Eye />
                   Preview
-                </Tab>
-                <Tab
-                  className={viewMode === 1 ? "bg-white" : ""}
-                  icon={CodeIcon}
+                </TabsTrigger>
+                <TabsTrigger
+                  variant="background"
+                  value="code"
+                  className="flex items-center gap-1.5"
                 >
+                  <Code />
                   Code
-                </Tab>
-                <Tab
-                  className={viewMode === 2 ? "bg-white" : ""}
-                  icon={BorderSplitIcon}
+                </TabsTrigger>
+                <TabsTrigger
+                  variant="background"
+                  value="split"
+                  className="flex items-center gap-1.5"
                 >
+                  <SquareSplitHorizontal />
                   Split
-                </Tab>
-              </TabList>
+                </TabsTrigger>
+              </TabsList>
 
               {fullscreen ? (
-                <div className="flex">{data.slug ? previewLink : null}</div>
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                  {data.slug ? previewLink : null}
+                </div>
               ) : (
                 <></>
               )}
 
-              <div className="flex gap-4">
+              <div className="flex gap-2">
                 {fullscreen && saveButton()}
                 <Button
-                  variant="outline"
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setFullscreen(!fullscreen)}
                 >
-                  {fullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+                  {fullscreen ? (
+                    <Minimize size={4} className="text-stone-500" />
+                  ) : (
+                    <Maximize size={4} className="text-stone-500" />
+                  )}
                 </Button>
               </div>
             </div>
-            <TabPanels>
-              <TabPanel>{preview}</TabPanel>
-              <TabPanel className="mt-0">{codeview(true)}</TabPanel>
-              <TabPanel className="mt-0">
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="col-span-1">{preview}</div>
-                  <div className="col-span-1">
-                    <div className="sticky top-0 h-[100vh] w-full">
-                      {codeview(false)}
-                    </div>
-                  </div>
+          </div>
+
+          <TabsContent value="preview" className="mt-0">
+            {preview}
+          </TabsContent>
+          <TabsContent value="code" className="mt-0">
+            {codeview(true)}
+          </TabsContent>
+          <TabsContent value="split" className="mt-0">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-1">{preview}</div>
+              <div className="col-span-1">
+                <div className="sticky top-0 h-[100vh] w-full">
+                  {codeview(false)}
                 </div>
-              </TabPanel>
-            </TabPanels>
-          </TabGroup>
-        </Card>
+              </div>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

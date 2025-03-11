@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import CustomerPackageFeatures from "../../../components/customer/customer-package-features";
 import Tier from "@/app/models/Tier";
 import CancelSubscriptionButton from "./subscriptions/cancel-subscription-button";
-import Tabs from "../../../components/common/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import FeatureService from "@/app/services/feature-service";
 import { parseTierDescription } from "@/lib/utils";
 import { getRootUrl } from "@/lib/domain";
@@ -235,66 +235,52 @@ export default async function SubscriptionsAndChargesList({
   const anyActive = activeSubscriptions.length > 0;
   const anyPast = pastSubscriptions.length > 0;
 
-  const tabOneTimePurchases = (
-    <>
-      {charges.map((element) => (
-        <ChargeCard charge={element} key={element.id} />
-      ))}
-      {!anyCharges && (
-        <div className="flex flex-col space-y-2">
-          <h2>No purchases</h2>
-        </div>
-      )}
-    </>
-  );
-
-  const tabActiveSubscriptions = (
-    <>
-      {activeSubscriptions.map((element) => (
-        <SubscriptionCard subscription={element} key={element.id} />
-      ))}
-      {!anyActive && (
-        <div className="flex flex-col space-y-2">
-          <h2>No active subscriptions</h2>
-        </div>
-      )}
-    </>
-  );
-
-  const tabPastSubscriptions = (
-    <>
-      {pastSubscriptions.map((element) => (
-        <SubscriptionCard subscription={element} key={element.id} />
-      ))}
-      {!anyPast && (
-        <div className="flex flex-col space-y-2">
-          <h2>No past subscriptions</h2>
-        </div>
-      )}
-    </>
-  );
-
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
         <PageHeading title="Purchases" />
         <p className="text-sm text-stone-500">All your subscriptions and one time purchases from market.dev will appear here.</p>
-        <Tabs
-          tabs={[
-            {
-              title: <span>Active Subscriptions</span>,
-              content: tabActiveSubscriptions,
-            },
-            {
-              title: <span>One Time Purchases</span>,
-              content: tabOneTimePurchases,
-            },
-            {
-              title: <span>Past Subscriptions</span>,
-              content: tabPastSubscriptions,
-            },
-          ]}
-        />
+        
+        <Tabs defaultValue="active">
+          <TabsList>
+            <TabsTrigger value="active">Active Subscriptions</TabsTrigger>
+            <TabsTrigger value="onetime">One Time Purchases</TabsTrigger>
+            <TabsTrigger value="past">Past Subscriptions</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="active">
+            {activeSubscriptions.map((element) => (
+              <SubscriptionCard subscription={element} key={element.id} />
+            ))}
+            {!anyActive && (
+              <div className="flex flex-col space-y-2">
+                <h2>No active subscriptions</h2>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="onetime">
+            {charges.map((element) => (
+              <ChargeCard charge={element} key={element.id} />
+            ))}
+            {!anyCharges && (
+              <div className="flex flex-col space-y-2">
+                <h2>No purchases</h2>
+              </div>
+            )}
+          </TabsContent>
+          
+          <TabsContent value="past">
+            {pastSubscriptions.map((element) => (
+              <SubscriptionCard subscription={element} key={element.id} />
+            ))}
+            {!anyPast && (
+              <div className="flex flex-col space-y-2">
+                <h2>No past subscriptions</h2>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
