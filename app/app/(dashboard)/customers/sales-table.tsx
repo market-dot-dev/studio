@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuGroup,
-} from "@/components/common/dropdown";
+} from "@/components/ui/dropdown-menu";
 import SubscriptionStatusBadge from "./subscription-state";
 import PurchaseStatusBadge from "./purchase-state";
 import { Card } from "@/components/ui/card";

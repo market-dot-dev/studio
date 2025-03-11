@@ -6,10 +6,8 @@ import {
   DropdownMenuTrigger,
   DropdownMenuItem,
   DropdownMenuGroup,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-} from "@/components/common/dropdown";
-import { Switch } from "@tremor/react";
+} from "@/components/ui/dropdown-menu";
+import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { Package, Settings, Moon, Sun, PenLine } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -58,19 +56,16 @@ export default function EmbeddingsSettingsDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button>
+        <Button variant="outline">
           <Settings />
           Embed Settings
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuLabel>Settings</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={showPublishedPackagesSelectionModal}>
-            <span className="flex items-center gap-x-2 text-gray-700">
-              <Package className="size-4 text-gray-700" />
+            <span className="flex items-center gap-x-2">
+              <Package className="size-4" />
               <span>
                 Packages{" "}
                 {atleastOneTierSelected ? `(${selectedTiers.length})` : ""}
@@ -81,7 +76,7 @@ export default function EmbeddingsSettingsDropdown({
             onClick={darkModeCallback}
             disabled={!atleastOneTierSelected}
           >
-            <div className="flex w-full items-center justify-between text-gray-700">
+            <div className="flex w-full items-center justify-between gap-4 ">
               <div className="flex items-center gap-x-2">
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -92,9 +87,9 @@ export default function EmbeddingsSettingsDropdown({
                     transition={{ duration: 0.2 }}
                   >
                     {darkMode ? (
-                      <Moon className="size-4 text-gray-700" />
+                      <Moon className="size-4" />
                     ) : (
-                      <Sun className="size-4 text-gray-700" />
+                      <Sun className="size-4" />
                     )}
                   </motion.div>
                 </AnimatePresence>
@@ -102,8 +97,7 @@ export default function EmbeddingsSettingsDropdown({
               </div>
               <Switch
                 checked={darkMode}
-                color="black"
-                onChange={darkModeCallback}
+                onCheckedChange={darkModeCallback}
                 disabled={!atleastOneTierSelected}
               />
             </div>
@@ -112,15 +106,14 @@ export default function EmbeddingsSettingsDropdown({
             onClick={() => setUseSVG(!useSVG)}
             disabled={!atleastOneTierSelected}
           >
-            <div className="flex w-full items-center justify-between text-gray-700">
+            <div className="flex w-full items-center justify-between gap-4">
               <div className="flex items-center gap-x-2">
-                <PenLine className="size-4 text-gray-700" />
+                <PenLine className="size-4" />
                 <span>SVG</span>
               </div>
               <Switch
                 checked={useSVG}
-                color="black"
-                onChange={() => setUseSVG(!useSVG)}
+                onCheckedChange={() => setUseSVG(!useSVG)}
                 disabled={!atleastOneTierSelected}
               />
             </div>

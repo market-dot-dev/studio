@@ -1,7 +1,7 @@
 import Nav from "@/app/components/nav";
 import Link from "next/link";
 import Logo from "@/components/home/logo";
-import UserDropwdown from "@/components/header/user-dropwdown";
+import UserDropdown from "@/components/header/user-dropdown";
 import FeatureService from "@/app/services/feature-service";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
 import { getSession } from "@/lib/auth";
@@ -31,7 +31,7 @@ export default async function Header() {
         <Logo color="white" className="h-[22px] w-auto" />
       </Link>
       <div className="flex items-center gap-4">
-        <UserDropwdown user={user} />
+        <UserDropdown user={user} />
         <Nav
           siteId={site?.id ?? null}
           roleId={user.roleId || "anonymous"}
