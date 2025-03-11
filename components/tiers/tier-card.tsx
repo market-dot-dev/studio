@@ -5,9 +5,9 @@ import type {
   CheckoutType,
   TierWithFeatures,
 } from "@/app/services/TierService";
-import { Switch } from "@tremor/react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
 import TierFeatureList from "@/components/features/tier-feature-list";
 import { Feature } from "@prisma/client";
@@ -65,7 +65,7 @@ const CheckoutButton = ({
     >
       <Button
         variant={variant}
-        className={cn("w-full", darkMode && "bg-white text-stone-800 hover:bg-stone-100")}
+        className={cn("w-full", darkMode && "!bg-white !text-stone-800 hover:bg-stone-100")}
       >
         {checkoutType === "gitwallet" ? "Get Started" : "Get in touch"}
       </Button>
@@ -88,10 +88,10 @@ const TierCard: React.FC<TierCardProps> = ({
   const [showAnnual, setShowAnnual] = useState(false);
 
   const containerClasses = darkMode
-    ? "text-white bg-gray-900"
-    : "text-gray-900 bg-white";
-  const headingClasses = darkMode ? "text-white" : "text-gray-900";
-  const textClasses = darkMode ? "text-gray-300" : "text-gray-500";
+    ? "text-white bg-stone-900"
+    : "text-stone-900 bg-white";
+  const headingClasses = darkMode ? "text-white" : "text-stone-900";
+  const textClasses = darkMode ? "text-stone-300" : "text-stone-500";
 
   const hasAnnual = (tier.priceAnnual || 0) > 0;
   const isntOnce = tier.cadence !== "once";
@@ -152,22 +152,22 @@ const TierCard: React.FC<TierCardProps> = ({
                   : tier.price}
               </span>
               {cadenceShorthand && (
-                <span className="text-base/10 font-normal text-gray-500">
+                <span className={cn("text-base/10 font-normal", darkMode ? "text-stone-500" : "text-stone-400")}>
                   <span className="mr-px">/</span>
                   {cadenceShorthand}
                 </span>
               )}
             </p>
             {hasAnnual && isntOnce ? (
-              <div className="flex items-center gap-1.5">
-                <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+              <div className="flex items-center justify-center gap-1.5">
+                <p className="text-xxs font-medium uppercase tracking-wider text-stone-500">
                   Monthly
                 </p>
                 <Switch
                   checked={showAnnual}
-                  onChange={() => setShowAnnual(!showAnnual)}
+                  onCheckedChange={() => setShowAnnual(!showAnnual)}
                 />
-                <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+                <p className="text-xxs font-medium uppercase tracking-wider text-stone-500">
                   Yearly
                 </p>
               </div>
@@ -183,7 +183,7 @@ const TierCard: React.FC<TierCardProps> = ({
                 return (
                   <div key={dex}>
                     {section.text.map((text: string, index: number) => (
-                      <p key={index} className={cn("text-sm text-stone-500", textClasses)}>
+                      <p key={index} className={cn("text-sm", textClasses)}>
                         {text}
                       </p>
                     ))}

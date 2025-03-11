@@ -1,7 +1,7 @@
-import { List, ListItem, Switch } from "@tremor/react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useRef, useState } from "react";
 import { FaEdit, FaCheck } from "react-icons/fa";
 
@@ -36,7 +36,7 @@ function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
     }
 
     return (
-      <ListItem
+      <div
         key={index}
         style={{
           ...(feature.disconnect ? { opacity: 0.3 } : {}),
@@ -66,11 +66,11 @@ function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
             </Button>
             <Switch
               checked={!feature.disconnect}
-              onChange={() => toggleConnect(index)}
+              onCheckedChange={() => toggleConnect(index)}
             />
           </div>
         </div>
-      </ListItem>
+      </div>
     );
 }
 
@@ -95,12 +95,10 @@ export default function FeaturesEditor({features, setFeatures}: any) : JSX.Eleme
                     <Button onClick={addFeature}>Add</Button>
                 </div>
             </div>
-            <div className="px-2 w-full">
-                <List>
-                    { features.map((feature : any, index: number) => (
-                        <EditableListItem key={index} index={index} feature={feature} setFeatures={setFeatures} />
-                    ))}						
-                </List>
+            <div className="flex flex-col px-2 w-full">
+                  { features.map((feature : any, index: number) => (
+                      <EditableListItem key={index} index={index} feature={feature} setFeatures={setFeatures} />
+                  ))}						
             </div>
         </>
     )
