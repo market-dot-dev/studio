@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useRef, useState } from "react";
 import { FaEdit, FaCheck } from "react-icons/fa";
+import { Edit, Check } from "lucide-react";
 
 function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
     const [isEditing, setIsEditing] = useState(false);
@@ -58,11 +59,7 @@ function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
         <div>
           <div className="flex gap-4">
             <Button size="icon" variant="ghost" onClick={toggleEditing}>
-              {isEditing ? (
-                <FaCheck height="14" width="14" />
-              ) : (
-                <FaEdit height="14" width="14" />
-              )}
+              {isEditing ? <Check /> : <Edit />}
             </Button>
             <Switch
               checked={!feature.disconnect}

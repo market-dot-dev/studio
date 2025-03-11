@@ -15,7 +15,7 @@ import {
 } from "@/app/services/contract-service";
 import { useRouter } from "next/navigation";
 import Uploader, { Attachment } from "@/components/uploader";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { Trash } from "lucide-react";
 import ContractDeleteButton from "./contract-delete-button";
 
 export default function ContractEdit({
@@ -194,7 +194,7 @@ export default function ContractEdit({
                       variant="outline"
                       onClick={handleRemoveAttachment}
                     >
-                      <FaRegTrashAlt />
+                      <Trash />
                     </Button>
                   </div>
                 </div>
