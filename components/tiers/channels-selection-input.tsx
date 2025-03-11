@@ -1,5 +1,6 @@
 import { Channel } from "@prisma/client";
 import { Store, ShoppingBag } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function ChannelsSelectionInput({
   selectedChannels,
@@ -21,13 +22,12 @@ export default function ChannelsSelectionInput({
                 Storefront
               </span>
             </div>
-            <input
-              type="checkbox"
+            <Checkbox
+              id="channel-site"
               name="channel-type"
               value={Channel.site}
-              className="rounded-sm text-stone-400 checked:text-marketing-swamp focus:outline-none focus:ring-0"
               checked={selectedChannels.includes(Channel.site)}
-              onChange={() => handleInputChange(Channel.site)}
+              onCheckedChange={() => handleInputChange(Channel.site)}
             />
           </div>
           <p className="text-left text-xs leading-4 text-stone-500">
@@ -45,13 +45,12 @@ export default function ChannelsSelectionInput({
                   Marketplace
                 </span>
               </div>
-              <input
-                type="checkbox"
+              <Checkbox
+                id="channel-market"
                 name="channel-type"
                 value={Channel.market}
-                className="rounded-sm text-stone-400 checked:text-marketing-swamp focus:outline-none focus:ring-0"
                 checked={selectedChannels.includes(Channel.market)}
-                onChange={() => handleInputChange(Channel.market)}
+                onCheckedChange={() => handleInputChange(Channel.market)}
               />
             </div>
             <p className="text-left text-xs leading-4 text-stone-500">

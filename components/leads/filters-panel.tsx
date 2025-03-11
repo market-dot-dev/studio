@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { Input } from "@/components/ui/input"
 import countryCodes from "@/lib/constants/country-codes" ;
+import { Checkbox } from "@/components/ui/checkbox";
 
 type OptionType = {
   label: string;
@@ -179,13 +180,12 @@ function OptionsList({options, filters, handleCheckboxChange, filterName}: {opti
       {visibleOptions.map((option) => {
         return (
           <div key={option.value} className="mb-1 flex justify-between w-full items-center">
-            <label className="flex items-center space-x-2 text-sm grow">
-              <input type="checkbox"
-                checked={filters[itemKey as keyof FiltersState] === option.value}
-                onChange={() => handleCheckboxChange(itemKey, option.value)}
-              />
-              <span>{option.label[0].toUpperCase() + option.label.substring(1)}</span>
-            </label>
+            <Checkbox
+              id={`${filterName}-${option.value}`}
+              checked={filters[itemKey as keyof FiltersState] === option.value}
+              onCheckedChange={() => handleCheckboxChange(itemKey, option.value)}
+              label={option.label[0].toUpperCase() + option.label.substring(1)}
+            />
             <span className="text-sm text-gray-400 pr-2">{option.count}</span>
           </div>
         )
@@ -250,7 +250,7 @@ export default function FiltersPanel({facets, filters, setFilters, setItemsCount
         options={options}
         filters={filters}
         handleCheckboxChange={handleCheckboxChange}
-        />
+      />
     );
   };
 

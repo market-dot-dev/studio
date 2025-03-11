@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from "react";
 import { Feature, Tier } from "@prisma/client";
-import FeatureAddRemoveToggle from "@/components/features/feature-add-remove-toggle";
+import { Checkbox } from "@/components/ui/checkbox";
 import { TierWithFeatures, getTiersForMatrix } from "@/app/services/TierService";
 import { findByCurrentUser } from "@/app/services/feature-service";
 import LoadingDots from "../icons/loading-dots";
@@ -162,16 +162,23 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
                     const isAlreadySelected = ((newRecord  && !tier.id) || tier.id === tierId) ? selectedFeatureIds.has(feature.id) : tier?.features?.some(f => f.id === feature.id) || false;
 
                     return (
-                      <td key={tier?.id || 'new-tier'} className="py-4 whitespace-nowrap text-sm text-gray-500 text-center">
+                      <td
+                        key={tier?.id || "new-tier"}
+                        className="whitespace-nowrap py-4 text-center text-sm text-gray-500"
+                      >
                         <div className="flex justify-center">
-                        { tier.id === tierId ? 
-                          <FeatureAddRemoveToggle
-                            feature={feature}
-                            isAttached={isAlreadySelected}
-                            onToggle={() => handleFeatureToggle(feature)}
-                          /> :
-                          (isAlreadySelected ? <CheckSquare className="text-gray-500" /> : null)
-                        }
+                          {tier.id === tierId ? (
+                            <Checkbox
+                              id={`feature-switch-${feature.id}`}
+                              name={`feature-switch-${feature.id}`}
+                              checked={isAlreadySelected}
+                              onCheckedChange={() =>
+                                handleFeatureToggle(feature)
+                              }
+                            />
+                          ) : isAlreadySelected ? (
+                            <Checkbox checked className="pointer-default" />
+                          ) : null}
                         </div>
                       </td>
                     );

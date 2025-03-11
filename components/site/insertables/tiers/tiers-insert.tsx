@@ -1,9 +1,11 @@
 'use client';
+
 import { useModal } from "@/components/modal/provider";
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { getPublishedTiers } from "@/app/services/TierService";
 import LoadingSpinner from "@/components/form/loading-spinner";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type TierProps = {
     id: string;
@@ -34,22 +36,21 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
 
                     tiers.length ? tiers.map((tier: TierProps) => {
                         return (
-                        
-                            <div key={tier.id} className="flex gap-2 justify-start">
-                            <input
-                                type="checkbox"
-                                checked={ selectedTiers?.includes(tier.id) }
-                                onChange={(e) => {
-                                setSelectedTiers((tiers: any) => {
-                                    if(e.target.checked) {
-                                        return [...tiers, tier.id]
-                                    } else {
-                                        return tiers.filter((id: string) => id !== tier.id);
-                                    }
-                                })}} 
+                            <Checkbox
+                                key={tier.id}
+                                id={`tier-${tier.id}`}
+                                label={tier.name}
+                                checked={selectedTiers?.includes(tier.id)}
+                                onCheckedChange={(checked) => {
+                                    setSelectedTiers((tiers: any) => {
+                                        if(checked) {
+                                            return [...tiers, tier.id]
+                                        } else {
+                                            return tiers.filter((id: string) => id !== tier.id);
+                                        }
+                                    })
+                                }}
                             />
-                            <p className="text-sm text-stone-500">{tier.name}</p>
-                            </div>
                         )}) : <p className="text-sm text-stone-500">No tiers found</p>
                     ) : (
                         <LoadingSpinner />

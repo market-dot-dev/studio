@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { User } from "@prisma/client";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface UserSelectionStepProps {
   selectedUsers: User[];
@@ -152,11 +153,9 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
           <TableHead>
             <TableRow>
               <TableHeaderCell className="w-12">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={isAllSelected}
-                  onChange={handleSelectAll}
-                  className="h-4 w-4"
+                  onCheckedChange={handleSelectAll}
                 />
               </TableHeaderCell>
               <TableHeaderCell>Name</TableHeaderCell>
@@ -167,11 +166,9 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
             {filteredUsers.map((user) => (
               <TableRow key={user.id} className="cursor-pointer hover:bg-gray-50" onClick={() => handleSelectUser(user)}>
                 <TableCell>
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={isUserSelected(user.id!)}
-                    onChange={() => handleSelectUser(user)}
-                    className="h-4 w-4"
+                    onCheckedChange={() => handleSelectUser(user)}
                   />
                 </TableCell>
                 <TableCell>{user.name || "N/A"}</TableCell>
