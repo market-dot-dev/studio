@@ -153,26 +153,19 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     return (
       <>
         {currentUser ? (
-          <>
             <div className="flex w-full flex-row items-center justify-between">
-              <span>
+                <span>
                 You are logged in as {currentUser.name} ({currentUser.email}).
-              </span>
-              <Button
+                </span>
+                <Button
                 variant="outline"
                 loading={isSubmitting}
                 disabled={isSubmitting}
                 onClick={handleLogout}
-              >
+                >
                 Logout
-              </Button>
+                </Button>
             </div>
-            {error && (
-              <div className="flex w-full justify-center text-sm">
-                <p className="text-rose-500">{error}</p>
-              </div>
-            )}
-          </>
         ) : !isSubmitted ? (
           <div className="flex flex-col gap-6">
             {isSignUp ? (
@@ -252,7 +245,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                 </>
               ) : (
                 <>
-                  <span>Don't have an account?</span>{" "}
+                  <span>Don&apos;t have an account?</span>{" "}
                   <Button
                     variant="link"
                     className="!h-fit p-0"
@@ -266,7 +259,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
           </div>
         ) : (
           <div className="">
-            <label className="text-sm block text-center text-stone-500">
+            <label className="block text-center text-sm text-stone-500">
               A verification code has been sent to your email. Please enter the
               value here.
             </label>
@@ -291,6 +284,11 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
                 />
               </div>
             </div>
+          </div>
+        )}
+        {error && (
+          <div className="text-center text-sm">
+            <p className="text-rose-500">{error}</p>
           </div>
         )}
       </>
