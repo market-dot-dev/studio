@@ -51,7 +51,7 @@ interface StyledTooltipProps {
 
 const StyledTooltip: React.FC<StyledTooltipProps> = ({ className, children }) => {
   return (
-    <div className={className}>
+    <div className={cn("cursor-default", className)}>
       <Tooltip>{children}</Tooltip>
     </div>
   );

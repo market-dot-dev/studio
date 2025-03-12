@@ -43,9 +43,8 @@ import TierFeaturePicker from "../features/tier-feature-picker";
 import { attachMany } from "@/app/services/feature-service";
 import Link from "next/link";
 import { Channel, Contract, Feature, User } from "@prisma/client";
-import LoadingDots from "@/components/icons/loading-dots";
 import useCurrentSession from "@/app/hooks/use-current-session";
-import { Check, Copy, ChevronLeft } from "lucide-react";
+import { Check, Copy, LinkIcon, ChevronLeft, AlertTriangle } from "lucide-react";
 import TierDeleteButton from "./tier-delete-button";
 import { getRootUrl } from "@/lib/domain";
 import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
@@ -53,6 +52,7 @@ import ChannelsSelectionInput from "./channels-selection-input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Switch } from "../ui/switch";
+import Spinner from "../ui/spinner";
 
 interface TierFormProps {
   tier?: Partial<Tier>;
@@ -159,10 +159,10 @@ const TierLinkCopier = ({ tier, savedPublishedState }: { tier: Tier, savedPublis
   }
 
   return (
-    <div className="flex flex-row items-center justify-center w-[280px]">
+    <div className="flex flex-row items-center justify-center">
       <Input
         id="checkoutLink"
-        className="rounded-r-none truncate pr-2"
+        className="min-w-none w-fit rounded-r-none truncate"
         readOnly
         value={link}
         onClick={(e) => (e.target as HTMLInputElement).select()}
@@ -176,7 +176,7 @@ const TierLinkCopier = ({ tier, savedPublishedState }: { tier: Tier, savedPublis
           `${isCopied ? "cursor-not-allowed opacity-50" : ""}`
         }
       >
-        {isCopied ? <Check /> : <Copy />}
+        {isCopied ? <Check /> : <LinkIcon />}
         {isCopied ? "Copied!" : ""}
       </Button>
     </div>
@@ -224,10 +224,12 @@ const StandardCheckoutForm = ({
   tier,
   contracts,
   handleTierDataChange,
+  idPrefix = ""
 }: {
   tier: Tier;
   contracts: Contract[];
   handleTierDataChange: (name: string, value: number | string | null) => void;
+  idPrefix?: string;
 }) => {
   const [trialEnabled, setTrialEnabled] = useState(tier?.trialDays > 0);
   const [annualPlanEnabled, setAnnualPlanEnabled] = useState(
@@ -240,7 +242,7 @@ const StandardCheckoutForm = ({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Label htmlFor="contractId" className="mb-1 block">
+        <Label htmlFor={`${idPrefix}contractId`} className="mb-1 block">
           Contract
         </Label>
         <Select
@@ -261,7 +263,7 @@ const StandardCheckoutForm = ({
       </div>
       <div className="flex flex-col gap-6">
         <div>
-          <Label htmlFor="cadence" className="mb-2 md:mb-1.5 block">
+          <Label htmlFor={`${idPrefix}cadence`} className="mb-2 block md:mb-1.5">
             Billing type
           </Label>
           <Select
@@ -283,12 +285,12 @@ const StandardCheckoutForm = ({
         </div>
 
         <div>
-          <Label htmlFor="price" className="mb-2 md:mb-1.5 block">
+          <Label htmlFor={`${idPrefix}price`} className="mb-2 block md:mb-1.5">
             Monthly Price (USD)
           </Label>
           <div className="flex gap-2">
             <Input
-              id="price"
+              id={`${idPrefix}price`}
               name="price"
               type="number"
               value={tier.price || 0}
@@ -315,9 +317,9 @@ const StandardCheckoutForm = ({
 
         {tier.cadence === "month" && (
           <>
-            <div>
+            <div className="flex flex-col gap-4">
               <Checkbox
-                id="annualPlanEnabled"
+                id={`${idPrefix}annualPlanEnabled`}
                 checked={annualPlanEnabled}
                 onCheckedChange={(checked) => {
                   const isChecked = checked === true;
@@ -336,94 +338,99 @@ const StandardCheckoutForm = ({
                 }}
                 label="Offer annual plan"
               />
+
+              {annualPlanEnabled && (
+                <div>
+                  <Label htmlFor={`${idPrefix}priceAnnual`} className="mb-2 block md:mb-1.5">
+                    Annual Price (USD)
+                  </Label>
+                  <Input
+                    id={`${idPrefix}priceAnnual`}
+                    name="priceAnnual"
+                    type="number"
+                    placeholder="0"
+                    required
+                    disabled={!annualPlanEnabled}
+                    value={tier.priceAnnual || 0}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      setAnnualDiscountPercent(
+                        calcDiscount(tier.price || 0, v),
+                      );
+                      handleTierDataChange("priceAnnual", v);
+                    }}
+                    className={
+                      !!tier.priceAnnual &&
+                      (tier.price || 0) * 12 < (tier.priceAnnual || 0)
+                        ? "border-rose-500"
+                        : ""
+                    }
+                  />
+                  {!!tier.priceAnnual &&
+                    (tier.price || 0) * 12 < (tier.priceAnnual || 0) && (
+                      <p className="mt-2 text-xs text-rose-600">
+                        Your annual plan is equal to or more expensive than the
+                        Monthly Plan x 12 (${(tier.price || 0) * 12}). Please
+                        adjust.
+                      </p>
+                    )}
+                  <p className="font-regular mt-3 block text-xs text-stone-500">
+                    <strong className="font-semibold">
+                      Effective Discount Rate
+                    </strong>
+                    :{" "}
+                    {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"}{" "}
+                    (compared to annualized monthly{" "}
+                    {<>${(tier.price || 0) * 12}</>})
+                  </p>
+                </div>
+              )}
+
+              {/* <div className="mb-4">
+                <Input
+                  id="annualDiscountPercent"
+                  placeholder="Annual Discount (%)"
+                  readOnly={true}
+                  disabled={!annualPlanEnabled}
+                  required
+                  type="number"
+                  min={0}
+                  max={100}
+                  name="annualDiscountPercent"
+                  value={annualDiscountPercent}
+                />
+              </div> */}
             </div>
 
-            {annualPlanEnabled && (
-              <div>
-                <Label htmlFor="priceAnnual" className="mb-2 md:mb-1.5 block">
-                  Annual Price (USD)
-                </Label>
-                <Input
-                  id="priceAnnual"
-                  name="priceAnnual"
-                  type="number"
-                  placeholder="0"
-                  required
-                  disabled={!annualPlanEnabled}
-                  value={tier.priceAnnual || 0}
-                  onChange={(e) => {
-                    const v = Number(e.target.value);
-                    setAnnualDiscountPercent(calcDiscount(tier.price || 0, v));
-                    handleTierDataChange("priceAnnual", v);
-                  }}
-                  className={
-                    !!tier.priceAnnual &&
-                    (tier.price || 0) * 12 < (tier.priceAnnual || 0)
-                      ? "border-rose-500"
-                      : ""
-                  }
-                />
-                {!!tier.priceAnnual &&
-                  (tier.price || 0) * 12 < (tier.priceAnnual || 0) && (
-                    <p className="mt-2 text-xs text-rose-600">
-                      Your annual plan is equal to or more expensive than the
-                      Monthly Plan x 12 (${(tier.price || 0) * 12}). Please
-                      adjust.
-                    </p>
-                  )}
-                <p className="font-regular mt-2 block text-xs text-stone-500">
-                  <strong className="font-bold">Effective Discount Rate</strong>
-                  : {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"}{" "}
-                  (compared to annualized monthly{" "}
-                  {<>${(tier.price || 0) * 12}</>})
-                </p>
-              </div>
-            )}
-
-            {/* <div className="mb-4">
-              <Input
-                id="annualDiscountPercent"
-                placeholder="Annual Discount (%)"
-                readOnly={true}
-                disabled={!annualPlanEnabled}
-                required
-                type="number"
-                min={0}
-                max={100}
-                name="annualDiscountPercent"
-                value={annualDiscountPercent}
-              />
-            </div> */}
-
-            <div>
+            <div className="flex flex-col gap-4">
               <Checkbox
-                id="trialEnabled"
+                id={`${idPrefix}trialEnabled`}
                 checked={trialEnabled}
                 onCheckedChange={(checked) => setTrialEnabled(checked === true)}
                 label="Offer trial period"
               />
-            </div>
 
-            {trialEnabled && (
-              <div>
-                <Label htmlFor="trialDays" className="mb-2 block">
-                  Trial Length (Days)
-                </Label>
-                <Input
-                  id="trialDays"
-                  name="trialDays"
-                  type="number"
-                  placeholder="Trial length in days"
-                  required
-                  disabled={!trialEnabled}
-                  value={tier.trialDays || 0}
-                  min={0}
-                  onChange={(e) =>
-                    handleTierDataChange("trialDays", Number(e.target.value))
-                  }
-                />
-              </div>
-            )}
+              {trialEnabled && (
+                <div>
+                  <Label htmlFor={`${idPrefix}trialDays`} className="mb-2 block">
+                    Trial Length (Days)
+                  </Label>
+                  <Input
+                    id={`${idPrefix}trialDays`}
+                    name="trialDays"
+                    type="number"
+                    placeholder="Trial length in days"
+                    required
+                    disabled={!trialEnabled}
+                    value={tier.trialDays || 0}
+                    min={0}
+                    onChange={(e) =>
+                      handleTierDataChange("trialDays", Number(e.target.value))
+                    }
+                  />
+                </div>
+              )}
+            </div>
           </>
         )}
       </div>
@@ -580,7 +587,7 @@ export default function TierForm({
               className="flex w-fit -translate-x-0.5 items-center gap-1 text-sm font-semibold tracking-tightish text-stone-500 transition-colors hover:text-stone-800"
             >
               <ChevronLeft size={16} className="shrink-0" />
-              All Packages
+              Packages
             </Link>
             <div className="flex w-full flex-wrap items-center justify-between gap-1">
               <div className="flex items-center gap-3">
@@ -605,24 +612,56 @@ export default function TierForm({
 
       <Separator className="my-3" />
 
+      {!canPublish && !canPublishLoading && (
+        <Alert variant="warning" className="my-4">
+          <AlertTriangle size={18} className="mr-2.5" />
+          <div className="flex flex-col gap-4 md:flex-row md:items-center">
+            <div>
+              <AlertTitle>Payment Setup Required</AlertTitle>
+              <AlertDescription>
+                You need to connect your Stripe account to publish a package.
+                Once connected, you&apos;ll be able to publish packages and
+                start accepting payments from customers.
+              </AlertDescription>
+            </div>
+            <Button variant="outline" className="w-fit" asChild>
+              <Link href="/settings/payment">Connect Stripe</Link>
+            </Button>
+          </div>
+        </Alert>
+      )}
       <div className="mt-4 flex flex-col gap-10 pb-20 lg:flex-row">
         {/* Mobile Tabs - Only visible on screens smaller than lg breakpoint */}
-        <div className="lg:hidden w-full mb-6">
+        <div className="mb-6 w-full lg:hidden">
           <Tabs defaultValue="details">
             <TabsList variant="background" className="w-full">
-              <TabsTrigger variant="background" value="details" className="flex-1">Details</TabsTrigger>
-              <TabsTrigger variant="background" value="preview" className="flex-1">Preview</TabsTrigger>
+              <TabsTrigger
+                variant="background"
+                value="details"
+                className="flex-1"
+              >
+                Details
+              </TabsTrigger>
+              <TabsTrigger
+                variant="background"
+                value="preview"
+                className="flex-1"
+              >
+                Preview
+              </TabsTrigger>
             </TabsList>
-            
+
             {/* Details Tab Content - Form Fields */}
             <TabsContent value="details">
               <div className="flex w-full flex-col gap-6">
-                <div>
-                  <div className="space-y-2">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
                     <Switch
-                      id="published"
+                      id="mobile-published"
                       checked={tier.published}
-                      disabled={!canPublish || canPublishDisabled}
+                      disabled={
+                        canPublishLoading || !canPublish || canPublishDisabled
+                      }
                       data-cy="available-for-sale"
                       onCheckedChange={(checked) => {
                         setTier({
@@ -632,39 +671,21 @@ export default function TierForm({
                       }}
                       label="This package is available for sale"
                     />
-                    <p className="text-xs text-stone-500">
-                      {tier.published ? (
-                        <>
-                          This package will be visible and purchasable by customers.
-                          Changes will create a new version.{" "}
-                          <a href="#channels" className="underline">
-                            Pick this package&apos;s channels
-                          </a>
-                        </>
-                      ) : (
-                        "This package will remain hidden from customers on all channels."
-                      )}
-                    </p>
+                    {canPublishLoading && <Spinner />}
                   </div>
-                  {!canPublish && !canPublishLoading && (
-                    <>
-                      <Alert variant="destructive" className="my-2">
-                        <AlertTitle>Payment Setup Required</AlertTitle>
-                        <AlertDescription>
-                          You need to connect your Stripe account to publish a
-                          package. Visit{" "}
-                          <a href="/settings/payment" className="underline">
-                            Payment Settings
-                          </a>{" "}
-                          to get started.
-                        </AlertDescription>
-                      </Alert>
-                      <p className="mt-2 text-sm text-stone-500">
-                        Once connected, you&apos;ll be able to publish packages and
-                        start accepting payments from customers.
-                      </p>
-                    </>
-                  )}
+                  <p className="text-xs text-stone-500">
+                    {tier.published ? (
+                      <>
+                        This package will be visible and purchasable by
+                        customers. Changes will create a new version.{" "}
+                        <a href="#mobile-channels" className="underline">
+                          Pick this package&apos;s channels
+                        </a>
+                      </>
+                    ) : (
+                      "This package will remain hidden from customers on all channels."
+                    )}
+                  </p>
                 </div>
                 <div>
                   <NewVersionCallout
@@ -672,11 +693,11 @@ export default function TierForm({
                     versionedAttributesChanged={versionedAttributesChanged}
                     featuresChanged={featuresChanged}
                   />
-                  <Label htmlFor="tierName" className="mb-2 md:mb-1.5">
+                  <Label htmlFor="mobile-tierName" className="mb-2 md:mb-1.5">
                     Name
                   </Label>
                   <Input
-                    id="tierName"
+                    id="mobile-tierName"
                     placeholder="Premium"
                     required
                     name="name"
@@ -688,34 +709,47 @@ export default function TierForm({
                   ) : null}
                 </div>
                 <div>
-                  <Label htmlFor="tierTagline" className="mb-2 md:mb-1.5 block">
+                  <Label
+                    htmlFor="mobile-tierTagline"
+                    className="mb-2 block md:mb-1.5"
+                  >
                     Tagline
                   </Label>
                   <Input
-                    id="tierTagline"
+                    id="mobile-tierTagline"
                     placeholder="Great for startups and smaller companies."
                     required
                     name="tagline"
                     value={tier.tagline || ""}
-                    onChange={(e) => handleInputChange("tagline", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("tagline", e.target.value)
+                    }
                   />
                 </div>
                 <div>
-                  <Label htmlFor="tierDescription" className="mb-2 md:mb-1.5 block">
+                  <Label
+                    htmlFor="mobile-tierDescription"
+                    className="mb-2 block md:mb-1.5"
+                  >
                     Description
                   </Label>
                   <Textarea
-                    id="tierDescription"
+                    id="mobile-tierDescription"
                     rows={4}
                     placeholder="Describe your package here. This is for your own use and will not be shown to any potential customers."
                     name="description"
                     value={tier.description || ""}
-                    onChange={(e) => handleInputChange("description", e.target.value)}
+                    onChange={(e) =>
+                      handleInputChange("description", e.target.value)
+                    }
                   />
                 </div>
                 {hasActiveFeatures && (
                   <div>
-                    <Label htmlFor="features" className="mb-2 md:mb-1.5 block">
+                    <Label
+                      htmlFor="mobile-features"
+                      className="mb-2 block md:mb-1.5"
+                    >
                       Features
                     </Label>
                     <Card className="p-2">
@@ -743,13 +777,14 @@ export default function TierForm({
                 <Separator className="my-2" />
 
                 <div>
-                  <Label htmlFor="checkoutType" className="mb-2.5">
+                  <Label htmlFor="mobile-checkoutType" className="mb-2.5">
                     Checkout Type
                   </Label>
                   <CheckoutTypeSelectionInput
                     user={user}
                     tier={tier}
                     handleInputChange={handleInputChange}
+                    idPrefix="mobile-"
                   />
                 </div>
                 {tier.checkoutType === "gitwallet" && (
@@ -757,18 +792,20 @@ export default function TierForm({
                     tier={tier}
                     contracts={contracts}
                     handleTierDataChange={handleInputChange}
+                    idPrefix="mobile-"
                   />
                 )}
 
                 <Separator className="my-2" />
 
-                <div id="channels">
-                  <Label htmlFor="channels" className="mb-2.5 block">
+                <div id="mobile-channels">
+                  <Label htmlFor="mobile-channels" className="mb-2.5 block">
                     Channels
                   </Label>
                   <ChannelsSelectionInput
                     userIsMarketExpert={!!user.marketExpertId}
                     selectedChannels={tier.channels}
+                    idPrefix="mobile-"
                     handleInputChange={(channel) => {
                       let channels: Channel[] = tier.channels;
                       if (channels.includes(channel)) {
@@ -784,35 +821,42 @@ export default function TierForm({
                     }}
                   />
                 </div>
+
+                <Separator className="my-2" />
+
                 {tier.checkoutType === "gitwallet" && (
                   <div>
-                    <Label htmlFor="versionHistory" className="mb-2 md:mb-1.5 block">
+                    <Label
+                      htmlFor="mobile-versionHistory"
+                      className="mb-2 block md:mb-1"
+                    >
                       Package Version History
                     </Label>
 
                     {!!versions && versions.length === 0 && (
-                      <p className="text-sm text-stone-500">
+                      <p className="text-xs text-stone-500">
                         {tier.name} has{" "}
                         {currentRevisionSubscriberCount === 0
                           ? "no customers yet"
                           : currentRevisionSubscriberCount + " customers"}
-                        . If you make any price or feature changes for a package that
-                        has customers, your changes to the previous package will be
-                        kept as a package version. Customers will be charged what they
-                        originally purchased.
+                        . If you make any price or feature changes for a package
+                        that has customers, your changes to the previous package
+                        will be kept as a package version. Customers will be
+                        charged what they originally purchased.
                       </p>
                     )}
 
                     {!!versions && versions.length > 0 && (
                       <>
-                        <p className="my-6 text-sm text-stone-500">
+                        <p className="my-6 text-xs text-stone-500">
                           {tier.name} has{" "}
                           {currentRevisionSubscriberCount === 0
                             ? "no customers yet"
-                            : currentRevisionSubscriberCount + " customers"}{" "}
-                          for the most recent version. There are {versions.length}{" "}
-                          versions and {tierSubscriberCount} customers across
-                          versions.
+                            : currentRevisionSubscriberCount +
+                              " customers"}{" "}
+                          for the most recent version. There are{" "}
+                          {versions.length} versions and {tierSubscriberCount}{" "}
+                          customers across versions.
                         </p>
                         <Card>
                           <Table>
@@ -836,7 +880,11 @@ export default function TierForm({
                               <TableRow>
                                 <TableCell className="m-0 p-1 ps-0">
                                   {tier.createdAt.toDateString()}
-                                  <Badge variant="success" size="sm" className="ms-1">
+                                  <Badge
+                                    variant="success"
+                                    size="sm"
+                                    className="ms-1"
+                                  >
                                     Current
                                   </Badge>
                                 </TableCell>
@@ -870,23 +918,22 @@ export default function TierForm({
                           </Table>
                         </Card>
 
-                        <p className="my-6 text-sm text-stone-500">
-                          Please note that package versions are only recorded when you
-                          make feature or price changes to a package where you have
-                          existing customers. Customers will be charged what they
-                          originally purchased.
+                        <p className="my-6 text-xs text-stone-500">
+                          Please note that package versions are only recorded
+                          when you make feature or price changes to a package
+                          where you have existing customers. Customers will be
+                          charged what they originally purchased.
                         </p>
                       </>
                     )}
                   </div>
                 )}
 
-                <Separator className="my-2" />
-
                 <Button
                   disabled={isSaving || isDeleting}
                   loading={isSaving}
                   onClick={onSubmit}
+                  className="w-full"
                 >
                   {buttonLabel}
                 </Button>
@@ -897,36 +944,39 @@ export default function TierForm({
                     <div className="flex flex-col gap-2">
                       <div className="flex justify-center gap-2">
                         <DuplicateTierButton tierId={tier.id} />
-                        {!tier._count?.Charge && !tier._count?.subscriptions && (
-                          <TierDeleteButton
-                            tierId={tier.id}
-                            onConfirm={() => setIsDeleting(true)}
-                            onSuccess={() => {
-                              setIsDeleting(false);
-                              window.location.href = "/tiers";
-                            }}
-                            onError={(error: any) => {
-                              setIsDeleting(false);
-                            }}
-                          />
-                        )}
+                        {!tier._count?.Charge &&
+                          !tier._count?.subscriptions && (
+                            <TierDeleteButton
+                              tierId={tier.id}
+                              onConfirm={() => setIsDeleting(true)}
+                              onSuccess={() => {
+                                setIsDeleting(false);
+                                window.location.href = "/tiers";
+                              }}
+                              onError={(error: any) => {
+                                setIsDeleting(false);
+                              }}
+                            />
+                          )}
                       </div>
                       {!tier._count?.Charge && !tier._count?.subscriptions && (
                         <p className="text-sm text-stone-500">
-                          This package can be deleted as it has no active customers or
-                          features.
+                          This package can be deleted as it has no active
+                          customers or features.
                         </p>
                       )}
                     </div>
                     <Separator />
                     <Button variant="outline" className="w-full" asChild>
-                      <Link href={`/admin/tiers/${tier.id}`}>Go to Admin Panel</Link>
+                      <Link href={`/admin/tiers/${tier.id}`}>
+                        Go to Admin Panel
+                      </Link>
                     </Button>
                   </div>
                 )}
               </div>
             </TabsContent>
-            
+
             <TabsContent value="preview">
               <div className="mx-auto w-full max-w-[300px]">
                 <TierCard
@@ -940,14 +990,16 @@ export default function TierForm({
             </TabsContent>
           </Tabs>
         </div>
-        
-        <div className="hidden lg:flex w-full lg:max-w-lg flex-col gap-6">
-          <div>
-            <div className="space-y-2">
+
+        <div className="hidden w-full flex-col gap-6 lg:flex lg:max-w-xl">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
               <Switch
                 id="published"
                 checked={tier.published}
-                disabled={!canPublish || canPublishDisabled}
+                disabled={
+                  canPublishLoading || !canPublish || canPublishDisabled
+                }
                 data-cy="available-for-sale"
                 onCheckedChange={(checked) => {
                   setTier({
@@ -957,39 +1009,22 @@ export default function TierForm({
                 }}
                 label="This package is available for sale"
               />
-              <p className="text-xs text-stone-500">
-                {tier.published ? (
-                  <>
-                    This package will be visible and purchasable by customers.
-                    Changes will create a new version.{" "}
-                    <a href="#channels" className="underline">
-                      Pick this package&apos;s channels
-                    </a>
-                  </>
-                ) : (
-                  "This package will remain hidden from customers on all channels."
-                )}
-              </p>
+              {canPublishLoading && <Spinner />}
             </div>
-            {!canPublish && !canPublishLoading && (
-              <>
-                <Alert variant="destructive" className="my-2">
-                  <AlertTitle>Payment Setup Required</AlertTitle>
-                  <AlertDescription>
-                    You need to connect your Stripe account to publish a
-                    package. Visit{" "}
-                    <a href="/settings/payment" className="underline">
-                      Payment Settings
-                    </a>{" "}
-                    to get started.
-                  </AlertDescription>
-                </Alert>
-                <p className="mt-2 text-sm text-stone-500">
-                  Once connected, you&apos;ll be able to publish packages and
-                  start accepting payments from customers.
-                </p>
-              </>
-            )}
+            <p className="text-xs text-stone-500">
+              {tier.published ? (
+                <>
+                  This package will be visible and purchasable by customers.
+                  Changes will create a new version.{" "}
+                  <br />
+                  <a href="#channels" className="underline">
+                    Pick this package&apos;s channels
+                  </a>
+                </>
+              ) : (
+                "This package will remain hidden from customers on all channels."
+              )}
+            </p>
           </div>
           <div>
             <NewVersionCallout
@@ -1013,7 +1048,7 @@ export default function TierForm({
             ) : null}
           </div>
           <div>
-            <Label htmlFor="tierTagline" className="mb-2 md:mb-1.5 block">
+            <Label htmlFor="tierTagline" className="mb-2 block md:mb-1.5">
               Tagline
             </Label>
             <Input
@@ -1026,7 +1061,7 @@ export default function TierForm({
             />
           </div>
           <div>
-            <Label htmlFor="tierDescription" className="mb-2 md:mb-1.5 block">
+            <Label htmlFor="tierDescription" className="mb-2 block md:mb-1.5">
               Description
             </Label>
             <Textarea
@@ -1040,7 +1075,7 @@ export default function TierForm({
           </div>
           {hasActiveFeatures && (
             <div>
-              <Label htmlFor="features" className="mb-2 md:mb-1.5 block">
+              <Label htmlFor="features" className="mb-2 block md:mb-1.5">
                 Features
               </Label>
               <Card className="p-2">
@@ -1075,6 +1110,7 @@ export default function TierForm({
               user={user}
               tier={tier}
               handleInputChange={handleInputChange}
+              idPrefix=""
             />
           </div>
           {tier.checkoutType === "gitwallet" && (
@@ -1109,14 +1145,17 @@ export default function TierForm({
               }}
             />
           </div>
+
+          <Separator className="my-2" />
+
           {tier.checkoutType === "gitwallet" && (
             <div>
-              <Label htmlFor="versionHistory" className="mb-2 md:mb-1.5 block">
+              <Label htmlFor="versionHistory" className="mb-2 block md:mb-1">
                 Package Version History
               </Label>
 
               {!!versions && versions.length === 0 && (
-                <p className="text-sm text-stone-500">
+                <p className="text-xs text-stone-500">
                   {tier.name} has{" "}
                   {currentRevisionSubscriberCount === 0
                     ? "no customers yet"
@@ -1130,7 +1169,7 @@ export default function TierForm({
 
               {!!versions && versions.length > 0 && (
                 <>
-                  <p className="my-6 text-sm text-stone-500">
+                  <p className="my-6 text-xs text-stone-500">
                     {tier.name} has{" "}
                     {currentRevisionSubscriberCount === 0
                       ? "no customers yet"
@@ -1195,7 +1234,7 @@ export default function TierForm({
                     </Table>
                   </Card>
 
-                  <p className="my-6 text-sm text-stone-500">
+                  <p className="my-6 text-xs text-stone-500">
                     Please note that package versions are only recorded when you
                     make feature or price changes to a package where you have
                     existing customers. Customers will be charged what they
@@ -1206,8 +1245,6 @@ export default function TierForm({
             </div>
           )}
 
-          <Separator className="my-2" />
-
           <Button
             disabled={isSaving || isDeleting}
             loading={isSaving}
@@ -1217,7 +1254,7 @@ export default function TierForm({
           </Button>
         </div>
 
-        <div className="hidden lg:block sticky top-20 mx-auto mb-auto w-full text-center md:w-[300px]">
+        <div className="sticky top-20 mx-auto mb-auto hidden w-full text-center md:w-[300px] lg:block">
           <TierCard
             tier={{ ...tier, published: savedPublishedState }}
             features={featureObjs}

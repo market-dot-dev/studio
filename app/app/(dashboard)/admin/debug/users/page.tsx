@@ -1,42 +1,15 @@
 import UserService from "@/app/services/UserService";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
-import ImpersonateButton from "./impersonate-button";
 import { Card } from "@/components/ui/card";
+import { User, columns } from "./columns";
+import { DataTable } from "./data-table";
 
 export default async function UsersList() {
 	const users = await UserService.getCustomersMaintainers();
 	
 	return (
 		<>
-			<h2 className="text-xl font-bold mb-4">Users</h2>
-			<Card className="container mx-auto p-4">
-				<Table>
-					<TableHead>
-					<TableRow>
-						<TableHeaderCell>ID</TableHeaderCell>
-						<TableHeaderCell>GitHub Username</TableHeaderCell>
-						<TableHeaderCell>Email</TableHeaderCell>
-						<TableHeaderCell>Name</TableHeaderCell>
-						<TableHeaderCell>Role</TableHeaderCell>
-						<TableHeaderCell></TableHeaderCell>
-					</TableRow>
-					</TableHead>
-					<TableBody>
-					{users.map((user) => (
-						<TableRow key={user.id}>
-						<TableCell>{user.id}</TableCell>
-						<TableCell>{user.gh_username || 'N/A'}</TableCell>
-						<TableCell>{user.email}</TableCell>
-						<TableCell>{user.name}</TableCell>
-						<TableCell>{user.roleId}</TableCell>
-						<TableHeaderCell>
-							<ImpersonateButton userId={user.id!} />
-						</TableHeaderCell>
-						</TableRow>
-					))}
-					</TableBody>
-				</Table>
-			</Card>
+			<h2 className="text-3xl font-bold mb-2">Users</h2>
+			<DataTable columns={columns} data={users as User[]} />
 		</>
 	  );
 }

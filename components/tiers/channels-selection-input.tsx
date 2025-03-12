@@ -6,10 +6,12 @@ export default function ChannelsSelectionInput({
   selectedChannels,
   handleInputChange,
   userIsMarketExpert,
+  idPrefix = "",
 }: {
   selectedChannels: Channel[];
   handleInputChange: (channel: Channel) => void;
   userIsMarketExpert: boolean;
+  idPrefix?: string;
 }) {
   return (
     <div className="flex flex-col gap-2">
@@ -23,15 +25,15 @@ export default function ChannelsSelectionInput({
               </span>
             </div>
             <Checkbox
-              id="channel-site"
-              name="channel-type"
+              id={`${idPrefix}channel-site`}
+              name={`${idPrefix}channel-type`}
               value={Channel.site}
               checked={selectedChannels.includes(Channel.site)}
               onCheckedChange={() => handleInputChange(Channel.site)}
             />
           </div>
           <p className="text-left text-xs leading-4 text-stone-500">
-            List your package on your website
+            List your package for sale on your website
           </p>
         </div>
       </label>
@@ -46,15 +48,15 @@ export default function ChannelsSelectionInput({
                 </span>
               </div>
               <Checkbox
-                id="channel-market"
-                name="channel-type"
+                id={`${idPrefix}channel-market`}
+                name={`${idPrefix}channel-type`}
                 value={Channel.market}
                 checked={selectedChannels.includes(Channel.market)}
                 onCheckedChange={() => handleInputChange(Channel.market)}
               />
             </div>
             <p className="text-left text-xs leading-4 text-stone-500">
-              List your package on your Market.dev expert page
+              List your package for sale on your Market.dev expert page
             </p>
           </div>
         </label>

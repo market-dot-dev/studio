@@ -6,7 +6,7 @@ import { buttonVariants } from "./button";
 import { cn } from "@/lib/utils"
 
 const alertVariants = cva(
-  "relative w-full rounded border p-4 pb-3 text-sm [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg]:text-foreground [&>svg~*]:pl-[30px]",
+  "relative w-full rounded border p-4 pb-4 text-sm [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg]:text-foreground [&>svg~*]:pl-[30px]",
   {
     variants: {
       variant: {

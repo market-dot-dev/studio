@@ -24,7 +24,7 @@ const ImpersonateButton = ({ userId } : { userId : string}) => {
   };
 
   return (
-    <Button size="sm" onClick={handleImpersonation} disabled={loading}>
+    <Button size="sm" variant="outline" onClick={handleImpersonation} disabled={loading}>
       {loading ? 'Impersonating...' : 'Impersonate'}
     </Button>
   );

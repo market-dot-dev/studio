@@ -8,6 +8,7 @@ import FeatureService from "@/app/services/feature-service";
 import TiersEmptyState from "./empty-state";
 import NewTierModal from "@/components/tiers/new-tier-modal";
 import clsx from "clsx";
+import { Badge } from "@/components/ui/badge";
 
 export default async function Tiers() {
   const currentUserId = await SessionService.getCurrentUserId();
@@ -52,30 +53,28 @@ export default async function Tiers() {
               {tiers.map((tier, index) => (
                 <div
                   key={index}
-                  className="flex flex-col gap-4 rounded-2xl bg-stone-100 text-center"
+                  className="flex flex-col gap-4 rounded-xl border bg-stone-200/25 text-center"
                 >
                   <div className="flex items-center justify-between gap-4 p-3 pl-5">
                     <div className="flex items-center gap-2">
                       <span
                         className={clsx(
-                          "h-2 w-2 rounded-full ring-1 ring-inset ring-black/5",
-                          tier.published ? "bg-emerald-600" : "bg-stone-400",
+                          "h-[7px] w-[7px] rounded-full",
+                          tier.published ? "bg-lime-700" : "bg-stone-400",
                         )}
                       ></span>
                       <p
                         className={clsx(
                           "text-sm font-medium",
-                          tier.published
-                            ? "text-emerald-700"
-                            : "text-stone-500",
+                          tier.published ? "text-lime-700" : "text-stone-500",
                         )}
                       >
-                        {tier.published ? "Active" : "Inactive"}
+                        {tier.published ? "Published" : "Draft"}
                       </p>
                     </div>
                     <Link
                       href={`tiers/${tier.id}`}
-                      className="flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
+                      className="flex items-center gap-1.5 rounded px-1.5 py-0.5 text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
                     >
                       <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
                       Edit

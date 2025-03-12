@@ -18,7 +18,7 @@ export default async function ContractSettingsPage() {
   const contracts = await ContractService.getContractsByCurrentMaintainer();
 
   return (
-    <div className="max-w flex max-w-screen-xl flex-col space-y-12">
+    <div className="max-w flex max-w-screen-xl flex-col space-y-9">
       <div className="flex justify-between">
         <div className="flex flex-col">
           <PageHeading title="Contracts" />

@@ -1,16 +1,94 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
+import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { User } from "@prisma/client";
 import { Checkbox } from "@/components/ui/checkbox";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface UserSelectionStepProps {
   selectedUsers: User[];
   setSelectedUsers: (users: User[]) => void;
+}
+
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[]
+  data: TData[]
+  onRowClick?: (row: TData) => void
+}
+
+function DataTable<TData, TValue>({
+  columns,
+  data,
+  onRowClick,
+}: DataTableProps<TData, TValue>) {
+  const table = useReactTable({
+    data,
+    columns,
+    getCoreRowModel: getCoreRowModel(),
+  })
+
+  return (
+    <Table>
+      <TableHeader>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <TableRow key={headerGroup.id}>
+            {headerGroup.headers.map((header) => {
+              return (
+                <TableHead key={header.id}>
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext()
+                      )}
+                </TableHead>
+              )
+            })}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {table.getRowModel().rows?.length ? (
+          table.getRowModel().rows.map((row) => (
+            <TableRow
+              key={row.id}
+              data-state={row.getIsSelected() && "selected"}
+              className="cursor-pointer hover:bg-gray-50"
+              onClick={() => onRowClick && onRowClick(row.original)}
+            >
+              {row.getVisibleCells().map((cell) => (
+                <TableCell key={cell.id}>
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))
+        ) : (
+          <TableRow>
+            <TableCell colSpan={columns.length} className="h-24 text-center">
+              No results found.
+            </TableCell>
+          </TableRow>
+        )}
+      </TableBody>
+    </Table>
+  )
 }
 
 export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: UserSelectionStepProps) {
@@ -79,6 +157,41 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
   
   const isAllSelected = filteredUsers.length > 0 && selectedUsers.length === filteredUsers.length;
   
+  // Define columns for the table
+  const columns = useMemo<ColumnDef<User>[]>(() => [
+    {
+      id: "select",
+      header: () => (
+        <Checkbox
+          checked={isAllSelected}
+          onCheckedChange={handleSelectAll}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => {
+        const user = row.original;
+        return (
+          <Checkbox
+            checked={isUserSelected(user.id!)}
+            onCheckedChange={() => handleSelectUser(user)}
+            aria-label="Select row"
+            onClick={(e) => e.stopPropagation()}
+          />
+        );
+      },
+    },
+    {
+      accessorKey: "name",
+      header: "Name",
+      cell: ({ row }) => <div>{row.original.name || "N/A"}</div>,
+    },
+    {
+      accessorKey: "email",
+      header: "Email",
+      cell: ({ row }) => <div>{row.original.email || "N/A"}</div>,
+    },
+  ], [isAllSelected, handleSelectAll, isUserSelected, handleSelectUser]);
+  
   // Error state
   if (error) {
     return (
@@ -138,53 +251,11 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
         />
       </div>
       
-      <div className="mb-4">
-        <Button
-          variant="secondary"
-          onClick={handleSelectAll}
-          size="sm"
-        >
-          {isAllSelected ? "Deselect All" : "Select All"}
-        </Button>
-      </div>
-      
-      <div className="border rounded-lg overflow-hidden">
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell className="w-12">
-                <Checkbox
-                  checked={isAllSelected}
-                  onCheckedChange={handleSelectAll}
-                />
-              </TableHeaderCell>
-              <TableHeaderCell>Name</TableHeaderCell>
-              <TableHeaderCell>Email</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredUsers.map((user) => (
-              <TableRow key={user.id} className="cursor-pointer hover:bg-gray-50" onClick={() => handleSelectUser(user)}>
-                <TableCell>
-                  <Checkbox
-                    checked={isUserSelected(user.id!)}
-                    onCheckedChange={() => handleSelectUser(user)}
-                  />
-                </TableCell>
-                <TableCell>{user.name || "N/A"}</TableCell>
-                <TableCell>{user.email || "N/A"}</TableCell>
-              </TableRow>
-            ))}
-            {filteredUsers.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={3} className="text-center py-4">
-                  No users found matching your search
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+      <DataTable 
+        columns={columns} 
+        data={filteredUsers} 
+        onRowClick={handleSelectUser}
+      />
     </div>
   );
 } 

@@ -9,7 +9,7 @@ import { format } from 'date-fns'
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useDropzone } from 'react-dropzone';
-import { Loader } from "lucide-react";
+import Spinner from "@/components/ui/spinner";
 
 type Media = Partial<DBMedia>;
 
@@ -31,7 +31,7 @@ const StyledDropzone = ({ onFileAccepted, isUploading } : any) => {
         <input {...getInputProps()} />
         <strong>Files Upload</strong>
         {isUploading ? (
-          <Loader className="loading-spinner animate-spin-slow h-3 w-3" />
+          <Spinner />
         ) : (
           <p className="py-1 text-sm text-stone-500">
             Drop files here or <strong>Click</strong> to select files
@@ -133,9 +133,7 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
           </div>
 
           <div className="flex max-h-[60vh] grow flex-wrap items-start justify-start gap-4 overflow-auto p-4">
-            {isLoading && (
-              <Loader className="loading-spinner animate-spin-slow h-3 w-3" />
-            )}
+            {isLoading && <Spinner />}
             {mediaList.map((media) => {
               const classes = `border ${selectedMedia?.id === media.id ? "border-blue-500" : "border-transparent"} cursor-pointer`;
               return (

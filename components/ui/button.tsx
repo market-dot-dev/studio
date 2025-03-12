@@ -1,7 +1,6 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import { Loader } from "lucide-react";
 
 import { cn } from "@/lib/utils"
 import {
@@ -10,6 +9,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip"
+import Spinner from "./spinner"
 
 const buttonVariants = cva(
   // "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-swamp disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 [&[data-loading=true]_svg:not(.loading-spinner)]:hidden",
@@ -32,6 +32,7 @@ const buttonVariants = cva(
         sm: "h-6 px-2 text-xs [&_svg]:size-3.5 gap-1",
         lg: "h-10 px-6",
         icon: "h-8 w-8 [&_svg]:size-5",
+        "icon-sm": "h-6 w-6 [&_svg]:size-4",
       },
     },
     defaultVariants: {
@@ -79,7 +80,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading ? (
           <>
-            <Loader className="h-3 w-3 loading-spinner animate-spin-slow" />
+            <Spinner />
             {loadingText}
           </>
         ) : (

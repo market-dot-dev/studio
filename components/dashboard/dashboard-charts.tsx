@@ -204,7 +204,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
 
   return (
     <>
-      <div className="mb-2 flex items-end justify-between">
+      <div className="mb-4 flex items-end justify-between">
         <div className="flex items-end gap-2">
           <div className="text-xl font-bold">Reports</div>
           {isUsingDummyData && (
@@ -237,7 +237,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline justify-start space-x-3 truncate">
-                <h3 className="text-3xl leading-none tracking-tight">
+                <h3 className="text-3xl font-semibold leading-none tracking-tight">
                   {totalNewCustomers}
                 </h3>
               </div>
@@ -275,7 +275,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline justify-start space-x-3 truncate">
-                <h3 className="text-3xl tracking-tight leading-none">${`${totalRevenue}`}</h3>
+                <h3 className="text-3xl font-semibold tracking-tight leading-none">${`${totalRevenue}`}</h3>
               </div>
 
               <RevenueLineChart

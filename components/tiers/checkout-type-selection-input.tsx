@@ -8,10 +8,12 @@ export default function CheckoutTypeSelectionInput({
   user,
   tier,
   handleInputChange,
+  idPrefix = ""
 }: {
   user: User;
   tier: TierWithFeatures;
   handleInputChange: (key: string, value: string) => void;
+  idPrefix?: string;
 }) {
   const gitwalletCheckoutEnabled = !!user.stripeAccountId;
 
@@ -36,9 +38,10 @@ export default function CheckoutTypeSelectionInput({
               </span>
             </div>
             <input
+              id={`${idPrefix}checkout-type-gitwallet`}
               disabled={!gitwalletCheckoutEnabled}
               type="radio"
-              name="checkout-type"
+              name={`${idPrefix}checkout-type`}
               value="gitwallet"
               className="border-stone-400 checked:border-swamp shadow-sm checked:text-swamp focus:outline-none focus:ring-0"
               checked={tier.checkoutType === "gitwallet"}
@@ -87,8 +90,9 @@ export default function CheckoutTypeSelectionInput({
               </span>
             </div>
             <input
+              id={`${idPrefix}checkout-type-contact-form`}
               type="radio"
-              name="checkout-type"
+              name={`${idPrefix}checkout-type`}
               value="contact-form"
               className="border-stone-400 shadow-sm checked:border-swamp checked:text-swamp focus:outline-none focus:ring-0"
               checked={tier.checkoutType === "contact-form"}

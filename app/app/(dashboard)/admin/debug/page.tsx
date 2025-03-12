@@ -4,9 +4,9 @@ import Link from 'next/link';
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
 import RoleSwitcher from "@/components/user/role-switcher";
-import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
 import { Card } from "@/components/ui/card"
-import { buttonVariants } from '@/components/ui/button';
+import { columns, DebugLink } from "./columns";
+import { DataTable } from "./data-table";
 
 const Debug = async () => {
   const user = await UserService.getCurrentUser();
@@ -14,7 +14,7 @@ const Debug = async () => {
     return <div>Not logged in</div>;
   }
 
-  const debugLinks = [
+  const debugLinks: DebugLink[] = [
     { name: "View All Users", href: "/admin/debug/users" },
     { name: "Bulk Email Tool", href: "/admin/debug/email" },
     { name: "Onboarding State", href: "/admin/debug/onboarding" },
@@ -27,40 +27,23 @@ const Debug = async () => {
     { name: "Sentry Example", href: "/admin/debug/sentry-example-page" },
   ];
 
+  // Add the role switcher as a special row that will be handled separately
+  const roleSwitcherRow = { name: "Switch Role", href: "#" };
+
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+    <div className="flex max-w-screen-xl flex-col space-y-8">
       <div className="flex w-full justify-between">
         <PageHeading title="Debug Tools" />
       </div>
 
-      <Card>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Debug Tool</TableHeaderCell>
-              <TableHeaderCell>Action</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {debugLinks.map((link) => (
-              <TableRow key={link.href}>
-                <TableCell>{link.name}</TableCell>
-                <TableCell>
-                  <Link href={link.href} className={buttonVariants({ variant: 'outline', size: 'sm' })}>
-                    View
-                  </Link>
-                </TableCell>
-              </TableRow>
-            ))}
-            <TableRow>
-              <TableCell>Switch Role</TableCell>
-              <TableCell>
-                <RoleSwitcher />
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Card>
+      <DataTable columns={columns} data={debugLinks} />
+      
+      <div className="mt-4 border-t pt-4">
+        <div className="flex items-center justify-between">
+          <div className="font-medium">Switch Role</div>
+          <RoleSwitcher />
+        </div>
+      </div>
     </div>
   );
 };

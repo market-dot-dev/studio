@@ -212,9 +212,9 @@ export default function ProfileForm({
                   <Button
                     type="button"
                     size="sm"
-                    variant="outline"
+                    variant="link"
                     onClick={handleFilePicker}
-                    className="mt-4 text-xs text-stone-500 underline"
+                    className="mt-4 text-xs text-stone-500"
                   >
                     Pick another image
                   </Button>
