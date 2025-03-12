@@ -8,7 +8,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } fro
 import { Card } from "@/components/ui/card"
 import { buttonVariants } from '@/components/ui/button';
 
-const StripeDebug = async () => {
+const Debug = async () => {
   const user = await UserService.getCurrentUser();
   if(!user || !(user.roleId === "admin")) {
     return <div>Not logged in</div>;
@@ -65,4 +65,4 @@ const StripeDebug = async () => {
   );
 };
 
-export default StripeDebug;
+export default Debug;
