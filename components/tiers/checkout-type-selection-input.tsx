@@ -40,7 +40,7 @@ export default function CheckoutTypeSelectionInput({
               type="radio"
               name="checkout-type"
               value="gitwallet"
-              className="text-stone-500 checked:text-swamp focus:outline-none focus:ring-0"
+              className="border-stone-400 checked:border-swamp shadow-sm checked:text-swamp focus:outline-none focus:ring-0"
               checked={tier.checkoutType === "gitwallet"}
               onChange={(e) =>
                 handleInputChange(
@@ -75,7 +75,7 @@ export default function CheckoutTypeSelectionInput({
   }
 
   return (
-    <div className="grid h-full gap-x-3 gap-y-2 xl:grid-cols-2">
+    <div className="flex flex-col gap-2">
       <GitWalletCheckout />
       <label className="flex h-full w-full rounded focus-within:outline-none">
         <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] hover:bg-stone-50 [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp">
@@ -90,7 +90,7 @@ export default function CheckoutTypeSelectionInput({
               type="radio"
               name="checkout-type"
               value="contact-form"
-              className="text-stone-500 checked:text-swamp focus:outline-none focus:ring-0"
+              className="border-stone-400 shadow-sm checked:border-swamp checked:text-swamp focus:outline-none focus:ring-0"
               checked={tier.checkoutType === "contact-form"}
               onChange={(e) =>
                 handleInputChange(

@@ -9,11 +9,15 @@ import {
   TableRow,
   TableCell,
 } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Separator } from "@/components/ui/separator";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import {
   Select,
   SelectContent,
@@ -40,16 +44,14 @@ import Link from "next/link";
 import { Channel, Contract, Feature, User } from "@prisma/client";
 import LoadingDots from "@/components/icons/loading-dots";
 import useCurrentSession from "@/app/hooks/use-current-session";
-import { Check, Copy } from "lucide-react";
+import { Check, Copy, ChevronLeft } from "lucide-react";
 import TierDeleteButton from "./tier-delete-button";
 import { getRootUrl } from "@/lib/domain";
 import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
 import ChannelsSelectionInput from "./channels-selection-input";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Card } from "@/components/ui/card";
+import { Switch } from "../ui/switch";
 
 interface TierFormProps {
   tier?: Partial<Tier>;
@@ -134,66 +136,84 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({
 
 const TierLinkCopier = ({ tier }: { tier: Tier }) => {
   const [isCopied, setIsCopied] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
   const link = getRootUrl("app", `/checkout/${tier.id}`);
 
   const copyToClipboard = async () => {
     if (window.location.protocol !== "https:") {
-      setErrorMessage("Copying to clipboard is only supported on HTTPS sites.");
+      toast.error("Copying to clipboard is only supported on HTTPS sites.");
       return;
     }
 
     try {
       await navigator.clipboard.writeText(link);
       setIsCopied(true);
-      setErrorMessage("");
     } catch (err) {
       console.error("Failed to copy text: ", err);
-      setErrorMessage("Failed to copy the link. Please try again.");
+      toast.error("Failed to copy the link. Please try again.");
     }
   };
 
-  if (!link) {
+  if (!link || !tier.published) {
     return null;
   }
 
   return (
-    <div className="mt-4 flex flex-col rounded border border-stone-200 bg-stone-100 p-4 text-stone-600">
-      <strong>Checkout Link</strong>
-      {tier.published ? (
-        <>
-          <p className="text-sm text-stone-500">
-            You can send this link directly to any potential customers.
-          </p>
-          <div className="mt-4 flex flex-row items-center justify-center">
-            <Input
-              id="checkoutLink"
-              className="rounded-r-none"
-              readOnly
-              value={link}
-            />
-            <Button
-              variant="outline"
-              onClick={copyToClipboard}
-              disabled={isCopied}
-              className={
-                `h-9 rounded-l-none ` +
-                `${isCopied ? "cursor-not-allowed opacity-50" : ""}`
-              }
-            >
-              {isCopied ? <Check /> : <Copy />}
-              {isCopied ? "Copied!" : ""}
-            </Button>
-          </div>
-        </>
-      ) : (
-        <p className="text-sm text-stone-500">
-          To create a checkout link, this package needs to be marked as
-          available for sale.
-        </p>
-      )}
-      {errorMessage && <p className="mt-2 text-red-500">{errorMessage}</p>}
+    <div className="flex flex-row items-center justify-center w-[280px]">
+      <Input
+        id="checkoutLink"
+        className="rounded-r-none truncate pr-2"
+        readOnly
+        value={link}
+      />
+      <Button
+        variant="outline"
+        onClick={copyToClipboard}
+        disabled={isCopied}
+        className={
+          `h-9 rounded-l-none ` +
+          `${isCopied ? "cursor-not-allowed opacity-50" : ""}`
+        }
+      >
+        {isCopied ? <Check /> : <Copy />}
+        {isCopied ? "Copied!" : ""}
+      </Button>
     </div>
+    // <div className="mt-4 flex flex-col rounded border border-stone-200 bg-stone-100 p-4 text-stone-600">
+    //   <strong>Checkout Link</strong>
+    //   {tier.published ? (
+    //     <>
+    //       <p className="text-sm text-stone-500">
+    //         You can send this link directly to any potential customers.
+    //       </p>
+    //       <div className="mt-4 flex flex-row items-center justify-center">
+    //         <Input
+    //           id="checkoutLink"
+    //           className="rounded-r-none"
+    //           readOnly
+    //           value={link}
+    //         />
+    //         <Button
+    //           variant="outline"
+    //           onClick={copyToClipboard}
+    //           disabled={isCopied}
+    //           className={
+    //             `h-9 rounded-l-none ` +
+    //             `${isCopied ? "cursor-not-allowed opacity-50" : ""}`
+    //           }
+    //         >
+    //           {isCopied ? <Check /> : <Copy />}
+    //           {isCopied ? "Copied!" : ""}
+    //         </Button>
+    //       </div>
+    //     </>
+    //   ) : (
+    //     <p className="text-sm text-stone-500">
+    //       To create a checkout link, this package needs to be marked as
+    //       available for sale.
+    //     </p>
+    //   )}
+    //   {errorMessage && <p className="mt-2 text-red-500">{errorMessage}</p>}
+    // </div>
   );
 };
 
@@ -252,9 +272,8 @@ const StandardCheckoutForm = ({
   );
 
   return (
-    <div>
-      {" "}
-      <div className="mb-4">
+    <div className="flex flex-col gap-6">
+      <div>
         <Label htmlFor="contractId" className="mb-1 block">
           Contract
         </Label>
@@ -274,9 +293,9 @@ const StandardCheckoutForm = ({
           </SelectContent>
         </Select>
       </div>
-      <div className="mb-4">
-        <div className="mb-4">
-          <Label htmlFor="cadence" className="mb-1 block">
+      <div className="flex flex-col gap-6">
+        <div>
+          <Label htmlFor="cadence" className="mb-1.5 block">
             Billing type
           </Label>
           <Select
@@ -297,8 +316,8 @@ const StandardCheckoutForm = ({
           </Select>
         </div>
 
-        <div className="mb-4">
-          <Label htmlFor="price" className="mb-1 block">
+        <div>
+          <Label htmlFor="price" className="mb-1.5 block">
             Monthly Price (USD)
           </Label>
           <div className="flex gap-2">
@@ -330,7 +349,7 @@ const StandardCheckoutForm = ({
 
         {tier.cadence === "month" && (
           <>
-            <div className="mb-4">
+            <div>
               <Checkbox
                 id="annualPlanEnabled"
                 checked={annualPlanEnabled}
@@ -354,8 +373,8 @@ const StandardCheckoutForm = ({
             </div>
 
             {annualPlanEnabled && (
-              <div className="mb-4">
-                <Label htmlFor="priceAnnual" className="mb-2 block">
+              <div>
+                <Label htmlFor="priceAnnual" className="mb-1.5 block">
                   Annual Price (USD)
                 </Label>
                 <Input
@@ -410,7 +429,7 @@ const StandardCheckoutForm = ({
               />
             </div> */}
 
-            <div className="mb-4">
+            <div>
               <Checkbox
                 id="trialEnabled"
                 checked={trialEnabled}
@@ -420,7 +439,7 @@ const StandardCheckoutForm = ({
             </div>
 
             {trialEnabled && (
-              <div className="mb-4">
+              <div>
                 <Label htmlFor="trialDays" className="mb-2 block">
                   Trial Length (Days)
                 </Label>
@@ -580,41 +599,73 @@ export default function TierForm({
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-        <div className="space-y-6 md:col-span-2">
-          <div className="flex justify-between">
-            <div>
-              <Link href="/tiers" className="underline">
-                ← All Packages
-              </Link>
-              <PageHeading title={formTitle} />
+      <div className="flex flex-col gap-6 md:col-span-2">
+        <div className="flex w-full justify-between">
+          <div className="flex w-full flex-col gap-4">
+            <Link
+              href="/tiers"
+              className="flex -translate-x-0.5 items-center gap-1 text-sm font-semibold tracking-tightish text-stone-500 hover:text-stone-800"
+            >
+              <ChevronLeft size={16} className="shrink-0" />
+              All Packages
+            </Link>
+            <div className="flex w-full flex-wrap items-center justify-between gap-1">
+              <div className="flex items-center gap-3">
+                <PageHeading title={formTitle} />
+                <Badge
+                  variant={tier.id && tier.published ? "success" : "secondary"}
+                  className="mb-1 w-fit"
+                >
+                  {tier.id && tier.published ? "Published" : "Draft"}
+                </Badge>
+              </div>
+              <TierLinkCopier tier={tier} />
             </div>
           </div>
         </div>
-
-        <div>&nbsp;</div>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 gap-8 pb-20 md:grid-cols-3">
-        <div className="space-y-6 md:col-span-2">
-          <div className="mb-4">
-            <Label htmlFor="checkoutType" className="mb-2">
-              Checkout Type
-            </Label>
-            <CheckoutTypeSelectionInput
-              user={user}
-              tier={tier}
-              handleInputChange={handleInputChange}
+      <Separator className="my-6" />
+
+      <div className="mt-4 flex flex-col gap-10 pb-20 md:flex-row">
+        <div className="flex w-full max-w-lg flex-col gap-6">
+          <div>
+            <Switch
+              id="published"
+              checked={tier.published}
+              disabled={!canPublish || canPublishDisabled}
+              data-cy="available-for-sale"
+              onCheckedChange={(checked) => {
+                setTier({
+                  ...tier,
+                  published: checked === true,
+                } as Tier);
+              }}
+              label="This package is available for sale"
             />
+            {!canPublish && !canPublishLoading && (
+              <>
+                <Alert variant="destructive" className="my-2">
+                  <AlertTitle>Payment Setup Required</AlertTitle>
+                  <AlertDescription>
+                    You need to connect your Stripe account to publish a
+                    package. Visit{" "}
+                    <a href="/settings/payment" className="underline">
+                      Payment Settings
+                    </a>{" "}
+                    to get started.
+                  </AlertDescription>
+                </Alert>
+              </>
+            )}
           </div>
-          <div className="mb-4">
+          <div>
             <NewVersionCallout
               tierHasSubscribers={tierHasSubscribers}
               versionedAttributesChanged={versionedAttributesChanged}
               featuresChanged={featuresChanged}
             />
-
-            <Label htmlFor="tierName" className="mb-1">
+            <Label htmlFor="tierName" className="mb-1.5">
               Name
             </Label>
             <Input
@@ -629,8 +680,8 @@ export default function TierForm({
               <p className="text-sm text-stone-500">{errors["name"]}</p>
             ) : null}
           </div>
-          <div className="mb-4">
-            <Label htmlFor="tierTagline" className="mb-1 block">
+          <div>
+            <Label htmlFor="tierTagline" className="mb-1.5 block">
               Tagline
             </Label>
             <Input
@@ -642,8 +693,8 @@ export default function TierForm({
               onChange={(e) => handleInputChange("tagline", e.target.value)}
             />
           </div>
-          <div className="mb-4">
-            <Label htmlFor="tierDescription" className="mb-1 block">
+          <div>
+            <Label htmlFor="tierDescription" className="mb-1.5 block">
               Description
             </Label>
             <Textarea
@@ -655,84 +706,9 @@ export default function TierForm({
               onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </div>
-          <div className="mb-4">
-            <Label htmlFor="channels" className="mb-2 block">
-              Channels
-            </Label>
-            <ChannelsSelectionInput
-              userIsMarketExpert={!!user.marketExpertId}
-              selectedChannels={tier.channels}
-              handleInputChange={(channel) => {
-                let channels: Channel[] = tier.channels;
-                if (channels.includes(channel)) {
-                  channels = channels.filter((c) => c !== channel);
-                } else {
-                  channels = [...channels, channel];
-                }
-
-                setTier({
-                  ...tier,
-                  channels,
-                });
-              }}
-            />
-          </div>
-
-          {tier.checkoutType === "gitwallet" && (
-            <StandardCheckoutForm
-              tier={tier}
-              contracts={contracts}
-              handleTierDataChange={handleInputChange}
-            />
-          )}
-          <div className="mb-4">
-            <Label htmlFor="packageStatus" className="mb-1 block">
-              Package Status
-            </Label>
-            <div className="flex gap-2">
-              {canPublishLoading && (
-                <>
-                  <LoadingDots />
-                  <p className="text-sm text-stone-500">
-                    Checking Stripe Eligiblity
-                  </p>
-                </>
-              )}
-              {!canPublishLoading && (
-                <Checkbox
-                  id="published"
-                  checked={tier.published}
-                  disabled={canPublishDisabled}
-                  data-cy="available-for-sale"
-                  onCheckedChange={(checked) => {
-                    setTier({
-                      ...tier,
-                      published: checked === true,
-                    } as Tier);
-                  }}
-                  label="Make this package available for sale"
-                />
-              )}
-            </div>
-            {!canPublish && !canPublishLoading && (
-              <>
-                <Alert variant="destructive" className="my-2">
-                  <AlertTitle>Payment Setup Required</AlertTitle>
-                  <AlertDescription>
-                    You need to connect your Stripe account to publish a package.
-                    Visit{" "}
-                    <a href="/settings/payment" className="underline">
-                      Payment Settings
-                    </a>{" "}
-                    to get started.
-                  </AlertDescription>
-                </Alert>
-              </>
-            )}
-          </div>
           {hasActiveFeatures && (
-            <div className="mb-4">
-              <Label htmlFor="features" className="mb-1 block">
+            <div>
+              <Label htmlFor="features" className="mb-1.5 block">
                 Features
               </Label>
               <Card className="p-2">
@@ -756,24 +732,84 @@ export default function TierForm({
               </Card>
             </div>
           )}
-          {isAdmin() && tier?.id && (
-            <>
-              <div className="mb-4">
-                <Label htmlFor="adminPanel" className="mb-1 block">
-                  Admin Panel
-                </Label>
-                <Card className="p-2">
-                  View admin-only options:{" "}
-                  <Link href={`/admin/tiers/${tier.id}`}>
-                    <Button variant="outline">Admin Panel</Button>
-                  </Link>
-                </Card>
-              </div>
-            </>
-          )}
+
+          <Separator className="my-2" />
+
+          <div>
+            <Label htmlFor="checkoutType" className="mb-2.5">
+              Checkout Type
+            </Label>
+            <CheckoutTypeSelectionInput
+              user={user}
+              tier={tier}
+              handleInputChange={handleInputChange}
+            />
+          </div>
           {tier.checkoutType === "gitwallet" && (
-            <div className="mb-4">
-              <Label htmlFor="versionHistory" className="mb-1 block">
+            <StandardCheckoutForm
+              tier={tier}
+              contracts={contracts}
+              handleTierDataChange={handleInputChange}
+            />
+          )}
+
+          <Separator className="my-2" />
+
+          {/* <div>
+            <Switch
+              id="published"
+              checked={tier.published}
+              disabled={!canPublish || canPublishDisabled}
+              data-cy="available-for-sale"
+              onCheckedChange={(checked) => {
+                setTier({
+                  ...tier,
+                  published: checked === true,
+                } as Tier);
+              }}
+              label="This package is available for sale"
+            />
+            {!canPublish && !canPublishLoading && (
+              <>
+                <Alert variant="destructive" className="my-2">
+                  <AlertTitle>Payment Setup Required</AlertTitle>
+                  <AlertDescription>
+                    You need to connect your Stripe account to publish a
+                    package. Visit{" "}
+                    <a href="/settings/payment" className="underline">
+                      Payment Settings
+                    </a>{" "}
+                    to get started.
+                  </AlertDescription>
+                </Alert>
+              </>
+            )}
+          </div> */}
+          <div>
+            <Label htmlFor="channels" className="mb-2.5 block">
+              Channels
+            </Label>
+            <ChannelsSelectionInput
+              userIsMarketExpert={!!user.marketExpertId}
+              selectedChannels={tier.channels}
+              handleInputChange={(channel) => {
+                let channels: Channel[] = tier.channels;
+                if (channels.includes(channel)) {
+                  channels = channels.filter((c) => c !== channel);
+                } else {
+                  channels = [...channels, channel];
+                }
+
+                setTier({
+                  ...tier,
+                  channels,
+                });
+              }}
+            />
+          </div>
+          {tier.checkoutType === "gitwallet" && (
+            <div>
+              <Label htmlFor="versionHistory" className="mb-1.5 block">
                 Package Version History
               </Label>
 
@@ -792,7 +828,7 @@ export default function TierForm({
 
               {!!versions && versions.length > 0 && (
                 <>
-                  <p className="my-4 text-sm text-stone-500">
+                  <p className="my-6 text-sm text-stone-500">
                     {tier.name} has{" "}
                     {currentRevisionSubscriberCount === 0
                       ? "no customers yet"
@@ -857,7 +893,7 @@ export default function TierForm({
                     </Table>
                   </Card>
 
-                  <p className="my-4 text-sm text-stone-500">
+                  <p className="my-6 text-sm text-stone-500">
                     Please note that package versions are only recorded when you
                     make feature or price changes to a package where you have
                     existing customers. Customers will be charged what they
@@ -867,6 +903,9 @@ export default function TierForm({
               )}
             </div>
           )}
+
+          <Separator className="my-2" />
+
           <Button
             disabled={isSaving || isDeleting}
             loading={isSaving}
@@ -877,12 +916,13 @@ export default function TierForm({
         </div>
 
         {/* Preview Section */}
-        <div className="mb-auto text-center md:w-[300px]">
+        <div className="sticky top-20 mx-auto mb-auto w-full text-center md:w-[300px]">
           <TierCard
             tier={tier}
             features={featureObjs}
             buttonDisabled={newRecord}
             hasActiveFeatures={hasActiveFeatures}
+            className="w-full"
           />
           {tier.id && tier.published ? (
             <p className="mt-2 text-sm text-stone-500">
@@ -893,33 +933,37 @@ export default function TierForm({
               This package is not published and is not available for sale.
             </p>
           )}
-          <TierLinkCopier tier={tier} />
           {!newRecord && (
-            <div className="mt-4 flex flex-col items-center rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">
-              <strong>Admin Options</strong>
-
-              <div className="my-2 flex justify-center gap-2">
-                <DuplicateTierButton tierId={tier.id} />
+            <div className="mt-4 flex flex-col items-center gap-4 rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">
+              <strong className="text-stone-800">Admin Options</strong>
+              <div className="flex flex-col gap-2">
+                <div className="flex justify-center gap-2">
+                  <DuplicateTierButton tierId={tier.id} />
+                  {!tier._count?.Charge && !tier._count?.subscriptions && (
+                    <TierDeleteButton
+                      tierId={tier.id}
+                      onConfirm={() => setIsDeleting(true)}
+                      onSuccess={() => {
+                        setIsDeleting(false);
+                        window.location.href = "/tiers";
+                      }}
+                      onError={(error: any) => {
+                        setIsDeleting(false);
+                      }}
+                    />
+                  )}
+                </div>
                 {!tier._count?.Charge && !tier._count?.subscriptions && (
-                  <TierDeleteButton
-                    tierId={tier.id}
-                    onConfirm={() => setIsDeleting(true)}
-                    onSuccess={() => {
-                      setIsDeleting(false);
-                      window.location.href = "/tiers";
-                    }}
-                    onError={(error: any) => {
-                      setIsDeleting(false);
-                    }}
-                  />
+                  <p className="text-sm text-stone-500">
+                    This package can be deleted as it has no active customers or
+                    features.
+                  </p>
                 )}
               </div>
-              {!tier._count?.Charge && !tier._count?.subscriptions && (
-                <p className="mt-2 text-sm text-stone-500">
-                  This package can be deleted as it has no active customers or
-                  features.
-                </p>
-              )}
+              <Separator />
+              <Button variant="outline" className="w-full" asChild>
+                <Link href={`/admin/tiers/${tier.id}`}>Go to Admin Panel</Link>
+              </Button>
             </div>
           )}
         </div>

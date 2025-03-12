@@ -12,7 +12,7 @@ export default function ChannelsSelectionInput({
   userIsMarketExpert: boolean;
 }) {
   return (
-    <div className="grid h-full gap-x-3 gap-y-2 xl:grid-cols-2">
+    <div className="flex flex-col gap-2">
       <label className="block w-full focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-200">
         <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] hover:bg-stone-50 [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
           <div className="flex w-full items-center justify-between">

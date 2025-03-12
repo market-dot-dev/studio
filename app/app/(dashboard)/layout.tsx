@@ -60,7 +60,7 @@ export default async function DashboardLayout({
             onboarding={onboarding}
             showOnboardingModal={showOnboardingModal}
           />
-          <div className="flex min-h-screen w-full flex-col items-center bg-stone-50 md:pl-60">
+          <div className="flex min-h-screen w-full flex-col items-center bg-stone-100 md:pl-60">
             {user?.stripeAccountDisabled && user?.stripeAccountId && (
               <StripeDisabledBanner />
             )}

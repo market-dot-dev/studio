@@ -36,7 +36,7 @@ const Checkbox = React.forwardRef<
     return (
       <div className="flex items-center gap-2">
         {checkbox}
-        <Label htmlFor={props.id} className="font-medium">{label}</Label>
+        <Label htmlFor={props.id} className="peer-disabled:opacity-50 font-medium">{label}</Label>
       </div>
     );
   }

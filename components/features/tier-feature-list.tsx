@@ -21,7 +21,7 @@ const TierFeatureList = ({
         .map((feature) => (
           <li key={feature.id} className="flex gap-2 text-sm">
             <Check
-              className="h-5 w-5 min-w-6 text-swamp"
+              className={cn("h-5 w-5 min-w-6", darkMode ? "text-swamp-300" : "text-swamp-500")}
             />
             <p className={cn("text-sm", textClasses)}>{feature.name}</p>
           </li>
