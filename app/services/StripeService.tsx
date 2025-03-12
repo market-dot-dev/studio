@@ -686,4 +686,32 @@ export const {
   calculateApplicationFee,
 } = StripeService;
 
+export const createSetupIntent = async (
+  maintainerUserId: string,
+  maintainerStripeAccountId: string,
+) => {
+  try {
+    const customer = await getCustomer(
+      maintainerUserId, 
+      maintainerStripeAccountId
+    );
+    
+    const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
+    
+    const connectedStripe = await connStripe(maintainerStripeAccountId);
+    
+    const setupIntent = await connectedStripe.setupIntents.create({
+      customer: stripeCustomerId,
+      payment_method_types: ['card'],
+    });
+    
+    return {
+      clientSecret: setupIntent.client_secret,
+    };
+  } catch (error) {
+    console.error('Error creating setup intent:', error);
+    throw error;
+  }
+};
+
 export default StripeService;

@@ -1,9 +1,10 @@
-import { useStripe, useElements, CardElement, Elements } from '@stripe/react-stripe-js';
-import { useState, useCallback, ReactElement, ReactNode } from 'react';
+import { useStripe, useElements, CardElement, Elements, PaymentElement } from '@stripe/react-stripe-js';
+import { useState, useCallback, ReactElement, ReactNode, useEffect } from 'react';
 import { loadStripe } from '@stripe/stripe-js';
 import { User } from '@prisma/client';
 import { SessionUser } from '../models/Session';
-import { attachPaymentMethod, detachPaymentMethod } from '../services/StripeService';
+import { attachPaymentMethod, detachPaymentMethod, createSetupIntent } from '../services/StripeService';
+import type { StripePaymentElementOptions, StripeElementsOptions, Appearance } from '@stripe/stripe-js';
 
 interface UseStripePaymentCollectorProps {
   user: User | SessionUser | null | undefined;
@@ -12,23 +13,26 @@ interface UseStripePaymentCollectorProps {
   maintainerStripeAccountId: string;
 }
 
-const CARD_ELEMENT_OPTIONS = {
-  style: {
-    base: {
-      color: "#32325d",
-      fontFamily: 'Arial, sans-serif',
-      fontSmoothing: "antialiased",
-      fontSize: "16px",
-      "::placeholder": {
-        color: "#aab7c4"
-      },
-      border: '1px solid #e2e8f0',
-    },
-    invalid: {
-      color: "#fa755a",
-      iconColor: "#fa755a"
-    }
-  }
+// Define the appearance separately
+const appearance: Appearance = {
+  theme: 'stripe',
+  variables: {
+    colorPrimary: '#0570de',
+    colorBackground: '#ffffff',
+    colorText: '#32325d',
+    colorDanger: '#fa755a',
+    fontFamily: 'Arial, sans-serif',
+    spacingUnit: '4px',
+    borderRadius: '4px',
+  },
+};
+
+// Payment Element appearance options
+const PAYMENT_ELEMENT_OPTIONS: StripePaymentElementOptions = {
+  layout: {
+    type: 'tabs' as const,
+    defaultCollapsed: false,
+  },
 };
 
 interface UseStripePaymentCollectorReturns {
@@ -38,15 +42,40 @@ interface UseStripePaymentCollectorReturns {
   handleDetach: () => Promise<void>;
 }
 
-export const StripeCardElement = () => {
-  return <CardElement options={CARD_ELEMENT_OPTIONS} />
+export const StripePaymentElement = () => {
+  return <PaymentElement options={PAYMENT_ELEMENT_OPTIONS} />
 }
 
-export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId, ...props }: {
+export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId, maintainerUserId, ...props }: {
   children: (props: any) => ReactNode;
   maintainerStripeAccountId: string;
+  maintainerUserId: string;
   props?: any;
 }) => {
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchSetupIntent = async () => {
+      try {
+        setIsLoading(true);
+        const { clientSecret: secret } = await createSetupIntent(
+          maintainerUserId,
+          maintainerStripeAccountId
+        );
+        setClientSecret(secret);
+      } catch (err: any) {
+        console.error('Error fetching setup intent:', err);
+        setError(err.message || 'Failed to initialize payment form');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchSetupIntent();
+  }, [maintainerUserId, maintainerStripeAccountId]);
+
   const pk = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY || 'NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_NOT_SET_IN_ENV';
   const stripePromise = loadStripe(pk, {
     stripeAccount: maintainerStripeAccountId,
@@ -55,7 +84,26 @@ export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId,
     return null;
   });
 
-  return <Elements stripe={stripePromise}>
+  if (isLoading) {
+    return <div className="text-center p-4">
+      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
+      <p className="mt-2">Loading payment form...</p>
+    </div>;
+  }
+
+  if (error || !clientSecret) {
+    return <div className="text-center p-4 text-red-500">
+      {error || 'Unable to initialize payment form. Please try again later.'}
+    </div>;
+  }
+
+  // Setup options with PaymentElement required parameters
+  const options: StripeElementsOptions = {
+    clientSecret,
+    appearance,
+  };
+
+  return <Elements stripe={stripePromise} options={options}>
     { children({ ...props }) }
   </Elements>;
 };
@@ -76,22 +124,25 @@ const useStripePaymentCollector = ({ user, setError, maintainerUserId, maintaine
       return Promise.reject('User not found')
     }
 
-    const cardElement = elements.getElement(CardElement);
-    if (!cardElement) {
-      return Promise.reject('Card element not found');
-    }
-
-    const { error, paymentMethod } = await stripe.createPaymentMethod({
-      type: 'card',
-      card: cardElement,
+    // With PaymentElement we use confirmSetup instead of createPaymentMethod
+    const { error, setupIntent } = await stripe.confirmSetup({
+      elements,
+      confirmParams: {
+        return_url: `${window.location.origin}/payment-confirmation`,
+      },
+      redirect: 'if_required',
     });
 
     if (error) {
       setError(error.message || '');
       return Promise.reject(error || '');
-    } else if (paymentMethod && maintainerUserId) {
-      console.log('Payment method attached: ', paymentMethod);
-      await attachPaymentMethod(paymentMethod.id, maintainerUserId, maintainerStripeAccountId);
+    } else if (setupIntent && setupIntent.payment_method && maintainerUserId) {
+      console.log('Payment method attached: ', setupIntent.payment_method);
+      // Extract payment method ID if it's an object, or use the string directly
+      const paymentMethodId = typeof setupIntent.payment_method === 'string' 
+        ? setupIntent.payment_method 
+        : setupIntent.payment_method.id;
+      await attachPaymentMethod(paymentMethodId, maintainerUserId, maintainerStripeAccountId);
     }
   }, [stripe, elements, setError, maintainerUserId, maintainerStripeAccountId, user]);
 
@@ -104,7 +155,7 @@ const useStripePaymentCollector = ({ user, setError, maintainerUserId, maintaine
   }, [user, maintainerUserId, maintainerStripeAccountId]);
 
   return {
-    CardElementComponent: StripeCardElement,
+    CardElementComponent: StripePaymentElement, // Note: We keep the same prop name for backward compatibility
     stripeCustomerId,
     handleSubmit,
     handleDetach,
