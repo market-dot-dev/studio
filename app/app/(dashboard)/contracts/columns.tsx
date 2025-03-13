@@ -124,9 +124,7 @@ export const createColumns = (
   {
     accessorKey: "name",
     header: "Name",
-    cell: function NameCellRenderer({ row }) {
-      return <NameCell contract={row.original} currentUser={currentUser} />;
-    }
+    cell: ({ row }) => <NameCell contract={row.original} currentUser={currentUser} />
   },
   {
     accessorKey: "description",
@@ -134,8 +132,6 @@ export const createColumns = (
   },
   {
     id: "actions",
-    cell: function ActionsCellRenderer({ row }) {
-      return <ActionsCell contract={row.original} currentUser={currentUser} />;
-    }
+    cell: ({ row }) => <ActionsCell contract={row.original} currentUser={currentUser} />
   }
 ] 

@@ -18,7 +18,7 @@ export const columns: ColumnDef<DebugLink>[] = [
   {
     id: "actions",
     header: "Action",
-    cell: function ActionCell({ row }) {
+    cell: ({ row }) => {
       const link = row.original
       
       return (

@@ -4,18 +4,13 @@ import { ColumnDef } from "@tanstack/react-table"
 import { User } from "@prisma/client"
 import Link from "next/link"
 import { buttonVariants } from "@/components/ui/button"
-import { formatCurrency, formatDate } from "@/lib/utils"
-import SubscriptionStatusBadge from "../subscription-state"
-import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button"
 import { ReactNode } from "react"
 
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: "ID",
-    cell: function IdCell({ row }) { 
-      return <pre>{row.getValue("id")}</pre>
-    }
+    cell: ({ row }) => <pre>{row.getValue("id")}</pre>
   },
   {
     accessorKey: "name",
@@ -24,7 +19,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "company",
     header: "Company",
-    cell: function CompanyCell({ row }) {
+    cell: ({ row }) => {
       const company = row.getValue("company") as string | null
       return company || "(Unknown)"
     }
@@ -32,7 +27,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "gh_username",
     header: "Github",
-    cell: function GithubCell({ row }) {
+    cell: ({ row }) => {
       const username = row.getValue("gh_username") as string
       return (
         <a href={`https://www.github.com/${username}`} className="underline">
@@ -44,7 +39,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "email",
     header: "Email",
-    cell: function EmailCell({ row }) {
+    cell: ({ row }) => {
       const email = row.getValue("email") as string
       return (
         <div className="flex items-center gap-4">
@@ -70,9 +65,7 @@ export const customerOverviewColumns: ColumnDef<KeyValuePair>[] = [
   {
     accessorKey: "field",
     header: "Field",
-    cell: function FieldCell({ row }) {
-      return <strong>{row.getValue("field")}</strong>
-    }
+    cell: ({ row }) => <strong>{row.getValue("field")}</strong>
   },
   {
     accessorKey: "value",
@@ -97,9 +90,7 @@ export const subscriptionColumns: ColumnDef<KeyValuePair>[] = [
   {
     accessorKey: "field",
     header: "Field",
-    cell: function SubscriptionFieldCell({ row }) {
-      return <strong>{row.getValue("field")}</strong>
-    }
+    cell: ({ row }) => <strong>{row.getValue("field")}</strong>
   },
   {
     accessorKey: "value",
@@ -121,9 +112,7 @@ export const chargeColumns: ColumnDef<KeyValuePair>[] = [
   {
     accessorKey: "field",
     header: "Field",
-    cell: function ChargeFieldCell({ row }) {
-      return <strong>{row.getValue("field")}</strong>
-    }
+    cell: ({ row }) => <strong>{row.getValue("field")}</strong>
   },
   {
     accessorKey: "value",
