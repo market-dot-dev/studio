@@ -15,23 +15,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Card } from "@/components/ui/card";
-import { SessionUser } from "@/app/models/Session"
-import { MouseEvent } from "react"
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
-  currentUser?: SessionUser | null | undefined
-  isLoading?: boolean
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
-  currentUser,
-  isLoading = false,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -40,7 +33,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <Card>
+    <Card className="p-0">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
@@ -61,27 +54,14 @@ export function DataTable<TData, TValue>({
           ))}
         </TableHeader>
         <TableBody>
-          {isLoading ? (
-            Array(data.length || 4).fill(0).map((_, index) => (
-              <TableRow key={`skeleton-${index}`}>
-                {Array(columns.length).fill(0).map((_, cellIndex) => (
-                  <TableCell key={`skeleton-cell-${index}-${cellIndex}`}>
-                    <Skeleton className="h-6" />
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : table.getRowModel().rows?.length ? (
+          {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell 
-                    key={cell.id}
-                    emphasized={cell.column.id === 'name' || cell.column.id === 'contractName'}
-                  >
+                  <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}
@@ -90,7 +70,7 @@ export function DataTable<TData, TValue>({
           ) : (
             <TableRow>
               <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results
+                No results.
               </TableCell>
             </TableRow>
           )}

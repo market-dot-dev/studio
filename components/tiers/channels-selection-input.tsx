@@ -15,8 +15,8 @@ export default function ChannelsSelectionInput({
 }) {
   return (
     <div className="flex flex-col gap-2">
-      <label className="block w-full focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-200">
-        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] hover:bg-stone-50 [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
+      <label htmlFor={`${idPrefix}channel-site`} className="block w-full">
+        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-swamp hover:bg-stone-50">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               <Store className="mr-2.5 size-[18px] text-stone-500" />
@@ -38,8 +38,8 @@ export default function ChannelsSelectionInput({
         </div>
       </label>
       {userIsMarketExpert && (
-        <label className="block h-full w-full focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-200">
-          <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] hover:bg-stone-50 [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
+        <label htmlFor={`${idPrefix}channel-market`} className="block h-full w-full">
+          <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-swamp hover:bg-stone-50">
             <div className="flex h-full w-full items-center justify-between">
               <div className="flex items-center">
                 <ShoppingBag className="mr-2.5 size-[18px] text-stone-500" />

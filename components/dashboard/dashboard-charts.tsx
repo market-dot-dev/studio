@@ -206,7 +206,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
     <>
       <div className="mb-4 flex items-end justify-between">
         <div className="flex items-end gap-2">
-          <div className="text-xl font-bold">Reports</div>
+          <div className="text-xl font-semibold">Reports</div>
           {isUsingDummyData && (
             <Badge variant="secondary" size="sm" className="mb-1">
               Sample Data

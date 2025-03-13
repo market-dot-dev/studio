@@ -20,7 +20,7 @@ const TableHeader = React.forwardRef<
   HTMLTableSectionElement,
   React.HTMLAttributes<HTMLTableSectionElement>
 >(({ className, ...props }, ref) => (
-  <thead ref={ref} className={cn("[&_tr]:border-b border-stone-200/50", className)} {...props} />
+  <thead ref={ref} className={cn("[&_tr]:border-b", className)} {...props} />
 ))
 TableHeader.displayName = "TableHeader"
 
@@ -42,13 +42,10 @@ const TableFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn(
-      "border-t border-stone-200/50 bg-muted/50 font-medium [&>tr]:last:border-b-0",
-      className,
-    )}
+    className={cn("bg-primary font-medium text-primary-foreground", className)}
     {...props}
   />
-));
+))
 TableFooter.displayName = "TableFooter"
 
 const TableRow = React.forwardRef<
@@ -58,8 +55,7 @@ const TableRow = React.forwardRef<
   <tr
     ref={ref}
     className={cn(
-      "border-b border-stone-200/50 transition-colors data-[state=selected]:bg-stone-100",
-      "tbody:hover:bg-stone-100",
+      "border-b border-stone-200/70 transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted",
       className,
     )}
     {...props}
@@ -74,7 +70,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "py-3 px-5 text-left align-middle font-semibold text-xxs/5 uppercase tracking-wide [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+      "h-12 px-5 py-3 text-left align-middle font-semibold text-xxs/5 tracking-wide uppercase [&:has([role=checkbox])]:pr-0",
       className
     )}
     {...props}
@@ -82,20 +78,23 @@ const TableHead = React.forwardRef<
 ))
 TableHead.displayName = "TableHead"
 
-const TableCell = React.forwardRef<
-  HTMLTableCellElement,
-  React.TdHTMLAttributes<HTMLTableCellElement> & { emphasized?: boolean }
->(({ className, emphasized, ...props }, ref) => (
-  <td
-    ref={ref}
-    className={cn(
-      "px-5 py-3 align-middle [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-      emphasized ? "font-semibold text-stone-800" : "text-stone-500",
-      className,
-    )}
-    {...props}
-  />
-));
+interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
+  emphasized?: boolean
+}
+
+const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
+  ({ className, emphasized, ...props }, ref) => (
+    <td
+      ref={ref}
+      className={cn(
+        "py-3 px-5 align-middle [&:has([role=checkbox])]:pr-0",
+        emphasized ? "font-semibold text-stone-800" : "text-stone-500",
+        className
+      )}
+      {...props}
+    />
+  )
+)
 TableCell.displayName = "TableCell"
 
 const TableCaption = React.forwardRef<

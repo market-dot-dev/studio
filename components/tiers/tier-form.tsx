@@ -1,14 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import {
-  Table,
-  TableHead,
-  TableHeaderCell,
-  TableBody,
-  TableRow,
-  TableCell,
-} from "@tremor/react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -18,6 +10,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import {
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow,
+  TableCell,
+} from "@/components/ui/table";
 import {
   Select,
   SelectContent,
@@ -77,10 +77,10 @@ const TierVersionCard = ({
 
   return (
     <TableRow>
-      <TableCell className="m-0 p-1 ps-0">
+      <TableCell>
         {tierVersion.createdAt.toDateString()}
       </TableCell>
-      <TableCell className="m-0 p-1 ps-0">
+      <TableCell>
         {features.length > 0 ? (
           <>
             <ul>
@@ -93,10 +93,10 @@ const TierVersionCard = ({
           <>&nbsp;none</>
         )}
       </TableCell>
-      <TableCell className="m-0 p-1 ps-0 text-center">
+      <TableCell>
         ${tierVersion.price}
       </TableCell>
-      <TableCell className="m-0 p-1 ps-0 text-center">
+      <TableCell>
         {versionSubscribers}
       </TableCell>
     </TableRow>
@@ -242,7 +242,7 @@ const StandardCheckoutForm = ({
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <Label htmlFor={`${idPrefix}contractId`} className="mb-1 block">
+        <Label htmlFor={`${idPrefix}contractId`} className="mb-2 block">
           Contract
         </Label>
         <Select
@@ -263,7 +263,7 @@ const StandardCheckoutForm = ({
       </div>
       <div className="flex flex-col gap-6">
         <div>
-          <Label htmlFor={`${idPrefix}cadence`} className="mb-2 block md:mb-1.5">
+          <Label htmlFor={`${idPrefix}cadence`} className="mb-2 block">
             Billing type
           </Label>
           <Select
@@ -285,7 +285,7 @@ const StandardCheckoutForm = ({
         </div>
 
         <div>
-          <Label htmlFor={`${idPrefix}price`} className="mb-2 block md:mb-1.5">
+          <Label htmlFor={`${idPrefix}price`} className="mb-2 block">
             Monthly Price (USD)
           </Label>
           <div className="flex gap-2">
@@ -314,10 +314,11 @@ const StandardCheckoutForm = ({
             />
           </div>
         </div>
+        
 
         {tier.cadence === "month" && (
-          <>
-            <div className="flex flex-col gap-4">
+          <div className="space-y-4">
+            <div className="flex flex-col gap-6">
               <Checkbox
                 id={`${idPrefix}annualPlanEnabled`}
                 checked={annualPlanEnabled}
@@ -340,8 +341,8 @@ const StandardCheckoutForm = ({
               />
 
               {annualPlanEnabled && (
-                <div>
-                  <Label htmlFor={`${idPrefix}priceAnnual`} className="mb-2 block md:mb-1.5">
+                <div className="mb-4">
+                  <Label htmlFor={`${idPrefix}priceAnnual`} className="mb-2 block">
                     Annual Price (USD)
                   </Label>
                   <Input
@@ -402,7 +403,7 @@ const StandardCheckoutForm = ({
               </div> */}
             </div>
 
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-6">
               <Checkbox
                 id={`${idPrefix}trialEnabled`}
                 checked={trialEnabled}
@@ -411,7 +412,7 @@ const StandardCheckoutForm = ({
               />
 
               {trialEnabled && (
-                <div>
+                <div className="mb-4">
                   <Label htmlFor={`${idPrefix}trialDays`} className="mb-2 block">
                     Trial Length (Days)
                   </Label>
@@ -431,7 +432,7 @@ const StandardCheckoutForm = ({
                 </div>
               )}
             </div>
-          </>
+          </div>
         )}
       </div>
     </div>
@@ -655,7 +656,7 @@ export default function TierForm({
             <TabsContent value="details">
               <div className="flex w-full flex-col gap-6">
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2">
+                  <div className="flex flex-wrap gap-x-4 gap-y-3">
                     <Switch
                       id="mobile-published"
                       checked={tier.published}
@@ -671,7 +672,12 @@ export default function TierForm({
                       }}
                       label="This package is available for sale"
                     />
-                    {canPublishLoading && <Spinner />}
+                    {canPublishLoading && (
+                      <div className="flex items-center gap-1.5 text-xxs font-semibold text-stone-500">
+                        <Spinner />
+                        Checking Stripe connection...
+                      </div>
+                    )}
                   </div>
                   <p className="text-xs text-stone-500">
                     {tier.published ? (
@@ -693,7 +699,7 @@ export default function TierForm({
                     versionedAttributesChanged={versionedAttributesChanged}
                     featuresChanged={featuresChanged}
                   />
-                  <Label htmlFor="mobile-tierName" className="mb-2 md:mb-1.5">
+                  <Label htmlFor="mobile-tierName" className="mb-2">
                     Name
                   </Label>
                   <Input
@@ -709,10 +715,7 @@ export default function TierForm({
                   ) : null}
                 </div>
                 <div>
-                  <Label
-                    htmlFor="mobile-tierTagline"
-                    className="mb-2 block md:mb-1.5"
-                  >
+                  <Label htmlFor="mobile-tierTagline" className="mb-2 block">
                     Tagline
                   </Label>
                   <Input
@@ -729,7 +732,7 @@ export default function TierForm({
                 <div>
                   <Label
                     htmlFor="mobile-tierDescription"
-                    className="mb-2 block md:mb-1.5"
+                    className="mb-2 block"
                   >
                     Description
                   </Label>
@@ -746,10 +749,7 @@ export default function TierForm({
                 </div>
                 {hasActiveFeatures && (
                   <div>
-                    <Label
-                      htmlFor="mobile-features"
-                      className="mb-2 block md:mb-1.5"
-                    >
+                    <Label htmlFor="mobile-features" className="mb-2 block">
                       Features
                     </Label>
                     <Card className="p-2">
@@ -777,7 +777,7 @@ export default function TierForm({
                 <Separator className="my-2" />
 
                 <div>
-                  <Label htmlFor="mobile-checkoutType" className="mb-2.5">
+                  <Label htmlFor="mobile-checkoutType" className="mb-2">
                     Checkout Type
                   </Label>
                   <CheckoutTypeSelectionInput
@@ -799,7 +799,7 @@ export default function TierForm({
                 <Separator className="my-2" />
 
                 <div id="mobile-channels">
-                  <Label htmlFor="mobile-channels" className="mb-2.5 block">
+                  <Label htmlFor="mobile-channels" className="mb-3 block">
                     Channels
                   </Label>
                   <ChannelsSelectionInput
@@ -826,10 +826,7 @@ export default function TierForm({
 
                 {tier.checkoutType === "gitwallet" && (
                   <div>
-                    <Label
-                      htmlFor="mobile-versionHistory"
-                      className="mb-2 block md:mb-1"
-                    >
+                    <Label htmlFor="mobile-versionHistory" className="mb-2">
                       Package Version History
                     </Label>
 
@@ -860,25 +857,25 @@ export default function TierForm({
                         </p>
                         <Card>
                           <Table>
-                            <TableHead>
-                              <TableRow className="border-b-2 border-gray-400">
-                                <TableHeaderCell className="m-0 p-1 ps-0 text-xs font-medium uppercase tracking-wider text-gray-500">
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead>
                                   Created
-                                </TableHeaderCell>
-                                <TableHeaderCell className="m-0 p-1 ps-0 text-xs font-medium uppercase tracking-wider text-gray-500">
+                                </TableHead>
+                                <TableHead>
                                   Features
-                                </TableHeaderCell>
-                                <TableHeaderCell className="m-0 p-1 ps-0 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                                </TableHead>
+                                <TableHead>
                                   Price
-                                </TableHeaderCell>
-                                <TableHeaderCell className="m-0 p-1 ps-0 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                                </TableHead>
+                                <TableHead>
                                   #Customers
-                                </TableHeaderCell>
+                                </TableHead>
                               </TableRow>
-                            </TableHead>
+                            </TableHeader>
                             <TableBody>
                               <TableRow>
-                                <TableCell className="m-0 p-1 ps-0">
+                                <TableCell>
                                   {tier.createdAt.toDateString()}
                                   <Badge
                                     variant="success"
@@ -888,7 +885,7 @@ export default function TierForm({
                                     Current
                                   </Badge>
                                 </TableCell>
-                                <TableCell className="m-0 p-1 ps-0">
+                                <TableCell>
                                   {tier.features && tier.features.length > 0 ? (
                                     <>
                                       <ul>
@@ -901,10 +898,10 @@ export default function TierForm({
                                     <>&nbsp;None</>
                                   )}
                                 </TableCell>
-                                <TableCell className="m-0 p-1 ps-0 text-center">
+                                <TableCell>
                                   ${tier.price}
                                 </TableCell>
-                                <TableCell className="m-0 p-1 ps-0 text-center">
+                                <TableCell>
                                   {currentRevisionSubscriberCount}
                                 </TableCell>
                               </TableRow>
@@ -993,9 +990,9 @@ export default function TierForm({
 
         <div className="hidden w-full flex-col gap-6 lg:flex lg:max-w-xl">
           <div className="space-y-2">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap gap-x-4 gap-y-3">
               <Switch
-                id="published"
+                id="mobile-published"
                 checked={tier.published}
                 disabled={
                   canPublishLoading || !canPublish || canPublishDisabled
@@ -1009,7 +1006,12 @@ export default function TierForm({
                 }}
                 label="This package is available for sale"
               />
-              {canPublishLoading && <Spinner />}
+              {canPublishLoading && (
+                <div className="flex items-center gap-1.5 text-xxs font-semibold text-stone-500">
+                  <Spinner />
+                  Checking Stripe connection...
+                </div>
+              )}
             </div>
             <p className="text-xs text-stone-500">
               {tier.published ? (
@@ -1017,7 +1019,7 @@ export default function TierForm({
                   This package will be visible and purchasable by customers.
                   Changes will create a new version.{" "}
                   <br />
-                  <a href="#channels" className="underline">
+                  <a href="#mobile-channels" className="underline">
                     Pick this package&apos;s channels
                   </a>
                 </>
@@ -1026,13 +1028,16 @@ export default function TierForm({
               )}
             </p>
           </div>
+
+          <Separator className="my-2" />
+
           <div>
             <NewVersionCallout
               tierHasSubscribers={tierHasSubscribers}
               versionedAttributesChanged={versionedAttributesChanged}
               featuresChanged={featuresChanged}
             />
-            <Label htmlFor="tierName" className="mb-2 md:mb-1.5">
+            <Label htmlFor="tierName" className="mb-2">
               Name
             </Label>
             <Input
@@ -1048,7 +1053,7 @@ export default function TierForm({
             ) : null}
           </div>
           <div>
-            <Label htmlFor="tierTagline" className="mb-2 block md:mb-1.5">
+            <Label htmlFor="tierTagline" className="mb-2 block">
               Tagline
             </Label>
             <Input
@@ -1061,7 +1066,7 @@ export default function TierForm({
             />
           </div>
           <div>
-            <Label htmlFor="tierDescription" className="mb-2 block md:mb-1.5">
+            <Label htmlFor="tierDescription" className="mb-2 block">
               Description
             </Label>
             <Textarea
@@ -1075,7 +1080,7 @@ export default function TierForm({
           </div>
           {hasActiveFeatures && (
             <div>
-              <Label htmlFor="features" className="mb-2 block md:mb-1.5">
+              <Label htmlFor="features" className="mb-2 block">
                 Features
               </Label>
               <Card className="p-2">
@@ -1103,7 +1108,7 @@ export default function TierForm({
           <Separator className="my-2" />
 
           <div>
-            <Label htmlFor="checkoutType" className="mb-2.5">
+            <Label htmlFor="checkoutType" className="mb-3">
               Checkout Type
             </Label>
             <CheckoutTypeSelectionInput
@@ -1124,7 +1129,7 @@ export default function TierForm({
           <Separator className="my-2" />
 
           <div id="channels">
-            <Label htmlFor="channels" className="mb-2.5 block">
+            <Label htmlFor="channels" className="mb-2 block">
               Channels
             </Label>
             <ChannelsSelectionInput
@@ -1174,37 +1179,36 @@ export default function TierForm({
                     {currentRevisionSubscriberCount === 0
                       ? "no customers yet"
                       : currentRevisionSubscriberCount + " customers"}{" "}
-                    for the most recent version. There are {versions.length}{" "}
-                    versions and {tierSubscriberCount} customers across
-                    versions.
+                    for the most recent version. There are {versions.length} versions
+                    and {tierSubscriberCount} customers across versions.
                   </p>
-                  <Card>
+                  <Card className="p-0">
                     <Table>
-                      <TableHead>
-                        <TableRow className="border-b-2 border-gray-400">
-                          <TableHeaderCell className="m-0 p-1 ps-0 text-xs font-medium uppercase tracking-wider text-gray-500">
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>
                             Created
-                          </TableHeaderCell>
-                          <TableHeaderCell className="m-0 p-1 ps-0 text-xs font-medium uppercase tracking-wider text-gray-500">
+                          </TableHead>
+                          <TableHead>
                             Features
-                          </TableHeaderCell>
-                          <TableHeaderCell className="m-0 p-1 ps-0 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                          </TableHead>
+                          <TableHead>
                             Price
-                          </TableHeaderCell>
-                          <TableHeaderCell className="m-0 p-1 ps-0 text-center text-xs font-medium uppercase tracking-wider text-gray-500">
+                          </TableHead>
+                          <TableHead>
                             #Customers
-                          </TableHeaderCell>
+                          </TableHead>
                         </TableRow>
-                      </TableHead>
+                      </TableHeader>
                       <TableBody>
                         <TableRow>
-                          <TableCell className="m-0 p-1 ps-0">
+                          <TableCell>
                             {tier.createdAt.toDateString()}
                             <Badge variant="success" size="sm" className="ms-1">
                               Current
                             </Badge>
                           </TableCell>
-                          <TableCell className="m-0 p-1 ps-0">
+                          <TableCell>
                             {tier.features && tier.features.length > 0 ? (
                               <>
                                 <ul>
@@ -1217,10 +1221,10 @@ export default function TierForm({
                               <>&nbsp;None</>
                             )}
                           </TableCell>
-                          <TableCell className="m-0 p-1 ps-0 text-center">
+                          <TableCell>
                             ${tier.price}
                           </TableCell>
-                          <TableCell className="m-0 p-1 ps-0 text-center">
+                          <TableCell>
                             {currentRevisionSubscriberCount}
                           </TableCell>
                         </TableRow>

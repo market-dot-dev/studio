@@ -3,17 +3,17 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import CreatePageButton from "@/components/create-page-button";
-import Pages from "@/components/pages";
+import Pages from "./pages";
 import PageHeading from "@/components/common/page-heading";
 import { ExternalLinkChip } from "@/components/common/external-link";
 import { formatDistanceToNow } from "date-fns";
 import { getSiteAndPages } from "@/app/services/SiteService";
 import { Page, Site } from "@prisma/client";
 import { useEffect, useState } from "react";
-import PreviewSection from "./preview-section";
+import PreviewSection from "../preview-section";
 import { getRootUrl } from "@/lib/domain";
 import Link from "next/link";
-import { buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 type SiteData = Partial<Site> & {
   pages: Page[];
@@ -51,22 +51,33 @@ export default function SiteAdmin({ id }: { id: string }) {
   }
 
   return (
-    <>
-      <PageHeading title="Your Storefront" />
+    <div>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <PageHeading title="Your Storefront" />
+        <div className="mb-2 flex justify-start">
+          {url ? (
+            <Button variant="secondary" className="text-stone-600" asChild>
+              <Link href={url} target="_blank" rel="noopener noreferrer">
+                {url} ↗
+              </Link>
+            </Button>
+          ) : null}
+        </div>
+      </div>
 
-      <Card className="p-6 pt-5">
+      <Card className="relative mb-10 mt-16 p-6 pt-5">
         <div className="flex w-full flex-col lg:flex-row lg:justify-between">
           <div className="absolute bottom-0 left-4 hidden lg:block">
             <PreviewSection
               content={homepage?.content ?? ""}
-              width={280}
-              height={220}
+              width={250}
+              height={200}
               screenWidth={1600}
-              screenHeight={1250}
-              className="rounded-t-lg border border-b-0"
+              screenHeight={1280}
+              className="rounded-t-md border border-b-0"
             />
           </div>
-          <div className="flex-column w-full lg:ms-[300px]">
+          <div className="flex-column w-full lg:ms-[calc(250px+16px+8px)]">
             <div className="mb-4">
               <div className="mb-2 flex">
                 <div className="flex items-center gap-2">
@@ -82,11 +93,6 @@ export default function SiteAdmin({ id }: { id: string }) {
                   )}
                 </div>
               </div>
-              <div className="mb-2 flex justify-start">
-                {url ? (
-                  <ExternalLinkChip href={url} label={url + " ↗"} />
-                ) : null}
-              </div>
 
               <p className="mt-2 text-sm text-stone-500">
                 Title: {homepage?.title ?? "No Home Page Set"}
@@ -101,23 +107,24 @@ export default function SiteAdmin({ id }: { id: string }) {
               </p>
             </div>
             <div className="mt-auto">
-              <Link href={`/page/${siteData.homepageId}`} className={buttonVariants({ variant: 'outline' })}>Edit Homepage</Link>
+              <Link
+                href={`/page/${siteData.homepageId}`}
+                className={buttonVariants({ variant: "outline" })}
+              >
+                Edit Homepage
+              </Link>
             </div>
           </div>
         </div>
       </Card>
 
-      <Card className="p-6 pt-5">
-        <div className="flex w-full justify-between">
-          <div className="flex flex-row">
-            <strong>Other Pages</strong>
-          </div>
-          <div className="flex flex-row">
-            <CreatePageButton />
-          </div>
+      <div className="flex flex-col gap-4">
+        <div className="flex w-full items-center justify-between">
+          <h3 className="text-xl font-bold text-stone-800">Pages</h3>
+          <CreatePageButton />
         </div>
 
-        <div className="overflow-x-auto">
+        <div>
           {siteData.pages.length > 1 ? (
             <Pages
               pages={siteData.pages}
@@ -125,15 +132,13 @@ export default function SiteAdmin({ id }: { id: string }) {
               homepageId={siteData.homepageId ?? null}
             />
           ) : (
-            <div className="flex h-full flex-col items-center justify-center pt-6">
-              <p className="text-lg text-stone-500">
-                You do not have any other pages yet. Create more pages to start
-                building your store.
-              </p>
-            </div>
+            <p className="text-sm text-stone-500">
+              You do not have any other pages yet. Create more pages to start
+              building your store.
+            </p>
           )}
         </div>
-      </Card>
-    </>
+      </div>
+    </div>
   );
-}
+} 

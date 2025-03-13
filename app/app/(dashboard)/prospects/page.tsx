@@ -1,12 +1,20 @@
 import React from "react";
 import PageHeading from "@/components/common/page-heading";
-import ProspectsTable from "./prospects-table";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { DataTable } from "./data-table";
+import { columns } from "./columns";
 import ProspectService from "@/app/services/prospect-service";
 import { getCurrentSessionUser } from "@/app/services/UserService";
 
 export default async function ProspectsPage() {
   const user = await getCurrentSessionUser();
   const prospects = await ProspectService.getProspects(user!.id);
+
+  // This is the full prospects page, so we don't need to limit the rows
+  // but we're preserving the logic from the original component
+  const showAll = true; // Set to true since this is the full prospects page
+  const maxInitialRows = undefined; // No need to limit rows on the full page
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12">
@@ -19,7 +27,18 @@ export default async function ProspectsPage() {
           </p>
         </div>
       </div>
-      <ProspectsTable prospects={prospects} />
+      
+      <DataTable columns={columns} data={prospects} />
+      
+      {!showAll && maxInitialRows && prospects.length > maxInitialRows && (
+        <div className="grid justify-items-end mt-4">
+          <Link href="/prospects">
+            <Button size="sm" variant="outline">
+              View All Prospects →
+            </Button>
+          </Link>
+        </div>
+        )}
     </div>
   );
 }

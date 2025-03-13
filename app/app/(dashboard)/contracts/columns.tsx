@@ -24,7 +24,11 @@ const NameCell = ({
 }) => {
   // If currentUser is null or undefined, we can't determine ownership yet
   if (currentUser === null || currentUser === undefined) {
-    return <div>{contract.name}</div>;
+    return <div>
+      <Link href={`/c/contracts/${contract.id}`} target="_blank" className="hover:underline">
+        {contract.name}
+      </Link>
+    </div>;
   }
   
   const ownsContract = contract.maintainerId === currentUser.id;
@@ -32,10 +36,21 @@ const NameCell = ({
   return (
     <div className="flex items-center gap-2">
       {ownsContract ? (
-        contract.name
+        <Link 
+          href={`/contracts/${contract.id}`} 
+          className="hover:underline"
+        >
+          {contract.name}
+        </Link>
       ) : (
         <>
-          <span>{contract.name}</span>
+          <Link 
+            href={`/c/contracts/${contract.id}`} 
+            target="_blank"
+            className="hover:underline"
+          >
+            {contract.name}
+          </Link>
           <Badge
             variant="secondary"
             className="pl-1"
@@ -107,8 +122,7 @@ const ActionsCell = ({
 };
 
 export const createColumns = (
-  currentUser: SessionUser | null | undefined,
-  onRowClick: (contract: Contract) => void
+  currentUser: SessionUser | null | undefined
 ): ColumnDef<Contract>[] => [
   {
     accessorKey: "name",

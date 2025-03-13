@@ -1,7 +1,7 @@
 import { User, Subscription, Charge } from "@prisma/client";
 import React from "react";
 import Tier from "@/app/models/Tier";
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DataTable } from "./data-table";
 import { CustomerTableItem, columns } from "./columns";
@@ -55,12 +55,11 @@ export const CustomersTable: React.FC<{
       
       {!showAll && maxInitialRows && tableData.length > maxInitialRows && (
         <div className="grid justify-items-end">
-          <Link
-            href="/customers"
-            className={buttonVariants({ variant: "secondary", size: "sm" })}
-          >
-            View All Customers
-          </Link>
+          <Button variant="outline" asChild>
+            <Link href="/customers">
+              View All Customers
+            </Link>
+          </Button>
         </div>
       )}
     </>

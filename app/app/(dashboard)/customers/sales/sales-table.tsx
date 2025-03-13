@@ -69,7 +69,7 @@ const SalesTable = ({
   return (
     <>
       <div className="mb-4 flex w-full items-end justify-between">
-        <h3 className="text-xl font-bold">Sales & Prospects</h3>
+        <h3 className="text-xl font-semibold">Sales & Prospects</h3>
         <Link href="/customers">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -104,13 +104,13 @@ const SalesTable = ({
       </div>
 
       {sales.length === 0 ? (
-        <Card className="mb-8 flex flex-col items-center justify-center shadow-none border border-stone-300 border-dashed bg-stone-200/25 h-64">
+        <Card className="mb-8 flex h-72 flex-col items-center justify-center border border-dashed border-stone-300 bg-stone-200/25 shadow-none">
           <div className="flex flex-col items-center justify-center py-6">
-            <Receipt className="text-swamp mb-3 h-9 w-9" strokeWidth={1.5} />
+            <Receipt className="mb-3 h-9 w-9 text-swamp" strokeWidth={1.5} />
             <h3 className="mb-2 text-xl font-semibold">No sales... yet</h3>
             <p className="max-w-md text-center text-sm text-stone-500">
               When you make your first sale
-              <br /> it'll show up here.
+              <br /> it&apos;ll show up here.
             </p>
             <div className="mt-4">
               <Button variant="outline" asChild>
