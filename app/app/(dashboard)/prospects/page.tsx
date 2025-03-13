@@ -4,7 +4,6 @@ import PageHeading from "@/components/common/page-heading";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ProspectService from "@/app/services/prospect-service";
-import ProspectsTable from "./prospects-table";
 
 export default async function ProspectsPage() {
   const session = await getSession();
@@ -26,7 +25,6 @@ export default async function ProspectsPage() {
           </Text>
         </div>
       </div>
-      <ProspectsTable prospects={prospects} />
     </div>
   );
 }
