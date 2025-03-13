@@ -32,12 +32,12 @@ const ProspectRow: React.FC<RowProps> = ({ prospect }) => {
         </TableCell>
         <TableCell className="m-0 p-4 pb-2 text-left">{prospect.organization}</TableCell>
         <TableCell className="m-0 p-4 pb-2 text-left">
-          <Link href={`/tiers/${prospect.tier.id}`} target="_blank">
-            {prospect.tier.name}
+          <Link href={prospect.tier ? `/tiers/${prospect.tier.id}` : "#"} target="_blank">
+            {prospect.tier?.name || "Unknown Package"}
           </Link>
         </TableCell>
         <TableCell className="m-0 p-4 pb-2 text-left">
-          {prospect.context || "No context"}
+          {prospect.context || "No context provided."}
         </TableCell>
       </TableRow>
     </>
