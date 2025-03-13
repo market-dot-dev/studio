@@ -82,15 +82,6 @@ export const ProspectsTable: React.FC<{
           <TableBody>{visibleRows}</TableBody>
         </Table>
       </DashboardCard>
-      {!showAll && maxInitialRows && rows?.length && rows.length > maxInitialRows && (
-        <div className="grid justify-items-end">
-          <Link href="/prospects">
-            <Button size="xs" className="h-6" variant="secondary">
-              View All Prospects →
-            </Button>
-          </Link>
-        </div>
-      )}
     </>
   );
 };
