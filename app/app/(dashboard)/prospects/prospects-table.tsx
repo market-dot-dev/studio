@@ -37,7 +37,7 @@ const ProspectRow: React.FC<RowProps> = ({ prospect }) => {
           </Link>
         </TableCell>
         <TableCell className="m-0 p-4 pb-2 text-left">
-          {prospect.context}
+          {prospect.context || "No context"}
         </TableCell>
       </TableRow>
     </>
@@ -45,16 +45,16 @@ const ProspectRow: React.FC<RowProps> = ({ prospect }) => {
 };
 
 export const ProspectsTable: React.FC<{
-  prospects: (Prospect & { tier: Tier })[];
+  prospects?: (Prospect & { tier: Tier })[];
   maxInitialRows?: number;
 }> = ({ prospects, maxInitialRows }) => {
   const showAll = false;
 
-  const rows = prospects.map((prospect) => (
+  const rows = prospects?.map((prospect) => (
     <ProspectRow key={prospect.id} prospect={prospect} />
   ));
 
-  const visibleRows = showAll ? rows : rows.slice(0, maxInitialRows);
+  const visibleRows = showAll ? rows : rows?.slice(0, maxInitialRows);
 
   return (
     <>
@@ -82,7 +82,7 @@ export const ProspectsTable: React.FC<{
           <TableBody>{visibleRows}</TableBody>
         </Table>
       </DashboardCard>
-      {!showAll && maxInitialRows && rows.length > maxInitialRows && (
+      {!showAll && maxInitialRows && rows?.length && rows.length > maxInitialRows && (
         <div className="grid justify-items-end">
           <Link href="/prospects">
             <Button size="xs" className="h-6" variant="secondary">
