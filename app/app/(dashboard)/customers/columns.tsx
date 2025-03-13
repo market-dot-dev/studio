@@ -31,7 +31,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   {
     accessorKey: "userName",
     header: "Name",
-    cell: ({ row, table }) => {
+    cell: function UserNameCell({ row, table }) {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
       const rowIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);
@@ -50,7 +50,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   {
     accessorKey: "userCompany",
     header: "Company",
-    cell: ({ row, table }) => {
+    cell: function CompanyCell({ row, table }) {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
       const rowIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);
@@ -69,7 +69,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   {
     accessorKey: "userEmail",
     header: "Email",
-    cell: ({ row, table }) => {
+    cell: function EmailCell({ row, table }) {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
       const rowIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);
@@ -92,7 +92,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   {
     id: "status",
     header: "Status",
-    cell: ({ row }) => {
+    cell: function StatusCell({ row }) {
       if (row.original.statusType === "subscription" && row.original.subscription) {
         return <SubscriptionStatusBadge subscription={row.original.subscription} />;
       } else if (row.original.charge) {
@@ -103,14 +103,16 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: () => <div className="text-right">Customer Since</div>,
-    cell: ({ row }) => {
+    header: function DateHeader() { 
+      return <div className="text-right">Customer Since</div>;
+    },
+    cell: function DateCell({ row }) {
       return <div className="text-right">{formatDate(row.original.createdAt)}</div>;
     }
   },
   {
     id: "actions",
-    cell: ({ row, table }) => {
+    cell: function ActionsCell({ row, table }) {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
       const rowIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);

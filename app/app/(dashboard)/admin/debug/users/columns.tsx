@@ -20,7 +20,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "gh_username",
     header: "GitHub Username",
-    cell: ({ row }) => {
+    cell: function GithubUsernameCell({ row }) {
       const username = row.getValue("gh_username") as string | undefined
       return <div>{username || "N/A"}</div>
     },
@@ -40,7 +40,7 @@ export const columns: ColumnDef<User>[] = [
   {
     id: "actions",
     header: "",
-    cell: ({ row }) => {
+    cell: function ActionCell({ row }) {
       const userId = row.original.id
       return <ImpersonateButton userId={userId} />
     },

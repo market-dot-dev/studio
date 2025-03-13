@@ -36,16 +36,13 @@ const NameCell = ({
   return (
     <div className="flex items-center gap-2">
       {ownsContract ? (
-        <Link 
-          href={`/contracts/${contract.id}`} 
-          className="hover:underline"
-        >
+        <Link href={`/contracts/${contract.id}`} className="hover:underline">
           {contract.name}
         </Link>
       ) : (
         <>
-          <Link 
-            href={`/c/contracts/${contract.id}`} 
+          <Link
+            href={`/c/contracts/${contract.id}`}
             target="_blank"
             className="hover:underline"
           >
@@ -56,7 +53,7 @@ const NameCell = ({
             className="pl-1"
             tooltip="This is a standard open source contract provided by market.dev"
           >
-            <ShieldCheck className="h-3.5 w-3.5 mr-1" strokeWidth={2.25} />
+            <ShieldCheck className="mr-1 h-3.5 w-3.5" strokeWidth={2.25} />
             Standard
           </Badge>
         </>
@@ -127,7 +124,9 @@ export const createColumns = (
   {
     accessorKey: "name",
     header: "Name",
-    cell: ({ row }) => <NameCell contract={row.original} currentUser={currentUser} />
+    cell: function NameCellRenderer({ row }) {
+      return <NameCell contract={row.original} currentUser={currentUser} />;
+    }
   },
   {
     accessorKey: "description",
@@ -135,6 +134,8 @@ export const createColumns = (
   },
   {
     id: "actions",
-    cell: ({ row }) => <ActionsCell contract={row.original} currentUser={currentUser} />
+    cell: function ActionsCellRenderer({ row }) {
+      return <ActionsCell contract={row.original} currentUser={currentUser} />;
+    }
   }
 ] 

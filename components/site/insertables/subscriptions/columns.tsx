@@ -14,6 +14,43 @@ export type Subscription = {
   }
 }
 
+// Proper React component for the action cell
+const ActionCell = ({ subscription, onDelete }: { subscription: Subscription; onDelete?: (id: string) => void }) => {
+  const [isDeleting, setIsDeleting] = useState(false)
+  
+  const handleDelete = async () => {
+    setIsDeleting(true)
+    try {
+      await fetch('/api/subscription', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          subscriptionId: subscription.id
+        })
+      })
+      
+      // Call the onDelete callback if provided
+      if (onDelete) {
+        onDelete(subscription.id)
+      }
+    } catch (error) {
+      console.error('Error deleting subscription:', error)
+    }
+    setIsDeleting(false)
+  }
+  
+  return (
+    <Button 
+      onClick={handleDelete} 
+      disabled={isDeleting}
+    >
+      {isDeleting ? "Cancelling..." : "Cancel"}
+    </Button>
+  )
+}
+
 // Factory function to create columns with an onDelete callback
 export const createColumns = (onDelete?: (id: string) => void): ColumnDef<Subscription>[] => [
   {
@@ -23,41 +60,9 @@ export const createColumns = (onDelete?: (id: string) => void): ColumnDef<Subscr
   {
     id: "actions",
     header: "Action",
-    cell: ({ row }) => {
+    cell: function Cell({ row }) {
       const subscription = row.original
-      const [isDeleting, setIsDeleting] = useState(false)
-      
-      const handleDelete = async () => {
-        setIsDeleting(true)
-        try {
-          await fetch('/api/subscription', {
-            method: 'DELETE',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              subscriptionId: subscription.id
-            })
-          })
-          
-          // Call the onDelete callback if provided
-          if (onDelete) {
-            onDelete(subscription.id)
-          }
-        } catch (error) {
-          console.error('Error deleting subscription:', error)
-        }
-        setIsDeleting(false)
-      }
-      
-      return (
-        <Button 
-          onClick={handleDelete} 
-          disabled={isDeleting}
-        >
-          {isDeleting ? "Cancelling..." : "Cancel"}
-        </Button>
-      )
+      return <ActionCell subscription={subscription} onDelete={onDelete} />
     }
   }
 ]

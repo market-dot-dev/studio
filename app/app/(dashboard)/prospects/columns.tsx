@@ -13,7 +13,7 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
   {
     accessorKey: "createdAt",
     header: "Submitted On",
-    cell: ({ row }) => {
+    cell: function DateCell({ row }) {
       return formatDate(row.original.createdAt)
     },
   },
@@ -24,7 +24,7 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => {
+    cell: function EmailCell({ row }) {
       return <a href={`mailto:${row.original.email}`}>{row.original.email}</a>
     },
   },
@@ -35,7 +35,7 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
   {
     accessorKey: "tier",
     header: "Package",
-    cell: ({ row }) => {
+    cell: function TierCell({ row }) {
       return (
         <Link href={`/tiers/${row.original.tier.id}`} target="_blank">
           {row.original.tier.name}

@@ -161,14 +161,16 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
   const columns = useMemo<ColumnDef<User>[]>(() => [
     {
       id: "select",
-      header: () => (
-        <Checkbox
-          checked={isAllSelected}
-          onCheckedChange={handleSelectAll}
-          aria-label="Select all"
-        />
-      ),
-      cell: ({ row }) => {
+      header: function SelectHeader() {
+        return (
+          <Checkbox
+            checked={isAllSelected}
+            onCheckedChange={handleSelectAll}
+            aria-label="Select all"
+          />
+        );
+      },
+      cell: function SelectCell({ row }) {
         const user = row.original;
         return (
           <Checkbox
@@ -183,12 +185,16 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
     {
       accessorKey: "name",
       header: "Name",
-      cell: ({ row }) => <div>{row.original.name || "N/A"}</div>,
+      cell: function NameCell({ row }) {
+        return <div>{row.original.name || "N/A"}</div>;
+      },
     },
     {
       accessorKey: "email",
       header: "Email",
-      cell: ({ row }) => <div>{row.original.email || "N/A"}</div>,
+      cell: function EmailCell({ row }) {
+        return <div>{row.original.email || "N/A"}</div>;
+      },
     },
   ], [isAllSelected, handleSelectAll, isUserSelected, handleSelectUser]);
   

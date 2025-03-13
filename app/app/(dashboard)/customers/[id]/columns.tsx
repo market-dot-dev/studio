@@ -13,7 +13,9 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: "ID",
-    cell: ({ row }) => <pre>{row.getValue("id")}</pre>
+    cell: function IdCell({ row }) { 
+      return <pre>{row.getValue("id")}</pre>
+    }
   },
   {
     accessorKey: "name",
@@ -22,7 +24,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "company",
     header: "Company",
-    cell: ({ row }) => {
+    cell: function CompanyCell({ row }) {
       const company = row.getValue("company") as string | null
       return company || "(Unknown)"
     }
@@ -30,7 +32,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "gh_username",
     header: "Github",
-    cell: ({ row }) => {
+    cell: function GithubCell({ row }) {
       const username = row.getValue("gh_username") as string
       return (
         <a href={`https://www.github.com/${username}`} className="underline">
@@ -42,7 +44,7 @@ export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "email",
     header: "Email",
-    cell: ({ row }) => {
+    cell: function EmailCell({ row }) {
       const email = row.getValue("email") as string
       return (
         <div className="flex items-center gap-4">
@@ -68,7 +70,7 @@ export const customerOverviewColumns: ColumnDef<KeyValuePair>[] = [
   {
     accessorKey: "field",
     header: "Field",
-    cell: ({ row }) => {
+    cell: function FieldCell({ row }) {
       return <strong>{row.getValue("field")}</strong>
     }
   },
@@ -95,7 +97,7 @@ export const subscriptionColumns: ColumnDef<KeyValuePair>[] = [
   {
     accessorKey: "field",
     header: "Field",
-    cell: ({ row }) => {
+    cell: function SubscriptionFieldCell({ row }) {
       return <strong>{row.getValue("field")}</strong>
     }
   },
@@ -119,7 +121,7 @@ export const chargeColumns: ColumnDef<KeyValuePair>[] = [
   {
     accessorKey: "field",
     header: "Field",
-    cell: ({ row }) => {
+    cell: function ChargeFieldCell({ row }) {
       return <strong>{row.getValue("field")}</strong>
     }
   },

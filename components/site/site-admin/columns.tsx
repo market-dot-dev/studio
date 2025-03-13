@@ -20,7 +20,7 @@ export const columns: ColumnDef<Page>[] = [
   {
     accessorKey: "slug",
     header: "Path",
-    cell: ({ row, table }) => {
+    cell: function PathCell({ row, table }) {
       // Access custom props from the table meta
       const meta = table.options.meta as { homepageId?: string; url?: string }
       const { url, homepageId } = meta || {}
@@ -41,7 +41,7 @@ export const columns: ColumnDef<Page>[] = [
   {
     accessorKey: "draft",
     header: "Status",
-    cell: ({ row }) => {
+    cell: function StatusCell({ row }) {
       const draft = row.original.draft
       
       return draft ? (
@@ -57,7 +57,7 @@ export const columns: ColumnDef<Page>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
+    cell: function ActionCell({ row }) {
       return <Link href={`/page/${row.original.id}`}>Edit</Link>
     },
   },

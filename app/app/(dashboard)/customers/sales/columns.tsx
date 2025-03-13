@@ -24,19 +24,21 @@ export const columns: ColumnDef<Sale>[] = [
   {
     accessorKey: "user.name",
     header: "Name",
-    cell: ({ row }) => row.original.user.name
+    cell: function NameCell({ row }) {
+      return row.original.user.name;
+    }
   },
   {
     accessorKey: "user.email",
     header: "Email",
-    cell: ({ row }) => {
+    cell: function EmailCell({ row }) {
       return <a href={`mailto:${row.original.user.email}`}>{row.original.user.email}</a>;
     }
   },
   {
     id: "package",
     header: "Package",
-    cell: ({ row }) => {
+    cell: function PackageCell({ row }) {
       if (row.original.tierNames && row.original.tierNames.length > 0) {
         return row.original.tierNames.join(", ");
       }
@@ -46,14 +48,14 @@ export const columns: ColumnDef<Sale>[] = [
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => {
+    cell: function TypeCell({ row }) {
       return <Badge variant="secondary">{row.original.type}</Badge>;
     }
   },
   {
     id: "status",
     header: "Status",
-    cell: ({ row }) => {
+    cell: function StatusCell({ row }) {
       if (row.original.type === "subscription" && row.original.subscription) {
         return <SubscriptionStatusBadge subscription={row.original.subscription} />;
       } else if (row.original.type === "charge" && row.original.charge) {
@@ -65,7 +67,7 @@ export const columns: ColumnDef<Sale>[] = [
   {
     accessorKey: "createdAt",
     header: "Date",
-    cell: ({ row }) => {
+    cell: function DateCell({ row }) {
       return formatDate(row.original.createdAt);
     }
   }
