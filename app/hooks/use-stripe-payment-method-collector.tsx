@@ -33,6 +33,9 @@ const PAYMENT_ELEMENT_OPTIONS: StripePaymentElementOptions = {
     type: 'tabs' as const,
     defaultCollapsed: false,
   },
+  business: {
+    name: 'market.dev',
+  },
 };
 
 interface UseStripePaymentCollectorReturns {
