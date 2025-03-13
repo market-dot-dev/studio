@@ -163,7 +163,7 @@ export default function Nav({
     const marketItems: LinkItem[] = [
       {
         type: "link",
-        name: "explore.market.dev",
+        name: "Marketplace",
         href: "/channels/market",
         icon: <ShoppingBag width={18} />,
         isActive: urlSegments[1] === "market",
