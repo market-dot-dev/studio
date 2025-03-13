@@ -3,10 +3,10 @@ import React from "react";
 import PageHeading from "@/components/common/page-heading";
 import ProspectsTable from "./prospects-table";
 import ProspectService from "@/app/services/prospect-service";
-import { getCurrentSessionUser } from "@/app/services/UserService";
+import { getCurrentUser } from "@/app/services/UserService";
 
 export default async function ProspectsPage() {
-  const user = await getCurrentSessionUser();
+  const user = await getCurrentUser();
   const prospects = await ProspectService.getProspects(user!.id);
 
   return (
