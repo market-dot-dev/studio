@@ -10,6 +10,11 @@ class ProspectService {
   static async getProspects(
     userId: string,
   ): Promise<(Prospect & { tier: Tier })[]> {
+    if (!userId) {
+      console.warn("getProspects called without valid userId");
+      return [];
+    }
+
     const response = await prisma.prospect.findMany({
       where: { userId },
       include: { tiers: true },
