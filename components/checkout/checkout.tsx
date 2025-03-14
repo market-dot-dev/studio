@@ -95,9 +95,9 @@ export default function RegistrationCheckoutSection({
     return <AlreadySubscribedCard />;
   } else
     return (
-      <div className="mx-auto flex flex-col gap-12 lg:max-w-lg lg:gap-16">
+      <div className="mx-auto flex w-full flex-col gap-12 lg:max-w-lg">
         <section>
-          <h2 className="mb-6 border-b pb-2 text-2xl font-bold tracking-tight text-stone-800">
+          <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-stone-800">
             Account
           </h2>
           <CustomerLoginComponent signup={true} />
@@ -139,7 +139,7 @@ export default function RegistrationCheckoutSection({
           </Button>
           {tier.trialDays && tier.trialDays !== 0 ? (
             <p className="mt-6 text-pretty text-center text-xs font-medium tracking-tightish text-stone-500">
-              You won't be charged now. After your{" "}
+              You won&apos;t be charged now. After your{" "}
               <strong>{tier.trialDays} day</strong> trial, your card will be
               charged{" "}
               <strong className="tracking-tight text-stone-800">{`${checkoutCurrency} $${checkoutPrice}`}</strong>
