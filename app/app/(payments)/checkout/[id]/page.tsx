@@ -5,22 +5,23 @@ import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
-import { Card } from "@/components/ui/card";
 import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 
 interface QueryParams {
   [key: string]: string | string[] | undefined;
 }
 
 const checkoutCurrency = "USD";
+const checkoutCurrencySymbol = "$";
 
 import Image from "next/image";
 import useContract from "@/app/hooks/use-contract";
-import LoadingDots from "@/components/icons/loading-dots";
-import { Contract } from "@prisma/client";
 import { parseTierDescription } from "@/lib/utils";
-import SkeletonLoader from "@/components/common/skeleton-loader";
-import { getRootUrl } from "@/lib/domain";
+import { Store } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
+import Link from "next/link";
 
 const TierNotAvailable = () => {
   return (
@@ -34,24 +35,6 @@ const TierNotAvailable = () => {
       />
       <p className="text-lg text-stone-500">Tier not available</p>
     </div>
-  );
-};
-
-const ContractText = ({ contract }: { contract?: Contract }) => {
-  const baseUrl = getRootUrl("app", "/contracts");
-  const url = contract
-    ? `${baseUrl}/${contract.id}`
-    : `${baseUrl}/standard-msa`;
-  const contractName = contract?.name || "Standard MSA";
-
-  return (
-    <>
-      Terms of this package are detailed in the{" "}
-      <a href={url} className="underline" target="_blank">
-        {contractName}
-      </a>
-      .
-    </>
   );
 };
 
@@ -71,6 +54,22 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   );
   const [features, isFeaturesLoading] = useFeatures(id);
 
+  // Derived loading states that account for dependencies
+  const isEffectiveMaintainerLoading = useMemo(() => 
+    isTierLoading || (tier?.userId && isMaintainerLoading), 
+    [isTierLoading, tier?.userId, isMaintainerLoading]
+  );
+  
+  const isEffectiveContractLoading = useMemo(() => 
+    isTierLoading || (tier?.contractId && isContractLoading), 
+    [isTierLoading, tier?.contractId, isContractLoading]
+  );
+
+  const isEffectiveFeaturesLoading = useMemo(() => 
+    isTierLoading || isFeaturesLoading, 
+    [isTierLoading, isFeaturesLoading]
+  );
+
   const checkoutType = tier?.checkoutType;
   const checkoutProject = maintainer?.projectName || maintainer?.name;
   const checkoutPrice = isAnnual ? tier?.priceAnnual : tier?.price;
@@ -87,132 +86,182 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const tierFeatures = directlyProvidedFeatures ? features : [];
   const parsedDescription = parseTierDescription(tier?.description || "");
 
-  const tierInfo = (
-    <Card className="p-6">
-      <p className="text-sm text-stone-500">Package Details</p>
-      {isTierLoading ? (
-        <div className="opacity-50">
-          <SkeletonLoader className="mb-2 h-4 w-3/5 rounded-full leading-6" />
-          <SkeletonLoader className="mb-4 h-4 w-1/2 rounded-full leading-6" />
-        </div>
-      ) : checkoutType === "gitwallet" ? (
-        <div>
-          <div className="mb-2 text-lg">
-            <strong className="text-gray-800">
-              {checkoutProject}: {checkoutTier} {isAnnual ? `(annual)` : ""}
-            </strong>
-          </div>
-          <div className="mb-2 text-lg leading-6">
-            <p className="text-sm text-stone-500">
-              {checkoutCurrency + " " + checkoutPrice}{" "}
-              {checkoutCadence !== "once" ? `per ${checkoutCadence}` : ""}
-              {trialOffered && <>&nbsp;with {trialDays}d free trial</>}
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="mb-2 text-lg">
-          <strong className="text-gray-800">
-            {checkoutProject}: {checkoutTier}
-          </strong>
-        </div>
-      )}
-
-      {isFeaturesLoading ? (
-        <SkeletonLoader className="my-2 h-8 w-full rounded-xl" />
-      ) : (
-        <div className="mb-4 flex flex-col gap-4">
-          {hasActiveFeatures && tierFeatures.length !== 0 ? (
-            <TierFeatureList features={tierFeatures} />
-          ) : (
-            parsedDescription.map((section, dex) => {
-              if (section.text) {
-                return (
-                  <div key={dex}>
-                    {section.text.map((text: string, index: number) => (
-                      <p key={index} className="text-sm text-stone-500">
-                        {text}
-                      </p>
-                    ))}
-                  </div>
-                );
-              }
-
-              return (
-                <TierFeatureList
-                  key={dex}
-                  features={section.features.map(
-                    (feature: string, index: number) => ({
-                      id: `${index}`,
-                      name: feature,
-                      isEnabled: true,
-                    }),
-                  )}
-                />
-              );
-            })
-          )}
-        </div>
-      )}
-
-      {/* accept terms of service */}
-      {checkoutType === "gitwallet" && (
-        <div className="flex flex-row items-center gap-2 rounded-md border border-gray-400 bg-gray-100 p-2">
-          {isFeaturesLoading ? (
-            <SkeletonLoader className="mb-4 h-4 w-3/4 rounded-full" />
-          ) : (
-            <p className="text-sm text-stone-500 leading-6">
-              {isContractLoading && !(tier?.id && !tier.contractId) ? (
-                <LoadingDots />
-              ) : (
-                <ContractText contract={contract} />
-              )}
-            </p>
-          )}
-        </div>
-      )}
-    </Card>
-  );
-
   return (
-    <div className="flex min-h-screen flex-col md:flex-row">
+    <div className="flex min-h-screen flex-col text-stone-800 lg:flex-row">
       {/* Left Column */}
-      <div
-        className="left-0 top-0 flex h-full w-full flex-col justify-center bg-slate-800 px-8 sm:py-8 md:fixed md:w-2/5"
-        // style={{ backgroundImage: "url(/voronoi.png)" }}
-      >
-        <div className="overflow-y-auto">
-          <div className="w-7/8">
-            {isMaintainerLoading ? (
-              <div className="flex flex-col items-start mb-6 gap-10 opacity-50">
-                <SkeletonLoader className="h-6 w-3/4 rounded-xl" />
-                <div className="flex flex-col items-start gap-2">
-                  <SkeletonLoader className="h-4 w-full rounded-full" />
-                  <SkeletonLoader className="h-4 w-1/2 rounded-full" />
-                </div>
-              </div>
+      <div className="left-0 top-0 flex h-full w-full flex-col justify-between gap-6 bg-stone-200/70 p-6 pb-9 pt-6 sm:gap-12 sm:px-9 lg:fixed lg:w-1/2 lg:p-16 lg:pt-12 xl:w-2/5">
+        <div className="flex flex-col gap-9 lg:gap-12">
+          <div className="flex items-center gap-3">
+            <div className="flex size-8 items-center justify-center rounded-full bg-gradient-to-b from-stone-800/90 to-stone-800 text-white/85">
+              <Store size={18} />
+            </div>
+            {isEffectiveMaintainerLoading ? (
+              <Skeleton className="h-5 w-36 " />
             ) : (
-              <>
-                <h1 className="mb-8 text-4xl font-semibold text-slate-50">
-                  {checkoutProject}
-                </h1>
-                {tierInfo}
-              </>
+              <span className="font-bold tracking-tightish">
+                {checkoutProject}
+              </span>
             )}
           </div>
+
+          <div className="flex flex-col gap-9">
+            <div className="flex flex-col gap-2">
+              {isTierLoading ? (
+                <Skeleton className="h-6 lg:h-7 w-full max-w-48 mb-1" />
+              ) : (
+                <span className="text-xl font-semibold text-stone-500 lg:text-2xl">
+                  {checkoutTier} {isAnnual ? "(annual)" : ""}
+                </span>
+              )}
+              
+              {isTierLoading ? (
+                <Skeleton className="h-10 xl:h-12 w-full max-w-72 " />
+              ) : (
+                <h1 className="text-4xl font-semibold tracking-tight xl:text-5xl">
+                  {checkoutType === "gitwallet" ? (
+                    <>
+                      {checkoutCurrency +
+                        " " +
+                        checkoutCurrencySymbol +
+                        checkoutPrice}
+                      {checkoutCadence !== "once" ? (
+                        <span className="text-stone-400">
+                          /{checkoutCadence}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </>
+                  ) : (
+                    "Get in touch"
+                  )}
+                </h1>
+              )}
+              
+              {isTierLoading ? (
+                <Skeleton className="mt-2 h-5 lg:h-6 w-3/4 " />
+              ) : (
+                <>
+                  {checkoutType === "gitwallet" ? (
+                    trialOffered ? (
+                      <p className="mt-2 text-sm font-medium tracking-tightish text-stone-500 lg:text-base">
+                        Starts with a{" "}
+                        <span className="font-bold">{trialDays} day</span>{" "}
+                        free trial
+                      </p>
+                    ) : null
+                  ) : (
+                    <p className="mt-2 text-sm font-medium text-stone-500 lg:text-base">
+                      Please provide your details so we can get in touch
+                      with you.
+                    </p>
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-6 lg:gap-9">
+              {!isTierLoading && checkoutType !== "gitwallet" && (
+                <>
+                  <Separator className="bg-stone-300/50" />
+
+                  <div className="flex flex-col gap-1 text-stone-500">
+                    <p className="text-lg lg:text-xl font-bold tracking-tightish text-stone-800">
+                      {checkoutCurrency +
+                        " " +
+                        checkoutCurrencySymbol +
+                        checkoutPrice}{" "}
+                      {checkoutCadence !== "once" ? (
+                        <span className="font-semibold text-stone-500">
+                          /{checkoutCadence}
+                        </span>
+                      ) : null}
+                    </p>
+                    {trialOffered && (
+                      <p className="text-sm tracking-tightish">
+                        Starts with a{" "}
+                        <span className="font-semibold">{trialDays} day</span>{" "}
+                        free trial day free trial
+                      </p>
+                    )}
+                  </div>
+
+                  <Separator className="bg-stone-300/50" />
+                </>
+              )}
+
+              <div className="mb-4 flex flex-col gap-4 overflow-y-scroll">
+                {isEffectiveFeaturesLoading ? (
+                  <div className="space-y-3">
+                    <Skeleton className="h-5 w-full " />
+                    <Skeleton className="h-5 w-5/6 " />
+                    <Skeleton className="h-5 w-4/6 " />
+                    <Skeleton className="h-5 w-3/4 " />
+                  </div>
+                ) : hasActiveFeatures && tierFeatures.length !== 0 ? (
+                  <TierFeatureList features={tierFeatures} />
+                ) : (
+                  !isTierLoading && parsedDescription.map((section, dex) => {
+                    if (section.text) {
+                      return (
+                        <div key={dex}>
+                          {section.text.map(
+                            (text: string, index: number) => (
+                              <p
+                                key={index}
+                                className="max-w-prose text-pretty text-sm text-stone-500"
+                              >
+                                {text}
+                              </p>
+                            ),
+                          )}
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <TierFeatureList
+                        key={dex}
+                        features={section.features.map(
+                          (feature: string, index: number) => ({
+                            id: `${index}`,
+                            name: feature,
+                            isEnabled: true,
+                          }),
+                        )}
+                      />
+                    );
+                  })
+                )}
+              </div>
+            </div>
+          </div>
         </div>
+        <p className="absolute right-6 top-8 inline-flex gap-2 text-sm font-semibold tracking-tight text-stone-500 sm:right-9 lg:static">
+          <span className="hidden sm:inline">Powered by</span>
+          <Link href="https://market.dev" target="_blank">
+            <Image
+              alt="market.dev logo"
+              width={72}
+              height={16}
+              className="inline h-5 w-auto -translate-y-px sm:h-[19px]"
+              src="/market-dot-dev-logo.svg"
+            />
+          </Link>
+        </p>
       </div>
 
       {/* Right Column */}
-      <div className="ml-auto w-full overflow-y-auto bg-white p-8 text-slate-800 md:w-3/5 md:p-16">
-        {isTierLoading ? (
-          <>
-            <div className="flex flex-col items-start gap-12 opacity-50">
-              <SkeletonLoader className="h-16 w-5/6 rounded-xl" />
-              <SkeletonLoader className="h-36 w-5/6 rounded-xl" />
-              <SkeletonLoader className="h-12 w-5/6 rounded-xl" />
+      <div className="flex flex-col items-center ml-auto min-h-[80vh] w-full overflow-y-auto bg-stone-100 px-6 py-9 text-stone-800 sm:p-9 lg:w-1/2 lg:p-16 lg:pt-32 xl:w-3/5">
+        {isEffectiveMaintainerLoading || isEffectiveContractLoading ? (
+          <div className="flex flex-col items-start gap-6 w-full max-w-lg mx-auto mt-1">
+            <div className="w-full space-y-4">
+              <Skeleton className="h-12 w-full " />
+              <Skeleton className="h-12 w-full " />
+              <Skeleton className="h-12 w-full " />
             </div>
-          </>
+            <Skeleton className="h-10 w-full mt-4 " />
+          </div>
         ) : (
           <>
             {tier && maintainer && (

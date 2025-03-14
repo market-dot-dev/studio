@@ -30,7 +30,7 @@ const TableBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tbody
     ref={ref}
-    className={cn("[&_tr:last-child]:border-0", className)}
+    className={cn("[&_tr:last-child]:border-0 min-h-12", className)}
     {...props}
   />
 ))
@@ -70,12 +70,12 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-12 px-5 py-3 text-left align-middle font-semibold text-xxs/5 tracking-wide uppercase [&:has([role=checkbox])]:pr-0",
-      className
+      "h-11 whitespace-nowrap px-5 py-2.5 text-left align-middle text-xxs/5 font-semibold uppercase tracking-wide [&:has([role=checkbox])]:pr-0",
+      className,
     )}
     {...props}
   />
-))
+));
 TableHead.displayName = "TableHead"
 
 interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
@@ -87,14 +87,14 @@ const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
     <td
       ref={ref}
       className={cn(
-        "py-3 px-5 align-middle [&:has([role=checkbox])]:pr-0",
+        "whitespace-nowrap px-5 py-3 align-middle [&:has([role=checkbox])]:pr-0",
         emphasized ? "font-semibold text-stone-800" : "text-stone-500",
-        className
+        className,
       )}
       {...props}
     />
-  )
-)
+  ),
+);
 TableCell.displayName = "TableCell"
 
 const TableCaption = React.forwardRef<

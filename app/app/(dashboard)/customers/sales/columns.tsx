@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import SubscriptionStatusBadge from "../subscription-state";
 import PurchaseStatusBadge from "../purchase-state";
+import { capitalize } from "@/lib/utils";
 
 export type Sale = {
   id: string;
@@ -47,7 +48,7 @@ export const columns: ColumnDef<Sale>[] = [
     accessorKey: "type",
     header: "Type",
     cell: ({ row }) => {
-      return <Badge variant="secondary">{row.original.type}</Badge>;
+      return <Badge variant="secondary">{capitalize(row.original.type)}</Badge>;
     }
   },
   {
