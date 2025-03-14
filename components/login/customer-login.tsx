@@ -10,6 +10,8 @@ import { userExists, setSignUp } from "@/app/services/registration-service";
 import OTPInputElement from "./otp-input-element"
 import useCurrentSession from "@/app/hooks/use-current-session";
 import { cn } from "@/lib/utils";
+import { Card } from "../ui/card";
+import { User, UserRoundCheck } from "lucide-react";
 
 // usign a local variable to avoid state update delays
 
@@ -40,8 +42,9 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     }
 
     const handleEmail = async (e: any) => {
-        
-        if( !verificationEmail ) {
+        setError(null);
+
+        if (!verificationEmail) {
             setError('Please enter your email.');
             return;
         };
@@ -148,40 +151,38 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
         });
     }
 
-    const toggleSignUp = () => setIsSignUp(!isSignUp);
+    const toggleSignUp = () => {
+      setError(null);
+      setIsSignUp(!isSignUp)
+    };
 
     return (
       <>
         {currentUser ? (
-            <div className="flex w-full flex-row items-center justify-between">
-                <span>
-                You are logged in as {currentUser.name} ({currentUser.email}).
-                </span>
-                <Button
-                variant="outline"
-                loading={isSubmitting}
-                disabled={isSubmitting}
-                onClick={handleLogout}
-                >
-                Logout
-                </Button>
+          <div className="flex justify-between w-full gap-4">
+            <div className="flex gap-3">
+              <UserRoundCheck className="h-6 w-6 text-stone-500 shrink-0" />
+              <div className="flex gap-x-2 flex-wrap text-medium text-sm font-medium tracking-tightish text-stone-500">
+                <span className="text-base font-bold text-stone-800">{currentUser.name}</span>
+                <span className="leading-6 align-middle">{currentUser.email}</span>
+              </div>
             </div>
+            <Button
+              size="sm"
+              variant="outline"
+              loading={isSubmitting}
+              disabled={isSubmitting}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+          </div>
         ) : !isSubmitted ? (
           <div className="flex flex-col gap-6">
-            {isSignUp ? (
-              <div className="text-center text-sm text-stone-500">
-                Enter your details to create an account.
-              </div>
-            ) : (
-              <div className="text-center text-sm text-stone-500">
-                Enter your email to receive a verification code.
-              </div>
-            )}
-
-            <div className="flex w-full flex-col gap-4">
+            <div className="flex w-full flex-col gap-6">
               {isSignUp && (
                 <div>
-                  <Label htmlFor="name" className="mb-1.5">
+                  <Label htmlFor="name" className="mb-2">
                     Name
                   </Label>
                   <Input
@@ -198,7 +199,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
               )}
               <div className="w-full items-center">
                 {isSignUp && (
-                  <Label htmlFor="email" className="mb-1.5">
+                  <Label htmlFor="email" className="mb-2">
                     Email
                   </Label>
                 )}
@@ -287,7 +288,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
           </div>
         )}
         {error && (
-          <div className="text-center text-sm">
+          <div className="mt-6 text-center text-sm">
             <p className="text-rose-500">{error}</p>
           </div>
         )}

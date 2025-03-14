@@ -41,67 +41,56 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
   };
 
   return (
-    <div className="w-7/8 flex flex-col gap-4">
-      <section className="text-md mb-8 text-slate-600 lg:w-5/6">
-        <SectionHeader headerName="Get in touch" />
-        <span>
-          Please provide your details below so we can get in touch with you.
-        </span>
-      </section>
-      <section>
-        <Card>
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div className="w-full items-center">
-              <Label htmlFor="email">Email Address</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                required
-              />
-            </div>
-            <div className="w-full items-center">
-              <Label htmlFor="name">Name</Label>
-              <Input 
-                id="name"
-                name="name" 
-                placeholder="Enter your name" 
-                required 
-              />
-            </div>
-            <div className="w-full items-center">
-              <Label htmlFor="organization">Organization</Label>
-              <Input
-                id="organization"
-                name="organization"
-                placeholder="Enter your organization name"
-                required
-              />
-            </div>
-            <div className="w-full items-center">
-              <Label htmlFor="context">Additional Context</Label>
-              <Textarea
-                id="context"
-                name="context"
-                placeholder="Tell us more about your project needs and how we can help"
-                required
-                className="min-h-[100px]"
-              />
-            </div>
-            <div className="items-center">
-              <Button
-                type="submit"
-                className="w-full"
-                loading={isSubmitting}
-                disabled={isSubmitting}
-              >
-                Get in touch
-              </Button>
-            </div>
-          </form>
-        </Card>
-      </section>
+    <div className="lg:max-w-md mx-auto flex flex-col items-center w-full gap-9">
+      <form className="flex flex-col gap-9 w-full" onSubmit={handleSubmit}>
+        <div className="flex w-full flex-col gap-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+        <div className="flex w-full flex-col gap-2">
+          <Label htmlFor="name">Name</Label>
+          <Input
+            id="name"
+            name="name"
+            placeholder="Enter your name"
+            required
+          />
+        </div>
+        <div className="flex w-full flex-col gap-2">
+          <Label htmlFor="organization">Organization</Label>
+          <Input
+            id="organization"
+            name="organization"
+            placeholder="Enter your organization name"
+            required
+          />
+        </div>
+        <div className="flex w-full flex-col gap-2">
+          <Label htmlFor="context">Additional Context</Label>
+          <Textarea
+            id="context"
+            name="context"
+            placeholder="Tell us more about your project needs and how we can help"
+            required
+            className="min-h-[100px]"
+          />
+        </div>
+        <Button
+          size="lg"
+          type="submit"
+          className="w-full"
+          loading={isSubmitting}
+          disabled={isSubmitting}
+        >
+          Get in touch
+        </Button>
+      </form>
     </div>
   );
 }

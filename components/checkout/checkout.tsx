@@ -5,13 +5,10 @@ import { Card } from "@/components/ui/card";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
 import { User, Contract } from "@prisma/client";
-
 import { onClickSubscribe } from "@/app/services/StripeService";
 import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
-import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
-import SectionHeader from "./section-header";
 import { getRootUrl } from "@/lib/domain";
 
 const checkoutCurrency = "USD";
@@ -94,31 +91,23 @@ export default function RegistrationCheckoutSection({
     }
   }, [userId, tierId]);
 
-  const tierInfo = tier?.name || "Package";
-
   if (subscribed) {
     return <AlreadySubscribedCard />;
   } else
     return (
-      <>
-        <section className="w-7/8 text-md mb-8 text-slate-600 lg:w-5/6">
-          <SectionHeader headerName={"Purchase " + tierInfo} />
-          <span>
-            To purchase this package, please provide your account & payment
-            information below.
-          </span>
+      <div className="mx-auto flex lg:max-w-lg flex-col gap-12 lg:gap-16">
+        <section>
+          <h2 className="mb-6 border-b pb-2 text-2xl font-bold tracking-tight text-stone-800">
+            Account
+          </h2>
+          <CustomerLoginComponent signup={true} />
         </section>
 
-        <section className="w-7/8 text-md mb-8 text-slate-600 lg:w-5/6">
-          <SectionHeader headerName="Your Account" />
-          <Card className="p-4">
-            <CustomerLoginComponent signup={true} />
-          </Card>
-        </section>
-
-        <section className="w-7/8 mb-8 lg:w-5/6">
-          <SectionHeader headerName="Payment Information" />
-          <Card className="p-4">
+        <section>
+          <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-stone-800 ">
+            Payment
+          </h2>
+          <Card className="px-4 py-2">
             {error && <div className="mb-4 text-red-500">{error}</div>}
             {maintainer.stripeAccountId && (
               <UserPaymentMethodWidget
@@ -132,10 +121,10 @@ export default function RegistrationCheckoutSection({
           </Card>
         </section>
 
-        <section className="w-7/8 mb-8 lg:w-5/6">
-          <p className="mb-4 text-center text-sm text-stone-500">
+        <section>
+          <div className="mb-4 text-center text-xs font-medium tracking-tightish text-stone-500">
             <ContractText contract={contract} />
-          </p>
+          </div>
           <Button
             loading={loading}
             disabled={loading || !userId}
@@ -149,14 +138,16 @@ export default function RegistrationCheckoutSection({
               : `Pay $${checkoutPrice} ${checkoutCurrency}`}
           </Button>
           {tier.trialDays && tier.trialDays !== 0 ? (
-            <p className="mt-4 text-pretty text-center text-sm text-stone-500">
-              <span>{`You will not be charged now. After your ${tier.trialDays} day trial, your card will be charged`}</span>{" "}
-              <strong className="text-stone-800">{`$${checkoutPrice} ${checkoutCurrency}`}</strong>
+            <p className="mt-6 text-pretty text-center text-xs font-medium tracking-tightish text-stone-500">
+              You won't be charged now. After your{" "}
+              <strong>{tier.trialDays} day</strong> trial, your card will be
+              charged{" "}
+              <strong className="tracking-tight text-stone-800">{`${checkoutCurrency} $${checkoutPrice}`}</strong>
               .
             </p>
           ) : null}
         </section>
-      </>
+      </div>
     );
 }
 
