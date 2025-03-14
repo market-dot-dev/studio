@@ -275,7 +275,7 @@ export default function Nav({
       {
         type: "link",
         name: "Github",
-        href: "https://www.github.com/git-wallet",
+        href: "https://www.github.com/market-dot-dev/",
         target: "_blank",
         icon: <FaGithubAlt width={18} className="text-stone-700" />,
       },
