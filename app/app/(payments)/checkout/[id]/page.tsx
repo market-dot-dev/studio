@@ -82,6 +82,12 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
     return TierNotAvailable();
   }
 
+  const shortenedCadence = useMemo(() => {
+    if (checkoutCadence === "month") return "mo";
+    if (checkoutCadence === "year") return "yr";
+    return checkoutCadence;
+  }, [checkoutCadence]);
+
   const directlyProvidedFeatures = !!features && features.length > 0;
   const tierFeatures = directlyProvidedFeatures ? features : [];
   const parsedDescription = parseTierDescription(tier?.description || "");
@@ -96,7 +102,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               <Store size={18} />
             </div>
             {isEffectiveMaintainerLoading ? (
-              <Skeleton className="h-5 w-36 " />
+              <Skeleton className="h-5 w-36" />
             ) : (
               <span className="font-bold tracking-tightish">
                 {checkoutProject}
@@ -107,15 +113,15 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
           <div className="flex flex-col gap-9">
             <div className="flex flex-col gap-2">
               {isTierLoading ? (
-                <Skeleton className="h-6 lg:h-7 w-full max-w-48 mb-1" />
+                <Skeleton className="mb-1 h-6 w-full max-w-48 lg:h-7" />
               ) : (
                 <span className="text-xl font-semibold text-stone-500 lg:text-2xl">
                   {checkoutTier} {isAnnual ? "(annual)" : ""}
                 </span>
               )}
-              
+
               {isTierLoading ? (
-                <Skeleton className="h-10 xl:h-12 w-full max-w-72 " />
+                <Skeleton className="h-10 w-full max-w-72 xl:h-12" />
               ) : (
                 <h1 className="text-4xl font-semibold tracking-tight xl:text-5xl">
                   {checkoutType === "gitwallet" ? (
@@ -126,7 +132,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                         checkoutPrice}
                       {checkoutCadence !== "once" ? (
                         <span className="text-stone-400">
-                          /{checkoutCadence}
+                          /{shortenedCadence}
                         </span>
                       ) : (
                         ""
@@ -137,23 +143,23 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                   )}
                 </h1>
               )}
-              
+
               {isTierLoading ? (
-                <Skeleton className="mt-2 h-5 lg:h-6 w-3/4 " />
+                <Skeleton className="mt-2 h-5 w-3/4 lg:h-6" />
               ) : (
                 <>
                   {checkoutType === "gitwallet" ? (
                     trialOffered ? (
                       <p className="mt-2 text-sm font-medium tracking-tightish text-stone-500 lg:text-base">
                         Starts with a{" "}
-                        <span className="font-bold">{trialDays} day</span>{" "}
-                        free trial
+                        <span className="font-bold">{trialDays} day</span> free
+                        trial
                       </p>
                     ) : null
                   ) : (
                     <p className="mt-2 text-sm font-medium text-stone-500 lg:text-base">
-                      Please provide your details so we can get in touch
-                      with you.
+                      Please provide your details so we can get in touch with
+                      you.
                     </p>
                   )}
                 </>
@@ -166,14 +172,14 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                   <Separator className="bg-stone-300/50" />
 
                   <div className="flex flex-col gap-1 text-stone-500">
-                    <p className="text-lg lg:text-xl font-bold tracking-tightish text-stone-800">
+                    <p className="text-lg font-bold tracking-tightish text-stone-800 lg:text-xl">
                       {checkoutCurrency +
                         " " +
                         checkoutCurrencySymbol +
-                        checkoutPrice}{" "}
+                        checkoutPrice}
                       {checkoutCadence !== "once" ? (
                         <span className="font-semibold text-stone-500">
-                          /{checkoutCadence}
+                          /{shortenedCadence}
                         </span>
                       ) : null}
                     </p>
@@ -193,28 +199,27 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               <div className="mb-4 flex flex-col gap-4 overflow-y-scroll">
                 {isEffectiveFeaturesLoading ? (
                   <div className="space-y-3">
-                    <Skeleton className="h-5 w-full " />
-                    <Skeleton className="h-5 w-5/6 " />
-                    <Skeleton className="h-5 w-4/6 " />
-                    <Skeleton className="h-5 w-3/4 " />
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-5 w-5/6" />
+                    <Skeleton className="h-5 w-4/6" />
+                    <Skeleton className="h-5 w-3/4" />
                   </div>
                 ) : hasActiveFeatures && tierFeatures.length !== 0 ? (
                   <TierFeatureList features={tierFeatures} />
                 ) : (
-                  !isTierLoading && parsedDescription.map((section, dex) => {
+                  !isTierLoading &&
+                  parsedDescription.map((section, dex) => {
                     if (section.text) {
                       return (
                         <div key={dex}>
-                          {section.text.map(
-                            (text: string, index: number) => (
-                              <p
-                                key={index}
-                                className="max-w-prose text-pretty text-sm text-stone-500"
-                              >
-                                {text}
-                              </p>
-                            ),
-                          )}
+                          {section.text.map((text: string, index: number) => (
+                            <p
+                              key={index}
+                              className="max-w-prose text-pretty text-sm text-stone-500"
+                            >
+                              {text}
+                            </p>
+                          ))}
                         </div>
                       );
                     }
@@ -252,15 +257,15 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
       </div>
 
       {/* Right Column */}
-      <div className="flex flex-col items-center ml-auto min-h-[80vh] w-full overflow-y-auto bg-stone-100 px-6 py-9 text-stone-800 sm:p-9 lg:w-1/2 lg:p-16 lg:pt-32 xl:w-3/5">
+      <div className="ml-auto flex min-h-[80vh] w-full flex-col items-center overflow-y-auto bg-stone-100 px-6 py-9 text-stone-800 sm:p-9 lg:w-1/2 lg:p-16 lg:pt-32 xl:w-3/5">
         {isEffectiveMaintainerLoading || isEffectiveContractLoading ? (
-          <div className="flex flex-col items-start gap-6 w-full max-w-lg mx-auto mt-1">
+          <div className="mx-auto mt-1 flex w-full max-w-lg flex-col items-start gap-6">
             <div className="w-full space-y-4">
-              <Skeleton className="h-12 w-full " />
-              <Skeleton className="h-12 w-full " />
-              <Skeleton className="h-12 w-full " />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
+              <Skeleton className="h-12 w-full" />
             </div>
-            <Skeleton className="h-10 w-full mt-4 " />
+            <Skeleton className="mt-4 h-10 w-full" />
           </div>
         ) : (
           <>
