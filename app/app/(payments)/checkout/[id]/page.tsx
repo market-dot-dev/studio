@@ -131,7 +131,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                         checkoutCurrencySymbol +
                         checkoutPrice}
                       {checkoutCadence !== "once" ? (
-                        <span className="text-stone-400">
+                        <span className="font-semibold text-stone-400">
                           /{shortenedCadence}
                         </span>
                       ) : (
@@ -149,7 +149,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               ) : (
                 <>
                   {checkoutType === "gitwallet" ? (
-                    trialOffered ? (
+                    trialOffered && tier?.cadence !== "once" ? (
                       <p className="mt-2 text-sm font-medium tracking-tightish text-stone-500 lg:text-base">
                         Starts with a{" "}
                         <span className="font-bold">{trialDays} day</span> free
@@ -178,16 +178,16 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                         checkoutCurrencySymbol +
                         checkoutPrice}
                       {checkoutCadence !== "once" ? (
-                        <span className="font-semibold text-stone-500">
+                        <span className="font-semibold text-stone-500/85">
                           /{shortenedCadence}
                         </span>
                       ) : null}
                     </p>
-                    {trialOffered && (
-                      <p className="text-sm tracking-tightish">
+                    {trialOffered && tier?.cadence !== "once" && (
+                      <p className="text-sm font-medium tracking-tightish">
                         Starts with a{" "}
-                        <span className="font-semibold">{trialDays} day</span>{" "}
-                        free trial day free trial
+                        <span className="font-bold">{trialDays} day</span> free
+                        trial
                       </p>
                     )}
                   </div>
@@ -259,7 +259,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
       {/* Right Column */}
       <div className="ml-auto flex min-h-[80vh] w-full flex-col items-center overflow-y-auto bg-stone-100 px-6 py-9 text-stone-800 sm:p-9 lg:w-1/2 lg:p-16 lg:pt-32 xl:w-3/5">
         {isEffectiveMaintainerLoading || isEffectiveContractLoading ? (
-          <div className="mx-auto mt-1 flex w-full max-w-lg flex-col items-start gap-6">
+          <div className="mx-auto mt-1 flex w-full flex-col items-start gap-6 opacity-50 lg:max-w-lg">
             <div className="w-full space-y-4">
               <Skeleton className="h-12 w-full" />
               <Skeleton className="h-12 w-full" />

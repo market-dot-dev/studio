@@ -286,7 +286,7 @@ const StandardCheckoutForm = ({
 
         <div>
           <Label htmlFor={`${idPrefix}price`} className="mb-2 block">
-            Monthly Price (USD)
+            {tier.cadence === "month" ? "Monthly Price (USD)" : "Price (USD)"}
           </Label>
           <div className="flex gap-2">
             <Input
@@ -314,7 +314,6 @@ const StandardCheckoutForm = ({
             />
           </div>
         </div>
-        
 
         {tier.cadence === "month" && (
           <div className="space-y-4">
@@ -342,7 +341,10 @@ const StandardCheckoutForm = ({
 
               {annualPlanEnabled && (
                 <div className="mb-4">
-                  <Label htmlFor={`${idPrefix}priceAnnual`} className="mb-2 block">
+                  <Label
+                    htmlFor={`${idPrefix}priceAnnual`}
+                    className="mb-2 block"
+                  >
                     Annual Price (USD)
                   </Label>
                   <Input
@@ -413,7 +415,10 @@ const StandardCheckoutForm = ({
 
               {trialEnabled && (
                 <div className="mb-4">
-                  <Label htmlFor={`${idPrefix}trialDays`} className="mb-2 block">
+                  <Label
+                    htmlFor={`${idPrefix}trialDays`}
+                    className="mb-2 block"
+                  >
                     Trial Length (Days)
                   </Label>
                   <Input
@@ -859,18 +864,10 @@ export default function TierForm({
                           <Table>
                             <TableHeader>
                               <TableRow>
-                                <TableHead>
-                                  Created
-                                </TableHead>
-                                <TableHead>
-                                  Features
-                                </TableHead>
-                                <TableHead>
-                                  Price
-                                </TableHead>
-                                <TableHead>
-                                  #Customers
-                                </TableHead>
+                                <TableHead>Created</TableHead>
+                                <TableHead>Features</TableHead>
+                                <TableHead>Price</TableHead>
+                                <TableHead>#Customers</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -898,9 +895,7 @@ export default function TierForm({
                                     <>&nbsp;None</>
                                   )}
                                 </TableCell>
-                                <TableCell>
-                                  ${tier.price}
-                                </TableCell>
+                                <TableCell>${tier.price}</TableCell>
                                 <TableCell>
                                   {currentRevisionSubscriberCount}
                                 </TableCell>
@@ -925,12 +920,10 @@ export default function TierForm({
                     )}
                   </div>
                 )}
-
                 <Button
                   disabled={isSaving || isDeleting}
                   loading={isSaving}
                   onClick={onSubmit}
-                  className="w-full"
                 >
                   {buttonLabel}
                 </Button>
@@ -1017,8 +1010,7 @@ export default function TierForm({
               {tier.published ? (
                 <>
                   This package will be visible and purchasable by customers.
-                  Changes will create a new version.{" "}
-                  <br />
+                  Changes will create a new version. <br />
                   <a href="#mobile-channels" className="underline">
                     Pick this package&apos;s channels
                   </a>
@@ -1179,25 +1171,18 @@ export default function TierForm({
                     {currentRevisionSubscriberCount === 0
                       ? "no customers yet"
                       : currentRevisionSubscriberCount + " customers"}{" "}
-                    for the most recent version. There are {versions.length} versions
-                    and {tierSubscriberCount} customers across versions.
+                    for the most recent version. There are {versions.length}{" "}
+                    versions and {tierSubscriberCount} customers across
+                    versions.
                   </p>
                   <Card className="p-0">
                     <Table>
                       <TableHeader>
                         <TableRow>
-                          <TableHead>
-                            Created
-                          </TableHead>
-                          <TableHead>
-                            Features
-                          </TableHead>
-                          <TableHead>
-                            Price
-                          </TableHead>
-                          <TableHead>
-                            #Customers
-                          </TableHead>
+                          <TableHead>Created</TableHead>
+                          <TableHead>Features</TableHead>
+                          <TableHead>Price</TableHead>
+                          <TableHead>#Customers</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -1221,9 +1206,7 @@ export default function TierForm({
                               <>&nbsp;None</>
                             )}
                           </TableCell>
-                          <TableCell>
-                            ${tier.price}
-                          </TableCell>
+                          <TableCell>${tier.price}</TableCell>
                           <TableCell>
                             {currentRevisionSubscriberCount}
                           </TableCell>

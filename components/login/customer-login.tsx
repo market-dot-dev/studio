@@ -159,12 +159,16 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     return (
       <>
         {currentUser ? (
-          <div className="flex justify-between w-full gap-4">
+          <Card className="flex w-full justify-between gap-4 p-4">
             <div className="flex gap-3">
-              <UserRoundCheck className="h-6 w-6 text-stone-500 shrink-0" />
-              <div className="flex gap-x-2 flex-wrap text-medium text-sm font-medium tracking-tightish text-stone-500">
-                <span className="text-base font-bold text-stone-800">{currentUser.name}</span>
-                <span className="leading-6 align-middle">{currentUser.email}</span>
+              <UserRoundCheck className="h-6 w-6 shrink-0 text-stone-500" />
+              <div className="text-medium flex flex-wrap gap-x-2 text-sm font-medium tracking-tightish text-stone-500">
+                <span className="text-base font-bold text-stone-800">
+                  {currentUser.name}
+                </span>
+                <span className="align-middle leading-6">
+                  {currentUser.email}
+                </span>
               </div>
             </div>
             <Button
@@ -176,7 +180,7 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
             >
               Logout
             </Button>
-          </div>
+          </Card>
         ) : !isSubmitted ? (
           <div className="flex flex-col gap-6">
             <div className="flex w-full flex-col gap-6">

@@ -107,7 +107,7 @@ export default function RegistrationCheckoutSection({
           <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-stone-800">
             Payment
           </h2>
-          <Card className="px-4 py-2">
+          <Card className="p-4">
             {error && <div className="mb-4 text-red-500">{error}</div>}
             {maintainer.stripeAccountId && (
               <UserPaymentMethodWidget
@@ -133,11 +133,14 @@ export default function RegistrationCheckoutSection({
             size="lg"
             onClick={() => setLoading(true)}
           >
-            {tier.trialDays && tier.trialDays !== 0
-              ? "Start your free trial"
-              : `Pay $${checkoutPrice} ${checkoutCurrency}`}
+            {tier.cadence === "once" 
+              ? `Pay $${checkoutPrice} ${checkoutCurrency}`
+              : tier.trialDays && tier.trialDays !== 0
+                ? "Start your free trial"
+                : `Pay $${checkoutPrice} ${checkoutCurrency}`
+            }
           </Button>
-          {tier.trialDays && tier.trialDays !== 0 ? (
+          {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 ? (
             <p className="mt-6 text-pretty text-center text-xs font-medium tracking-tightish text-stone-500">
               You won&apos;t be charged now. After your{" "}
               <strong>{tier.trialDays} day</strong> trial, your card will be

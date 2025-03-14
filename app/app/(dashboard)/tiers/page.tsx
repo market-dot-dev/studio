@@ -7,8 +7,8 @@ import SessionService from "@/app/services/SessionService";
 import FeatureService from "@/app/services/feature-service";
 import TiersEmptyState from "./empty-state";
 import NewTierModal from "@/components/tiers/new-tier-modal";
+import CopyCheckoutLinkButton from "@/components/tiers/copy-checkout-link-button";
 import clsx from "clsx";
-import { Badge } from "@/components/ui/badge";
 
 export default async function Tiers() {
   const currentUserId = await SessionService.getCurrentUserId();
@@ -72,13 +72,21 @@ export default async function Tiers() {
                         {tier.published ? "Published" : "Draft"}
                       </p>
                     </div>
-                    <Link
-                      href={`tiers/${tier.id}`}
-                      className="flex items-center gap-1.5 rounded px-1.5 py-0.5 text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
-                    >
-                      <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
-                      Edit
-                    </Link>
+                    <div className="flex items-center gap-1">
+                      {tier.published && (
+                        <>
+                          <CopyCheckoutLinkButton tierId={tier.id} />
+                          <span className="h-3 border-r border-stone-300" />
+                        </>
+                      )}
+                      <Link
+                        href={`tiers/${tier.id}`}
+                        className="flex items-center gap-1.5 rounded px-1.5 py-0.5 text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
+                      >
+                        <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
+                        Edit
+                      </Link>
+                    </div>
                   </div>
                   <div className="flex h-full items-center justify-center p-6 pb-10 pt-0">
                     <TierCard
