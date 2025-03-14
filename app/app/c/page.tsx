@@ -15,6 +15,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import FeatureService from "@/app/services/feature-service";
 import { parseTierDescription } from "@/lib/utils";
 import { getRootUrl } from "@/lib/domain";
+import { Store } from "lucide-react";
 
 type TierWithFeatures = (Tier & { features: Feature[] }) | null;
 
@@ -26,7 +27,7 @@ const ContractLink = ({ contract }: { contract?: Contract }) => {
   const contractName = contract?.name || "Standard MSA";
 
   return (
-    <p className="text-sm text-stone-500">
+    <p className="text-sm font-medium">
       <a href={url} className="underline" target="_blank">
         {contractName}
       </a>
@@ -65,54 +66,63 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
     (await ContractService.getContractById(tier.contractId || "")) || undefined;
 
   return (
-    <Card className="mb-4">
-      <div className="flex flex-col space-y-2">
-        <div className="flex flex-row justify-between">
-          <div className="flex flex-row items-center space-x-2">
-            {/* Add content here if needed */}
-          </div>
-        </div>
-
-        <strong>Package Name: {tier.name}</strong>
-        <strong>Purchased From: {maintainer.projectName}</strong>
+    <Card className="text-sm">
+      <div className="flex flex-col gap-4 p-5 pr-4 pt-4">
         <div className="flex flex-col">
-          <strong>Description:</strong>
-          <p className="text-sm text-stone-500">{tier.tagline}</p>
-        </div>
-
-        <div className="flex flex-col">
-          <strong>Pricing:</strong>
-          <p className="text-sm text-stone-500">
-            ${tier.price} / {tier.cadence}
-          </p>
-        </div>
-
-        <div className="mb-4 flex flex-col">
-          <strong>Status:</strong>
-          <p className="text-sm text-stone-500">
-            <Badge variant="secondary" className="me-2">
+          <div className="flex justify-between gap-2">
+            <h3 className="text-base font-semibold">
+              {tier.name}
+            </h3>
+            <Badge variant="success" className="h-fit w-fit">
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Badge>
-            (On {charge.createdAt.toDateString()})
-          </p>
+          </div>
+          {tier.tagline && (
+            <p className="line-clamp-2 text-sm text-stone-500">
+              {tier.tagline}
+            </p>
+          )}
         </div>
-        <div className="flex flex-col">
-          <strong>Contract:</strong>
-          <ContractLink contract={contract} />
+        <p className="mb-1 text-xl font-semibold text-stone-800">USD ${tier.price}</p>
+        <div className="flex flex-row flex-wrap gap-x-10 gap-y-4">
+          <div className="flex flex-col gap-1">
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+              Purchased from
+            </span>
+            <div className="flex items-center gap-1.5">
+              <Store size={16} />
+              <span className="font-medium">{maintainer.projectName}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+              Purchased On
+            </span>
+            <span className="font-medium">
+              {charge.createdAt.toLocaleDateString()}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+              Contract
+            </span>
+            <ContractLink contract={contract} />
+          </div>
         </div>
-        <div className="flex gap-4">
-          <CustomerPackageFeatures
-            features={
-              hasActiveFeatures ? tier.features : featuresFromDescription
-            }
-            maintainerEmail={maintainer?.email}
-          />
-        </div>
+      </div>
+
+      <div className="flex flex-row justify-between gap-2 rounded-b-md border-t bg-stone-50 px-5 py-3">
+        <CustomerPackageFeatures
+          features={hasActiveFeatures ? tier.features : featuresFromDescription}
+          maintainerEmail={maintainer?.email}
+        />
       </div>
     </Card>
   );
 };
-
+  
 const SubscriptionCard = async ({
   subscription,
 }: {
@@ -146,6 +156,7 @@ const SubscriptionCard = async ({
 
   const actualCadence = subscription.priceAnnual ? "year" : tier.cadence;
   const actualPrice = subscription.priceAnnual ? tier.priceAnnual : tier.price;
+  const shortenedCadence = actualCadence === "month" ? "mo" : actualCadence === "year" ? "yr" : actualCadence;
 
   let status = "";
   if (subscription.state === SubscriptionStates.renewing) {
@@ -168,53 +179,66 @@ const SubscriptionCard = async ({
     (await ContractService.getContractById(tier.contractId || "")) || undefined;
 
   return (
-    <Card className="mb-4">
-      <div className="flex flex-col space-y-2">
-        <div className="flex flex-row justify-between">
-          <div className="flex flex-row items-center space-x-2"></div>
-        </div>
-
-        <strong>Package Name: {tier.name}</strong>
-        <strong>Purchased From: {maintainer.projectName}</strong>
-
+    <Card className="text-sm">
+      <div className="flex flex-col gap-4 p-5 pr-4 pt-4">
         <div className="flex flex-col">
-          <strong>Status:</strong>
-          <p className="text-sm text-stone-500">
-            <Badge variant="secondary" className="me-2">
+          <div className="flex justify-between gap-2">
+            <h3 className="text-base font-semibold">
+              {tier.name} {subscription.priceAnnual ? "(annual)" : ""}
+            </h3>
+            <Badge variant={"secondary"} className="h-fit w-fit">
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Badge>
-            (On {subscription.createdAt.toDateString()})
-          </p>
-        </div>
-
-        <div className="flex flex-col">
-          <strong>Description:</strong>
-          <p className="text-sm text-stone-500">{tier.tagline}</p>
-        </div>
-
-        <div className="flex flex-col">
-          <strong>Pricing:</strong>
-          <p className="text-sm text-stone-500">
-            ${actualPrice} / {actualCadence}
-          </p>
-        </div>
-
-        <div className="flex flex-col">
-          <strong>Terms:</strong>
-          <ContractLink contract={contract} />
-        </div>
-
-        <div className="flex flex-row justify-between space-x-2">
-          <CustomerPackageFeatures
-            features={
-              hasActiveFeatures ? tier.features : featuresFromDescription
-            }
-            maintainerEmail={maintainer?.email}
-          />
-          {subscription.state !== "cancelled" && (
-            <CancelSubscriptionButton subscriptionId={subscription.id} />
+          </div>
+          {tier.tagline && (
+            <p className="line-clamp-2 text-sm text-stone-500">
+              {tier.tagline}
+            </p>
           )}
         </div>
+        <p className="mb-1 text-xl font-semibold text-stone-800">
+          USD ${actualPrice}
+          <span className="font-medium text-stone-500">
+            /{shortenedCadence}
+          </span>
+        </p>
+        <div className="flex flex-row flex-wrap gap-x-10 gap-y-4">
+          <div className="flex flex-col gap-1">
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+              Purchased from
+            </span>
+            <div className="flex items-center gap-1.5">
+              <Store size={16} />
+              <span className="font-medium">{maintainer.projectName}</span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+              Purchased On
+            </span>
+            <span className="font-medium">
+              {subscription.createdAt.toLocaleDateString()}
+            </span>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+              Contract
+            </span>
+            <ContractLink contract={contract} />
+          </div>
+        </div>
+      </div>
+
+      <div className="flex flex-row justify-between gap-2 rounded-b-md border-t bg-stone-50 px-5 py-3">
+        <CustomerPackageFeatures
+          features={hasActiveFeatures ? tier.features : featuresFromDescription}
+          maintainerEmail={maintainer?.email}
+        />
+        {subscription.state !== "cancelled" && (
+          <CancelSubscriptionButton subscriptionId={subscription.id} />
+        )}
       </div>
     </Card>
   );
@@ -238,8 +262,10 @@ export default async function SubscriptionsAndChargesList({
   return (
     <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
       <div className="flex flex-col space-y-6">
-        <PageHeading title="Purchases" />
-        <p className="text-sm text-stone-500">All your subscriptions and one time purchases from market.dev will appear here.</p>
+        <div>
+          <PageHeading title="Purchases" />
+          <p className="text-sm text-stone-500">All your subscriptions and one time purchases from market.dev will appear here.</p>
+        </div>
         
         <Tabs defaultValue="active">
           <TabsList>
@@ -249,9 +275,11 @@ export default async function SubscriptionsAndChargesList({
           </TabsList>
           
           <TabsContent value="active">
-            {activeSubscriptions.map((element) => (
-              <SubscriptionCard subscription={element} key={element.id} />
-            ))}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {activeSubscriptions.map((element) => (
+                <SubscriptionCard subscription={element} key={element.id} />
+              ))}
+            </div>
             {!anyActive && (
               <div className="flex flex-col space-y-2">
                 <h2>No active subscriptions</h2>
@@ -260,9 +288,11 @@ export default async function SubscriptionsAndChargesList({
           </TabsContent>
           
           <TabsContent value="onetime">
-            {charges.map((element) => (
-              <ChargeCard charge={element} key={element.id} />
-            ))}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {charges.map((element) => (
+                <ChargeCard charge={element} key={element.id} />
+              ))}
+            </div>
             {!anyCharges && (
               <div className="flex flex-col space-y-2">
                 <h2>No purchases</h2>

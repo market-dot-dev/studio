@@ -2,7 +2,7 @@
 import { useModal } from "@/components/modal/provider";
 import { Feature } from "@prisma/client";
 import styles from './features.module.css';
-import { CheckSquare2 as CheckSquare } from "lucide-react";
+import { CheckSquare2 as CheckSquare, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function CustomerPackageFeatures({ features, maintainerEmail }: { features: Partial<Feature>[], maintainerEmail: string | null }) {
@@ -16,7 +16,7 @@ export default function CustomerPackageFeatures({ features, maintainerEmail }: {
         show(
           <div className="flex flex-col gap-4 rounded-md border bg-white p-6 shadow-2xl">
             {[
-              { id: 0, name: "Contact Maintainers", uri: maintainerEmail },
+              { id: 0, name: "Contact", uri: maintainerEmail },
               ...features,
             ].map((feature) =>
               feature.uri ? (
@@ -67,6 +67,9 @@ export default function CustomerPackageFeatures({ features, maintainerEmail }: {
     }
 
     return (
-        <Button onClick={showFeatures}>Contact Maintainers</Button>
+      <Button size="sm" variant="outline" onClick={showFeatures}>
+        <Send />
+        Contact
+      </Button>
     );
 }

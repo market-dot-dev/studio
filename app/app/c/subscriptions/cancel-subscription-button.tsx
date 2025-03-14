@@ -30,7 +30,7 @@ const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }
       className="w-min"
       onClick={showWarning}
     >
-      Cancel subscription
+      Cancel Subscription
     </Button>
   );
 }
