@@ -95,7 +95,7 @@ export default function RegistrationCheckoutSection({
     return <AlreadySubscribedCard />;
   } else
     return (
-      <div className="mx-auto flex lg:max-w-lg flex-col gap-12 lg:gap-16">
+      <div className="mx-auto flex flex-col gap-12 lg:max-w-lg lg:gap-16">
         <section>
           <h2 className="mb-6 border-b pb-2 text-2xl font-bold tracking-tight text-stone-800">
             Account
@@ -104,7 +104,7 @@ export default function RegistrationCheckoutSection({
         </section>
 
         <section>
-          <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-stone-800 ">
+          <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-stone-800">
             Payment
           </h2>
           <Card className="px-4 py-2">
@@ -126,15 +126,15 @@ export default function RegistrationCheckoutSection({
             <ContractText contract={contract} />
           </div>
           <Button
-            loading={loading}
-            disabled={loading || !userId}
+            loading={loading || submittingPayment}
+            disabled={loading || !userId || submittingPayment}
             data-cy="checkout-button"
             className="w-full"
             size="lg"
             onClick={() => setLoading(true)}
           >
             {tier.trialDays && tier.trialDays !== 0
-              ? "Checkout"
+              ? "Start your free trial"
               : `Pay $${checkoutPrice} ${checkoutCurrency}`}
           </Button>
           {tier.trialDays && tier.trialDays !== 0 ? (
