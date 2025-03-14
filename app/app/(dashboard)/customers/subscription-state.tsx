@@ -1,3 +1,5 @@
+"use client"
+
 import { formatDate } from "@/lib/utils";
 import { Subscription } from "@prisma/client";
 import { Badge } from "@/components/ui/badge"

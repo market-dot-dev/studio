@@ -65,22 +65,29 @@ export default function CustomerNav() {
       >
         <div className="grid gap-2">
           <div className="grid">
-            {tabs.map(({ name, href, isActive, icon }) => (
+            {tabs.map(({ name, href, isActive, icon }) =>
               href === "" ? (
-                  <span key={name} className="text-xs font-semibold tracking-wide uppercase mt-4">{name}</span>
-                ) : (
+                <span
+                  key={name}
+                  className="mt-4 text-xs font-semibold uppercase tracking-wide"
+                >
+                  {name}
+                </span>
+              ) : (
                 <Link
                   key={name}
                   href={href}
                   className={`flex items-center space-x-3 ${
-                    isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
-                  } rounded px-1 transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                    isActive
+                      ? "bg-white text-stone-800 shadow-border dark:bg-stone-700"
+                      : ""
+                  } rounded px-1 transition-all duration-150 ease-in-out hover:bg-white hover:shadow-border dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                 >
                   {icon}
                   <span className="text-sm font-medium">{name}</span>
                 </Link>
-              )
-            ))}
+              ),
+            )}
           </div>
         </div>
       </div>
