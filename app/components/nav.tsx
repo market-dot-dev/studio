@@ -202,7 +202,6 @@ export default function Nav({
         name: "Contracts",
         href: "/contracts",
         isActive: urlSegments[0] === "contracts",
-        isBeta: true,
         icon: <Scroll width={18} />,
       },
       {
@@ -227,6 +226,7 @@ export default function Nav({
         type: "link",
         name: "Research",
         href: "/leads",
+        isBeta: true,
         isActive: urlSegments[0] === "leads",
         icon: <ScanSearch width={18} />,
       },
