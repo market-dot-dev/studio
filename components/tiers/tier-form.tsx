@@ -688,10 +688,7 @@ export default function TierForm({
                     {tier.published ? (
                       <>
                         This package will be visible and purchasable by
-                        customers. Changes will create a new version.{" "}
-                        <a href="#mobile-channels" className="underline">
-                          Pick this package&apos;s channels
-                        </a>
+                        customers. Changes will create a new version.
                       </>
                     ) : (
                       "This package will remain hidden from customers on all channels."
@@ -803,8 +800,8 @@ export default function TierForm({
 
                 <Separator className="my-2" />
 
-                <div id="mobile-channels">
-                  <Label htmlFor="mobile-channels" className="mb-3 block">
+                <div>
+                  <Label htmlFor="channels" className="mb-3 block">
                     Channels
                   </Label>
                   <ChannelsSelectionInput
@@ -1011,9 +1008,6 @@ export default function TierForm({
                 <>
                   This package will be visible and purchasable by customers.
                   Changes will create a new version. <br />
-                  <a href="#mobile-channels" className="underline">
-                    Pick this package&apos;s channels
-                  </a>
                 </>
               ) : (
                 "This package will remain hidden from customers on all channels."
@@ -1120,7 +1114,7 @@ export default function TierForm({
 
           <Separator className="my-2" />
 
-          <div id="channels">
+          <div>
             <Label htmlFor="channels" className="mb-2 block">
               Channels
             </Label>
