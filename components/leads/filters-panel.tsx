@@ -208,14 +208,27 @@ export default function FiltersPanel({facets, filters, setFilters, setItemsCount
 
   
   const determineItemsCount = useCallback(() => {
-    let itemsCount = (facets['kind']['organization'] ?? 0) + (facets['kind']['user'] ?? 0);
+    // Default to 0 if we can't determine the count
+    if (!facets || typeof facets !== 'object') {
+      setItemsCount(0);
+      return;
+    }
+    
+    // Get the count of organizations and users, defaulting to 0 if they don't exist
+    const orgCount = facets['kind'] && facets['kind']['organization'] ? facets['kind']['organization'] : 0;
+    const userCount = facets['kind'] && facets['kind']['user'] ? facets['kind']['user'] : 0;
+    let itemsCount = orgCount + userCount;
     
     Object.keys(filters).forEach((filterName) => {
       const key = filtersToFacetMap[filterName] ?? filterName;
+      
+      // Check if this facet exists
+      if (!facets[key]) return;
+      
       const facet = facets[key];
       const filterValue = filters[key as keyof FiltersState];
     
-      if(filterValue && facet[filterValue] && facet[filterValue] < itemsCount) {
+      if(filterValue && facet[filterValue] !== undefined && facet[filterValue] < itemsCount) {
         itemsCount = facet[filterValue];
       }
     });
@@ -232,17 +245,23 @@ export default function FiltersPanel({facets, filters, setFilters, setItemsCount
 
   const renderOptions = (filterName: keyof FiltersState) => {
     
-    if( filtersMeta[filterName]?.disabled ) return null; // Hides disabled filter panels
+    if (filtersMeta[filterName]?.disabled) return null; // Hides disabled filter panels
+    
+    // Check if facets exists and has this filter
+    if (!facets || !facets[filterName]) return null;
 
     const isCountry = filterName === "country_code";
 
-    const options: OptionType[] = Object.entries(facets[filterName]).map(([value, count]) => ({
-      label: `${ isCountry ? countryCodes[value] ?? value : value }`,
+    // Make sure we have an object to iterate over
+    const facetData = facets[filterName] || {};
+    
+    const options: OptionType[] = Object.entries(facetData).map(([value, count]) => ({
+      label: `${ isCountry ? (countryCodes[value] ?? value) : value }`,
       value,
-      count,
+      count: typeof count === 'number' ? count : 0,
     }));
     
-    if ( ! options.length ) return null; // Return null if only "All" option is available
+    if (!options.length) return null; // Return null if no options available
   
     return (
       <OptionsList

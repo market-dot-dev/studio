@@ -375,7 +375,16 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 return;
             }
             
-            setFacets(res.data);
+            // Make sure res.data is an object before setting it as facets
+            if (res.data && typeof res.data === 'object') {
+                setFacets(res.data);
+            } else {
+                console.error('Unexpected facets data format:', res.data);
+                setFacets({}); // Set to empty object instead of null
+            }
+        }).catch(error => {
+            console.error('Error fetching facets:', error);
+            setFacets({}); // Set to empty object on error
         });
 
     }, [radarId, filters])
@@ -393,8 +402,8 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         }
     }, [inputRepoUrl])
 
-    const filterBadges = Object.keys(filters).map((key: string) => {
-        if (filters[key as keyof FiltersState]) {
+    const filterBadges = Object.keys(filters || {}).map((key: string) => {
+        if (filters && filters[key as keyof FiltersState]) {
             return (
               <Badge key={key} variant="secondary" className="mb-1 mr-1 pr-1">
                 <div className="flex flex-nowrap gap-1">
@@ -417,6 +426,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
               </Badge>
             );
         }
+        return null;
     }).filter(Boolean);
 
     return (
@@ -448,9 +458,9 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                             }
                         }}
                     />
-                    <div className={ "w-full relative " + (!isUrlInputFocused || !urlsHistory?.length ? "hidden" : "" )}>
+                    <div className={ "w-full relative " + (!isUrlInputFocused || !Array.isArray(urlsHistory) || !urlsHistory?.length ? "hidden" : "" )}>
                         <div className="absolute left-0 top-0 w-full flex flex-col bg-white text-sm py-2 z-50 border border-t-0 shadow-lg rounded-b-md">
-                            {urlsHistory.map((url: string, index: number) => {
+                            {Array.isArray(urlsHistory) && urlsHistory.map((url: string, index: number) => {
                                 return (
                                     <div key={index} className="flex items-center justify-between cursor-pointer hover:bg-gray-200 px-4 group"
                                         onClick={() => {
@@ -473,7 +483,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 </div>
                 
 
-                {repos.length ?
+                {Array.isArray(repos) && repos.length ?
                     <div className="flex-col gap-2 mt-2 md:flex-row">
                         <p className="text-sm text-stone-500">Search for your connected repos: (<Link href="/settings/repos" className="underline">Connect More</Link>)</p>
                         <div className="flex gap-2 mt-2 flex-wrap w-full">
@@ -537,7 +547,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             }
             <div className="grid grid-cols-4 w-full min-h-[100vh]">
                 <div className="col-span-1">
-                    { facets ?
+                    { facets && typeof facets === 'object' ?
                         <FiltersPanel facets={facets} filters={filters} setFilters={setFilters} setItemsCount={setTotalCount} />
                         : radarId ? <LoadingSpinner /> : null
                     }
@@ -549,8 +559,8 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         </div>
                         :
                         <>
-                            {radarResults?.map((lead, index) => {
-                                const isShortlisted = shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
+                            {Array.isArray(radarResults) && radarResults.map((lead, index) => {
+                                const isShortlisted = Array.isArray(shortListedLeads) && shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
                                 return <SearchResult key={index} lead={lead} isShortlisted={isShortlisted} setShortListedLeads={setShortListedLeads} />
                             })}
 
@@ -606,7 +616,7 @@ function SearchResult({ lead, isShortlisted, setShortListedLeads }: { lead: Lead
 
 
 function Pagination({ page, perPage, totalCount, onPageChange, isLoading, facets }: { page: number, perPage: number, totalCount: number, onPageChange: any, isLoading: boolean, facets: any }) {
-    const totalPages = Math.ceil(totalCount / perPage);
+    const totalPages = Math.max(1, Math.ceil(totalCount / perPage)); // Ensure at least 1 page
     const [inputPage, setInputPage] = useState<number>(page);
 
     const changePage = (newPage: number) => {
@@ -637,13 +647,13 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading, facets
             Prev
           </Button>
           <span className="text-sm">
-            Page {page} of {facets ? totalPages : "-"}
+            Page {page} of {facets && typeof facets === 'object' ? totalPages : "-"}
           </span>
           <Button
             size="sm"
             variant="ghost"
             onClick={() => changePage(page + 1)}
-            disabled={page === totalPages || isLoading}
+            disabled={page === totalPages || isLoading || !facets}
           >
             Next
           </Button>
@@ -653,7 +663,7 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading, facets
             type="number"
             // enableStepper={false}
             min={1}
-            max={100}
+            max={totalPages}
             value={inputPage}
             onChange={(e) => {
               setInputPage(e.target.valueAsNumber);
