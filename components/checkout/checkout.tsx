@@ -156,8 +156,6 @@ export default function RegistrationCheckoutSection({
 
 const AlreadySubscribedCard = () => {
   return (
-    <Card>
       <p className="text-sm text-stone-500">You&apos;re already subscribed to this product.</p>
-    </Card>
   );
 };
