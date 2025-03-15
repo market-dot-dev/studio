@@ -36,15 +36,22 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
     accessorKey: "tier",
     header: "Package",
     cell: ({ row }) => {
+      const tier = row.original.tier;
+      if (!tier) {
+        return <span>Unknown Package</span>;
+      }
       return (
-        <Link href={`/tiers/${row.original.tier.id}`} target="_blank">
-          {row.original.tier.name}
+        <Link href={`/tiers/${tier.id}`} target="_blank">
+          {tier.name}
         </Link>
-      )
+      );
     },
   },
   {
     accessorKey: "context",
     header: "Details",
+    cell: ({ row }) => {
+      return row.original.context || "No context provided."
+    },
   },
 ] 
