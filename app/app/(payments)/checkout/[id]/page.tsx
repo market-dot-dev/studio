@@ -78,15 +78,15 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const trialDays = tier?.trialDays || 0;
   const trialOffered = trialDays > 0;
 
-  if (tier?.id && !tier?.published) {
-    return TierNotAvailable();
-  }
-
   const shortenedCadence = useMemo(() => {
     if (checkoutCadence === "month") return "mo";
     if (checkoutCadence === "year") return "yr";
     return checkoutCadence;
   }, [checkoutCadence]);
+
+  if (tier?.id && !tier?.published) {
+    return TierNotAvailable();
+  }
 
   const directlyProvidedFeatures = !!features && features.length > 0;
   const tierFeatures = directlyProvidedFeatures ? features : [];
