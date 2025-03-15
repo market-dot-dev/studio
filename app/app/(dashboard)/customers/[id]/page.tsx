@@ -1,22 +1,15 @@
 // CustomerDetailPage.tsx
 "use server";
 
-import PageHeading from "@/components/common/page-heading";
-import {
-  Button,
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-  Textarea,
-} from "@tremor/react";
+import PageHeader from "@/components/common/page-header";
 import Link from "next/link";
-import DashboardCard from "@/components/common/dashboard-card";
-import LinkButton from "@/components/common/link-button";
-import SubscriptionStatusBadge from "../subscription-state";
+import { Button } from "@/components/ui/button";
 import UserService from "@/app/services/UserService";
-import { formatCurrency, formatDate } from "@/lib/utils";
-import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button";
+import { Send, User, Building, Github, Mail } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import SubscriptionCard from "@/components/customer/subscription-card";
+import ChargeCard from "@/components/customer/charge-card";
+import Subscription from "@/app/models/Subscription";
 
 const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
   const userId = params.id;
@@ -35,176 +28,105 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
     return <div>Customer not found</div>;
   }
 
+  // Convert raw subscription data to Subscription instances
+  const subscriptions = customer.subscriptions.map(sub => new Subscription(sub));
+
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12">
-      <div className="flex w-full justify-between">
-        <div className="flex flex-col">
-          <Link href="/customers" className="underline">
-            ← All Customers
-          </Link>
-          <PageHeading
-            title={customer.company || customer.name || "Customer Details"}
-          />
+    <div className="flex max-w-screen-xl flex-col space-y-9">
+      <div className="flex flex-col gap-7">
+        <PageHeader
+          title={customer.name || "Customer Details"}
+          description={customer.id}
+          backLink={{
+            href: "/customers",
+            title: "Customers",
+          }}
+          actions={[
+            <Button key="contact" variant="outline" asChild>
+              <Link href={`mailto:${customer.email}`}>
+                <Send />
+                Contact
+              </Link>
+            </Button>,
+          ]}
+        />
+
+        <div className="flex flex-row flex-wrap gap-x-10 gap-y-4 text-sm">
+          <div className="flex flex-col gap-1">
+            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
+              <Building size={12} strokeWidth={2.5} />
+              Company
+            </span>
+            <div className="flex items-center">
+              <span className="font-medium">
+                {customer.company || "(Unknown)"}
+              </span>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
+              <Github size={12} strokeWidth={2.5} />
+              Github
+            </span>
+            <div className="flex items-center">
+              <a
+                href={`https://www.github.com/${customer.gh_username}`}
+                className="font-medium hover:underline"
+              >
+                {customer.gh_username}
+              </a>
+            </div>
+          </div>
+
+          <div className="flex flex-col gap-1">
+            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
+              <Mail size={12} strokeWidth={2.5} />
+              Email
+            </span>
+            <div className="flex items-center">
+              <Link
+                href={`mailto:${customer.email}`}
+                className="font-medium hover:underline"
+              >
+                {customer.email}
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
 
-      <DashboardCard>
-        <div className="p-1">
-          <h2 className="mb-4 text-xl font-semibold">Customer Overview</h2>
-          <Table className="mb-8">
-            <TableBody>
-              <TableRow>
-                <TableCell className="w-1/2 py-2 md:w-1/3">
-                  <strong>ID</strong>
-                </TableCell>
-                <TableCell className="py-2">
-                  <pre>{customer.id}</pre>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="py-2">
-                  <strong>Name</strong>
-                </TableCell>
-                <TableCell className="py-2">{customer.name}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="py-2">
-                  <strong>Company</strong>
-                </TableCell>
-                <TableCell className="py-2">
-                  {customer.company ? customer.company : "(Unknown)"}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="py-2">
-                  <strong>Github</strong>
-                </TableCell>
-                <TableCell className="py-2">
-                  <a
-                    href={`https://www.github.com/${customer.gh_username}`}
-                    className="underline"
-                  >
-                    {customer.gh_username}
-                  </a>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="py-2">
-                  <strong>Email</strong>
-                </TableCell>
-                <TableCell className="py-2">
-                  <Link href={`mailto:${customer.email}`} className="underline">
-                    {customer.email}
-                  </Link>
-                  <LinkButton
-                    href={`mailto:${customer.email}`}
-                    label="Contact"
-                    className="ms-4"
-                  />
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+      <Separator />
 
-          <h2 className="mb-4 mt-8 text-xl font-semibold">Subscriptions</h2>
-          {customer.subscriptions.map((subscription) => (
-            <div key={subscription.id} className="mb-8">
-              <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="w-1/2 py-2 md:w-1/3">
-                      <strong>Tier Name</strong>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      {subscription.tier.name}
-                      {subscription.tierVersionId
-                        ? ` (${subscription.tierVersionId})`
-                        : ""}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-2">
-                      <strong>Tier Price</strong>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      {formatCurrency(subscription.tier.price!)} (Monthly)
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-2">
-                      <strong>Subscription Status</strong>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      <SubscriptionStatusBadge subscription={subscription} />
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-2">
-                      <strong>Subscription Date</strong>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      {formatDate(subscription.createdAt)}
-                    </TableCell>
-                  </TableRow>
-                  {subscription.cancelledAt ? (
-                    <TableRow>
-                      <TableCell className="py-2">
-                        <strong>Cancellation Date</strong>
-                      </TableCell>
-                      <TableCell className="py-2">
-                        {formatDate(subscription.cancelledAt)}
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    <TableRow>
-                      <TableCell className="py-2">
-                        <strong>Actions</strong>
-                      </TableCell>
-                      <TableCell className="py-2">
-                        <CancelSubscriptionButton
-                          subscriptionId={subscription.id}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+        <div className="flex w-full flex-col gap-4">
+          <h2 className="text-xl font-semibold">Subscriptions</h2>
+          {subscriptions.map((subscription) => (
+            <SubscriptionCard
+              key={subscription.id}
+              subscription={subscription}
+              isCustomerView={false}
+            />
           ))}
-
-          <h2 className="mb-4 mt-8 text-xl font-semibold">Charges</h2>
-          {customer.charges.map((charge) => (
-            <div key={charge.id} className="mb-8">
-              <Table>
-                <TableBody>
-                  <TableRow>
-                    <TableCell className="w-1/2 py-2 md:w-1/3">
-                      <strong>Tier Name</strong>
-                    </TableCell>
-                    <TableCell className="py-2">{charge.tier.name}</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-2">
-                      <strong>Amount</strong>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      {formatCurrency(charge.tier.price!)}
-                    </TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell className="py-2">
-                      <strong>Charge Date</strong>
-                    </TableCell>
-                    <TableCell className="py-2">
-                      {formatDate(charge.createdAt)}
-                    </TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </div>
-          ))}
+          {subscriptions.length === 0 && (
+            <p className="text-stone-500">No subscriptions found.</p>
+          )}
         </div>
-      </DashboardCard>
+
+        <div className="flex w-full flex-col gap-4">
+          <h2 className="text-xl font-semibold">Charges</h2>
+          {customer.charges.map((charge) => (
+            <ChargeCard
+              key={charge.id}
+              charge={charge}
+              isCustomerView={false}
+            />
+          ))}
+          {customer.charges.length === 0 && (
+            <p className="text-stone-500">No charges found.</p>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

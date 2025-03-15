@@ -5,7 +5,9 @@ import type {
   CheckoutType,
   TierWithFeatures,
 } from "@/app/services/TierService";
-import { Card, Button, Text, Switch } from "@tremor/react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
 import TierFeatureList from "@/components/features/tier-feature-list";
 import { Feature } from "@prisma/client";
@@ -40,7 +42,7 @@ const CheckoutButton = ({
   openUrlInNewTab = false,
   tierId,
   annual = false,
-  variant = "primary",
+  variant = "default",
   checkoutType = "gitwallet",
   darkMode = false,
   disabled = false,
@@ -49,7 +51,7 @@ const CheckoutButton = ({
   openUrlInNewTab?: boolean;
   tierId: string;
   annual?: boolean;
-  variant?: "secondary" | "primary";
+  variant?: "secondary" | "default";
   checkoutType?: CheckoutType;
   darkMode?: boolean;
   disabled?: boolean;
@@ -63,14 +65,9 @@ const CheckoutButton = ({
     >
       <Button
         variant={variant}
-        className={cn(
-          "w-full rounded-md px-3 py-2 text-center text-sm font-medium shadow-sm ring-1 ring-black/5 transition-shadow hover:shadow",
-          darkMode
-            ? "bg-white text-gray-900 hover:bg-gray-100"
-            : "!bg-gradient-to-b from-gray-800 to-gray-950 text-white hover:bg-gray-700",
-        )}
+        className={cn("w-full", darkMode && "!bg-white !text-stone-800 hover:bg-stone-100")}
       >
-        {checkoutType === "gitwallet" ? "Get Started" : "Contact Us"}
+        {checkoutType === "gitwallet" ? "Get Started" : "Get in touch"}
       </Button>
     </Link>
   );
@@ -91,10 +88,10 @@ const TierCard: React.FC<TierCardProps> = ({
   const [showAnnual, setShowAnnual] = useState(false);
 
   const containerClasses = darkMode
-    ? "text-white bg-gray-900"
-    : "text-gray-900 bg-white";
-  const headingClasses = darkMode ? "text-white" : "text-gray-900";
-  const textClasses = darkMode ? "text-gray-300" : "text-gray-500";
+    ? "text-white bg-stone-900"
+    : "text-stone-900 bg-white";
+  const headingClasses = darkMode ? "text-white" : "text-stone-900";
+  const textClasses = darkMode ? "text-stone-300" : "text-stone-500";
 
   const hasAnnual = (tier.priceAnnual || 0) > 0;
   const isntOnce = tier.cadence !== "once";
@@ -109,14 +106,14 @@ const TierCard: React.FC<TierCardProps> = ({
   return (
     <Card
       className={clsx(
-        "relative flex h-full w-full flex-col justify-between rounded-md bg-white p-6 pt-5 shadow ring-1 ring-gray-500/10",
+        "relative flex h-full w-full flex-col justify-between p-6 pt-5",
         containerClasses,
         className,
       )}
     >
       <div
         className={clsx(
-          "flex flex-col gap-6",
+          "flex flex-col gap-4",
           alignment === "center" && "items-center",
         )}
       >
@@ -147,30 +144,30 @@ const TierCard: React.FC<TierCardProps> = ({
               alignment === "center" && "items-center",
             )}
           >
-            <div className="text-4xl">
-              <span className="font-geist-mono">
+            <p className="text-4xl h-fit">
+              <span className="font-geist-mono tracking-tight">
                 $
                 {showAnnual
                   ? Math.round((tier.priceAnnual || 0) / 12)
                   : tier.price}
               </span>
               {cadenceShorthand && (
-                <span className="text-base/10 font-normal text-gray-500">
+                <span className={cn("text-base/10 font-normal", darkMode ? "text-stone-500" : "text-stone-400")}>
                   <span className="mr-px">/</span>
                   {cadenceShorthand}
                 </span>
               )}
-            </div>
+            </p>
             {hasAnnual && isntOnce ? (
-              <div className="flex items-center gap-1.5">
-                <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+              <div className="flex items-center justify-center gap-1.5">
+                <p className="text-xxs font-medium uppercase tracking-wider text-stone-500">
                   Monthly
                 </p>
                 <Switch
                   checked={showAnnual}
-                  onChange={() => setShowAnnual(!showAnnual)}
+                  onCheckedChange={() => setShowAnnual(!showAnnual)}
                 />
-                <p className="text-xxs font-medium uppercase tracking-wider text-gray-500">
+                <p className="text-xxs font-medium uppercase tracking-wider text-stone-500">
                   Yearly
                 </p>
               </div>
@@ -186,9 +183,9 @@ const TierCard: React.FC<TierCardProps> = ({
                 return (
                   <div key={dex}>
                     {section.text.map((text: string, index: number) => (
-                      <Text key={index} className={cn("text-sm", textClasses)}>
+                      <p key={index} className={cn("text-sm", textClasses)}>
                         {text}
-                      </Text>
+                      </p>
                     ))}
                   </div>
                 );
@@ -211,7 +208,7 @@ const TierCard: React.FC<TierCardProps> = ({
           )}
         </div>
       </div>
-      <div className="mt-12 w-full">
+      <div className="mt-8 w-full">
         {children || (
           <CheckoutButton
             url={url}

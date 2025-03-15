@@ -1,6 +1,5 @@
-import { Grid, Col } from "@tremor/react";
-import  components from "../site/insertables";
 import type { Insertable } from "../site/insertables";
+import components from "../site/insertables";
 
 export default function ComponentsPanel({ insertAtCursor }: {insertAtCursor: (prop: string) => void}) {
     return (
@@ -10,7 +9,7 @@ export default function ComponentsPanel({ insertAtCursor }: {insertAtCursor: (pr
 
 function ComponentsBlock({components, insertAtCursor} : { components : Insertable[], insertAtCursor: (prop: string) => void} ) : JSX.Element {
     return (
-      <Grid numItems={1} className="gap-2 w-full">
+      <div className="grid gap-2 w-full">
         {Object.values(components).filter((item: any) => !item.hidden).map(
           (component: Insertable, index: number) => {
             const buttonContent =  (
@@ -20,7 +19,7 @@ function ComponentsBlock({components, insertAtCursor} : { components : Insertabl
               </div>
             )
             return (
-              <Col key={index}>
+              <div key={index}>
                   <div
                     className="cursor-pointer bg-gray-200 hover:bg-gray-600 hover:text-white rounded-md h-full text-xs align-middle text-center">
                       { component.insert ? <component.insert insertAtCursor={insertAtCursor}>{buttonContent}</component.insert> :
@@ -28,15 +27,15 @@ function ComponentsBlock({components, insertAtCursor} : { components : Insertabl
                           insertAtCursor(
                             `<${component.tag}${component.attributes ? ' ' + Object.keys(component.attributes).map((key) => `${key}="${component.attributes[key]}"`).join(' ') : ''}></${component.tag}>`,
                           )
-                      }}>
-                        {buttonContent}
-                      </div>
-                    }
+                        }}>
+                          {buttonContent}
+                        </div>
+                      }
                   </div>
-              </Col>
+              </div>
             );
           },
         )}
-      </Grid>
-    )
-  } 
+      </div>
+    );
+} 

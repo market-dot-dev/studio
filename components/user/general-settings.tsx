@@ -1,5 +1,8 @@
 "use client";
-import { Flex, Card, TextInput, Button } from "@tremor/react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
@@ -24,15 +27,10 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
 
   return (
     <>
-      <Flex flexDirection="col" alignItems="start" className="w-full space-y-6">
-        <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Name
-          </label>
-          <TextInput
+      <div className="flex flex-col items-start w-full space-y-6">
+        <div className="flex flex-col items-start w-1/2 gap-1.5">
+          <Label htmlFor="name">Name</Label>
+          <Input
             placeholder=""
             name="name"
             id="name"
@@ -41,16 +39,11 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
               setUserData({ ...userData, name: e.target.value });
             }}
           />
-        </Flex>
+        </div>
 
-        <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Email
-          </label>
-          <TextInput
+        <div className="flex flex-col items-start w-1/2 gap-1.5">
+          <Label htmlFor="email">Email</Label>
+          <Input
             placeholder=""
             type="email"
             name="email"
@@ -60,12 +53,17 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
               setUserData({ ...userData, email: e.target.value });
             }}
           />
-        </Flex>
+        </div>
 
-        <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>
+        <Button 
+          loading={isSaving} 
+          loadingText="Saving Changes"
+          disabled={isSaving} 
+          onClick={saveChanges}
+        >
           Save Changes
         </Button>
-      </Flex>
+      </div>
     </>
   );
 }

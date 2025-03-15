@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import LoadingDots from "@/components/icons/loading-dots";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function LocalAuthButton() {
   const [loading, setLoading] = useState(false);
@@ -47,47 +49,39 @@ export default function LocalAuthButton() {
 
   return (
     <form onSubmit={handleSignIn} className="space-y-4">
-      <div>
-        <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="username">
           GitHub Username
-        </label>
-        <input
+        </Label>
+        <Input
           id="username"
           name="username"
           type="text"
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          className="w-full"
           placeholder="Enter any GitHub username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
-      <div>
-        <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="password">
           Password
-        </label>
-        <input
+        </Label>
+        <Input
           id="password"
           name="password"
           type="password"
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          className="w-full"
           placeholder="Enter the local auth password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
-      <button
-        type="submit"
-        disabled={loading}
-        className={`group my-2 flex w-full items-center justify-center rounded-md border border-stone-200 px-4 py-2 text-sm font-medium text-stone-600 transition-colors duration-75 focus:outline-none ${
-          loading
-            ? "cursor-not-allowed bg-stone-50 dark:bg-stone-800"
-            : "bg-white hover:bg-stone-50 active:bg-stone-100 dark:bg-black dark:hover:border-white dark:hover:bg-black"
-        }`}
-      >
-        {loading ? <LoadingDots color="#A8A29E" /> : "Sign in with Local Auth"}
-      </button>
+      <Button type="submit" disabled={loading} loading={loading} className="w-full">
+        Sign in with Local Auth
+      </Button>
     </form>
   );
 }

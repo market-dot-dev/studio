@@ -1,10 +1,9 @@
 'use client'
-import { TextInput, Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { addUserToWaitlist } from "@/lib/waitlist/actions";
 import { useState } from "react";
 import Link from "next/link";
-import { set } from "date-fns";
-
 
 export default function SimpleEmailInputForm(props: any) {
 
@@ -70,10 +69,10 @@ export default function SimpleEmailInputForm(props: any) {
 
     return (
         <>
-        <div className="md:flex md:inline-flex gap-2 p-1 items-center">
-            <TextInput placeholder={props.placeholder ?? ""} onChange={(e) => setEmail(e.target.value)} />
+        <div className="md:flex gap-2 p-1 items-center">
+            <Input placeholder={props.placeholder ?? ""} onChange={(e) => setEmail(e.target.value)} />
             <div className="text-center">
-                <Button className="mt-1 md:mt-0" color="slate" size="md" onClick={onSubmit}>
+                <Button className="mt-1 md:mt-0" onClick={onSubmit}>
                     {buttonLabel}
                 </Button>
             </div>

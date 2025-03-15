@@ -11,7 +11,6 @@ import {
 } from "@tremor/react";
 import React from "react";
 import Tier from "@/app/models/Tier";
-import DashboardCard from "@/components/common/dashboard-card";
 import { formatDate } from "@/lib/utils";
 import Link from "next/link";
 
@@ -58,7 +57,6 @@ export const ProspectsTable: React.FC<{
 
   return (
     <>
-      <DashboardCard>
         <Table>
           <TableHead>
             <TableRow>
@@ -81,7 +79,6 @@ export const ProspectsTable: React.FC<{
           </TableHead>
           <TableBody>{visibleRows}</TableBody>
         </Table>
-      </DashboardCard>
       {!showAll && maxInitialRows && rows?.length && rows.length > maxInitialRows && (
         <div className="grid justify-items-end">
           <Link href="/prospects">

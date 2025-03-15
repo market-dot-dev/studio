@@ -2,9 +2,11 @@ import PageHeading from "@/components/common/page-heading";
 import { Feature } from "@prisma/client";
 import FeatureService from "@/app/services/feature-service";
 import prisma from "@/lib/prisma";
-import LinkButton from "@/components/common/link-button";
+import Link from 'next/link';
+import { buttonVariants } from "@/components/ui/button";
 import UserService from "@/app/services/UserService";
 import { CheckSquare2 as CheckSquare } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 import ChargeService from "@/app/services/charge-service";
 import TierService from "@/app/services/TierService";
@@ -21,13 +23,12 @@ const formatFeatureLink = async (feature: Feature) => {
     : feature.uri;
 
   return (
-    <>
-      <LinkButton
-        disabled={!feature.isEnabled}
-        href={uri || ""}
-        label={feature.name || service.name}
-      />
-    </>
+    <Link
+      href={uri || ""}
+      className={cn(buttonVariants({ variant: "default" }), feature.isEnabled && 'opacity-50 cursor-not-allowed')}
+    >
+      {feature.name || service.name}
+    </Link>
   );
 };
 
@@ -47,7 +48,7 @@ const FeatureAction = async ({ feature }: { feature: Feature }) => {
           </div>
         </div>
       </div>
-      <div>{button}</div>
+      {button}
     </div>
   );
 };

@@ -44,10 +44,8 @@ export default function SettingsNav() {
           href={item.href}
           // Change style depending on whether the link is active
           className={cn(
-            "rounded-md px-2 py-1 text-sm font-medium transition-colors active:bg-stone-200 dark:active:bg-stone-600",
-            segment === item.segment
-              ? "bg-stone-100 text-stone-600 dark:bg-stone-800 dark:text-stone-400"
-              : "text-stone-600 hover:bg-stone-100 dark:text-stone-400 dark:hover:bg-stone-800",
+            "rounded px-2 py-1 text-sm font-medium transition-colors active:bg-stone-200 dark:active:bg-stone-600",
+            segment === item.segment ? "bg-stone-200 text-stone-800" : "text-stone-600 hover:bg-stone-200",
           )}
         >
           {item.name}

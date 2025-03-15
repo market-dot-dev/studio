@@ -1,7 +1,7 @@
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
-import SiteAdmin from "../../../../../components/site/site-admin";
+import SiteAdmin from "@/components/site/site-admin";
 
 async function SitePage({
   params,
@@ -16,9 +16,7 @@ async function SitePage({
   
 
   return (
-    <>
     <SiteAdmin id={params.id} />
-    </>
   );
 }
 

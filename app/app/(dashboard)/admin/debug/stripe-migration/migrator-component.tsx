@@ -5,6 +5,7 @@ import { Check } from "lucide-react";
 import StripeCustomerMigrator from "./stripe-customer-migrator";
 import { LegacyProduct, Subscription, Tier, User } from "@prisma/client";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
 
 type LegacyProductWithExtra = LegacyProduct & {
   subscription: Subscription & { user: User };
@@ -31,12 +32,11 @@ const MigratorComponent = ({
         </div>
       </div>
       <div>
-        <input
+        <Input
           id="password"
           name="password"
           type="password"
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           placeholder="Enter the stripe private key"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

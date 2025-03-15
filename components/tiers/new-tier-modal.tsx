@@ -1,12 +1,12 @@
 'use client'
 
 import { categorizedTiers } from "@/lib/constants/tiers/default-tiers"
-import { Button, Title, Text } from "@tremor/react"
+import { Button } from "@/components/ui/button";
 import TierCard from "./tier-card"
 import { useCallback, useState } from "react";
 import { createTemplateTier } from "@/app/services/TierService";
 import { useModal } from "../modal/provider";
-import { X, CheckSquare2 as CheckSquare, Square, Plus } from 'lucide-react';
+import { CheckSquare2 as CheckSquare, Square, Plus } from 'lucide-react';
 
 
 export default function NewTierModal({ children, multiple }: { children: React.ReactNode, multiple?: boolean }) {
@@ -17,13 +17,13 @@ export default function NewTierModal({ children, multiple }: { children: React.R
 	// }, []);
 
 	const header = (
-			<Title>Create{multiple ? '' : ' a'} new package{multiple ? 's' : ''}</Title>
-	)
+    <h2 className="text-xl font-bold">Create{multiple ? '' : ' a'} new package{multiple ? 's' : ''}</h2>
+  );
     const showModal = () => {
         show(<TiersTemplatesModal hide={hide} multiple={multiple} />, undefined, undefined, header, 'w-full md:w-5/6 max-h-[80vh]');
     };
     return (
-        <Button size="xs" onClick={showModal}>{children}</Button>
+        <Button onClick={showModal}>{children}</Button>
     )
 }
 
@@ -110,7 +110,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
       <div className="flex grow flex-col items-stretch justify-start gap-4 overflow-auto">
         {categorizedTiers.map((category, cIndex) => (
           <div className="flex flex-col gap-4 p-4" key={cIndex}>
-            <Title>{category.name}</Title>
+            <h2 className="text-xl font-bold">{category.name}</h2>
             <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {category.tiers.map(({ metaDescription, data: tier }, index) => {
                 const determinedIndex = determineIndex(cIndex, index);
@@ -139,9 +139,9 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
                       </div>
                     ) : null}
                     <div className="flex aspect-[3/2] flex-col justify-between gap-4 overflow-hidden px-5 pt-4">
-                      <Text className="text-xs text-stone-600">
+                      <p className="text-sm text-stone-500">
                         {metaDescription}
-                      </Text>
+                      </p>
                       <svg
                         className="aspect-[100/56] w-full"
                         fill="none"
@@ -162,8 +162,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
                     {!multiple && (
                       <div className="absolute left-0 top-0 flex h-full w-full cursor-default items-center justify-center bg-white bg-opacity-50 opacity-0 transition-opacity group-hover:opacity-100">
                         <Button
-                          size="xs"
-                          className="h-10 w-10 bg-stone-800 transition-all hover:scale-105"
+                          size="icon"
                           onClick={() => {
                             createSingleTemplateTier(determinedIndex);
                           }}
@@ -196,8 +195,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
             <ProgressBar done={done} total={total} label={"Creating " + noun} />
           ) : (
             <Button
-              size="xs"
-              className="h-10 w-10 bg-stone-900 hover:scale-105 transition-all"
+              size="icon"
               onClick={() => createTemplateTiers()}
               disabled={selected.length === 0}
             >

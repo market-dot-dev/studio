@@ -1,6 +1,6 @@
 "use client";
 
-import { Text, Bold, Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { useCallback, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { dismissOnboarding } from "@/app/services/onboarding/OnboardingService";
@@ -99,7 +99,7 @@ function TodoItem({
   if (variant === "mini") {
     return (
       <div
-        className="group bg-white rounded shadow-border flex w-full cursor-pointer items-center justify-between p-1 pl-1.5 text-xs font-medium text-stone-900 hover:bg-stone-50 transition-colors"
+        className="group bg-white rounded shadow-border flex w-full cursor-pointer items-center justify-between p-1 pl-1.5 text-xs font-medium text-stone-800 hover:bg-stone-50 transition-colors"
         onClick={navigateToStep}
       >
         <div className="flex items-center gap-[7px]">
@@ -128,28 +128,28 @@ function TodoItem({
         </div>
         <div className="flex flex-col lg:flex-row w-full items-start lg:items-center justify-between gap-x-8 gap-y-1">
           <div className="flex flex-col items-start">
-            <Bold
+            <strong 
               className={clsx(
-                "w-fit text-sm cursor-pointer",
-                completed ? "text-stone-500" : "text-stone-800 hover:text-stone-600",
+                "new-bold-tag w-fit text-sm cursor-pointer",
+                completed ? "text-stone-500" : "text-stone-800 hover:text-stone-700",
               )}
               onClick={navigateToStep}
             >
               {stepTitle}
-            </Bold>
-            {!completed && <Text className="text-pretty">{stepDescription}</Text>}
+            </strong>
+            {!completed && <p className="text-sm text-stone-500 text-pretty">{stepDescription}</p>}
           </div>
           {!completed && (
             <Button
-              size="xs"
-              variant="secondary"
-              className="group w-fit border-black/[12%] bg-white py-1 my-1 pr-1.5 transition-colors"
+              size="sm"
+              variant="outline"
+              className="group w-fit pr-1 gap-[3px]"
               onClick={navigateToStep}
             >
               <span>{stepTitle}</span>
               <ChevronRight
                 size={16}
-                className="mb-0.5 ml-0.5 inline-block transition-transform group-hover:translate-x-px"
+                className="inline-block transition-transform group-hover:translate-x-px"
               />
             </Button>
           )}
@@ -234,11 +234,12 @@ export default function OnboardingChecklist({ variant = "default" }: { variant?:
 
         <div className="m-0 flex justify-end">
           <Button
-            variant="light"
+            variant="ghost"
+            size="icon"
             onClick={dismissChecklist}
-            className="group -m-1 rounded p-1 text-sm underline transition-colors hover:bg-black/5"
+            className="group -m-1 hover:bg-black/5 h-6 w-6"
           >
-            <X size={16} className="text-stone-500" />
+            <X size={16} className="!size-4 text-stone-500" />
           </Button>
         </div>
       </div>

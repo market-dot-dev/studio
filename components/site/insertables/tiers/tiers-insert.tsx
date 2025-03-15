@@ -1,9 +1,11 @@
 'use client';
+
 import { useModal } from "@/components/modal/provider";
 import { useState, useEffect, useCallback } from "react";
-import { Button, Flex,  Title, Text } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { getPublishedTiers } from "@/app/services/TierService";
 import LoadingSpinner from "@/components/form/loading-spinner";
+import { Checkbox } from "@/components/ui/checkbox";
 
 type TierProps = {
     id: string;
@@ -28,55 +30,46 @@ function TiersInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     }, []);
 
     return (
-        
-            
-            <Flex flexDirection="col" alignItems="start" justifyContent="between" className="grow gap-2 p-4">
-                <Flex flexDirection="col" alignItems="stretch" justifyContent="start" className="grow gap-2">
-                    
-                    {
-                    tiers ?
-                        tiers.length ? tiers.map((tier: TierProps) => {
-                            return (
-                            
-                                <Flex key={tier.id} className="gap-2" justifyContent="start">
-                                <input
-                                    type="checkbox"
-                                    checked={ selectedTiers?.includes(tier.id) }
-                                    onChange={(e) => {
+        <div className="flex flex-col items-start justify-between grow gap-2 p-4">
+            <div className="flex flex-col items-stretch justify-start grow gap-2">
+                {tiers ? (
+
+                    tiers.length ? tiers.map((tier: TierProps) => {
+                        return (
+                            <Checkbox
+                                key={tier.id}
+                                id={`tier-${tier.id}`}
+                                label={tier.name}
+                                checked={selectedTiers?.includes(tier.id)}
+                                onCheckedChange={(checked) => {
                                     setSelectedTiers((tiers: any) => {
-                                        if(e.target.checked) {
+                                        if(checked) {
                                             return [...tiers, tier.id]
                                         } else {
                                             return tiers.filter((id: string) => id !== tier.id);
                                         }
                                     })
-                                    }} 
-                                    />
-                                <Text>{tier.name}</Text>
-                                </Flex>
-
-                            )
-                            })
-                            : <Text>No tiers found</Text>
-                        : 
-                        
+                                }}
+                            />
+                        )}) : <p className="text-sm text-stone-500">No tiers found</p>
+                    ) : (
                         <LoadingSpinner />
-                    }
-                </Flex>
-                <Button onClick={handleInsertTiers} disabled={!tiers}>Insert</Button>
-            </Flex>
-            
-            
-        
+                    )
+                }
+            </div>
+            <Button onClick={handleInsertTiers} disabled={!tiers}>Insert</Button>
+        </div>
     )
 }
 
 export default function TiersInsert({ insertAtCursor, children }: { insertAtCursor: (prop: any) => void, children: any}) {
     const { show, hide } = useModal();
     const showModal = () => {
-        const modalHeader = <div className="grow">
-            <Title>Select Tiers to be displayed</Title>
-        </div>
+        const modalHeader = (
+          <div className="grow">
+            <h2 className="text-xl font-bold">Pick Tiers to show</h2>
+          </div>
+        );
         show(<TiersInsertModal insertAtCursor={insertAtCursor} hide={hide} />, undefined, undefined, modalHeader, 'w-1/4 min-h-[50vh]');
     };
     return (

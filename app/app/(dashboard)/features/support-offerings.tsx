@@ -3,7 +3,8 @@
 import { Service, Feature } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import FeatureForm from '@/components/form/feature-form';
-import { Badge, Button, Title } from '@tremor/react';
+import { Button } from '@/components/ui/button';
+import { Badge } from "@/components/ui/badge";
 import { useModal } from "@/components/modal/provider";
 
 import {
@@ -144,11 +145,11 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
         
         {currentFeatureEnabled ? 
           <div className="flex justify-between items-center w-full">
-            <Button size="xs" variant="secondary" onClick={handleClick}>Configure</Button> 
-            <Badge size="xs" color="green">Enabled</Badge>
+            <Button size="sm" variant="secondary" onClick={handleClick}>Configure</Button> 
+            <Badge size="sm" variant="success">Enabled</Badge>
           </div>
           : 
-          <Button size="xs" variant="primary" onClick={handleClick}>Enable</Button>
+          <Button size="sm" onClick={handleClick}>Enable</Button>
         }
       </div>
       
@@ -175,11 +176,15 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
     if (selectedService) {
       const feature = featuresList.find((f) => f.serviceId === selectedService.id);
       const modalHeader = (
-          <div className="flex justify-between items-center grow">
-            <Title>Details</Title>
-            { feature?.isEnabled ? <Badge size="xs" color="green">Enabled</Badge> : null }
-          </div>
-        )
+        <div className="flex grow items-center justify-between">
+          <h2 className="text-xl font-bold">Details</h2>
+          {feature?.isEnabled ? (
+            <Badge size="sm" variant="success">
+              Enabled
+            </Badge>
+          ) : null}
+        </div>
+      );
       show(
         <FeatureForm initialFeature={feature} service={selectedService} onSuccess={handleFeatureSuccess} requiresUri={selectedService.requiresUri} hide={hide} />,
         () => setSelectedService(null),

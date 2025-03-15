@@ -1,6 +1,5 @@
 import PageHeading from "@/components/common/page-heading";
 import TierService from "@/app/services/TierService";
-import { Badge, Text } from "@tremor/react";
 import { Pencil } from "lucide-react";
 import Link from "next/link";
 import TierCard from "@/components/tiers/tier-card";
@@ -8,6 +7,7 @@ import SessionService from "@/app/services/SessionService";
 import FeatureService from "@/app/services/feature-service";
 import TiersEmptyState from "./empty-state";
 import NewTierModal from "@/components/tiers/new-tier-modal";
+import CopyCheckoutLinkButton from "@/components/tiers/copy-checkout-link-button";
 import clsx from "clsx";
 
 export default async function Tiers() {
@@ -22,10 +22,10 @@ export default async function Tiers() {
   const tiersDashboardTitleArea = (
     <div className="flex flex-col">
       <PageHeading title="Packages" />
-      <Text>
+      <p className="text-sm text-stone-500">
         Packages are what you sell to your customers. You can inlcude them on
         your website or send them to customers directly using a checkout link.
-      </Text>
+      </p>
     </div>
   );
   return (
@@ -53,34 +53,40 @@ export default async function Tiers() {
               {tiers.map((tier, index) => (
                 <div
                   key={index}
-                  className="flex flex-col gap-4 rounded-2xl bg-stone-100 text-center"
+                  className="flex flex-col gap-4 rounded-xl border bg-stone-200/25 text-center"
                 >
                   <div className="flex items-center justify-between gap-4 p-3 pl-5">
                     <div className="flex items-center gap-2">
                       <span
                         className={clsx(
-                          "h-2 w-2 rounded-full ring-1 ring-inset ring-black/5",
-                          tier.published ? "bg-emerald-600" : "bg-stone-400",
+                          "h-[7px] w-[7px] rounded-full",
+                          tier.published ? "bg-lime-700" : "bg-stone-400",
                         )}
                       ></span>
                       <p
                         className={clsx(
                           "text-sm font-medium",
-                          tier.published
-                            ? "text-emerald-700"
-                            : "text-stone-500",
+                          tier.published ? "text-lime-700" : "text-stone-500",
                         )}
                       >
-                        {tier.published ? "Active" : "Inactive"}
+                        {tier.published ? "Published" : "Draft"}
                       </p>
                     </div>
-                    <Link
-                      href={`tiers/${tier.id}`}
-                      className="flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
-                    >
-                      <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
-                      Edit
-                    </Link>
+                    <div className="flex items-center gap-1">
+                      {tier.published && (
+                        <>
+                          <CopyCheckoutLinkButton tierId={tier.id} />
+                          <span className="h-3 border-r border-stone-300" />
+                        </>
+                      )}
+                      <Link
+                        href={`tiers/${tier.id}`}
+                        className="flex items-center gap-1.5 rounded px-1.5 py-0.5 text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
+                      >
+                        <Pencil className="h-3.5 w-3.5" strokeWidth={2.25} />
+                        Edit
+                      </Link>
+                    </div>
                   </div>
                   <div className="flex h-full items-center justify-center p-6 pb-10 pt-0">
                     <TierCard

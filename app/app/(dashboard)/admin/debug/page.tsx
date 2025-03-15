@@ -1,18 +1,20 @@
 "use server";
 
+import Link from 'next/link';
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
 import RoleSwitcher from "@/components/user/role-switcher";
-import { Card, Table, TableBody, TableCell, TableHead, TableHeaderCell, TableRow } from "@tremor/react";
-import LinkButton from "@/components/common/link-button";
+import { Card } from "@/components/ui/card"
+import { columns, DebugLink } from "./columns";
+import { DataTable } from "./data-table";
 
-const StripeDebug = async () => {
+const Debug = async () => {
   const user = await UserService.getCurrentUser();
   if(!user || !(user.roleId === "admin")) {
     return <div>Not logged in</div>;
   }
 
-  const debugLinks = [
+  const debugLinks: DebugLink[] = [
     { name: "View All Users", href: "/admin/debug/users" },
     { name: "Bulk Email Tool", href: "/admin/debug/email" },
     { name: "Onboarding State", href: "/admin/debug/onboarding" },
@@ -25,40 +27,25 @@ const StripeDebug = async () => {
     { name: "Sentry Example", href: "/admin/debug/sentry-example-page" },
   ];
 
+  // Add the role switcher as a special row that will be handled separately
+  const roleSwitcherRow = { name: "Switch Role", href: "#" };
+
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
-      <div className="flex justify-between w-full">
+    <div className="flex max-w-screen-xl flex-col space-y-8">
+      <div className="flex w-full justify-between">
         <PageHeading title="Debug Tools" />
       </div>
+
+      <DataTable columns={columns} data={debugLinks} />
       
-      <Card>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableHeaderCell>Debug Tool</TableHeaderCell>
-              <TableHeaderCell>Action</TableHeaderCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {debugLinks.map((link) => (
-              <TableRow key={link.href}>
-                <TableCell>{link.name}</TableCell>
-                <TableCell>
-                  <LinkButton href={link.href} label="View" className="w-24" />
-                </TableCell>
-              </TableRow>
-            ))}
-            <TableRow>
-              <TableCell>Switch Role</TableCell>
-              <TableCell>
-                <RoleSwitcher />
-              </TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-      </Card>
+      <div className="mt-4 border-t pt-4">
+        <div className="flex items-center justify-between">
+          <div className="font-medium">Switch Role</div>
+          <RoleSwitcher />
+        </div>
+      </div>
     </div>
   );
 };
 
-export default StripeDebug;
+export default Debug;

@@ -1,4 +1,4 @@
-import { Flex, Text, Button } from "@tremor/react";
+import { buttonVariants } from "@/components/ui/button";
 import PageHeading from "@/components/common/page-heading";
 import { getCurrentUser } from "@/app/services/UserService";
 import ConnectionRequired from "@/components/channels/market/connection-required";
@@ -14,7 +14,7 @@ export default async function MarketChannel() {
   const isConnectedToMarket = currentUser.marketExpertId != null;
 
   return (
-    <Flex flexDirection="col" alignItems="start" className="w-full gap-6">
+    <div className="flex w-full flex-col items-start gap-6">
       <PageHeading title="explore.market.dev" />
 
       {!isConnectedToMarket ? (
@@ -22,8 +22,9 @@ export default async function MarketChannel() {
       ) : (
         <div className="flex w-full flex-col gap-4">
           <div className="flex w-full items-center justify-between">
-            <Text className="text-black">
-              You have an expert profile on explore.market.dev, and can use it to advertise products and services to sell.{" "}
+            <p className="text-sm text-black">
+              You have an expert profile on explore.market.dev, and can use it
+              to advertise products and services to sell.{" "}
               <Link
                 className="underline"
                 href={`${process.env.NEXT_PUBLIC_MARKET_DEV_BASE_URL}/experts/${currentUser.gh_username}`}
@@ -31,10 +32,10 @@ export default async function MarketChannel() {
               >
                 Check it out
               </Link>
-            </Text>
+            </p>
 
-            <Link href="/tiers">
-              <Button className="bg-black">Manage packages</Button>
+            <Link href="/tiers" className={buttonVariants({ variant: 'default' })}>
+              Manage packages
             </Link>
           </div>
           <MarketPreview
@@ -43,6 +44,6 @@ export default async function MarketChannel() {
           />
         </div>
       )}
-    </Flex>
+    </div>
   );
 }

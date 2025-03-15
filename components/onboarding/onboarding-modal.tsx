@@ -9,7 +9,7 @@ import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { toast } from "sonner";
 import LoadingDots from "../icons/loading-dots";
 import { AlertCircleIcon } from "lucide-react";
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { validateMarketExpert } from "@/lib/market";
 
 function useMounted() {
@@ -75,10 +75,7 @@ export default function OnboardingModal({
         <div className="flex h-full w-full flex-col items-center justify-center gap-4">
           <AlertCircleIcon className="h-5 w-5" />
           <p className="text-md">{validateMarketExpertError}</p>
-          <Button
-            className="bg-gray-900 text-white hover:bg-gray-800"
-            onClick={() => window.location.reload()}
-          >
+          <Button onClick={() => window.location.reload()}>
             Try again
           </Button>
         </div>

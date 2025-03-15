@@ -1,9 +1,9 @@
 "use client";
-import { Title, Flex, Grid, Col } from "@tremor/react";
+
 import { useEffect, useState } from "react";
 import embedables from "../site/embedables";
 import CodeSnippet from "./code-snippet";
-import DashboardCard from "../common/dashboard-card";
+import { Card } from "@/components/ui/card"
 
 export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
   const [settings, setSettings] = useState({} as any);
@@ -22,17 +22,13 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
   }, []);
 
   return (
-    <Flex flexDirection="col" alignItems="stretch" className="gap-4">
-      <Title className="mt-6">{embedables[index].name}</Title>
-      <Grid numItems={1} className="gap-8">
-        <Col numColSpan={1}>
-          <Flex
-            className="w-full gap-6"
-            alignItems="stretch"
-            justifyContent="start"
-          >
-            <DashboardCard className="w-3/4">
-              <Flex flexDirection="col" className="grow gap-6">
+    <div className="flex flex-col items-stretch gap-4">
+      <h2 className="mt-6 text-xl font-bold">{embedables[index].name}</h2>
+      <div className="grid gap-8">
+        <div className="col-span-1">
+          <div className="flex w-full items-stretch justify-start gap-6">
+            <Card className="w-3/4">
+              <div className="flex grow flex-col gap-6">
                 {previewProps ? (
                   <Component
                     site={site}
@@ -45,24 +41,19 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
                 <CodeSnippet
                   code={
                     `<script 
-  data-domain='${domain}' 
-  data-widget='${index}'
-  ` +
+                    data-domain='${domain}' 
+                    data-widget='${index}'
+                    ` +
                     (Object.keys(settings)?.length
                       ? `data-settings='${JSON.stringify(settings, null, 6)}'`
                       : "") +
                     ` src='//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js'></script>`
                   }
                 />
-              </Flex>
-            </DashboardCard>
-            <Flex
-              flexDirection="col"
-              alignItems="start"
-              className="w-1/4 gap-4"
-              justifyContent="start"
-            >
-              <Title>Embed Configuration</Title>
+              </div>
+            </Card>
+            <div className="flex w-1/4 flex-col items-start justify-start gap-4">
+              <h2 className="text-xl font-bold">Embed Configuration</h2>
               {previewProps ? (
                 <Settings
                   settings={settings}
@@ -70,10 +61,11 @@ export default function EmbedItem({ site, index, hasActiveFeatures }: any) {
                   {...previewProps}
                 />
               ) : null}
-            </Flex>
-          </Flex>
-        </Col>
-      </Grid>
-    </Flex>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
+

@@ -1,8 +1,7 @@
 "use client";
 
-import { Button, Text, Title } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import LoadingDots from "@/components/icons/loading-dots";
 import { useModal } from "@/components/modal/provider";
 import { destroyContract } from "@/app/services/contract-service";
 
@@ -14,40 +13,63 @@ const ContractDeleteButton = ({ contractId, onConfirm, onSuccess, onError }: { c
   const showWarning = (e: any) => {
 	e.preventDefault();
 	e.stopPropagation();
-  const modalHeader = <Title>Delete Contract</Title>
+  const modalHeader = <h2 className="text-xl font-bold">Delete Contract</h2>
     show(
-        <div className="flex flex-col gap-12 p-6">
-          <Text>Are you sure, you want to delete this contract?</Text>
-          <div className="flex gap-4">
-           <Button size="xs" className="w-min" variant="primary" color="red" onClick={async() => {
-            setLoading(true);
-			onConfirm();
-            destroyContract(contractId).
-				then(() => {
-					hide();
-					onSuccess();
-				})
-				.catch((error) => {
-					onError(error)
-				}).
-				finally(() => {
-					setLoading(false)
-					hide();
-				});
-          }} >
-            {loading ? <>Deleting Contract&nbsp;<LoadingDots color="#A8A29E" /></> : "Delete Contract"}
+      <div className="flex flex-col gap-12 p-6">
+        <p className="text-sm text-stone-500">
+          Are you sure, you want to delete this contract?
+        </p>
+        <div className="flex gap-4">
+          <Button
+            size="sm"
+            variant="destructive"
+            loading={loading}
+            loadingText="Deleting contract"
+            className="w-min"
+            onClick={async () => {
+              setLoading(true);
+              onConfirm();
+              destroyContract(contractId)
+                .then(() => {
+                  hide();
+                  onSuccess();
+                })
+                .catch((error) => {
+                  onError(error);
+                })
+                .finally(() => {
+                  setLoading(false);
+                  hide();
+                });
+            }}
+          >
+            Delete contract
           </Button>
-          <Button size="xs" className="w-min" variant="secondary" onClick={hide}>No, Keep Contract</Button>
-          </div>
-        </div>,
-        hide,
-        true, // ignoreFocusTrap
-        modalHeader,
-        'w-full md:w-2/3 lg:w-1/2'
+          <Button
+            size="sm"
+            variant="outline"
+            className="w-min"
+            onClick={hide}
+          >
+            No, keep contract
+          </Button>
+        </div>
+      </div>,
+      hide,
+      true, // ignoreFocusTrap
+      modalHeader,
+      "w-full md:w-2/3 lg:w-1/2",
     );
 }
   return (
-    <Button size="xs" className="w-min" variant="primary" color="red" onClick={showWarning}>Delete</Button>
+    <Button 
+      size="sm" 
+      className="w-min" 
+      variant="destructive" 
+      onClick={showWarning}
+    >
+      Delete
+    </Button>
   );
 }
 

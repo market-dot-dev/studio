@@ -4,7 +4,7 @@
 import UserService from "@/app/services/UserService";
 import UserAccountWidget from "@/components/payments/user-account-widget";
 import TierService from "@/app/services/TierService";
-import { Card } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 //import UserPaymentMethodWidgetWrapper from "@/components/common/user-payment-method-widget";
 //import TierPriceWidget from "@/components/payments/tier-price-widget";
 
@@ -21,7 +21,7 @@ const StripeDebug = async () => {
   return (
     <div className="px-3">
       <h1>Stripe Debug</h1>
-      <Card decoration="top" decorationColor="indigo">
+      <Card className="p-6">
         <h2>Customer</h2>
         <h2>Customer ID (for buying subscriptions)</h2>
         {/* <UserCustomerWidget user={user} /> */}
@@ -32,7 +32,7 @@ const StripeDebug = async () => {
 
       <br/>
 
-      <Card decoration="top" decorationColor="indigo">
+      <Card className="p-6">
         <h2>Maintainer</h2>
 
         {/*
@@ -45,7 +45,7 @@ const StripeDebug = async () => {
 
       { tiers.map((tier) => (
         <div key={tier.id}>
-          <Card>
+          <Card className="p-6">
             <h2>{tier.name} | {tier.price}</h2>
             { /* <TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } /> */ }
           </Card>

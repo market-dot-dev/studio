@@ -1,9 +1,10 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { TierWithFeatures, updateApplicationFee } from '@/app/services/TierService';
-import { Button, NumberInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { GLOBAL_APPLICATION_FEE_DOLLARS, GLOBAL_APPLICATION_FEE_PCT } from '@/app/config/stripe-fees';
 import { calculateApplicationFee } from '@/app/services/StripeService';
+import { Input } from "@/components/ui/input";
 
 export default function TierForm({ tier }: { tier: TierWithFeatures; }) {
   const [applicationFeePercent, setApplicationFeePercent] = useState(tier.applicationFeePercent || 0);
@@ -21,45 +22,56 @@ export default function TierForm({ tier }: { tier: TierWithFeatures; }) {
   }, [applicationFeePercent, applicationFeePrice]);
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="mb-4">
-        NB: These are on top of the global fees ({GLOBAL_APPLICATION_FEE_DOLLARS || 0} USD + {GLOBAL_APPLICATION_FEE_PCT || 0}%)
-        <br/>
-        So for a 100 USD payment, the total would be {examplePrice} USD
-      </div>
-      <div className="mb-4">
-        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
+    <form onSubmit={handleSubmit} className='space-y-6'>
+      <div>
+        <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
           Application fee (%)&nbsp;
         </label>
-        <NumberInput
+        <Input
           id="applicationFeePercent"
+          name="applicationFeePercent"
+          type="number"
           placeholder="Enter a percentage (0-100)"
           required
-          name="applicationFeePercent"
           disabled={false}
-          enableStepper={false}
-          error={!!tier.applicationFeePercent && tier.applicationFeePercent >= 100}
-          errorMessage={`Your fee cannot be more than 100%`}
           value={applicationFeePercent}
-          onValueChange={(value) => setApplicationFeePercent(value)}
+          min={0}
+          onChange={(e) => setApplicationFeePercent(Number(e.target.value))}
+          className={
+            !!applicationFeePercent && applicationFeePercent >= 100
+              ? "border-red-500"
+              : ""
+          }
         />
+        {!!applicationFeePercent && applicationFeePercent >= 100 && (
+          <p className="mt-1 text-sm text-red-500">
+            Your fee cannot be more than 100%
+          </p>
+        )}
       </div>
-      <div className="mb-4">
-        <label className="block mb-0.5 text-sm font-medium text-gray-900 dark:text-white">
+      <div>
+        <label className="mb-0.5 block text-sm font-medium text-gray-900 dark:text-white">
           Application fee price ($)&nbsp;
         </label>
-        <NumberInput
+        <Input
           id="applicationFeePrice"
+          name="applicationFeePrice"
+          type="number"
           placeholder="Enter a price in dollars"
           required
-          name="applicationFeePrice"
           disabled={false}
-          enableStepper={false}
           value={applicationFeePrice}
-          onValueChange={(value) => setApplicationFeePrice(value)}
+          onChange={(e) => setApplicationFeePrice(Number(e.target.value))}
         />
       </div>
       <Button type="submit">Save</Button>
+      <div className="mb-6 text-sm text-gray-500">
+        NB: These are on top of the global fees (
+        {GLOBAL_APPLICATION_FEE_DOLLARS || 0} USD +{" "}
+        {GLOBAL_APPLICATION_FEE_PCT || 0}%)
+        <br />
+        So for a 100 USD payment, the total would be {examplePrice} USD
+      </div>
     </form>
   );
 }

@@ -1,5 +1,8 @@
 "use client";
-import { Flex, Text, TextInput, Button } from "@tremor/react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Site } from "@prisma/client";
 import Link from "next/link";
 import { useState } from "react";
@@ -41,71 +44,64 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
   const siteURL = `https://` + site.subdomain + `.market.dev`;
 
   return (
-    <>
-      <form onSubmit={handleSubmit}>
-        <Flex
-          flexDirection="col"
-          alignItems="start"
-          className="w-full space-y-6"
-        >
-          <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-            <label
-              htmlFor="subdomain"
-              className="block text-sm font-medium text-gray-700"
-            >
+    <form onSubmit={handleSubmit}>
+      <div className="flex flex-col items-start w-full space-y-6">
+        <div className="flex flex-col items-start w-1/2 gap-2">
+          <div>
+            <Label htmlFor="subdomain" className="mb-0.5">
               Subdomain
-            </label>
-            <TextInput
-              placeholder="Your subdomain"
-              name="subdomain"
-              id="subdomain"
-              defaultValue={site.subdomain ?? ""}
-            />
-            <Text>
+            </Label>
+            <p className="text-xs text-stone-500">
               Your store will appear at{" "}
               <Link className="underline" href={siteURL}>
                 {siteURL}.
               </Link>
-            </Text>
-          </Flex>
-          <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Name
-            </label>
-            <TextInput
-              placeholder="Your store title"
-              name="name"
-              id="name"
-              defaultValue={site.name ?? ""}
-            />
-          </Flex>
-          <Flex flexDirection="col" alignItems="start" className="w-1/2 gap-2">
-            <label
-              htmlFor="logo"
-              className="block text-sm font-medium text-gray-700"
-            >
+            </p>
+          </div>
+          <Input
+            placeholder="Your subdomain"
+            name="subdomain"
+            id="subdomain"
+            defaultValue={site.subdomain ?? ""}
+          />
+        </div>
+        <div className="flex flex-col items-start w-1/2 gap-1.5">
+          <Label htmlFor="name">
+            Name
+          </Label>
+          <Input
+            placeholder="Your store title"
+            name="name"
+            id="name"
+            defaultValue={site.name ?? ""}
+          />
+        </div>
+        <div className="flex flex-col items-start w-1/2 gap-2">
+          <div>
+            <Label htmlFor="logo" className="mb-0.5">
               Logo
-            </label>
-            <Text>
+            </Label>
+            <p className="text-xs text-stone-500">
               Your store logo is used in your web storefront, for favicons and Open Graph
               images.
-            </Text>
+            </p>
+          </div>
 
-            <Uploader
-              defaultValue={site.logo ?? null}
-              name="logo"
-              setChanged={setChanged}
-            />
-          </Flex>
+          <Uploader
+            defaultValue={site.logo ?? null}
+            name="logo"
+            setChanged={setChanged}
+          />
+        </div>
 
-          <Button type="submit" loading={isSaving} disabled={isSaving}>
-            Save Changes
-          </Button>
-        </Flex>
-      </form>
-    </>
+        <Button 
+          type="submit" 
+          loading={isSaving}
+          loadingText="Saving Changes"
+        >
+          Save Changes
+        </Button>
+      </div>
+    </form>
   );
 }

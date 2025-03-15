@@ -2,15 +2,15 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Box, Text } from "@radix-ui/themes";
-import { EyeOpenIcon, CodeIcon, InfoCircledIcon, BorderSplitIcon } from "@radix-ui/react-icons";
+import { Info, Eye, Code, SquareSplitHorizontal, Maximize, Minimize } from "lucide-react";
+import clsx from "clsx";
 
 import renderElement from "./page-renderer";
 import { useRouter } from "next/navigation";
 
-import { Flex, Grid, Col, Badge, Callout, Button, Bold, TextInput, Card } from "@tremor/react";
-import DashboardCard from "../common/dashboard-card";
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
+import { Card } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   setHomepage,
   deletePage,
@@ -19,6 +19,17 @@ import {
 import { Page, Site } from "@prisma/client";
 import PageEditorSidebar from "./page-editor-sidebar";
 import { useFullscreen } from "../dashboard/dashboard-context";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 let debounceTimeout: any;
 
@@ -50,77 +61,15 @@ function TimedAlert({
     <>
       {showAlert ? (
         <>
-          <Callout title={message} icon={InfoCircledIcon}></Callout>
+          <Alert>
+            <Info />
+            <AlertDescription>{message}</AlertDescription>
+          </Alert>
         </>
       ) : null}
     </>
   );
 }
-const SelectOption = ({
-  value,
-  children,
-}: {
-  value: string;
-  children: React.ReactNode;
-}) => {
-  return <option value={value}>{children}</option>;
-};
-
-const SelectBox = ({
-  value,
-  children,
-  inProgress,
-  isDeleting,
-  handleChange,
-}: {
-  value: string;
-  children: React.ReactNode;
-  inProgress: boolean;
-  isDeleting: boolean;
-  handleChange?: (value: boolean) => void;
-}) => {
-  return (
-    <div className="flex max-w-sm items-center overflow-hidden rounded-lg border border-stone-600">
-      <select
-        name="font"
-        value={value}
-        className="w-full rounded-none border-none bg-white px-4 py-2 text-sm font-medium text-stone-700 focus:outline-none focus:ring-black dark:bg-black dark:text-stone-200 dark:focus:ring-white"
-        onChange={(e) => {
-          return handleChange && handleChange(e.target.value === "true");
-        }}
-        disabled={inProgress || isDeleting}
-      >
-        {children}
-      </select>
-    </div>
-  );
-};
-
-const DraftSelectBox = ({
-  inProgress,
-  isDeleting,
-  draft,
-  handleChange,
-}: {
-  inProgress: boolean;
-  isDeleting: boolean;
-  draft: boolean;
-  handleChange: (value: boolean) => void;
-}) => {
-  return (
-    <SelectBox
-      value={String(draft)} // Pass the current value
-      inProgress={inProgress}
-      isDeleting={isDeleting}
-      handleChange={handleChange}
-    >
-      <option value="false">Live</option>
-      <option value="true">Draft</option>
-    </SelectBox>
-  );
-};
-
-
 
 export default function PageEditor({
   site,
@@ -339,11 +288,9 @@ export default function PageEditor({
 
   const saveButton = (className?: string) => (
     <Button
-      size="xs"
       className={className}
-      disabled={inProgress}
       loading={inProgress}
-      loadingText="Saving..."
+      loadingText="Saving"
       onClick={() => saveContent(page)}
     >
       Save
@@ -352,11 +299,11 @@ export default function PageEditor({
 
   const deleteButton = (
     <Button
-      className="w-full bg-red-500 hover:bg-red-600 border-red-600"
-      size="xs"
+      variant="destructive"
       disabled={inProgress || isDeleting || isHome}
       loading={isDeleting}
-      tooltip={isHome ? "Cannot delete the homepage" : ""}
+      loadingText="Deleting"
+      tooltip={isHome ? "Cannot delete the homepage" : undefined}
       onClick={() => {
         if (window.confirm("Are you sure you want to delete this page?")) {
           doDeletePage();
@@ -399,22 +346,20 @@ export default function PageEditor({
 
   const makeHomepageButton = (
     <Button
-      className="w-full"
-      size="xs"
       disabled={inProgress || isMakingHomepage || isHome}
       loading={isDeleting}
-      tooltip={isHome ? "This page is already the homepage" : ""}
-      
+      tooltip={isHome ? "This page is already the homepage" : undefined}
+      className="w-full"
       onClick={doMakeHomepage}
     >
-      Make Homepage
+      Set to Homepage
     </Button>
   );
 
   const linkWithSlug = siteUrl + ( isHome ? '' : data.slug )
   
   const previewLink = (
-      <Flex className={ data.draft ? 'pointer-events-none opacity-50' : '' }>
+      <div className={`flex ${data.draft ? 'pointer-events-none opacity-50' : ''}`}>
         <a
           href={ linkWithSlug }
           target="_blank"
@@ -423,7 +368,7 @@ export default function PageEditor({
         >
           {linkWithSlug} ↗
         </a>
-      </Flex>
+      </div>
     );
   
 
@@ -452,13 +397,30 @@ export default function PageEditor({
   )
 
   const codeview = (useWithRefs?: boolean) => (
-    <Grid numItems={fullscreen ? 5 : 4} className="gap-4 pt-0">
-      { viewMode !== 2 ? <Col numColSpan={1}>
-        <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
-      </Col> : null }
-      <Col numColSpan={fullscreen ? (viewMode < 2 ? 4 : 5)  : viewMode < 2 ? 3 : 4}>
-        <div className="w-full sticky top-0 h-[100vh] border border-y-0 border-r-0">
-          <Editor                        
+    <div
+      className={clsx(
+        "grid gap-4 pt-0",
+        fullscreen ? "grid-cols-5" : "grid-cols-4",
+      )}
+    >
+      {viewMode !== 2 ? (
+        <div className="col-span-1">
+          <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
+        </div>
+      ) : null}
+      <div
+        className={clsx(
+          fullscreen
+            ? viewMode < 2
+              ? "col-span-4"
+              : "col-span-5"
+            : viewMode < 2
+              ? "col-span-3"
+              : "col-span-4",
+        )}
+      >
+        <div className="sticky top-0 h-[100vh] w-full border border-y-0 border-r-0">
+          <Editor
             height="max(100%, 90vh)" // By default, it does not have a size
             defaultLanguage="html"
             defaultValue=""
@@ -475,190 +437,224 @@ export default function PageEditor({
             }}
           />
         </div>
-      </Col>
-    </Grid>
-  )
+      </div>
+    </div>
+  );
   return (
-    <>
-      <Grid numItems={12} className="gap-2">
-        { ! fullscreen ?
-          <>
-          <Col numColSpanMd={9} className={ fullscreen ? ' p-4' : '' }>
-            <Grid numItems={12} className="mb-4 gap-2">
-              <Col numColSpanMd={8}>
-                <Bold>Page Title</Bold>
-                <TextInput
+    <div className="grid grid-cols-12 gap-2">
+      {!fullscreen ? (
+        <>
+          <div className={clsx("md:col-span-9", fullscreen ? "p-4" : "")}>
+            <div className="mb-4 grid grid-cols-12 gap-2">
+              <div className="space-y-1.5 md:col-span-8">
+                <Label htmlFor="page-title">Page Title</Label>
+                <Input
+                  id="page-title"
                   placeholder="Title"
-                  error={titleError ? true : false}
-                  errorMessage={titleError ? titleError : ""}
+                  className={titleError ? "border-red-500" : ""}
                   defaultValue={data?.title || ""}
                   onChange={(e) => {
                     setTitleError(null);
                     setData({ ...data, title: e.target.value });
                   }}
-                ></TextInput>
-              </Col>
+                />
+                {titleError && (
+                  <p className="text-sm text-red-500">{titleError}</p>
+                )}
+              </div>
 
-              <Col numColSpanMd={4}>
-                <Flex>
-                  <Bold>URL Slug</Bold>
-                </Flex>
-
-                <Flex>
-                  <TextInput
-                    placeholder="Path"
-                    error={slugError ? true : false}
-                    errorMessage={slugError ? slugError : ""}
-                    defaultValue={data?.slug || ""}
-                    onChange={(e) => {
-                      setSlugError(null);
-                      setSlugVirgin(false);
-                      setData({ ...data, slug: e.target.value });
-                    }}
-                  ></TextInput>
-                </Flex>
-              </Col>
-            </Grid>
-
-            <Flex className="mb-2" justifyContent="between">
-              <Box>
-                <Bold>Page Content</Bold>
-              </Box>
-              <Box>{ data.slug ? previewLink : null}</Box>
-            </Flex>
-
-            <Flex className="mb-2" justifyContent="between">
-              <Box>
-                <Bold>Page Status</Bold>
-              </Box>
-              <Box>
-                <DraftSelectBox
-                  inProgress={inProgress}
-                  isDeleting={isDeleting}
-                  draft={data.draft}
-                  handleChange={async (draft) => {
-                    setData({ ...data, draft });
-                    await updatePage(data.id, { draft });
+              <div className="space-y-1.5 md:col-span-4">
+                <Label htmlFor="page-slug">URL Slug</Label>
+                <Input
+                  id="page-slug"
+                  placeholder="Path"
+                  className={slugError ? "border-red-500" : ""}
+                  defaultValue={data?.slug || ""}
+                  onChange={(e) => {
+                    setSlugError(null);
+                    setSlugVirgin(false);
+                    setData({ ...data, slug: e.target.value });
                   }}
                 />
-              </Box>
-            </Flex>
-
-          </Col>
-
-          <Col numColSpanMd={3} className={ fullscreen ? ' p-4' : '' }>
-            <DashboardCard>
-              <Box>
-                <Text>This page is currently</Text>
-                {data.draft ? (
-                  <>
-                    {" "}
-                    in{" "}
-                    <Badge color="gray" size="xs">
-                      Draft
-                    </Badge>{" "}
-                  </>
-                ) : (
-                  <>
-                    {" "}
-                    <Badge color="green" size="xs">
-                      Live
-                    </Badge>{" "}
-                  </>
+                {slugError && (
+                  <p className="text-sm text-red-500">{slugError}</p>
                 )}
+              </div>
+            </div>
+
+            <div className="mb-2 flex items-center justify-between">
+              <Label>Page Content</Label>
+              {data.slug ? previewLink : null}
+            </div>
+
+            <div className="mb-2 flex items-center justify-between">
+              <Label>Page Status</Label>
+              <Select
+                value={String(data.draft)}
+                onValueChange={(val) => {
+                  const draft = val === "true";
+                  setData({ ...data, draft });
+                  updatePage(data.id, { draft });
+                }}
+                disabled={inProgress || isDeleting}
+              >
+                <SelectTrigger className="w-fit">
+                  <SelectValue placeholder={data.draft ? "Draft" : "Live"} />
+                </SelectTrigger>
+                <SelectContent position="item-aligned">
+                  <SelectItem value="false">Live</SelectItem>
+                  <SelectItem value="true">Draft</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className={clsx("md:col-span-3", fullscreen ? "p-4" : "")}>
+            <Card className="mb-2 p-2 text-sm">
+              <span className="text-stone-500">This page is currently</span>
+              {data.draft ? (
+                <>
+                  {" "}
+                  in{" "}
+                  <Badge size="sm" variant="secondary">
+                    Draft
+                  </Badge>{" "}
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <Badge size="sm" variant="success">
+                    Live
+                  </Badge>{" "}
+                </>
+              )}
+              <span className="text-stone-500">
                 and was last updated on {lastUpdateDate}.
-              </Box>
-            </DashboardCard>
+              </span>
+            </Card>
 
             {status.message ? (
               <TimedAlert {...status} refresh={forceStatusRefresh} />
             ) : null}
 
-            <DashboardCard>
-              <Box mb="2">{saveButton('w-full')}</Box>
-              <Flex className='gap-2'>
-                <Box mb="2" className='grow'>{makeHomepageButton}</Box>
-                <Box mb="2">{deleteButton}</Box>
-              </Flex>
-            </DashboardCard>
-          </Col>
-          </>
-        : null }
-        <Col numColSpanMd={12}>
-        <Card className={"p-0" + (fullscreen ? " ring-0 shadow-none rounded-none" : "")}>
-            <TabGroup
-              defaultIndex={viewMode}
-              onIndexChange={(index) => {
-                setViewMode(index);
-              }}
+            <div>
+              <div className="mb-2">{saveButton("w-full")}</div>
+              <div className="flex gap-2">
+                <div className="mb-2 w-full">{makeHomepageButton}</div>
+                <div className="mb-2">{deleteButton}</div>
+              </div>
+            </div>
+          </div>
+        </>
+      ) : null}
+      <div className="md:col-span-12">
+        <Tabs
+          defaultValue={
+            viewMode === 0 ? "preview" : viewMode === 1 ? "code" : "split"
+          }
+          onValueChange={(value) => {
+            setViewMode(value === "preview" ? 0 : value === "code" ? 1 : 2);
+          }}
+          className="rounded-md border border-stone-200 bg-white"
+        >
+          <div className="sticky">
+            <div
+              className={
+                "relative flex items-center justify-between border-b border-stone-200 bg-stone-100 p-1 pr-2 " +
+                (fullscreen ? "z-10" : "rounded-t-md")
+              }
             >
-              <div className={"flex justify-between items-center p-4 border border-x-0" + (fullscreen ? " bg-white py-2 z-10" : " border-t-0")}>
-                <TabList variant="solid" className="font-bold">
-                  <Tab className={viewMode === 0 ? "bg-white" : ""} icon={EyeOpenIcon}>
-                    Preview
-                  </Tab>
-                  <Tab className={viewMode === 1 ? "bg-white" : ""} icon={CodeIcon}>
-                    Code
-                  </Tab>
-                  <Tab className={viewMode === 2 ? "bg-white" : ""} icon={BorderSplitIcon}>
-                    Split
-                  </Tab>
-                </TabList>
+              <TabsList variant="background" className="bg-transparent">
+                <TabsTrigger
+                  variant="background"
+                  value="preview"
+                  className="flex items-center gap-1.5"
+                >
+                  <Eye />
+                  Preview
+                </TabsTrigger>
+                <TabsTrigger
+                  variant="background"
+                  value="code"
+                  className="flex items-center gap-1.5"
+                >
+                  <Code />
+                  Code
+                </TabsTrigger>
+                <TabsTrigger
+                  variant="background"
+                  value="split"
+                  className="flex items-center gap-1.5"
+                >
+                  <SquareSplitHorizontal />
+                  Split
+                </TabsTrigger>
+              </TabsList>
 
-                { fullscreen ?
-                  <div className="flex">
-                  { data.slug ? previewLink : null}
-                  </div> : <></>
-                }
+              {fullscreen ? (
+                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+                  {data.slug ? previewLink : null}
+                </div>
+              ) : (
+                <></>
+              )}
 
-                <div className="flex gap-4">
-                  { fullscreen && saveButton() }
-                  <Button onClick={() => setFullscreen(!fullscreen)}>
-                    {fullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-                  </Button>
+              <div className="flex gap-2">
+                {fullscreen && saveButton()}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setFullscreen(!fullscreen)}
+                >
+                  {fullscreen ? (
+                    <Minimize size={4} className="text-stone-500" />
+                  ) : (
+                    <Maximize size={4} className="text-stone-500" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <TabsContent value="preview" className="mt-0">
+            {preview}
+          </TabsContent>
+          <TabsContent value="code" className="mt-0">
+            {codeview(true)}
+          </TabsContent>
+          <TabsContent value="split" className="mt-0">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-1">{preview}</div>
+              <div className="col-span-1">
+                <div className="sticky top-0 h-[100vh] w-full">
+                  {codeview(false)}
                 </div>
               </div>
-              <TabPanels>
-                <TabPanel>
-                  {preview}
-                </TabPanel>
-                <TabPanel className="mt-0">
-                  {codeview(true)}
-                </TabPanel>
-                <TabPanel className="mt-0">
-                  <Grid numItems={2} className="gap-4">
-                    <Col numColSpan={1}>{preview}</Col>
-                    <Col numColSpan={1}>
-                    <div className="w-full sticky top-0 h-[100vh]">
-                      {codeview(false)}
-                      </div>
-                    </Col>
-                  </Grid>
-                </TabPanel>
-              </TabPanels>
-            </TabGroup>
-          </Card>
-        </Col>
-      </Grid>
-    </>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </div>
   );
 }
 
 function PreviewFrame({ children }: { children: React.ReactNode }) {
-  
   const wrappingDiv = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState<number>(1);
   useEffect(() => {
     if (wrappingDiv.current) {
       const frame = wrappingDiv.current;
       const width = frame.clientWidth;
-      setScale(width / 1600)
+      setScale(width / 1600);
     }
   }, [children]);
 
   return (
     <div className="w-full overflow-x-hidden" ref={wrappingDiv}>
-      <div className="w-[1600px]" style={{transform: `scale(${scale})`, transformOrigin: 'top left'}}>
+      <div
+        className="w-[1600px]"
+        style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+      >
         {children}
       </div>
     </div>

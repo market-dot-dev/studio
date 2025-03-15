@@ -2,7 +2,8 @@
 
 import { disconnectStripeAccount } from "@/app/services/StripeService";
 import { User } from "@prisma/client";
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
+
 import { useEffect } from "react";
 
 const DisconnectStripeAccountButton = ({ user }: { user: User }) => {
@@ -17,8 +18,9 @@ const DisconnectStripeAccountButton = ({ user }: { user: User }) => {
   return (
     <div className="mt-2">
       <Button
-        onClick={() => disconnectStripeAccount(user?.id).then(() => window.location.reload())}
+        variant="outline"
         disabled={!user?.stripeAccountId}
+        onClick={() => disconnectStripeAccount(user?.id).then(() => window.location.reload())}
       >
         Disconnect Stripe Account
       </Button>

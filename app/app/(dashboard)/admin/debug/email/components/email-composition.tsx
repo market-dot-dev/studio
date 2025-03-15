@@ -1,6 +1,9 @@
 "use client";
 
-import { TextInput, Textarea, Card } from "@tremor/react";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 interface EmailCompositionStepProps {
   emailSubject: string;
@@ -21,10 +24,11 @@ export default function EmailCompositionStep({
       
       <div className="space-y-6">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <Label htmlFor="email-subject">
             Subject
-          </label>
-          <TextInput
+          </Label>
+          <Input
+            id="email-subject"
             placeholder="Enter email subject"
             value={emailSubject}
             onChange={(e) => setEmailSubject(e.target.value)}
@@ -32,10 +36,11 @@ export default function EmailCompositionStep({
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
+          <Label htmlFor="email-content">
             Content
-          </label>
+          </Label>
           <Textarea
+            id="email-content"
             placeholder="Enter email content"
             value={emailContent}
             onChange={(e) => setEmailContent(e.target.value)}
@@ -46,7 +51,7 @@ export default function EmailCompositionStep({
           </p>
         </div>
         
-        <Card className="p-4 bg-gray-50">
+        <Card>
           <h3 className="text-sm font-medium text-gray-700 mb-2">
             Available Variables
           </h3>

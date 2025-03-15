@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Card, Button, Text } from '@tremor/react';
+import { Button } from "@/components/ui/button";
 import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
 import { canBuy, getPaymentMethod, StripeCard } from '@/app/services/StripeService';
 import useCurrentSession from '@/app/hooks/use-current-session';
+import { CreditCard } from 'lucide-react';
 
 interface UserPaymentMethodWidgetProps {
   loading?: boolean;
@@ -57,24 +58,39 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
     handleDetach
   } = useStripePaymentCollector({ user, setError, maintainerUserId, maintainerStripeAccountId });
 
-  if(invalidCard){
+  if (invalidCard){
     return (
       <div className="flex flex-row justify-between items-center">
-        <Text>Invalid payment method. Please update your payment method.</Text>
-        <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshSession).then(() => setCardInfo(undefined))}>
+        <p className="text-sm text-stone-500">Invalid payment method. Please update your payment method.</p>
+        <Button 
+          type="button" 
+          variant="outline" 
+          onClick={() => handleDetach().then(refreshSession).then(() => setCardInfo(undefined))}
+        >
           Remove
         </Button>
       </div>
     );
   }
 
-  if(!!cardInfo){
+  if (!!cardInfo) {
     return (
         <div className="flex flex-row justify-between items-center">
-          <Text>Use saved {cardInfo?.brand.toUpperCase()} ending in {cardInfo?.last4}</Text>
-          <br />
-          <Button type="button" variant="secondary" className="p-1" onClick={() => handleDetach().then(refreshSession).then(refreshSession).then(() => setCardInfo(undefined))}>
-            Remove
+          <div className="flex items-center gap-3">
+            <CreditCard className='text-stone-500' />
+            <p className="text-sm font-semibold">{cardInfo?.brand.toUpperCase()} ••••{cardInfo?.last4}</p>
+          </div>
+          <Button 
+            type="button" 
+            size="sm" 
+            variant="outline" 
+            onClick={() => {
+              handleDetach()
+                .then(refreshSession)
+                .then(refreshSession)
+                .then(() => setCardInfo(undefined))
+            }}>
+            Use another card
           </Button>
         </div>
     );
