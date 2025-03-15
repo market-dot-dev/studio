@@ -53,9 +53,9 @@ class UserService {
   static async getCustomersMaintainers(): Promise<Partial<User>[]> {
     // if current user is admin
     const session = await getSession();
-    // if (session?.user.roleId !== "admin") {
-    //   return [];
-    // }
+    if (session?.user.roleId !== "admin") {
+      return [];
+    }
 
     // find users where roleId is either customer or maintainer
     return prisma?.user.findMany({
