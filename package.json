@@ -1,7 +1,8 @@
 {
   "private": true,
   "scripts": {
-    "dev": "prisma generate && next dev -H market.local",
+    "generate-routes": "tsx scripts/routes.ts",
+    "dev": "prisma generate && tsx scripts/routes.ts && next dev -H market.local",
     "build": "prisma generate && prisma migrate deploy && next build && tsx prisma/sync.ts",
     "format:write": "prettier --write \"**/*.{css,js,json,jsx,ts,tsx}\"",
     "format": "prettier \"**/*.{css,js,json,jsx,ts,tsx}\"",
