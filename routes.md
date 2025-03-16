@@ -1,5 +1,5 @@
 # Next.js Routes Map
-# Generated on 2025-03-16T10:17:15.168Z
+# Generated on 2025-03-16T10:32:12.448Z
 
 > Note: Routes marked with "via middleware" are rewritten or redirected by middleware.ts
 
@@ -105,111 +105,102 @@ GET     /api/users/verify                        # api/users/verify/route.ts
 
 ## Namespace: (auth)
 
-GET     /(auth)/checkout/:id                     # maintainer-site/[domain]/(auth)/checkout/[id]/page.tsx (via :domain.market.dev middleware)
-GET     /(auth)/customer-login                   # app/(auth)/customer-login/page.tsx (via app.market.dev middleware)
-GET     /(auth)/login                            # app/(auth)/login/page.tsx (via app.market.dev middleware)
-GET     /(auth)/login/error                      # app/(auth)/login/error/page.tsx (via app.market.dev middleware)
-GET     /(auth)/login/local-auth                 # app/(auth)/login/local-auth/page.tsx (via app.market.dev middleware)
+GET     /(auth)/checkout/:id                     # maintainer-site/[domain]/(auth)/checkout/[id]/page.tsx (user sites - user.market.dev)
+GET     /(auth)/customer-login                   # app/(auth)/customer-login/page.tsx (app.market.dev)
+GET     /(auth)/login                            # app/(auth)/login/page.tsx (app.market.dev)
+GET     /(auth)/login/error                      # app/(auth)/login/error/page.tsx (app.market.dev)
+GET     /(auth)/login/local-auth                 # app/(auth)/login/local-auth/page.tsx (app.market.dev)
 
 ## Namespace: (dashboard)
 
-GET     /(dashboard)                             # app/(dashboard)/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/admin/debug                 # app/(dashboard)/admin/debug/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/admin/debug/:userId/validation # app/(dashboard)/admin/debug/[userId]/validation/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/admin/debug/email           # app/(dashboard)/admin/debug/email/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/admin/debug/onboarding      # app/(dashboard)/admin/debug/onboarding/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/admin/debug/session         # app/(dashboard)/admin/debug/session/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/admin/debug/stripe-debug    # app/(dashboard)/admin/debug/stripe-debug/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/admin/debug/stripe-migration # app/(dashboard)/admin/debug/stripe-migration/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/admin/debug/users           # app/(dashboard)/admin/debug/users/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/admin/tiers/:id             # app/(dashboard)/admin/tiers/[id]/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/channels/embeds             # app/(dashboard)/channels/embeds/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/channels/market             # app/(dashboard)/channels/market/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/contracts                   # app/(dashboard)/contracts/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/contracts/:id               # app/(dashboard)/contracts/[id]/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/contracts/create            # app/(dashboard)/contracts/create/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/customers                   # app/(dashboard)/customers/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/customers/:id               # app/(dashboard)/customers/[id]/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/features                    # app/(dashboard)/features/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/features/:id                # app/(dashboard)/features/[id]/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/leads                       # app/(dashboard)/leads/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/leads/shortlisted           # app/(dashboard)/leads/shortlisted/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/maintainer                  # app/(dashboard)/maintainer/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/maintainer/stripe-connect   # app/(dashboard)/maintainer/stripe-connect/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/page/:id                    # app/(dashboard)/page/[id]/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/post/:id                    # app/(dashboard)/post/[id]/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/post/:id/settings           # app/(dashboard)/post/[id]/settings/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/prospects                   # app/(dashboard)/prospects/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/reports                     # app/(dashboard)/reports/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/settings                    # app/(dashboard)/settings/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/settings/payment            # app/(dashboard)/settings/payment/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/settings/project            # app/(dashboard)/settings/project/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/settings/repos              # app/(dashboard)/settings/repos/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/settings/site               # app/(dashboard)/settings/site/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/site/:id                    # app/(dashboard)/site/[id]/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/site/:id/analytics          # app/(dashboard)/site/[id]/analytics/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/subscriptions               # app/(dashboard)/subscriptions/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/tiers                       # app/(dashboard)/tiers/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/tiers/:id                   # app/(dashboard)/tiers/[id]/page.tsx (via app.market.dev middleware)
-GET     /(dashboard)/tiers/new                   # app/(dashboard)/tiers/new/page.tsx (via app.market.dev middleware)
+GET     /(dashboard)                             # app/(dashboard)/page.tsx (app.market.dev)
+GET     /(dashboard)/admin/debug                 # app/(dashboard)/admin/debug/page.tsx (app.market.dev)
+GET     /(dashboard)/admin/debug/:userId/validation # app/(dashboard)/admin/debug/[userId]/validation/page.tsx (app.market.dev)
+GET     /(dashboard)/admin/debug/email           # app/(dashboard)/admin/debug/email/page.tsx (app.market.dev)
+GET     /(dashboard)/admin/debug/onboarding      # app/(dashboard)/admin/debug/onboarding/page.tsx (app.market.dev)
+GET     /(dashboard)/admin/debug/session         # app/(dashboard)/admin/debug/session/page.tsx (app.market.dev)
+GET     /(dashboard)/admin/debug/stripe-debug    # app/(dashboard)/admin/debug/stripe-debug/page.tsx (app.market.dev)
+GET     /(dashboard)/admin/debug/stripe-migration # app/(dashboard)/admin/debug/stripe-migration/page.tsx (app.market.dev)
+GET     /(dashboard)/admin/debug/users           # app/(dashboard)/admin/debug/users/page.tsx (app.market.dev)
+GET     /(dashboard)/admin/tiers/:id             # app/(dashboard)/admin/tiers/[id]/page.tsx (app.market.dev)
+GET     /(dashboard)/channels/embeds             # app/(dashboard)/channels/embeds/page.tsx (app.market.dev)
+GET     /(dashboard)/channels/market             # app/(dashboard)/channels/market/page.tsx (app.market.dev)
+GET     /(dashboard)/contracts                   # app/(dashboard)/contracts/page.tsx (app.market.dev)
+GET     /(dashboard)/contracts/:id               # app/(dashboard)/contracts/[id]/page.tsx (app.market.dev)
+GET     /(dashboard)/contracts/create            # app/(dashboard)/contracts/create/page.tsx (app.market.dev)
+GET     /(dashboard)/customers                   # app/(dashboard)/customers/page.tsx (app.market.dev)
+GET     /(dashboard)/customers/:id               # app/(dashboard)/customers/[id]/page.tsx (app.market.dev)
+GET     /(dashboard)/features                    # app/(dashboard)/features/page.tsx (app.market.dev)
+GET     /(dashboard)/features/:id                # app/(dashboard)/features/[id]/page.tsx (app.market.dev)
+GET     /(dashboard)/leads                       # app/(dashboard)/leads/page.tsx (app.market.dev)
+GET     /(dashboard)/leads/shortlisted           # app/(dashboard)/leads/shortlisted/page.tsx (app.market.dev)
+GET     /(dashboard)/maintainer                  # app/(dashboard)/maintainer/page.tsx (app.market.dev)
+GET     /(dashboard)/maintainer/stripe-connect   # app/(dashboard)/maintainer/stripe-connect/page.tsx (app.market.dev)
+GET     /(dashboard)/page/:id                    # app/(dashboard)/page/[id]/page.tsx (app.market.dev)
+GET     /(dashboard)/post/:id                    # app/(dashboard)/post/[id]/page.tsx (app.market.dev)
+GET     /(dashboard)/post/:id/settings           # app/(dashboard)/post/[id]/settings/page.tsx (app.market.dev)
+GET     /(dashboard)/prospects                   # app/(dashboard)/prospects/page.tsx (app.market.dev)
+GET     /(dashboard)/reports                     # app/(dashboard)/reports/page.tsx (app.market.dev)
+GET     /(dashboard)/settings                    # app/(dashboard)/settings/page.tsx (app.market.dev)
+GET     /(dashboard)/settings/payment            # app/(dashboard)/settings/payment/page.tsx (app.market.dev)
+GET     /(dashboard)/settings/project            # app/(dashboard)/settings/project/page.tsx (app.market.dev)
+GET     /(dashboard)/settings/repos              # app/(dashboard)/settings/repos/page.tsx (app.market.dev)
+GET     /(dashboard)/settings/site               # app/(dashboard)/settings/site/page.tsx (app.market.dev)
+GET     /(dashboard)/site/:id                    # app/(dashboard)/site/[id]/page.tsx (app.market.dev)
+GET     /(dashboard)/site/:id/analytics          # app/(dashboard)/site/[id]/analytics/page.tsx (app.market.dev)
+GET     /(dashboard)/subscriptions               # app/(dashboard)/subscriptions/page.tsx (app.market.dev)
+GET     /(dashboard)/tiers                       # app/(dashboard)/tiers/page.tsx (app.market.dev)
+GET     /(dashboard)/tiers/:id                   # app/(dashboard)/tiers/[id]/page.tsx (app.market.dev)
+GET     /(dashboard)/tiers/new                   # app/(dashboard)/tiers/new/page.tsx (app.market.dev)
 
 ## Namespace: (nonav)
 
-GET     /(nonav)/c/contracts/:id                 # app/(nonav)/c/contracts/[id]/page.tsx (via app.market.dev middleware)
+GET     /(nonav)/c/contracts/:id                 # app/(nonav)/c/contracts/[id]/page.tsx (app.market.dev)
 
 ## Namespace: (payments)
 
-GET     /(payments)/checkout/:id                 # app/(payments)/checkout/[id]/page.tsx (via app.market.dev middleware)
-GET     /(payments)/success                      # app/(payments)/success/page.tsx (via app.market.dev middleware)
-
-## Namespace: c
-
-GET     /c                                       # app/c/page.tsx (via app.market.dev middleware)
-GET     /c/charges                               # app/c/charges/page.tsx (via app.market.dev middleware)
-GET     /c/charges/:id                           # app/c/charges/[id]/page.tsx (via app.market.dev middleware)
-GET     /c/debug                                 # app/c/debug/page.tsx (via app.market.dev middleware)
-GET     /c/settings                              # app/c/settings/page.tsx (via app.market.dev middleware)
-GET     /c/subscriptions/:id                     # app/c/subscriptions/[id]/page.tsx (via app.market.dev middleware)
+GET     /(payments)/checkout/:id                 # app/(payments)/checkout/[id]/page.tsx (app.market.dev)
+GET     /(payments)/success                      # app/(payments)/success/page.tsx (app.market.dev)
 
 ## Namespace: charges
 
-GET     /charges                                 # app/c/charges/page.tsx (via app.market.dev for customers)
-GET     /charges/:id                             # app/c/charges/[id]/page.tsx (via app.market.dev for customers)
+GET     /charges                                 # app/c/charges/page.tsx (customer portal)
+GET     /charges/:id                             # app/c/charges/[id]/page.tsx (customer portal)
 
 ## Namespace: debug
 
-GET     /debug                                   # app/c/debug/page.tsx (via app.market.dev for customers)
+GET     /debug                                   # app/c/debug/page.tsx (customer portal)
 
 ## Namespace: root
 
-GET                                              # home/page.tsx (via market.dev middleware)
-GET     /                                        # maintainer-site/[domain]/page.tsx (via :domain.market.dev middleware)
+GET                                              # app/c/page.tsx (customer portal)
+GET     /                                        # maintainer-site/[domain]/page.tsx (user sites - user.market.dev)
 
 ## Namespace: settings
 
-GET     /settings                                # app/c/settings/page.tsx (via app.market.dev for customers)
+GET     /settings                                # app/c/settings/page.tsx (customer portal)
 
 ## Namespace: subscriptions
 
-GET     /subscriptions/:id                       # app/c/subscriptions/[id]/page.tsx (via app.market.dev for customers)
+GET     /subscriptions/:id                       # app/c/subscriptions/[id]/page.tsx (customer portal)
 
 ## Namespace: legal
 
-GET     /legal/standard-msa                      # home/legal/standard-msa/page.tsx (via market.dev middleware)
+GET     /legal/standard-msa                      # home/legal/standard-msa/page.tsx (home routes)
 
 ## Namespace: :slug
 
-GET     /:slug                                   # maintainer-site/[domain]/[slug]/page.tsx (via :domain.market.dev middleware)
+GET     /:slug                                   # maintainer-site/[domain]/[slug]/page.tsx (user sites - user.market.dev)
 
 ## Namespace: contracts
 
-GET     /contracts/:id                           # maintainer-site/[domain]/contracts/[id]/page.tsx (via :domain.market.dev middleware)
+GET     /contracts/:id                           # maintainer-site/[domain]/contracts/[id]/page.tsx (user sites - user.market.dev)
 
 ## Namespace: embed
 
-GET     /embed/:embed                            # maintainer-site/[domain]/embed/[embed]/page.tsx (via :domain.market.dev middleware)
+GET     /embed/:embed                            # maintainer-site/[domain]/embed/[embed]/page.tsx (user sites - user.market.dev)
 
 ## Namespace: success
 
-GET     /success                                 # maintainer-site/[domain]/success/page.tsx (via :domain.market.dev middleware)
+GET     /success                                 # maintainer-site/[domain]/success/page.tsx (user sites - user.market.dev)
 

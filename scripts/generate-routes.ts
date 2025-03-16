@@ -336,51 +336,71 @@ function formatRoutePath(route: RouteInfo): string {
 function applyMiddlewareTransformations(routes: {path: string, methods: string[], filePath: string}[]): {path: string, methods: string[], filePath: string}[] {
   const transformedRoutes = [...routes];
   
-  // Check for middleware rules and apply transformations
-  // These rules are based on the middleware.ts file
+  // Define transformation rules
+  type TransformRule = {
+    // Predicate to check if this rule applies to a route
+    matches: (path: string) => boolean;
+    // Function to transform the path
+    transformPath: (path: string) => string;
+    // Function to generate attribution message
+    getAttribution: (path: string, filePath: string) => string;
+  };
   
-  // Add additional routes that are created by middleware rewrites
-  routes.forEach(route => {
-    // Handle maintainer-site routes
-    if (route.path.startsWith('/maintainer-site')) {
-      const parts = route.path.split('/');
-      if (parts.length >= 3) {
-        const username = parts[2];
+  const transformationRules: TransformRule[] = [
+    // Maintainer site routes (username.market.dev)
+    {
+      matches: (path) => path.startsWith('/maintainer-site'),
+      transformPath: (path) => {
+        const parts = path.split('/');
+        if (parts.length < 3) return path;
+        
         const remainingPath = parts.slice(3).join('/');
+        return `/${remainingPath}`;
+      },
+      getAttribution: (path, filePath) => {
+        const username = path.split('/')[2];
+        return `${filePath} (user sites - user.market.dev)`
+      }
+    },
+    
+    // App routes (app.market.dev)
+    {
+      matches: (path) => path.startsWith('/app') && !path.startsWith('/app/c'),
+      transformPath: (path) => path.replace(/^\/app/, ''),
+      getAttribution: (_, filePath) => `${filePath} (app.market.dev)`
+    },
+    
+    // Customer routes (app.market.dev for customers)
+    {
+      matches: (path) => path.startsWith('/app/c'),
+      transformPath: (path) => path.replace(/^\/app\/c/, ''),
+      getAttribution: (_, filePath) => `${filePath} (customer portal)`
+    },
+    
+    // Home routes (market.dev)
+    {
+      matches: (path) => path.startsWith('/home'),
+      transformPath: (path) => path.replace(/^\/home/, ''),
+      getAttribution: (_, filePath) => `${filePath} (home routes)`
+    }
+  ];
+  
+  // Apply all transformation rules to each route
+  routes.forEach(route => {
+    for (const rule of transformationRules) {
+      if (rule.matches(route.path)) {
+        const transformedPath = rule.transformPath(route.path);
+        
+        // Skip if the transformed path is the same as the original
+        if (transformedPath === route.path) continue;
+        
+        // Create the transformed route
         transformedRoutes.push({
-          path: `/${remainingPath ? remainingPath : ''}`,
+          path: transformedPath,
           methods: route.methods,
-          filePath: `${route.filePath} (via ${username}.market.dev middleware)`,
+          filePath: rule.getAttribution(route.path, route.filePath)
         });
       }
-    }
-    
-    // Handle app routes transformations
-    if (route.path.startsWith('/app')) {
-      // app.market.dev routes
-      transformedRoutes.push({
-        path: route.path.replace(/^\/app/, ''),
-        methods: route.methods,
-        filePath: `${route.filePath} (via app.market.dev middleware)`,
-      });
-      
-      // Customer routes
-      if (route.path.startsWith('/app/c')) {
-        transformedRoutes.push({
-          path: route.path.replace(/^\/app\/c/, ''),
-          methods: route.methods,
-          filePath: `${route.filePath} (via app.market.dev for customers)`,
-        });
-      }
-    }
-    
-    // Handle home routes
-    if (route.path.startsWith('/home')) {
-      transformedRoutes.push({
-        path: route.path.replace(/^\/home/, ''),
-        methods: route.methods,
-        filePath: `${route.filePath} (via market.dev middleware)`,
-      });
     }
   });
   
