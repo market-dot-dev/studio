@@ -1,5 +1,5 @@
 # Next.js Routes Map
-# Generated on 2025-03-16T10:04:53.427Z
+# Generated on 2025-03-16T10:08:44.124Z
 
 > Note: Routes marked with "via middleware" are rewritten or redirected by middleware.ts
 
@@ -9,7 +9,6 @@ GET     /app/(auth)/customer-login               # app/(auth)/customer-login/pag
 GET     /app/(auth)/login                        # app/(auth)/login/page.tsx
 GET     /app/(auth)/login/error                  # app/(auth)/login/error/page.tsx
 GET     /app/(auth)/login/local-auth             # app/(auth)/login/local-auth/page.tsx
-GET     /app/(auth)/login/thanks                 # app/(auth)/login/thanks/page.tsx
 GET     /app/(dashboard)                         # app/(dashboard)/page.tsx
 GET     /app/(dashboard)/admin/debug             # app/(dashboard)/admin/debug/page.tsx
 GET     /app/(dashboard)/admin/debug/:userId/validation # app/(dashboard)/admin/debug/[userId]/validation/page.tsx
@@ -111,7 +110,6 @@ GET     /(auth)/customer-login                   # app/(auth)/customer-login/pag
 GET     /(auth)/login                            # app/(auth)/login/page.tsx (via app.market.dev middleware)
 GET     /(auth)/login/error                      # app/(auth)/login/error/page.tsx (via app.market.dev middleware)
 GET     /(auth)/login/local-auth                 # app/(auth)/login/local-auth/page.tsx (via app.market.dev middleware)
-GET     /(auth)/login/thanks                     # app/(auth)/login/thanks/page.tsx (via app.market.dev middleware)
 
 ## Namespace: (dashboard)
 
