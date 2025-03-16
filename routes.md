@@ -1,14 +1,7 @@
 # Next.js Routes Map
-# Generated on 2025-03-16T09:36:52.346Z
+# Generated on 2025-03-16T10:04:53.427Z
 
 > Note: Routes marked with "via middleware" are rewritten or redirected by middleware.ts
-
-## Namespace: api
-
-GET     /api/buybutton/:userid                   # api/buybutton/[userid]/route.tsx
-GET     /api/og/:siteid                          # api/og/[siteid]/route.tsx
-GET     /api/sentry-example-api                  # api/sentry-example-api/route.js
-GET     /api/tiers/:userid                       # api/tiers/[userid]/route.tsx
 
 ## Namespace: app
 
@@ -87,6 +80,29 @@ GET     /privacy                                 # privacy/page.tsx
 ## Namespace: terms
 
 GET     /terms                                   # terms/page.tsx
+
+## Namespace: api
+
+POST    /api/:domain/subscription                # api/[domain]/subscription/route.ts
+DELETE  /api/:domain/subscription                # api/[domain]/subscription/route.ts
+GET     /api/admin/mock-users                    # api/admin/mock-users/route.ts
+POST    /api/admin/send-bulk-email               # api/admin/send-bulk-email/route.ts
+GET     /api/admin/users                         # api/admin/users/route.ts
+GET     /api/auth/:...nextauth                   # api/auth/[...nextauth]/route.ts
+POST    /api/auth/:...nextauth                   # api/auth/[...nextauth]/route.ts
+POST    /api/auth/githubapp                      # api/auth/githubapp/route.ts
+GET     /api/buybutton/:userid                   # api/buybutton/[userid]/route.tsx
+GET     /api/domain/:slug/verify                 # api/domain/[slug]/verify/route.ts
+POST    /api/generate                            # api/generate/route.ts
+POST    /api/market/validate-expert              # api/market/validate-expert/route.ts
+GET     /api/migrate                             # api/migrate/route.ts
+GET     /api/og/:siteid                          # api/og/[siteid]/route.tsx
+GET     /api/preview/nav                         # api/preview/nav/route.ts
+GET     /api/preview/subscriptions               # api/preview/subscriptions/route.ts
+GET     /api/sentry-example-api                  # api/sentry-example-api/route.js
+GET     /api/tiers/:userid                       # api/tiers/[userid]/route.tsx
+POST    /api/upload                              # api/upload/route.ts
+GET     /api/users/verify                        # api/users/verify/route.ts
 
 ## Namespace: (auth)
 
