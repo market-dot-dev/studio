@@ -216,8 +216,8 @@ importers:
         specifier: ^16.12.0
         version: 16.12.0
       swr:
-        specifier: ^2.2.5
-        version: 2.2.5(react@18.2.0)
+        specifier: ^2.3.3
+        version: 2.3.3(react@18.2.0)
       tailwind-merge:
         specifier: ^2.2.1
         version: 2.2.1
@@ -7007,10 +7007,10 @@ packages:
     peerDependencies:
       react: ^16.11.0 || ^17.0.0 || ^18.0.0
 
-  swr@2.2.5:
-    resolution: {integrity: sha512-QtxqyclFeAsxEUeZIYmsaQ0UjimSq1RZ9Un7I68/0ClKK/U3LoyQunwkQfJZr2fc22DfIXLNDc2wFyTEikCUpg==}
+  swr@2.3.3:
+    resolution: {integrity: sha512-dshNvs3ExOqtZ6kJBaAsabhPdHyeY4P2cKwRCniDVifBMoG/SVI7tfLWqPXriVspf2Rg4tPzXJTnwaihIeFw2A==}
     peerDependencies:
-      react: ^16.11.0 || ^17.0.0 || ^18.0.0
+      react: ^16.11.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   swrev@4.0.0:
     resolution: {integrity: sha512-LqVcOHSB4cPGgitD1riJ1Hh4vdmITOp+BkmfmXRh4hSF/t7EnS4iD+SOTmq7w5pPm/SiPeto4ADbKS6dHUDWFA==}
@@ -7453,10 +7453,10 @@ packages:
       '@types/react':
         optional: true
 
-  use-sync-external-store@1.2.0:
-    resolution: {integrity: sha512-eEgnFxGQ1Ife9bzYs6VLi8/4X6CObHMw9Qr9tPY43iKwsPw8xE8+EFsf/2cFZ5S3esXgpWgtSCtLNS41F+sKPA==}
+  use-sync-external-store@1.4.0:
+    resolution: {integrity: sha512-9WXSPC5fMv61vaupRkCKCxsPxBocVnwakBEkMIHHpkTTg6icbJtg6jzgtLDm4bl3cSHAca52rYWih0k4K3PfHw==}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   utf-8-validate@6.0.3:
     resolution: {integrity: sha512-uIuGf9TWQ/y+0Lp+KGZCMuJWc3N9BHA+l/UmHd/oUHwJJDeysyTRxNQVkbzsIWfGFbRe3OcgML/i0mvVRPOyDA==}
@@ -7720,7 +7720,7 @@ snapshots:
     dependencies:
       '@ai-sdk/provider-utils': 1.0.22(zod@3.23.8)
       '@ai-sdk/ui-utils': 0.0.50(zod@3.23.8)
-      swr: 2.2.5(react@18.2.0)
+      swr: 2.3.3(react@18.2.0)
       throttleit: 2.1.0
     optionalDependencies:
       react: 18.2.0
@@ -15368,7 +15368,7 @@ snapshots:
       clsx: 2.1.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      swr: 2.2.5(react@18.2.0)
+      swr: 2.3.3(react@18.2.0)
 
   react@18.2.0:
     dependencies:
@@ -16014,13 +16014,13 @@ snapshots:
   swr@2.2.0(react@18.2.0):
     dependencies:
       react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
+      use-sync-external-store: 1.4.0(react@18.2.0)
 
-  swr@2.2.5(react@18.2.0):
+  swr@2.3.3(react@18.2.0):
     dependencies:
-      client-only: 0.0.1
+      dequal: 2.0.3
       react: 18.2.0
-      use-sync-external-store: 1.2.0(react@18.2.0)
+      use-sync-external-store: 1.4.0(react@18.2.0)
 
   swrev@4.0.0: {}
 
@@ -16499,7 +16499,7 @@ snapshots:
     optionalDependencies:
       '@types/react': 18.2.55
 
-  use-sync-external-store@1.2.0(react@18.2.0):
+  use-sync-external-store@1.4.0(react@18.2.0):
     dependencies:
       react: 18.2.0
 
