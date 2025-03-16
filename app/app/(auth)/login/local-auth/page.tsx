@@ -15,22 +15,19 @@ export default function LoginPage({
   }
 
   return (
-    <div className="mx-auto sm:w-full sm:max-w-md sm:rounded-lg sm:shadow-md">
+    <div className="mx-auto sm:w-full sm:max-w-xs">
       <Image
-        alt="market.dev"
-        width={100}
-        height={100}
-        className="relative mx-auto h-12 w-auto dark:scale-110 dark:rounded-full dark:border dark:border-stone-400"
-        src="/gw-logo.png"
+        alt="market.dev logo"
+        width={162}
+        height={36}
+        className="relative mx-auto h-9 w-auto"
+        src="/market-dot-dev-logo.svg"
       />
-      <h1 className="mt-6 text-center font-cal text-3xl dark:text-white">
-        market.dev
-      </h1>
-      <p className="mt-2 text-center text-sm text-stone-600 dark:text-stone-400">
-        Log in with local auth credentials<br />
+      <p className="mt-3 text-center text-sm text-stone-500 dark:text-stone-400">
+        Log in with local auth credentials
       </p>
 
-      <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
+      <div className="mx-auto mt-6 w-11/12 max-w-xs sm:w-full">
         <Suspense
           fallback={
             <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />

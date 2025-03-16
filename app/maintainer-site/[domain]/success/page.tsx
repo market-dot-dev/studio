@@ -2,9 +2,7 @@
 
 import { getRootUrl } from "@/lib/domain";
 /*
-import PrimaryButton from '@/components/common/link-button';
 import PageHeading from '@/components/common/page-heading';
-import { Card } from '@tremor/react';
 */
 import { redirect } from "next/navigation";
 

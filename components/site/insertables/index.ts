@@ -4,9 +4,10 @@ import TiersInsert from "./tiers/tiers-insert";
 import SiteName from "./site-name/site-name";
 import SiteDescription from "./site-description/site-description";
 import { 
-    Flex, Box, Grid, Container, Card,
+    Flex, Box, Grid, Container,
     Text, Heading, Blockquote, Code, Em, Link, Quote
 } from '@radix-ui/themes'
+import { Card } from "@/components/ui/card";
 
 import Section from "./section/section";
 
@@ -100,7 +101,7 @@ export const standardComponents = {
         name: 'Card',
         tag: 'div',
         attributes: {
-            class: "bg-white shadow-md p-4 rounded-lg"
+            class: "p-4"
         }
     },
 }

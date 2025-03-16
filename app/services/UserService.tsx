@@ -61,7 +61,7 @@ class UserService {
     return prisma?.user.findMany({
       where: {
         roleId: {
-          in: ["customer", "maintainer"],
+          in: ["customer", "maintainer", "admin"],
         },
       },
       select: {

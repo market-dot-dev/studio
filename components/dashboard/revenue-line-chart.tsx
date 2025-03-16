@@ -17,7 +17,7 @@ export default function RevenueLineChart({
 }: RevenueLineChartProps) {
   return (
     <LineChart
-      className="h-72 mt-4"
+      className="h-72 mt-3"
       data={revenueData}
       index="date"
       categories={["New Subscriptions", "Renewals", "One-time Charges"]}

@@ -2,12 +2,9 @@
 
 import { useTransition } from "react";
 import { createPage } from "@/app/services/PageService";
-import { cn } from "@/lib/utils";
-import { useParams, useRouter } from "next/navigation";
-import LoadingDots from "@/components/icons/loading-dots";
+import { useRouter } from "next/navigation";
 import va from "@vercel/analytics";
-import { Button } from "@tremor/react";
-import { Page } from "@prisma/client";
+import { Button } from "@/components/ui/button";
 
 export default function CreatePageButton() {
   const router = useRouter();
@@ -17,6 +14,8 @@ export default function CreatePageButton() {
   
   return (
     <Button
+      loading={isPending}
+      loadingText="Creating Page"
       onClick={() =>
         startTransition(async () => {
           try {
@@ -29,20 +28,8 @@ export default function CreatePageButton() {
           }
         })
       }
-      className={cn(
-        "flex h-8 items-center justify-center space-x-2 px-4 py-1.5  rounded-lg border text-sm transition-all sm:h-9",
-        isPending
-          ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400"
-          : "border border-black bg-gray-800 hover:bg-gray-900 px-4 py-1.5 text-white active:bg-stone-100",
-      )}
-      disabled={isPending}
     >
-      {isPending ? 
-        <>
-          <p>Creating Page</p>
-          <LoadingDots color="#808080" />
-        </> : 
-        <p>New Page</p>}
+      New Page
     </Button>
   );
 }

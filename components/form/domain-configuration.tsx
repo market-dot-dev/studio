@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useDomainStatus } from "./use-domain-status";
 import { getSubdomain } from "@/lib/domains";
 import { AlertCircle, XCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export const InlineSnippet = ({
@@ -87,9 +88,9 @@ export default function DomainConfiguration({ domain }: { domain: string }) {
             </div>
           </div>
           <p className="text-sm dark:text-stone-400">
-            Warning: if you are using this domain for another store, setting this
-            TXT record will transfer domain ownership away from that store and
-            break it. Please exercise caution when setting this record.
+            Warning: if you are using this domain for another store, setting
+            this TXT record will transfer domain ownership away from that store
+            and break it. Please exercise caution when setting this record.
           </p>
         </>
       ) : status === "Unknown Error" ? (
@@ -99,28 +100,20 @@ export default function DomainConfiguration({ domain }: { domain: string }) {
       ) : (
         <>
           <div className="flex justify-start space-x-4">
-            <button
+            <Button
               type="button"
+              variant={recordType == "A" ? "default" : "ghost"}
               onClick={() => setRecordType("A")}
-              className={`${
-                recordType == "A"
-                  ? "border-black text-black dark:border-white dark:text-white"
-                  : "border-white text-stone-400 dark:border-black dark:text-stone-600"
-              } ease border-b-2 pb-1 text-sm transition-all duration-150`}
             >
               A Record{!subdomain && " (recommended)"}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={recordType == "CNAME" ? "default" : "ghost"}
               onClick={() => setRecordType("CNAME")}
-              className={`${
-                recordType == "CNAME"
-                  ? "border-black text-black dark:border-white dark:text-white"
-                  : "border-white text-stone-400 dark:border-black dark:text-stone-600"
-              } ease border-b-2 pb-1 text-sm transition-all duration-150`}
             >
-              CNAME Record{subdomain && " (recommended)"}
-            </button>
+              CNAME Record{!subdomain && " (recommended)"}
+            </Button>
           </div>
           <div className="my-3 text-left">
             <p className="my-5 text-sm dark:text-white">

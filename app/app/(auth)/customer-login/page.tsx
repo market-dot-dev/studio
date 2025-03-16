@@ -11,34 +11,35 @@ export const metadata: Metadata = {
 
 export default async function LoginPage() {
   return (
-    <>
+    <div className="flex flex-col max-w-xs mx-auto">
       <Image
         alt="market.dev logo"
         width={162}
         height={36}
-        className="relative mx-auto"
+        className="relative mx-auto h-9 w-auto"
         src="/market-dot-dev-logo.svg"
       />
 
-        <div className="mx-auto mt-4 w-11/12 max-w-xs sm:w-full">
-          <Suspense
-            fallback={
-              <div className="my-2 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
-            }
-          >
-            
-            <CustomerLogin />
-            
+      <div className="mx-auto mt-4 flex flex-col gap-6 sm:w-full">
+        <Suspense
+          fallback={
+            <div className="my-4 h-10 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
+          }
+        >
+          <CustomerLogin />
+        </Suspense>
+        {LOCAL_AUTH_AVAILABLE && (
+          <Suspense>
+            <LoginButton
+              href={"/login/local-auth"}
+              isLoading={false}
+              className="w-full"
+            >
+              Log in with Local Auth
+            </LoginButton>
           </Suspense>
-          {LOCAL_AUTH_AVAILABLE &&
-            <Suspense>
-              <LoginButton href={'/login/local-auth'} isLoading={false} >
-                <p className="text-sm font-medium text-stone-600 dark:text-stone-400">
-                  Log in with Local Auth
-                </p>
-              </LoginButton>
-            </Suspense>}
-        </div>
-      </>
+        )}
+      </div>
+    </div>
   );
 }

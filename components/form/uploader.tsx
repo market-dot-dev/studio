@@ -49,11 +49,11 @@ export default function Uploader({
       <label
         htmlFor={`${name}-upload`}
         className={cn(
-          "group relative mt-2 flex cursor-pointer flex-col items-center justify-center rounded-md border border-gray-300 bg-white shadow-sm transition-all hover:bg-gray-50",
-          aspectRatio,
+          "group relative flex cursor-pointer flex-col items-center justify-center rounded-md border border-stone-200 hover:border-stone-300 bg-white transition-colors",
           {
             "max-w-screen-md": aspectRatio === "aspect-video",
             "max-w-xs": aspectRatio === "aspect-square",
+            aspectRatio,
           },
         )}
       >
@@ -90,13 +90,13 @@ export default function Uploader({
           } absolute z-[3] flex h-full w-full flex-col items-center justify-center rounded-md px-10 transition-all ${
             data[name]
               ? "bg-white/80 opacity-0 hover:opacity-100 hover:backdrop-blur-md"
-              : "bg-white opacity-100 hover:bg-gray-50"
+              : "bg-white opacity-100 hover:bg-stone-50"
           }`}
         >
           <svg
             className={`${
               dragActive ? "scale-110" : "scale-100"
-            } h-7 w-7 text-gray-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95`}
+            } h-7 w-7 text-stone-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95`}
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
@@ -111,10 +111,10 @@ export default function Uploader({
             <path d="M12 12v9"></path>
             <path d="m16 16-4-4-4 4"></path>
           </svg>
-          <p className="mt-2 text-center text-sm text-gray-500">
+          <p className="mt-2 text-center text-sm text-stone-500">
             Drag and drop or click to upload.
           </p>
-          <p className="mt-2 text-center text-sm text-gray-500">
+          <p className="mt-2 text-center text-sm text-stone-500">
             Max file size: 50MB
           </p>
           <span className="sr-only">Photo upload</span>

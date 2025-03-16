@@ -1,4 +1,5 @@
-import { Card, Text, LineChart } from "@tremor/react";
+import { LineChart } from "@tremor/react";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 
 const labels = {
@@ -143,22 +144,28 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
     
     return (
       <Card>
-        <div className="flex flex-row justify-between">
-          <Text>{title} (Last 6 Months)</Text>
-        </div>
-        
-        <LineChart
-          className="h-72 mt-4"
-          data={data}
-          index="date"
-          categories={[labels[category]]}
-          colors={[color]}
-          connectNulls={true}
-          autoMinValue={true}
-          maxValue={Math.ceil(heighestValue * 120 / 100)}
-          intervalType="preserveStartEnd"
-          allowDecimals={false}
-        />
+        <CardHeader className="pb-5">
+          <CardTitle>
+            <span className="mr-2">{title}</span>
+            <span className="text-sm font-normal text-stone-500">
+              Last 6 months
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <LineChart
+            className="h-72 mt-4"
+            data={data}
+            index="date"
+            categories={[labels[category]]}
+            colors={[color]}
+            connectNulls={true}
+            autoMinValue={true}
+            maxValue={Math.ceil(heighestValue * 120 / 100)}
+            intervalType="preserveStartEnd"
+            allowDecimals={false}
+          />
+        </CardContent>
       </Card>
     )
   };

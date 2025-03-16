@@ -3,7 +3,7 @@
 import { useMemo } from "react";
 import renderElement from "./page-renderer";
 
-export default function PreviewSection({ content, width=400, height, screenWidth = 1600, screenHeight = 800, className }: {content: string, width?: number, height?:number, screenWidth?: number, screenHeight?: number, className?: string}) {
+export default function PreviewSection({ content, width=400, height = 900, screenWidth = 1600, screenHeight = 900, className }: {content: string, width?: number, height?:number, screenWidth?: number, screenHeight?: number, className?: string}) {
     const previewElement = useMemo(() => {
         try {
             const parser = new DOMParser();

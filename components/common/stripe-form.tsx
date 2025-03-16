@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import { Button } from "@/components/ui/button";
 import { Elements, useStripe, useElements, PaymentElement } from '@stripe/react-stripe-js';
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -41,9 +42,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ clientSecret, returnUrl }) 
   return (
     <form onSubmit={handleSubmit}>
       <PaymentElement />
-      <button type="submit" disabled={!stripe}>
+      <Button type="submit" disabled={!stripe}>
         Submit
-      </button>
+      </Button>
     </form>
   );
 };

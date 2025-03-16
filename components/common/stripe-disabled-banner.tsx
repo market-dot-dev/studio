@@ -1,21 +1,31 @@
-import LinkButton from "./link-button";
-import { Card, Bold, Text } from "@tremor/react";
-import { AlertCircle } from "lucide-react";
+import { Alert, AlertTitle, AlertDescription, AlertButton } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 const StripeDisabledBanner = () => {
   return (
-    <Card
-      className="mb-4 flex flex-row justify-between items-center bg-gray-100 border border-gray-400 px-4 py-3 text-gray-700"
+    <Alert
+      variant="warning"
+      className="rounded-none border-x-0 border-b border-t-0"
     >
-      <div className="flex flex-row items-center">
-        <AlertCircle size={24} className="mr-2 h-full" />
-        <div className="flex flex-col">
-          <Bold>There is an issue with your Stripe Account.</Bold>
-          <Text>Your Stripe account is not connected or has an issue that may prevent sales. Please visit your <a href="/settings/payment" className="underline">Payment Settings</a> to resolve this issue.</Text>
+      <AlertTriangle size={18} className="mr-2.5" />
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div>
+          <AlertTitle>There is an issue with your Stripe Account</AlertTitle>
+          <AlertDescription>
+            <p>
+              Your Stripe account is not connected or has an issue that may
+              prevent sales. Please visit your{" "}
+              <a href="/settings/payment" className="underline">
+                Payment Settings
+              </a>{" "}
+              to resolve this issue.
+            </p>
+          </AlertDescription>
         </div>
+        <AlertButton href="/settings/payment">Payment Settings</AlertButton>
       </div>
-      <LinkButton href="/settings/payment" label="Payment Settings" />
-    </Card>
+    </Alert>
+    // <Link href="/settings/payment" className={buttonVariants({ variant: "outline" })}>Payment Settings</Link>
   );
 };
 

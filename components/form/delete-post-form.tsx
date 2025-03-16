@@ -1,11 +1,11 @@
 "use client";
 
-import LoadingDots from "@/components/icons/loading-dots";
-import { cn } from "@/lib/utils";
 import { useParams, useRouter } from "next/navigation";
 import { useFormStatus } from "react-dom";
 import { toast } from "sonner";
 import { deletePost } from "@/lib/actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import va from "@vercel/analytics";
 
 export default function DeletePostForm({ postName }: { postName: string }) {
@@ -34,14 +34,13 @@ export default function DeletePostForm({ postName }: { postName: string }) {
           Deletes your post permanently. Type in the name of your post{" "}
           <b>{postName}</b> to confirm.
         </p>
-
-        <input
+        <Input
           name="confirm"
           type="text"
           required
           pattern={postName}
           placeholder={postName}
-          className="w-full max-w-md rounded-md border border-stone-300 text-sm text-stone-900 placeholder-stone-300 focus:border-stone-500 focus:outline-none focus:ring-stone-500 dark:border-stone-600 dark:bg-black dark:text-white dark:placeholder-stone-700"
+          className="w-full max-w-md"
         />
       </div>
 
@@ -60,16 +59,8 @@ export default function DeletePostForm({ postName }: { postName: string }) {
 function FormButton() {
   const { pending } = useFormStatus();
   return (
-    <button
-      className={cn(
-        "flex h-8 w-32 items-center justify-center space-x-2 rounded-md border text-sm transition-all focus:outline-none sm:h-10",
-        pending
-          ? "cursor-not-allowed border-stone-200 bg-stone-100 text-stone-400 dark:border-stone-700 dark:bg-stone-800 dark:text-stone-300"
-          : "border-red-600 bg-red-600 text-white hover:bg-white hover:text-red-600 dark:hover:bg-transparent",
-      )}
-      disabled={pending}
-    >
-      {pending ? <LoadingDots color="#808080" /> : <p>Confirm Delete</p>}
-    </button>
+    <Button variant="destructive" loading={pending} loadingText="Deleting">
+      Delete Post
+    </Button>
   );
 }

@@ -1,21 +1,25 @@
 "use client";
 
-import LoadingDots from "@/components/icons/loading-dots";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ReactNode, MouseEventHandler, FC } from "react";
+import { Button } from "@/components/ui/button";
 
 interface LoginButtonProps {
   children: ReactNode;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   isLoading: boolean;
   href?: string;
+  loadingText?: string;
+  className?: string;
 }
 
 export const LoginButton: FC<LoginButtonProps> = ({
   children,
   onClick,
   isLoading,
+  loadingText,
   href,
+  className = ""
 }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -41,17 +45,15 @@ export const LoginButton: FC<LoginButtonProps> = ({
   };
 
   return (
-    <button
-      disabled={isLoading}
+    <Button
+      variant="outline"
+      loading={isLoading}
+      loadingText={loadingText}
       onClick={handleClick}
-      className={`${
-        isLoading
-          ? "cursor-not-allowed bg-white dark:bg-black"
-          : "bg-white hover:bg-stone-50 active:bg-stone-100 dark:bg-black dark:hover:bg-black dark:hover:shadow"
-      } group flex h-12 w-full items-center justify-center gap-3 rounded-md font-bold text-stone-900 shadow ring-1 ring-black/5 transition-colors duration-75 focus:outline-none dark:border-stone-700 dark:text-stone-400`}
+      className={className}
     >
-      {isLoading ? <LoadingDots color="#A8A29E" /> : children}
-    </button>
+      {children}
+    </Button>
   );
 };
 

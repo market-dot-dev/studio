@@ -1,12 +1,15 @@
 'use client';
-import { useModal } from "@/components/modal/provider";
-import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; import { useState, useEffect, useCallback } from "react";
-import { Media as DBMedia } from "@prisma/client";
-import { Button, Flex,  NumberInput, Title, TextInput, Text, Bold } from "@tremor/react";
-import { format } from 'date-fns'
 
+import { useState, useEffect, useCallback } from "react";
+import { useModal } from "@/components/modal/provider";
+import { uploadFile, listMedia, deleteMedia } from "@/app/services/MediaService"; 
+import { Button } from "@/components/ui/button";
+import { Media as DBMedia } from "@prisma/client";
+import { format } from 'date-fns'
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useDropzone } from 'react-dropzone';
-import { Spinner } from "flowbite-react";
+import Spinner from "@/components/ui/spinner";
 
 type Media = Partial<DBMedia>;
 
@@ -21,14 +24,20 @@ const StyledDropzone = ({ onFileAccepted, isUploading } : any) => {
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
     return (
-        <Flex {...getRootProps()} flexDirection="col" className="p-4 gap-2 border-2 rounded-md border-dashed dropzone cursor-pointer min-h-30" justifyContent="start">
-            <input {...getInputProps()} />
-            <Bold>Files Upload</Bold>
-            {isUploading ? <Spinner /> :
-            
-                <Text className="py-1">Drop files here or <strong>Click</strong> to select files</Text>
-            }
-        </Flex>
+      <div
+        {...getRootProps()}
+        className="dropzone min-h-30 flex cursor-pointer flex-col gap-2 rounded-md border-2 border-dashed p-4"
+      >
+        <input {...getInputProps()} />
+        <strong>Files Upload</strong>
+        {isUploading ? (
+          <Spinner />
+        ) : (
+          <p className="py-1 text-sm text-stone-500">
+            Drop files here or <strong>Click</strong> to select files
+          </p>
+        )}
+      </div>
     );
 };
 
@@ -114,96 +123,131 @@ function ImageInsertModal({ insertAtCursor, hide }: { insertAtCursor: (prop: any
     }, [selectedMedia, setMediaList]);
 
     return (
-        <Flex className="grow" alignItems="stretch">
-            <Flex flexDirection="col" alignItems="stretch">
-                <Flex flexDirection="col" justifyContent="center" alignItems="center" className='w-full p-4 gap-2'>
-                    <StyledDropzone onFileAccepted={handleFileUpload} isUploading={isUploading} />    
-                </Flex>
+      <div className="flex grow items-stretch">
+        <div className="flex flex-col items-stretch">
+          <div className="flex w-full flex-col items-center justify-center gap-2 p-4">
+            <StyledDropzone
+              onFileAccepted={handleFileUpload}
+              isUploading={isUploading}
+            />
+          </div>
 
-                <Flex justifyContent="start" alignItems="start" className="gap-4 grow p-4 flex-wrap max-h-[60vh] overflow-auto" >
-                    {isLoading && <Spinner />}
-                    {mediaList.map((media) => {
-                        const classes = `border ${selectedMedia?.id === media.id ? 'border-blue-500' : 'border-transparent'} cursor-pointer`;
-                        return (
-                            <div
-                                key={media.id}
-                                className={classes}
-                                onClick={() => handleSelectMedia(media)}
-                                style={{ width: '137px', height: '137px' }} 
-                            >
-                                <img src={media.url} className="object-cover w-full h-full" />
-                            </div>
-                        )
-                    })}
-                </Flex>
-                
+          <div className="flex max-h-[60vh] grow flex-wrap items-start justify-start gap-4 overflow-auto p-4">
+            {isLoading && <Spinner />}
+            {mediaList.map((media) => {
+              const classes = `border ${selectedMedia?.id === media.id ? "border-blue-500" : "border-transparent"} cursor-pointer`;
+              return (
+                <div
+                  key={media.id}
+                  className={classes}
+                  onClick={() => handleSelectMedia(media)}
+                  style={{ width: "137px", height: "137px" }}
+                >
+                  <img src={media.url} className="h-full w-full object-cover" />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <div className="flex w-1/3 flex-col justify-between gap-6 bg-stone-100 p-4">
+          <div className="flex min-h-[60vh] grow flex-col justify-start gap-4">
+            {selectedMedia && (
+              <>
+                <h2 className="text-xl font-bold">Selected Image</h2>
+                <div className="flex gap-4">
+                  <div
+                    style={{
+                      width: "137px",
+                      height: "137px",
+                      flexBasis: "50%",
+                    }}
+                  >
+                    <img
+                      src={selectedMedia.url}
+                      className="h-full w-full object-cover"
+                      alt="Thumbnail"
+                    />
+                  </div>
+                  <div className="flex basis-1/2 flex-col items-start gap-4">
+                    <p className="text-sm text-stone-500">
+                      Uploaded:
+                      <br />{" "}
+                      {selectedMedia.createdAt
+                        ? format(new Date(selectedMedia.createdAt), "PPP")
+                        : null}
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      loading={isDeleting}
+                      loadingText="Deleting"
+                      onClick={deleteSelected}
+                    >
+                      Delete
+                    </Button>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1">
+                    <Label htmlFor="alt-text">Alt Text</Label>
+                    <Input
+                      type="text"
+                      id="alt-text"
+                      name="alt-text"
+                      value={alt}
+                      onChange={(e) => setAlt(e.target.value)}
+                      placeholder="Alt Text"
+                    />
+                  </div>
 
-                
-            </Flex>
-            <Flex flexDirection="col" justifyContent="between" className="w-1/3 bg-stone-100 p-4 gap-6">
-                <Flex flexDirection="col" className="grow gap-4 min-h-[60vh]" justifyContent="start">
-                {selectedMedia && (
-                    <>
-                        <Title>Selected Image</Title>
-                        <Flex className="gap-4">
-                            <div style={{ width: '137px', height: '137px', flexBasis: '50%' }} >
-                                <img src={selectedMedia.url} className="object-cover w-full h-full" alt="Thumbnail" />
-                            </div>
-                            <Flex flexDirection="col" className="gap-4 basis-1/2" alignItems="start">
-                                <Text className="color-black text-wrap">Uploaded:<br /> {selectedMedia.createdAt ? format(new Date(selectedMedia.createdAt), 'PPP') : null}</Text>
-                                <Button color="red" size="xs" loading={isDeleting} disabled={isDeleting} onClick={deleteSelected}>Delete</Button>
-                            </Flex>
-                        </Flex>
-                        <Flex flexDirection="col" className="gap-2">
-                            <Flex className="gap-2" flexDirection="col">
-                                <label>Alt Text</label>
-                                <TextInput
-                                    type="text"
-                                    value={alt}
-                                    onChange={(e) => setAlt(e.target.value)}
-                                    placeholder="Alt Text"
-                                />
-                            </Flex>
-                            
-                            <Flex className="gap-2" flexDirection="col">
-                                <label>Width (px)</label>
-                                <NumberInput
-                                    value={width}
-                                    min={1}
-                                    onChange={(e) => setWidth(e.target.value)}
-                                    placeholder="Width"
-                                />
-                            </Flex>
-                            <Flex className="gap-2" flexDirection="col">
-                                <label>Height (px)</label>
-                                <NumberInput
-                                    value={height}
-                                    min={1}
-                                    onChange={(e) => setHeight(e.target.value)}
-                                    placeholder="Height"
-                                />
-                            </Flex>
-                            
-                        </Flex>
-                    </>
-                )}
-                </Flex>
-                <Button onClick={handleInsertImage}
-                    disabled={!selectedMedia}
-                >Insert</Button>
-                
-            </Flex>
-        </Flex>
-    )
+                  <div className="flex flex-col gap-1">
+                    <Label htmlFor="width">Width (px)</Label>
+                    <Input
+                      id="width"
+                      name="width"
+                      type="number"
+                      value={width}
+                      min={1}
+                      onChange={(e) => setWidth(e.target.value)}
+                      placeholder="Width"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <Label htmlFor="height">Height (px)</Label>
+                    <Input
+                      id="height"
+                      name="height"
+                      type="number"
+                      value={height}
+                      min={1}
+                      onChange={(e) => setHeight(e.target.value)}
+                      placeholder="Height"
+                    />
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+          <Button onClick={handleInsertImage} disabled={!selectedMedia}>
+            Insert
+          </Button>
+        </div>
+      </div>
+    );
 }
 
 export default function ImageInsert({ insertAtCursor, children }: { insertAtCursor: (prop: any) => void, children: any }) {
     const { show, hide } = useModal();
     const header = (
-        <Title>Select or Upload Image</Title>
-    )
+      <h2 className="text-xl font-bold">Select or Upload Image</h2>
+    );
     const showModal = () => {
-        show(<ImageInsertModal insertAtCursor={insertAtCursor} hide={hide} />, undefined, undefined, header, 'w-full md:w-5/6 max-h-[80vh]');
+        show(
+            <ImageInsertModal insertAtCursor={insertAtCursor} hide={hide} />, 
+            undefined, 
+            undefined, 
+            header, 'w-full md:w-5/6 max-h-[80vh]'
+        );
     };
     return (
         <div className="p-2 py-4" onClick={showModal}>{children}</div>

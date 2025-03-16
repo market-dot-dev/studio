@@ -1,8 +1,12 @@
-import { Metric, Card, Text, Flex, BarChart, LineChart, Button, Badge } from "@tremor/react";
+import { BarChart } from "@tremor/react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import Link from "next/link";
 import RevenueLineChart from "./revenue-line-chart";
-import SecondaryButton from "@/components/common/secondary-button";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { ChevronRight } from "lucide-react";
 
 export default function DashboardCharts({ customers }: { customers: CustomerWithChargesAndSubscriptions[] }) {
 
@@ -200,67 +204,88 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
 
   return (
     <>
-      <div className="flex justify-between items-end mb-2">
+      <div className="mb-4 flex items-end justify-between">
         <div className="flex items-end gap-2">
-          <div className="text-xl font-bold">Reports</div>
+          <div className="text-xl font-semibold">Reports</div>
           {isUsingDummyData && (
-            <Badge color={'gray'} size={'xs'} className="mb-1">
+            <Badge variant="secondary" size="sm" className="mb-1">
               Sample Data
             </Badge>
           )}
         </div>
-        <Link href='/reports' className="ml-auto">
-          <SecondaryButton label="More Details" />
+        <Link
+          href="/reports"
+          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "group gap-0.5 pr-1")}
+        >
+          More Details
+          <ChevronRight
+            size={10}
+            className="inline-block transition-transform group-hover:translate-x-px"
+          />
         </Link>
       </div>
       <div className="flex max-w-screen-xl flex-col space-y-4">
         <div className="grid gap-6 lg:grid-cols-2">
           <Card>
-            <div className="flex flex-row justify-between">
-              <Text>New Customers (Last 6 Months)</Text>
-            </div>
-            <Flex
-              className="space-x-3 truncate"
-              justifyContent="start"
-              alignItems="baseline"
-            >
-              <Metric className="font-cal">{totalNewCustomers}</Metric>
-            </Flex>
-            <BarChart
-              className="h-72 mt-4"
-              data={customerTotals}
-              index="date"
-              categories={["New Subscriptions", "Cancellations", "Renewals", "One-time Charges"]}
-              colors={isUsingDummyData
-                ? ["gray-300", "gray-400", "gray-500", "gray-600"]
-                : ["gray-400", "red-400", "green-400", "blue-400"]}
-              autoMinValue={true}
-              maxValue={Math.ceil(highestCustChangesInAMonth * 120 / 100)}
-              intervalType="preserveStartEnd"
-              allowDecimals={false}
-            />
+            <CardHeader className="pb-4">
+              <CardTitle>
+                <span className="mr-2">New Customers</span>
+                <span className="text-sm font-normal text-stone-500">
+                  Last 6 months
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-baseline justify-start space-x-3 truncate">
+                <h3 className="text-3xl font-semibold leading-none tracking-tight">
+                  {totalNewCustomers}
+                </h3>
+              </div>
+              <BarChart
+                className="mt-3 h-72"
+                data={customerTotals}
+                index="date"
+                categories={[
+                  "New Subscriptions",
+                  "Cancellations",
+                  "Renewals",
+                  "One-time Charges",
+                ]}
+                colors={
+                  isUsingDummyData
+                    ? ["gray-300", "gray-400", "gray-500", "gray-600"]
+                    : ["gray-400", "red-400", "green-400", "blue-400"]
+                }
+                autoMinValue={true}
+                maxValue={Math.ceil((highestCustChangesInAMonth * 120) / 100)}
+                intervalType="preserveStartEnd"
+                allowDecimals={false}
+              />
+            </CardContent>
           </Card>
 
           <Card>
-            <div className="flex flex-row justify-between">
-              <Text>Revenue (Last 6 Months)</Text>
-            </div>
-            <Flex
-              className="space-x-3 truncate"
-              justifyContent="start"
-              alignItems="baseline"
-            >
-              <Metric className="font-cal">${`${totalRevenue}`}</Metric>
-            </Flex>
+            <CardHeader className="pb-4">
+              <CardTitle>
+                <span className="mr-2">Revenue</span>
+                <span className="text-sm font-normal text-stone-500">
+                  Last 6 months
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-baseline justify-start space-x-3 truncate">
+                <h3 className="text-3xl font-semibold tracking-tight leading-none">${`${totalRevenue}`}</h3>
+              </div>
 
-            <RevenueLineChart
-              revenueData={revenueData}
-              isUsingDummyData={isUsingDummyData}
-              highestRevenueItemInMonth={highestRevenueItemInMonth}
-            />
+              <RevenueLineChart
+                revenueData={revenueData}
+                isUsingDummyData={isUsingDummyData}
+                highestRevenueItemInMonth={highestRevenueItemInMonth}
+              />
+            </CardContent>
           </Card>
         </div>
-
       </div>
     </>
   );

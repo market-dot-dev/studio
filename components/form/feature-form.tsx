@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, TextInput } from '@tremor/react';
-import { TextArea } from "@radix-ui/themes";
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 import { Feature, Service } from '@prisma/client'; // Assuming Service stays as is, importing it if needed
 import { update, create } from '@/app/services/feature-service';
 import { getCurrentUser } from '@/app/services/UserService';
-import { CheckSquare } from "lucide-react";
-
 
 type Props = {
   service: Service;
@@ -83,39 +83,84 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 flex flex-col gap-4 items-start p-4">
-      <div className="flex flex-col w-full gap-2">
-        <label htmlFor="name" className="text-sm text-gray-600 font-bold">Service Name</label>
-        <div className="text-gray-600 text-xs">This is the name that appears on the features list for a Tier.</div>
-        <TextInput placeholder=""
-              {...register("name", { required: "Service name is required" })}
-        />
-        {errors.name ? <p className="text-red-500 text-xs">{errors.name.message}</p> : <></>}
-      </div>
-      <div className="flex flex-col w-full gap-2">
-        <label htmlFor="name" className="text-sm text-gray-600 font-bold">Relevant Link, Email, or Phone#</label>
-          <TextInput placeholder=""
-            {...register("uri", {
-              required: requiresUri && "Relevant Link, Email, or Phone# is required for this service",
-            })}
-          />
-        { (requiresUri && errors.uri) && <p className="text-red-500 text-xs">{errors.uri.message}</p> }
-      </div>
-      <div className="flex flex-col w-full gap-2">
-        <label htmlFor="description" className="text-sm text-gray-600 font-bold">Description</label>
-        <TextArea placeholder="Detail fulfillment or workflow information" rows={3} {...register("description")} className="w-full" />
-      </div>
-      
-      <input type="hidden" {...register("isEnabled")} />
-      <div className="flex gap-4 items-center justify-between w-full">
-      
-        <div className="flex gap-4">
-          <Button onClick={enabledClick} disabled={isSaving} loading={isSaving}>
-            {initialFeature?.isEnabled ? 'Update' : 'Enable'}
-          </Button>
-          <Button variant="secondary" onClick={hide}>Close</Button>
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="flex flex-col items-start gap-4 space-y-2 p-4"
+    >
+      <div className="flex w-full flex-col gap-2">
+        <div>
+          <Label htmlFor="name">
+            Service Name
+          </Label>
+          <div className="text-xs text-stone-500">
+            This is the name that appears on the features list for a Tier.
+          </div>
         </div>
-        { initialFeature?.isEnabled && <Button variant="secondary" color="red" size="xs" onClick={ disableClick } disabled={isSaving} loading={isSaving}>Disable</Button> }
+        <Input
+          id="name"
+          placeholder=""
+          {...register("name", { required: "Service name is required" })}
+        />
+        {errors.name ? (
+          <p className="text-xs text-red-500">{errors.name.message}</p>
+        ) : (
+          <></>
+        )}
+      </div>
+      <div className="flex w-full flex-col gap-2">
+        <Label htmlFor="uri">
+          Relevant Link, Email, or Phone#
+        </Label>
+        <Input
+          id="uri"
+          placeholder=""
+          {...register("uri", {
+            required:
+              requiresUri &&
+              "Relevant Link, Email, or Phone# is required for this service",
+          })}
+        />
+        {requiresUri && errors.uri && (
+          <p className="text-xs text-red-500">{errors.uri.message}</p>
+        )}
+      </div>
+      <div className="flex w-full flex-col gap-2">
+        <Label htmlFor="description">
+          Description
+        </Label>
+        <Textarea
+          id="description"
+          placeholder="Detail fulfillment or workflow information"
+          rows={3}
+          {...register("description")}
+          className="w-full"
+        />
+      </div>
+
+      <input type="hidden" {...register("isEnabled")} />
+      <div className="flex w-full items-center justify-between gap-4">
+        <div className="flex gap-4">
+          <Button
+            loading={isSaving}
+            loadingText={initialFeature?.isEnabled ? "Updating" : "Enabling"}
+            onClick={enabledClick}
+          >
+            {initialFeature?.isEnabled ? "Update" : "Enable"}
+          </Button>
+          <Button variant="outline" onClick={hide}>
+            Close
+          </Button>
+        </div>
+        {initialFeature?.isEnabled && (
+          <Button
+            variant="destructive"
+            loading={isSaving}
+            loadingText="Disabling"
+            onClick={disableClick}
+          >
+            Disable
+          </Button>
+        )}
       </div>
     </form>
   );

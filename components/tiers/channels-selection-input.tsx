@@ -1,62 +1,63 @@
 import { Channel } from "@prisma/client";
-import { Globe, Store } from "lucide-react";
+import { Store, ShoppingBag } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function ChannelsSelectionInput({
   selectedChannels,
   handleInputChange,
   userIsMarketExpert,
+  idPrefix = "",
 }: {
   selectedChannels: Channel[];
   handleInputChange: (channel: Channel) => void;
   userIsMarketExpert: boolean;
+  idPrefix?: string;
 }) {
   return (
-    <div className="flex h-full gap-2">
-      <label className="block w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
-        <div className="flex cursor-pointer flex-col gap-1 rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
+    <div className="flex flex-col gap-2">
+      <label htmlFor={`${idPrefix}channel-site`} className="block w-full">
+        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-swamp hover:bg-stone-50">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
-              <Globe className="mr-3 h-5 w-5 text-gray-500" />
-              <span className="text-sm text-gray-900">Site</span>
+              <Store className="mr-2.5 size-[18px] text-stone-500" />
+              <span className="text-left text-sm font-semibold text-stone-800">
+                Storefront
+              </span>
             </div>
-            <input
-              type="checkbox"
-              name="channel-type"
+            <Checkbox
+              id={`${idPrefix}channel-site`}
+              name={`${idPrefix}channel-type`}
               value={Channel.site}
-              className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
               checked={selectedChannels.includes(Channel.site)}
-              onChange={() => handleInputChange(Channel.site)}
+              onCheckedChange={() => handleInputChange(Channel.site)}
             />
           </div>
-          <div className="block">
-            <span className="text-xs text-gray-900">
-              List your package on your website
-            </span>
-          </div>
+          <p className="text-left text-xs leading-4 text-stone-500">
+            List your package for sale on your website
+          </p>
         </div>
       </label>
       {userIsMarketExpert && (
-        <label className="block h-full w-full rounded-tremor-default focus-within:outline-none focus-within:ring-2 focus-within:ring-gray-200">
-          <div className="flex cursor-pointer flex-col gap-1 rounded-tremor-default border bg-white p-4 shadow-sm hover:bg-gray-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
+        <label htmlFor={`${idPrefix}channel-market`} className="block h-full w-full">
+          <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-swamp hover:bg-stone-50">
             <div className="flex h-full w-full items-center justify-between">
               <div className="flex items-center">
-                <Store className="mr-3 h-5 w-5 text-gray-500" />
-                <span className="text-sm text-gray-900">Market</span>
+                <ShoppingBag className="mr-2.5 size-[18px] text-stone-500" />
+                <span className="text-left text-sm font-semibold text-stone-800">
+                  Marketplace
+                </span>
               </div>
-              <input
-                type="checkbox"
-                name="channel-type"
+              <Checkbox
+                id={`${idPrefix}channel-market`}
+                name={`${idPrefix}channel-type`}
                 value={Channel.market}
-                className="text-gray-500 checked:text-marketing-swamp focus:outline-none focus:ring-0"
                 checked={selectedChannels.includes(Channel.market)}
-                onChange={() => handleInputChange(Channel.market)}
+                onCheckedChange={() => handleInputChange(Channel.market)}
               />
             </div>
-            <div className="block">
-              <span className="text-xs text-gray-900">
-                List your package on your Market.dev expert page
-              </span>
-            </div>
+            <p className="text-left text-xs leading-4 text-stone-500">
+              List your package for sale on your Market.dev expert page
+            </p>
           </div>
         </label>
       )}

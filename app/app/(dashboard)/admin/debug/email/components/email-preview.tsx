@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Card, Button, Callout } from "@tremor/react";
-import { User } from "@prisma/client";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Card } from "@/components/ui/card";
 
 // SVG icons as components
 const CheckCircleIcon = () => (
@@ -18,7 +19,7 @@ const ExclamationCircleIcon = () => (
 );
 
 interface EmailPreviewStepProps {
-  selectedUsers: User[];
+  selectedUsers: any[];
   emailSubject: string;
   emailContent: string;
 }
@@ -32,7 +33,7 @@ export default function EmailPreviewStep({
   const [status, setStatus] = useState<"idle" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   
-  const formatContent = (content: string, user: User): string => {
+  const formatContent = (content: string, user: any): string => {
     // Replace variables with user data
     let formatted = content
       .replace(/{name}/g, user.name || "there")
@@ -82,18 +83,18 @@ export default function EmailPreviewStep({
       <h2 className="text-lg font-semibold mb-4">Preview & Send</h2>
       
       {status !== "idle" && (
-        <Callout
-          title={status === "success" ? "Success" : "Error"}
-          icon={status === "success" ? CheckCircleIcon : ExclamationCircleIcon}
-          color={status === "success" ? "green" : "red"}
+        <Alert
+          variant={status === "success" ? "default" : "destructive"}
           className="mb-4"
         >
-          {message}
-        </Callout>
+          {status === "success" ? <CheckCircleIcon /> : <ExclamationCircleIcon />}
+          <AlertTitle>{status === "success" ? "Success" : "Error"}</AlertTitle>
+          <AlertDescription>{message}</AlertDescription>
+        </Alert>
       )}
       
       <div className="mb-6">
-        <p className="text-sm text-gray-600 mb-2">
+        <p className="text-sm text-stone-500 mb-2">
           You are about to send this email to <strong>{selectedUsers.length}</strong> users.
         </p>
         
@@ -101,7 +102,6 @@ export default function EmailPreviewStep({
           onClick={sendEmails}
           disabled={sending}
           loading={sending}
-          color="green"
           className="mt-2"
         >
           Send Emails
@@ -110,14 +110,14 @@ export default function EmailPreviewStep({
       
       <div className="space-y-6">
         <div>
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Email Preview</h3>
-          <Card className="p-4 bg-gray-50">
+          <h3 className="text-sm font-medium text-stone-700 mb-2">Email Preview</h3>
+          <Card>
             <div className="mb-2">
-              <span className="text-sm font-medium text-gray-500">Subject:</span>
+              <span className="text-sm font-medium text-stone-500">Subject:</span>
               <span className="text-sm ml-2">{emailSubject}</span>
             </div>
             <div>
-              <span className="text-sm font-medium text-gray-500">Content:</span>
+              <span className="text-sm font-medium text-stone-500">Content:</span>
               <div className="mt-2 p-4 bg-white border rounded-md">
                 <div dangerouslySetInnerHTML={{ __html: formatContent(emailContent, selectedUsers[0] || {}) }} />
               </div>
@@ -126,8 +126,8 @@ export default function EmailPreviewStep({
         </div>
         
         <div>
-          <h3 className="text-sm font-medium text-gray-700 mb-2">Recipients ({selectedUsers.length})</h3>
-          <Card className="p-4 bg-gray-50 max-h-40 overflow-y-auto">
+          <h3 className="text-sm font-medium text-stone-700 mb-2">Recipients ({selectedUsers.length})</h3>
+          <Card className="max-h-40 overflow-y-auto">
             <ul className="text-sm">
               {selectedUsers.map((user) => (
                 <li key={user.id} className="mb-1">

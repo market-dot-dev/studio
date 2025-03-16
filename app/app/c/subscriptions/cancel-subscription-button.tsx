@@ -1,7 +1,7 @@
 "use client";
 
 import { cancelSubscription } from "@/app/services/SubscriptionService";
-import { Button, Text, Title } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import { useCallback, useState } from "react";
 import { useModal } from "@/components/modal/provider";
 
@@ -11,7 +11,7 @@ const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }
   const { show, hide } = useModal();
 
   const showWarning = () => {
-    const modalHeader = <Title>Cancel Subscription</Title>;
+    const modalHeader = <h2 className="text-xl font-bold">Cancel Subscription</h2>;
     show(
       <CancelSubscriptionContent subscriptionId={subscriptionId} hide={hide} setParentLoading={setLoading} />,
       hide,
@@ -21,7 +21,17 @@ const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }
     );
   }
   return (
-    <Button size="xs" className="w-min" variant="primary" color="red" loading={loading} disabled={loading} onClick={showWarning}>Cancel Subscription</Button>
+    <Button
+      size="sm"
+      variant="destructive"
+      loading={loading}
+      loadingText="Cancelling Subscription"
+      disabled={loading}
+      className="w-min"
+      onClick={showWarning}
+    >
+      Cancel Subscription
+    </Button>
   );
 }
 
@@ -40,18 +50,34 @@ function CancelSubscriptionContent({ subscriptionId, hide, setParentLoading }: {
   }, [subscriptionId, cancelSubscription, setLoading, setParentLoading]);
 
   return (
-
     <div className="flex flex-col gap-12 p-4">
-      <Text>Are you sure, you want to cancel your subscription?</Text>
+      <p className="text-sm text-stone-500">
+        Are you sure, you want to cancel your subscription?
+      </p>
       <div className="flex gap-4">
-        <Button size="xs" className="w-min" variant="primary" color="red" loading={loading} disabled={loading} onClick={handleCancelSubscription} >
-          {loading ? "Cancelling Subscription" : "Cancel Subscription"}
+        <Button
+          size="sm"
+          className="w-min"
+          variant="destructive"
+          loading={loading}
+          loadingText="Cancelling Subscription"
+          disabled={loading}
+          onClick={handleCancelSubscription}
+        >
+          Cancel subscription
         </Button>
-        <Button size="xs" className="w-min" variant="secondary" disabled={loading} onClick={hide}>No, Keep Subscription</Button>
+        <Button
+          size="sm"
+          className="w-min"
+          variant="secondary"
+          disabled={loading}
+          onClick={hide}
+        >
+          No, keep subscription
+        </Button>
       </div>
     </div>
-
-  )
+  );
 
 }
 

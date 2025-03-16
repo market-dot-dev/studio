@@ -1,8 +1,18 @@
 'use client'
 import { Lead, Repo } from "@prisma/client";
-import { Bold, Card, Badge, Button, Text, SelectItem, Select, TextInput } from "@tremor/react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Search, XCircle, Trash2 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { useCallback, useEffect, useState } from "react";
 
@@ -276,12 +286,19 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             <div>
                 <Select
                     disabled={isSearching}
-                    value={`${perPage}`} onValueChange={(e: string) => {
+                    value={`${perPage}`} 
+                    onValueChange={(e: string) => {
                         setPerPage(parseInt(e));
-                    }}>
-                    <SelectItem value="20">20</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                    <SelectItem value="100">100</SelectItem>
+                    }}
+                >
+                    <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Results per page" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="20">20</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                    </SelectContent>
                 </Select>
             </div>
         </>
@@ -358,7 +375,16 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                 return;
             }
             
-            setFacets(res.data);
+            // Make sure res.data is an object before setting it as facets
+            if (res.data && typeof res.data === 'object') {
+                setFacets(res.data);
+            } else {
+                console.error('Unexpected facets data format:', res.data);
+                setFacets({}); // Set to empty object instead of null
+            }
+        }).catch(error => {
+            console.error('Error fetching facets:', error);
+            setFacets({}); // Set to empty object on error
         });
 
     }, [radarId, filters])
@@ -376,33 +402,39 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
         }
     }, [inputRepoUrl])
 
-    const filterBadges = Object.keys(filters).map((key: string) => {
-        if (filters[key as keyof FiltersState]) {
+    const filterBadges = Object.keys(filters || {}).map((key: string) => {
+        if (filters && filters[key as keyof FiltersState]) {
             return (
-                <Badge key={key} className="pr-1 mr-1 mb-1">
-                    <div className="flex flex-nowrap gap-1">
-                        <Text>{key}: {filters[key as keyof FiltersState]}</Text>
-                        <div className="cursor-pointer" 
-                            onClick={() => {
-                                setFilters((prev: FiltersState) => {
-                                    let newFilters = { ...prev };
-                                    newFilters[key as keyof FiltersState] = '';
-                                    return newFilters;
-                                });
-                            }}
-                        ><XCircle className="h-5 w-5 flex-shrink-0" /></div>
-                    </div>
-                </Badge>
-            )
+              <Badge key={key} variant="secondary" className="mb-1 mr-1 pr-1">
+                <div className="flex flex-nowrap gap-1">
+                  <p className="text-sm text-stone-500">
+                    {key}: {filters[key as keyof FiltersState]}
+                  </p>
+                  <div
+                    className="cursor-pointer"
+                    onClick={() => {
+                      setFilters((prev: FiltersState) => {
+                        let newFilters = { ...prev };
+                        newFilters[key as keyof FiltersState] = "";
+                        return newFilters;
+                      });
+                    }}
+                  >
+                    <XCircle className="h-5 w-5 flex-shrink-0" />
+                  </div>
+                </div>
+              </Badge>
+            );
         }
+        return null;
     }).filter(Boolean);
 
     return (
         <>
             <div className="mb-4">
 
-                <div className="relative">
-                    <TextInput icon={Search} value={inputRepoUrl} placeholder="Enter a Repo URL..." 
+                <div className="flex gap-3">
+                    <Input icon={<Search />} value={inputRepoUrl} placeholder="Enter a Repo URL..." 
                         onFocus={() => {
                             setIsUrlInputFocused(true);
                         }}
@@ -426,9 +458,9 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                             }
                         }}
                     />
-                    <div className={ "w-full relative " + (!isUrlInputFocused || !urlsHistory?.length ? "hidden" : "" )}>
+                    <div className={ "w-full relative " + (!isUrlInputFocused || !Array.isArray(urlsHistory) || !urlsHistory?.length ? "hidden" : "" )}>
                         <div className="absolute left-0 top-0 w-full flex flex-col bg-white text-sm py-2 z-50 border border-t-0 shadow-lg rounded-b-md">
-                            {urlsHistory.map((url: string, index: number) => {
+                            {Array.isArray(urlsHistory) && urlsHistory.map((url: string, index: number) => {
                                 return (
                                     <div key={index} className="flex items-center justify-between cursor-pointer hover:bg-gray-200 px-4 group"
                                         onClick={() => {
@@ -447,21 +479,26 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                             })}
                         </div>
                     </div>
-                    <div className="absolute right-0 top-0 h-full inline-block">
-                        <Button className="rounded-l-none" onClick={handleUrlSearch} disabled={isSearching} loading={isSearching}>Search</Button>
-                    </div>
+                    <Button loading={isSearching} onClick={handleUrlSearch}>Search</Button>
                 </div>
                 
 
-                {repos.length ?
+                {Array.isArray(repos) && repos.length ?
                     <div className="flex-col gap-2 mt-2 md:flex-row">
-                        <Text>Search for your connected repos: (<Link href="/settings/repos" className="underline">Connect More</Link>)</Text>
+                        <p className="text-sm text-stone-500">Search for your connected repos: (<Link href="/settings/repos" className="underline">Connect More</Link>)</p>
                         <div className="flex gap-2 mt-2 flex-wrap w-full">
                             {repos.map((repo, index) => {
                                 const repoOrgName = gitHubRepoOrgAndName(repo.url);
                                 return (
-                                    <Button size="xs" key={index} className={'rounded-xl py-0 px-2' + (radarId && repo.radarId === radarId ? ' bg-black' : ' bg-gray-600')} onClick={() => handleRepoSelected(index)}>{repoOrgName || repo.name}</Button>
-                                )
+                                  <Button
+                                    key={index}
+                                    size="sm"
+                                    variant={radarId && repo.radarId === radarId ? "default" : "outline"}
+                                    onClick={() => handleRepoSelected(index)}
+                                  >
+                                    {repoOrgName || repo.name}
+                                  </Button>
+                                );
                             })}
                         </div>
                     </div>
@@ -478,8 +515,8 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
 
             </div>
 
-            <Bold>Search Results{ repoOrgName ? ' for ' + repoOrgName : ''}:</Bold>
-            {searchError ? <Text className="text-red-500">{searchError}</Text> : null}
+            <strong>Search Results{ repoOrgName ? ' for ' + repoOrgName : ''}:</strong>
+            {searchError ? <p className="text-sm text-red-500">{searchError}</p> : null}
             {radarResults.length ?
                 <div className="flex flex-col gap-4 items-stretch sticky -top-1 z-10 bg-white p-4 shadow-sm border rounded-md -mr-1 -ml-1">
                     <div className="flex w-full items-start">
@@ -510,7 +547,7 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
             }
             <div className="grid grid-cols-4 w-full min-h-[100vh]">
                 <div className="col-span-1">
-                    { facets ?
+                    { facets && typeof facets === 'object' ?
                         <FiltersPanel facets={facets} filters={filters} setFilters={setFilters} setItemsCount={setTotalCount} />
                         : radarId ? <LoadingSpinner /> : null
                     }
@@ -522,8 +559,8 @@ export default function LeadsSearch({ repos }: { repos: Repo[] }) {
                         </div>
                         :
                         <>
-                            {radarResults?.map((lead, index) => {
-                                const isShortlisted = shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
+                            {Array.isArray(radarResults) && radarResults.map((lead, index) => {
+                                const isShortlisted = Array.isArray(shortListedLeads) && shortListedLeads.some(leadKey => leadKey.host === lead.host && leadKey.uuid === lead.uuid);
                                 return <SearchResult key={index} lead={lead} isShortlisted={isShortlisted} setShortListedLeads={setShortListedLeads} />
                             })}
 
@@ -559,23 +596,27 @@ function SearchResult({ lead, isShortlisted, setShortListedLeads }: { lead: Lead
     }, [lead])
 
     return (
-        <Card className="flex flex-col my-2 z-0 relative">
-            <LeadItem lead={lead} />
-            <div className="flex flex-col absolute right-10 gap-4">
-                {isShortlisted && <Badge>Shortlisted</Badge>}
-                <Button
-                    loading={isAddingToShortlist}
-                    disabled={isShortlisted || isAddingToShortlist}
-                    onClick={addToShortlist}
-                >Add to Shortlist</Button>
-            </div>
-        </Card>
-    )
+      <Card className="relative z-0 my-2 flex flex-col">
+        <LeadItem lead={lead} />
+        <div className="absolute right-10 flex flex-col gap-4">
+          {isShortlisted && <Badge variant="secondary">Shortlisted</Badge>}
+          <Button
+            variant="outline"
+            loading={isAddingToShortlist}
+            loadingText="Adding to Shortlist"
+            disabled={isShortlisted || isAddingToShortlist}
+            onClick={addToShortlist}
+          >
+            Add to Shortlist
+          </Button>
+        </div>
+      </Card>
+    );
 }
 
 
 function Pagination({ page, perPage, totalCount, onPageChange, isLoading, facets }: { page: number, perPage: number, totalCount: number, onPageChange: any, isLoading: boolean, facets: any }) {
-    const totalPages = Math.ceil(totalCount / perPage);
+    const totalPages = Math.max(1, Math.ceil(totalCount / perPage)); // Ensure at least 1 page
     const [inputPage, setInputPage] = useState<number>(page);
 
     const changePage = (newPage: number) => {
@@ -595,55 +636,51 @@ function Pagination({ page, perPage, totalCount, onPageChange, isLoading, facets
     }, [page])
 
     return (
+      <>
+        <div className="flex items-center justify-start gap-2">
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => changePage(page - 1)}
+            disabled={page === 1 || isLoading}
+          >
+            Prev
+          </Button>
+          <span className="text-sm">
+            Page {page} of {facets && typeof facets === 'object' ? totalPages : "-"}
+          </span>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => changePage(page + 1)}
+            disabled={page === totalPages || isLoading || !facets}
+          >
+            Next
+          </Button>
+        </div>
+        <div className="flex grow items-center justify-end gap-2 lg:justify-center">
+          <input
+            type="number"
+            // enableStepper={false}
+            min={1}
+            max={totalPages}
+            value={inputPage}
+            onChange={(e) => {
+              setInputPage(e.target.valueAsNumber);
+            }}
+            onKeyDown={(e: any) => {
+              if (e.key === "Enter") {
+                handleGoClick();
+              }
+            }}
+            className="w-20 rounded-md border border-gray-300 text-xs"
+            placeholder="Go to page..."
+          />
 
-        <>
-            <div className="flex justify-start items-center gap-2">
-                <Button
-                    size="xs"
-                    onClick={() => changePage(page - 1)}
-                    disabled={page === 1 || isLoading}
-                    className={`${page === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                    Prev
-                </Button>
-                <span className="text-sm font-medium">Page {page} of {facets ? totalPages : '-'}</span>
-
-                <Button
-                    size="xs"
-                    onClick={() => changePage(page + 1)}
-                    disabled={page === totalPages || isLoading}
-                    className={`${page === totalPages ? 'opacity-50 cursor-not-allowed' : ''}`}>
-                    Next
-                </Button>
-            </div>
-            <div className="flex justify-end lg:justify-center items-center gap-2 grow">
-
-                <input
-                    type="number"
-                    // enableStepper={false}
-                    min={1}
-                    max={100}
-                    value={inputPage}
-                    onChange={(e) => {
-                        setInputPage(e.target.valueAsNumber)
-                    }}
-                    onKeyDown={(e: any) => {
-                        if (e.key === 'Enter') {
-                            handleGoClick();
-                        }
-                    }}
-                    className="border rounded-md text-xs w-20 border-gray-300"
-                    placeholder="Go to page..."
-                />
-
-                <Button
-                    size="xs"
-                    disabled={isLoading}
-                    onClick={handleGoClick} >
-                    Go to Page
-                </Button>
-            </div>
-        </>
-
-
+          <Button size="sm" disabled={isLoading} onClick={handleGoClick}>
+            Go to Page
+          </Button>
+        </div>
+      </>
     );
 }

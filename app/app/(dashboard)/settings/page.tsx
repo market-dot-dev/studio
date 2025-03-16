@@ -1,10 +1,7 @@
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-
 import UserService from "@/app/services/UserService";
 import GeneralSettings from "@/components/user/general-settings";
-import { Title } from "@tremor/react";
-
 
 export default async function GeneralSettingsPage() {
   const session = await getSession();

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button, TextInput } from "@tremor/react";
 import { User } from "@prisma/client";
 //import { createStripeCustomerById, clearStripeCustomerById } from "@/app/services/UserService";
 import { useEffect, useState } from "react";
@@ -18,7 +17,7 @@ const UserCustomerWidget = ({ user, maintainer }: { user: User; maintainer: User
   return <></>;
   /*
   return (<>
-    <TextInput
+    <Input
       name="stripeCustomerId"
       placeholder={"Stripe Customer ID"}
       value={stripeCustomerId || ''}

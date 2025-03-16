@@ -1,7 +1,11 @@
 "use client";
-import { Flex, TextInput, Textarea, Button, Text } from "@tremor/react";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { User } from "@prisma/client";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { toast } from "sonner";
 
@@ -30,25 +34,18 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
 
   return (
     <>
-      <Flex
-        justifyContent="between"
-        alignItems="start"
-        className="w-full gap-12"
-      >
-        <Flex
-          flexDirection="col"
-          alignItems="start"
-          className="w-1/2 space-y-6"
-        >
-          <Flex flexDirection="col" alignItems="start" className="w-full gap-2">
-            <label
-              htmlFor="project-name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Business Name
-            </label>
-            <Text>Provide a name for your business, if you have one.</Text>
-            <TextInput
+      <div className="flex w-full items-start justify-between gap-12">
+        <div className="flex w-1/2 flex-col items-start space-y-6">
+          <div className="flex flex-col gap-2">
+            <div>
+              <Label htmlFor="project-name" className="mb-0.5">
+                Business Name
+              </Label>
+              <p className="text-xs text-stone-500">
+                Provide a name for your business, if you have one.
+              </p>
+            </div>
+            <Input
               placeholder=""
               name="project-name"
               id="project-name"
@@ -57,19 +54,19 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
                 setUserData({ ...userData, projectName: e.target.value });
               }}
             />
-          </Flex>
+          </div>
 
-          <Flex flexDirection="col" alignItems="start" className="w-full gap-2">
-            <label
-              htmlFor="project-description"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Business Description
-            </label>
-            <Text>
-              Your business description is used in your store homepage (and other
-              pages where you embed the {`<SiteDescription>`} component).
-            </Text>
+          <div className="flex flex-col gap-2">
+            <div>
+              <Label htmlFor="project-description" className="mb-0.5">
+                Business Description
+              </Label>
+              <p className="text-xs text-stone-500">
+                Your business description is used in your store homepage (and
+                other pages where you embed the {`<SiteDescription>`}{" "}
+                component).
+              </p>
+            </div>
             <Textarea
               className="h-52"
               placeholder=""
@@ -83,13 +80,17 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
                 });
               }}
             />
-          </Flex>
+          </div>
 
-          <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>
+          <Button
+            loading={isSaving}
+            loadingText="Saving Changes"
+            onClick={saveChanges}
+          >
             Save Changes
           </Button>
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </>
   );
 }

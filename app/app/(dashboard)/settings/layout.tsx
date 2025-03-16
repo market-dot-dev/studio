@@ -1,6 +1,4 @@
-import { Settings } from 'lucide-react';
 import SettingsNav from './nav'; 
-import { Flex } from '@tremor/react';
 import PageHeading from '@/components/common/page-heading';
 
 export default async function SettingsLayout({ children } : {

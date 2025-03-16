@@ -1,9 +1,10 @@
 'use client'
+
 import Image from "next/image";
-import { Flex } from "@tremor/react"
+
 export default function SiteOwner({site, page}: { site : any, page : any}) {
     return (
-        <Flex alignItems="center" justifyContent="start" className="gap-4">
+        <div className="flex items-center justify-start gap-4">
             { site?.user ?
                 <Image
                     src={
@@ -20,6 +21,6 @@ export default function SiteOwner({site, page}: { site : any, page : any}) {
             <span className="truncate text-lg">
                 {site?.user.name ?? 'John Doe'}
             </span>
-        </Flex>
+        </div>
     )
 }

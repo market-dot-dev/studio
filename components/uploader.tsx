@@ -3,7 +3,7 @@
 import { useState, useCallback, useMemo, ChangeEvent, useEffect } from "react";
 import { toast } from "sonner";
 import LoadingDots from "@/components/icons/loading-dots";
-import { Button } from "@tremor/react";
+import { Button } from "./ui/button";
 
 export type Attachment = {
   attachmentType: string;
@@ -309,47 +309,37 @@ export default function Uploader({
 
       {saving && (
         <div className="relative pt-1">
-          <div className="flex mb-2 items-center justify-between">
+          <div className="mb-2 flex items-center justify-between">
             <div className="text-right">
-              <span className="text-xs font-semibold inline-block text-gray-500">
+              <span className="inline-block text-xs font-semibold text-gray-500">
                 {Math.round(progress)}%
               </span>
             </div>
           </div>
-          <div className="overflow-hidden h-2 mb-4 text-xs flex rounded bg-gray-200">
-            <div style={{ width: `${progress}%` }} className="shadow-none flex flex-col text-center whitespace-nowrap text-white justify-center bg-blue-500"></div>
+          <div className="mb-4 flex h-2 overflow-hidden rounded bg-gray-200 text-xs">
+            <div
+              style={{ width: `${progress}%` }}
+              className="flex flex-col justify-center whitespace-nowrap bg-blue-500 text-center text-white shadow-none"
+            ></div>
           </div>
         </div>
       )}
 
       {uploadedFilePath && (
-        <div>
-          <Button
-            onClick={onRemove}
-            className="flex h-10 w-full items-center justify-center rounded-md border border-black bg-black text-sm text-white transition-all hover:bg-white hover:text-black focus:outline-none"
-          >
-            Remove
-          </Button>
-        </div>
+        <Button variant="destructive" onClick={onRemove}>
+          Remove
+        </Button>
       )}
       {!uploadedFilePath && !autoUpload && (
         <Button
-          disabled={saveDisabled}
+          loading={saveDisabled}
+          loadingText="Uploading"
           onClick={(e) => {
             e.preventDefault();
             onSubmit(file!);
           }}
-          className={`${
-            saveDisabled
-              ? "cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400"
-              : "border-black bg-black text-white hover:bg-white hover:text-black"
-          } flex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none`}
         >
-          {saving ? (
-            <LoadingDots color="#808080" />
-          ) : (
-            <p className="text-sm">Confirm upload</p>
-          )}
+          Confirm upload
         </Button>
       )}
     </form>

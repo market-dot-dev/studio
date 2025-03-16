@@ -1,15 +1,7 @@
 "use client";
 
-import {
-  Card,
-  Text,
-  Title,
-  BarList,
-  Flex,
-  Grid,
-  Bold,
-  AreaChart,
-} from "@tremor/react";
+import { BarList, AreaChart } from "@tremor/react";
+import { Card } from "@/components/ui/card";
 import Image from "next/image";
 
 const chartdata = [
@@ -88,7 +80,7 @@ export default function AnalyticsMockup() {
   return (
     <div className="grid gap-6">
       <Card>
-        <Title>Visitors</Title>
+        <h2 className="text-xl font-bold">Visitors</h2>
         <AreaChart
           className="mt-4 h-72"
           data={chartdata}
@@ -100,18 +92,18 @@ export default function AnalyticsMockup() {
           }
         />
       </Card>
-      <Grid numItemsSm={2} numItemsLg={3} className="gap-6">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {categories.map(({ title, subtitle, data }) => (
           <Card key={title} className="max-w-lg">
-            <Title>{title}</Title>
-            <Flex className="mt-4">
-              <Text>
-                <Bold>{subtitle}</Bold>
-              </Text>
-              <Text>
-                <Bold>Visitors</Bold>
-              </Text>
-            </Flex>
+            <h2 className="text-xl font-bold">{title}</h2>
+            <div className="flex mt-4">
+              <p className="text-sm text-stone-500">
+                <strong>{subtitle}</strong>
+              </p>
+              <p className="text-sm text-stone-500">
+                <strong>Visitors</strong>
+              </p>
+            </div>
             <BarList
               // @ts-ignore
               data={data.map(({ name, value, code }) => ({
@@ -147,7 +139,7 @@ export default function AnalyticsMockup() {
             />
           </Card>
         ))}
-      </Grid>
+      </div>
     </div>
   );
 }

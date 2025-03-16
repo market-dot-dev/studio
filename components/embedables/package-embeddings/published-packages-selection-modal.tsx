@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
 import {
   getPublishedTiers,
   TierWithFeatures,
@@ -87,9 +87,7 @@ function PublishedPackagesSelectionModalContent({
         ))}
       </div>
       <div className="flex justify-end">
-        <Button onClick={onDone} className="bg-black">
-          Done
-        </Button>
+        <Button size="lg" onClick={onDone}>Done</Button>
       </div>
     </div>
   );

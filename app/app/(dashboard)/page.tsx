@@ -3,7 +3,7 @@ import PageHeading from "@/components/common/page-heading";
 import SessionService from "@/app/services/SessionService";
 import { customersAndProspectsOfMaintainer } from "@/app/services/UserService";
 import { redirect } from "next/navigation";
-import SalesTable from "./customers/sales-table";
+import SalesTable from "./customers/sales/sales-table";
 
 export default async function Overview() {
   const user = await SessionService.getSessionUser();

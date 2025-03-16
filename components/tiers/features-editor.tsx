@@ -1,8 +1,10 @@
-import { Flex, Card, TextInput, Button, List, ListItem, Title, Switch, Bold } from "@tremor/react";
-import { IconButton } from "@radix-ui/themes";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { useRef, useState } from "react";
-
 import { FaEdit, FaCheck } from "react-icons/fa";
+import { Edit, Check } from "lucide-react";
 
 function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
     const [isEditing, setIsEditing] = useState(false);
@@ -35,25 +37,38 @@ function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
     }
 
     return (
-        <ListItem key={index} style={{
-            ...(feature.disconnect ? {opacity: 0.3} : {})
-            }}>
-            {isEditing ? (
-                <TextInput ref={inputRef as any} value={feature.content} onChange={handleChange} onBlur={toggleEditing} className="mr-4"/>
-            ) : (
-                <div onDoubleClick={toggleEditing} className="grow">{feature.content}</div>
-            )}
-            <div>
-                <Flex className="gap-4">
-                    <IconButton size="1" variant="ghost" onClick={toggleEditing}>
-                        { isEditing ? <FaCheck height="14" width="14" /> : <FaEdit height="14" width="14" /> }
-                    </IconButton>
-                    <Switch checked={!feature.disconnect} onChange={() => toggleConnect(index)} />
-                    
-                </Flex>
-            </div>
-        </ListItem>
-    )
+      <div
+        key={index}
+        style={{
+          ...(feature.disconnect ? { opacity: 0.3 } : {}),
+        }}
+      >
+        {isEditing ? (
+          <Input
+            ref={inputRef as any}
+            value={feature.content}
+            onChange={handleChange}
+            onBlur={toggleEditing}
+            className="mr-4"
+          />
+        ) : (
+          <div onDoubleClick={toggleEditing} className="grow">
+            {feature.content}
+          </div>
+        )}
+        <div>
+          <div className="flex gap-4">
+            <Button size="icon" variant="ghost" onClick={toggleEditing}>
+              {isEditing ? <Check /> : <Edit />}
+            </Button>
+            <Switch
+              checked={!feature.disconnect}
+              onCheckedChange={() => toggleConnect(index)}
+            />
+          </div>
+        </div>
+      </div>
+    );
 }
 
 export default function FeaturesEditor({features, setFeatures}: any) : JSX.Element {
@@ -68,26 +83,20 @@ export default function FeaturesEditor({features, setFeatures}: any) : JSX.Eleme
         setNewFeature('');
 	}
 
-    
     return (
         <>        
-                <Flex flexDirection="col" alignItems="start" className="gap-1">
-                    <Bold>Features</Bold>
-                    <Flex className="gap-4">
-                        <TextInput value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Enter feature text"/>
-                        <Button onClick={addFeature}>Add</Button>
-                    </Flex>
-                </Flex>
-                <div className="px-2 w-full">
-                    <List>
-                        { features.map((feature : any, index: number) => (
-                            <EditableListItem key={index} index={index} feature={feature} setFeatures={setFeatures} />
-                        ))}						
-                    </List>
+            <div className="flex flex-col items-start gap-1">
+                <Label>Features</Label>
+                <div className="flex gap-4">
+                    <Input value={newFeature} onChange={(e) => setNewFeature(e.target.value)} placeholder="Enter feature text"/>
+                    <Button onClick={addFeature}>Add</Button>
                 </div>
-
-
+            </div>
+            <div className="flex flex-col px-2 w-full">
+                  { features.map((feature : any, index: number) => (
+                      <EditableListItem key={index} index={index} feature={feature} setFeatures={setFeatures} />
+                  ))}						
+            </div>
         </>
     )
-
 }

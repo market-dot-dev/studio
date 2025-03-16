@@ -19,12 +19,13 @@ import {
 } from "lucide-react";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { FaDiscord, FaGithubAlt } from "react-icons/fa";
-import { Badge } from "@tremor/react";
+import { Badge } from "@/components/ui/badge";
 import { usePathname, useSelectedLayoutSegments } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import clsx from "clsx";
 import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
+import { Button } from "@/components/ui/button";
 
 interface BaseNavItem {
   name: string;
@@ -54,7 +55,10 @@ type NavItem = TitleItem | LinkItem;
 function Item({ item }: { item: NavItem }) {
   if (item.type === "title") {
     return (
-      <span className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-bold uppercase tracking-wide text-stone-500">
+      // <span className="mb-1 ml-1 mt-4 text-xs/4 font-bold text-stone-500">
+      //   {item.name}
+      // </span>
+      <span className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
         {item.name}
       </span>
     );
@@ -66,7 +70,7 @@ function Item({ item }: { item: NavItem }) {
         href={item.href}
         target={item.target}
         className={clsx(
-          "flex h-6 items-center space-x-3",
+          "flex h-6 items-center space-x-2",
           "rounded px-1 transition-all duration-150 ease-in-out",
           "hover:bg-white hover:shadow-border",
           "focus:bg-white focus:shadow-border focus:outline-none",
@@ -79,9 +83,9 @@ function Item({ item }: { item: NavItem }) {
         <span className="text-sm font-medium">{item.name}</span>
         {item.isBeta && (
           <Badge
-            size="xs"
+            size="sm"
+            variant="secondary"
             tooltip="This feature is still in Beta"
-            className="p-1.5 py-1 text-xxs font-medium"
           >
             Beta
           </Badge>
@@ -159,7 +163,7 @@ export default function Nav({
     const marketItems: LinkItem[] = [
       {
         type: "link",
-        name: "explore.market.dev",
+        name: "Marketplace",
         href: "/channels/market",
         icon: <ShoppingBag width={18} />,
         isActive: urlSegments[1] === "market",
@@ -198,7 +202,6 @@ export default function Nav({
         name: "Contracts",
         href: "/contracts",
         isActive: urlSegments[0] === "contracts",
-        isBeta: true,
         icon: <Scroll width={18} />,
       },
       {
@@ -223,6 +226,7 @@ export default function Nav({
         type: "link",
         name: "Research",
         href: "/leads",
+        isBeta: true,
         isActive: urlSegments[0] === "leads",
         icon: <ScanSearch width={18} />,
       },
@@ -275,7 +279,7 @@ export default function Nav({
       {
         type: "link",
         name: "Github",
-        href: "https://www.github.com/git-wallet",
+        href: "https://www.github.com/market-dot-dev/",
         target: "_blank",
         icon: <FaGithubAlt width={18} className="text-stone-700" />,
       },
@@ -309,8 +313,10 @@ export default function Nav({
   return (
     <>
       {isMobile && (
-        <button
-          className="-m-0.5 rounded p-0.5 text-stone-300 transition-colors hover:bg-stone-800 hover:text-white md:hidden"
+        <Button
+          size="icon"
+          variant="ghost"
+          className="-m-2 text-stone-300 hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white md:hidden"
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         >
           <AnimatePresence initial={false} mode="wait">
@@ -336,7 +342,7 @@ export default function Nav({
               </motion.div>
             )}
           </AnimatePresence>
-        </button>
+        </Button>
       )}
       <nav
         className={clsx(

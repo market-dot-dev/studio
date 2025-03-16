@@ -5,8 +5,8 @@ import { redirect } from "next/navigation";
 import ContractSettings from "./contracts-index";
 import ContractService from "@/app/services/contract-service";
 import PageHeading from "@/components/common/page-heading";
-import PrimaryButton from "@/components/common/link-button";
-import { Badge, Text } from "@tremor/react";
+import { buttonVariants } from "@/components/ui/button";
+import Link from 'next/link';
 
 export default async function ContractSettingsPage() {
   const session = await getSession();
@@ -18,14 +18,19 @@ export default async function ContractSettingsPage() {
   const contracts = await ContractService.getContractsByCurrentMaintainer();
 
   return (
-    <div className="flex max-w flex-col max-w-screen-xl space-y-12">
+    <div className="max-w flex max-w-screen-xl flex-col space-y-9">
       <div className="flex justify-between">
         <div className="flex flex-col">
           <PageHeading title="Contracts" />
-          <Text>Contracts are the terms of service for the packages you are offering, and are shown at checkout. This feature is in Beta.</Text>
+          <p className="text-sm text-stone-500">
+            Contracts are the terms of service for the packages you are
+            offering, and are shown at checkout. This feature is in Beta.
+          </p>
         </div>
         <div className="flex flex-row">
-          <PrimaryButton label="New Contract" href="/contracts/create" />
+          <Link href="/contracts/create" className={buttonVariants({ variant: 'default' })}>
+            New Contract
+          </Link>
         </div>
       </div>
 

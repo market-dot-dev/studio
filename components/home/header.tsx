@@ -9,12 +9,15 @@ import Link from "@/components/home/link";
 import { useRouter } from 'next/navigation';
 import Logo from "@/components/home/logo";
 import Button from '@/components/home/button';
+import { Button as UIButton } from "@/components/ui/button";
 import clsx from "clsx";
 import { Menu, X, Package, Speech, ListCheck, ChevronRight, BookOpenCheck } from "lucide-react";
 import { colors } from "@/lib/home/colors";
 import { loginURL, discordURL, blogURL, twitterUrl } from '@/lib/home/social-urls';
 import { motion, AnimatePresence } from "framer-motion";
 import FeatureCard from "@/components/home/feature-card";
+import useCurrentSession from "@/app/hooks/use-current-session";
+import { useSession } from "next-auth/react";
 
 interface AnimatedHambugerButtonProps {
   isOpen: boolean;
@@ -64,9 +67,14 @@ export default function Header({ className }: { className?: string }) {
   const desktopMenuButtonRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
-  
+  const { isSignedIn } = useCurrentSession();
+  const { status } = useSession();
+  const signedIn = isSignedIn();
+  const isLoading = status === "loading";
+  const dashboardURL = process.env.NODE_ENV === 'production' ? 'https://app.market.dev' : 'http://app.market.local';
+
   const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 60, right: 16 });
-  
+
   const dropdownOffsets: DropdownOffsets = {
     vertical: 14,
     horizontal: 0,
@@ -76,19 +84,19 @@ export default function Header({ className }: { className?: string }) {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
     };
-    
+
     handleScroll();
-    
+
     window.addEventListener('scroll', handleScroll);
-    
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
 
   useEffect(() => {
-    isMobileMenuOpen 
-      ? document.body.classList.add("overflow-hidden") 
+    isMobileMenuOpen
+      ? document.body.classList.add("overflow-hidden")
       : document.body.classList.remove("overflow-hidden");
 
     return () => {
@@ -106,7 +114,7 @@ export default function Header({ className }: { className?: string }) {
 
     updateHeaderHeight();
     window.addEventListener('resize', updateHeaderHeight);
-    
+
     return () => {
       window.removeEventListener('resize', updateHeaderHeight);
     };
@@ -211,7 +219,7 @@ export default function Header({ className }: { className?: string }) {
     if (isDesktopDropdownOpen) {
       updateDropdownPosition();
       window.addEventListener('resize', updateDropdownPosition);
-      
+
       return () => {
         window.removeEventListener('resize', updateDropdownPosition);
       };
@@ -285,13 +293,24 @@ export default function Header({ className }: { className?: string }) {
               </Link>
             </div>
             <div className="flex w-fit items-center gap-4">
-              <Link
-                href={loginURL}
-                variant="primary"
-                className="hidden px-2 sm:block"
-              >
-                Log in
-              </Link>
+              {isLoading || !signedIn ? (
+                <Link
+                  href={loginURL}
+                  variant="primary"
+                  className="hidden px-2 sm:block"
+                >
+                  Log in
+                </Link>
+              ) : (
+                <UIButton
+                  onClick={() => {
+                    router.push(dashboardURL);
+                  }}
+                  variant="default"
+                >
+                  Dashboard
+                </UIButton>
+              )}
               {/* Desktop menu button */}
               <div
                 className="relative hidden items-center justify-center lg:flex"
@@ -446,13 +465,24 @@ export default function Header({ className }: { className?: string }) {
                   Twitter
                 </Link>
                 <hr className="border-black/15 sm:hidden" />
-                <Link
-                  href={loginURL}
-                  variant="primary"
-                  className="flex sm:hidden h-[60px] w-full items-center bg-marketing-background leading-5"
-                >
-                  Log in
-                </Link>
+                {isLoading || !signedIn ? (
+                  <Link
+                    href={loginURL}
+                    variant="primary"
+                    className="hidden px-2 sm:block"
+                  >
+                    Log in
+                  </Link>
+                ) : (
+                  <UIButton
+                    onClick={() => {
+                      router.push(dashboardURL);
+                    }}
+                    variant="default"
+                  >
+                    Dashboard
+                  </UIButton>
+                )}
               </div>
               <div className="sticky bottom-0 left-0 right-0 border-t border-black/10 bg-marketing-background p-6">
                 <Button className="w-full">

@@ -1,8 +1,6 @@
 import { useCallback, useState } from "react";
 import ComponentsPanel from "./components-panel";
 import ThemesPanel from "./themes-panel";
-import { Bold, Divider, Tab, TabGroup, TabList, TabPanel, TabPanels } from "@tremor/react";
-import { text } from "stream/consumers";
 
 export default function PageEditorSidebar({editorRef, monacoRef}: {editorRef: any, monacoRef: any}) {
     const [activeTab, setActiveTab] = useState(0);
@@ -49,21 +47,21 @@ export default function PageEditorSidebar({editorRef, monacoRef}: {editorRef: an
     }, [editorRef, monacoRef]);
 
     return (
-        <div className="pl-4">
-          <div className="text-md font-bold py-2">
-            <span>Add Content</span>
-          </div>
-          <Divider className="my-0" />
-          <div className="flex flex-col gap-6 mt-2">
-            <div className="flex flex-col gap-2 mt-4">
-              <div className="text-sm font-bold">Dynamic Content</div>
-              <ComponentsPanel insertAtCursor={insertAtCursor} />
-            </div>
-            <div className="flex flex-col gap-2">
-              <div className="text-sm font-bold">Layout Sections</div>
-              <ThemesPanel insertAtCursor={insertAtCursor} />
-            </div>
-          </div>      
+      <div className="pl-4">
+        <div className="text-md py-2 font-bold">
+          <span>Add Content</span>
         </div>
-    )
+        <hr className="my-0 h-px w-full bg-black/10" />
+        <div className="mt-2 flex flex-col gap-6">
+          <div className="mt-4 flex flex-col gap-2">
+            <div className="text-sm font-bold">Dynamic Content</div>
+            <ComponentsPanel insertAtCursor={insertAtCursor} />
+          </div>
+          <div className="flex flex-col gap-2">
+            <div className="text-sm font-bold">Layout Sections</div>
+            <ThemesPanel insertAtCursor={insertAtCursor} />
+          </div>
+        </div>
+      </div>
+    );
 }

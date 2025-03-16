@@ -1,16 +1,14 @@
 "use client";
 
-import { Card, Text, Button } from "@tremor/react";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { useEffect, useState } from "react";
 import { User, Contract } from "@prisma/client";
-
 import { onClickSubscribe } from "@/app/services/StripeService";
 import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
-import LoadingDots from "@/components/icons/loading-dots";
 import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
-import SectionHeader from "./section-header";
 import { getRootUrl } from "@/lib/domain";
 
 const checkoutCurrency = "USD";
@@ -93,31 +91,23 @@ export default function RegistrationCheckoutSection({
     }
   }, [userId, tierId]);
 
-  const tierInfo = tier?.name || "Package";
-
   if (subscribed) {
     return <AlreadySubscribedCard />;
   } else
     return (
-      <>
-        <section className="w-7/8 text-md mb-8 text-slate-600 lg:w-5/6">
-          <SectionHeader headerName={"Purchase " + tierInfo} />
-          <span>
-            To purchase this package, please provide your account & payment
-            information below.
-          </span>
+      <div className="mx-auto flex w-full flex-col gap-12 lg:max-w-lg">
+        <section>
+          <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-stone-800">
+            Account
+          </h2>
+          <CustomerLoginComponent signup={true} />
         </section>
 
-        <section className="w-7/8 text-md mb-8 text-slate-600 lg:w-5/6">
-          <SectionHeader headerName="Your Account" />
-          <Card>
-            <CustomerLoginComponent signup={true} />
-          </Card>
-        </section>
-
-        <section className="w-7/8 mb-8 lg:w-5/6">
-          <SectionHeader headerName="Payment Information" />
-          <Card>
+        <section>
+          <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-stone-800">
+            Payment
+          </h2>
+          <Card className="p-4">
             {error && <div className="mb-4 text-red-500">{error}</div>}
             {maintainer.stripeAccountId && (
               <UserPaymentMethodWidget
@@ -131,43 +121,41 @@ export default function RegistrationCheckoutSection({
           </Card>
         </section>
 
-        <section className="w-7/8 mb-8 lg:w-5/6">
-          <Text className="my-2 text-center">
+        <section>
+          <div className="mb-4 text-center text-xs font-medium tracking-tightish text-stone-500">
             <ContractText contract={contract} />
-          </Text>
+          </div>
           <Button
-            onClick={() => setLoading(true)}
-            disabled={loading || !userId}
-            color="green"
-            className="w-full"
+            loading={loading || submittingPayment}
+            disabled={loading || !userId || submittingPayment}
             data-cy="checkout-button"
+            className="w-full"
+            size="lg"
+            onClick={() => setLoading(true)}
           >
-            {loading ? <LoadingDots color="#A8A29E" /> : "Checkout"}
+            {tier.cadence === "once" 
+              ? `Pay $${checkoutPrice} ${checkoutCurrency}`
+              : tier.trialDays && tier.trialDays !== 0
+                ? "Start your free trial"
+                : `Pay $${checkoutPrice} ${checkoutCurrency}`
+            }
           </Button>
-          <Text className="my-2 text-center">
-            {tier.trialDays
-              ? "You will not be charged now. After your " +
-                tier.trialDays +
-                " day trial, your card will be charged " +
-                checkoutCurrency +
-                " " +
-                checkoutPrice +
-                "."
-              : "Your card will be charged " +
-                checkoutCurrency +
-                " " +
-                checkoutPrice +
-                "."}
-          </Text>
+          {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 ? (
+            <p className="mt-6 text-pretty text-center text-xs font-medium tracking-tightish text-stone-500">
+              You won&apos;t be charged now. After your{" "}
+              <strong>{tier.trialDays} day</strong> trial, your card will be
+              charged{" "}
+              <strong className="tracking-tight text-stone-800">{`${checkoutCurrency} $${checkoutPrice}`}</strong>
+              .
+            </p>
+          ) : null}
         </section>
-      </>
+      </div>
     );
 }
 
 const AlreadySubscribedCard = () => {
   return (
-    <Card>
-      <Text>You&apos;re already subscribed to this product.</Text>
-    </Card>
+      <p className="text-sm text-stone-500">You&apos;re already subscribed to this product.</p>
   );
 };
