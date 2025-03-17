@@ -38,7 +38,7 @@ import {
 } from "@/app/services/TierService";
 import TierCard from "./tier-card";
 import { userHasStripeAccountIdById } from "@/app/services/StripeService";
-import PageHeading from "../common/page-heading";
+import PageHeader from "../common/page-header";
 import TierFeaturePicker from "../features/tier-feature-picker";
 import { attachMany } from "@/app/services/feature-service";
 import Link from "next/link";
@@ -264,14 +264,14 @@ const StandardCheckoutForm = ({
       <div className="flex flex-col gap-6">
         <div>
           <Label htmlFor={`${idPrefix}cadence`} className="mb-2 block">
-            Billing type
+            Billing Type
           </Label>
           <Select
             value={tier.cadence || "month"}
             onValueChange={(v) => handleTierDataChange("cadence", v)}
           >
             <SelectTrigger className="w-full">
-              <SelectValue placeholder="Billing type" />
+              <SelectValue placeholder="Billing Type" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="month">Recurring</SelectItem>
@@ -587,36 +587,28 @@ export default function TierForm({
     <>
       <div className="flex flex-col gap-6 md:col-span-2">
         <div className="flex w-full justify-between">
-          <div className="flex w-full flex-col gap-4">
-            <Link
-              href="/tiers"
-              className="flex w-fit -translate-x-0.5 items-center gap-1 text-sm font-semibold tracking-tightish text-stone-500 transition-colors hover:text-stone-800"
-            >
-              <ChevronLeft size={16} className="shrink-0" />
-              Packages
-            </Link>
-            <div className="flex w-full flex-wrap items-center justify-between gap-1">
-              <div className="flex items-center gap-3">
-                <PageHeading title={formTitle} />
-                <Badge
-                  variant={
-                    tier.id && savedPublishedState ? "success" : "secondary"
-                  }
-                  className="mb-1 w-fit"
-                >
-                  {tier.id && savedPublishedState ? "Published" : "Draft"}
-                </Badge>
-              </div>
+          <PageHeader
+            title={formTitle}
+            backLink={{
+              href: "/tiers",
+              title: "Packages",
+            }}
+            status={{
+              title: tier.id && savedPublishedState ? "Published" : "Draft",
+              variant: tier.id && savedPublishedState ? "success" : "secondary",
+            }}
+            actions={[
               <TierLinkCopier
+                key="tier-link"
                 tier={tier}
                 savedPublishedState={savedPublishedState}
-              />
-            </div>
-          </div>
+              />,
+            ]}
+          />
         </div>
       </div>
 
-      <Separator className="my-3" />
+      <Separator className="mb-2 mt-6 hidden lg:block" />
 
       {!canPublish && !canPublishLoading && (
         <Alert variant="warning" className="my-4">
@@ -636,10 +628,10 @@ export default function TierForm({
           </div>
         </Alert>
       )}
-      <div className="mt-4 flex flex-col gap-10 pb-20 lg:flex-row">
+      <div className="mt-6 flex flex-col gap-10 pb-20 lg:flex-row">
         {/* Mobile Tabs - Only visible on screens smaller than lg breakpoint */}
         <div className="mb-6 w-full lg:hidden">
-          <Tabs defaultValue="details">
+          <Tabs defaultValue="details" >
             <TabsList variant="background" className="w-full">
               <TabsTrigger
                 variant="background"
@@ -658,7 +650,7 @@ export default function TierForm({
             </TabsList>
 
             {/* Details Tab Content - Form Fields */}
-            <TabsContent value="details">
+            <TabsContent value="details" className="mt-8">
               <div className="flex w-full flex-col gap-6">
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-x-4 gap-y-3">
@@ -695,6 +687,9 @@ export default function TierForm({
                     )}
                   </p>
                 </div>
+
+                <Separator className="my-2" />
+
                 <div>
                   <NewVersionCallout
                     tierHasSubscribers={tierHasSubscribers}
@@ -779,7 +774,7 @@ export default function TierForm({
                 <Separator className="my-2" />
 
                 <div>
-                  <Label htmlFor="mobile-checkoutType" className="mb-2">
+                  <Label htmlFor="mobile-checkoutType" className="mb-3">
                     Checkout Type
                   </Label>
                   <CheckoutTypeSelectionInput
@@ -1114,8 +1109,8 @@ export default function TierForm({
 
           <Separator className="my-2" />
 
-          <div>
-            <Label htmlFor="channels" className="mb-2 block">
+          <div id="channels">
+            <Label htmlFor="channels" className="mb-3 block">
               Channels
             </Label>
             <ChannelsSelectionInput
