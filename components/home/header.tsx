@@ -310,7 +310,7 @@ export default function Header({ className }: { className?: string }) {
                   className="w-9 rounded-full bg-stone-200 !text-marketing-sm font-bold text-black hover:bg-stone-300/75 focus:bg-stone-300/75 sm:px-3 md:w-auto"
                 >
                   <Store strokeWidth={2.25} className="!size-5" />
-                  <span className="hidden md:inline">Open Store</span>
+                  <span className="hidden md:inline">Dashboard</span>
                 </UIButton>
               )}
               {/* Desktop menu button */}
@@ -498,7 +498,7 @@ export default function Header({ className }: { className?: string }) {
                     className='w-full'
                   >
                     <Store strokeWidth={2.25} className="!size-5" />
-                    Open Store
+                    Dashboard
                   </Button>
                 )}
               </div>

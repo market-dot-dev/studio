@@ -7,7 +7,7 @@ export default function Hero() {
   return (
     <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-7 tracking-tight sm:pt-10 md:gap-y-16 lg:max-w-[var(--marketing-max-width)] lg:px-16 lg:pt-14 xl:pt-14">
       <div className="flex h-full w-full flex-col items-center">
-        <GradientHeading className="mb-3 whitespace-nowrap text-center text-[clamp(24px,8vw,37px)] font-bold !leading-[0.95] tracking-[-0.045em] text-marketing-primary xs:text-marketing-xl sm:mb-4 sm:text-marketing-2xl md:text-marketing-3xl md:tracking-[-0.045em] lg:mb-5 lg:text-marketing-4xl xl:text-marketing-5xl">
+        <GradientHeading className="mb-3 whitespace-nowrap text-center text-[clamp(24px,8vw,37px)] font-bold !leading-[0.9] tracking-[-0.0525em] text-marketing-primary xs:text-marketing-xl sm:mb-4 sm:text-marketing-2xl md:text-marketing-3xl md:tracking-[-0.045em] lg:mb-5 lg:text-marketing-4xl xl:text-marketing-5xl">
           All-in-one business tools, <br />built for developers.
         </GradientHeading>
         <p className="mb-4 max-w-[44ch] text-pretty text-center text-marketing-sm !leading-[1.25] xs:mb-5 xs:text-balance sm:mb-6 sm:text-[clamp(16px,12vw,20px)] lg:text-marketing-md">
