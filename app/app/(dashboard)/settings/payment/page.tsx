@@ -71,7 +71,7 @@ export default async function PaymentSettings({
         <div className="flex flex-col items-start gap-4">
           {!stripeConnected && (
             <>
-              <h2 className="font-cal text-xl dark:text-white">
+              <h2 className="font-semibold text-xl">
                 Connect Stripe Account
               </h2>
               <p className="text-sm text-stone-500">
@@ -84,7 +84,7 @@ export default async function PaymentSettings({
           )}
           {stripeConnected ? (
             <>
-              <h2 className="font-cal text-xl dark:text-white">
+              <h2 className="font-semibold text-xl">
                 Stripe Account
               </h2>
               <p className="text-sm text-stone-500">
