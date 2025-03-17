@@ -13,7 +13,7 @@ export default async function Overview() {
   }
 
   const customers = await customersAndProspectsOfMaintainer(user.id);
-  const title = user?.name ? `Welcome, ${user.name}` : "Your Dashboard";
+  const title = user?.name ? `Welcome ${user.name}` : "Your Dashboard";
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-6">

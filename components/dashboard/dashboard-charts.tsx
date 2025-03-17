@@ -215,7 +215,10 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
         </div>
         <Link
           href="/reports"
-          className={cn(buttonVariants({ variant: "outline", size: "sm" }), "group gap-0.5 pr-1")}
+          className={cn(
+            buttonVariants({ variant: "outline", size: "sm" }),
+            "group gap-0.5 pr-1",
+          )}
         >
           More Details
           <ChevronRight
@@ -225,7 +228,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
         </Link>
       </div>
       <div className="flex max-w-screen-xl flex-col space-y-4">
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 xl:grid-cols-2">
           <Card>
             <CardHeader className="pb-4">
               <CardTitle>
@@ -242,6 +245,7 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
                 </h3>
               </div>
               <BarChart
+
                 className="mt-3 h-72"
                 data={customerTotals}
                 index="date"
@@ -253,8 +257,8 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
                 ]}
                 colors={
                   isUsingDummyData
-                    ? ["gray-300", "gray-400", "gray-500", "gray-600"]
-                    : ["gray-400", "red-400", "green-400", "blue-400"]
+                    ? ["stone-300", "stone-300", "stone-300", "stone-300"]
+                    : ["stone-400", "orange-400", "swamp", "purple-400"]
                 }
                 autoMinValue={true}
                 maxValue={Math.ceil((highestCustChangesInAMonth * 120) / 100)}
@@ -275,7 +279,9 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline justify-start space-x-3 truncate">
-                <h3 className="text-3xl font-semibold tracking-tight leading-none">${`${totalRevenue}`}</h3>
+                <h3 className="text-3xl font-semibold leading-none tracking-tight">
+                  ${`${totalRevenue}`}
+                </h3>
               </div>
 
               <RevenueLineChart
