@@ -34,7 +34,6 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   meta?: Record<string, any>
-  emphasizeFirstColumn?: boolean
   className?: string
   tableOptions?: Partial<TableOptions<TData>>
   noResults?: ReactNode
@@ -48,7 +47,6 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   meta = {},
-  emphasizeFirstColumn = false,
   className = "",
   tableOptions = {},
   noResults = "No results",
@@ -104,11 +102,10 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell, cellIndex) => (
+                  {row.getVisibleCells().map((cell) => (
                     <TableCell 
                       key={cell.id}
-                      emphasized={emphasizeFirstColumn && cellIndex === 0 || 
-                                 cell.column.columnDef.meta?.emphasized}
+                      emphasized={cell.column.columnDef.meta?.emphasized}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
