@@ -70,6 +70,10 @@ export const customerOverviewColumns: ColumnDef<KeyValuePair>[] = [
   {
     accessorKey: "value",
     header: "Value",
+    cell: ({ row }) => {
+      const value = row.getValue("value");
+      return value;
+    }
   },
 ]
 
@@ -95,6 +99,10 @@ export const subscriptionColumns: ColumnDef<KeyValuePair>[] = [
   {
     accessorKey: "value",
     header: "Value",
+    cell: ({ row }) => {
+      const value = row.getValue("value");
+      return value;
+    }
   },
 ]
 
@@ -117,5 +125,9 @@ export const chargeColumns: ColumnDef<KeyValuePair>[] = [
   {
     accessorKey: "value",
     header: "Value",
+    cell: ({ row }) => {
+      const value = row.getValue("value");
+      return value;
+    }
   },
 ] 

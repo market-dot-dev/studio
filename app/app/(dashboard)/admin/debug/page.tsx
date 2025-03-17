@@ -1,12 +1,10 @@
 "use server";
 
-import Link from 'next/link';
 import UserService from "@/app/services/UserService";
 import PageHeading from "@/components/common/page-heading";
 import RoleSwitcher from "@/components/user/role-switcher";
-import { Card } from "@/components/ui/card"
 import { columns, DebugLink } from "./columns";
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/ui/data-table";
 
 const Debug = async () => {
   const user = await UserService.getCurrentUser();

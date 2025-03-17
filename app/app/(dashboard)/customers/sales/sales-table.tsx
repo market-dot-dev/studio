@@ -1,7 +1,6 @@
 import { User, Subscription, Charge, Prospect } from "@prisma/client";
 import React from "react";
 import Tier from "@/app/models/Tier";
-import { capitalize, cn } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronRight, Receipt, ScanSearch } from "lucide-react";
 import { Button } from "@/components/ui/button"; 
@@ -13,7 +12,7 @@ import {
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { Card } from "@/components/ui/card";
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/ui/data-table";
 import { Sale, columns } from "./columns";
 
 export type CustomerWithChargesSubscriptionsAndProspects = User & {

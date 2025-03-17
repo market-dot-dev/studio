@@ -20,6 +20,9 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    meta: {
+      emphasized: true
+    }
   },
   {
     accessorKey: "email",

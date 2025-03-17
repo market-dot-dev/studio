@@ -25,6 +25,9 @@ export const columns: ColumnDef<Sale>[] = [
   {
     accessorKey: "user.name",
     header: "Name",
+    meta: {
+      emphasized: true
+    },
     cell: ({ row }) => row.original.user.name
   },
   {

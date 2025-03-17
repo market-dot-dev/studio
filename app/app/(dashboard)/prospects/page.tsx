@@ -2,7 +2,7 @@ import React from "react";
 import PageHeading from "@/components/common/page-heading";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./columns";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";

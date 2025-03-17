@@ -3,6 +3,8 @@
 import { ColumnDef } from "@tanstack/react-table"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
+import { Pencil } from "lucide-react"
 
 // This type is used to define the shape of our data.
 export type Page = {
@@ -16,6 +18,9 @@ export const columns: ColumnDef<Page>[] = [
   {
     accessorKey: "title",
     header: "Title",
+    meta: {
+      emphasized: true
+    }
   },
   {
     accessorKey: "slug",
@@ -57,6 +62,13 @@ export const columns: ColumnDef<Page>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <Link href={`/page/${row.original.id}`}>Edit</Link>,
+    cell: ({ row }) => (
+      <Button variant="outline" size="sm" asChild>
+        <Link href={`/page/${row.original.id}`}>
+          <Pencil className="mr-1" />
+          Edit
+        </Link>
+      </Button>
+    ),
   },
 ] 
