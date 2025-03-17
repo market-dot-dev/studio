@@ -3,6 +3,7 @@
 import * as React from "react"
 import * as TabsPrimitive from "@radix-ui/react-tabs"
 import { cva, type VariantProps } from "class-variance-authority"
+import Link from "next/link"
 
 import { cn } from "@/lib/utils"
 
@@ -90,4 +91,54 @@ const TabsContent = React.forwardRef<
 ))
 TabsContent.displayName = TabsPrimitive.Content.displayName
 
-export { Tabs, TabsList, TabsTrigger, TabsContent }
+export interface LinkTabsProps {
+  items: {
+    name: string;
+    href: string;
+    isActive: boolean;
+  }[];
+  variant?: "default" | "background" | "pills";
+  className?: string;
+}
+
+// LinkTab component for individual tabs - helps with hydration
+function LinkTab({ item, variant }: { 
+  item: { name: string; href: string; isActive: boolean };
+  variant: "default" | "background" | "pills";
+}) {
+  const [mounted, setMounted] = React.useState(false);
+  
+  // Only set the data-state attribute after component has mounted on client
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  return (
+    <Link
+      key={item.name}
+      href={item.href}
+      className={cn(
+        tabsTriggerVariants({ variant }),
+        // Apply basic styling for initial render to avoid hydration mismatch
+        !mounted && item.isActive ? "text-stone-800" : "",
+        !mounted && !item.isActive ? "text-stone-600" : ""
+      )}
+      // Only set data-state after client-side hydration
+      {...(mounted ? { "data-state": item.isActive ? "active" : "inactive" } : {})}
+    >
+      {item.name}
+    </Link>
+  );
+}
+
+function LinkTabs({ items, variant = "default", className }: LinkTabsProps) {
+  return (
+    <div className={cn(tabsListVariants({ variant }), className)}>
+      {items.map((item) => (
+        <LinkTab key={item.name} item={item} variant={variant} />
+      ))}
+    </div>
+  );
+}
+
+export { Tabs, TabsList, TabsTrigger, TabsContent, LinkTabs }
