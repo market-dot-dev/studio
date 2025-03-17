@@ -1,5 +1,5 @@
 # Next.js Routes Map
-# Generated on 2025-03-16T11:14:59.094Z
+# Generated on 2025-03-16T16:31:15.227Z
 
 > Note: Routes marked with "via middleware" are rewritten or redirected by middleware.ts
 
@@ -71,6 +71,10 @@ GET     /maintainer-site/:domain/(auth)/checkout/:id # maintainer-site/[domain]/
 GET     /maintainer-site/:domain/contracts/:id   # maintainer-site/[domain]/contracts/[id]/page.tsx
 GET     /maintainer-site/:domain/embed/:embed    # maintainer-site/[domain]/embed/[embed]/page.tsx
 GET     /maintainer-site/:domain/success         # maintainer-site/[domain]/success/page.tsx
+
+## Namespace: payment-confirmation
+
+GET     /payment-confirmation                    # payment-confirmation/page.tsx
 
 ## Namespace: privacy
 

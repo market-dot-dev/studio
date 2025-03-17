@@ -691,6 +691,12 @@ export const createSetupIntent = async (
   maintainerStripeAccountId: string,
 ) => {
   try {
+    const user = await UserService.getCurrentUser();
+    
+    if (!user) {
+      throw new Error("User not found");
+    }
+    
     const customer = await getCustomer(
       maintainerUserId, 
       maintainerStripeAccountId

@@ -49,6 +49,62 @@ export const StripePaymentElement = () => {
   return <PaymentElement options={PAYMENT_ELEMENT_OPTIONS} />
 }
 
+// Add this new MockPaymentElement component
+const MockPaymentElement = () => {
+  return (
+    <div className="relative group">
+      {/* Overlay that appears on hover */}
+      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-md z-10">
+        <div className="text-center p-3 bg-white rounded shadow-md">
+          <p className="text-sm font-medium text-stone-800 mb-2">Please sign in to add a payment method</p>
+        </div>
+      </div>
+      
+      {/* Mock payment form */}
+      <div className="border border-gray-200 rounded-md p-4 bg-white opacity-60">
+        <div className="mb-4 border-b pb-2">
+          <div className="flex justify-between mb-2">
+            <div className="h-5 w-5 rounded-full bg-gray-300"></div>
+            <div className="flex gap-1">
+              <div className="h-5 w-8 rounded bg-gray-300"></div>
+              <div className="h-5 w-8 rounded bg-gray-300"></div>
+              <div className="h-5 w-8 rounded bg-gray-300"></div>
+            </div>
+          </div>
+          <div className="h-4 w-16 bg-gray-300 rounded"></div>
+        </div>
+        
+        {/* Card number field */}
+        <div className="mb-4">
+          <label className="block text-sm text-gray-500 mb-1">Card number</label>
+          <div className="h-10 bg-gray-100 rounded border border-gray-300 px-3 flex items-center justify-between">
+            <div className="h-4 w-32 bg-gray-300 rounded"></div>
+            <div className="h-5 w-5 rounded-full bg-gray-300"></div>
+          </div>
+        </div>
+        
+        {/* Expiry and CVC row */}
+        <div className="flex gap-4 mb-4">
+          <div className="flex-1">
+            <label className="block text-sm text-gray-500 mb-1">Expiration</label>
+            <div className="h-10 bg-gray-100 rounded border border-gray-300 px-3 flex items-center">
+              <div className="h-4 w-16 bg-gray-300 rounded"></div>
+            </div>
+          </div>
+          <div className="flex-1">
+            <label className="block text-sm text-gray-500 mb-1">CVC</label>
+            <div className="h-10 bg-gray-100 rounded border border-gray-300 px-3 flex items-center justify-between">
+              <div className="h-4 w-10 bg-gray-300 rounded"></div>
+              <div className="h-5 w-5 rounded-full bg-gray-300"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  );
+};
+
 export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId, maintainerUserId, ...props }: {
   children: (props: any) => ReactNode;
   maintainerStripeAccountId: string;
@@ -58,6 +114,7 @@ export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId,
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(true); // Assume logged in initially
 
   useEffect(() => {
     const fetchSetupIntent = async () => {
@@ -70,7 +127,12 @@ export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId,
         setClientSecret(secret);
       } catch (err: any) {
         console.error('Error fetching setup intent:', err);
-        setError(err.message || 'Failed to initialize payment form');
+        // Check if the error is due to user not being logged in
+        if (err.message === 'User not found') {
+          setIsUserLoggedIn(false);
+        } else {
+          setError(err.message || 'Failed to initialize payment form');
+        }
       } finally {
         setIsLoading(false);
       }
@@ -92,6 +154,10 @@ export const StripeCheckoutFormWrapper = ({ children, maintainerStripeAccountId,
       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500 mx-auto"></div>
       <p className="mt-2">Loading payment form...</p>
     </div>;
+  }
+
+  if (!isUserLoggedIn) {
+    return <MockPaymentElement />;
   }
 
   if (error || !clientSecret) {
