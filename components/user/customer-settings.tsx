@@ -66,7 +66,7 @@ export default function CustomerSettings() {
                 loadingText="Saving Changes"
                 onClick={saveChanges}
             >
-                Save Changes
+                Save
             </Button>
         </div>
     )

@@ -1,8 +1,8 @@
 import React from "react";
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./columns";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
@@ -23,16 +23,11 @@ export default async function ProspectsPage() {
   const maxInitialRows = undefined; // No need to limit rows on the full page
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12">
-      <div className="flex w-full justify-between">
-        <div className="flex flex-col">
-          <PageHeading title="Prospects" />
-          <p className="text-sm text-stone-500">
-            View all prospects who have submitted an interest on one of your
-            packages.
-          </p>
-        </div>
-      </div>
+    <div className="flex max-w-screen-xl flex-col space-y-10">
+      <PageHeader
+        title="Prospects"
+        description="View all prospects who have submitted an interest on one of your packages."
+      />
       
       <DataTable columns={columns} data={prospects} />
       

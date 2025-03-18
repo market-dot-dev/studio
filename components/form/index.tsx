@@ -147,7 +147,7 @@ function FormButton() {
       loading={pending}
       loadingText="Saving changes"
     >
-      Save changes
+      Save
     </Button>
   );
 }

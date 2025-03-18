@@ -1,9 +1,8 @@
 import { Metadata } from "next";
 import Image from "next/image";
-import LoginButton from "@/components/common/login-button";
 import { Suspense } from "react";
 import CustomerLogin from "@/components/login/customer-login";
-import { LOCAL_AUTH_AVAILABLE } from "@/app/config/local-auth";
+import LocalAuthSection from "@/components/login/local-auth-section";
 
 export const metadata: Metadata = {
   title: "Customer Login",
@@ -11,7 +10,7 @@ export const metadata: Metadata = {
 
 export default async function LoginPage() {
   return (
-    <div className="flex flex-col max-w-xs mx-auto">
+    <div className="flex flex-col gap-6 max-w-xs mx-auto">
       <Image
         alt="market.dev logo"
         width={162}
@@ -28,17 +27,8 @@ export default async function LoginPage() {
         >
           <CustomerLogin />
         </Suspense>
-        {LOCAL_AUTH_AVAILABLE && (
-          <Suspense>
-            <LoginButton
-              href={"/login/local-auth"}
-              isLoading={false}
-              className="w-full"
-            >
-              Log in with Local Auth
-            </LoginButton>
-          </Suspense>
-        )}
+        
+        <LocalAuthSection />
       </div>
     </div>
   );

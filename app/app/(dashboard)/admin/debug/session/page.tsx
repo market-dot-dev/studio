@@ -1,7 +1,7 @@
 "use client";
 
 import useCurrentSession from "@/app/hooks/use-current-session";
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
@@ -12,7 +12,7 @@ export default function Page() {
   if (isSignedIn()) {
     return (
       <Card className="p-6">
-        <PageHeading>Session Debug Tool</PageHeading>
+        <PageHeader title="Session Debug Tool" />
         <br />
         <pre>{JSON.stringify(currentUser, null, 2)}</pre>
         <br />
