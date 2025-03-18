@@ -113,9 +113,9 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
           <div className="flex flex-col gap-9">
             <div className="flex flex-col gap-2">
               {isTierLoading ? (
-                <Skeleton className="mb-1 h-6 w-full max-w-48 lg:h-7" />
+                <Skeleton className="mb-1 h-6 w-full max-w-48 xl:h-7" />
               ) : (
-                <span className="text-xl font-semibold text-stone-500 lg:text-2xl">
+                <span className="text-xl font-semibold text-stone-500 xl:text-2xl">
                   {checkoutTier} {isAnnual ? "(annual)" : ""}
                 </span>
               )}
@@ -145,19 +145,19 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               )}
 
               {isTierLoading ? (
-                <Skeleton className="mt-2 h-5 w-3/4 lg:h-6" />
+                <Skeleton className="mt-2 h-5 w-3/4 xl:h-6" />
               ) : (
                 <>
                   {checkoutType === "gitwallet" ? (
                     trialOffered && tier?.cadence !== "once" ? (
-                      <p className="mt-2 text-sm font-medium tracking-tightish text-stone-500 lg:text-base">
+                      <p className="mt-2 text-sm font-medium tracking-tightish text-stone-500 xl:text-base">
                         Starts with a{" "}
                         <span className="font-bold">{trialDays} day</span> free
                         trial
                       </p>
                     ) : null
                   ) : (
-                    <p className="mt-2 text-sm font-medium text-stone-500 lg:text-base">
+                    <p className="mt-2 text-sm font-medium text-stone-500 xl:text-base">
                       Please provide your details so we can get in touch with
                       you.
                     </p>
@@ -172,7 +172,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                   <Separator className="bg-stone-300/50" />
 
                   <div className="flex flex-col gap-1 text-stone-500">
-                    <p className="text-lg font-bold tracking-tightish text-stone-800 lg:text-xl">
+                    <p className="text-lg font-bold tracking-tightish text-stone-800 xl:text-xl">
                       {checkoutCurrency +
                         " " +
                         checkoutCurrencySymbol +

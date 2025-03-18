@@ -253,7 +253,7 @@ export default function Header({ className }: { className?: string }) {
         <div className="mx-auto w-full px-4 lg:max-w-[var(--marketing-max-width)] xl:px-16">
           <div
             className={clsx(
-              "duration-[500ms] relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow ease-in-out",
+              "duration-500 relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow ease-in-out",
               isScrolled && "shadow-border-b",
             )}
           >

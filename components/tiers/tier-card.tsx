@@ -106,7 +106,7 @@ const TierCard: React.FC<TierCardProps> = ({
   return (
     <Card
       className={clsx(
-        "relative flex h-full w-full flex-col justify-between p-6 pt-5",
+        "relative flex h-full w-full flex-col justify-between p-6 pt-5 min-w-[300px]",
         containerClasses,
         className,
       )}
