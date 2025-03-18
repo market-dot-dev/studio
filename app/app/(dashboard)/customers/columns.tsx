@@ -106,11 +106,9 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: function DateHeader() { 
-      return <div className="text-right">Customer Since</div>;
-    },
+    header: "Customer Since",
     cell: ({ row }) => {
-      return <div className="text-right">{formatDate(row.original.createdAt)}</div>;
+      return <div>{formatDate(row.original.createdAt)}</div>;
     }
   },
   {
