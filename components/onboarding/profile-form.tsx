@@ -111,29 +111,29 @@ export default function ProfileForm({
   return (
     <form className="relative w-full" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-6">
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-2">
           <div className="flex justify-center">
             <Image
               src="/gw-logo-nav.png"
               alt="Gitwallet Logo"
-              className="h-11 w-11 shrink-0"
-              height={44}
-              width={44}
+              className="h-9 w-9 shrink-0"
+              height={36}
+              width={36}
             />
           </div>
 
           <div className="space-y-1 text-center">
-            <h1 className="text-2xl font-bold tracking-tight text-stone-900">
+            <h1 className="text-xl font-bold tracking-tightish text-stone-800">
               Welcome to market.dev
             </h1>
-            <h2 className="text-base font-normal text-stone-900">
+            <h2 className="text-sm font-normal text-stone-500">
               Tell us about your business
             </h2>
           </div>
         </div>
 
         <div className="space-y-6">
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="businessName">
               Business Name
             </Label>
@@ -147,7 +147,7 @@ export default function ProfileForm({
             />
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label htmlFor="subdomain">
               Domain
             </Label>
@@ -173,7 +173,7 @@ export default function ProfileForm({
             </p>
           </div>
 
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             <Label>
               Logo
               <span className="ml-1 text-xs font-normal text-stone-500">
@@ -246,12 +246,6 @@ export default function ProfileForm({
             teamType={teamType}
             setTeamType={setTeamType}
           />
-        </div>
-
-        <div className="flex w-full justify-end pt-4">
-          <Button size="lg" type="submit" loading={isLoading}>
-            Next
-          </Button>
         </div>
       </div>
     </form>

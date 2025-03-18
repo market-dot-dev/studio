@@ -1,4 +1,4 @@
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import { Feature } from "@prisma/client";
 import FeatureService from "@/app/services/feature-service";
 import prisma from "@/lib/prisma";
@@ -66,9 +66,9 @@ export default async function ChargeDetail({
   const features = await FeatureService.findByTierId(tier.id);
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-10">
+      <PageHeader title={`${maintainer!.name}: ${tier?.name}`} />
       <div className="flex flex-col space-y-6">
-        <PageHeading title={`${maintainer!.name}: ${tier?.name}`} />
         <div>{tier?.description}</div>
         <div className="flex flex-col space-y-2">
           {features.map((f) => (

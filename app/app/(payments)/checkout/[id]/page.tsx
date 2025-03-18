@@ -166,7 +166,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
               )}
             </div>
 
-            <div className="flex flex-col gap-6 lg:gap-9">
+            <div className="flex flex-col gap-6">
               {!isTierLoading && checkoutType !== "gitwallet" && (
                 <>
                   <Separator className="bg-stone-300/50" />

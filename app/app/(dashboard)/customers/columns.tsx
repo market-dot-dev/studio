@@ -31,6 +31,9 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   {
     accessorKey: "userName",
     header: "Name",
+    meta: {
+      emphasized: true
+    },
     cell: ({ row, table }) => {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;

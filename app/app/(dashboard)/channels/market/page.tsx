@@ -1,5 +1,5 @@
 import { buttonVariants } from "@/components/ui/button";
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import { getCurrentUser } from "@/app/services/UserService";
 import ConnectionRequired from "@/components/channels/market/connection-required";
 import MarketPreview from "@/components/channels/market/market-preview";
@@ -15,7 +15,7 @@ export default async function MarketChannel() {
 
   return (
     <div className="flex w-full flex-col items-start gap-6">
-      <PageHeading title="explore.market.dev" />
+      <PageHeader title="explore.market.dev" />
 
       {!isConnectedToMarket ? (
         <ConnectionRequired user={currentUser} />

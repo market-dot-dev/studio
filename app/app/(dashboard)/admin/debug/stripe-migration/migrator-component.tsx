@@ -1,6 +1,6 @@
 "use client";
 
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import { Check } from "lucide-react";
 import StripeCustomerMigrator from "./stripe-customer-migrator";
 import { LegacyProduct, Subscription, Tier, User } from "@prisma/client";
@@ -25,12 +25,8 @@ const MigratorComponent = ({
   const [password, setPassword] = useState("");
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
-      <div className="flex w-full justify-between">
-        <div className="flex flex-row">
-          <PageHeading title="Legacy Subscription Migration tool" />
-        </div>
-      </div>
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-8">
+      <PageHeader title="Legacy Subscription Migration tool" />
       <div>
         <Input
           id="password"

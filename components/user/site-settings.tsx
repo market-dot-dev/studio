@@ -99,7 +99,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
           loading={isSaving}
           loadingText="Saving Changes"
         >
-          Save Changes
+          Save
         </Button>
       </div>
     </form>

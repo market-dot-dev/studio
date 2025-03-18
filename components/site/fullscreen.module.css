@@ -7,9 +7,20 @@
     overflow: auto;
     height: 100vh;
     max-width: unset;
+    width: 100%;
 }
 
 .fullscreen > div:first-child {
   display: none;
   padding: 1rem;
+}
+
+.fullscreen :global(.fullscreen-header) {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: white;
+  border-bottom: 1px solid #e5e5e5;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
 }
