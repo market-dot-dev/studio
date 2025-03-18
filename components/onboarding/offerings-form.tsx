@@ -69,14 +69,12 @@ interface OfferingsData {
 interface OfferingsFormProps {
   user: User;
   onSubmit: (data: OfferingsData) => void;
-  onBack: () => void;
   isLoading: boolean;
 }
 
 export default function OfferingsForm({
   user,
   onSubmit,
-  onBack,
   isLoading,
 }: OfferingsFormProps) {
   const [selectedOfferings, setSelectedOfferings] = useState<Set<string>>(
@@ -103,23 +101,23 @@ export default function OfferingsForm({
   return (
     <form className="w-full" onSubmit={handleSubmit}>
       <div className="flex flex-col items-center gap-9">
-        <div className="flex flex-col items-center gap-3">
+        <div className="flex flex-col items-center gap-2">
           <div className="flex justify-center">
             <Image
               src="/gw-logo-nav.png"
               alt="Gitwallet Logo"
-              className="h-11 w-11 shrink-0"
-              height={44}
-              width={44}
+              className="h-9 w-9 shrink-0"
+              height={36}
+              width={36}
             />
           </div>
 
-          <h1 className="text-center text-2xl font-bold tracking-tight text-stone-900">
+          <h1 className="text-center text-xl font-bold tracking-tightish text-stone-800">
             Last, what are you selling?
           </h1>
         </div>
 
-        <div className="flex w-full flex-col gap-4">
+        <div className="flex w-full flex-col md:grid grid-cols-2 gap-4">
           {offerings.map(
             ({ id, title, description, icon: Icon, isComingSoon }) => (
               <label
@@ -151,16 +149,6 @@ export default function OfferingsForm({
               </label>
             ),
           )}
-        </div>
-
-        {/* Navigation */}
-        <div className="flex w-full justify-between pt-4">
-          <Button variant="ghost" size="lg" onClick={onBack} type="button">
-            Back
-          </Button>
-          <Button type="submit" size="lg" loading={isLoading}>
-            Finish
-          </Button>
         </div>
       </div>
     </form>

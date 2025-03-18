@@ -85,11 +85,11 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="flex flex-col items-start gap-4 space-y-2 p-4"
+      className="flex flex-col items-start gap-6"
     >
       <div className="flex w-full flex-col gap-2">
         <div>
-          <Label htmlFor="name">
+          <Label htmlFor="name" className="mb-1">
             Service Name
           </Label>
           <div className="text-xs text-stone-500">
@@ -108,9 +108,7 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
         )}
       </div>
       <div className="flex w-full flex-col gap-2">
-        <Label htmlFor="uri">
-          Relevant Link, Email, or Phone#
-        </Label>
+        <Label htmlFor="uri">Relevant Link, Email, or Phone#</Label>
         <Input
           id="uri"
           placeholder=""
@@ -125,9 +123,7 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
         )}
       </div>
       <div className="flex w-full flex-col gap-2">
-        <Label htmlFor="description">
-          Description
-        </Label>
+        <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
           placeholder="Detail fulfillment or workflow information"
@@ -138,19 +134,7 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
       </div>
 
       <input type="hidden" {...register("isEnabled")} />
-      <div className="flex w-full items-center justify-between gap-4">
-        <div className="flex gap-4">
-          <Button
-            loading={isSaving}
-            loadingText={initialFeature?.isEnabled ? "Updating" : "Enabling"}
-            onClick={enabledClick}
-          >
-            {initialFeature?.isEnabled ? "Update" : "Enable"}
-          </Button>
-          <Button variant="outline" onClick={hide}>
-            Close
-          </Button>
-        </div>
+      <div className="mt-2 flex w-full items-center justify-between gap-4">
         {initialFeature?.isEnabled && (
           <Button
             variant="destructive"
@@ -161,6 +145,18 @@ const FeatureForm: React.FC<Props> = ({ service, initialFeature, onSuccess, requ
             Disable
           </Button>
         )}
+        <div className="flex gap-4 self-end ml-auto">
+          <Button variant="outline" onClick={hide}>
+            Close
+          </Button>
+          <Button
+            loading={isSaving}
+            loadingText={initialFeature?.isEnabled ? "Updating" : "Enabling"}
+            onClick={enabledClick}
+          >
+            {initialFeature?.isEnabled ? "Update" : "Enable"}
+          </Button>
+        </div>
       </div>
     </form>
   );
