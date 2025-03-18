@@ -61,7 +61,7 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
           disabled={isSaving} 
           onClick={saveChanges}
         >
-          Save Changes
+          Save
         </Button>
       </div>
     </>
