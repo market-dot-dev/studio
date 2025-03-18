@@ -66,7 +66,7 @@ export default async function PaymentSettings({
   const stripeConnected = !!user.stripeAccountId;
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12">
+    <div className="flex max-w-screen-xl flex-col space-y-10">
       <div className="flex flex-col space-y-6">
         <div className="flex flex-col items-start gap-4">
           {!stripeConnected && (

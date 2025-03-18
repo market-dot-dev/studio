@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Contract } from "@prisma/client";
 import Link from "next/link";
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import { startTransition, useState } from "react";
 import {
   updateContract,
@@ -15,7 +15,7 @@ import {
 } from "@/app/services/contract-service";
 import { useRouter } from "next/navigation";
 import Uploader, { Attachment } from "@/components/uploader";
-import { Trash } from "lucide-react";
+import { BookOpen, Trash } from "lucide-react";
 import ContractDeleteButton from "./contract-delete-button";
 
 export default function ContractEdit({
@@ -110,22 +110,38 @@ export default function ContractEdit({
   };
 
   return (
-    <>
-      <div className="flex w-full items-center justify-between">
-        <Link href="/contracts" className="underline">
-          ← All Contracts
-        </Link>
-        {editing ? (
-          <Link
-            href={`/c/contracts/${contract.id}`}
-            target="_blank"
-            className="underline"
-          >
-            View
-          </Link>
-        ) : null}
-      </div>
-      <PageHeading title={editing ? "Edit Contract" : "Create Contract"} />
+    <div className="flex flex-col space-y-10">
+      <PageHeader
+        title={editing ? "Edit Contract" : "Create Contract"}
+        backLink={{
+          title: "Contracts",
+          href: "/contracts",
+        }}
+        actions={[
+          editing ? (
+            <ContractDeleteButton
+              contractId={contract.id}
+              onConfirm={() => setIsDeleting(true)}
+              onSuccess={() => {
+                setIsDeleting(false);
+                window.location.href = "/contracts";
+              }}
+              onError={(error: any) => {
+                setIsDeleting(false);
+                setError(error as { message: string });
+              }}
+            />
+          ) : null,
+          editing ? (
+            <Button variant="outline" asChild>
+              <Link href={`/c/contracts/${contract.id}`} target="_blank">
+                <BookOpen />
+                Read
+              </Link>
+            </Button>
+          ) : null,
+        ]}
+      />
       <form>
         {error && <p className="text-sm text-red-500">{error?.message}</p>}
         {info && <p className="text-sm text-stone-500">{info}</p>}
@@ -201,7 +217,7 @@ export default function ContractEdit({
               ) : null}
               <div
                 className={
-                  "flex w-1/2 flex-col items-start gap-2" +
+                  "flex w-full flex-col items-start gap-2" +
                   (contract?.attachmentUrl ? " hidden" : "")
                 }
               >
@@ -234,27 +250,15 @@ export default function ContractEdit({
               onClick={handleSubmit}
               loading={isSaving || isUploading}
               disabled={isSaving || isUploading || isDeleting}
-              loadingText={isSaving ? "Saving" : isUploading ? "Uploading" : undefined}
+              loadingText={
+                isSaving ? "Saving" : isUploading ? "Uploading" : undefined
+              }
             >
               {editing ? "Save" : "Create"}
             </Button>
-            {editing ? (
-              <ContractDeleteButton
-                contractId={contract.id}
-                onConfirm={() => setIsDeleting(true)}
-                onSuccess={() => {
-                  setIsDeleting(false);
-                  window.location.href = "/contracts";
-                }}
-                onError={(error: any) => {
-                  setIsDeleting(false);
-                  setError(error as { message: string });
-                }}
-              />
-            ) : null}
           </div>
         </div>
       </form>
-    </>
+    </div>
   );
 }

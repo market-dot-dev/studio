@@ -6,7 +6,7 @@ export default function DebugPage() {
    const { currentUser, refreshSession, isSignedIn  } = useCurrentSession();
     
   return (
-      <div className="space-y-12 p-8">
+      <div className="space-y-10 p-8">
         <h1>Debug</h1>
         <pre>
           {JSON.stringify(currentUser, null, 2)}

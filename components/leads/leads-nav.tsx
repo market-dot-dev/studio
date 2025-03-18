@@ -28,6 +28,6 @@ export default function LeadsNav() {
   ];
 
   return (
-    <LinkTabs items={navItems} className="mb-6" />
+    <LinkTabs items={navItems} />
   );
 } 
