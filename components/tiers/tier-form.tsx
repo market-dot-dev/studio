@@ -1296,7 +1296,7 @@ export default function TierForm({
           </Button>
         </div>
 
-        <div className="sticky top-20 mx-auto mb-auto hidden w-full text-center md:w-[300px] lg:block">
+        <div className="sticky top-20 mx-auto mb-auto hidden text-center w-[300px] lg:block">
           <TierCard
             tier={{ ...tier, published: savedPublishedState }}
             features={featureObjs}
