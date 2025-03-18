@@ -66,9 +66,11 @@ const SalesTable = ({
   const visibleSales = showAll ? sales : sales.slice(0, maxInitialRows);
 
   return (
-    <>
-      <div className="mb-4 flex w-full items-end justify-between">
-        <h3 className="text-xl font-semibold">Sales & Prospects</h3>
+    <div className="space-y-4">
+      <div className="flex w-full items-end justify-between">
+        <h3 className="text-xl font-bold tracking-tightish">
+          Sales & Prospects
+        </h3>
         <Link href="/customers">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -126,7 +128,7 @@ const SalesTable = ({
           <DataTable columns={columns} data={visibleSales} />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

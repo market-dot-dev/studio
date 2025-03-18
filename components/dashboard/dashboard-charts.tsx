@@ -203,10 +203,10 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
 
 
   return (
-    <>
-      <div className="mb-4 flex items-end justify-between">
+    <div className="space-y-4">
+      <div className="flex items-end justify-between">
         <div className="flex items-end gap-2">
-          <div className="text-xl font-semibold">Reports</div>
+          <div className="text-xl font-bold tracking-tightish">Reports</div>
           {isUsingDummyData && (
             <Badge variant="secondary" size="sm" className="mb-1">
               Sample Data
@@ -293,6 +293,6 @@ export default function DashboardCharts({ customers }: { customers: CustomerWith
           </Card>
         </div>
       </div>
-    </>
+    </div>
   );
 }
