@@ -80,7 +80,7 @@ export default function PackageEmbeddings({
               ) : (
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger className="cursor-default">
+                    <TooltipTrigger asChild>
                       <TabsTrigger variant="background" value="code" disabled>
                         Code
                       </TabsTrigger>

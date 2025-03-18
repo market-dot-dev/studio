@@ -54,11 +54,14 @@ export default function EmbeddingsSettingsDropdown({
           <DialogHeader>
             <DialogTitle>Pick Packages</DialogTitle>
           </DialogHeader>
-          <PublishedPackagesSelectionModal initTiers={selectedTiers} />
+          <PublishedPackagesSelectionModal 
+            initTiers={temporarySelectedTiers} 
+            onSelectionChange={setTemporarySelectedTiers}
+          />
           <DialogFooter>
             <Button 
               size="lg"
-              disabled={!selectedTiers}
+              disabled={temporarySelectedTiers.length === 0}
               onClick={() => {
                 setSelectedTiers(temporarySelectedTiers);
                 setDialogOpen(false);

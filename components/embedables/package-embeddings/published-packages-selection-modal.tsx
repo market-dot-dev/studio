@@ -8,7 +8,13 @@ import { useEffect, useState } from "react";
 import SkeletonLoader from "@/components/common/skeleton-loader";
 import TierCard from "@/components/tiers/tier-card";
 
-export default function PublishedPackagesSelectionModal({ initTiers }: { initTiers?: TierWithFeatures[] }) {
+export default function PublishedPackagesSelectionModal({ 
+  initTiers,
+  onSelectionChange
+}: { 
+  initTiers?: TierWithFeatures[];
+  onSelectionChange?: (tiers: TierWithFeatures[]) => void;
+}) {
   const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>(
     initTiers || [],
   );
@@ -23,12 +29,23 @@ export default function PublishedPackagesSelectionModal({ initTiers }: { initTie
   }, []);
 
   const toggleTier = (tier: TierWithFeatures) => {
-    setSelectedTiers((prev) =>
-      prev.some((t) => t.id === tier.id)
+    setSelectedTiers((prev) => {
+      const newSelection = prev.some((t) => t.id === tier.id)
         ? prev.filter((t) => t.id !== tier.id)
-        : [...prev, tier],
-    );
+        : [...prev, tier];
+      
+      // Notify parent component about selection change
+      if (onSelectionChange) {
+        onSelectionChange(newSelection);
+      }
+      
+      return newSelection;
+    });
   };
+
+  useEffect(() => {
+    console.log("SELECTED TIERS NEW:", selectedTiers);
+  }, [selectedTiers]);
 
   return (
     <div className="w-full">
@@ -55,8 +72,8 @@ function PublishedPackagesSelectionModalContent({
   publishedTiers: TierWithFeatures[];
 }) {
   return (
-    <div className="flex w-full flex-col gap-4">
-      <div className="grid grid-cols-1 gap-2 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="flex w-full flex-col gap-4 h-full">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {publishedTiers.map((tier) => (
           <div
             key={tier.id}
