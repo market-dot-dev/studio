@@ -44,7 +44,7 @@ import { attachMany } from "@/app/services/feature-service";
 import Link from "next/link";
 import { Channel, Contract, Feature, User } from "@prisma/client";
 import useCurrentSession from "@/app/hooks/use-current-session";
-import { Check, Copy, LinkIcon, ChevronLeft, AlertTriangle } from "lucide-react";
+import { Check, Copy, LinkIcon, AlertTriangle } from "lucide-react";
 import TierDeleteButton from "./tier-delete-button";
 import { getRootUrl } from "@/lib/domain";
 import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
@@ -53,6 +53,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Switch } from "../ui/switch";
 import Spinner from "../ui/spinner";
+import { AnimatePresence, motion } from "framer-motion";
 
 interface TierFormProps {
   tier?: Partial<Tier>;
@@ -137,21 +138,57 @@ const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({
 
 const TierLinkCopier = ({ tier, savedPublishedState }: { tier: Tier, savedPublishedState: boolean }) => {
   const [isCopied, setIsCopied] = useState(false);
+  const [shouldCopy, setShouldCopy] = useState(false);
   const link = getRootUrl("app", `/checkout/${tier.id}`);
 
-  const copyToClipboard = async () => {
-    if (window.location.protocol !== "https:") {
-      toast.error("Copying to clipboard is only supported on HTTPS sites.");
-      return;
-    }
+  useEffect(() => {
+    if (!shouldCopy) return;
+    
+    const copyToClipboard = async () => {
+      try {
+        console.log('Link to copy:', link);
+        
+        // Check if the Clipboard API is available
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(link);
+        } else {
+          // Fallback for browsers without clipboard API
+          const textarea = document.createElement('textarea');
+          textarea.value = link;
+          textarea.style.position = 'fixed'; // Prevent scrolling to bottom
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+          
+          // Try the execCommand as fallback (works in more browsers)
+          const successful = document.execCommand('copy');
+          if (!successful) {
+            throw new Error('Fallback clipboard copy failed');
+          }
+          
+          document.body.removeChild(textarea);
+        }
+        
+        setIsCopied(true);
+        
+        const timer = setTimeout(() => {
+          setIsCopied(false);
+          setShouldCopy(false);
+        }, 2000);
+        
+        return () => clearTimeout(timer);
+      } catch (err) {
+        console.error("Failed to copy text: ", err);
+        toast.error("Failed to copy the link. Please try again.");
+        setShouldCopy(false);
+      }
+    };
+    
+    copyToClipboard();
+  }, [shouldCopy, link]);
 
-    try {
-      await navigator.clipboard.writeText(link);
-      setIsCopied(true);
-    } catch (err) {
-      console.error("Failed to copy text: ", err);
-      toast.error("Failed to copy the link. Please try again.");
-    }
+  const handleCopy = () => {
+    setShouldCopy(true);
   };
 
   if (!link || !savedPublishedState) {
@@ -169,15 +206,34 @@ const TierLinkCopier = ({ tier, savedPublishedState }: { tier: Tier, savedPublis
       />
       <Button
         variant="outline"
-        onClick={copyToClipboard}
+        onClick={handleCopy}
         disabled={isCopied}
-        className={
-          `h-9 rounded-l-none ` +
-          `${isCopied ? "cursor-not-allowed opacity-50" : ""}`
-        }
+        tooltip={isCopied ? "Copied!" : "Copy checkout link"}
+        className="h-9 md:h-8 w-9 md:w-8 rounded-l-none"
       >
-        {isCopied ? <Check /> : <LinkIcon />}
-        {isCopied ? "Copied!" : ""}
+        <AnimatePresence mode="wait" initial={false}>
+          {isCopied ? (
+            <motion.div
+              key="check"
+              initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
+              transition={{ duration: 0.1, type: "easeInOut" }}
+            >
+              <Check className="h-4 w-4" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="link"
+              initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
+              transition={{ duration: 0.1, type: "easeInOut" }}
+            >
+              <LinkIcon className="h-4 w-4" />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Button>
     </div>
   );
