@@ -71,7 +71,7 @@ export default function SiteAdmin({ id }: { id: string }) {
         title="Your Storefront" 
         actions={[
           url ? (
-            <Button variant="secondary" className="text-stone-600" asChild>
+            <Button key="view-site" variant="secondary" className="text-stone-600" asChild>
               <Link href={url} target="_blank" rel="noopener noreferrer">
                 {url} ↗
               </Link>

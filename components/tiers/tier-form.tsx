@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, Copy, LinkIcon, AlertTriangle } from "lucide-react";
+
+import Spinner from "../ui/spinner";
+import { Switch } from "../ui/switch";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,7 +32,20 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Tabs,
+  TabsList,
+  TabsTrigger,
+  TabsContent,
+} from "@/components/ui/tabs";
+
+import PageHeader from "../common/page-header";
+import TierCard from "./tier-card";
+import TierFeaturePicker from "../features/tier-feature-picker";
+import TierDeleteButton from "./tier-delete-button";
+import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
+import ChannelsSelectionInput from "./channels-selection-input";
+
 import Tier, { newTier } from "@/app/models/Tier";
 import { subscriberCount } from "@/app/services/SubscriptionService";
 import {
@@ -36,24 +56,14 @@ import {
   TierWithFeatures,
   duplicateTier,
 } from "@/app/services/TierService";
-import TierCard from "./tier-card";
 import { userHasStripeAccountIdById } from "@/app/services/StripeService";
-import PageHeader from "../common/page-header";
-import TierFeaturePicker from "../features/tier-feature-picker";
 import { attachMany } from "@/app/services/feature-service";
-import Link from "next/link";
-import { Channel, Contract, Feature, User } from "@prisma/client";
-import useCurrentSession from "@/app/hooks/use-current-session";
-import { Check, Copy, LinkIcon, AlertTriangle } from "lucide-react";
-import TierDeleteButton from "./tier-delete-button";
 import { getRootUrl } from "@/lib/domain";
-import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
-import ChannelsSelectionInput from "./channels-selection-input";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
-import { Switch } from "../ui/switch";
-import Spinner from "../ui/spinner";
-import { AnimatePresence, motion } from "framer-motion";
+
+import useCurrentSession from "@/app/hooks/use-current-session";
+
+import { Channel, Contract, Feature, User } from "@prisma/client";
 
 interface TierFormProps {
   tier?: Partial<Tier>;
@@ -655,7 +665,7 @@ export default function TierForm({
             }}
             actions={[
               <TierLinkCopier
-                key="tier-link"
+                key="copy-tier-link"
                 tier={tier}
                 savedPublishedState={savedPublishedState}
               />,

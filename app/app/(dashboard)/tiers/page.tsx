@@ -27,7 +27,7 @@ export default async function Tiers() {
           description="Packages are what you sell to your customers. You can include them on your website or send them to customers directly using a checkout link."
           actions={[
             tiers.length > 0 ? (
-              <NewTierModal multiple={false}>New Package</NewTierModal>
+              <NewTierModal key="new-package" multiple={false}>New Package</NewTierModal>
             ) : null,
           ]}
         />

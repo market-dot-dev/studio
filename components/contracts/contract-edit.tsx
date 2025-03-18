@@ -120,6 +120,7 @@ export default function ContractEdit({
         actions={[
           editing ? (
             <ContractDeleteButton
+              key="delete-contract"
               contractId={contract.id}
               onConfirm={() => setIsDeleting(true)}
               onSuccess={() => {
@@ -133,7 +134,7 @@ export default function ContractEdit({
             />
           ) : null,
           editing ? (
-            <Button variant="outline" asChild>
+            <Button key="view-contract" variant="outline" asChild>
               <Link href={`/c/contracts/${contract.id}`} target="_blank">
                 <BookOpen />
                 Read

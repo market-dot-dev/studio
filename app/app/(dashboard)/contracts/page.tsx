@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 import ContractSettings from "./contracts-index";
 import ContractService from "@/app/services/contract-service";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Link from 'next/link';
 import PageHeader from "@/components/common/page-header";
 
@@ -24,7 +24,7 @@ export default async function ContractSettingsPage() {
         description="Contracts are the terms of service for the packages you are
           offering, and are shown at checkout. This feature is in Beta."
         actions={[
-          <Button asChild>
+          <Button key="new-contract" asChild>
             <Link href="/contracts/create">New Contract</Link>
           </Button>
         ]}

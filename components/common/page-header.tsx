@@ -66,9 +66,7 @@ export default function PageHeader({
 
         {actions && actions.length > 0 && (
           <div className="flex flex-shrink-0 flex-wrap items-center gap-2">
-            {actions.map((action, index) => (
-              <Fragment key={index}>{action}</Fragment>
-            ))}
+            {actions}
           </div>
         )}
       </div>
