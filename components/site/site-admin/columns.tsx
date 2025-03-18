@@ -32,14 +32,11 @@ export const columns: ColumnDef<Page>[] = [
       const page = row.original
       
       return (
-        <a
-          href={url + (page.id === homepageId ? "" : `/${page.slug}`)}
-          target="_blank"
-          rel="noreferrer"
-          className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600"
-        >
-          {page.id === homepageId ? "" : `/${page.slug}`} ↗
-        </a>
+        <Button variant="secondary" size="sm" asChild>
+          <Link href={url + (page.id === homepageId ? "" : `/${page.slug}`)}>
+            {page.id === homepageId ? "" : `/${page.slug}`} ↗
+          </Link>
+        </Button>
       )
     },
   },
@@ -63,12 +60,14 @@ export const columns: ColumnDef<Page>[] = [
   {
     id: "actions",
     cell: ({ row }) => (
-      <Button variant="outline" size="sm" asChild>
-        <Link href={`/page/${row.original.id}`}>
-          <Pencil className="mr-1" />
-          Edit
-        </Link>
-      </Button>
+      <div className="flex justify-end">
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/page/${row.original.id}`}>
+            <Pencil className="mr-0.5 h-3 w-3" />
+            Edit
+          </Link>
+        </Button>
+      </div>
     ),
   },
 ] 
