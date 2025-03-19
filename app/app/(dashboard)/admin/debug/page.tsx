@@ -1,12 +1,10 @@
 "use server";
 
-import Link from 'next/link';
 import UserService from "@/app/services/UserService";
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import RoleSwitcher from "@/components/user/role-switcher";
-import { Card } from "@/components/ui/card"
 import { columns, DebugLink } from "./columns";
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/ui/data-table";
 
 const Debug = async () => {
   const user = await UserService.getCurrentUser();
@@ -32,9 +30,7 @@ const Debug = async () => {
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-8">
-      <div className="flex w-full justify-between">
-        <PageHeading title="Debug Tools" />
-      </div>
+      <PageHeader title="Debug Tools" />
 
       <DataTable columns={columns} data={debugLinks} />
       

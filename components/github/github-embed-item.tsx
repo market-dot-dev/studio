@@ -31,31 +31,29 @@ export default function GithubEmbedItem({
 
   return (
     <div className="flex w-full flex-col gap-3">
-      <h2 className="text-2xl font-bold">Badge</h2>
-      <div className="flex w-full flex-col gap-12">
-        <Tabs defaultValue="preview" className="w-full">
-          <div className="flex items-center justify-between">
-            <TabsList>
-              <TabsTrigger value="preview">Preview</TabsTrigger>
-              <TabsTrigger value="code">Code</TabsTrigger>
-            </TabsList>
+      <Tabs defaultValue="preview">
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <h2 className="text-xl font-bold">Badge</h2>
+          <TabsList variant="background">
+            <TabsTrigger variant="background" value="preview">Preview</TabsTrigger>
+            <TabsTrigger variant="background" value="code">Code</TabsTrigger>
+          </TabsList>
+        </div>
+        
+        <TabsContent value="preview" className="mt-4">
+          <div className="relative w-full overflow-hidden">
+            <DashedCard>
+              <div dangerouslySetInnerHTML={{ __html: html }} />
+            </DashedCard>
           </div>
+        </TabsContent>
 
-          <TabsContent value="preview">
-            <div className="relative w-full overflow-hidden">
-              <DashedCard>
-                <div dangerouslySetInnerHTML={{ __html: html }} />
-              </DashedCard>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="code">
-            <div className="flex w-full flex-col gap-4">
-              <CodeSnippet code={markdown} />
-            </div>
-          </TabsContent>
-        </Tabs>
-      </div>
+        <TabsContent value="code" className="mt-4">
+          <div className="flex w-full flex-col gap-4">
+            <CodeSnippet code={markdown} />
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

@@ -31,6 +31,9 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   {
     accessorKey: "userName",
     header: "Name",
+    meta: {
+      emphasized: true
+    },
     cell: ({ row, table }) => {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
@@ -103,11 +106,9 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   },
   {
     accessorKey: "createdAt",
-    header: function DateHeader() { 
-      return <div className="text-right">Customer Since</div>;
-    },
+    header: "Customer Since",
     cell: ({ row }) => {
-      return <div className="text-right">{formatDate(row.original.createdAt)}</div>;
+      return <div>{formatDate(row.original.createdAt)}</div>;
     }
   },
   {

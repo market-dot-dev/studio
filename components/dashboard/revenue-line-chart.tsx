@@ -17,17 +17,19 @@ export default function RevenueLineChart({
 }: RevenueLineChartProps) {
   return (
     <LineChart
-      className="h-72 mt-3"
+      className="mt-3 h-72"
       data={revenueData}
       index="date"
       categories={["New Subscriptions", "Renewals", "One-time Charges"]}
-      colors={isUsingDummyData
-        ? ["gray-300", "gray-500", "gray-700"]
-        : ["gray-500", "blue-300", "yellow-300"]}
+      colors={
+        isUsingDummyData
+          ? ["stone-400", "stone-400", "stone-400"]
+          : ["stone-500", "swamp", "orange-300"]
+      }
       connectNulls={true}
       valueFormatter={valueFormatter}
       autoMinValue={true}
-      maxValue={Math.ceil(highestRevenueItemInMonth * 120 / 100)}
+      maxValue={Math.ceil((highestRevenueItemInMonth * 120) / 100)}
       intervalType="preserveStartEnd"
       allowDecimals={false}
     />

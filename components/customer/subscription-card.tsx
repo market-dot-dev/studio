@@ -11,7 +11,7 @@ import ContractLink from "./contract-link";
 import Tier from "@/app/models/Tier";
 import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
 import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button";
-import { parseTierDescription } from "@/lib/utils";
+import { parseTierDescription, cn } from "@/lib/utils";
 
 type TierWithFeatures = (Tier & { features: Feature[] }) | null;
 
@@ -63,7 +63,7 @@ const SubscriptionCard = async ({
         (subscription.activeUntil.getTime() - new Date().getTime()) /
           (1000 * 3600 * 24),
       );
-      status = `Cancelled -- usable for ${daysRemaining} more day${daysRemaining !== 1 ? "s" : ""}`;
+      status = `Cancelled, usable for ${daysRemaining} more day${daysRemaining !== 1 ? "s" : ""}`;
     } else {
       status = "Cancelled";
     }
@@ -75,27 +75,27 @@ const SubscriptionCard = async ({
   return (
     <Card className="text-sm">
       <div className="flex flex-col gap-4 p-5 pr-4 pt-4">
-        <div className="flex flex-col">
-          <div className="flex justify-between gap-2">
+        <div className="flex flex-wrap justify-between gap-2">
+          <div>
             <h3 className="text-base font-semibold">
               {tier.name} {subscription.priceAnnual ? "(annual)" : ""}
             </h3>
-            <Badge 
-              variant={
-                subscription.state === SubscriptionStates.renewing 
-                  ? "success" 
-                  : "secondary"
-                } 
-              className="h-fit w-fit"
-            >
-              {status.charAt(0).toUpperCase() + status.slice(1)}
-            </Badge>
+            {tier.tagline && (
+              <p className="line-clamp-2 text-sm text-stone-500">
+                {tier.tagline}
+              </p>
+            )}
           </div>
-          {tier.tagline && (
-            <p className="line-clamp-2 text-sm text-stone-500">
-              {tier.tagline}
-            </p>
-          )}
+          <Badge
+            variant={
+              subscription.state === SubscriptionStates.renewing
+                ? "success"
+                : "secondary"
+            }
+            className="h-fit w-fit"
+          >
+            {status.charAt(0).toUpperCase() + status.slice(1)}
+          </Badge>
         </div>
         <p className="mb-1 text-xl font-semibold text-stone-800">
           USD ${actualPrice}
@@ -134,12 +134,16 @@ const SubscriptionCard = async ({
         </div>
       </div>
 
-      <div className="flex flex-row justify-between gap-2 rounded-b-md border-t bg-stone-50 px-5 py-3">
+      <div className={cn("flex flex-row gap-2 rounded-b-md border-t bg-stone-50 px-5 py-3", {
+        "justify-between": subscription.state !== SubscriptionStates.cancelled
+      })}>
         <CustomerPackageFeatures
           features={hasActiveFeatures ? tier.features : featuresFromDescription}
           maintainerEmail={isCustomerView ? maintainer?.email : null}
         />
-        <CancelSubscriptionButton subscriptionId={subscription.id} />
+        {subscription.state !== SubscriptionStates.cancelled && (
+          <CancelSubscriptionButton subscriptionId={subscription.id} />
+        )}
       </div>
     </Card>
   );

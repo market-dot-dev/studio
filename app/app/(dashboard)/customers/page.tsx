@@ -1,18 +1,16 @@
 import React from "react";
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import CustomersTable from "./customer-table";
 import { customers as getCustomersData } from "@/app/services/UserService";
 
 const CustomersPage = async () => {
   const customers = await getCustomersData();
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12">
-      <div className="flex w-full justify-between">
-        <div className="flex flex-col">
-          <PageHeading title="Customers" />
-          <p className="text-sm text-stone-500">Manage your customers and their tiers here.</p>
-        </div>
-      </div>
+    <div className="flex max-w-screen-xl flex-col space-y-10">
+      <PageHeader 
+        title="Customers" 
+        description="Manage your customers and their tiers here."
+      />
       <CustomersTable customers={customers} />
     </div>
   );

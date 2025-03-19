@@ -1,7 +1,4 @@
-import TierService from "@/app/services/TierService";
-import UserService from "@/app/services/UserService";
-import PageHeading from "@/components/common/page-heading";
-import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
+import PageHeader from "@/components/common/page-header";
 import ChargeService from "@/app/services/charge-service";
 import SubscriptionService from "@/app/services/SubscriptionService";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
@@ -24,12 +21,12 @@ export default async function SubscriptionsAndChargesList({
   const anyPast = pastSubscriptions.length > 0;
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-10">
       <div className="flex flex-col space-y-6">
-        <div>
-          <PageHeading title="Purchases" />
-          <p className="text-sm text-stone-500">All your subscriptions and one time purchases from market.dev will appear here.</p>
-        </div>
+        <PageHeader
+          title="Purchases"
+          description="All your subscriptions and one time purchases from market.dev will appear here."
+        />
         
         <Tabs defaultValue="active">
           <TabsList>

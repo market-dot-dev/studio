@@ -4,8 +4,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import CreatePageButton from "@/components/create-page-button";
 import Pages from "./pages";
-import PageHeading from "@/components/common/page-heading";
-import { ExternalLinkChip } from "@/components/common/external-link";
+import PageHeader from "@/components/common/page-header";
 import { formatDistanceToNow } from "date-fns";
 import { getSiteAndPages } from "@/app/services/SiteService";
 import { Page, Site } from "@prisma/client";
@@ -14,6 +13,7 @@ import PreviewSection from "../preview-section";
 import { getRootUrl } from "@/lib/domain";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 type SiteData = Partial<Site> & {
   pages: Page[];
@@ -22,25 +22,40 @@ type SiteData = Partial<Site> & {
 export default function SiteAdmin({ id }: { id: string }) {
   const [siteData, setSiteData] = useState<SiteData | null>(null);
   const [url, setUrl] = useState<string | null>(null);
+  const router = useRouter();
 
+  // Function to refresh site data
+  const refreshSiteData = async () => {
+    try {
+      const data = await getSiteAndPages(id);
+      const url = data?.subdomain
+        ? getRootUrl(data.subdomain ?? "app")
+        : "";
+
+      setSiteData(data);
+      setUrl(url);
+    } catch (e) {
+      console.error('Error loading site data:', e);
+    }
+  };
+
+  // Load site data on mount and when router changes
   useEffect(() => {
     if (id) {
-      const getData = async () => {
-        try {
-          const data = await getSiteAndPages(id);
-          const url = data?.subdomain
-            ? getRootUrl(data.subdomain ?? "app")
-            : "";
-
-          setSiteData(data);
-          setUrl(url);
-        } catch (e) {
-          console.error(e);
-        }
-      };
-      getData();
+      refreshSiteData();
     }
-  }, []);
+    
+    // Set up event listener for focus to refresh data
+    const handleFocus = () => {
+      refreshSiteData();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+    
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [id]);
 
   const homepage =
     siteData?.pages?.find((page: Page) => page.id === siteData.homepageId) ??
@@ -51,21 +66,21 @@ export default function SiteAdmin({ id }: { id: string }) {
   }
 
   return (
-    <div>
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <PageHeading title="Your Storefront" />
-        <div className="mb-2 flex justify-start">
-          {url ? (
-            <Button variant="secondary" className="text-stone-600" asChild>
+    <div className="flex flex-col gap-10">
+      <PageHeader 
+        title="Your Storefront" 
+        actions={[
+          url ? (
+            <Button key="view-site" variant="secondary" className="text-stone-600" asChild>
               <Link href={url} target="_blank" rel="noopener noreferrer">
                 {url} ↗
               </Link>
             </Button>
-          ) : null}
-        </div>
-      </div>
+          ) : null
+        ].filter(Boolean)}
+      />
 
-      <Card className="relative mb-10 mt-16 p-6 pt-5">
+      <Card className="relative mt-9 p-6 pt-5">
         <div className="flex w-full flex-col lg:flex-row lg:justify-between">
           <div className="absolute bottom-0 left-4 hidden lg:block">
             <PreviewSection

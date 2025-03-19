@@ -1,30 +1,42 @@
 'use client'
 
 import { categorizedTiers } from "@/lib/constants/tiers/default-tiers"
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import TierCard from "./tier-card"
 import { useCallback, useState } from "react";
 import { createTemplateTier } from "@/app/services/TierService";
-import { useModal } from "../modal/provider";
 import { CheckSquare2 as CheckSquare, Square, Plus } from 'lucide-react';
-
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
 
 export default function NewTierModal({ children, multiple }: { children: React.ReactNode, multiple?: boolean }) {
-	const { show, hide } = useModal();
+	const [open, setOpen] = useState(false);
 	
-	// const gotoNewBlankPackage = useCallback(() => {
-	// 	window.location.href = '/tiers/new';
-	// }, []);
-
-	const header = (
-    <h2 className="text-xl font-bold">Create{multiple ? '' : ' a'} new package{multiple ? 's' : ''}</h2>
+	return (
+    <>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger className={buttonVariants({ variant: "default" })}>
+          {children}
+        </DialogTrigger>
+        <DialogContent className="max-h-[80vh] w-full max-w-none overflow-hidden md:max-w-[80vw] p-6 pt-5 md:p-7 md:pt-6 gap-6 md:gap-9">
+          <DialogHeader>
+            <DialogTitle className="text-lg md:text-xl">
+              Create{multiple ? "" : " a"} new package{multiple ? "s" : ""}
+            </DialogTitle>
+          </DialogHeader>
+          <TiersTemplatesModal
+            hide={() => setOpen(false)}
+            multiple={multiple}
+          />
+        </DialogContent>
+      </Dialog>
+    </>
   );
-    const showModal = () => {
-        show(<TiersTemplatesModal hide={hide} multiple={multiple} />, undefined, undefined, header, 'w-full md:w-5/6 max-h-[80vh]');
-    };
-    return (
-        <Button onClick={showModal}>{children}</Button>
-    )
 }
 
 function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: boolean }) {
@@ -101,17 +113,13 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 		}
 	}, [setSelected, multiple]);
 
-	
-
-	
-
 	return (
     <>
-      <div className="flex grow flex-col items-stretch justify-start gap-4 overflow-auto">
+      <div className="flex grow flex-col items-stretch justify-start gap-6 overflow-auto max-h-[calc(80vh-8rem)]">
         {categorizedTiers.map((category, cIndex) => (
-          <div className="flex flex-col gap-4 p-4" key={cIndex}>
-            <h2 className="text-xl font-bold">{category.name}</h2>
-            <div className="grid w-full grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="flex flex-col gap-2" key={cIndex}>
+            <h2 className="text-sm font-semibold">{category.name}</h2>
+            <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {category.tiers.map(({ metaDescription, data: tier }, index) => {
                 const determinedIndex = determineIndex(cIndex, index);
                 const isSelected = selected.indexOf(determinedIndex) !== -1;
@@ -139,7 +147,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
                       </div>
                     ) : null}
                     <div className="flex aspect-[3/2] flex-col justify-between gap-4 overflow-hidden px-5 pt-4">
-                      <p className="text-sm text-stone-500">
+                      <p className="text-xs text-stone-500">
                         {metaDescription}
                       </p>
                       <svg
@@ -179,7 +187,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
         ))}
         {!multiple && singleTierInProgress ? (
           <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50">
-            <div className="w-1/2 rounded-lg border bg-white p-8 shadow-lg">
+            <div className="w-1/2 rounded-lg border bg-white p-6 shadow-lg">
               <ProgressBar
                 done={done}
                 total={total}
@@ -211,11 +219,10 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 function ProgressBar({done, total, label}: {done: number, total: number, label?:string}) {
 	return (
 		<div className="flex flex-col w-full gap-2">
-			{label && <p className="text-md ">{label}</p>}
+			{label && <p className="text-base">{label}</p>}
 			<div className="relative w-full h-2 bg-stone-200 rounded-full">
 				<div className="absolute h-2 bg-stone-900 rounded-full transition-[width]" style={{width: `${(done/total)*100}%`}}></div>
 			</div>
 		</div>
 	)
-
 }

@@ -1,5 +1,5 @@
 import { TierWithFeatures } from "@/app/services/TierService";
-import { Wallet, Mail } from "lucide-react";
+import { Mail, CreditCard } from "lucide-react";
 import { User } from "@prisma/client";
 import { Tooltip, TooltipTrigger, TooltipProvider, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,7 @@ export default function CheckoutTypeSelectionInput({
         >
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
-              <Wallet className="mr-2.5 size-[18px] text-stone-500" />
+              <CreditCard className="mr-2.5 size-[18px] text-stone-500" />
               <span className="text-left text-sm font-semibold text-stone-800">
                 Standard Checkout
               </span>

@@ -56,7 +56,7 @@ export default async function StripeConnect({
   const stripeConnected = !!user.stripeAccountId;
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-8">
       <div className="flex flex-col space-y-6">
         <h1 className="font-cal text-3xl font-bold dark:text-white">
           Stripe Integration
@@ -65,7 +65,7 @@ export default async function StripeConnect({
           <div className="flex flex-col items-start gap-4">
             {stripeConnected ? (
               <>
-                <h2 className="font-cal text-xl dark:text-white">Stripe Account</h2>
+                <h2 className="font-bold text-xl">Stripe Account</h2>
                 <p className="text-sm text-stone-500">
                   Your stripe account is connected.
                 </p>
@@ -76,7 +76,7 @@ export default async function StripeConnect({
               </>
             ) : (
               <>
-                <h2 className="font-cal text-xl dark:text-white">Connect Stripe Account</h2>
+                <h2 className="font-semibold text-xl">Connect Stripe Account</h2>
                 <p className="text-sm text-stone-500">
                   Connect your Stripe account to manage and receive payments.
                 </p>

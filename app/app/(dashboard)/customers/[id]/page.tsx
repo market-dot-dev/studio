@@ -51,7 +51,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
           ]}
         />
 
-        <div className="flex flex-row flex-wrap gap-x-10 gap-y-4 text-sm">
+        <div className="flex flex-row flex-wrap gap-x-12 gap-y-4 text-sm">
           <div className="flex flex-col gap-1">
             <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
               <Building size={12} strokeWidth={2.5} />
@@ -59,7 +59,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
             </span>
             <div className="flex items-center">
               <span className="font-medium">
-                {customer.company || "(Unknown)"}
+                {customer.company || "—"}
               </span>
             </div>
           </div>
@@ -74,7 +74,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
                 href={`https://www.github.com/${customer.gh_username}`}
                 className="font-medium hover:underline"
               >
-                {customer.gh_username}
+                {customer.gh_username || "—"}
               </a>
             </div>
           </div>
@@ -98,9 +98,9 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
 
       <Separator />
 
-      <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-10 xl:grid-cols-2">
         <div className="flex w-full flex-col gap-4">
-          <h2 className="text-xl font-semibold">Subscriptions</h2>
+          <h2 className="text-xl font-bold">Subscriptions</h2>
           {subscriptions.map((subscription) => (
             <SubscriptionCard
               key={subscription.id}
@@ -114,7 +114,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
         </div>
 
         <div className="flex w-full flex-col gap-4">
-          <h2 className="text-xl font-semibold">Charges</h2>
+          <h2 className="text-xl font-bold">Charges</h2>
           {customer.charges.map((charge) => (
             <ChargeCard
               key={charge.id}

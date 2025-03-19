@@ -124,6 +124,9 @@ export const createColumns = (
   {
     accessorKey: "name",
     header: "Name",
+    meta: {
+      emphasized: true
+    },
     cell: ({ row }) => <NameCell contract={row.original} currentUser={currentUser} />
   },
   {

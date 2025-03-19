@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/ui/data-table";
 import { createColumns, Subscription as SubscriptionType } from "./columns";
 
 export default function Subscriptions({subscriptions} : { subscriptions : any[] }) {

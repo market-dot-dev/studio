@@ -1,17 +1,15 @@
-import LeadsNav from './nav'; 
-import PageHeading from '@/components/common/page-heading';
+import LeadsNav from "@/components/leads/leads-nav";
+import PageHeader from '@/components/common/page-header';
 
-export default async function SettingsLayout({ children } : {
-    children: React.ReactNode;
-  }) {
-    return (
-        <div className="flex max-w-screen-xl flex-col">
-            <div className="flex flex-col space-y-6">
-                <PageHeading title="Research" />
-                <p className="text-sm text-stone-500">Search for companies using your Open Source Projects.</p>
-                <LeadsNav />
-                {children}
-            </div>
-        </div>
-    )
-  }
+export default function LeadsLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex max-w-screen-xl flex-col gap-7">
+      <PageHeader 
+        title="Research" 
+        description="Search for companies using your Open Source Projects."
+      />
+      <LeadsNav />
+      {children}
+    </div>
+  );
+}

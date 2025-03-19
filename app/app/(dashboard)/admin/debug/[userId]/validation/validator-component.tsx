@@ -1,6 +1,6 @@
 "use client";
 
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import { Check } from "lucide-react";
 import { Tier, User } from "@prisma/client";
 import { useState } from "react";
@@ -17,12 +17,8 @@ const ValidatorComponent = ({
   const [password, setPassword] = useState("");
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
-      <div className="flex w-full justify-between">
-        <div className="flex flex-row">
-          <PageHeading title="User Validation / Migration tool" />
-        </div>
-      </div>
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-8">
+      <PageHeader title="User Validation / Migration tool" />
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="password">Stripe Private Key</Label>
         <Input

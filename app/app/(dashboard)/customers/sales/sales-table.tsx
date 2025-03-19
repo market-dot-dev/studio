@@ -1,7 +1,6 @@
 import { User, Subscription, Charge, Prospect } from "@prisma/client";
 import React from "react";
 import Tier from "@/app/models/Tier";
-import { capitalize, cn } from "@/lib/utils";
 import Link from "next/link";
 import { ChevronRight, Receipt, ScanSearch } from "lucide-react";
 import { Button } from "@/components/ui/button"; 
@@ -13,7 +12,7 @@ import {
   DropdownMenuGroup,
 } from "@/components/ui/dropdown-menu";
 import { Card } from "@/components/ui/card";
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/ui/data-table";
 import { Sale, columns } from "./columns";
 
 export type CustomerWithChargesSubscriptionsAndProspects = User & {
@@ -67,9 +66,11 @@ const SalesTable = ({
   const visibleSales = showAll ? sales : sales.slice(0, maxInitialRows);
 
   return (
-    <>
-      <div className="mb-4 flex w-full items-end justify-between">
-        <h3 className="text-xl font-semibold">Sales & Prospects</h3>
+    <div className="space-y-4">
+      <div className="flex w-full items-end justify-between">
+        <h3 className="text-xl font-bold tracking-tightish">
+          Sales & Prospects
+        </h3>
         <Link href="/customers">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -104,7 +105,7 @@ const SalesTable = ({
       </div>
 
       {sales.length === 0 ? (
-        <Card className="mb-8 flex h-72 flex-col items-center justify-center border border-dashed border-stone-300 bg-stone-200/25 shadow-none">
+        <Card className="mb-8 flex h-72 flex-col items-center justify-center border border-dashed border-stone-400/40 bg-stone-200/25 shadow-none">
           <div className="flex flex-col items-center justify-center py-6">
             <Receipt className="mb-3 h-9 w-9 text-swamp" strokeWidth={1.5} />
             <h3 className="mb-2 text-xl font-semibold">No sales... yet</h3>
@@ -127,7 +128,7 @@ const SalesTable = ({
           <DataTable columns={columns} data={visibleSales} />
         </div>
       )}
-    </>
+    </div>
   );
 };
 

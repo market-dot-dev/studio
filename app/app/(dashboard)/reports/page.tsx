@@ -1,5 +1,4 @@
-
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import RepoService from "@/app/services/RepoService";
 import RevenueReports from "./reports-tabs";
 import { customers as getCustomersData } from "@/app/services/UserService";
@@ -17,13 +16,9 @@ export default async function ReportsPage() {
 	}));
   
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12">
-      <div className="flex justify-between w-full">
-        <div className="flex flex-col space-y-6 w-full">
-          <PageHeading title="Reports" />
-          <RevenueReports customers={customers} />
-        </div>
-      </div>
+    <div className="flex max-w-screen-xl flex-col space-y-10">
+          <PageHeader title="Reports" />
+      <RevenueReports customers={customers} />
     </div>
   );
 }

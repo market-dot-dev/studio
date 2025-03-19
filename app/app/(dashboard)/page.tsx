@@ -1,5 +1,5 @@
 import DashboardCharts from "@/components/dashboard/dashboard-charts";
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import SessionService from "@/app/services/SessionService";
 import { customersAndProspectsOfMaintainer } from "@/app/services/UserService";
 import { redirect } from "next/navigation";
@@ -13,15 +13,13 @@ export default async function Overview() {
   }
 
   const customers = await customersAndProspectsOfMaintainer(user.id);
-  const title = user?.name ? `Welcome, ${user.name}` : "Your Dashboard";
+  const title = user?.name ? `Welcome ${user.name}` : "Your Dashboard";
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-6">
-      <PageHeading title={title} />
-      <div className="mb-10 flex flex-col">
-        <SalesTable customersAndProspects={customers} maxInitialRows={5} />
-        <DashboardCharts customers={customers} />
-      </div>
+    <div className="flex max-w-screen-xl flex-col space-y-10">
+      <PageHeader title={title} />
+      <SalesTable customersAndProspects={customers} maxInitialRows={5} />
+      <DashboardCharts customers={customers} />
     </div>
   );
 }
