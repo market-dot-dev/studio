@@ -14,6 +14,7 @@ module.exports = {
   	extend: {
   		colors: {
 				stone: {
+					150: "#F3F2F2",
 					500: "#766F6B"
 				},
 				swamp: {

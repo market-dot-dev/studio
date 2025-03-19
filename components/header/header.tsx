@@ -30,7 +30,7 @@ export default async function Header() {
       <Link href="/">
         <Logo color="white" className="h-[22px] w-auto" />
       </Link>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-3">
         <UserDropdown user={user} />
         <Nav
           siteId={site?.id ?? null}

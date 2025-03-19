@@ -73,7 +73,7 @@ function Item({ item }: { item: NavItem }) {
           "flex h-6 items-center space-x-2",
           "rounded px-1 transition-all duration-150 ease-in-out",
           "hover:bg-white hover:shadow-border",
-          "focus:bg-white focus:shadow-border focus:outline-none",
+          "focus:bg-white focus:shadow-border focus:outline-none focus:ring-0",
           "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800",
           item.isActive &&
             "bg-white text-black shadow-border dark:bg-stone-700",
@@ -187,7 +187,7 @@ export default function Nav({
       },
       {
         type: "title",
-        name: "Your Services",
+        name: "Offerings",
       },
       ...(hasFeatures ? featureItems : []),
       {
@@ -272,7 +272,7 @@ export default function Nav({
       : [];
 
     return [...mainItems, ...debugItems] as NavItem[];
-  }, [urlSegments, siteId, roleId, hasFeatures]);
+  }, [urlSegments, siteId, roleId, hasFeatures, isMarketExpert]);
 
   const serviceItems: NavItem[] = useMemo(() => {
     return [
@@ -346,13 +346,13 @@ export default function Nav({
       )}
       <nav
         className={clsx(
-          `fixed flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 bg-stone-100 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
+          `fixed flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 bg-stone-150 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
           isMobile
             ? [
                 "inset-0 top-[var(--headerHeight)] z-50 flex h-[calc(100vh-var(--headerHeight))] w-full transform md:hidden",
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full",
               ]
-            : "z-20 hidden h-[var(--navHeight)] w-60 md:flex",
+            : "z-20 hidden h-[var(--navHeight)] w-[var(--navWidth)] md:flex",
           className,
         )}
       >

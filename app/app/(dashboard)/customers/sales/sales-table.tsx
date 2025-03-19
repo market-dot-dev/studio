@@ -71,41 +71,39 @@ const SalesTable = ({
         <h3 className="text-xl font-bold tracking-tightish">
           Sales & Prospects
         </h3>
-        <Link href="/customers">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="group gap-0.5 pr-1"
-              >
-                View All
-                <ChevronRight
-                  size={10}
-                  className="inline-block transition-transform group-hover:translate-x-px"
-                />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuGroup>
-                <DropdownMenuItem>
-                  <Link href="/customers" className="w-full">
-                    Customers
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <Link href="/prospects" className="w-full">
-                    Prospects
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="outline"
+              size="sm"
+              className="group gap-0.5 pr-1"
+            >
+              View All
+              <ChevronRight
+                size={10}
+                className="inline-block transition-transform group-hover:translate-x-px"
+              />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuItem>
+                <Link href="/customers" className="w-full">
+                  Customers
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Link href="/prospects" className="w-full">
+                  Prospects
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {sales.length === 0 ? (
-        <Card className="mb-8 flex h-72 flex-col items-center justify-center border border-dashed border-stone-400/40 bg-stone-200/25 shadow-none">
+        <Card className="mb-8 flex h-72 flex-col items-center justify-center border border-dashed border-stone-400/40 bg-stone-200/30 shadow-none">
           <div className="flex flex-col items-center justify-center py-6">
             <Receipt className="mb-3 h-9 w-9 text-swamp" strokeWidth={1.5} />
             <h3 className="mb-2 text-xl font-semibold">No sales... yet</h3>

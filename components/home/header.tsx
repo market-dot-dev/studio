@@ -253,7 +253,7 @@ export default function Header({ className }: { className?: string }) {
         <div className="mx-auto w-full px-4 lg:max-w-[var(--marketing-max-width)] xl:px-16">
           <div
             className={clsx(
-              "duration-500 relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow ease-in-out",
+              "relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow duration-500 ease-in-out",
               isScrolled && "shadow-border-b",
             )}
           >
@@ -307,9 +307,9 @@ export default function Header({ className }: { className?: string }) {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="w-9 rounded-full bg-stone-200 !text-marketing-sm font-bold text-black hover:bg-stone-300/75 focus:bg-stone-300/75 sm:px-3 md:w-auto"
+                  className="h-9 w-9 rounded-full bg-marketing-accent !text-sm font-bold tracking-tight text-black hover:bg-marketing-accent-active focus:bg-marketing-accent-active sm:px-3 md:w-auto transition-colors"
                 >
-                  <Store strokeWidth={2.25} className="!size-5" />
+                  <Store className="!size-5" />
                   <span className="hidden md:inline">Dashboard</span>
                 </UIButton>
               )}
@@ -495,10 +495,10 @@ export default function Header({ className }: { className?: string }) {
                     onClick={() => {
                       router.push(dashboardURL);
                     }}
-                    className='w-full'
+                    className="w-full text-sm font-bold tracking-tightish"
                   >
-                    <Store strokeWidth={2.25} className="!size-5" />
-                    Dashboard
+                    <Store className="!size-5" />
+                    Go to Dashboard
                   </Button>
                 )}
               </div>
