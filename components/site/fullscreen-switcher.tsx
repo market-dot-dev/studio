@@ -10,7 +10,7 @@ export default function FullScreenSwitcher({
   children: React.ReactNode;
   className?: string;
 }) {	
-	const { fullscreen, setFullscreen } = useFullscreen();
+	const { fullscreen } = useFullscreen();
 	
 	// We can't directly pass props to arbitrary children
 	// so we'll apply a class to the container and let the children

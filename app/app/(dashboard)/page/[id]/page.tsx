@@ -100,14 +100,22 @@ export default async function Page({ params }: { params: { id: string } }) {
       return `${diffHours} ${diffHours === 1 ? "hour" : "hours"} ago`;
     }
     
-    // Yesterday or beyond
+    // Check if it was yesterday
+    const yesterday = new Date(now);
+    yesterday.setDate(yesterday.getDate() - 1);
+    if (
+      yesterday.getDate() === date.getDate() &&
+      yesterday.getMonth() === date.getMonth() &&
+      yesterday.getFullYear() === date.getFullYear()
+    ) {
+      return "yesterday";
+    }
+    
+    // Beyond yesterday
     return date.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
     });
   };
   

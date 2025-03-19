@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Page, Site } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import PageHeader from "@/components/common/page-header";
 import PageEditor from "@/components/site/page-editor";
-import { setHomepage, deletePage, updatePage } from "@/app/services/PageService";
+import { setHomepage, deletePage, updatePage, createPage } from "@/app/services/PageService";
 import { useFullscreen } from "../dashboard/dashboard-context";
 import { ArrowUpCircle, Home, EyeOff, MoreVertical, Trash } from "lucide-react";
 import { toast } from "sonner";
@@ -26,7 +26,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { cn } from "@/lib/utils";
 
 export default function PageContainer({
   site,
@@ -47,6 +46,11 @@ export default function PageContainer({
   const isHome = page.id === homepageId;
   const { fullscreen } = useFullscreen();
   
+  // Shared state that will be passed to the PageEditor
+  const [pageData, setPageData] = useState<Partial<Page>>(page);
+  const [slugVirgin, setSlugVirgin] = useState<boolean>(!page.slug);
+  
+  // UI state
   const [inProgress, setInProgress] = useState<boolean>(false);
   const [isMakingHomepage, setIsMakingHomepage] = useState<boolean>(false);
   const [isDeleting, setIsDeleting] = useState<boolean>(false);
@@ -54,12 +58,109 @@ export default function PageContainer({
   const [isPublishingInProgress, setIsPublishingInProgress] = useState<boolean>(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState<boolean>(false);
   
-  const handleSave = async (pageData: Partial<Page>) => {
-    if (inProgress || isPublishingInProgress || !pageData?.id) return;
+  // Form validation state
+  const [titleError, setTitleError] = useState<string | null>(null);
+  const [slugError, setSlugError] = useState<string | null>(null);
+  
+  // Update pageData when props change
+  useEffect(() => {
+    setPageData(page);
+  }, [page]);
+  
+  // Automatically generate slug from title if slug is virgin
+  useEffect(() => {
+    if (!slugVirgin) return;
+
+    const slug = pageData.title 
+      ? pageData.title
+          .toLowerCase()
+          .replace(/ /g, "-")
+          .replace(/[^a-z0-9-]/g, "") 
+      : "";
+    
+    setPageData(prevData => ({ ...prevData, slug }));
+    setSlugError(null);
+  }, [pageData.title, slugVirgin]);
+  
+  // State update handlers
+  const handleTitleChange = useCallback((title: string) => {
+    setTitleError(null);
+    setPageData(prevData => ({ ...prevData, title }));
+  }, []);
+  
+  const handleSlugChange = useCallback((slug: string) => {
+    setSlugError(null);
+    setSlugVirgin(false);
+    setPageData(prevData => ({ ...prevData, slug }));
+  }, []);
+  
+  const handleContentChange = useCallback((content: string) => {
+    setPageData(prevData => ({ ...prevData, content }));
+  }, []);
+  
+  // Validation function
+  const validate = useCallback(() => {
+    let isValid = true;
+
+    // Validate title
+    if (!pageData.title || pageData.title.trim() === "") {
+      setTitleError("Title is required.");
+      isValid = false;
+    } else {
+      setTitleError(null);
+    }
+
+    // Validate slug
+    if (!pageData.slug || pageData.slug.trim() === "") {
+      setSlugError("Slug is required.");
+      isValid = false;
+    } else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(pageData.slug)) {
+      setSlugError(
+        "Slug is not valid. Only lowercase alphanumeric characters and hyphens are allowed.",
+      );
+      isValid = false;
+    } else {
+      setSlugError(null);
+    }
+
+    return isValid;
+  }, [pageData.title, pageData.slug]);
+  
+  const handleSave = async () => {
+    if (inProgress || isPublishingInProgress || !pageData?.id) {
+      console.log('Save aborted:', { 
+        inProgress, 
+        isPublishingInProgress, 
+        'pageData?.id': pageData?.id 
+      });
+      return;
+    }
+    
+    // Validate input data
+    if (!validate()) {
+      return;
+    }
+    
     setInProgress(true);
     
     try {
+      console.log('Save initiated with page data:', { 
+        id: pageData.id, 
+        title: pageData.title, 
+        slug: pageData.slug,
+        contentLength: pageData.content?.length || 0,
+        isDraft
+      });
+      
       const { title, slug, content } = pageData;
+      
+      console.log('Calling updatePage with:', { 
+        id: pageData.id, 
+        title, 
+        slug, 
+        contentLength: content?.length || 0,
+        draft: isDraft 
+      });
       
       const result = await updatePage(pageData.id, { 
         title, 
@@ -67,6 +168,15 @@ export default function PageContainer({
         content,
         draft: isDraft
       });
+      
+      console.log('Update page result:', result);
+      
+      // Check if result contains an error
+      if (result && 'error' in result) {
+        toast.error(`Failed to save the page: ${result.error}`);
+        console.error('Error saving page:', result.error);
+        return;
+      }
       
       toast.success("The page was successfully saved");
       
@@ -84,11 +194,11 @@ export default function PageContainer({
   };
   
   const handleDelete = async () => {
-    if (inProgress || isPublishingInProgress || !page?.id) return;
+    if (inProgress || isPublishingInProgress || !pageData?.id) return;
     setIsDeleting(true);
     
     try {
-      const result = await deletePage(page.id) as any;
+      const result = await deletePage(pageData.id) as any;
       if (result.error) {
         toast.error(result.error);
       } else {
@@ -104,15 +214,16 @@ export default function PageContainer({
   };
   
   const handleMakeHomepage = async () => {
-    if (inProgress || isPublishingInProgress || !page?.siteId || !page?.id) return;
+    if (inProgress || isPublishingInProgress || !pageData?.siteId || !pageData?.id) return;
     setIsMakingHomepage(true);
     
     try {
-      const result = await setHomepage(page.siteId, page.id) as any;
+      const result = await setHomepage(pageData.siteId, pageData.id) as any;
       if (result.error) {
         toast.error(result.error);
       } else {
         toast.success("This is your new homepage");
+        router.refresh()
       }
     } catch (error) {
       console.error(error);
@@ -123,13 +234,13 @@ export default function PageContainer({
   };
   
   const handleDraftToggle = async () => {
-    if (isPublishingInProgress || !page?.id) return;
+    if (isPublishingInProgress || !pageData?.id) return;
     setIsPublishingInProgress(true);
     
     const newDraftState = !isDraft;
     
     try {
-      const result = await updatePage(page.id, { draft: newDraftState });
+      await updatePage(pageData.id, { draft: newDraftState });
       
       setIsDraft(newDraftState);
       toast.success(
@@ -144,6 +255,22 @@ export default function PageContainer({
       setIsPublishingInProgress(false);
     }
   };
+  
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleSaveShortcut = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === "s") {
+        e.preventDefault();
+        handleSave();
+      }
+    };
+
+    document.addEventListener("keydown", handleSaveShortcut);
+
+    return () => {
+      document.removeEventListener("keydown", handleSaveShortcut);
+    };
+  }, [pageData]);
   
   // Actions for PageHeader
   const headerActions = [
@@ -213,37 +340,49 @@ export default function PageContainer({
       key="save"
       loading={inProgress}
       loadingText="Saving"
-      onClick={() => handleSave(page)}
+      onClick={handleSave}
     >
       Save
     </Button>,
   ].filter(Boolean);
 
+  const linkWithSlug = (siteUrl || '') + (isHome ? '' : pageData.slug || '');
+
   return (
     <>
       {/* Only show PageHeader in normal mode or if in fullscreen mode */}
-      <PageHeader 
-        title={page?.title || "New Page"} 
-        backLink={{
-          href: `/site/${site.id}`,
-          title: "Storefront"
-        }}
-        description={`Last updated ${lastUpdateDate}`}
-        status={{
-          title: isDraft ? "Draft" : "Live",
-          variant: isDraft ? "secondary" : "success",
-          tooltip: isDraft ? "This page is not publicly visible" : "This page is publicly visible"
-        }}
-        actions={[ ...headerActions ]}
-        className={cn("mb-8", fullscreen && "fullscreen-header")}
-      />
+      {!fullscreen && (
+        <PageHeader 
+          title={pageData?.title || "New Page"} 
+          backLink={{
+            href: `/site/${site.id}`,
+            title: "Storefront"
+          }}
+          description={`Last updated ${lastUpdateDate}`}
+          status={{
+            title: isDraft ? "Draft" : "Live",
+            variant: isDraft ? "secondary" : "success",
+            tooltip: isDraft ? "This page is not publicly visible" : "This page is publicly visible"
+          }}
+          actions={[ ...headerActions ]}
+          className="mb-8"
+        />
+      )}
       <PageEditor
         site={site}
-        page={{...page, draft: isDraft}}
+        page={pageData}
         siteUrl={siteUrl}
         homepageId={homepageId}
         hasActiveFeatures={hasActiveFeatures}
+        isDraft={isDraft}
+        titleError={titleError}
+        slugError={slugError}
+        slugVirgin={slugVirgin}
+        onTitleChange={handleTitleChange}
+        onSlugChange={handleSlugChange}
+        onContentChange={handleContentChange}
         onSave={handleSave}
+        inProgress={inProgress}
       />
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>

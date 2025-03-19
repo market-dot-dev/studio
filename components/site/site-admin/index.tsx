@@ -66,7 +66,7 @@ export default function SiteAdmin({ id }: { id: string }) {
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-8 sm:gap-10">
       <PageHeader 
         title="Your Storefront" 
         actions={[
@@ -80,7 +80,7 @@ export default function SiteAdmin({ id }: { id: string }) {
         ].filter(Boolean)}
       />
 
-      <Card className="relative mt-9 p-6 pt-5">
+      <Card className="relative lg:mt-9 p-6 pt-5">
         <div className="flex w-full flex-col lg:flex-row lg:justify-between">
           <div className="absolute bottom-0 left-4 hidden lg:block">
             <PreviewSection

@@ -2,38 +2,42 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Info, Eye, Code, SquareSplitHorizontal, Maximize, Minimize } from "lucide-react";
+import { Eye, Code, SquareSplitHorizontal, Maximize, Minimize } from "lucide-react";
 import clsx from "clsx";
 import { toast } from "sonner";
 
 import renderElement from "./page-renderer";
-import { useRouter } from "next/navigation";
 
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  setHomepage,
-  deletePage,
-  updatePage,
-} from "@/app/services/PageService";
 import { Page, Site } from "@prisma/client";
 import PageEditorSidebar from "./page-editor-sidebar";
 import { useFullscreen } from "../dashboard/dashboard-context";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-let debounceTimeout: any;
+interface PageEditorProps {
+  site: Partial<Site>;
+  page: Partial<Page> & {
+    content?: string | null;
+    slug?: string | null;
+    title?: string | null;
+  };
+  homepageId: string | null;
+  siteUrl: string | null;
+  hasActiveFeatures?: boolean;
+  isDraft: boolean;
+  titleError: string | null;
+  slugError: string | null;
+  slugVirgin: boolean;
+  onTitleChange: (title: string) => void;
+  onSlugChange: (slug: string) => void;
+  onContentChange: (content: string) => void;
+  onSave: () => Promise<void>;
+  inProgress: boolean;
+}
 
 export default function PageEditor({
   site,
@@ -41,26 +45,21 @@ export default function PageEditor({
   homepageId,
   siteUrl,
   hasActiveFeatures,
+  isDraft,
+  titleError,
+  slugError,
+  slugVirgin,
+  onTitleChange,
+  onSlugChange,
+  onContentChange,
   onSave,
-}: {
-  site: Partial<Site>;
-  page: Partial<Page>;
-  homepageId: string | null;
-  siteUrl: string | null;
-  hasActiveFeatures?: boolean;
-  onSave?: (pageData: Partial<Page>) => Promise<void>;
-}): JSX.Element {
+  inProgress
+}: PageEditorProps): JSX.Element {
   const isHome = page.id === homepageId;
-
-  const [data, setData] = useState<any>(page);
-
-  const [slugVirgin, setSlugVirgin] = useState<boolean>(!data.slug);
 
   const [editorRef, setEditorRef] = useState<any>(null);
   const [monacoRef, setMonacoRef] = useState<any>(null);
-
-  const [inProgress, setInprogress] = useState<boolean>(false);
-
+  
   // 0: "preview",
   // 1: "code",
   // 2: "split",
@@ -69,166 +68,56 @@ export default function PageEditor({
   const [previewElement, setPreviewElement] = useState<any>(null);
 
   const {fullscreen, setFullscreen} = useFullscreen();
-
-  const [titleError, setTitleError] = useState<string | null>(null);
-  const [slugError, setSlugError] = useState<string | null>(null);
-
-  const router = useRouter();
-  
-  // Handle component updates when parent props change
-  useEffect(() => {
-    setData(page);
-  }, [page]);
   
   function handleEditorDidMount(editor: any, monaco: any) {
     setMonacoRef(monaco);
     setEditorRef(editor);
   }
 
-  useEffect(() => {
-    if (!slugVirgin) return;
-
-    const slug = data.title ? data.title
-      .toLowerCase()
-      .replace(/ /g, "-")
-      .replace(/[^a-z0-9-]/g, "") : "";
-    
-      setData({ ...data, slug });
-      setSlugError(null);
-
-  }, [data.title]);
-
-
-  useEffect(() => {
-    const handleSaveShortcut = (e: KeyboardEvent) => {
-      if (
-        (e.ctrlKey || e.metaKey) &&
-        e.key === "s"
-      ) {
-        e.preventDefault();
-        clearTimeout(debounceTimeout);
-        saveContent(data);
-      }
-
-      // if escape key is pressed, exit fullscreen
-      if (e.key === "Escape") {
-        setFullscreen(false);
-      }
-    };
-
-    document.addEventListener("keydown", handleSaveShortcut);
-
-    return () => {
-      document.removeEventListener("keydown", handleSaveShortcut);
-    };
-  }, [data])
-
   const generatePreview = useCallback(() => {
     try {
       const parser = new DOMParser();
-      const doc = parser.parseFromString(data.content, "text/html");
+      const content = typeof page?.content === 'string' ? page.content : '';
+      const doc = parser.parseFromString(content, "text/html");
       const rootElement = doc.body.children;
       setPreviewElement(Array.from(rootElement));
     } catch (error) {
       console.log(error);
     }
-  }, [setPreviewElement, data.content]);
+  }, [page?.content]);
 
+  // Restore the useEffect for viewMode changes
   useEffect(() => {
     if (viewMode === 0 || viewMode === 2) {
       generatePreview();
     } else {
       setPreviewElement(null);
     }
-  }, [viewMode]);
-
-  // trigger auto save on content change
+  }, [viewMode, generatePreview]);
+  
+  // Preview generation on content changes
   useEffect(() => {
-    // do not attempt auto save if the title and slug of the page are not set
-    if (data?.content && data?.title && data?.slug) {
-      debouncedSaveChanges();
-      debouncedGeneratePreview();
+    // Only regenerate preview when content changes
+    if (page?.content) {
+      const previewTimeout = setTimeout(generatePreview, 500);
+      return () => clearTimeout(previewTimeout);
     }
-  }, [data.content]);
+  }, [page?.content, generatePreview]);
 
-  const validate = () => {
-    let isValid = true;
-
-    // Validate title
-    if (!data.title || data.title.trim() === "") {
-      setTitleError("Title is required.");
-      isValid = false;
-    } else {
-      setTitleError(null);
-    }
-
-    // Validate slug (example validation, adjust as needed)
-    if (!data.slug || data.slug.trim() === "") {
-      setSlugError("Slug is required.");
-      isValid = false;
-    } else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(data.slug)) {
-      setSlugError(
-        "Slug is not valid. Only lowercase alphanumeric characters and hyphens are allowed.",
-      );
-      isValid = false;
-    } else {
-      setSlugError(null);
-    }
-
-    return isValid;
-  };
-
-  const saveContent = async (pageData: Partial<Page>) => {
-    if (!validate() || inProgress || !pageData || !pageData?.id) return;
-
-    setInprogress(true);
-
-    if (onSave) {
-      try {
-        await onSave(data);
-        toast.success("Page saved successfully");
-      } catch (error) {
-        console.error(error);
-        toast.error("Failed to save page");
-      } finally {
-        setInprogress(false);
-      }
-      return;
-    }
-
-    setInprogress(false);
-  };
-
-  const autoSaveChanges = useCallback(async () => {
-    if (!data || !data?.id) return;
-    await saveContent(data); 
-  }, [data]);
-
-  const debouncedSaveChanges = useCallback(() => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(autoSaveChanges, 2000);
-  }, [data]);
-
-  const debouncedGeneratePreview = useCallback(() => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(generatePreview, 500);
-  }, [data.content]);
-
-  const linkWithSlug = siteUrl + ( isHome ? '' : data.slug );
-
+  const linkWithSlug = siteUrl ? siteUrl + (isHome ? '' : page.slug || '') : '';
 
   const preview = (<PreviewFrame>
     {previewElement
-      ? 
-      renderElement(
-            previewElement as Element,
-            0,
-            site,
-            page,
-            true,
-            hasActiveFeatures
-          )
-      : null}
+      ? (
+        renderElement(
+          previewElement as Element,
+          0,
+          site,
+          page,
+          true,
+          hasActiveFeatures
+        )
+      ) : null}
   </PreviewFrame>
   )
 
@@ -261,10 +150,10 @@ export default function PageEditor({
             defaultLanguage="html"
             defaultValue=""
             theme="night-dark"
-            value={data.content}
-            onChange={(value) =>
-              setData((data: any) => ({ ...data, content: value }))
-            }
+            value={page.content ?? ""}
+            onChange={(value) => {
+              onContentChange(value || "");
+            }}
             onMount={useWithRefs ? handleEditorDidMount : () => {}}
             options={{
               minimap: {
@@ -285,7 +174,7 @@ export default function PageEditor({
             <table className="w-full">
               <tbody>
                 <tr>
-                  <td className="w-20 align-middle pb-2">
+                  <td className="w-20 pb-2 align-middle">
                     <Label htmlFor="page-title">Title</Label>
                   </td>
                   <td className="pb-2">
@@ -294,11 +183,8 @@ export default function PageEditor({
                         id="page-title"
                         placeholder="New Page"
                         className={titleError ? "border-rose-500" : ""}
-                        defaultValue={data?.title || ""}
-                        onChange={(e) => {
-                          setTitleError(null);
-                          setData({ ...data, title: e.target.value });
-                        }}
+                        value={page?.title || ""}
+                        onChange={(e) => onTitleChange(e.target.value)}
                       />
                       {titleError && (
                         <p className="text-sm text-rose-500">{titleError}</p>
@@ -307,21 +193,17 @@ export default function PageEditor({
                   </td>
                 </tr>
                 <tr>
-                  <td className="w-20 align-middle py-2">
+                  <td className="w-20 py-2 align-middle">
                     <Label htmlFor="page-slug">Slug</Label>
                   </td>
                   <td className="py-2">
                     <div className="lg:w-1/2">
                       <Input
                         id="page-slug"
-                        placeholder="new-page" 
+                        placeholder="new-page"
                         className={slugError ? "border-rose-500" : ""}
-                        defaultValue={data?.slug || ""}
-                        onChange={(e) => {
-                          setSlugError(null);
-                          setSlugVirgin(false);
-                          setData({ ...data, slug: e.target.value });
-                        }}
+                        value={page?.slug || ""}
+                        onChange={(e) => onSlugChange(e.target.value)}
                       />
                       {slugError && (
                         <p className="text-sm text-rose-500">{slugError}</p>
@@ -330,16 +212,20 @@ export default function PageEditor({
                   </td>
                 </tr>
                 <tr>
-                  <td className="w-20 align-middle pt-2">
+                  <td className="w-20 pt-2 align-middle">
                     <Label>Live Link</Label>
                   </td>
                   <td className="pt-2">
                     <Button
                       variant="secondary"
-                      disabled={data.draft || !data.slug}
+                      disabled={isDraft || !page.slug}
                       asChild
                     >
-                      <Link href={linkWithSlug} target="_blank" className="align-bottom">
+                      <Link
+                        href={linkWithSlug}
+                        target="_blank"
+                        className="align-bottom"
+                      >
                         {linkWithSlug} ↗
                       </Link>
                     </Button>
@@ -368,8 +254,8 @@ export default function PageEditor({
               }
             >
               <Button
-                variant="ghost"
                 size="icon"
+                variant="ghost"
                 onClick={() => setFullscreen(!fullscreen)}
               >
                 {fullscreen ? (
@@ -410,7 +296,7 @@ export default function PageEditor({
 
               {fullscreen && (
                 <div className="flex gap-2">
-                  {data.slug ? (
+                  {page.slug ? (
                     <Button
                       variant="ghost"
                       size="icon"
@@ -424,28 +310,63 @@ export default function PageEditor({
                   ) : null}
                   <Button
                     loading={inProgress}
-                    onClick={() => saveContent(data)}
+                    onClick={onSave}
+                    className="gap-1 pr-2"
                   >
                     Save
+                    <span className="text-[10px]/3 font-semibold border border-white/[12%] py-0.5 px-1 rounded bg-white/[6%]">⌘S</span>
                   </Button>
                 </div>
               )}
             </div>
           </div>
 
-          <TabsContent value="preview" className="mt-0">
+          <TabsContent
+            value="preview"
+            className={cn(
+              "mt-0",
+              !fullscreen &&
+                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]",
+            )}
+          >
             {preview}
           </TabsContent>
-          <TabsContent value="code" className="mt-0">
+          <TabsContent
+            value="code"
+            className={cn(
+              "mt-0",
+              !fullscreen &&
+                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]",
+            )}
+          >
             {codeview(true)}
           </TabsContent>
-          <TabsContent value="split" className="mt-0">
+          <TabsContent
+            value="split"
+            className={cn(
+              "mt-0",
+              !fullscreen &&
+                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]",
+            )}
+          >
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-1">{preview}</div>
               <div className="col-span-1">
-                <div className="sticky top-0 h-[100vh] w-full">
-                  {codeview(false)}
-                </div>
+                <Editor
+                  height="max(100vh, 90vh)"
+                  defaultLanguage="html"
+                  defaultValue=""
+                  theme="night-dark"
+                  value={page.content ?? ""}
+                  onChange={(value) => {
+                    onContentChange(value || "");
+                  }}
+                  options={{
+                    minimap: {
+                      enabled: false,
+                    },
+                  }}
+                />
               </div>
             </div>
           </TabsContent>
@@ -458,10 +379,45 @@ export default function PageEditor({
 function PreviewFrame({ children }: { children: React.ReactNode }) {
   const wrappingDiv = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState<number>(1);
+  const observerRef = useRef<ResizeObserver | null>(null);
+  
+  useEffect(() => {
+    if (!wrappingDiv.current) return;
+
+    const updateScale = () => {
+      if (wrappingDiv.current) {
+        const frame = wrappingDiv.current;
+        const width = frame.clientWidth;
+        setScale(width / 1600);
+      }
+    };
+
+    // Initialize ResizeObserver
+    observerRef.current = new ResizeObserver((entries) => {
+      // We only have one element being observed
+      if (entries.length > 0) {
+        updateScale();
+      }
+    });
+
+    // Start observing the wrapping div
+    observerRef.current.observe(wrappingDiv.current);
+
+    // Initial scale update
+    updateScale();
+
+    // Cleanup
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  // Also update scale when children change (content updates)
   useEffect(() => {
     if (wrappingDiv.current) {
-      const frame = wrappingDiv.current;
-      const width = frame.clientWidth;
+      const width = wrappingDiv.current.clientWidth;
       setScale(width / 1600);
     }
   }, [children]);
