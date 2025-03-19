@@ -52,6 +52,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: "/memo",
+        destination: "https://marketdev.notion.site/memo",
+        permanent: false
+      },
+      {
         source: "/:path*",
         has: [
           {
