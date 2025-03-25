@@ -26,7 +26,7 @@ export default function SettingsNav() {
       isActive: activeSegment === "project",
     },
     {
-      name: "Storefront Settings",
+      name: "Landing Page Settings",
       href: `/settings/site`,
       isActive: activeSegment === "site",
     },

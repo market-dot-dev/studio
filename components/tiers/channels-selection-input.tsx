@@ -21,7 +21,7 @@ export default function ChannelsSelectionInput({
             <div className="flex items-center">
               <Store className="mr-2.5 size-[18px] text-stone-500" />
               <span className="text-left text-sm font-semibold text-stone-800">
-                Storefront
+                Landing Page
               </span>
             </div>
             <Checkbox
