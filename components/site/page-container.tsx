@@ -323,6 +323,7 @@ export default function PageContainer({
       loading={isPublishingInProgress}
       loadingText={isDraft ? "Publishing" : "Unpublishing"}
       tooltip={isDraft ? "Make page visible to public" : "Hide page from public"}
+      className="md:mr-2"
     >
       {isDraft ? (
         <>

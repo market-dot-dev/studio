@@ -6,7 +6,7 @@ import CreatePageButton from "@/components/create-page-button";
 import Pages from "./pages";
 import PageHeader from "@/components/common/page-header";
 import { formatDistanceToNow } from "date-fns";
-import { getSiteAndPages } from "@/app/services/SiteService";
+import { getSiteAndPages, updateCurrentSite } from "@/app/services/SiteService";
 import { Page, Site } from "@prisma/client";
 import { useEffect, useState } from "react";
 import PreviewSection from "../preview-section";
@@ -14,6 +14,15 @@ import { getRootUrl } from "@/lib/domain";
 import Link from "next/link";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Settings } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Uploader from "@/components/form/uploader";
+import { toast } from "sonner";
+import * as Sentry from "@sentry/nextjs";
+import { isGitWalletError } from "@/lib/errors";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 type SiteData = Partial<Site> & {
   pages: Page[];
@@ -22,6 +31,9 @@ type SiteData = Partial<Site> & {
 export default function SiteAdmin({ id }: { id: string }) {
   const [siteData, setSiteData] = useState<SiteData | null>(null);
   const [url, setUrl] = useState<string | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [changed, setChanged] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const router = useRouter();
 
   // Function to refresh site data
@@ -57,6 +69,34 @@ export default function SiteAdmin({ id }: { id: string }) {
     };
   }, [id]);
 
+  const handleSubmitSettings = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+    setIsSaving(true);
+
+    const formData = new FormData(e.currentTarget);
+    // if not changed, remove the logo from the form data
+    if (!changed) {
+      formData.delete("logo");
+    }
+    try {
+      await updateCurrentSite(formData);
+      setChanged(false);
+      toast.success("Store updated");
+      setSettingsOpen(false);
+      refreshSiteData();
+    } catch (error) {
+      if (isGitWalletError(error)) {
+        toast.error(error.message);
+      } else {
+        console.error(error);
+        Sentry.captureException(error);
+        toast.error("An unknown error occurred");
+      }
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
   const homepage =
     siteData?.pages?.find((page: Page) => page.id === siteData.homepageId) ??
     null;
@@ -64,6 +104,8 @@ export default function SiteAdmin({ id }: { id: string }) {
   if (!siteData) {
     return <div>Loading...</div>;
   }
+
+  const siteURL = `https://` + siteData.subdomain + `.market.dev`;
 
   return (
     <div className="flex flex-col gap-8 sm:gap-10">
@@ -76,7 +118,80 @@ export default function SiteAdmin({ id }: { id: string }) {
                 {url} ↗
               </Link>
             </Button>
-          ) : null
+          ) : null,
+          <Dialog key="settings-dialog" open={settingsOpen} onOpenChange={setSettingsOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Settings className="h-4 w-4" />
+                <span className="sr-only">Settings</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="p-0">
+              <DialogHeader className="px-6 pt-6">
+                <DialogTitle>Storefront Settings</DialogTitle>
+              </DialogHeader>
+              <ScrollArea>
+                <form id="site-settings-form" onSubmit={handleSubmitSettings} className="space-y-6 px-6 pb-3 pt-2">
+                  <div className="flex flex-col items-start w-full gap-2">
+                    <div>
+                      <Label htmlFor="subdomain" className="mb-1">
+                        Subdomain
+                      </Label>
+                      <p className="text-xs text-stone-500">
+                        Your store will appear at{" "}
+                        <Link className="underline" href={siteURL}>
+                          {siteURL}.
+                        </Link>
+                      </p>
+                    </div>
+                    <Input
+                      placeholder="Your subdomain"
+                      name="subdomain"
+                      id="subdomain"
+                      defaultValue={siteData.subdomain ?? ""}
+                    />
+                  </div>
+                  <div className="flex flex-col items-start w-full gap-2">
+                    <Label htmlFor="name">
+                      Name
+                    </Label>
+                    <Input
+                      placeholder="Your store title"
+                      name="name"
+                      id="name"
+                      defaultValue={siteData.name ?? ""}
+                    />
+                  </div>
+                  <div className="flex flex-col items-start w-full gap-2">
+                    <div>
+                      <Label htmlFor="logo" className="mb-1">
+                        Logo
+                      </Label>
+                      <p className="text-xs text-stone-500">
+                        Your store logo is used in your web storefront, for favicons and Open Graph
+                        images.
+                      </p>
+                    </div>
+                    <Uploader
+                      defaultValue={siteData.logo ?? null}
+                      name="logo"
+                      setChanged={setChanged}
+                    />
+                  </div>
+                </form>
+              </ScrollArea>
+              <DialogFooter className="px-6 pb-6">
+                <Button 
+                  type="submit" 
+                  form="site-settings-form"
+                  loading={isSaving}
+                  loadingText="Saving"
+                >
+                  Save
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         ].filter(Boolean)}
       />
 

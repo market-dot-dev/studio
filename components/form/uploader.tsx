@@ -45,16 +45,11 @@ export default function Uploader({
   };
 
   return (
-    <div>
+    <div className="w-full">
       <label
         htmlFor={`${name}-upload`}
         className={cn(
-          "group relative flex cursor-pointer flex-col items-center justify-center rounded-md border border-stone-200 hover:border-stone-300 bg-white transition-colors",
-          {
-            "max-w-screen-md": aspectRatio === "aspect-video",
-            "max-w-xs": aspectRatio === "aspect-square",
-            aspectRatio,
-          },
+          "group relative flex w-full cursor-pointer flex-col items-center justify-center rounded-md border border-stone-300/95 bg-stone-50/80 border-dashed transition-colors hover:border-stone-400 p-6",
         )}
       >
         <div
@@ -84,48 +79,53 @@ export default function Uploader({
             handleUpload(file);
           }}
         />
-        <div
-          className={`${
-            dragActive ? "border-2 border-black" : ""
-          } absolute z-[3] flex h-full w-full flex-col items-center justify-center rounded-md px-10 transition-all ${
-            data[name]
-              ? "bg-white/80 opacity-0 hover:opacity-100 hover:backdrop-blur-md"
-              : "bg-white opacity-100 hover:bg-stone-50"
-          }`}
-        >
-          <svg
-            className={`${
-              dragActive ? "scale-110" : "scale-100"
-            } h-7 w-7 text-stone-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95`}
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
-            <path d="M12 12v9"></path>
-            <path d="m16 16-4-4-4 4"></path>
-          </svg>
-          <p className="mt-2 text-center text-sm text-stone-500">
-            Drag and drop or click to upload.
-          </p>
-          <p className="mt-2 text-center text-sm text-stone-500">
-            Max file size: 50MB
-          </p>
-          <span className="sr-only">Photo upload</span>
-        </div>
-        {data[name] && (
+        {data[name] ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={data[name] as string}
             alt="Preview"
-            className="h-full w-full rounded-md object-cover"
+            className={cn("h-full max-h-48 w-auto rounded-md object-cover object-center shadow-border-sm", {
+              "max-w-screen-md": aspectRatio === "aspect-video",
+              "max-w-xs": aspectRatio === "aspect-square",
+              aspectRatio,
+            })}
           />
+        ) : (
+          <div
+            className={`${
+              dragActive ? "border-2 border-black" : ""
+            }2 z-[3] flex h-full w-full flex-col items-center justify-center rounded-md px-10 transition-all ${
+              data[name]
+                ? "bg-white/80 opacity-0 hover:opacity-100 hover:backdrop-blur-md"
+                : "bg-white opacity-100 hover:bg-stone-50"
+            }`}
+          >
+            <svg
+              className={`${
+                dragActive ? "scale-110" : "scale-100"
+              } h-7 w-7 text-stone-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95`}
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path>
+              <path d="M12 12v9"></path>
+              <path d="m16 16-4-4-4 4"></path>
+            </svg>
+            <p className="mt-2 text-center text-sm text-stone-500">
+              Drag and drop or click to upload.
+            </p>
+            <p className="mt-2 text-center text-sm text-stone-500">
+              Max file size: 50MB
+            </p>
+            <span className="sr-only">Photo upload</span>
+          </div>
         )}
       </label>
       <div className="mt-1 flex rounded-md shadow-sm">

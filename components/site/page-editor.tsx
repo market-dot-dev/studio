@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Eye, Code, SquareSplitHorizontal, Maximize, Minimize } from "lucide-react";
+import { Eye, Code, SquareSplitHorizontal, Maximize, Minimize, SquareArrowOutUpRight } from "lucide-react";
 import clsx from "clsx";
 import { toast } from "sonner";
 
@@ -106,19 +106,20 @@ export default function PageEditor({
 
   const linkWithSlug = siteUrl ? siteUrl + (isHome ? '' : page.slug || '') : '';
 
-  const preview = (<PreviewFrame>
-    {previewElement
-      ? (
-        renderElement(
-          previewElement as Element,
-          0,
-          site,
-          page,
-          true,
-          hasActiveFeatures
-        )
-      ) : null}
-  </PreviewFrame>
+  const preview = (
+    <PreviewFrame>
+      {previewElement
+        ? (
+          renderElement(
+            previewElement as Element,
+            0,
+            site,
+            page,
+            true,
+            hasActiveFeatures
+          )
+        ) : null}
+    </PreviewFrame>
   )
 
   const codeview = (useWithRefs?: boolean) => (
@@ -304,17 +305,17 @@ export default function PageEditor({
                       asChild
                     >
                       <Link href={linkWithSlug} target="_blank">
-                        <Eye />
+                        <SquareArrowOutUpRight />
                       </Link>
                     </Button>
                   ) : null}
                   <Button
                     loading={inProgress}
                     onClick={onSave}
-                    className="gap-1 pr-2"
+                    className="gap-0.5"
                   >
                     Save
-                    <span className="text-[10px]/3 font-semibold border border-white/[12%] py-0.5 px-1 rounded bg-white/[6%]">⌘S</span>
+                    <span className="translate-x-1 text-[10px]/3 font-semibold border border-white/[12%] py-0.5 px-1 rounded bg-white/[6%]">⌘S</span>
                   </Button>
                 </div>
               )}
