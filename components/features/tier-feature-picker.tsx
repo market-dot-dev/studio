@@ -119,76 +119,39 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   };
 
   return (
-    <div>
-      <div className="overflow-x-auto">
-        { featuresLoading && 
-          <>
-            <p className="text-sm text-stone-500"><LoadingDots />&nbsp;Loading Features</p>
-          </>
-        }
-        { !featuresLoading && !anyFeatures && (
-          <p className="text-sm text-stone-500">You haven&apos;t listed the services you offer yet. You can do that <a href="/features" className="underline">here</a>.</p>
-        ) }
-        { anyFeatures &&
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead>
-              <tr>
-                <th className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  &nbsp;
-                </th>
-                {tiers.filter(tier => !!tier).map(tier => (
-                  <th key={tier?.id || 'new-tier'} className="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    {tier!.name || '(Unnamed Tier)' }
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            
-            <tbody className="bg-white divide-y divide-gray-200">
-              {allFeatures.map(feature => (
-                <tr key={feature.id}>
-                  <td className="py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {feature.name}
-                  </td>
-                  { tiersLoading && <>
-                    <td className="py-4 whitespace-nowrap text-sm text-gray-500 text-center" colSpan={tiers.length}>
-                      <LoadingDots />
-                    </td>
-                    </>
-                  }
-                  { !tiersLoading && tiers.map(tier => {
-                    if(!tier) return null;
-
-                    const isAlreadySelected = ((newRecord  && !tier.id) || tier.id === tierId) ? selectedFeatureIds.has(feature.id) : tier?.features?.some(f => f.id === feature.id) || false;
-
-                    return (
-                      <td
-                        key={tier?.id || "new-tier"}
-                        className="whitespace-nowrap py-4 text-center text-sm text-gray-500"
-                      >
-                        <div className="flex justify-center">
-                          {tier.id === tierId ? (
-                            <Checkbox
-                              id={`feature-switch-${feature.id}`}
-                              name={`feature-switch-${feature.id}`}
-                              checked={isAlreadySelected}
-                              onCheckedChange={() =>
-                                handleFeatureToggle(feature)
-                              }
-                            />
-                          ) : isAlreadySelected ? (
-                            <Checkbox checked className="pointer-default" />
-                          ) : null}
-                        </div>
-                      </td>
-                    );
-                  })}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        }
-      </div>
+    <div className="w-full">
+      {featuresLoading && (
+        <div className="space-y-2">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="flex items-center space-x-3 h-5">
+              <div className="h-4 w-4 rounded bg-stone-200 animate-pulse" />
+              <div className="h-3 w-32 rounded bg-stone-200 animate-pulse" />
+            </div>
+          ))}
+        </div>
+      )}
+      {!featuresLoading && !anyFeatures && (
+        <p className="text-sm text-stone-500">
+          You haven&apos;t listed the services you offer yet. You can do that{" "}
+          <a href="/features" className="underline">
+            here
+          </a>
+          .
+        </p>
+      )}
+      {anyFeatures && (
+        <div className="space-y-2">
+          {allFeatures.map((feature) => (
+            <Checkbox
+              key={feature.id}
+              id={`feature-${feature.id}`}
+              checked={selectedFeatureIds.has(feature.id)}
+              onCheckedChange={() => handleFeatureToggle(feature)}
+              label={feature.name || ""}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

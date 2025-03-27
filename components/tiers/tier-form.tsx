@@ -72,7 +72,7 @@ interface TierFormProps {
   user: User;
 }
 
-const TierVersionCard = ({
+const TierVersionRow = ({
   tierVersion,
 }: {
   tierVersion: TierVersionWithFeatures;
@@ -88,9 +88,13 @@ const TierVersionCard = ({
 
   return (
     <TableRow>
+      <TableCell>{tierVersion.createdAt.toDateString()}</TableCell>
+      <TableCell>${tierVersion.price}</TableCell>
       <TableCell>
-        {tierVersion.createdAt.toDateString()}
+        ${tierVersion.price}
+        {tierVersion.cadence ? `/${tierVersion.cadence}` : ""}
       </TableCell>
+      <TableCell>{versionSubscribers}</TableCell>
       <TableCell>
         {features.length > 0 ? (
           <>
@@ -103,12 +107,6 @@ const TierVersionCard = ({
         ) : (
           <>&nbsp;none</>
         )}
-      </TableCell>
-      <TableCell>
-        ${tierVersion.price}
-      </TableCell>
-      <TableCell>
-        {versionSubscribers}
       </TableCell>
     </TableRow>
   );
@@ -206,33 +204,24 @@ const TierLinkCopier = ({ tier, savedPublishedState }: { tier: Tier, savedPublis
   }
 
   return (
-    <div className="flex flex-row items-center justify-center">
+    <div className="flex flex-row items-center justify-center rounded shadow-border">
       <Input
         id="checkoutLink"
-        className="min-w-none w-fit rounded-r-none truncate"
+        className="min-w-none w-fit truncate rounded-r-none shadow-none active:shadow-none"
         readOnly
         value={link}
         onClick={(e) => (e.target as HTMLInputElement).select()}
       />
+      <span className="w-0 border-l border-stone-300 h-full"></span>
       <Button
         variant="outline"
         onClick={handleCopy}
         disabled={isCopied}
         tooltip={isCopied ? "Copied!" : "Copy checkout link"}
-        className="h-9 md:h-8 w-9 md:w-8 rounded-l-none"
+        className="h-9 w-9 rounded-l-none z-1 shadow-none active:shadow-none md:h-8 md:w-8"
       >
         <AnimatePresence mode="wait" initial={false}>
           {isCopied ? (
-            <motion.div
-              key="check"
-              initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
-              transition={{ duration: 0.1, type: "easeInOut" }}
-            >
-              <Check className="h-4 w-4" />
-            </motion.div>
-          ) : (
             <motion.div
               key="link"
               initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
@@ -241,6 +230,16 @@ const TierLinkCopier = ({ tier, savedPublishedState }: { tier: Tier, savedPublis
               transition={{ duration: 0.1, type: "easeInOut" }}
             >
               <LinkIcon className="h-4 w-4" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="check"
+              initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
+              transition={{ duration: 0.1, type: "easeInOut" }}
+            >
+              <Check className="h-4 w-4" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -340,7 +339,7 @@ const StandardCheckoutForm = ({
               <SelectValue placeholder="Billing Type" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="month">Recurring</SelectItem>
+              <SelectItem value="month">Recurring (Monthly)</SelectItem>
               {/*
               <SelectItem value="year">year</SelectItem>
               <SelectItem value="quarter">quarter</SelectItem>
@@ -382,7 +381,7 @@ const StandardCheckoutForm = ({
         </div>
 
         {tier.cadence === "month" && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             <div className="flex flex-col gap-6">
               <Checkbox
                 id={`${idPrefix}annualPlanEnabled`}
@@ -480,7 +479,7 @@ const StandardCheckoutForm = ({
               />
 
               {trialEnabled && (
-                <div className="mb-4">
+                <div>
                   <Label
                     htmlFor={`${idPrefix}trialDays`}
                     className="mb-2 block"
@@ -697,7 +696,7 @@ export default function TierForm({
       <div className="mt-6 flex flex-col gap-10 pb-20 lg:flex-row">
         {/* Mobile Tabs - Only visible on screens smaller than lg breakpoint */}
         <div className="mb-6 w-full lg:hidden">
-          <Tabs defaultValue="details" >
+          <Tabs defaultValue="details">
             <TabsList variant="background" className="w-full">
               <TabsTrigger
                 variant="background"
@@ -812,28 +811,26 @@ export default function TierForm({
                 </div>
                 {hasActiveFeatures && (
                   <div>
-                    <Label htmlFor="mobile-features" className="mb-2 block">
+                    <Label htmlFor="mobile-features" className="mb-3 block">
                       Features
                     </Label>
-                    <Card className="p-2">
-                      {tier?.id ? (
-                        <TierFeaturePicker
-                          tierId={tier.id}
-                          newTier={tier}
-                          selectedFeatureIds={selectedFeatureIds}
-                          setSelectedFeatureIds={setSelectedFeatureIds}
-                          setFeaturesChanged={setFeaturesChanged}
-                          setFeatureObjs={setFeatureObjs}
-                        />
-                      ) : (
-                        <TierFeaturePicker
-                          newTier={tier}
-                          selectedFeatureIds={selectedFeatureIds}
-                          setSelectedFeatureIds={setSelectedFeatureIds}
-                          setFeatureObjs={setFeatureObjs}
-                        />
-                      )}
-                    </Card>
+                    {tier?.id ? (
+                      <TierFeaturePicker
+                        tierId={tier.id}
+                        newTier={tier}
+                        selectedFeatureIds={selectedFeatureIds}
+                        setSelectedFeatureIds={setSelectedFeatureIds}
+                        setFeaturesChanged={setFeaturesChanged}
+                        setFeatureObjs={setFeatureObjs}
+                      />
+                    ) : (
+                      <TierFeaturePicker
+                        newTier={tier}
+                        selectedFeatureIds={selectedFeatureIds}
+                        setSelectedFeatureIds={setSelectedFeatureIds}
+                        setFeatureObjs={setFeatureObjs}
+                      />
+                    )}
                   </div>
                 )}
 
@@ -908,24 +905,14 @@ export default function TierForm({
 
                     {!!versions && versions.length > 0 && (
                       <>
-                        <p className="my-6 text-xs text-stone-500">
-                          {tier.name} has{" "}
-                          {currentRevisionSubscriberCount === 0
-                            ? "no customers yet"
-                            : currentRevisionSubscriberCount +
-                              " customers"}{" "}
-                          for the most recent version. There are{" "}
-                          {versions.length} versions and {tierSubscriberCount}{" "}
-                          customers across versions.
-                        </p>
                         <Card>
                           <Table>
                             <TableHeader>
                               <TableRow>
                                 <TableHead>Created</TableHead>
-                                <TableHead>Features</TableHead>
                                 <TableHead>Price</TableHead>
-                                <TableHead>#Customers</TableHead>
+                                <TableHead>Customers</TableHead>
+                                <TableHead>Features</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -935,10 +922,17 @@ export default function TierForm({
                                   <Badge
                                     variant="success"
                                     size="sm"
-                                    className="ms-1"
+                                    className="ml-1"
                                   >
                                     Current
                                   </Badge>
+                                </TableCell>
+                                <TableCell>
+                                  ${tier.price}
+                                  {tier.cadence ? `/${tier.cadence}` : ""}
+                                </TableCell>
+                                <TableCell>
+                                  {currentRevisionSubscriberCount}
                                 </TableCell>
                                 <TableCell>
                                   {tier.features && tier.features.length > 0 ? (
@@ -953,13 +947,9 @@ export default function TierForm({
                                     <>&nbsp;None</>
                                   )}
                                 </TableCell>
-                                <TableCell>${tier.price}</TableCell>
-                                <TableCell>
-                                  {currentRevisionSubscriberCount}
-                                </TableCell>
                               </TableRow>
                               {versions.map((version) => (
-                                <TierVersionCard
+                                <TierVersionRow
                                   tierVersion={version}
                                   key={version.id}
                                 />
@@ -1026,15 +1016,13 @@ export default function TierForm({
             </TabsContent>
 
             <TabsContent value="preview">
-              <div className="mx-auto w-full max-w-[300px]">
-                <TierCard
-                  tier={{ ...tier, published: savedPublishedState }}
-                  features={featureObjs}
-                  buttonDisabled={newRecord}
-                  hasActiveFeatures={hasActiveFeatures}
-                  className="w-full"
-                />
-              </div>
+              <TierCard
+                tier={{ ...tier, published: savedPublishedState }}
+                features={featureObjs}
+                buttonDisabled={newRecord}
+                hasActiveFeatures={hasActiveFeatures}
+                className="shadow-border-md mx-auto w-full max-w-[300px]"
+              />
             </TabsContent>
           </Tabs>
         </div>
@@ -1127,28 +1115,26 @@ export default function TierForm({
           </div>
           {hasActiveFeatures && (
             <div>
-              <Label htmlFor="features" className="mb-2 block">
+              <Label htmlFor="features" className="mb-3 block">
                 Features
               </Label>
-              <Card className="p-2">
-                {tier?.id ? (
-                  <TierFeaturePicker
-                    tierId={tier.id}
-                    newTier={tier}
-                    selectedFeatureIds={selectedFeatureIds}
-                    setSelectedFeatureIds={setSelectedFeatureIds}
-                    setFeaturesChanged={setFeaturesChanged}
-                    setFeatureObjs={setFeatureObjs}
-                  />
-                ) : (
-                  <TierFeaturePicker
-                    newTier={tier}
-                    selectedFeatureIds={selectedFeatureIds}
-                    setSelectedFeatureIds={setSelectedFeatureIds}
-                    setFeatureObjs={setFeatureObjs}
-                  />
-                )}
-              </Card>
+              {tier?.id ? (
+                <TierFeaturePicker
+                  tierId={tier.id}
+                  newTier={tier}
+                  selectedFeatureIds={selectedFeatureIds}
+                  setSelectedFeatureIds={setSelectedFeatureIds}
+                  setFeaturesChanged={setFeaturesChanged}
+                  setFeatureObjs={setFeatureObjs}
+                />
+              ) : (
+                <TierFeaturePicker
+                  newTier={tier}
+                  selectedFeatureIds={selectedFeatureIds}
+                  setSelectedFeatureIds={setSelectedFeatureIds}
+                  setFeatureObjs={setFeatureObjs}
+                />
+              )}
             </div>
           )}
 
@@ -1267,7 +1253,7 @@ export default function TierForm({
                           </TableCell>
                         </TableRow>
                         {versions.map((version) => (
-                          <TierVersionCard
+                          <TierVersionRow
                             tierVersion={version}
                             key={version.id}
                           />
@@ -1296,13 +1282,13 @@ export default function TierForm({
           </Button>
         </div>
 
-        <div className="sticky top-20 mx-auto mb-auto hidden text-center w-[300px] lg:block">
+        <div className="sticky top-20 mx-auto mb-auto hidden text-center lg:block max-w-[300px]">
           <TierCard
             tier={{ ...tier, published: savedPublishedState }}
             features={featureObjs}
             buttonDisabled={newRecord}
             hasActiveFeatures={hasActiveFeatures}
-            className="w-full"
+            className="w-[300px] shadow-border-md"
           />
           {!newRecord && (
             <div className="mt-4 flex flex-col items-center gap-4 rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">

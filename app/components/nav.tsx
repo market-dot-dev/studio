@@ -187,7 +187,7 @@ export default function Nav({
       },
       {
         type: "title",
-        name: "Offerings",
+        name: "Services",
       },
       ...(hasFeatures ? featureItems : []),
       {

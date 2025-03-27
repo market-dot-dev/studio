@@ -23,7 +23,7 @@ export default function NewTierModal({ children, multiple }: { children: React.R
         <DialogTrigger className={buttonVariants({ variant: "default" })}>
           {children}
         </DialogTrigger>
-        <DialogContent className="max-h-[80vh] w-full max-w-none overflow-hidden md:max-w-[80vw] p-6 pt-5 md:p-7 md:pt-6 gap-6 md:gap-9">
+        <DialogContent className="max-h-[80vh] w-full max-w-none overflow-hidden md:max-w-screen-lg p-6 pt-5 md:p-7 md:pt-6 gap-6 md:gap-9">
           <DialogHeader>
             <DialogTitle className="text-lg md:text-xl">
               Create{multiple ? "" : " a"} new package{multiple ? "s" : ""}
@@ -115,11 +115,14 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 
 	return (
     <>
-      <div className="flex grow flex-col items-stretch justify-start gap-6 overflow-auto max-h-[calc(80vh-8rem)]">
+      <div className="flex grow flex-col items-stretch justify-start gap-6 overflow-y-auto">
         {categorizedTiers.map((category, cIndex) => (
           <div className="flex flex-col gap-2" key={cIndex}>
-            <h2 className="text-sm font-semibold">{category.name}</h2>
-            <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <div className="flex gap-1 items-center w-full">
+              <h2 className="text-sm font-semibold">{category.name}</h2>
+              <hr/>
+            </div>
+            <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 overflow-y-auto">
               {category.tiers.map(({ metaDescription, data: tier }, index) => {
                 const determinedIndex = determineIndex(cIndex, index);
                 const isSelected = selected.indexOf(determinedIndex) !== -1;
