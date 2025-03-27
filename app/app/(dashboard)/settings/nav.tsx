@@ -26,11 +26,6 @@ export default function SettingsNav() {
       isActive: activeSegment === "project",
     },
     {
-      name: "Storefront Settings",
-      href: `/settings/site`,
-      isActive: activeSegment === "site",
-    },
-    {
       name: "Payout Info",
       href: `/settings/payment`,
       isActive: activeSegment === "payment",
