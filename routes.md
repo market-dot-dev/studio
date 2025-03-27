@@ -1,5 +1,5 @@
 # Next.js Routes Map
-# Generated on 2025-03-19T16:16:41.663Z
+# Generated on 2025-03-20T14:58:02.892Z
 
 > Note: Routes marked with "via middleware" are rewritten or redirected by middleware.ts
 

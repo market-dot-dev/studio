@@ -50,11 +50,10 @@ const NameCell = ({
           </Link>
           <Badge
             variant="secondary"
-            className="pl-1"
+            className="flex items-center justify-center size-5 p-0"
             tooltip="This is a standard open source contract provided by market.dev"
           >
-            <ShieldCheck className="mr-1 h-3.5 w-3.5" strokeWidth={2.25} />
-            Standard
+            <ShieldCheck className="h-3.5 w-3.5" strokeWidth={2.25} />
           </Badge>
         </>
       )}
