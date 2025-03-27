@@ -153,7 +153,7 @@ export default function Nav({
     const siteItems: LinkItem[] = [
       {
         type: "link",
-        name: "Storefront",
+        name: "Landing Pages",
         href: `/site/${siteId}`,
         isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
         icon: <Store width={18} />,

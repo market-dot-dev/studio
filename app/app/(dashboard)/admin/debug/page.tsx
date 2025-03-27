@@ -13,6 +13,7 @@ const Debug = async () => {
   }
 
   const debugLinks: DebugLink[] = [
+    { name: "User Analytics", href: "/admin/users" },
     { name: "View All Users", href: "/admin/debug/users" },
     { name: "Bulk Email Tool", href: "/admin/debug/email" },
     { name: "Onboarding State", href: "/admin/debug/onboarding" },

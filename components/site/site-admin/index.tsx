@@ -110,7 +110,7 @@ export default function SiteAdmin({ id }: { id: string }) {
   return (
     <div className="flex flex-col gap-8 sm:gap-10">
       <PageHeader 
-        title="Your Storefront" 
+        title="Landing Pages" 
         actions={[
           url ? (
             <Button key="view-site" variant="secondary" className="text-stone-600" asChild>
