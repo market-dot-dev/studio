@@ -357,7 +357,7 @@ export default function PageContainer({
           title={pageData?.title || "New Page"} 
           backLink={{
             href: `/site/${site.id}`,
-            title: "Landing Pages"
+            title: "Landing Page"
           }}
           description={`Last updated ${lastUpdateDate}`}
           status={{

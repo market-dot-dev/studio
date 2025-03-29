@@ -82,7 +82,7 @@ export default function SiteSettings({ site }: { site: Partial<Site> }) {
               Logo
             </Label>
             <p className="text-xs text-stone-500">
-              Your store logo is used in your landing pages, for favicons and Open Graph
+              Your store logo is used in your landing page, for favicons and Open Graph
               images.
             </p>
           </div>

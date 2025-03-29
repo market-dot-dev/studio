@@ -14,7 +14,7 @@ import {
   UserRoundSearch,
   ChartNoAxesColumnIncreasing as Chart,
   X,
-  Store,
+  AppWindowMac,
   ShoppingBag,
 } from "lucide-react";
 import { ReactNode, useEffect, useMemo, useState } from "react";
@@ -55,9 +55,6 @@ type NavItem = TitleItem | LinkItem;
 function Item({ item }: { item: NavItem }) {
   if (item.type === "title") {
     return (
-      // <span className="mb-1 ml-1 mt-4 text-xs/4 font-bold text-stone-500">
-      //   {item.name}
-      // </span>
       <span className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
         {item.name}
       </span>
@@ -72,11 +69,11 @@ function Item({ item }: { item: NavItem }) {
         className={clsx(
           "flex h-6 items-center space-x-2",
           "rounded px-1 transition-all duration-150 ease-in-out",
-          "hover:bg-white hover:shadow-border",
-          "focus:bg-white focus:shadow-border focus:outline-none focus:ring-0",
+          "hover:bg-white hover:shadow-border-sm",
+          "focus-visible:bg-white focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp",
           "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800",
           item.isActive &&
-            "bg-white text-black shadow-border dark:bg-stone-700",
+            "bg-white text-black shadow-border-sm dark:bg-stone-700",
         )}
       >
         {item.icon}
@@ -153,10 +150,10 @@ export default function Nav({
     const siteItems: LinkItem[] = [
       {
         type: "link",
-        name: "Landing Pages",
+        name: "Landing Page",
         href: `/site/${siteId}`,
         isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
-        icon: <Store width={18} />,
+        icon: <AppWindowMac width={18} />,
       },
     ];
 
