@@ -81,7 +81,7 @@ export default function CheckoutTypeSelectionInput({
     <div className="flex flex-col gap-2">
       <GitWalletCheckout />
       <label className="flex h-full w-full rounded focus-within:outline-none">
-        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] hover:bg-stone-50 [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp">
+        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-[background-color,box-shadow] hover:shadow-border [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp">
           <div className="flex h-full w-full items-center justify-between">
             <div className="flex items-center">
               <Mail className="mr-2.5 size-[18px] text-stone-500" />

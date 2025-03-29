@@ -204,7 +204,7 @@ const TierLinkCopier = ({ tier, savedPublishedState }: { tier: Tier, savedPublis
   }
 
   return (
-    <div className="flex flex-row items-center justify-center rounded shadow-border">
+    <div className="flex flex-row items-center justify-center rounded shadow-border-sm">
       <Input
         id="checkoutLink"
         className="min-w-none w-fit truncate rounded-r-none shadow-none active:shadow-none"
@@ -212,26 +212,16 @@ const TierLinkCopier = ({ tier, savedPublishedState }: { tier: Tier, savedPublis
         value={link}
         onClick={(e) => (e.target as HTMLInputElement).select()}
       />
-      <span className="w-0 border-l border-stone-300 h-full"></span>
+      <span className="h-full w-0 border-l border-stone-300"></span>
       <Button
         variant="outline"
         onClick={handleCopy}
         disabled={isCopied}
         tooltip={isCopied ? "Copied!" : "Copy checkout link"}
-        className="h-9 w-9 rounded-l-none z-1 shadow-none active:shadow-none md:h-8 md:w-8"
+        className="z-1 h-9 w-9 rounded-l-none shadow-none active:shadow-none md:h-8 md:w-8 text-stone-900"
       >
         <AnimatePresence mode="wait" initial={false}>
           {isCopied ? (
-            <motion.div
-              key="link"
-              initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
-              transition={{ duration: 0.1, type: "easeInOut" }}
-            >
-              <LinkIcon className="h-4 w-4" />
-            </motion.div>
-          ) : (
             <motion.div
               key="check"
               initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
@@ -239,7 +229,17 @@ const TierLinkCopier = ({ tier, savedPublishedState }: { tier: Tier, savedPublis
               exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
               transition={{ duration: 0.1, type: "easeInOut" }}
             >
-              <Check className="h-4 w-4" />
+              <Check className="h-4 w-4 text-stone-900" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="link"
+              initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
+              transition={{ duration: 0.1, type: "easeInOut" }}
+            >
+              <LinkIcon className="h-4 w-4 text-stone-900" />
             </motion.div>
           )}
         </AnimatePresence>
@@ -1288,7 +1288,7 @@ export default function TierForm({
             features={featureObjs}
             buttonDisabled={newRecord}
             hasActiveFeatures={hasActiveFeatures}
-            className="w-[300px] shadow-border-md"
+            className="w-[300px] shadow-border"
           />
           {!newRecord && (
             <div className="mt-4 flex flex-col items-center gap-4 rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">

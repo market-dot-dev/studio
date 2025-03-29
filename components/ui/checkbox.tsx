@@ -19,7 +19,7 @@ const Checkbox = React.forwardRef<
     <CheckboxPrimitive.Root
       ref={ref}
       className={cn(
-        "relative peer h-4 w-4 shrink-0  rounded-sm border border-black/20 bg-white shadow-sm transition-[border-color,background-color] duration-100 ease-in-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-swamp disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-swamp data-[state=checked]:bg-swamp data-[state=checked]:text-primary-foreground",
+        "relative peer h-4 w-4 shrink-0  rounded-sm border border-black/20 group-hover:border-black/30 bg-white shadow-sm transition-[border-color,background-color] duration-150 ease-in-out focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-swamp disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:border-swamp data-[state=checked]:bg-swamp group-hover:data-[state=checked]:border-swamp-500 data-[state=checked]:text-primary-foreground",
         className,
       )}
       {...props}
@@ -34,7 +34,7 @@ const Checkbox = React.forwardRef<
 
   if (label) {
     return (
-      <div className="flex items-center gap-2">
+      <div className="group flex items-center gap-2">
         {checkbox}
         <Label htmlFor={props.id} className="peer-disabled:opacity-50 font-medium">{label}</Label>
       </div>
