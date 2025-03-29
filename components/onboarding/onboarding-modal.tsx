@@ -226,7 +226,7 @@ export default function OnboardingModal({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogContent
-        className="max-w-[calc(100vw-32px)] sm:max-w-xl flex max-h-[calc(100vh-32px)] flex-col items-center rounded-lg p-0 sm:max-h-[calc(100vh-48px)]"
+        className="bg-stone-100 max-w-[calc(100vw-32px)] sm:max-w-xl flex max-h-[calc(100vh-32px)] flex-col items-center rounded-lg p-0 sm:max-h-[calc(100vh-48px)]"
         hideCloseButton
         preventOutsideClose
       >
@@ -244,7 +244,7 @@ export default function OnboardingModal({
               onProfileSubmit={handleProfileSubmit}
               onOfferingsSubmit={handleFinalSubmit}
             />
-            <DialogFooter className="w-full pb-4 sm:pb-6 px-6 pt-2 sm:px-9">
+            <DialogFooter className="w-full py-4 px-6 sm:px-9 border-t border-stone-200">
               <NavigationButtons
                 step={step}
                 isLoading={isLoading}

@@ -11,13 +11,13 @@ export default function TeamSelectionRadioGroup({
   setTeamType: (teamType: TeamType) => void;
 }) {
   return (
-    <div className="space-y-1.5">
+    <div className="space-y-3">
       <Label>
         Are you a team or independent?
       </Label>
       <div className="space-y-2">
         <label className="block w-full rounded focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-200">
-          <div className="flex cursor-pointer items-center justify-between rounded shadow-border bg-white p-4 pt-3.5 hover:bg-stone-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp transition-[box-shadow,colors]">
+          <div className="flex cursor-pointer items-center justify-between rounded shadow-border-sm bg-white p-4 pt-3.5 hover:shadow-border [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp transition-[box-shadow,colors]">
             <div className="flex items-center">
               <UsersRound className="mr-2.5 size-[18px] text-stone-500" />
               <span className="text-sm font-medium text-stone-900">
@@ -36,7 +36,7 @@ export default function TeamSelectionRadioGroup({
           </div>
         </label>
         <label className="block w-full rounded focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-200">
-          <div className="flex cursor-pointer items-center justify-between rounded border bg-white p-4 shadow-sm hover:bg-stone-50 [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
+          <div className="flex cursor-pointer items-center justify-between rounded bg-white p-4 shadow-border-sm hover:shadow-border [&:has(input:checked)]:border-marketing-swamp [&:has(input:checked)]:ring-1 [&:has(input:checked)]:ring-marketing-swamp">
             <div className="flex items-center">
               <UserRound className="mr-3 h-5 w-5 text-stone-500" />
               <span className="text-sm font-medium text-stone-900">

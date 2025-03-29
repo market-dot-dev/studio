@@ -117,7 +117,7 @@ export default function OfferingsForm({
           </h1>
         </div>
 
-        <div className="flex w-full flex-col md:grid grid-cols-2 gap-4">
+        <div className="flex w-full grid-cols-2 flex-col gap-4 md:grid">
           {offerings.map(
             ({ id, title, description, icon: Icon, isComingSoon }) => (
               <label
@@ -125,14 +125,14 @@ export default function OfferingsForm({
                 className="block h-full w-full rounded focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-300"
               >
                 <div className="relative h-full">
-                  <div className="relative flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-all focus-within:border-stone-300 hover:bg-stone-50 hover:focus-within:bg-white [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
-                    <div className="flex items-center gap-2.5">
-                      <Icon className="size-[18px] shrink-0 text-stone-500" />
+                  <div className="relative flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-all focus-within:border-stone-300 hover:shadow-border hover:focus-within:bg-white [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <Icon className="my-px size-[18px] shrink-0 text-stone-500" />
                       <h3 className="text-sm font-semibold text-stone-900">
                         {title}
                       </h3>
                       {isComingSoon && (
-                        <span className="border-box z-10 flex h-[18px] items-center rounded-full border border-black/10 bg-stone-100 px-1.5 text-[9px] font-bold uppercase tracking-wide text-stone-500">
+                        <span className="border-box absolute right-0 top-0 z-10 flex h-[18px] items-center whitespace-nowrap rounded-bl-md border-b border-l border-black/10 bg-stone-100 px-1 text-[9px] font-bold uppercase tracking-wide text-stone-500">
                           Coming Soon
                         </span>
                       )}

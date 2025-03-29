@@ -151,7 +151,7 @@ export default function ProfileForm({
             <Label htmlFor="subdomain">
               Domain
             </Label>
-            <div className="flex items-center justify-between gap-4 rounded-tremor-default border border-tremor-border bg-white shadow-tremor-input">
+            <div className="flex items-center justify-between gap-4 rounded bg-white shadow-border-sm">
               <Input
                 id="subdomain"
                 className="rounded-r-none shadow-none"
@@ -182,7 +182,7 @@ export default function ProfileForm({
             </Label>
             <div
               className={clsx(
-                "rounded-lg border border-dashed bg-stone-50 p-10 text-center transition-colors",
+                "rounded-lg border border-dashed bg-stone-150 p-10 text-center transition-colors",
                 isDraggingOverDropzone ? "border-stone-400" : "border-stone-300",
               )}
               onDragEnter={handleDragEnter}
