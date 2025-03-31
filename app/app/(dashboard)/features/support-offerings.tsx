@@ -5,7 +5,12 @@ import React, { useEffect, useState } from 'react';
 import FeatureForm from '@/components/form/feature-form';
 import { Button } from '@/components/ui/button';
 import { Badge } from "@/components/ui/badge";
-import { useModal } from "@/components/modal/provider";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 import {
   Mail,
@@ -161,42 +166,27 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, onUpdate, selectedSe
 const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ services, features }) => {
   const [selectedService, setSelectedService] = useState<Service | null>(null);
   const [featuresList, setFeaturesList] = useState<Feature[]>(features);
+  const [dialogOpen, setDialogOpen] = useState(false);
   
-  const { show, hide } = useModal();
-
   const handleFeatureSuccess = (updatedFeature: Feature) => {
     setFeaturesList(prevFeatures => {
       const otherFeatures = prevFeatures.filter(f => f.id !== updatedFeature.id);
       return [...otherFeatures, updatedFeature];
     });
+    setDialogOpen(false);
   };
   
-
   useEffect(() => {
     if (selectedService) {
-      const feature = featuresList.find((f) => f.serviceId === selectedService.id);
-      const modalHeader = (
-        <div className="flex grow items-center justify-between">
-          <h2 className="text-xl font-bold">Details</h2>
-          {feature?.isEnabled ? (
-            <Badge size="sm" variant="success">
-              Enabled
-            </Badge>
-          ) : null}
-        </div>
-      );
-      show(
-        <FeatureForm initialFeature={feature} service={selectedService} onSuccess={handleFeatureSuccess} requiresUri={selectedService.requiresUri} hide={hide} />,
-        () => setSelectedService(null),
-        undefined,
-        modalHeader,
-        'w-full md:w-2/3 lg:w-1/2'
-      );
-      
+      setDialogOpen(true);
     }
-  
-  }, [selectedService, featuresList]);
+  }, [selectedService]);
 
+  // Close dialog handler
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+    setSelectedService(null);
+  };
   
   const renderServices = (categoryId: string) => {
     return services.filter(service => service.category === categoryId).map(service => (
@@ -211,20 +201,50 @@ const Offerings: React.FC<{ services: Service[]; features: Feature[] }> = ({ ser
     ));
   };
 
+  // Find the current feature if a service is selected
+  const currentFeature = selectedService 
+    ? featuresList.find((f) => f.serviceId === selectedService.id)
+    : null;
+
   return (
-    <div className="flex flex-row gap-4 container mx-auto mt-6">
-      <main className="flex-1">
-        {categories.map(category => (
-          <div key={category.id} className="mb-8">
-            <h3 className="text-xl font-bold mb-2">{category.name}</h3>
-            <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {renderServices(category.id)}
+    <>
+      <div className="flex flex-row gap-4 container mx-auto mt-6">
+        <main className="flex-1">
+          {categories.map(category => (
+            <div key={category.id} className="mb-8">
+              <h3 className="text-xl font-bold mb-2">{category.name}</h3>
+              <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                {renderServices(category.id)}
+              </div>
             </div>
-          </div>
-        ))}
-      </main>
-      
-    </div>
+          ))}
+        </main>
+      </div>
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent onInteractOutside={handleDialogClose} className='gap-6'>
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <DialogTitle>Details</DialogTitle>
+              {currentFeature?.isEnabled && (
+                <Badge size="sm" variant="success" className='!font-semibold'>
+                  Enabled
+                </Badge>
+              )}
+            </div>
+          </DialogHeader>
+          {selectedService && (
+            <FeatureForm 
+              initialFeature={currentFeature || undefined} 
+              service={selectedService} 
+              onSuccess={handleFeatureSuccess} 
+              requiresUri={selectedService.requiresUri} 
+              hide={handleDialogClose} 
+            />
+          )}
+        </DialogContent>
+      </Dialog>
+    </>
   );
 };
 

@@ -70,6 +70,11 @@ class UserService {
         email: true,
         name: true,
         roleId: true,
+        createdAt: true,
+        updatedAt: true,
+        company: true,
+        businessType: true,
+        businessLocation: true,
       },
     });
   }

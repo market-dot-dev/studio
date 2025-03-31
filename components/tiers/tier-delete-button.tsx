@@ -2,59 +2,71 @@
 
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import LoadingDots from "@/components/icons/loading-dots";
-import { useModal } from "@/components/modal/provider";
 import { destroyTier } from "@/app/services/TierService";
 import { Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const ContractDeleteButton = ({ tierId, onConfirm, onSuccess, onError }: { tierId: string, onSuccess: any, onError: any, onConfirm: any }) => {
   const [loading, setLoading] = useState(false);
-  const { show, hide } = useModal();
+  const [open, setOpen] = useState(false);
 
-  const showWarning = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const modalHeader = <h2 className="text-xl font-bold">Delete Package</h2>
-    show(
-        <div className="flex flex-col gap-12 p-6 ">
-          <p className="text-sm text-stone-500">Are you sure you want to delete this package?</p>
-          <div className="flex gap-4">
-           <Button 
-            className="w-min" 
-            variant="destructive" 
-            onClick={async() => {
-              setLoading(true);
-              onConfirm();
-              destroyTier(tierId).
-                then(() => {
-                  hide();
-                  onSuccess();
-                })
-                .catch((error) => {
-                  onError(error)
-                }).
-                finally(() => {
-                  setLoading(false)
-                  hide();
-                });
-            }}
-          >
-            {loading ? <>Deleting Package&nbsp;<LoadingDots color="#A8A29E" /></> : "Delete Package"}
-          </Button>
-          <Button className="w-min" variant="outline" onClick={hide}>No, Keep Package</Button>
-          </div>
-        </div>,
-        hide,
-        true, // ignoreFocusTrap
-        modalHeader,
-        'w-full md:w-2/3 lg:w-1/2'
-    );
-  }
+  const handleDelete = async () => {
+    setLoading(true);
+    onConfirm();
+    try {
+      await destroyTier(tierId);
+      onSuccess();
+    } catch (error) {
+      onError(error);
+    } finally {
+      setLoading(false);
+      setOpen(false);
+    }
+  };
+
   return (
-    <Button variant="destructive" onClick={showWarning}>
-      <Trash2 />
-      Delete
-    </Button>
+    <>
+      <Button variant="destructive" onClick={() => setOpen(true)}>
+        <Trash2 />
+        Delete
+      </Button>
+
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Package</AlertDialogTitle>
+            <AlertDialogDescription className="text-sm text-stone-500">
+              Are you sure you want to delete this package?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOpen(false)}>
+              No, keep package
+            </AlertDialogCancel>
+            <AlertDialogAction asChild>
+              <Button
+                variant="destructive"
+                onClick={handleDelete}
+                loading={loading}
+                loadingText="Deleting package"
+                disabled={loading}
+              >
+                Delete package
+              </Button>
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
 

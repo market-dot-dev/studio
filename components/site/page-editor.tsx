@@ -2,73 +2,41 @@
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Info, Eye, Code, SquareSplitHorizontal, Maximize, Minimize } from "lucide-react";
+import { Eye, Code, SquareSplitHorizontal, Maximize, Minimize, SquareArrowOutUpRight } from "lucide-react";
 import clsx from "clsx";
+import { toast } from "sonner";
 
 import renderElement from "./page-renderer";
-import { useRouter } from "next/navigation";
 
-import { Card } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  setHomepage,
-  deletePage,
-  updatePage,
-} from "@/app/services/PageService";
 import { Page, Site } from "@prisma/client";
 import PageEditorSidebar from "./page-editor-sidebar";
 import { useFullscreen } from "../dashboard/dashboard-context";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
-let debounceTimeout: any;
-
-function TimedAlert({
-  message,
-  timeout = 0,
-  color = "info",
-  refresh,
-}: {
-  message: string;
-  timeout?: number;
-  color?: string;
-  refresh: boolean;
-}) {
-  const [showAlert, setShowAlert] = useState<boolean>(true);
-
-  useEffect(() => {
-    setShowAlert(true);
-    if (timeout === 0) return;
-
-    const timer = setTimeout(() => {
-      setShowAlert(false);
-    }, timeout);
-
-    return () => clearTimeout(timer);
-  }, [refresh]);
-
-  return (
-    <>
-      {showAlert ? (
-        <>
-          <Alert>
-            <Info />
-            <AlertDescription>{message}</AlertDescription>
-          </Alert>
-        </>
-      ) : null}
-    </>
-  );
+interface PageEditorProps {
+  site: Partial<Site>;
+  page: Partial<Page> & {
+    content?: string | null;
+    slug?: string | null;
+    title?: string | null;
+  };
+  homepageId: string | null;
+  siteUrl: string | null;
+  hasActiveFeatures?: boolean;
+  isDraft: boolean;
+  titleError: string | null;
+  slugError: string | null;
+  slugVirgin: boolean;
+  onTitleChange: (title: string) => void;
+  onSlugChange: (slug: string) => void;
+  onContentChange: (content: string) => void;
+  onSave: () => Promise<void>;
+  inProgress: boolean;
 }
 
 export default function PageEditor({
@@ -76,315 +44,73 @@ export default function PageEditor({
   page,
   homepageId,
   siteUrl,
-  hasActiveFeatures
-}: {
-  site: Partial<Site>;
-  page: Partial<Page>;
-  homepageId: string | null;
-  siteUrl: string | null;
-  hasActiveFeatures?: boolean;
-}): JSX.Element {
+  hasActiveFeatures,
+  isDraft,
+  titleError,
+  slugError,
+  slugVirgin,
+  onTitleChange,
+  onSlugChange,
+  onContentChange,
+  onSave,
+  inProgress
+}: PageEditorProps): JSX.Element {
   const isHome = page.id === homepageId;
-
-  const [data, setData] = useState<any>(page);
-
-  const [slugVirgin, setSlugVirgin] = useState<boolean>(!data.slug);
 
   const [editorRef, setEditorRef] = useState<any>(null);
   const [monacoRef, setMonacoRef] = useState<any>(null);
-
-  const [inProgress, setInprogress] = useState<boolean>(false);
-  const [isMakingHomepage, setIsMakingHomepage] = useState<boolean>(false);
-  const [isDeleting, setIsDeleting] = useState<boolean>(false);
-
-  const [status, setStatus] = useState<any>({ message: "", type: "info" });
-
+  
   // 0: "preview",
   // 1: "code",
   // 2: "split",
   const [viewMode, setViewMode] = useState<number>(0);
   
-
   const [previewElement, setPreviewElement] = useState<any>(null);
-  const [forceStatusRefresh, setForceStatusRefresh] = useState<boolean>(false);
-
-  const [willBeHome, setWillBeHome] = useState<boolean>(isHome);
-  const [isCurrentlyHome, setIsCurrentlyHome] = useState<boolean>(isHome);
 
   const {fullscreen, setFullscreen} = useFullscreen();
-
-  const [titleError, setTitleError] = useState<string | null>(null);
-  const [slugError, setSlugError] = useState<string | null>(null);
-
-  const router = useRouter();
   
   function handleEditorDidMount(editor: any, monaco: any) {
     setMonacoRef(monaco);
     setEditorRef(editor);
   }
 
-  useEffect(() => {
-    if (!slugVirgin) return;
-    // if (!data.title) return;
-    // if (data.slug) return;
-
-    const slug = data.title ? data.title
-      .toLowerCase()
-      .replace(/ /g, "-")
-      .replace(/[^a-z0-9-]/g, "") : "";
-    
-      setData({ ...data, slug });
-      setSlugError(null);
-
-  }, [data.title]);
-
-
-  useEffect(() => {
-    const handleSaveShortcut = (e: KeyboardEvent) => {
-      if (
-        (e.ctrlKey || e.metaKey) &&
-        e.key === "s"
-      ) {
-        e.preventDefault();
-        clearTimeout(debounceTimeout);
-        saveContent(data);
-      }
-
-      // if escape key is pressed, exit fullscreen
-      if (e.key === "Escape") {
-        setFullscreen(false);
-      }
-    };
-
-    document.addEventListener("keydown", handleSaveShortcut);
-
-    return () => {
-      document.removeEventListener("keydown", handleSaveShortcut);
-    };
-  }, [data])
-
   const generatePreview = useCallback(() => {
     try {
       const parser = new DOMParser();
-      const doc = parser.parseFromString(data.content, "text/html");
+      const content = typeof page?.content === 'string' ? page.content : '';
+      const doc = parser.parseFromString(content, "text/html");
       const rootElement = doc.body.children;
       setPreviewElement(Array.from(rootElement));
     } catch (error) {
       console.log(error);
     }
-  }, [setPreviewElement, data.content]);
+  }, [page?.content]);
 
+  // Restore the useEffect for viewMode changes
   useEffect(() => {
     if (viewMode === 0 || viewMode === 2) {
       generatePreview();
     } else {
       setPreviewElement(null);
     }
-  }, [viewMode]);
-
-  // trigger auto save on content change
+  }, [viewMode, generatePreview]);
+  
+  // Preview generation on content changes
   useEffect(() => {
-    // do not attempt auto save if the title and slug of the page are not set
-    if (data?.content && data?.title && data?.slug) {
-      debouncedSaveChanges();
-      debouncedGeneratePreview();
+    // Only regenerate preview when content changes
+    if (page?.content) {
+      const previewTimeout = setTimeout(generatePreview, 500);
+      return () => clearTimeout(previewTimeout);
     }
-  }, [data.content]);
+  }, [page?.content, generatePreview]);
 
-  const validate = () => {
-    let isValid = true;
+  const linkWithSlug = siteUrl ? siteUrl + (isHome ? '' : page.slug || '') : '';
 
-    // Validate title
-    if (!data.title || data.title.trim() === "") {
-      setTitleError("Title is required.");
-      isValid = false;
-    } else {
-      setTitleError(null);
-    }
-
-    // Validate slug (example validation, adjust as needed)
-    if (!data.slug || data.slug.trim() === "") {
-      setSlugError("Slug is required.");
-      isValid = false;
-    } else if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(data.slug)) {
-      setSlugError(
-        "Slug is not valid. Only lowercase alphanumeric characters and hyphens are allowed.",
-      );
-      isValid = false;
-    } else {
-      setSlugError(null);
-    }
-
-    return isValid;
-  };
-
-  const saveContent = async (page: Partial<Page>) => {
-    if (!validate() || inProgress || !page || !page?.id) return;
-
-    setInprogress(true);
-
-    const { title, slug, content } = data;
-
-    try {
-      await updatePage(page.id, { title, slug, content });
-      // call the refreshOnboarding function if it exists
-      if(window?.hasOwnProperty('refreshOnboarding')) {
-        (window as any)['refreshOnboarding']();
-      }
-      // setStatus({ message: "The page was succesfully saved", timeout: 3000 });
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setForceStatusRefresh(!forceStatusRefresh);
-    }
-
-    setInprogress(false);
-  };
-
-  const autoSaveChanges = useCallback(async () => {
-    if (!data || !data?.id) return;
-    console.log('Auto-saving page');
-    await saveContent(data); 
-  }, [data]);
-
-  const debouncedSaveChanges = useCallback(() => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(autoSaveChanges, 2000);
-  }, [data]);
-
-  const debouncedGeneratePreview = useCallback(() => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(generatePreview, 500);
-  }, [data.content]);
-
-  const doDeletePage = async () => {
-    if (inProgress || !page?.id) return;
-
-    setIsDeleting(true);
-    try {
-      const result = (await deletePage(page.id)) as any;
-
-      if (result.error) {
-        setStatus({ message: result.error, color: "red", timeout: 3000 });
-      } else {
-        setStatus({
-          message: "The page was succesfully deleted",
-          timeout: 3000,
-        });
-        router.push(`/site/${site.id}`);
-      }
-    } catch (error) {
-      console.log(error);
-      setStatus({
-        message: "An error occured while deleting the page",
-        color: "red",
-        timeout: 3000,
-      });
-    } finally {
-      setForceStatusRefresh(!forceStatusRefresh);
-    }
-    setIsDeleting(false);
-  };
-
-  const saveButton = (className?: string) => (
-    <Button
-      className={className}
-      loading={inProgress}
-      loadingText="Saving"
-      onClick={() => saveContent(page)}
-    >
-      Save
-    </Button>
-  );
-
-  const deleteButton = (
-    <Button
-      variant="destructive"
-      disabled={inProgress || isDeleting || isHome}
-      loading={isDeleting}
-      loadingText="Deleting"
-      tooltip={isHome ? "Cannot delete the homepage" : undefined}
-      onClick={() => {
-        if (window.confirm("Are you sure you want to delete this page?")) {
-          doDeletePage();
-        }
-      }}
-    >
-      Delete
-    </Button>
-  );
-
-  const doMakeHomepage = async () => {
-    if (inProgress || !page?.siteId || !page?.id) return;
-
-    setIsMakingHomepage(true);
-
-    try {
-      const result = (await setHomepage(page.siteId, page.id)) as any;
-
-      if (result.error) {
-        setStatus({ message: result.error, color: "red", timeout: 3000 });
-      } else {
-        setStatus({
-          message: "The page was promoted to homepage",
-          timeout: 3000,
-        });
-        router.push(`/site/${site.id}`);
-      }
-    } catch (error) {
-      console.log(error);
-      setStatus({
-        message: "An error occured while promoting the page",
-        color: "red",
-        timeout: 3000,
-      });
-    } finally {
-      setForceStatusRefresh(!forceStatusRefresh);
-    }
-    setIsMakingHomepage(false);
-  };
-
-  const makeHomepageButton = (
-    <Button
-      disabled={inProgress || isMakingHomepage || isHome}
-      loading={isDeleting}
-      tooltip={isHome ? "This page is already the homepage" : undefined}
-      className="w-full"
-      onClick={doMakeHomepage}
-    >
-      Set to Homepage
-    </Button>
-  );
-
-  const linkWithSlug = siteUrl + ( isHome ? '' : data.slug )
-  
-  const previewLink = (
-      <div className={`flex ${data.draft ? 'pointer-events-none opacity-50' : ''}`}>
-        <a
-          href={ linkWithSlug }
-          target="_blank"
-          rel="noreferrer"
-          className="truncate rounded-md bg-stone-100 px-2 py-1 text-sm font-medium text-stone-600 transition-colors hover:bg-stone-200"
-        >
-          {linkWithSlug} ↗
-        </a>
-      </div>
-    );
-  
-
-  const lastUpdateDate = new Date(data.updatedAt).toLocaleString("en-US", {
-    month: "long",
-    day: "numeric",
-    year: "numeric",
-    hour: "numeric",
-    minute: "numeric",
-    hour12: true,
-  });
-
-  const preview = (<PreviewFrame>
-    {previewElement
-      ? 
-      renderElement(
+  const preview = (
+    <PreviewFrame>
+      {previewElement
+        ? (
+          renderElement(
             previewElement as Element,
             0,
             site,
@@ -392,8 +118,8 @@ export default function PageEditor({
             true,
             hasActiveFeatures
           )
-      : null}
-  </PreviewFrame>
+        ) : null}
+    </PreviewFrame>
   )
 
   const codeview = (useWithRefs?: boolean) => (
@@ -425,10 +151,10 @@ export default function PageEditor({
             defaultLanguage="html"
             defaultValue=""
             theme="night-dark"
-            value={data.content}
-            onChange={(value) =>
-              setData((data: any) => ({ ...data, content: value }))
-            }
+            value={page.content ?? ""}
+            onChange={(value) => {
+              onContentChange(value || "");
+            }}
             onMount={useWithRefs ? handleEditorDidMount : () => {}}
             options={{
               minimap: {
@@ -440,114 +166,78 @@ export default function PageEditor({
       </div>
     </div>
   );
+
   return (
-    <div className="grid grid-cols-12 gap-2">
+    <>
       {!fullscreen ? (
         <>
-          <div className={clsx("md:col-span-9", fullscreen ? "p-4" : "")}>
-            <div className="mb-4 grid grid-cols-12 gap-2">
-              <div className="space-y-1.5 md:col-span-8">
-                <Label htmlFor="page-title">Page Title</Label>
-                <Input
-                  id="page-title"
-                  placeholder="Title"
-                  className={titleError ? "border-red-500" : ""}
-                  defaultValue={data?.title || ""}
-                  onChange={(e) => {
-                    setTitleError(null);
-                    setData({ ...data, title: e.target.value });
-                  }}
-                />
-                {titleError && (
-                  <p className="text-sm text-red-500">{titleError}</p>
-                )}
-              </div>
-
-              <div className="space-y-1.5 md:col-span-4">
-                <Label htmlFor="page-slug">URL Slug</Label>
-                <Input
-                  id="page-slug"
-                  placeholder="Path"
-                  className={slugError ? "border-red-500" : ""}
-                  defaultValue={data?.slug || ""}
-                  onChange={(e) => {
-                    setSlugError(null);
-                    setSlugVirgin(false);
-                    setData({ ...data, slug: e.target.value });
-                  }}
-                />
-                {slugError && (
-                  <p className="text-sm text-red-500">{slugError}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="mb-2 flex items-center justify-between">
-              <Label>Page Content</Label>
-              {data.slug ? previewLink : null}
-            </div>
-
-            <div className="mb-2 flex items-center justify-between">
-              <Label>Page Status</Label>
-              <Select
-                value={String(data.draft)}
-                onValueChange={(val) => {
-                  const draft = val === "true";
-                  setData({ ...data, draft });
-                  updatePage(data.id, { draft });
-                }}
-                disabled={inProgress || isDeleting}
-              >
-                <SelectTrigger className="w-fit">
-                  <SelectValue placeholder={data.draft ? "Draft" : "Live"} />
-                </SelectTrigger>
-                <SelectContent position="item-aligned">
-                  <SelectItem value="false">Live</SelectItem>
-                  <SelectItem value="true">Draft</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className={clsx("md:col-span-3", fullscreen ? "p-4" : "")}>
-            <Card className="mb-2 p-2 text-sm">
-              <span className="text-stone-500">This page is currently</span>
-              {data.draft ? (
-                <>
-                  {" "}
-                  in{" "}
-                  <Badge size="sm" variant="secondary">
-                    Draft
-                  </Badge>{" "}
-                </>
-              ) : (
-                <>
-                  {" "}
-                  <Badge size="sm" variant="success">
-                    Live
-                  </Badge>{" "}
-                </>
-              )}
-              <span className="text-stone-500">
-                and was last updated on {lastUpdateDate}.
-              </span>
-            </Card>
-
-            {status.message ? (
-              <TimedAlert {...status} refresh={forceStatusRefresh} />
-            ) : null}
-
-            <div>
-              <div className="mb-2">{saveButton("w-full")}</div>
-              <div className="flex gap-2">
-                <div className="mb-2 w-full">{makeHomepageButton}</div>
-                <div className="mb-2">{deleteButton}</div>
-              </div>
-            </div>
+          <div className="mb-10">
+            <table className="w-full">
+              <tbody>
+                <tr>
+                  <td className="w-20 pb-2 align-middle">
+                    <Label htmlFor="page-title">Title</Label>
+                  </td>
+                  <td className="pb-2">
+                    <div className="lg:w-1/2">
+                      <Input
+                        id="page-title"
+                        placeholder="New Page"
+                        className={titleError ? "border-rose-500" : ""}
+                        value={page?.title || ""}
+                        onChange={(e) => onTitleChange(e.target.value)}
+                      />
+                      {titleError && (
+                        <p className="text-sm text-rose-500">{titleError}</p>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="w-20 py-2 align-middle">
+                    <Label htmlFor="page-slug">Slug</Label>
+                  </td>
+                  <td className="py-2">
+                    <div className="lg:w-1/2">
+                      <Input
+                        id="page-slug"
+                        placeholder="new-page"
+                        className={slugError ? "border-rose-500" : ""}
+                        value={page?.slug || ""}
+                        onChange={(e) => onSlugChange(e.target.value)}
+                      />
+                      {slugError && (
+                        <p className="text-sm text-rose-500">{slugError}</p>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <td className="w-20 pt-2 align-middle">
+                    <Label>Live Link</Label>
+                  </td>
+                  <td className="pt-2">
+                    <Button
+                      variant="secondary"
+                      disabled={isDraft || !page.slug}
+                      asChild
+                    >
+                      <Link
+                        href={linkWithSlug}
+                        target="_blank"
+                        className="align-bottom"
+                      >
+                        {linkWithSlug} ↗
+                      </Link>
+                    </Button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </>
       ) : null}
-      <div className="md:col-span-12">
+      <div>
         <Tabs
           defaultValue={
             viewMode === 0 ? "preview" : viewMode === 1 ? "code" : "split"
@@ -555,16 +245,30 @@ export default function PageEditor({
           onValueChange={(value) => {
             setViewMode(value === "preview" ? 0 : value === "code" ? 1 : 2);
           }}
-          className="rounded-md border border-stone-200 bg-white"
+          className="rounded-lg border border-stone-200 bg-white"
         >
           <div className="sticky">
             <div
               className={
-                "relative flex items-center justify-between border-b border-stone-200 bg-stone-100 p-1 pr-2 " +
-                (fullscreen ? "z-10" : "rounded-t-md")
+                "relative flex items-center justify-between border-b border-stone-200 bg-stone-50 p-1 pr-2 " +
+                (fullscreen ? "z-10" : "rounded-t-lg")
               }
             >
-              <TabsList variant="background" className="bg-transparent">
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={() => setFullscreen(!fullscreen)}
+              >
+                {fullscreen ? (
+                  <Minimize size={4} className="text-stone-500" />
+                ) : (
+                  <Maximize size={4} className="text-stone-500" />
+                )}
+              </Button>
+              <TabsList
+                variant="background"
+                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-transparent"
+              >
                 <TabsTrigger
                   variant="background"
                   value="preview"
@@ -591,60 +295,130 @@ export default function PageEditor({
                 </TabsTrigger>
               </TabsList>
 
-              {fullscreen ? (
-                <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                  {data.slug ? previewLink : null}
+              {fullscreen && (
+                <div className="flex gap-2">
+                  {page.slug ? (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      tooltip="See live preview"
+                      asChild
+                    >
+                      <Link href={linkWithSlug} target="_blank">
+                        <SquareArrowOutUpRight />
+                      </Link>
+                    </Button>
+                  ) : null}
+                  <Button
+                    loading={inProgress}
+                    onClick={onSave}
+                    className="gap-0.5"
+                  >
+                    Save
+                    <span className="translate-x-1 text-[10px]/3 font-semibold border border-white/[12%] py-0.5 px-1 rounded bg-white/[6%]">⌘S</span>
+                  </Button>
                 </div>
-              ) : (
-                <></>
               )}
-
-              <div className="flex gap-2">
-                {fullscreen && saveButton()}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setFullscreen(!fullscreen)}
-                >
-                  {fullscreen ? (
-                    <Minimize size={4} className="text-stone-500" />
-                  ) : (
-                    <Maximize size={4} className="text-stone-500" />
-                  )}
-                </Button>
-              </div>
             </div>
           </div>
 
-          <TabsContent value="preview" className="mt-0">
+          <TabsContent
+            value="preview"
+            className={cn(
+              "mt-0",
+              !fullscreen &&
+                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]",
+            )}
+          >
             {preview}
           </TabsContent>
-          <TabsContent value="code" className="mt-0">
+          <TabsContent
+            value="code"
+            className={cn(
+              "mt-0",
+              !fullscreen &&
+                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]",
+            )}
+          >
             {codeview(true)}
           </TabsContent>
-          <TabsContent value="split" className="mt-0">
+          <TabsContent
+            value="split"
+            className={cn(
+              "mt-0",
+              !fullscreen &&
+                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]",
+            )}
+          >
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-1">{preview}</div>
               <div className="col-span-1">
-                <div className="sticky top-0 h-[100vh] w-full">
-                  {codeview(false)}
-                </div>
+                <Editor
+                  height="max(100vh, 90vh)"
+                  defaultLanguage="html"
+                  defaultValue=""
+                  theme="night-dark"
+                  value={page.content ?? ""}
+                  onChange={(value) => {
+                    onContentChange(value || "");
+                  }}
+                  options={{
+                    minimap: {
+                      enabled: false,
+                    },
+                  }}
+                />
               </div>
             </div>
           </TabsContent>
         </Tabs>
       </div>
-    </div>
+    </>
   );
 }
 
 function PreviewFrame({ children }: { children: React.ReactNode }) {
   const wrappingDiv = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState<number>(1);
+  const observerRef = useRef<ResizeObserver | null>(null);
+  
+  useEffect(() => {
+    if (!wrappingDiv.current) return;
+
+    const updateScale = () => {
+      if (wrappingDiv.current) {
+        const frame = wrappingDiv.current;
+        const width = frame.clientWidth;
+        setScale(width / 1600);
+      }
+    };
+
+    // Initialize ResizeObserver
+    observerRef.current = new ResizeObserver((entries) => {
+      // We only have one element being observed
+      if (entries.length > 0) {
+        updateScale();
+      }
+    });
+
+    // Start observing the wrapping div
+    observerRef.current.observe(wrappingDiv.current);
+
+    // Initial scale update
+    updateScale();
+
+    // Cleanup
+    return () => {
+      if (observerRef.current) {
+        observerRef.current.disconnect();
+      }
+    };
+  }, []);
+
+  // Also update scale when children change (content updates)
   useEffect(() => {
     if (wrappingDiv.current) {
-      const frame = wrappingDiv.current;
-      const width = frame.clientWidth;
+      const width = wrappingDiv.current.clientWidth;
       setScale(width / 1600);
     }
   }, [children]);

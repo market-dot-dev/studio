@@ -1,10 +1,9 @@
 import Image from "next/image";
 import GithubLoginButton from "./github-login-button";
-import LoginButton from "@/components/common/login-button";
 import { Suspense } from "react";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import { LOCAL_AUTH_AVAILABLE } from "@/app/config/local-auth";
+import LocalAuthSection from "@/components/login/local-auth-section";
 
 export default async function LoginPage({
   searchParams,
@@ -49,13 +48,7 @@ export default async function LoginPage({
           />
         </Suspense>
 
-        {LOCAL_AUTH_AVAILABLE && (
-          <Suspense>
-            <LoginButton href="/login/local-auth" isLoading={false}>
-              <p>Log in with Local Auth</p>
-            </LoginButton>
-          </Suspense>
-        )}
+        <LocalAuthSection />
       </div>
     </>
   );

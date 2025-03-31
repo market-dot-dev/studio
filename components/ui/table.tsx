@@ -42,7 +42,7 @@ const TableFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <tfoot
     ref={ref}
-    className={cn("bg-primary font-medium text-primary-foreground", className)}
+    className={cn("bg-primary font-semibold text-primary-foreground", className)}
     {...props}
   />
 ))
@@ -70,7 +70,7 @@ const TableHead = React.forwardRef<
   <th
     ref={ref}
     className={cn(
-      "h-11 whitespace-nowrap px-5 py-2.5 text-left align-middle text-xxs/5 font-semibold uppercase tracking-wide [&:has([role=checkbox])]:pr-0",
+      "h-10 whitespace-nowrap px-5 py-2 text-left text-stone-400 align-middle text-xxs/5 font-semibold uppercase tracking-wide [&:has([role=checkbox])]:pr-0",
       className,
     )}
     {...props}

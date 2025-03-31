@@ -87,7 +87,7 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
             loadingText="Saving Changes"
             onClick={saveChanges}
           >
-            Save Changes
+            Save
           </Button>
         </div>
       </div>

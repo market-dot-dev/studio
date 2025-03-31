@@ -11,7 +11,7 @@ import Logo from "@/components/home/logo";
 import Button from '@/components/home/button';
 import { Button as UIButton } from "@/components/ui/button";
 import clsx from "clsx";
-import { Menu, X, Package, Speech, ListCheck, ChevronRight, BookOpenCheck } from "lucide-react";
+import { Menu, X, Package, Speech, ListCheck, ChevronRight, BookOpenCheck, Store } from "lucide-react";
 import { colors } from "@/lib/home/colors";
 import { loginURL, discordURL, blogURL, twitterUrl } from '@/lib/home/social-urls';
 import { motion, AnimatePresence } from "framer-motion";
@@ -253,7 +253,7 @@ export default function Header({ className }: { className?: string }) {
         <div className="mx-auto w-full px-4 lg:max-w-[var(--marketing-max-width)] xl:px-16">
           <div
             className={clsx(
-              "duration-[500ms] relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow ease-in-out",
+              "relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow duration-500 ease-in-out",
               isScrolled && "shadow-border-b",
             )}
           >
@@ -278,7 +278,7 @@ export default function Header({ className }: { className?: string }) {
                 />
               </button>
             </Link>
-            <div className="flex justify-center absolute left-1/2 top-1/2  -translate-x-1/2 -translate-y-1/2 gap-7 max-w-0">
+            <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
               <Link
                 href="/"
                 className="whitespace-nowrap !text-marketing-primary"
@@ -306,9 +306,11 @@ export default function Header({ className }: { className?: string }) {
                   onClick={() => {
                     router.push(dashboardURL);
                   }}
-                  variant="default"
+                  variant="ghost"
+                  className="h-9 w-9 rounded-full bg-marketing-accent !text-sm font-bold tracking-tight text-black hover:bg-marketing-accent-active focus:bg-marketing-accent-active sm:px-3 md:w-auto transition-colors"
                 >
-                  Dashboard
+                  <Store className="!size-5" />
+                  <span className="hidden md:inline">Dashboard</span>
                 </UIButton>
               )}
               {/* Desktop menu button */}
@@ -465,36 +467,40 @@ export default function Header({ className }: { className?: string }) {
                   Twitter
                 </Link>
                 <hr className="border-black/15 sm:hidden" />
+                {isLoading ||
+                  (!signedIn && (
+                    <Link
+                      href={loginURL}
+                      variant="primary"
+                      className="hidden px-2 sm:block"
+                    >
+                      Log in
+                    </Link>
+                  ))}
+              </div>
+              <div className="sticky bottom-0 left-0 right-0 border-t border-black/10 bg-marketing-background p-6">
                 {isLoading || !signedIn ? (
-                  <Link
-                    href={loginURL}
-                    variant="primary"
-                    className="hidden px-2 sm:block"
-                  >
-                    Log in
-                  </Link>
+                  <Button className="w-full">
+                    <Image
+                      src="/github.svg"
+                      alt="github logo"
+                      height={24}
+                      width={24}
+                      className="col-span-2 col-start-1 h-[22px] w-auto xs:h-[18px] md:h-6"
+                    />
+                    Sign up with Github
+                  </Button>
                 ) : (
-                  <UIButton
+                  <Button
                     onClick={() => {
                       router.push(dashboardURL);
                     }}
-                    variant="default"
+                    className="w-full text-sm font-bold tracking-tightish"
                   >
-                    Dashboard
-                  </UIButton>
+                    <Store className="!size-5" />
+                    Go to Dashboard
+                  </Button>
                 )}
-              </div>
-              <div className="sticky bottom-0 left-0 right-0 border-t border-black/10 bg-marketing-background p-6">
-                <Button className="w-full">
-                  <Image
-                    src="/github.svg"
-                    alt="github logo"
-                    height={24}
-                    width={24}
-                    className="col-span-2 col-start-1 h-[22px] w-auto xs:h-[18px] md:h-6"
-                  />
-                  Sign up with Github
-                </Button>
               </div>
             </div>
           </motion.div>

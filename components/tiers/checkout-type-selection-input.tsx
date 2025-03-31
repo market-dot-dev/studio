@@ -1,5 +1,5 @@
 import { TierWithFeatures } from "@/app/services/TierService";
-import { Wallet, Mail } from "lucide-react";
+import { Mail, CreditCard } from "lucide-react";
 import { User } from "@prisma/client";
 import { Tooltip, TooltipTrigger, TooltipProvider, TooltipContent } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
@@ -32,7 +32,7 @@ export default function CheckoutTypeSelectionInput({
         >
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
-              <Wallet className="mr-2.5 size-[18px] text-stone-500" />
+              <CreditCard className="mr-2.5 size-[18px] text-stone-500" />
               <span className="text-left text-sm font-semibold text-stone-800">
                 Standard Checkout
               </span>
@@ -81,7 +81,7 @@ export default function CheckoutTypeSelectionInput({
     <div className="flex flex-col gap-2">
       <GitWalletCheckout />
       <label className="flex h-full w-full rounded focus-within:outline-none">
-        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] hover:bg-stone-50 [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp">
+        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-[background-color,box-shadow] hover:shadow-border [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp">
           <div className="flex h-full w-full items-center justify-between">
             <div className="flex items-center">
               <Mail className="mr-2.5 size-[18px] text-stone-500" />

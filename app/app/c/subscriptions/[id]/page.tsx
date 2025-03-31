@@ -1,4 +1,4 @@
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import { Feature } from "@prisma/client";
 import CancelSubscriptionButton from "../cancel-subscription-button";
 import SubscriptionService from "@/app/services/SubscriptionService";
@@ -54,11 +54,7 @@ const FeatureAction = async ({ feature }: { feature: Feature }) => {
   );
 };
 
-export default async function SubscriptionDetail({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function SubscriptionPage({ params }: { params: { id: string } }) {
   const subscription = await SubscriptionService.findSubscription(params.id);
   if (!subscription) return null;
   const tier = subscription.tier!;
@@ -71,17 +67,23 @@ export default async function SubscriptionDetail({
   );
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-10">
+      <PageHeader
+        title={`${maintainer!.name}: ${tier?.name}`}
+        description={tier?.description || undefined}
+      />
       <div className="flex flex-col space-y-6">
-        <PageHeading title={`${maintainer!.name}: ${tier?.name}`} />
-        <div>{tier?.description}</div>
-
         {cancelled && (
           <>
             <strong>Your subscription has been cancelled.</strong>
             <div>
               You can view and resubscribe to the plan here:{" "}
-              <Link href={resubUrl} className={buttonVariants({ variant: "outline" })}>View Plan</Link>
+              <Link
+                href={resubUrl}
+                className={buttonVariants({ variant: "outline" })}
+              >
+                View Plan
+              </Link>
             </div>
           </>
         )}

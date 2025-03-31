@@ -7,7 +7,7 @@ import UserSelectionStep from "./components/user-selection";
 import EmailCompositionStep from "./components/email-composition";
 import EmailPreviewStep from "./components/email-preview";
 import { User } from "@prisma/client";
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 
 const steps = ["Select Users", "Compose Email", "Preview & Send"];
 
@@ -31,7 +31,7 @@ export default function EmailTool() {
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-6 p-8">
-      <PageHeading title="Bulk Email Tool" />
+      <PageHeader title="Bulk Email Tool" />
       
       <div className="flex justify-between mb-4">
         {steps.map((step, index) => (

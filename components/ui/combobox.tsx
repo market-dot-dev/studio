@@ -90,7 +90,7 @@ export function Combobox<T extends ComboboxItem | Record<string, any>>({
       </PopoverTrigger>
       <PopoverContent className={cn("p-0", popoverClassName)}>
         <Command>
-          <CommandInput placeholder={searchPlaceholder} className="h-8" />
+          <CommandInput placeholder={searchPlaceholder} className="h-9" />
           <CommandList>
             <CommandEmpty>{emptyMessage}</CommandEmpty>
             <CommandGroup>

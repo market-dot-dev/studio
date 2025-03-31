@@ -120,7 +120,7 @@ const TierCard: React.FC<TierCardProps> = ({
         <div>
           <h3
             className={clsx(
-              "mb-1 font-geist text-lg font-semibold",
+              "mb-1 text-lg font-semibold",
               alignment === "center" && "text-center",
               headingClasses,
             )}
@@ -145,7 +145,7 @@ const TierCard: React.FC<TierCardProps> = ({
             )}
           >
             <p className="text-4xl h-fit">
-              <span className="font-geist-mono tracking-tight">
+              <span className="tracking-tight">
                 $
                 {showAnnual
                   ? Math.round((tier.priceAnnual || 0) / 12)

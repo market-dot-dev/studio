@@ -3,7 +3,7 @@ import React from "react";
 import Tier from "@/app/models/Tier";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/ui/data-table";
 import { CustomerTableItem, columns } from "./columns";
 
 export type CustomerWithChargesAndSubscriptions = User & {
@@ -51,7 +51,10 @@ export const CustomersTable: React.FC<{
 
   return (
     <>
-      <DataTable columns={columns} data={visibleData} />
+      <DataTable 
+        columns={columns} 
+        data={visibleData} 
+      />
       
       {!showAll && maxInitialRows && tableData.length > maxInitialRows && (
         <div className="grid justify-items-end">

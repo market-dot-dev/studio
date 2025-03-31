@@ -42,3 +42,6 @@ yarn.lock
 
 # Sentry Config File
 .sentryclirc
+
+# Cursor editor prompt configuration
+.cursorrules

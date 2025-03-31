@@ -1,6 +1,6 @@
 import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
-import PageHeading from "@/components/common/page-heading";
+import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Link from "next/link";
@@ -48,18 +48,21 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
   );
 }
 
-export default async function SubscriptionsList({ params }: { params: { id: string } }) {
+export default async function Charges() {
   const charges = await ChargeService.findCharges() || [];
   const anyCharges = charges.length > 0;
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-12 p-8">
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-10">
+      <PageHeader 
+        title="Your Purchases" 
+        description="All your one-time purchases from market.dev will appear here."
+      />
       <div className="flex flex-col space-y-6">
-        <PageHeading title="Your Purchases" />
-          {charges.map(element => <ChargeCard charge={element} key={element.id} />)}
-          {!anyCharges && <div className="flex flex-col space-y-2">
-            <h2>No purchases</h2>
-          </div>}
+        {charges.map(element => <ChargeCard charge={element} key={element.id} />)}
+        {!anyCharges && <div className="flex flex-col space-y-2">
+          <h2>No purchases</h2>
+        </div>}
       </div>
     </div>
   );

@@ -61,7 +61,7 @@ export default function CustomerNav() {
       <div
         className={`transform ${
           showSidebar ? "w-full translate-x-0" : "-translate-x-full"
-        } fixed z-10 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-3 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-60 sm:translate-x-0`}
+        } fixed z-10 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-3 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-[var(--navWidth)] sm:translate-x-0`}
       >
         <div className="grid gap-2">
           <div className="grid">

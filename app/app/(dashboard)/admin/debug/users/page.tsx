@@ -1,7 +1,7 @@
 import UserService from "@/app/services/UserService";
 import { Card } from "@/components/ui/card";
 import { User, columns } from "./columns";
-import { DataTable } from "./data-table";
+import { DataTable } from "@/components/ui/data-table";
 
 export default async function UsersList() {
 	const users = await UserService.getCustomersMaintainers();
