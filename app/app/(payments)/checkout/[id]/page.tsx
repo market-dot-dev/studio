@@ -95,11 +95,11 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   return (
     <div className="flex min-h-screen flex-col text-stone-800 lg:flex-row">
       {/* Left Column */}
-      <div className="left-0 top-0 flex h-full w-full flex-col justify-between gap-6 bg-stone-200/70 p-6 pb-9 pt-4 sm:pt-6 sm:gap-12 sm:px-9 lg:fixed lg:w-2/5 xl:p-16 xl:pt-12">
+      <div className="left-0 top-0 flex h-full w-full flex-col justify-between gap-6 bg-stone-200/80 p-6 pb-9 pt-4 sm:gap-12 sm:px-9 sm:pt-6 lg:fixed lg:w-2/5 xl:p-16 xl:pt-12">
         <div className="flex flex-col gap-9 lg:gap-12">
           <div className="flex items-center gap-3">
-            <div className="flex size-7 xl:size-8 items-center justify-center rounded-full bg-gradient-to-b from-stone-800/90 to-stone-800 text-white/85">
-              <Store size={18} className="h-[15px] xl:h-[18px]" />
+            <div className="flex size-7 items-center justify-center rounded-full bg-gradient-to-b from-stone-800/90 to-stone-800 text-white/85">
+              <Store size={18} className="h-[15px]" />
             </div>
             {isEffectiveMaintainerLoading ? (
               <Skeleton className="h-5 w-36" />
@@ -111,11 +111,11 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
           </div>
 
           <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2 xl:gap-3">
               {isTierLoading ? (
                 <Skeleton className="mb-1 h-6 w-full max-w-48 xl:h-7" />
               ) : (
-                <span className="text-lg font-semibold text-stone-500 xl:text-xl/8">
+                <span className="text-md font-semibold text-stone-500 xl:text-xl/8">
                   {checkoutTier} {isAnnual ? "(annual)" : ""}
                 </span>
               )}
@@ -152,8 +152,10 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                     trialOffered && tier?.cadence !== "once" ? (
                       <p className="mt-1 text-sm font-semibold tracking-tightish text-stone-500 xl:text-base">
                         Starts with a{" "}
-                        <span className="text-stone-800 underline decoration-dotted underline-offset-4 decoration-stone-400">{trialDays} day</span> free
-                        trial
+                        <strong className="font-bold text-stone-800">
+                          {trialDays} day
+                        </strong>{" "}
+                        free trial
                       </p>
                     ) : null
                   ) : (
@@ -187,16 +189,14 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                       if (section.text) {
                         return (
                           <div key={dex}>
-                            {section.text.map(
-                              (text: string, index: number) => (
-                                <p
-                                  key={index}
-                                  className="max-w-prose text-pretty text-sm text-stone-500"
-                                >
-                                  {text}
-                                </p>
-                              ),
-                            )}
+                            {section.text.map((text: string, index: number) => (
+                              <p
+                                key={index}
+                                className="max-w-prose text-pretty text-sm text-stone-500"
+                              >
+                                {text}
+                              </p>
+                            ))}
                           </div>
                         );
                       }
@@ -219,7 +219,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
         </div>
-        <p className="absolute right-6 top-5 sm:top-7 inline-flex gap-2 text-sm font-semibold tracking-tight text-stone-500 sm:right-9 lg:static">
+        <p className="absolute right-6 top-5 inline-flex gap-2 text-sm font-semibold tracking-tight text-stone-500 sm:right-9 sm:top-7 lg:static">
           <span className="hidden sm:inline">Powered by</span>
           <Link href="https://market.dev" target="_blank">
             <Image

@@ -41,8 +41,12 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
   };
 
   return (
-    <div className="lg:max-w-md mx-auto flex flex-col items-center w-full gap-9">
-      <form className="flex flex-col gap-9 w-full" onSubmit={handleSubmit}>
+    <div className="mx-auto flex w-full flex-col items-center gap-9 lg:max-w-md">
+      <form className="flex w-full flex-col gap-9" onSubmit={handleSubmit}>
+        <div className="flex w-full flex-col gap-2">
+          <Label htmlFor="name">Name</Label>
+          <Input id="name" name="name" placeholder="Enter your name" required />
+        </div>
         <div className="flex w-full flex-col gap-2">
           <Label htmlFor="email">Email</Label>
           <Input
@@ -50,15 +54,6 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
             name="email"
             type="email"
             placeholder="Enter your email"
-            required
-          />
-        </div>
-        <div className="flex w-full flex-col gap-2">
-          <Label htmlFor="name">Name</Label>
-          <Input
-            id="name"
-            name="name"
-            placeholder="Enter your name"
             required
           />
         </div>

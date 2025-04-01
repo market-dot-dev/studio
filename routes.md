@@ -1,5 +1,5 @@
 # Next.js Routes Map
-# Generated on 2025-03-20T14:58:02.892Z
+# Generated on 2025-04-01T20:57:27.504Z
 
 > Note: Routes marked with "via middleware" are rewritten or redirected by middleware.ts
 
@@ -19,6 +19,8 @@ GET     /app/(dashboard)/admin/debug/stripe-debug # app/(dashboard)/admin/debug/
 GET     /app/(dashboard)/admin/debug/stripe-migration # app/(dashboard)/admin/debug/stripe-migration/page.tsx
 GET     /app/(dashboard)/admin/debug/users       # app/(dashboard)/admin/debug/users/page.tsx
 GET     /app/(dashboard)/admin/tiers/:id         # app/(dashboard)/admin/tiers/[id]/page.tsx
+GET     /app/(dashboard)/admin/users             # app/(dashboard)/admin/users/page.tsx
+GET     /app/(dashboard)/admin/users/:id         # app/(dashboard)/admin/users/[id]/page.tsx
 GET     /app/(dashboard)/channels/embeds         # app/(dashboard)/channels/embeds/page.tsx
 GET     /app/(dashboard)/channels/market         # app/(dashboard)/channels/market/page.tsx
 GET     /app/(dashboard)/contracts               # app/(dashboard)/contracts/page.tsx
@@ -41,7 +43,6 @@ GET     /app/(dashboard)/settings                # app/(dashboard)/settings/page
 GET     /app/(dashboard)/settings/payment        # app/(dashboard)/settings/payment/page.tsx
 GET     /app/(dashboard)/settings/project        # app/(dashboard)/settings/project/page.tsx
 GET     /app/(dashboard)/settings/repos          # app/(dashboard)/settings/repos/page.tsx
-GET     /app/(dashboard)/settings/site           # app/(dashboard)/settings/site/page.tsx
 GET     /app/(dashboard)/site/:id                # app/(dashboard)/site/[id]/page.tsx
 GET     /app/(dashboard)/site/:id/analytics      # app/(dashboard)/site/[id]/analytics/page.tsx
 GET     /app/(dashboard)/subscriptions           # app/(dashboard)/subscriptions/page.tsx

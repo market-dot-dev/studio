@@ -39,7 +39,7 @@ export default function ChannelsSelectionInput({
       </label>
       {userIsMarketExpert && (
         <label htmlFor={`${idPrefix}channel-market`} className="block h-full w-full">
-          <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-swamp hover:bg-stone-50">
+          <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-swamp hover:shadow-border">
             <div className="flex h-full w-full items-center justify-between">
               <div className="flex items-center">
                 <ShoppingBag className="mr-2.5 size-[18px] text-stone-500" />
@@ -56,7 +56,7 @@ export default function ChannelsSelectionInput({
               />
             </div>
             <p className="text-left text-xs leading-4 text-stone-500">
-              List your package for sale on your Market.dev expert page
+              List your package for sale on your market.dev expert page
             </p>
           </div>
         </label>
