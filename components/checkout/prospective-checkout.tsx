@@ -63,16 +63,16 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
           />
         </div>
         <div className="flex w-full flex-col gap-2">
-          <Label htmlFor="organization">Organization</Label>
+          <Label htmlFor="organization">Company</Label>
           <Input
             id="organization"
             name="organization"
-            placeholder="Enter your organization name"
+            placeholder="Enter your company name"
             required
           />
         </div>
         <div className="flex w-full flex-col gap-2">
-          <Label htmlFor="context">Additional Context</Label>
+          <Label htmlFor="context">Notes</Label>
           <Textarea
             id="context"
             name="context"

@@ -11,7 +11,7 @@ import OTPInputElement from "./otp-input-element"
 import useCurrentSession from "@/app/hooks/use-current-session";
 import { cn } from "@/lib/utils";
 import { Card } from "../ui/card";
-import { User, UserRoundCheck } from "lucide-react";
+import { UserRoundCheck } from "lucide-react";
 
 // usign a local variable to avoid state update delays
 
@@ -159,14 +159,14 @@ export function CustomerLoginComponent({ redirect, signup = false } : { redirect
     return (
       <>
         {currentUser ? (
-          <Card className="flex w-full justify-between gap-4 p-4">
-            <div className="flex gap-3">
-              <UserRoundCheck className="h-6 w-6 shrink-0 text-stone-500" />
-              <div className="text-medium flex flex-wrap gap-x-2 text-sm font-medium tracking-tightish text-stone-500">
+          <Card className="flex w-full items-center justify-between gap-4 px-5 py-4 min-h-[60px]">
+            <div className="flex items-start gap-3">
+              <UserRoundCheck className="h-5 w-5 shrink-0 text-stone-500 my-0.5" />
+              <div className="text-medium flex flex-wrap items-baseline gap-x-2 text-sm font-medium tracking-tightish text-stone-500 self-center">
                 <span className="text-base font-bold text-stone-800">
                   {currentUser.name}
                 </span>
-                <span className="align-middle leading-6">
+                <span className="leading-6 truncate">
                   {currentUser.email}
                 </span>
               </div>

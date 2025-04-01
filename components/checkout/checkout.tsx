@@ -10,6 +10,7 @@ import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
 import Tier from "@/app/models/Tier";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 import { getRootUrl } from "@/lib/domain";
+import { Separator } from "../ui/separator";
 
 const checkoutCurrency = "USD";
 
@@ -95,20 +96,21 @@ export default function RegistrationCheckoutSection({
     return <AlreadySubscribedCard />;
   } else
     return (
-      <div className="mx-auto flex w-full flex-col gap-12 lg:max-w-lg">
+      <div className="mx-auto flex w-full flex-col gap-9 lg:max-w-lg">
         <section>
-          <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-stone-800">
+          <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">
             Account
           </h2>
           <CustomerLoginComponent signup={true} />
         </section>
 
+        <Separator />
+
         <section>
-          <h2 className="mb-6 border-b pb-2 text-2xl font-bold text-stone-800">
+          <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">
             Payment
           </h2>
-          <Card className="p-4">
-            {error && <div className="mb-4 text-red-500">{error}</div>}
+          <Card className="p-5 min-h-[60px]">
             {maintainer.stripeAccountId && (
               <UserPaymentMethodWidget
                 loading={submittingPayment}
@@ -118,6 +120,7 @@ export default function RegistrationCheckoutSection({
                 maintainerStripeAccountId={maintainer.stripeAccountId}
               />
             )}
+            {error && <div className="mt-4 text-red-600">{error}</div>}
           </Card>
         </section>
 
@@ -133,19 +136,20 @@ export default function RegistrationCheckoutSection({
             size="lg"
             onClick={() => setLoading(true)}
           >
-            {tier.cadence === "once" 
+            {tier.cadence === "once"
               ? `Pay $${checkoutPrice} ${checkoutCurrency}`
               : tier.trialDays && tier.trialDays !== 0
                 ? "Start your free trial"
-                : `Pay $${checkoutPrice} ${checkoutCurrency}`
-            }
+                : `Pay $${checkoutPrice} ${checkoutCurrency}`}
           </Button>
           {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 ? (
             <p className="mt-6 text-pretty text-center text-xs font-medium tracking-tightish text-stone-500">
               You won&apos;t be charged now. After your{" "}
-              <strong>{tier.trialDays} day</strong> trial, your card will be
-              charged{" "}
-              <strong className="tracking-tight text-stone-800">{`${checkoutCurrency} $${checkoutPrice}`}</strong>
+              <strong className="text-stone-800">
+                {tier.trialDays} day trial
+              </strong>
+              , your card will be charged{" "}
+              <strong className="text-stone-800">{`${checkoutCurrency} $${checkoutPrice}`}</strong>
               .
             </p>
           ) : null}

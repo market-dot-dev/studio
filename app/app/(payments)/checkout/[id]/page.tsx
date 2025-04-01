@@ -95,11 +95,11 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   return (
     <div className="flex min-h-screen flex-col text-stone-800 lg:flex-row">
       {/* Left Column */}
-      <div className="left-0 top-0 flex h-full w-full flex-col justify-between gap-6 bg-stone-200/70 p-6 pb-9 pt-6 sm:gap-12 sm:px-9 lg:fixed lg:w-1/2 lg:p-16 lg:pt-12 xl:w-2/5">
+      <div className="left-0 top-0 flex h-full w-full flex-col justify-between gap-6 bg-stone-200/70 p-6 pb-9 pt-4 sm:pt-6 sm:gap-12 sm:px-9 lg:fixed lg:w-2/5 xl:p-16 xl:pt-12">
         <div className="flex flex-col gap-9 lg:gap-12">
           <div className="flex items-center gap-3">
-            <div className="flex size-8 items-center justify-center rounded-full bg-gradient-to-b from-stone-800/90 to-stone-800 text-white/85">
-              <Store size={18} />
+            <div className="flex size-7 xl:size-8 items-center justify-center rounded-full bg-gradient-to-b from-stone-800/90 to-stone-800 text-white/85">
+              <Store size={18} className="h-[15px] xl:h-[18px]" />
             </div>
             {isEffectiveMaintainerLoading ? (
               <Skeleton className="h-5 w-36" />
@@ -110,12 +110,12 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
             )}
           </div>
 
-          <div className="flex flex-col gap-9">
-            <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-6">
+            <div className="flex flex-col gap-3">
               {isTierLoading ? (
                 <Skeleton className="mb-1 h-6 w-full max-w-48 xl:h-7" />
               ) : (
-                <span className="text-xl font-semibold text-stone-500 xl:text-2xl">
+                <span className="text-lg font-semibold text-stone-500 xl:text-xl/8">
                   {checkoutTier} {isAnnual ? "(annual)" : ""}
                 </span>
               )}
@@ -139,110 +139,87 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                       )}
                     </>
                   ) : (
-                    "Get in touch"
+                    <span className="-ml-0.5">Get in touch</span>
                   )}
                 </h1>
               )}
 
               {isTierLoading ? (
-                <Skeleton className="mt-2 h-5 w-3/4 xl:h-6" />
+                <Skeleton className="mt-1 h-5 w-3/4 xl:h-6" />
               ) : (
                 <>
                   {checkoutType === "gitwallet" ? (
                     trialOffered && tier?.cadence !== "once" ? (
-                      <p className="mt-2 text-sm font-medium tracking-tightish text-stone-500 xl:text-base">
+                      <p className="mt-1 text-sm font-semibold tracking-tightish text-stone-500 xl:text-base">
                         Starts with a{" "}
-                        <span className="font-bold">{trialDays} day</span> free
+                        <span className="text-stone-800 underline decoration-dotted underline-offset-4 decoration-stone-400">{trialDays} day</span> free
                         trial
                       </p>
                     ) : null
                   ) : (
-                    <p className="mt-2 text-sm font-medium text-stone-500 xl:text-base">
-                      Please provide your details so we can get in touch with
-                      you.
+                    <p className="mt-1 text-sm font-medium text-stone-500 xl:text-base">
+                      Please provide your details so we can reach out.
                     </p>
                   )}
                 </>
               )}
             </div>
 
-            <div className="flex flex-col gap-6">
-              {!isTierLoading && checkoutType !== "gitwallet" && (
+            <div className="flex flex-col gap-6 overflow-y-scroll">
+              {isEffectiveFeaturesLoading ? (
+                <div className="space-y-3">
+                  <Skeleton className="h-5 w-full" />
+                  <Skeleton className="h-5 w-5/6" />
+                  <Skeleton className="h-5 w-4/6" />
+                  <Skeleton className="h-5 w-3/4" />
+                </div>
+              ) : hasActiveFeatures && tierFeatures.length !== 0 ? (
+                <>
+                  <Separator className="bg-stone-300/50" />
+                  <TierFeatureList features={tierFeatures} />
+                </>
+              ) : (
                 <>
                   <Separator className="bg-stone-300/50" />
 
-                  <div className="flex flex-col gap-1 text-stone-500">
-                    <p className="text-lg font-bold tracking-tightish text-stone-800 xl:text-xl">
-                      {checkoutCurrency +
-                        " " +
-                        checkoutCurrencySymbol +
-                        checkoutPrice}
-                      {checkoutCadence !== "once" ? (
-                        <span className="font-semibold text-stone-500/85">
-                          /{shortenedCadence}
-                        </span>
-                      ) : null}
-                    </p>
-                    {trialOffered && tier?.cadence !== "once" && (
-                      <p className="text-sm font-medium tracking-tightish">
-                        Starts with a{" "}
-                        <span className="font-bold">{trialDays} day</span> free
-                        trial
-                      </p>
-                    )}
-                  </div>
+                  {!isTierLoading &&
+                    parsedDescription.map((section, dex) => {
+                      if (section.text) {
+                        return (
+                          <div key={dex}>
+                            {section.text.map(
+                              (text: string, index: number) => (
+                                <p
+                                  key={index}
+                                  className="max-w-prose text-pretty text-sm text-stone-500"
+                                >
+                                  {text}
+                                </p>
+                              ),
+                            )}
+                          </div>
+                        );
+                      }
 
-                  <Separator className="bg-stone-300/50" />
+                      return (
+                        <TierFeatureList
+                          key={dex}
+                          features={section.features.map(
+                            (feature: string, index: number) => ({
+                              id: `${index}`,
+                              name: feature,
+                              isEnabled: true,
+                            }),
+                          )}
+                        />
+                      );
+                    })}
                 </>
               )}
-
-              <div className="mb-4 flex flex-col gap-4 overflow-y-scroll">
-                {isEffectiveFeaturesLoading ? (
-                  <div className="space-y-3">
-                    <Skeleton className="h-5 w-full" />
-                    <Skeleton className="h-5 w-5/6" />
-                    <Skeleton className="h-5 w-4/6" />
-                    <Skeleton className="h-5 w-3/4" />
-                  </div>
-                ) : hasActiveFeatures && tierFeatures.length !== 0 ? (
-                  <TierFeatureList features={tierFeatures} />
-                ) : (
-                  !isTierLoading &&
-                  parsedDescription.map((section, dex) => {
-                    if (section.text) {
-                      return (
-                        <div key={dex}>
-                          {section.text.map((text: string, index: number) => (
-                            <p
-                              key={index}
-                              className="max-w-prose text-pretty text-sm text-stone-500"
-                            >
-                              {text}
-                            </p>
-                          ))}
-                        </div>
-                      );
-                    }
-
-                    return (
-                      <TierFeatureList
-                        key={dex}
-                        features={section.features.map(
-                          (feature: string, index: number) => ({
-                            id: `${index}`,
-                            name: feature,
-                            isEnabled: true,
-                          }),
-                        )}
-                      />
-                    );
-                  })
-                )}
-              </div>
             </div>
           </div>
         </div>
-        <p className="absolute right-6 top-8 inline-flex gap-2 text-sm font-semibold tracking-tight text-stone-500 sm:right-9 lg:static">
+        <p className="absolute right-6 top-5 sm:top-7 inline-flex gap-2 text-sm font-semibold tracking-tight text-stone-500 sm:right-9 lg:static">
           <span className="hidden sm:inline">Powered by</span>
           <Link href="https://market.dev" target="_blank">
             <Image
@@ -257,7 +234,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
       </div>
 
       {/* Right Column */}
-      <div className="ml-auto flex min-h-[80vh] w-full flex-col items-center overflow-y-auto bg-stone-100 px-6 py-9 text-stone-800 sm:p-9 lg:w-1/2 lg:p-16 lg:pt-32 xl:w-3/5">
+      <div className="ml-auto flex min-h-[80vh] w-full flex-col items-center overflow-y-auto bg-stone-100 px-6 py-9 text-stone-800 sm:p-9 lg:w-3/5 lg:p-16 lg:pt-32">
         {isEffectiveMaintainerLoading || isEffectiveContractLoading ? (
           <div className="mx-auto mt-1 flex w-full flex-col items-start gap-6 opacity-50 lg:max-w-lg">
             <div className="w-full space-y-4">

@@ -98,9 +98,7 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
 
   return (
     <>
-      <br />
       <CardElementComponent />
-      <br />
     </>
   );
 };
