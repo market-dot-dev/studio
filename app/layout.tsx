@@ -1,5 +1,6 @@
 import "@/styles/globals.css";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Providers } from "./providers";
 import { Metadata } from "next";
 import "@radix-ui/themes/styles.css";
@@ -43,6 +44,7 @@ export default function RootLayout({
       <body className="font-sans">
         <Providers>
           {children}
+          <SpeedInsights />
           <Analytics />
         </Providers>
       </body>
