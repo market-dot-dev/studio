@@ -1,45 +1,70 @@
-import React from "react";
+"use client";
+
+import React, { useState } from "react";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./columns";
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import ProspectService from "@/app/services/prospect-service";
+import MockProspectService from "@/app/services/MockProspectService";
+import { useEffect } from "react";
+import Prospect from "@/app/models/Prospect";
 
-export default async function ProspectsPage() {
-  const session = await getSession();
+export default function ProspectsPage() {
+  const [prospects, setProspects] = useState<Prospect[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  if (!session) {
-    redirect("/login");
+  useEffect(() => {
+    const fetchProspects = async () => {
+      setLoading(true);
+      try {
+        const data = await MockProspectService.getAllProspects();
+        setProspects(data);
+      } catch (error) {
+        console.error("Error fetching prospects:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProspects();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex max-w-screen-xl flex-col space-y-10">
+        <PageHeader
+          title="Prospects"
+          description="View all prospects who have submitted an interest in your products."
+        />
+        <div className="flex justify-center py-10">
+          <div className="w-10 h-10 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
+        </div>
+      </div>
+    );
   }
-
-  const prospects = await ProspectService.getProspects(session.user.id);
-
-  // This is the full prospects page, so we don't need to limit the rows
-  // but we're preserving the logic from the original component
-  const showAll = true; // Set to true since this is the full prospects page
-  const maxInitialRows = undefined; // No need to limit rows on the full page
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-10">
       <PageHeader
         title="Prospects"
-        description="View all prospects who have submitted an interest on one of your packages."
+        description="View all prospects who have submitted an interest in your products."
+        actions={[
+          <Button key="add-prospect" variant="default" asChild>
+            <Link href="/prospects/new">
+              Add Prospect
+            </Link>
+          </Button>,
+        ]}
       />
       
-      <DataTable columns={columns} data={prospects} />
-      
-      {!showAll && maxInitialRows && prospects.length > maxInitialRows && (
-        <div className="grid justify-items-end mt-4">
-          <Link href="/prospects">
-            <Button size="sm" variant="outline">
-              View All Prospects →
-            </Button>
-          </Link>
-        </div>
-        )}
+      <DataTable 
+        columns={columns} 
+        data={prospects}
+        isLoading={loading}
+        noResults="No prospects found"
+        className="bg-transparent shadow-none"
+      />
     </div>
   );
 }

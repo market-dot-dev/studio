@@ -1,18 +1,18 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { Prospect } from "@prisma/client"
-import Tier from "@/app/models/Tier"
 import { formatDate } from "@/lib/utils"
 import Link from "next/link"
+import Prospect from "@/app/models/Prospect"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Eye, Package } from "lucide-react"
+import Spinner from "@/components/ui/spinner"
 
-// Define the shape of our data
-export type ProspectWithTier = Prospect & { tier: Tier }
-
-export const columns: ColumnDef<ProspectWithTier>[] = [
+export const columns: ColumnDef<Prospect>[] = [
   {
     accessorKey: "createdAt",
-    header: "Submitted On",
+    header: "Reached out",
     cell: ({ row }) => {
       return formatDate(row.original.createdAt)
     },
@@ -20,41 +20,90 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
   {
     accessorKey: "name",
     header: "Name",
+    cell: ({ row }) => {
+      const status = row.original.qualificationStatus;
+
+      return (
+        <div className="flex w-fit flex-col">
+          <div className="flex w-fit items-center gap-1.5">
+            <Link
+              href={`/prospects/${row.original.id}`}
+              className="hover:underline"
+            >
+              {row.original.name}
+            </Link>
+            {status === "qualified" ? (
+              <Badge variant="success" size="sm">
+                Qualified
+              </Badge>
+            ) : status === "disqualified" ? (
+              <Badge variant="secondary" size="sm">
+                Disqualified
+              </Badge>
+            ) : (
+              <Badge variant="secondary" size="sm" className="gap-1">
+                <Spinner className="h-2.5 w-2.5" strokeWidth={2.5} />
+                Qualifying
+              </Badge>
+            )}
+          </div>
+          <span className="text-xs font-normal text-stone-500">
+            {row.original.email}
+          </span>
+        </div>
+      );
+    },
     meta: {
       emphasized: true
     }
   },
   {
-    accessorKey: "email",
-    header: "Email",
+    accessorKey: "company",
+    header: "Company",
     cell: ({ row }) => {
-      return <a href={`mailto:${row.original.email}`}>{row.original.email}</a>
-    },
-  },
-  {
-    accessorKey: "organization",
-    header: "Organization",
-  },
-  {
-    accessorKey: "tier",
-    header: "Package",
-    cell: ({ row }) => {
-      const tier = row.original.tier;
-      if (!tier) {
-        return <span>Unknown Package</span>;
-      }
+      const company = row.original.company || "—";
+      const jobTitle = row.original.jobTitle;
+      
       return (
-        <Link href={`/tiers/${tier.id}`} target="_blank">
-          {tier.name}
-        </Link>
+        <div className="flex flex-col">
+          <span className="font-medium text-stone-800">{company}</span>
+          <span className="text-xs font-normal text-stone-500">
+            {jobTitle || "—"}
+          </span>
+        </div>
+      );
+    }
+  },
+  {
+    accessorKey: "interestedPackage",
+    header: "Interested In",
+    cell: ({ row }) => {
+      return (
+        <div className="flex items-center gap-1.5 font-medium text-stone-800">
+          {row.original.interestedPackage ? (
+            <>
+              <Package size={15} />
+              {row.original.interestedPackage}
+            </>
+          ) : "—"}
+        </div>
       );
     },
   },
   {
-    accessorKey: "context",
-    header: "Details",
+    id: "actions",
+    header: "Actions",
     cell: ({ row }) => {
-      return row.original.context || "No context provided."
+      return (
+        <div className="flex justify-end">
+          <Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0">
+            <Link href={`/prospects/${row.original.id}`}>
+              <Eye className="h-4 w-4" />
+              <span className="sr-only">View prospect</span>
+            </Link>
+          </Button>
+        </div>
+      );
     },
   },
 ] 
