@@ -23,16 +23,18 @@ export default function NewTierModal({ children, multiple }: { children: React.R
         <DialogTrigger className={buttonVariants({ variant: "default" })}>
           {children}
         </DialogTrigger>
-        <DialogContent className="max-h-[80vh] w-full max-w-none overflow-hidden md:max-w-screen-lg p-6 pt-5 md:p-7 md:pt-6 gap-6 md:gap-9">
-          <DialogHeader>
+        <DialogContent className="max-h-[80vh] w-full max-w-none overflow-hidden md:max-w-screen-md p-6 pt-5 md:p-7 md:pt-6 gap-6 md:gap-9 flex flex-col">
+          <DialogHeader className="bg-transparent !bg-gradient-to-b from-white">
             <DialogTitle className="text-lg md:text-xl">
               Create{multiple ? "" : " a"} new package{multiple ? "s" : ""}
             </DialogTitle>
           </DialogHeader>
-          <TiersTemplatesModal
-            hide={() => setOpen(false)}
-            multiple={multiple}
-          />
+          <div className="flex-1 overflow-y-auto">
+            <TiersTemplatesModal
+              hide={() => setOpen(false)}
+              multiple={multiple}
+            />
+          </div>
         </DialogContent>
       </Dialog>
     </>
@@ -115,12 +117,12 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
 
 	return (
     <>
-      <div className="flex grow flex-col items-stretch justify-start gap-6 overflow-y-auto">
+      <div className="flex flex-col items-stretch justify-start gap-9">
         {categorizedTiers.map((category, cIndex) => (
-          <div className="flex flex-col gap-2" key={cIndex}>
-            <div className="flex gap-1 items-center w-full">
-              <h2 className="text-sm font-semibold">{category.name}</h2>
-              <hr/>
+          <div className="flex flex-col gap-4" key={cIndex}>
+            <div className="flex gap-1 items-center w-full sticky top-0 z-10">
+              <h2 className="text-xs font-semibold text-stone-500 uppercase tracking-wide">{category.name}</h2>
+              <hr className="w-full" />
             </div>
             <div className="grid w-full grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 overflow-y-auto">
               {category.tiers.map(({ metaDescription, data: tier }, index) => {
@@ -162,7 +164,7 @@ function TiersTemplatesModal({hide, multiple}: { hide: () => void, multiple?: bo
                         <foreignObject
                           width="320"
                           height="400"
-                          className="pointer-events-none overflow-visible"
+                          className="pointer-events-none overflow-visible "
                         >
                           <TierCard tier={tier as any}>
                             <></>
