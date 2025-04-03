@@ -64,12 +64,14 @@ export default async function DashboardLayout({
             {user?.stripeAccountDisabled && user?.stripeAccountId && (
               <StripeDisabledBanner />
             )}
-            <div className="flex w-full max-w-screen-xl flex-col items-center space-y-4 p-6 sm:p-10 sm:pt-8">
+            <div className="flex w-full flex-col items-center">
               {!onboarding.isDismissed && !showOnboardingModal && (
-                <OnboardingChecklist />
+                <OnboardingChecklist className="w-full max-w-screen-xl p-6 sm:p-10 sm:pt-8" />
               )}
-              <div className="relative flex w-full flex-col gap-8">
-                {children}
+              <div className="relative flex w-full flex-col">
+                <div className="w-full max-w-screen-xl p-6 sm:p-10 sm:pt-8 space-y-4">
+                  {children}
+                </div>
               </div>
             </div>
           </div>

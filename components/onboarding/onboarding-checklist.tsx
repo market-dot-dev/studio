@@ -13,7 +13,7 @@ import {
 import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { useSiteId } from "../dashboard/dashboard-context";
 import { Check, X, ChevronRight, Goal } from "lucide-react";
-import clsx from "clsx";
+import { cn } from "@/lib/utils";
 
 function calculateCompletionPercentage(completedSteps: OnboardingStepsType): number {
   if (!completedSteps) return 0;
@@ -116,7 +116,7 @@ function TodoItem({
 
   return (
     <>
-      <div className={clsx("flex w-full flex-row items-center gap-4 p-4 py-2")}>
+      <div className={cn("flex w-full flex-row items-center gap-4 p-4 py-2")}>
         <div className="flex h-5 items-center">
           {completed ? (
             <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-marketing-swamp ring-4 ring-white">
@@ -129,8 +129,8 @@ function TodoItem({
         <div className="flex flex-col lg:flex-row w-full items-start lg:items-center justify-between gap-x-8 gap-y-1">
           <div className="flex flex-col items-start">
             <strong 
-              className={clsx(
-                "new-bold-tag w-fit text-sm cursor-pointer",
+              className={cn(
+                "w-fit text-sm cursor-pointer",
                 completed ? "text-stone-500" : "text-stone-800 hover:text-stone-700",
               )}
               onClick={navigateToStep}
@@ -160,7 +160,7 @@ function TodoItem({
   );
 }
 
-export default function OnboardingChecklist({ variant = "default" }: { variant?: "default" | "mini" }): JSX.Element {
+export default function OnboardingChecklist({ className, variant = "default" }: { className?: string, variant?: "default" | "mini" }): JSX.Element {
   const pathName = usePathname();
   const [onboardingState, setOnboardingState] =
     useState<OnboardingState | null>(null);
@@ -223,7 +223,7 @@ export default function OnboardingChecklist({ variant = "default" }: { variant?:
   if (!isHomepage) return <></>;
 
   return (
-    <div className="mb-6 flex w-full flex-col items-start rounded-lg bg-white shadow-border">
+    <div className={cn("mb-6 flex w-full flex-col items-start rounded-lg bg-white shadow-border", className)}>
       <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-stone-200 bg-stone-50 py-2.5 pl-4 pr-2.5">
         <div className="flex items-center gap-4">
           <Goal size={16} className="text-stone-500" />

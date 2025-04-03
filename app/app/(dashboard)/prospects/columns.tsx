@@ -4,10 +4,9 @@ import { ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "@/lib/utils"
 import Link from "next/link"
 import Prospect from "@/app/models/Prospect"
-import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Eye, Package } from "lucide-react"
-import Spinner from "@/components/ui/spinner"
+import { QualificationBadge } from "@/components/prospects/qualification-badge"
 
 export const columns: ColumnDef<Prospect>[] = [
   {
@@ -32,20 +31,7 @@ export const columns: ColumnDef<Prospect>[] = [
             >
               {row.original.name}
             </Link>
-            {status === "qualified" ? (
-              <Badge variant="success" size="sm">
-                Qualified
-              </Badge>
-            ) : status === "disqualified" ? (
-              <Badge variant="secondary" size="sm">
-                Disqualified
-              </Badge>
-            ) : (
-              <Badge variant="secondary" size="sm" className="gap-1">
-                <Spinner className="h-2.5 w-2.5" strokeWidth={2.5} />
-                Qualifying
-              </Badge>
-            )}
+            <QualificationBadge status={status} size="sm" />
           </div>
           <span className="text-xs font-normal text-stone-500">
             {row.original.email}
@@ -80,17 +66,13 @@ export const columns: ColumnDef<Prospect>[] = [
     cell: ({ row }) => {
       return (
         <div className="flex items-center gap-1.5 font-medium text-stone-800">
-          {row.original.interestedPackage ? (
-            <>
-              <Package size={15} />
-              {row.original.interestedPackage}
-            </>
-          ) : "—"}
+          {row.original.interestedPackage || "—"}
         </div>
       );
     },
   },
   {
+    
     id: "actions",
     header: "Actions",
     cell: ({ row }) => {

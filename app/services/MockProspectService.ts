@@ -1,4 +1,4 @@
-import Prospect, { ProspectData, QualificationStatus } from "../models/Prospect";
+import Prospect, { ProspectData, QualificationStatus, TimelineActivity, CompanyData } from "../models/Prospect";
 
 // Mock prospect database
 const mockProspects: ProspectData[] = [
@@ -12,11 +12,50 @@ const mockProspects: ProspectData[] = [
     twitterUrl: "https://twitter.com/janesmith",
     websiteUrl: "https://janesmith.com",
     bio: "Experienced tech leader with 15+ years in SaaS. Looking for solutions to scale our engineering team.",
+    bioSources: ["linkedin", "twitter", "website"],
     interestedPackage: "Enterprise Plan",
     qualificationStatus: "qualified",
     qualificationReason: "Large enterprise with over 500 employees. Already using our competitor's product and looking to switch.",
     createdAt: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(), // 15 days ago
-    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString()  // 2 days ago
+    updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),  // 2 days ago
+    timeline: [
+      {
+        type: "submission",
+        title: "Initial Contact",
+        date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
+        description: "Submitted contact form on website",
+        notes: "Looking for a solution to manage our growing engineering team of 50+ developers. Currently using XYZ but experiencing scaling issues."
+      },
+      {
+        type: "email",
+        title: "Follow-up Email Sent",
+        date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
+        description: "Sent initial follow-up with product information"
+      },
+      {
+        type: "meeting",
+        title: "Discovery Call",
+        date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+        description: "30-minute call with Jane and her team",
+        notes: "Team showed strong interest in our enterprise features. Main concerns are around migration from current solution."
+      },
+      {
+        type: "qualification",
+        title: "Qualified Prospect",
+        date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
+        description: "Marked as qualified lead",
+        notes: "Has budget approval for Q1 implementation. Decision committee includes CTO and 2 engineering directors."
+      }
+    ],
+    companyData: {
+      name: "Acme Corporation",
+      industry: "Enterprise Software",
+      size: "501-1000 employees",
+      website: "https://acmecorp.example.com",
+      funding: "$75M",
+      series: "C",
+      description: "Acme Corporation is a leading provider of cloud-based enterprise software solutions. Founded in 2010, they specialize in data analytics and business intelligence tools for Fortune 500 companies."
+    }
   },
   {
     id: "prospect-456",
@@ -66,10 +105,19 @@ const mockProspects: ProspectData[] = [
     id: "prospect-202",
     name: "Emily Rodriguez",
     email: "emily.r@example.com",
+    company: "Marketing Masters",
     jobTitle: "Product Manager",
     qualificationStatus: "unqualified",
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
-    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString() // 1 day ago
+    updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
+    timeline: [
+      {
+        type: "submission",
+        title: "Initial Contact",
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+        description: "Submitted contact form on website"
+      }
+    ]
   },
   {
     id: "prospect-303",

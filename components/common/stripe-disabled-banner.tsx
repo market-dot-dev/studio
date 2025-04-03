@@ -25,7 +25,6 @@ const StripeDisabledBanner = () => {
         <AlertButton href="/settings/payment">Payment Settings</AlertButton>
       </div>
     </Alert>
-    // <Link href="/settings/payment" className={buttonVariants({ variant: "outline" })}>Payment Settings</Link>
   );
 };
 

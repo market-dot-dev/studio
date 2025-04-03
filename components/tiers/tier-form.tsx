@@ -381,7 +381,7 @@ const StandardCheckoutForm = ({
         </div>
 
         {tier.cadence === "month" && (
-          <div className="space-y-6">
+          <div className="space-y-4">
             <div className="flex flex-col gap-6">
               <Checkbox
                 id={`${idPrefix}annualPlanEnabled`}
@@ -658,10 +658,13 @@ export default function TierForm({
               href: "/tiers",
               title: "Packages",
             }}
-            status={{
-              title: tier.id && savedPublishedState ? "Published" : "Draft",
-              variant: tier.id && savedPublishedState ? "success" : "secondary",
-            }}
+            status={
+              <Badge
+                variant={tier.id && savedPublishedState ? "success" : "secondary"}
+              >
+                {tier.id && savedPublishedState ? "Published" : "Draft"}
+              </Badge>
+            }
             actions={[
               <TierLinkCopier
                 key="copy-tier-link"

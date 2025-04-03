@@ -17,11 +17,11 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-gradient-to-b from-primary/90 to-primary text-primary-foreground shadow-border hover:bg-primary/90 active:shadow-border-sm",
+          "bg-gradient-to-b from-primary/90 to-primary text-primary-foreground hover:bg-primary/90 shadow active:shadow-sm",
         destructive:
           "bg-gradient-to-b from-destructive/90 to-destructive text-destructive-foreground shadow-border hover:bg-destructive/90 active:shadow-border-sm",
         outline:
-          "bg-white text-foreground shadow-border hover:bg-stone-50 active:shadow-border-sm",
+          "bg-white text-foreground shadow-border-sm hover:shadow-border hover:bg-stone-50",
         secondary: "bg-stone-200/80 text-stone-600 hover:bg-stone-200",
         ghost: "hover:bg-stone-200 hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",

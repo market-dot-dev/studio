@@ -26,6 +26,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Badge } from "@/components/ui/badge";
 
 export default function PageContainer({
   site,
@@ -360,11 +361,14 @@ export default function PageContainer({
             title: "Landing Page"
           }}
           description={`Last updated ${lastUpdateDate}`}
-          status={{
-            title: isDraft ? "Draft" : "Live",
-            variant: isDraft ? "secondary" : "success",
-            tooltip: isDraft ? "This page is not publicly visible" : "This page is publicly visible"
-          }}
+          status={
+            <Badge 
+              variant={isDraft ? "secondary" : "success"}
+              tooltip={isDraft ? "This page is not publicly visible" : "This page is publicly visible"}
+            >
+              {isDraft ? "Draft" : "Live"}
+            </Badge>
+          }
           actions={[ ...headerActions ]}
           className="mb-8"
         />

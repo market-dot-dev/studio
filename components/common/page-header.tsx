@@ -12,11 +12,7 @@ interface PageHeaderProps {
   };
   description?: ReactNode | string;
   actions?: ReactNode[];
-  status?: {
-    title: string;
-    variant?: VariantProps<typeof badgeVariants>["variant"];
-    tooltip?: string;
-  };
+  status?: ReactNode;
   className?: string;
 }
 
@@ -48,13 +44,9 @@ export default function PageHeader({
           <div className="inline-flex items-center gap-3">
             <h1 className="text-3xl/8 font-bold tracking-tightish">{title}</h1>
             {status && (
-              <Badge
-                variant={status.variant}
-                tooltip={status.tooltip}
-                className="w-fit translate-y-0.5"
-              >
-                {status.title}
-              </Badge>
+              <div className="w-fit translate-y-px">
+                {status}
+              </div>
             )}
           </div>
           {description && (
