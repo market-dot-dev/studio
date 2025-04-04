@@ -1,7 +1,7 @@
-export type QualificationStatus = 'unqualified' | 'qualified' | 'disqualified';
+export type QualificationStatus = 'notQualified' | 'qualified' | 'disqualified';
 
 export interface TimelineActivity {
-  type: 'submission' | 'qualification' | 'disqualification' | 'meeting' | 'email';
+  type: 'initialContact' | 'startedQualification' | 'completedQualification' | 'followup';
   title: string;
   date: string;
   description?: string;
@@ -89,8 +89,8 @@ class Prospect {
     return this.qualificationStatus === 'disqualified';
   }
 
-  get isUnqualified(): boolean {
-    return this.qualificationStatus === 'unqualified';
+  get isNotQualified(): boolean {
+    return this.qualificationStatus === 'notQualified';
   }
 }
 

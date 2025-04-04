@@ -29,6 +29,48 @@
   }
 }
 
+/* Gradient text wave animation */
+@keyframes gradient-x {
+  0% {
+    background-position: 200% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient-x {
+  animation: gradient-x 2.2s linear infinite;
+}
+
+/* Shimmer text animation */
+.shimmer-text {
+  display: inline-block;
+  color: transparent !important;
+  -webkit-background-clip: text;
+  background-clip: text;
+  background-image: linear-gradient(
+    90deg,
+    var(--base-color, #766F6B) 0%,
+    var(--base-color, #766F6B) 35%,
+    var(--shimmer-color, #FFFFFF) 45%,
+    var(--base-color, #766F6B) 55%,
+    var(--base-color, #766F6B) 100%
+  );
+  background-size: 300% 100%;
+  background-position: 100% 50%;
+  animation: shimmerAnimation var(--animation-duration, 2s) steps(40, end) infinite;
+}
+
+@keyframes shimmerAnimation {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
 .animate-spin-slow {
   animation: spin 2s linear infinite;
 }

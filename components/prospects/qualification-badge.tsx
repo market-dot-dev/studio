@@ -5,7 +5,7 @@ import Spinner from "@/components/ui/spinner";
 import { QualificationStatus } from "@/app/models/Prospect";
 
 interface QualificationBadgeProps {
-  status: QualificationStatus;
+  status: QualificationStatus | "qualifying";
   size?: "default" | "sm";
   className?: string;
 }
@@ -30,8 +30,16 @@ export function QualificationBadge({
       </Badge>
     );
   }
+  
+  if (status === "notQualified") {
+    return (
+      <Badge variant="empty" size={size} className={className}>
+        Not Qualified
+      </Badge>
+    );
+  }
 
-  // unqualified is treated as "qualifying" in the UI
+  // qualifying state
   return (
     <Badge variant="secondary" size={size} className={`gap-1 ${className}`}>
       <Spinner className="h-2.5 w-2.5" strokeWidth={2.5} />

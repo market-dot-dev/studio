@@ -89,13 +89,20 @@ export const gitHubRepoOrgAndName = (url: string | null | undefined) => {
   return repoInfo ? `${repoInfo.usernameOrOrg}/${repoInfo.repoName}` : "";
 };
 
-export const formatDate = (date: Date | string): string => {
+export const formatDate = (date: Date | string, withTime: boolean = false): string => {
   const options: Intl.DateTimeFormatOptions = {
-    year: "numeric",
+    year: withTime ? undefined : "numeric",
     month: "short",
     day: "numeric",
     timeZone: "UTC", // Ensure consistent output by using UTC
   };
+
+  // Add time options if withTime is true
+  if (withTime) {
+    options.hour = "numeric";
+    options.minute = "2-digit";
+    options.hour12 = true;
+  }
 
   // Convert the date string to a Date object if it's not already
   const parsedDate = typeof date === "string" ? new Date(date) : date;

@@ -1,5 +1,5 @@
 # Next.js Routes Map
-# Generated on 2025-04-01T20:57:27.504Z
+# Generated on 2025-04-04T20:00:21.587Z
 
 > Note: Routes marked with "via middleware" are rewritten or redirected by middleware.ts
 
@@ -38,6 +38,7 @@ GET     /app/(dashboard)/page/:id                # app/(dashboard)/page/[id]/pag
 GET     /app/(dashboard)/post/:id                # app/(dashboard)/post/[id]/page.tsx
 GET     /app/(dashboard)/post/:id/settings       # app/(dashboard)/post/[id]/settings/page.tsx
 GET     /app/(dashboard)/prospects               # app/(dashboard)/prospects/page.tsx
+GET     /app/(dashboard)/prospects/:id           # app/(dashboard)/prospects/[id]/page.tsx
 GET     /app/(dashboard)/reports                 # app/(dashboard)/reports/page.tsx
 GET     /app/(dashboard)/settings                # app/(dashboard)/settings/page.tsx
 GET     /app/(dashboard)/settings/payment        # app/(dashboard)/settings/payment/page.tsx

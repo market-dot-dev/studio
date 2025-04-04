@@ -9,10 +9,12 @@ import { columns } from "./columns";
 import MockProspectService from "@/app/services/MockProspectService";
 import { useEffect } from "react";
 import Prospect from "@/app/models/Prospect";
+import { useRouter } from "next/navigation";
 
 export default function ProspectsPage() {
   const [prospects, setProspects] = useState<Prospect[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchProspects = async () => {
@@ -30,9 +32,13 @@ export default function ProspectsPage() {
     fetchProspects();
   }, []);
 
+  const handleRowClick = (prospectId: string) => {
+    router.push(`/prospects/${prospectId}`);
+  };
+
   if (loading) {
     return (
-      <div className="flex max-w-screen-xl flex-col space-y-10">
+      <div className="flex w-full flex-col space-y-10">
         <PageHeader
           title="Prospects"
           description="View all prospects who have submitted an interest in your products."
@@ -45,7 +51,7 @@ export default function ProspectsPage() {
   }
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-10">
+    <div className="flex w-full flex-col space-y-10">
       <PageHeader
         title="Prospects"
         description="View all prospects who have submitted an interest in your products."
@@ -63,7 +69,16 @@ export default function ProspectsPage() {
         data={prospects}
         isLoading={loading}
         noResults="No prospects found"
-        className="bg-transparent shadow-none"
+        className="bg-transparent shadow-none -mx-6 md:-mx-10 w-[calc(100vw-var(--navWidth))] md:w-[calc(100vw-var(--navWidth))]"
+        fullWidth={true}
+        tableOptions={{
+          meta: {
+            rowProps: (row: Prospect) => ({
+              className: "cursor-pointer",
+              onClick: () => handleRowClick(row.id)
+            })
+          }
+        }}
       />
     </div>
   );

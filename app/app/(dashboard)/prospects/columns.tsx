@@ -4,8 +4,6 @@ import { ColumnDef } from "@tanstack/react-table"
 import { formatDate } from "@/lib/utils"
 import Link from "next/link"
 import Prospect from "@/app/models/Prospect"
-import { Button } from "@/components/ui/button"
-import { Eye, Package } from "lucide-react"
 import { QualificationBadge } from "@/components/prospects/qualification-badge"
 
 export const columns: ColumnDef<Prospect>[] = [
@@ -25,12 +23,7 @@ export const columns: ColumnDef<Prospect>[] = [
       return (
         <div className="flex w-fit flex-col">
           <div className="flex w-fit items-center gap-1.5">
-            <Link
-              href={`/prospects/${row.original.id}`}
-              className="hover:underline"
-            >
-              {row.original.name}
-            </Link>
+            {row.original.name}
             <QualificationBadge status={status} size="sm" />
           </div>
           <span className="text-xs font-normal text-stone-500">
@@ -67,23 +60,6 @@ export const columns: ColumnDef<Prospect>[] = [
       return (
         <div className="flex items-center gap-1.5 font-medium text-stone-800">
           {row.original.interestedPackage || "—"}
-        </div>
-      );
-    },
-  },
-  {
-    
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => {
-      return (
-        <div className="flex justify-end">
-          <Button variant="ghost" size="sm" asChild className="h-8 w-8 p-0">
-            <Link href={`/prospects/${row.original.id}`}>
-              <Eye className="h-4 w-4" />
-              <span className="sr-only">View prospect</span>
-            </Link>
-          </Button>
         </div>
       );
     },

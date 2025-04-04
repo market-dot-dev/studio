@@ -17,11 +17,11 @@ const badgeVariants = cva(
         default:
           "border-transparent bg-primary !text-primary-foreground shadow",
         secondary: "border-transparent bg-stone-200 !text-stone-600",
-        success:
-          "border-transparent bg-swamp !text-primary-foreground shadow",
+        success: "border-transparent bg-swamp !text-primary-foreground shadow",
         destructive:
           "border-transparent bg-destructive !text-destructive-foreground shadow",
         outline: "!text-stone-600",
+        empty: "!text-stone-600 border-dashed border-black/20",
       },
       size: {
         default: "py-0.5 px-1.5 text-xs rounded-sm",

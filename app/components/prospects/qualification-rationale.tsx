@@ -3,24 +3,15 @@
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { CircleCheck, CircleSlash, Globe, Clock } from "lucide-react";
-import { QualificationStatus } from "@/app/models/Prospect";
 import { motion, AnimatePresence, Variants } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import { ShimmerText } from "@/components/ui/shimmer-text";
 
 interface QualificationRationaleProps {
-  status: QualificationStatus;
-  isUnqualified: boolean;
   isQualified: boolean;
   isDisqualified: boolean;
+  isFetchingExternalData?: boolean;
   qualificationReason?: string;
   timeEstimate?: string;
-  linkedinUrl?: string;
-  setLinkedinUrl?: (value: string) => void;
-  twitterUrl?: string;
-  setTwitterUrl?: (value: string) => void;
-  websiteUrl?: string;
-  setWebsiteUrl?: (value: string) => void;
   handleEnrichment?: () => void;
   hasNoLinks?: boolean;
 }
@@ -96,32 +87,23 @@ const AnimatedEllipsis = () => {
 };
 
 export function QualificationRationale({
-  status,
-  isUnqualified,
   isQualified,
   isDisqualified,
+  isFetchingExternalData = false,
   qualificationReason,
   timeEstimate = "2 min",
-  linkedinUrl = "",
-  setLinkedinUrl,
-  twitterUrl = "",
-  setTwitterUrl,
-  websiteUrl = "",
-  setWebsiteUrl,
-  handleEnrichment,
-  hasNoLinks = false,
 }: QualificationRationaleProps) {
   const [currentIconIndex, setCurrentIconIndex] = useState(0);
 
   useEffect(() => {
-    if (!isUnqualified) return;
+    if (!isFetchingExternalData) return;
 
     const interval = setInterval(() => {
       setCurrentIconIndex((prev) => (prev + 1) % icons.length);
     }, 4000);
 
     return () => clearInterval(interval);
-  }, [isUnqualified]);
+  }, [isFetchingExternalData]);
 
   // Animation variants
   const iconVariants = {
@@ -155,19 +137,19 @@ export function QualificationRationale({
     <div
       className={cn(
         "rounded px-4 pb-3.5 pt-3",
-        isUnqualified
-          ? "border border-black/[8%] bg-stone-150"
+        isFetchingExternalData
+          ? "border border-black/8 bg-stone-150"
           : "bg-white shadow-border-sm",
       )}
     >
       <div
         className={cn(
-          "mb-1.5 flex  gap-3",
-          isUnqualified ? "text-stone-600" : "text-white",
+          "mb-1.5 flex gap-3",
+          isFetchingExternalData ? "text-stone-600" : "text-white",
         )}
       >
-        {isUnqualified ? (
-          <div className="relative h-[16px] w-[16px] my-0.5">
+        {isFetchingExternalData ? (
+          <div className="relative my-0.5 h-[16px] w-[16px]">
             <AnimatePresence>
               {icons.map((icon, index) => {
                 const IconComponent = icon.component;
@@ -194,13 +176,10 @@ export function QualificationRationale({
         ) : (
           <CircleSlash size={20} className="-mx-0.5 fill-stone-500" />
         )}
-        <div className="z-10 text-sm/5 font-semibold text-stone-800 w-full">
-          {isUnqualified && (
-            <div className="flex flex-wrap justify-between gap-x-4 gap-y-1 w-full">
-              <span>
-                Seeing if they're a fit
-                <AnimatedEllipsis />
-              </span>
+        <div className="z-10 w-full text-sm/5 font-semibold tracking-tightish text-stone-800">
+          {isFetchingExternalData && (
+            <div className="flex w-full flex-wrap justify-between gap-x-4 gap-y-1">
+              <ShimmerText text="Seeing if they're a fit..." className="" />
               {timeEstimate && (
                 <div className="-my-0.5 flex items-center gap-1.5 text-xs font-semibold text-stone-500">
                   <Clock size={14} />
@@ -209,69 +188,22 @@ export function QualificationRationale({
               )}
             </div>
           )}
-          {isQualified && "Looks like a fit!"}
-          {isDisqualified && "Doesn't look like a fit"}
+          {!isFetchingExternalData && isQualified && "Looks like a fit!"}
+          {!isFetchingExternalData &&
+            isDisqualified &&
+            "Doesn't look like a fit"}
         </div>
       </div>
-      {status === "unqualified" ? (
+      {isFetchingExternalData ? (
         <p className="max-w-screen-md text-sm text-stone-600">
           We're analyzing this prospect's data from various sources to determine
           if they're a good fit for your business. This includes their company
           size, role, and engagement level.
         </p>
       ) : (
-        <div className="space-y-2">
-          {qualificationReason && (
-            <p className="mt-2 text-sm text-stone-600">{qualificationReason}</p>
-          )}
-          
-          {hasNoLinks && setLinkedinUrl && setTwitterUrl && setWebsiteUrl && handleEnrichment && (
-            <div className="mt-4 rounded-md bg-stone-50 p-4">
-              <p className="mb-3 text-sm text-stone-600">
-                We couldn't find social profiles for this prospect. Add them
-                to enrich this profile.
-              </p>
-              <div className="space-y-3">
-                <div>
-                  <label className="text-xs font-medium text-stone-500">
-                    LinkedIn URL
-                  </label>
-                  <Input
-                    placeholder="https://linkedin.com/in/..."
-                    value={linkedinUrl}
-                    onChange={(e) => setLinkedinUrl(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-stone-500">
-                    Twitter URL
-                  </label>
-                  <Input
-                    placeholder="https://twitter.com/..."
-                    value={twitterUrl}
-                    onChange={(e) => setTwitterUrl(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-medium text-stone-500">
-                    Website URL
-                  </label>
-                  <Input
-                    placeholder="https://..."
-                    value={websiteUrl}
-                    onChange={(e) => setWebsiteUrl(e.target.value)}
-                    className="mt-1"
-                  />
-                </div>
-                <Button className="w-full" onClick={handleEnrichment}>
-                  Enrich Profile
-                </Button>
-              </div>
-            </div>
-          )}
-        </div>
+        qualificationReason && (
+          <p className="mt-2 text-sm text-stone-600">{qualificationReason}</p>
+        )
       )}
     </div>
   );

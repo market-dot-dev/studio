@@ -7,6 +7,7 @@ import {
   useReactTable,
   TableOptions,
   Table as ReactTable,
+  Row,
 } from "@tanstack/react-table"
 
 import {
@@ -28,6 +29,10 @@ declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends unknown, TValue> {
     emphasized?: boolean
   }
+  
+  interface TableMeta<TData> {
+    rowProps?: (row: TData) => React.HTMLAttributes<HTMLTableRowElement>
+  }
 }
 
 interface DataTableProps<TData, TValue> {
@@ -41,6 +46,7 @@ interface DataTableProps<TData, TValue> {
   tableContainerClassName?: string
   currentUser?: SessionUser | null | undefined
   isLoading?: boolean
+  fullWidth?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -54,6 +60,7 @@ export function DataTable<TData, TValue>({
   tableContainerClassName,
   currentUser,
   isLoading = false,
+  fullWidth = false,
 }: DataTableProps<TData, TValue>): ReactElement {
   const table = useReactTable({
     data,
@@ -64,15 +71,21 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <Card className={cn("p-0", className)} {...cardProps}>
-      <div className={tableContainerClassName}>
-        <Table>
+    <Card className={cn("p-0", fullWidth && "w-full", className)} {...cardProps}>
+      <div className={cn(fullWidth && "w-full", tableContainerClassName)}>
+        <Table fullWidth={fullWidth}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="hover:bg-transparent">
-                {headerGroup.headers.map((header) => {
+              <TableRow key={headerGroup.id} className="hover:bg-transparent" fullWidth={fullWidth}>
+                {headerGroup.headers.map((header, index) => {
+                  const isFirst = index === 0;
+                  const isLast = index === headerGroup.headers.length - 1;
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead 
+                      key={header.id}
+                      isFirst={isFirst && fullWidth}
+                      isLast={isLast && fullWidth}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(
@@ -88,33 +101,59 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {isLoading ? (
               Array(data.length || 4).fill(0).map((_, index) => (
-                <TableRow key={`skeleton-${index}`}>
-                  {Array(columns.length).fill(0).map((_, cellIndex) => (
-                    <TableCell key={`skeleton-cell-${index}-${cellIndex}`}>
-                      <Skeleton className="h-6" />
-                    </TableCell>
-                  ))}
+                <TableRow key={`skeleton-${index}`} fullWidth={fullWidth}>
+                  {Array(columns.length).fill(0).map((_, cellIndex) => {
+                    const isFirst = cellIndex === 0;
+                    const isLast = cellIndex === columns.length - 1;
+                    return (
+                      <TableCell 
+                        key={`skeleton-cell-${index}-${cellIndex}`}
+                        isFirst={isFirst && fullWidth}
+                        isLast={isLast && fullWidth}
+                      >
+                        <Skeleton className="h-6" />
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
               ))
             ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell 
-                      key={cell.id}
-                      emphasized={cell.column.columnDef.meta?.emphasized}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                // Get any custom row props from the meta
+                const rowProps = table.options.meta?.rowProps?.(row.original) || {};
+                
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    fullWidth={fullWidth}
+                    {...rowProps}
+                  >
+                    {row.getVisibleCells().map((cell, index) => {
+                      const isFirst = index === 0;
+                      const isLast = index === row.getVisibleCells().length - 1;
+                      return (
+                        <TableCell 
+                          key={cell.id}
+                          emphasized={cell.column.columnDef.meta?.emphasized}
+                          isFirst={isFirst && fullWidth}
+                          isLast={isLast && fullWidth}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                );
+              })
             ) : (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="min-h-24 text-center">
+              <TableRow fullWidth={fullWidth}>
+                <TableCell 
+                  colSpan={columns.length} 
+                  className="min-h-24 text-center"
+                  isFirst={fullWidth}
+                  isLast={fullWidth}
+                >
                   {noResults}
                 </TableCell>
               </TableRow>

@@ -6,88 +6,65 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { 
   Send, 
-  User, 
   Building, 
   Mail, 
-  Globe, 
-  CalendarClock, 
-  Package, 
-  CheckCircle2, 
-  XCircle,
-  CircleHelp,
-  LoaderCircle,
-  CheckCircle,
+  Package,
   CircleSlash,
   CircleCheck,
-  Calendar,
   CircleDashed,
-  ArrowUpRight,
-  ExternalLink,
   SquareUserRound,
   LinkIcon,
   BriefcaseBusiness,
   UserRoundCheck,
-  UserRoundX
+  UserRoundX,
+  ArrowUpRight,
+  Search,
+  SearchCheck,
+  UserRoundSearch
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardFooter, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { 
   Select, 
   SelectContent, 
   SelectItem, 
   SelectTrigger, 
-  SelectValue 
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";;
 import Prospect, { QualificationStatus } from "@/app/models/Prospect";
 import MockProspectService from "@/app/services/MockProspectService";
 import { QualificationBadge } from "@/components/prospects/qualification-badge";
 import { QualificationRationale } from "@/app/components/prospects/qualification-rationale";
 import { cn, formatDate } from "@/lib/utils";
+import Spinner from "@/components/ui/spinner";
+import { ShimmerText } from "@/components/ui/shimmer-text";
 
 // State types for the prototype
 type PageState = "loading" | "empty" | "success";
 
-// Define state constants as strings matching the PageState type
-const LOADING = "loading";
-const EMPTY = "empty";
-const SUCCESS = "success";
-
 const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
-  const [pageState, setPageState] = useState<PageState>(LOADING);
+  const [pageState, setPageState] = useState<PageState>("loading");
   const [prospect, setProspect] = useState<Prospect | null>(null);
-  const [qualificationStatus, setQualificationStatus] = useState<QualificationStatus>("unqualified");
-  
-  // For empty state
-  const [linkedinUrl, setLinkedinUrl] = useState("");
-  const [twitterUrl, setTwitterUrl] = useState("");
-  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [qualificationStatus, setQualificationStatus] = useState<QualificationStatus>("notQualified");
+  const [isFetchingExternalData, setIsFetchingExternalData] = useState(false);
 
   // Load prospect data
   useEffect(() => {
     const fetchProspect = async () => {
-      setPageState(LOADING);
+      setPageState("loading");
       try {
         const data = await MockProspectService.getProspectById(params.id);
         
         if (data) {
           setProspect(data);
           setQualificationStatus(data.qualificationStatus);
-          setPageState(SUCCESS);
+          setPageState("success");
         } else {
           // If no data found, set to empty state
-          setPageState(EMPTY);
+          setPageState("empty");
         }
       } catch (error) {
         console.error("Error fetching prospect:", error);
-        setPageState(EMPTY);
+        setPageState("empty");
       }
     };
 
@@ -97,7 +74,7 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
   // For prototype state switching
   const handleStateChange = (state: PageState) => {
     setPageState(state);
-    if (state === EMPTY) {
+    if (state === "empty") {
       // In empty state, we'll use a stub prospect with minimal data
       MockProspectService.getProspectById("prospect-202").then(data => {
         if (data) {
@@ -105,7 +82,7 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
           setQualificationStatus(data.qualificationStatus);
         }
       });
-    } else if (state === SUCCESS) {
+    } else if (state === "success") {
       // In success state, we'll show a fully populated prospect
       MockProspectService.getProspectById("prospect-123").then(data => {
         if (data) {
@@ -113,7 +90,7 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
           setQualificationStatus(data.qualificationStatus);
         }
       });
-    } else if (state === LOADING) {
+    } else if (state === "loading") {
       // Simulate loading
       setProspect(null);
       setTimeout(() => {
@@ -121,7 +98,7 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
           if (data) {
             setProspect(data);
             setQualificationStatus(data.qualificationStatus);
-            setPageState(SUCCESS);
+            setPageState("success");
           }
         });
       }, 1500);
@@ -142,20 +119,21 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
   // Mock handler for enrichment
   const handleEnrichment = () => {
     // Simulate loading and then success
-    setPageState(LOADING);
+    setIsFetchingExternalData(true);
+    
     setTimeout(() => {
       MockProspectService.getProspectById("prospect-123").then(data => {
         if (data) {
           setProspect(data);
           setQualificationStatus(data.qualificationStatus);
-          setPageState(SUCCESS);
+          setIsFetchingExternalData(false);
         }
       });
     }, 1500);
   };
 
   // UI for different states
-  if (pageState === LOADING) {
+  if (pageState === "loading") {
     return (
       <div className="flex flex-col items-center justify-center h-96 space-y-4">
         <div className="w-16 h-16 border-t-4 border-blue-500 border-solid rounded-full animate-spin"></div>
@@ -178,6 +156,12 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
   // Check if the prospect has any links
   const hasLinks = prospect.linkedinUrl || prospect.twitterUrl || prospect.websiteUrl;
   
+  // Determine which timeline activities to show based on external data fetching state
+  const filteredTimeline = isFetchingExternalData 
+    ? prospect.timeline?.filter(activity => 
+        activity.type === "initialContact" || activity.type === "startedQualification"
+      )
+    : prospect.timeline;
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-9">
@@ -185,24 +169,31 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
       <div className="flex items-center gap-2 rounded-md bg-gray-100">
         <Button
           size="sm"
-          variant={pageState === "loading" ? "default" : "outline"}
-          onClick={() => handleStateChange(LOADING)}
+          variant={(pageState as string) === "loading" ? "default" : "outline"}
+          onClick={() => handleStateChange("loading")}
         >
           Loading
         </Button>
         <Button
           size="sm"
-          variant={pageState === "empty" ? "default" : "outline"}
-          onClick={() => handleStateChange(EMPTY)}
+          variant={(pageState as string) === "empty" ? "default" : "outline"}
+          onClick={() => handleStateChange("empty")}
         >
           Empty
         </Button>
         <Button
           size="sm"
-          variant={pageState === "success" ? "default" : "outline"}
-          onClick={() => handleStateChange(SUCCESS)}
+          variant={(pageState as string) === "success" ? "default" : "outline"}
+          onClick={() => handleStateChange("success")}
         >
           Success
+        </Button>
+        <Button
+          size="sm"
+          variant={isFetchingExternalData ? "default" : "outline"}
+          onClick={() => setIsFetchingExternalData(!isFetchingExternalData)}
+        >
+          Fetching External Data
         </Button>
       </div>
 
@@ -214,7 +205,12 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
             title: "Prospects",
           }}
           status={
-            <QualificationBadge status={qualificationStatus} size="default" />
+            <QualificationBadge
+              status={
+                isFetchingExternalData ? "qualifying" : qualificationStatus
+              }
+              size="default"
+            />
           }
           actions={[
             <Select
@@ -223,6 +219,7 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
               onValueChange={(value) =>
                 handleQualificationChange(value as QualificationStatus)
               }
+              disabled={isFetchingExternalData}
             >
               <SelectTrigger className="w-fit">Change to…</SelectTrigger>
               <SelectContent>
@@ -238,13 +235,13 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
                     <span>Disqualified</span>
                   </div>
                 </SelectItem>
-                <SelectItem value="unqualified">
+                <SelectItem value="notQualified">
                   <div className="flex items-center gap-2">
                     <CircleDashed
                       className="h-[16px] w-[16px] stroke-stone-500"
                       strokeWidth={2}
                     />
-                    <span>Unqualified</span>
+                    <span>Not Qualified</span>
                   </div>
                 </SelectItem>
               </SelectContent>
@@ -265,16 +262,6 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
         />
 
         <div className="flex flex-row flex-wrap gap-x-12 gap-y-4 text-sm">
-          <div className="flex flex-col gap-1">
-            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
-              <Calendar size={12} strokeWidth={2.5} />
-              Reached out
-            </span>
-            <div className="font-medium">
-              {formatDate(prospect.formattedCreatedAt)}
-            </div>
-          </div>
-
           <div className="flex flex-col gap-1">
             <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
               <Package size={12} strokeWidth={2.5} />
@@ -300,7 +287,7 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
             </div>
           </div>
 
-          {hasLinks && (
+          {!isFetchingExternalData && hasLinks && (
             <div className="flex flex-col gap-1">
               <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
                 <LinkIcon size={12} strokeWidth={2.5} />
@@ -312,13 +299,13 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
                     href={prospect.linkedinUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-px font-medium"
+                    className="flex items-center gap-px font-medium hover:underline"
                   >
                     LinkedIn
                     <ArrowUpRight
                       size={12}
                       strokeWidth={2.5}
-                      className="text-stone-400 transition-colors group-hover:text-stone-800"
+                      className="text-stone-400"
                     />
                   </Link>
                 )}
@@ -327,13 +314,13 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
                     href={prospect.twitterUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-px font-medium"
+                    className="flex items-center gap-px font-medium hover:underline"
                   >
                     X
                     <ArrowUpRight
                       size={12}
                       strokeWidth={2.5}
-                      className="text-stone-400 transition-colors group-hover:text-stone-800"
+                      className="text-stone-400"
                     />
                   </Link>
                 )}
@@ -342,13 +329,13 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
                     href={prospect.websiteUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center gap-px font-medium"
+                    className="flex items-center gap-px font-medium hover:underline"
                   >
                     Website
                     <ArrowUpRight
                       size={12}
                       strokeWidth={2.5}
-                      className="text-stone-400 transition-colors group-hover:text-stone-800"
+                      className="text-stone-400"
                     />
                   </Link>
                 )}
@@ -358,48 +345,43 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
         </div>
 
         <QualificationRationale
-          status={qualificationStatus}
-          isUnqualified={qualificationStatus === "unqualified"}
-          isQualified={qualificationStatus === "qualified"}
-          isDisqualified={qualificationStatus === "disqualified"}
+          isQualified={prospect.isQualified}
+          isDisqualified={prospect.isDisqualified}
+          isFetchingExternalData={isFetchingExternalData}
           qualificationReason={prospect.qualificationReason}
-          linkedinUrl={linkedinUrl}
-          setLinkedinUrl={setLinkedinUrl}
-          twitterUrl={twitterUrl}
-          setTwitterUrl={setTwitterUrl}
-          websiteUrl={websiteUrl}
-          setWebsiteUrl={setWebsiteUrl}
           handleEnrichment={handleEnrichment}
-          hasNoLinks={!hasLinks && qualificationStatus !== "unqualified"}
+          hasNoLinks={!hasLinks && qualificationStatus !== "notQualified"}
         />
       </div>
 
       <Separator />
 
-      <div className="mt-6 grid grid-cols-1 gap-10 xl:grid-cols-3">
+      <div className="mt-6 flex flex-col gap-10 xl:grid xl:grid-cols-3">
         {/* Left Column - Timeline */}
         <div className="col-span-2 flex flex-col space-y-6">
-          <div className="space-y-4">
+          <div className="space-y-6">
             <h2 className="text-2xl font-bold">Timeline</h2>
-            <div className="space-y-4">
-              {prospect.timeline && prospect.timeline.length > 0 ? (
-                prospect.timeline.map((activity, index) => (
-                  <div key={index} className="flex items-start gap-3">
-                    <div className="mt-0.5 rounded-full bg-stone-100 p-1.5">
-                      {activity.type === "submission" && (
-                        <Mail className="h-4 w-4 text-stone-600" />
+            <div className="space-y-6">
+              {filteredTimeline && filteredTimeline.length > 0 ? (
+                filteredTimeline.map((activity, index, array) => (
+                  <div key={index} className="relative flex items-start gap-3">
+                    <div
+                      className={cn(
+                        "absolute -bottom-[30px] left-[9.5px] top-[9.5px] z-0 w-px",
+                        index === array.length - 1
+                          ? "bg-gradient-to-b from-stone-200"
+                          : "bg-stone-200",
                       )}
-                      {activity.type === "qualification" && (
-                        <CheckCircle className="h-4 w-4 text-swamp" />
+                    />
+                    <div className="z-10 -my-1 rounded-full bg-stone-100 px-0.5 py-1.5">
+                      {activity.type === "initialContact" && (
+                        <Mail className="h-4 w-4 text-stone-500" />
                       )}
-                      {activity.type === "disqualification" && (
-                        <CircleSlash className="h-4 w-4 text-stone-600" />
+                      {activity.type === "startedQualification" && (
+                        <Search className="h-4 w-4 text-stone-500" />
                       )}
-                      {activity.type === "meeting" && (
-                        <Calendar className="h-4 w-4 text-stone-600" />
-                      )}
-                      {activity.type === "email" && (
-                        <Send className="h-4 w-4 text-stone-600" />
+                      {activity.type === "completedQualification" && (
+                        <SearchCheck className="h-4 w-4 text-stone-500" />
                       )}
                     </div>
                     <div className="flex-1">
@@ -407,8 +389,8 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
                         <h4 className="text-sm font-medium">
                           {activity.title}
                         </h4>
-                        <time className="text-xs text-stone-500">
-                          {formatDate(activity.date)}
+                        <time className="text-xs font-medium text-stone-500">
+                          {formatDate(activity.date, true)}
                         </time>
                       </div>
                       {activity.description && (
@@ -417,7 +399,7 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
                         </p>
                       )}
                       {activity.notes && (
-                        <div className="mt-2 rounded-md bg-stone-50 p-2 text-xs text-stone-700">
+                        <div className="mt-2 rounded border bg-stone-150 px-3 py-2 text-xs text-stone-700">
                           {activity.notes}
                         </div>
                       )}
@@ -438,23 +420,64 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
 
         {/* Right Column - Metadata */}
         <div className="col-span-1 flex flex-col space-y-4">
-          {prospect.bio && (
-            <Card>
-              <CardHeader className="pb-2 pt-5">
-                <div className="flex items-center gap-1.5 font-semibold text-stone-500">
-                  <SquareUserRound size={12} strokeWidth={2.5} />
-                  <span className="text-xxs uppercase tracking-wide">Bio</span>
+          <Card
+            className={cn(
+              isFetchingExternalData
+                ? "border-black/8 border bg-stone-150 shadow-none"
+                : "bg-white shadow-border-sm",
+            )}
+          >
+            <CardHeader className="pb-3 pt-5">
+              <div className="flex items-center gap-1.5 font-semibold text-stone-500">
+                <BriefcaseBusiness size={12} strokeWidth={2.5} />
+                <span className="text-xxs uppercase tracking-wide">Role</span>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-2 pb-5">
+              <p className="text-sm font-semibold">
+                {prospect.jobTitle || "—"}
+              </p>
+              {prospect.jobTitle && !isFetchingExternalData ? (
+                isDecisionMaker(prospect.jobTitle) ? (
+                  <div className="flex items-center gap-1 text-swamp-500">
+                    <UserRoundCheck className="h-4 w-4" strokeWidth={2.25} />
+                    <span className="text-xs font-semibold">
+                      Likely a decision-maker
+                    </span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 text-stone-500">
+                    <UserRoundX className="h-4 w-4" strokeWidth={2.25} />
+                    <span className="text-xs font-semibold">
+                      Not likely to be a decision-maker
+                    </span>
+                  </div>
+                )
+              ) : (
+                <div className="flex items-center gap-1.5 text-stone-500">
+                  <Search
+                    size={12}
+                    strokeWidth={2.5}
+                    className="text-stone-500"
+                  />
+                  <ShimmerText
+                    text="Analyzing decision-making authority..."
+                    className="text-xxs font-semibold"
+                  />
                 </div>
-              </CardHeader>
-              <CardContent className="pb-5">
-                <p className="text-sm text-stone-800">{prospect.bio}</p>
-              </CardContent>
-            </Card>
-          )}
+              )}
+            </CardContent>
+          </Card>
 
           {/* Company Information */}
-          <Card>
-            <CardHeader className="pb-4 pt-5">
+          <Card
+            className={cn(
+              isFetchingExternalData
+                ? "border-black/8 border bg-stone-150 shadow-none"
+                : "bg-white shadow-border-sm",
+            )}
+          >
+            <CardHeader className="pb-3 pt-5">
               <div className="flex items-center gap-1.5 font-semibold text-stone-500">
                 <Building size={12} strokeWidth={2.5} />
                 <span className="text-xxs uppercase tracking-wide">
@@ -463,10 +486,27 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
               </div>
             </CardHeader>
             <CardContent className="space-y-4 pb-5">
-              {prospect.companyData ? (
+              {isFetchingExternalData ? (
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold">
+                    {prospect.company || "Unknown Company"}
+                  </p>
+                  <div className="flex items-center gap-1.5">
+                    <Search
+                      size={12}
+                      strokeWidth={2.5}
+                      className="text-stone-500"
+                    />
+                    <ShimmerText
+                      text="Pulling company info..."
+                      className="text-xxs font-semibold"
+                    />
+                  </div>
+                </div>
+              ) : prospect.companyData ? (
                 <>
                   <div className="flex flex-col gap-1">
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-px">
                       <p className="text-sm font-semibold">
                         {prospect.companyData.name || prospect.company || "—"}
                       </p>
@@ -476,21 +516,24 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
                           variant="ghost"
                           asChild
                           tooltip="Visit company site"
-                          className="group -m-0.5"
+                          className="group h-4 w-4"
                         >
                           <Link
                             href={prospect.companyData.website}
                             target="_blank"
                             rel="noopener noreferrer"
                           >
-                            <Globe className="h-3 w-3 text-stone-400 transition-colors group-hover:text-stone-500" />
+                            <ArrowUpRight
+                              strokeWidth={2.5}
+                              className="!size-3 text-stone-400 transition-colors group-hover:text-stone-500"
+                            />
                           </Link>
                         </Button>
                       )}
                     </div>
                     {prospect.companyData.description && (
                       <div>
-                        <p className="text-xs text-stone-700">
+                        <p className="max-w-xl text-xs text-stone-700">
                           {prospect.companyData.description}
                         </p>
                       </div>
@@ -533,7 +576,9 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
               ) : (
                 <div className="text-sm text-stone-500">
                   {prospect.company ? (
-                    <p>Basic company information: {prospect.company}</p>
+                    <p className="text-sm font-semibold text-stone-800">
+                      {prospect.company}
+                    </p>
                   ) : (
                     <p>No company information available.</p>
                   )}
@@ -542,33 +587,39 @@ const ProspectDetailPage = ({ params }: { params: { id: string } }) => {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader className="pb-2 pt-5">
+          <Card
+            className={cn(
+              isFetchingExternalData
+                ? "border-black/8 border bg-stone-150 shadow-none"
+                : "bg-white shadow-border-sm",
+            )}
+          >
+            <CardHeader className="pb-3 pt-5">
               <div className="flex items-center gap-1.5 font-semibold text-stone-500">
-                <BriefcaseBusiness size={12} strokeWidth={2.5} />
-                <span className="text-xxs uppercase tracking-wide">Role</span>
+                <SquareUserRound size={12} strokeWidth={2.5} />
+                <span className="text-xxs uppercase tracking-wide">Bio</span>
               </div>
             </CardHeader>
-            <CardContent className="space-y-2 pb-5">
-              <p className="text-sm font-semibold">
-                {prospect.jobTitle || "—"}
-              </p>
-              {prospect.jobTitle &&
-                (isDecisionMaker(prospect.jobTitle) ? (
-                  <div className="flex items-center gap-1 text-swamp-500">
-                    <UserRoundCheck className="h-4 w-4" strokeWidth={2.25} />
-                    <span className="text-xs font-semibold">
-                      Likely a decision-maker
-                    </span>
+            <CardContent className="pb-5">
+              {isFetchingExternalData ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-1.5">
+                    <Search
+                      size={12}
+                      strokeWidth={2.5}
+                      className="text-stone-500"
+                    />
+                    <ShimmerText
+                      text={`Learning about ${prospect.name}...`}
+                      className="text-xxs font-semibold"
+                    />
                   </div>
-                ) : (
-                  <div className="flex items-center gap-1 text-stone-500">
-                    <UserRoundX className="h-4 w-4" strokeWidth={2.25} />
-                    <span className="text-xs font-semibold">
-                      Not likely to be a decision-maker
-                    </span>
-                  </div>
-                ))}
+                </div>
+              ) : (
+                <p className="max-w-xl text-xs text-stone-800">
+                  {prospect.bio}
+                </p>
+              )}
             </CardContent>
           </Card>
         </div>

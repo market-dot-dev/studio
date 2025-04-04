@@ -345,6 +345,9 @@ module.exports = {
   				}
   			}
   		},
+			opacity: {
+				8: "0.08"
+			},
   		keyframes: {
   			wiggle: {
   				'0%, 100%': {

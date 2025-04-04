@@ -20,30 +20,22 @@ const mockProspects: ProspectData[] = [
     updatedAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(),  // 2 days ago
     timeline: [
       {
-        type: "submission",
-        title: "Initial Contact",
-        date: new Date(Date.now() - 15 * 24 * 60 * 60 * 1000).toISOString(),
-        description: "Submitted contact form on website",
+        type: "initialContact",
+        title: "Reached out",
+        date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
+        description: "Submitted contact form on your website",
         notes: "Looking for a solution to manage our growing engineering team of 50+ developers. Currently using XYZ but experiencing scaling issues."
       },
       {
-        type: "email",
-        title: "Follow-up Email Sent",
-        date: new Date(Date.now() - 12 * 24 * 60 * 60 * 1000).toISOString(),
-        description: "Sent initial follow-up with product information"
-      },
-      {
-        type: "meeting",
-        title: "Discovery Call",
+        type: "startedQualification",
+        title: "Started qualifying",
         date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString(),
-        description: "30-minute call with Jane and her team",
-        notes: "Team showed strong interest in our enterprise features. Main concerns are around migration from current solution."
+        description: "Pulling & analyzing their info to see if they're a fit",
       },
       {
-        type: "qualification",
-        title: "Qualified Prospect",
-        date: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(),
-        description: "Marked as qualified lead",
+        type: "completedQualification",
+        title: "Finished qualifying",
+        date: new Date(Date.now() - 8 * 24 * 60 * 60 * 1000 + 2 * 60 * 1000).toISOString(),
         notes: "Has budget approval for Q1 implementation. Decision committee includes CTO and 2 engineering directors."
       }
     ],
@@ -68,7 +60,7 @@ const mockProspects: ProspectData[] = [
     websiteUrl: "https://techstart.io",
     bio: "Serial entrepreneur with 3 successful exits. Building a new SaaS platform for remote teams.",
     interestedPackage: "Growth Plan",
-    qualificationStatus: "unqualified",
+    qualificationStatus: "notQualified",
     createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days ago
     updatedAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000).toISOString()
   },
@@ -107,15 +99,27 @@ const mockProspects: ProspectData[] = [
     email: "emily.r@example.com",
     company: "Marketing Masters",
     jobTitle: "Product Manager",
-    qualificationStatus: "unqualified",
+    qualificationStatus: "notQualified",
     createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
     updatedAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(), // 1 day ago
     timeline: [
       {
-        type: "submission",
+        type: "initialContact",
         title: "Initial Contact",
         date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
         description: "Submitted contact form on website"
+      },
+      {
+        type: "startedQualification",
+        title: "Started Qualifying",
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000 + 30 * 60 * 1000).toISOString(),
+        description: "Pulling & analyzing their info to see if they're a fit"
+      },
+      {
+        type: "completedQualification",
+        title: "Finished Qualifying",
+        date: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000 + 32 * 60 * 1000).toISOString(),
+        notes: "Small company with limited budget"
       }
     ]
   },
