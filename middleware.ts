@@ -18,13 +18,6 @@ export const config = {
   ],
 };
 
-// Add a debug function to help troubleshoot
-const debug = (...args: any[]) => {
-  if (process.env.NODE_ENV === "development") {
-    console.log("[Middleware Debug]", ...args);
-  }
-};
-
 export default withAuth(
   async function middleware(req) {
     return await customMiddleware(req);
@@ -36,8 +29,6 @@ export default withAuth(
         const roleId = user?.roleId as Role || 'anonymous';
         const path = req.nextUrl.pathname;
         
-        debug("Auth check for path:", path, "roleId:", roleId);
-        
         // Allow access if this is a site subdomain (GitHub username or custom subdomain)
         // Check for this before the path check
         const subdomain = DomainService.getSubdomainFromRequest(req);
@@ -45,20 +36,16 @@ export default withAuth(
         
         // If this is a subdomain that isn't reserved, it's a site subdomain that should be publicly accessible
         if (subdomain && !isReservedSubdomain) {
-          debug("Site subdomain detected:", subdomain, "- allowing access");
           return true;
         }
         
-        const canView = await RoleService.canViewPath(path, roleId);
-        debug("canViewPath result:", canView);
-        return canView;
+        return await RoleService.canViewPath(path, roleId);
       },
     },
   },
 );
 
 const rewrite = (path: string, url: string) => {
-  debug("Rewriting path:", path);
   return NextResponse.rewrite(new URL(path, url));
 };
 
@@ -77,15 +64,6 @@ async function customMiddleware(req: NextRequest) {
     searchParams.length > 0 ? `?${searchParams}` : ""
   }`;
   path = path === "/" ? "" : path;
-
-  debug("Request:", {
-    url: req.url,
-    path,
-    ghUsername,
-    reservedSubdomain,
-    bareDomain,
-    roleId,
-  });
 
   // exempt from middleware rewrites
   if (
@@ -123,7 +101,6 @@ async function customMiddleware(req: NextRequest) {
     }
 
     const maintainerSitePath = `/maintainer-site/${ghUsername}${path}`;
-    debug("Rewriting to maintainer site path:", maintainerSitePath);
     return rewrite(maintainerSitePath, req.url);
   }
 
