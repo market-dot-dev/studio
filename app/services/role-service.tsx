@@ -29,6 +29,9 @@ class RoleService {
     /^\/events(\/|$)/,
     /^\/organizations(\/|$)/,
     /^\/trending(\/|$)/,
+
+    // Allow all maintainer site pages
+    /^\/maintainer-site\//,
   ];
 
   static adminOnlyPaths = [
