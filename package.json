@@ -16,7 +16,8 @@
     "db:reset:preview": "if [ \"$VERCEL_ENV\" = \"preview\" ]; then npm run db:reset && tsx prisma/seed.ts; fi",
     "vercel-build": "prisma generate && next build && npm run db:reset:preview && prisma migrate deploy && tsx prisma/sync.ts",
     "test": "dotenv -e .env.test jest",
-    "test:prepare": "dotenv -e .env.test pnpm prisma migrate reset"
+    "test:prepare": "dotenv -e .env.test pnpm prisma migrate reset",
+    "knip": "knip"
   },
   "dependencies": {
     "@faker-js/faker": "^8.4.1",
@@ -55,7 +56,6 @@
     "date-fns": "^2.30.0",
     "dotenv-cli": "^7.4.2",
     "framer-motion": "^11.11.10",
-    "gray-matter": "^4.0.3",
     "input-otp": "1.2.4",
     "js-yaml": "^4.1.0",
     "jsdom": "^23.2.0",
@@ -64,7 +64,6 @@
     "nanoid": "^5.1.2",
     "next": "^14.2.25",
     "next-auth": "^4.24.11",
-    "next-mdx-remote": "^5.0.0",
     "nodemailer": "^6.10.0",
     "novel": "^0.1.22",
     "prettier": "^3.2.5",
@@ -76,7 +75,6 @@
     "react-icons": "^5.5.0",
     "react-textarea-autosize": "^8.5.4",
     "react-tweet": "^3.2.1",
-    "remark": "^14.0.3",
     "sharp": "^0.33.5",
     "sonner": "^1.5.0",
     "stripe": "^16.12.0",
@@ -100,6 +98,7 @@
     "eslint-config-next": "^15.0.3",
     "jest": "^29.7.0",
     "jest-mock-extended": "^3.0.7",
+    "knip": "^5.50.1",
     "postcss": "^8.5.0",
     "prettier-plugin-tailwindcss": "^0.6.8",
     "prisma": "^6.3.1",
