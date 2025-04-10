@@ -34,6 +34,11 @@ export default function SettingsNav() {
       name: "Connected Repositories",
       href: `/settings/repos`,
       isActive: activeSegment === "repos",
+    },
+    {
+      name: "Integrations",
+      href: `/settings/integrations`,
+      isActive: activeSegment === "integrations",
     }
   ];
 

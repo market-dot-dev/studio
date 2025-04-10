@@ -1,5 +1,5 @@
 # Next.js Routes Map
-# Generated on 2025-04-01T20:57:27.504Z
+# Generated on 2025-04-10T19:55:47.772Z
 
 > Note: Routes marked with "via middleware" are rewritten or redirected by middleware.ts
 
@@ -40,6 +40,7 @@ GET     /app/(dashboard)/post/:id/settings       # app/(dashboard)/post/[id]/set
 GET     /app/(dashboard)/prospects               # app/(dashboard)/prospects/page.tsx
 GET     /app/(dashboard)/reports                 # app/(dashboard)/reports/page.tsx
 GET     /app/(dashboard)/settings                # app/(dashboard)/settings/page.tsx
+GET     /app/(dashboard)/settings/integrations   # app/(dashboard)/settings/integrations/page.tsx
 GET     /app/(dashboard)/settings/payment        # app/(dashboard)/settings/payment/page.tsx
 GET     /app/(dashboard)/settings/project        # app/(dashboard)/settings/project/page.tsx
 GET     /app/(dashboard)/settings/repos          # app/(dashboard)/settings/repos/page.tsx
@@ -94,6 +95,10 @@ POST    /api/auth/githubapp                      # api/auth/githubapp/route.ts
 GET     /api/buybutton/:userid                   # api/buybutton/[userid]/route.tsx
 GET     /api/domain/:slug/verify                 # api/domain/[slug]/verify/route.ts
 POST    /api/generate                            # api/generate/route.ts
+GET     /api/integrations/cal/authorize          # api/integrations/cal/authorize/route.ts
+GET     /api/integrations/cal/callback           # api/integrations/cal/callback/route.ts
+POST    /api/integrations/cal/disconnect         # api/integrations/cal/disconnect/route.ts
+POST    /api/integrations/cal/refresh-token      # api/integrations/cal/refresh-token/route.ts
 POST    /api/market/validate-expert              # api/market/validate-expert/route.ts
 GET     /api/migrate                             # api/migrate/route.ts
 GET     /api/og/:siteid                          # api/og/[siteid]/route.tsx

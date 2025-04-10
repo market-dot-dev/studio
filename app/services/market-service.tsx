@@ -73,19 +73,46 @@ export class MarketService {
       throw new Error("User GitHub ID doesn't exist");
     }
 
-    const response = await fetch(`${API_ENDPOINT}store/experts/link`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
-      },
-      body: JSON.stringify({
-        store_id: user.id,
-        github_id: user.gh_id,
-      }),
+    if (!API_ENDPOINT) {
+      console.error("[MarketService] Missing MARKET_DEV_API_ENDPOINT environment variable");
+      throw new Error("Market.dev API endpoint not configured");
+    }
+
+    if (!API_KEY) {
+      console.error("[MarketService] Missing MARKET_DEV_API_KEY environment variable");
+      throw new Error("Market.dev API key not configured");
+    }
+
+    console.log("[MarketService] Attempting to validate account with:", {
+      endpoint: API_ENDPOINT,
+      hasApiKey: !!API_KEY,
+      userId: user.id,
+      githubId: user.gh_id
     });
 
-    return response;
+    try {
+      const response = await fetch(`${API_ENDPOINT}store/experts/link`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${API_KEY}`,
+        },
+        body: JSON.stringify({
+          store_id: user.id,
+          github_id: user.gh_id,
+        }),
+      });
+
+      console.log("[MarketService] Validation response:", {
+        status: response.status,
+        statusText: response.statusText
+      });
+
+      return response;
+    } catch (error) {
+      console.error("[MarketService] Error validating account:", error);
+      throw error;
+    }
   }
 
   static async userIsMarketExpert(): Promise<boolean> {
