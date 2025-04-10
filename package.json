@@ -14,7 +14,6 @@
     "db:seed": "./scripts/reset-db.sh && prisma generate && tsx prisma/seed.ts",
     "db:restore-prod": "./scripts/restore-prod-db.sh",
     "db:reset:preview": "if [ \"$VERCEL_ENV\" = \"preview\" ]; then npm run db:reset && tsx prisma/seed.ts; fi",
-    "migrate:debug": "tsx scripts/migrate-user.ts",
     "vercel-build": "prisma generate && next build && npm run db:reset:preview && prisma migrate deploy && tsx prisma/sync.ts",
     "test": "dotenv -e .env.test jest",
     "test:prepare": "dotenv -e .env.test pnpm prisma migrate reset"
