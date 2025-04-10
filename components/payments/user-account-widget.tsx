@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { User } from "@prisma/client";
 
-const UserCustomerWidget = ({ user }: { user: User; }) => {
+export const UserAccountWidget = ({ user }: { user: User; }) => {
   const stripeAccountId = user?.stripeAccountId;
 
   return (<>
@@ -28,5 +28,3 @@ const UserCustomerWidget = ({ user }: { user: User; }) => {
     }
   </>);
 }
-
-export default UserCustomerWidget;

@@ -3,7 +3,6 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { useRef, useState } from "react";
-import { FaEdit, FaCheck } from "react-icons/fa";
 import { Edit, Check } from "lucide-react";
 
 function EditableListItem({index, feature, setFeatures} : any) : JSX.Element {
