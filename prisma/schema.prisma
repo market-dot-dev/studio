@@ -159,16 +159,6 @@ model Page {
   @@index([userId])
 }
 
-model Example {
-  id            Int     @id @default(autoincrement())
-  name          String?
-  description   String?
-  domainCount   Int?
-  url           String?
-  image         String?
-  imageBlurhash String?
-}
-
 model Tier {
   id              String  @id @default(cuid())
   userId          String
