@@ -264,12 +264,6 @@ model Subscription {
   @@unique([userId, tierId])
 }
 
-model WaitlistUser {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  createdAt DateTime @default(now())
-}
-
 model Repo {
   id        String   @id @default(cuid())
   repoId    String

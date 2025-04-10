@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import prisma from '@/lib/prisma';
-import { WaitlistUser, Account, Session, Post, Site, Page, TierVersion, Subscription, Repo, Feature, Media, User, Tier } from '@prisma/client';
+import { Account, Session, Post, Site, Page, TierVersion, Subscription, Repo, Feature, Media, User, Tier } from '@prisma/client';
 
 export const createUser = async (overrides?: Partial<User>): Promise<User> => {
   return prisma.user.create({
@@ -21,15 +21,6 @@ export const createTier = async (userId: string, overrides?: Partial<Tier>): Pro
       name: faker.word.adjective(),
       price: 10,
       revision: 0,
-      ...overrides,
-    },
-  });
-};
-
-export const createWaitlistUser = async (overrides?: Partial<WaitlistUser>): Promise<WaitlistUser> => {
-  return prisma.waitlistUser.create({
-    data: {
-      email: faker.internet.email(),
       ...overrides,
     },
   });
