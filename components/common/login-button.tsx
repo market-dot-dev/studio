@@ -56,5 +56,3 @@ export const LoginButton: FC<LoginButtonProps> = ({
     </Button>
   );
 };
-
-export default LoginButton;
