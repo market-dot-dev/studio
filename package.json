@@ -78,8 +78,7 @@
     "sonner": "^1.5.0",
     "stripe": "^16.12.0",
     "swr": "^2.3.3",
-    "tailwind-merge": "^2.2.1",
-    "unist-util-visit": "^5.0.0"
+    "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
     "@tailwindcss/forms": "^0.5.10",
