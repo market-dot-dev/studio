@@ -1,5 +1,6 @@
 import prisma from "@/lib/prisma";
 
+// @TODO: Perhaps these fn's should be in lib/site/fetchers.ts instead?
 export async function getSiteData(domain: string) {
   const isDomain = domain.match(/\./);
 
