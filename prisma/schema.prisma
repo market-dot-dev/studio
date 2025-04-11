@@ -17,7 +17,7 @@ model User {
   id                          String         @id @default(cuid())
   name                        String?
   username                    String?
-  gh_id                       Int?  
+  gh_id                       Int?
   gh_username                 String?        @unique
   email                       String?        @unique
   businessLocation            String?
@@ -37,7 +37,6 @@ model User {
   updatedAt                   DateTime       @updatedAt
   accounts                    Account[]
   pages                       Page[]
-  posts                       Post[]
   sessions                    Session[]
   sites                       Site[]
   tiers                       Tier[]
@@ -97,27 +96,6 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
-model Post {
-  id            String   @id @default(cuid())
-  title         String?
-  description   String?
-  content       String?
-  slug          String   @default(cuid())
-  image         String?  @default("https://public.blob.vercel-storage.com/eEZHAoPTOBSYGBE3/hxfcV5V-eInX3jbVUhjAt1suB7zB88uGd1j20b.png")
-  imageBlurhash String?  @default("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAhCAYAAACbffiEAAAACXBIWXMAABYlAAAWJQFJUiTwAAABfUlEQVR4nN3XyZLDIAwE0Pz/v3q3r55JDlSBplsIEI49h76k4opexCK/juP4eXjOT149f2Tf9ySPgcjCc7kdpBTgDPKByKK2bTPFEdMO0RDrusJ0wLRBGCIuelmWJAjkgPGDSIQEMBDCfA2CEPM80+Qwl0JkNxBimiaYGOTUlXYI60YoehzHJDEm7kxjV3whOQTD3AaCuhGKHoYhyb+CBMwjIAFz647kTqyapdV4enGINuDJMSScPmijSwjCaHeLcT77C7EC0C1ugaCTi2HYfAZANgj6Z9A8xY5eiYghDMNQBJNCWhASot0jGsSCUiHWZcSGQjaWWCDaGMOWnsCcn2QhVkRuxqqNxMSdUSElCDbp1hbNOsa6Ugxh7xXauF4DyM1m5BLtCylBXgaxvPXVwEoOBjeIFVODtW74oj1yBQah3E8tyz3SkpolKS9Geo9YMD1QJR1Go4oJkgO1pgbNZq0AOUPChyjvh7vlXaQa+X1UXwKxgHokB2XPxbX+AnijwIU4ahazAAAAAElFTkSuQmCC")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  published     Boolean  @default(false)
-  siteId        String?
-  userId        String?
-  site          Site?    @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([slug, siteId])
-  @@index([siteId])
-  @@index([userId])
-}
-
 model Site {
   id            String   @id @default(cuid())
   name          String?
@@ -134,7 +112,6 @@ model Site {
   userId        String
   homepageId    String?
   pages         Page[]
-  posts         Post[]
   media         Media[]
   user          User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -162,16 +139,16 @@ model Page {
 model Tier {
   id              String  @id @default(cuid())
   userId          String
-  checkoutType    String @default("gitwallet")
+  checkoutType    String  @default("gitwallet")
   stripeProductId String? @unique
 
   name        String
   description String?
   tagline     String?
 
-  published Boolean @default(true)
-  channels Channel[] @default([site])
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  published Boolean   @default(true)
+  channels  Channel[] @default([site])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   price                 Int?
   applicationFeePercent Int?
@@ -194,6 +171,7 @@ model Tier {
   contractId    String?
   contract      Contract?       @relation(fields: [contractId], references: [id])
   Prospects     Prospect[]
+
   @@index([userId, stripePriceId])
 }
 
@@ -385,16 +363,16 @@ model Contract {
 }
 
 model Prospect {
-  id              String   @id @default(cuid())
-  userId          String
-  name            String
-  email           String
-  organization    String?
-  context         String?
-  tiers           Tier[]
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  email        String
+  organization String?
+  context      String?
+  tiers        Tier[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([email, userId])
 }

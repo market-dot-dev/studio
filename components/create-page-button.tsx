@@ -8,9 +8,7 @@ import { Button } from "@/components/ui/button";
 
 export default function CreatePageButton() {
   const router = useRouter();
-  // const { id } = useParams() as { id: string };
   const [isPending, startTransition] = useTransition();
-
   
   return (
     <Button

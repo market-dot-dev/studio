@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import prisma from '@/lib/prisma';
-import { Account, Session, Post, Site, Page, TierVersion, Subscription, Repo, Feature, Media, User, Tier } from '@prisma/client';
+import { Account, Session, Site, Page, TierVersion, Subscription, Repo, Feature, Media, User, Tier } from '@prisma/client';
 
 export const createUser = async (overrides?: Partial<User>): Promise<User> => {
   return prisma.user.create({
@@ -44,17 +44,6 @@ export const createSession = async (userId: string, overrides?: Partial<Session>
       userId,
       sessionToken: faker.datatype.uuid(),
       expires: faker.date.future(),
-      ...overrides,
-    },
-  });
-};
-
-export const createPost = async (userId: string, siteId: string, overrides?: Partial<Post>): Promise<Post> => {
-  return prisma.post.create({
-    data: {
-      userId,
-      siteId,
-      slug: faker.datatype.uuid(),
       ...overrides,
     },
   });

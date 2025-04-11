@@ -4,7 +4,6 @@ import Link from "next/link";
 import {
   Menu,
   Settings,
-  Package,
   Banknote
 } from "lucide-react";
 import {
@@ -50,6 +49,7 @@ export default function CustomerNav() {
       <button
         className={`fixed z-20 ${
           // left align for Editor, right align for other pages
+          // @TODO: This condition could probably be removed as Post no longer exists
           urlSegments[0] === "post" && urlSegments.length === 2 && !showSidebar
             ? "left-5 top-5"
             : "right-5 top-7"
