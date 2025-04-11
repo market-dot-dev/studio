@@ -20,7 +20,6 @@ const Debug = async () => {
     { name: "Stripe Debug", href: "/admin/debug/stripe-debug" },
     { name: "Stripe Connect", href: "/settings/payment" },
     { name: "Stripe Validation", href: `/admin/debug/${user?.id}/validation` },
-    { name: "Direct Payments Migration", href: "/admin/debug/stripe-migration" },
     { name: "Active Subscriptions", href: "/subscriptions" },
     { name: "Session Viewer", href: "/admin/debug/session" },
     { name: "Sentry Example", href: "/admin/debug/sentry-example-page" },
