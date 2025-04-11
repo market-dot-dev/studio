@@ -92,7 +92,7 @@ export default function FeatureCard({
           <div className="pointer-events-none absolute inset-0">
             <div
               className={clsx(
-                "pointer-events-none absolute inset-0 -bottom-8 bg-[url('/circuit-pattern.svg?height=100&width=100')] bg-repeat opacity-[6%]",
+                "pointer-events-none absolute inset-0 -bottom-8 bg-repeat opacity-[6%]",
                 image ? "right-[25%] -ml-px" : "left-[28.75%] -mt-0.5",
               )}
               style={{
