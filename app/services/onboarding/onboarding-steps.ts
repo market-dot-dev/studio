@@ -22,7 +22,7 @@ export type OnboardingStepsType = {
   setupSite: boolean;
 } | null;
 
-export type onBoardingStepKeyType = keyof Exclude<OnboardingStepsType, null>;
+type onBoardingStepKeyType = keyof Exclude<OnboardingStepsType, null>;
 
 export type onBoardingStepType = {
   name: onBoardingStepKeyType;

@@ -81,7 +81,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ category, selectedCategory,
   );
 };
 
-export const Icon = ({ id }: { id: string }) => {
+const Icon = ({ id }: { id: string }) => {
   const IconElement = {
     'email': Mail,
     'slack': Slack,
