@@ -1,12 +1,7 @@
 "use client";
 
 import CodeSnippet from "@/components/embedables/code-snippet";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 import { useState, useEffect } from "react";
 import { TierWithFeatures } from "@/app/services/TierService";
@@ -19,7 +14,7 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 
-export default function PackageEmbeddings({
+export function PackageEmbeddings({
   site,
   rootUrl,
   searchParams,
@@ -35,7 +30,9 @@ export default function PackageEmbeddings({
   const [darkmode, setDarkmode] = useState(initialDarkmode);
   const handleDarkMode = () => setDarkmode(!darkmode);
 
-  const finalRootUrl = rootUrl || `https://${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const finalRootUrl =
+    rootUrl ||
+    `https://${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
   const tiers = selectedTiers.length
     ? "tiers=" + selectedTiers.map((tier) => tier.id).join(",")
@@ -102,6 +99,7 @@ export default function PackageEmbeddings({
                 <a href={finalRootUrl} target="_blank">
                   <img
                     src={`/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`}
+                    alt={site}
                   />
                 </a>
               ) : embeddables?.tiers?.preview ? (
