@@ -55,7 +55,7 @@
     "@vercel/og": "^0.6.2",
     "@vercel/postgres": "^0.8.0",
     "@vercel/speed-insights": "^1.2.0",
-    "ai": "^3.4.33",
+    "ai": "^4.3.5",
     "aos": "^2.3.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
