@@ -1,14 +1,24 @@
 import allComponents, { deprecatedComponents } from "@/components/site/insertables";
-import type { JSX } from "react";
-const componentsMap = {
+import type { JSX, ReactNode } from "react";
+
+// Create a proper type for the component map
+type ComponentType = {
+  element: React.ComponentType<any>;
+  preview?: React.ComponentType<any>;
+  ui?: boolean;
+};
+
+// Explicitly type the components map
+const componentsMap: Record<string, ComponentType> = {
   ...allComponents,
   ...deprecatedComponents
-} as any;
+};
 
 type DynamicComponentProps = {
   tag: keyof JSX.IntrinsicElements;
   className?: string;
-  children?: React.ReactNode;
+  children?: ReactNode;
+  [key: string]: any; // For other attributes
 };
 
 const ignoreElements = [
@@ -40,7 +50,7 @@ const voidElements = [
   "wbr"
 ];
 
-function sanitizeAttributeName(attrName: string) {
+function sanitizeAttributeName(attrName: string): string {
   // Convert kebab-case to camelCase (e.g., data-value to dataValue)
   const camelCased = attrName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
 
@@ -55,7 +65,7 @@ const DynamicComponent: React.FC<DynamicComponentProps> = ({
   children,
   ...attributes
 }) => {
-  const Tag = tag;
+  const Tag = tag as any; // Use 'as any' here to avoid JSX element type issues
   return (
     <Tag className={className} {...attributes}>
       {children}
@@ -63,118 +73,152 @@ const DynamicComponent: React.FC<DynamicComponentProps> = ({
   );
 };
 
+// @TODO: These typings should be universal for all "maintainer-site" pages
+// Define proper site and page types (replace with your actual types)
+interface Site {
+  user?: {
+    projectDescription?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+interface Page {
+  [key: string]: any;
+}
+
 // For recursively rendering elements
 const renderElement = (
   element: Element | Element[],
   index: number,
-  site: any = null,
-  page: any = null,
+  site: Site | null = null,
+  page: Page | null = null,
   isPreview: boolean = false,
   hasActiveFeatures?: boolean
-) => {
+): JSX.Element => {
   // in case there are multiple root elements, wrap them in a fragment
   if (Array.isArray(element)) {
     return (
       <>
-        {element.map((child, index) =>
-          renderElement(child as Element, index, site, page, isPreview, hasActiveFeatures)
+        {element.map((child, childIndex) =>
+          renderElement(child, childIndex, site, page, isPreview, hasActiveFeatures)
         )}
       </>
     );
   }
 
   if (!element?.tagName) return <></>;
-  const tag = element.tagName.toLowerCase() as keyof JSX.IntrinsicElements;
+  const tag = element.tagName.toLowerCase();
 
   // ignore some elements
-  if (ignoreElements.indexOf(tag) !== -1) return <></>;
+  if (ignoreElements.includes(tag)) return <></>;
 
   // Check if the element is a custom component
-
   if (tag in componentsMap) {
     const CustomComponent =
-      isPreview && componentsMap[tag]["preview"]
-        ? componentsMap[tag]["preview"]
-        : componentsMap[tag]["element"];
+      isPreview && componentsMap[tag].preview
+        ? componentsMap[tag].preview
+        : componentsMap[tag].element;
 
     // collect all props on elements
-    let props = element.getAttributeNames().reduce((props: any, attr) => {
+    const props: Record<string, any> = {};
+
+    element.getAttributeNames().forEach((attr) => {
       // sanitize attr as html attributes can be anything
       const sanitizedAttr = sanitizeAttributeName(attr);
-
-      const val = element.getAttribute(sanitizedAttr);
+      const val = element.getAttribute(attr);
 
       if (val) {
-        if ("class" === sanitizedAttr || "classname" === sanitizedAttr.toLowerCase()) {
-          props["className"] = val;
+        if (sanitizedAttr === "class" || sanitizedAttr.toLowerCase() === "classname") {
+          props.className = val;
         } else {
           props[sanitizedAttr] = val;
         }
       }
-      return props;
-    }, {});
+    });
+
     // if it is not just a ui, pass site and page as props too
-    if (!componentsMap[tag]["ui"]) {
-      props = {
-        ...props,
-        ...(site ? { site } : {}),
-        ...(page ? { page } : {}),
-        ...(hasActiveFeatures ? { hasActiveFeatures } : {})
-      };
+    if (!componentsMap[tag].ui) {
+      if (site) props.site = site;
+      if (page) props.page = page;
+      if (hasActiveFeatures !== undefined) props.hasActiveFeatures = hasActiveFeatures;
     }
 
-    const children = Array.from(element.childNodes).map((child, index) => {
-      if (child.nodeName.startsWith("#text")) return child.textContent;
-      return renderElement(child as Element, index, site, page, isPreview, hasActiveFeatures);
+    const children = Array.from(element.childNodes).map((child, childIndex) => {
+      if (child.nodeType === Node.TEXT_NODE) return child.textContent;
+      return renderElement(child as Element, childIndex, site, page, isPreview, hasActiveFeatures);
     });
+
     return (
-      <CustomComponent key={"component" + index} {...props}>
+      <CustomComponent key={`component-${index}`} {...props}>
         {children}
       </CustomComponent>
     );
   }
 
-  // const className = element.className;
-  const className = element.getAttribute("class") + " " + element.getAttribute("classname");
-  const attributes = {} as any;
+  // Handle regular HTML elements
+  const classAttribute = element.getAttribute("class") || "";
+  const classNameAttribute = element.getAttribute("classname") || "";
+  const className = `${classAttribute} ${classNameAttribute}`.trim();
 
-  Array.from(element.attributes).forEach((item: any) => {
-    if (item.name === "style" || item.name === "class") {
+  const attributes: Record<string, string> = {};
+
+  Array.from(element.attributes).forEach((attr) => {
+    if (attr.name === "style" || attr.name === "class" || attr.name === "classname") {
       return;
     }
-
-    attributes[sanitizeAttributeName(item.name)] = item.value;
+    attributes[sanitizeAttributeName(attr.name)] = attr.value;
   });
 
   // Check if the element is a void element
-  if (voidElements.indexOf(tag) !== -1) {
-    return <DynamicComponent tag={tag} className={className} key={index} {...attributes} />;
+  if (voidElements.includes(tag)) {
+    return (
+      <DynamicComponent
+        tag={tag as keyof JSX.IntrinsicElements}
+        className={className || undefined}
+        key={index}
+        {...attributes}
+      />
+    );
   }
 
-  if (element.children.length > 0) {
+  // Handle elements with children
+  if (element.childNodes.length > 0) {
     return (
-      <DynamicComponent tag={tag} className={className} key={index} {...attributes}>
-        {Array.from(element.childNodes).map((child, index) =>
-          child.nodeName.startsWith("#text")
-            ? child.textContent
-            : renderElement(
-                child as Element,
-                index as number,
-                site,
-                page,
-                isPreview,
-                hasActiveFeatures
-              )
-        )}
-      </DynamicComponent>
-    );
-  } else {
-    return (
-      <DynamicComponent tag={tag} className={className} key={index} {...attributes}>
-        {element.textContent}
+      <DynamicComponent
+        tag={tag as keyof JSX.IntrinsicElements}
+        className={className || undefined}
+        key={index}
+        {...attributes}
+      >
+        {Array.from(element.childNodes).map((child, childIndex) => {
+          if (child.nodeType === Node.TEXT_NODE) {
+            return child.textContent;
+          }
+          return renderElement(
+            child as Element,
+            childIndex,
+            site,
+            page,
+            isPreview,
+            hasActiveFeatures
+          );
+        })}
       </DynamicComponent>
     );
   }
+
+  // Handle elements with just text content
+  return (
+    <DynamicComponent
+      tag={tag as keyof JSX.IntrinsicElements}
+      className={className || undefined}
+      key={index}
+      {...attributes}
+    >
+      {element.textContent}
+    </DynamicComponent>
+  );
 };
 
 export default renderElement;
