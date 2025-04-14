@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { withAuth } from "next-auth/middleware";
 import { getToken } from "next-auth/jwt";
-import RoleService, { Role } from "./app/services/role-service";
-import DomainService from "./app/services/domain-service";
+import { withAuth } from "next-auth/middleware";
+import { NextRequest, NextResponse } from "next/server";
 import { SessionUser } from "./app/models/Session";
+import DomainService from "./app/services/domain-service";
+import RoleService, { Role } from "./app/services/role-service";
 import { getRootUrl } from "./lib/domain";
 
 export const config = {
@@ -14,8 +14,8 @@ export const config = {
      * 3. /_static (inside /public)
      * 4. all root files inside /public (e.g. /favicon.ico)
      */
-    "/((?!_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)",
-  ],
+    "/((?!_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)"
+  ]
 };
 
 export default withAuth(
@@ -26,23 +26,23 @@ export default withAuth(
     callbacks: {
       authorized: async ({ token, req }) => {
         const user = token?.user as SessionUser;
-        const roleId = user?.roleId as Role || 'anonymous';
+        const roleId = (user?.roleId as Role) || "anonymous";
         const path = req.nextUrl.pathname;
-        
+
         // Allow access if this is a site subdomain (GitHub username or custom subdomain)
         // Check for this before the path check
         const subdomain = DomainService.getSubdomainFromRequest(req);
         const isReservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);
-        
+
         // If this is a subdomain that isn't reserved, it's a site subdomain that should be publicly accessible
         if (subdomain && !isReservedSubdomain) {
           return true;
         }
-        
+
         return await RoleService.canViewPath(path, roleId);
-      },
-    },
-  },
+      }
+    }
+  }
 );
 
 const rewrite = (path: string, url: string) => {
@@ -60,16 +60,11 @@ async function customMiddleware(req: NextRequest) {
   const roleId = session?.user?.roleId;
   const searchParams = req.nextUrl.searchParams.toString();
 
-  let path = `${url.pathname}${
-    searchParams.length > 0 ? `?${searchParams}` : ""
-  }`;
+  let path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
   path = path === "/" ? "" : path;
 
   // exempt from middleware rewrites
-  if (
-    url.pathname.startsWith("/monitoring") ||
-    url.pathname.startsWith("/api/users/verify")
-  ) {
+  if (url.pathname.startsWith("/monitoring") || url.pathname.startsWith("/api/users/verify")) {
     return NextResponse.next();
   }
 
@@ -83,9 +78,8 @@ async function customMiddleware(req: NextRequest) {
     }
 
     // Redirect all other paths to explore.market.dev
-    const targetHost = process.env.NODE_ENV === "development" 
-      ? "localhost:4000"
-      : "explore.market.dev";
+    const targetHost =
+      process.env.NODE_ENV === "development" ? "localhost:4000" : "explore.market.dev";
 
     return NextResponse.redirect(
       `http${process.env.NODE_ENV === "development" ? "" : "s"}://${targetHost}${url.pathname}`,
@@ -95,7 +89,7 @@ async function customMiddleware(req: NextRequest) {
 
   // $GHUSERNAME.market.dev or any custom subdomain site
   // permit API from users' subdomains
-  if (!!ghUsername) {
+  if (ghUsername) {
     if (url.pathname.startsWith("/api")) {
       return NextResponse.next();
     }
@@ -121,10 +115,7 @@ async function customMiddleware(req: NextRequest) {
   if (reservedSubdomain === "app" || DomainService.isVercelPreview(req)) {
     // if customer, then lock to /app/c/
     if (roleId === "customer") {
-      if (
-        url.pathname.startsWith("/checkout") ||
-        url.pathname.startsWith("/success")
-      ) {
+      if (url.pathname.startsWith("/checkout") || url.pathname.startsWith("/success")) {
         return rewrite(`/app${path}`, req.url);
       } else {
         return rewrite(`/app/c${path}`, req.url);

@@ -53,16 +53,18 @@ export default async function PaymentSettings(props: {
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const searchParams = await props.searchParams;
-  const code = searchParams["code"] as string;
-  const state = searchParams["state"] as string;
+  if (searchParams) {
+    const code = searchParams["code"] as string;
+    const state = searchParams["state"] as string;
 
-  // Check for OAuth callback
-  if (code && state) {
-    try {
-      await StripeService.handleOAuthResponse(code, state);
-    } catch (error) {
-      console.error("Error handling Stripe OAuth callback:", error);
-      // Handle error
+    // Check for OAuth callback
+    if (code && state) {
+      try {
+        await StripeService.handleOAuthResponse(code, state);
+      } catch (error) {
+        console.error("Error handling Stripe OAuth callback:", error);
+        // Handle error
+      }
     }
   }
 

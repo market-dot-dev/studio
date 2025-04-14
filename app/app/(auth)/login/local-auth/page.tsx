@@ -7,11 +7,7 @@ import { LOCAL_AUTH_AVAILABLE } from "@/app/config/local-auth";
 
 export const dynamic = "force-dynamic";
 
-export default function LoginPage({
-  searchParams
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default function LoginPage() {
   // This check happens only on the server
   if (!LOCAL_AUTH_AVAILABLE) {
     notFound();

@@ -2,7 +2,7 @@ import { onClickSubscribe } from "@/app/services/StripeService";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   const session = await getSession();
 
   if (!session?.user?.id) {
@@ -32,7 +32,7 @@ export async function POST(req: Request, res: Response) {
   return new Response(JSON.stringify(response), { status: 200 });
 }
 
-export async function DELETE(req: Request, res: Response) {
+export async function DELETE(req: Request) {
   const session = await getSession();
 
   if (!session?.user?.id) {

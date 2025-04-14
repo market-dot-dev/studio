@@ -23,7 +23,6 @@ export default async function StripeConnect(props: {
   params: Promise<{ slug: string }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const searchParams = await props.searchParams;
   const session = await getSession();
 
   if (!session) {
@@ -36,18 +35,21 @@ export default async function StripeConnect(props: {
     redirect("/login");
   }
 
-  const code = searchParams["code"] as string;
-  const state = searchParams["state"] as string;
+  // Handle the case where searchParams might be undefined
+  if (props.searchParams) {
+    const searchParams = await props.searchParams;
+    const code = searchParams["code"] as string;
+    const state = searchParams["state"] as string;
 
-  // Check for OAuth callback
-  if (code && state) {
-    try {
-      await StripeService.handleOAuthResponse(code, state);
-      user = await UserService.findUser(session.user.id!);
-    } catch (error) {
-      console.error("Error handling Stripe OAuth callback:", error);
-      // Handle error
-      // Potentially display an error message or redirect to an error page
+    // Check for OAuth callback
+    if (code && state) {
+      try {
+        await StripeService.handleOAuthResponse(code, state);
+        user = await UserService.findUser(session.user.id!);
+      } catch (error) {
+        console.error("Error handling Stripe OAuth callback:", error);
+        // Handle error
+      }
     }
   }
 

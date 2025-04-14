@@ -1,8 +1,10 @@
 import { getSiteNav } from "@/app/services/SiteService";
 import { getSession } from "@/lib/auth";
 
+// @TODO: Feels like this shouldn't be an endpoint, but rather a fn to be used in components.
+
 // Get nav items for the site of the current admin
-export async function GET(req: Request, res: Response) {
+export async function GET() {
   const session = await getSession();
 
   if (!session?.user.id) {

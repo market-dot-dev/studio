@@ -5,7 +5,7 @@ import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default async function SubscriptionsAndChargesList({ params }: { params: { id: string } }) {
+export default async function SubscriptionsAndChargesList() {
   const charges = (await ChargeService.findCharges()) || [];
   const subscriptions = (await SubscriptionService.findSubscriptions()) || [];
 
