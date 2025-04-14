@@ -53,7 +53,7 @@ export default function FeatureSection({
       {headline && (
         <GradientHeading
           as="h2"
-          className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[25ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-none tracking-[-0.035em] sm:mb-4"
+          className="mb-3 max-w-[25ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-none tracking-[-0.035em] sm:mb-4 sm:text-marketing-2xl lg:text-marketing-3xl"
         >
           {headline}
         </GradientHeading>

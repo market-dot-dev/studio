@@ -18,9 +18,9 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
     try {
       await updateCurrentUser(userData);
 
-      // call the refreshOnboarding function if it exists
-      if (window?.hasOwnProperty("refreshOnboarding")) {
-        (window as any)["refreshOnboarding"]();
+      // Use Object.prototype.hasOwnProperty.call instead of direct method access
+      if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
+        (window as any).refreshOnboarding();
       }
 
       toast.success("Project updated");

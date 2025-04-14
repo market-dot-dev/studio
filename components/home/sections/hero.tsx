@@ -10,7 +10,7 @@ export default function Hero() {
           All-in-one business tools, <br />
           built for developers.
         </GradientHeading>
-        <p className="text-marketing-sm xs:mb-5 xs:text-balance lg:text-marketing-md mb-4 max-w-[44ch] text-pretty text-center !leading-tight sm:mb-6 sm:text-[clamp(16px,12vw,20px)]">
+        <p className="mb-4 max-w-[44ch] text-pretty text-center text-marketing-sm !leading-tight xs:mb-5 xs:text-balance sm:mb-6 sm:text-[clamp(16px,12vw,20px)] lg:text-marketing-md">
           Offer premium services, sell digital products, and manage your entire{" "}
           <br className="xs:hidden" /> business in minutes.
         </p>

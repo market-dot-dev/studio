@@ -37,6 +37,7 @@ export default function OTPInputElement({ onComplete, onPaste, onInput, verifyin
       onComplete={onComplete}
       onPaste={onPaste}
       onInput={onInput}
+      // eslint-disable-next-line jsx-a11y/no-autofocus
       autoFocus
       render={({ slots }) => (
         <div className="flex w-full items-center justify-center">

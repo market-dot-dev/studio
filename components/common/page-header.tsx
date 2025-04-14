@@ -33,7 +33,7 @@ export default function PageHeader({
       {backLink && (
         <Link
           href={backLink.href}
-          className="tracking-tightish group flex w-fit -translate-x-[3px] items-center gap-1 text-sm font-semibold text-stone-500 transition-colors hover:text-stone-800"
+          className="group flex w-fit -translate-x-[3px] items-center gap-1 text-sm font-semibold tracking-tightish text-stone-500 transition-colors hover:text-stone-800"
         >
           <ChevronLeft
             size={16}
@@ -46,7 +46,7 @@ export default function PageHeader({
       <div className="flex w-full flex-wrap items-start justify-between gap-4">
         <div className="flex grow flex-col gap-2">
           <div className="inline-flex items-center gap-3">
-            <h1 className="tracking-tightish text-3xl/8 font-bold">{title}</h1>
+            <h1 className="text-3xl/8 font-bold tracking-tightish">{title}</h1>
             {status && (
               <Badge
                 variant={status.variant}

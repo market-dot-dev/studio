@@ -1,6 +1,7 @@
 import SiteService from "@/app/services/SiteService";
 import { Site } from "@prisma/client";
 import { ImageResponse } from "@vercel/og";
+import Image from "next/image";
 
 type SiteInfo = Partial<Site> & {
   user: {
@@ -31,7 +32,7 @@ export async function GET(_req: Request, props: { params: Promise<{ siteid: stri
         }}
       >
         {site.logo ? (
-          <img alt="Logo" width={65} src={site.logo ?? ""} />
+          <Image alt="Logo" width={65} src={site.logo ?? ""} />
         ) : (
           <svg
             width="65"

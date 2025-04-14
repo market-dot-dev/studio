@@ -1,7 +1,8 @@
 import { PrismaClient } from "@prisma/client";
 
+// @TODO: Need to review this file and see if it can be replaced by a more standard implementation.
 declare global {
-  var prisma: PrismaClient | undefined;
+  const prisma: PrismaClient | undefined;
 }
 
 const isDevelopment = process.env.NODE_ENV === "development";

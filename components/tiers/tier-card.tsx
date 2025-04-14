@@ -51,6 +51,7 @@ const CheckoutButton = ({
 }) => {
   const checkoutUrl = generateLink(url, tierId, annual);
 
+  // @TODO: Fix below link error
   return (
     <Link href={disabled ? "" : checkoutUrl} target={openUrlInNewTab ? "_blank" : "_self"}>
       <Button

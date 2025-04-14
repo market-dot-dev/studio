@@ -2,6 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Lead } from "@prisma/client";
 import { ProgressCircle } from "@tremor/react";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -57,7 +58,7 @@ export default function LeadItem({ lead }: { lead: Lead }) {
       <div className="mb-2 flex flex-row gap-8">
         {lead.icon_url ? (
           <div>
-            <img src={lead.icon_url} width={100} />
+            <Image src={lead.icon_url} width={100} alt={lead.name} />
           </div>
         ) : null}
         <div className="flex flex-col">

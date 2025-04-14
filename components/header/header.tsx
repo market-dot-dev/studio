@@ -23,7 +23,7 @@ export default async function Header() {
   const showOnboardingModal = !onboarding.setupBusiness || !onboarding.preferredServices;
 
   return (
-    <header className="shadow-border-b fixed inset-x-0 top-0 z-30 flex h-[var(--headerHeight)] items-center justify-between bg-black px-4">
+    <header className="fixed inset-x-0 top-0 z-30 flex h-[var(--headerHeight)] items-center justify-between bg-black px-4 shadow-border-b">
       <Link href="/">
         <Logo color="white" className="h-[22px] w-auto" />
       </Link>

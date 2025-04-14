@@ -559,8 +559,8 @@ export default function TierForm({
   useEffect(() => {
     if (tierObj) {
       // call the refreshOnboarding function if it exists
-      if (window?.hasOwnProperty("refreshOnboarding")) {
-        (window as any)["refreshOnboarding"]();
+      if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
+        (window as any).refreshOnboarding();
       }
     }
 
@@ -934,7 +934,7 @@ export default function TierForm({
                 features={featureObjs}
                 buttonDisabled={newRecord}
                 hasActiveFeatures={hasActiveFeatures}
-                className="shadow-border-md mx-auto w-full max-w-[300px]"
+                className="mx-auto w-full max-w-[300px] shadow-border-md"
               />
             </TabsContent>
           </Tabs>

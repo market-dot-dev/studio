@@ -24,7 +24,7 @@ import { ReactElement, ReactNode } from "react";
 
 // Extend the ColumnDef type to include an emphasized property
 declare module "@tanstack/react-table" {
-  interface ColumnMeta<TData extends unknown, TValue> {
+  interface ColumnMeta<TData, TValue> {
     emphasized?: boolean;
   }
 }

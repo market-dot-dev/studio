@@ -10,8 +10,8 @@ const DisconnectStripeAccountButton = ({ user }: { user: User }) => {
   // this is to refresh the onboarding guide if it exists
   useEffect(() => {
     // call the refreshOnboarding function if it exists
-    if (window?.hasOwnProperty("refreshOnboarding")) {
-      (window as any)["refreshOnboarding"]();
+    if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
+      (window as any).refreshOnboarding();
     }
   }, []);
   return (

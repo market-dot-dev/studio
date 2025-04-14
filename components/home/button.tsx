@@ -40,7 +40,7 @@ export default function Button({
       className={clsx(
         "flex items-center justify-center gap-2.5 whitespace-nowrap rounded-lg text-marketing-sm transition-all duration-200 md:gap-3 md:text-marketing-base",
         variant === "primary" &&
-          "shadow-marketing-camo/40 from-marketing-camo/75 via-marketing-camo/[92%] to-marketing-camo text-marketing-primary bg-gradient-to-b shadow-md ring-1 ring-black/[20%] active:shadow",
+          "shadow-marketing-camo/40 bg-gradient-to-b from-marketing-camo/75 via-marketing-camo/[92%] to-marketing-camo text-marketing-primary shadow-md ring-1 ring-black/[20%] active:shadow",
         variant === "secondary" &&
           "bg-marketing-accent text-marketing-primary hover:bg-marketing-accent-active",
         variant === "link"

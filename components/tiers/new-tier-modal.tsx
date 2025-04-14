@@ -107,6 +107,7 @@ function TiersTemplatesModal({ hide, multiple }: { hide: () => void; multiple?: 
   const toggleSelected = useCallback(
     (index: number) => {
       if (!multiple) {
+        // Do nothing
       } else {
         setSelected((prev) => {
           if (prev.includes(index)) {

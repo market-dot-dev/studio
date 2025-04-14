@@ -180,8 +180,8 @@ export default function PageContainer({
 
       toast.success("The page was successfully saved");
 
-      if (window?.hasOwnProperty("refreshOnboarding")) {
-        (window as any)["refreshOnboarding"]();
+      if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
+        (window as any).refreshOnboarding();
       }
 
       router.refresh();

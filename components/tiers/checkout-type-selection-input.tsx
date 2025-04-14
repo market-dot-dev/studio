@@ -21,7 +21,7 @@ export default function CheckoutTypeSelectionInput({
     const disabled = !gitwalletCheckoutEnabled;
 
     const InputComponent = ({ disabled = false }: { disabled?: boolean }) => (
-      <label className="focus-within:ring-swamp flex size-full transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-inset">
+      <label className="flex size-full transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-swamp">
         <div
           className={cn(
             "flex h-full w-full flex-col items-start justify-start gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp",
@@ -78,7 +78,7 @@ export default function CheckoutTypeSelectionInput({
     <div className="flex flex-col gap-2">
       <GitWalletCheckout />
       <label className="flex size-full rounded focus-within:outline-none">
-        <div className="shadow-border-sm hover:shadow-border [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-swamp flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 transition-[background-color,box-shadow] [&:has(input:checked)]:ring-2">
+        <div className="flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-[background-color,box-shadow] hover:shadow-border [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp">
           <div className="flex size-full items-center justify-between">
             <div className="flex items-center">
               <Mail className="mr-2.5 size-[18px] text-stone-500" />

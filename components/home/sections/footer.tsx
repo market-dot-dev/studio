@@ -6,12 +6,12 @@ import Link from "../link";
 
 export default function Footer() {
   return (
-    <footer className="from-marketing-camo/[25%] relative w-full overflow-hidden bg-gradient-to-t pb-7 pt-20">
+    <footer className="relative w-full overflow-hidden bg-gradient-to-t from-marketing-camo/[25%] pb-7 pt-20">
       <div className="mx-auto w-full max-w-[800px] px-6 lg:max-w-[var(--marketing-max-width)] lg:px-16">
         <div className="flex w-full flex-col items-center">
           <GradientHeading
             as="h2"
-            className="md:text-marketing-4xl lg:text-marketing-5xl mb-4 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-5 md:tracking-[-0.045em] lg:mb-7"
+            className="mb-4 whitespace-nowrap text-center text-[clamp(30px,12vw,58px)] font-bold leading-[0.9] tracking-[-0.035em] md:mb-5 md:text-marketing-4xl md:tracking-[-0.045em] lg:mb-7 lg:text-marketing-5xl"
           >
             Sta<span className="tracking-normal">r</span>t building
             <br /> your business
@@ -24,16 +24,16 @@ export default function Footer() {
           </div>
 
           <div className="mt-44 w-full border-t border-black/10 pt-5">
-            <div className="text-marketing-primary xs:grid-cols-3 xs:divide-y-0 grid grid-cols-1 gap-6 divide-y divide-black/[7%] lg:grid-cols-5">
+            <div className="grid grid-cols-1 gap-6 divide-y divide-black/[7%] text-marketing-primary xs:grid-cols-3 xs:divide-y-0 lg:grid-cols-5">
               <div className="col-span-full flex flex-col gap-3 lg:col-span-2">
                 <Logo color="black" className="h-[25px] w-fit" />
-                <p className="text-marketing-secondary text-xs">
+                <p className="text-xs text-marketing-secondary">
                   © {new Date().getFullYear()} market.dev. All rights reserved.
                 </p>
               </div>
 
-              <div className="xs:flex-col xs:pt-0 flex flex-row gap-4 pt-2">
-                <h3 className="text-marketing-secondary h-fit w-full text-sm">Navigation</h3>
+              <div className="flex flex-row gap-4 pt-2 xs:flex-col xs:pt-0">
+                <h3 className="h-fit w-full text-sm text-marketing-secondary">Navigation</h3>
                 <div className="flex h-fit w-full flex-col gap-2">
                   <Link href={loginURL} className="text-sm">
                     Log in
@@ -44,8 +44,8 @@ export default function Footer() {
                 </div>
               </div>
 
-              <div className="xs:flex-col xs:pt-0 flex flex-row gap-4 pt-2">
-                <h3 className="text-marketing-secondary h-fit w-full text-sm">Legal</h3>
+              <div className="flex flex-row gap-4 pt-2 xs:flex-col xs:pt-0">
+                <h3 className="h-fit w-full text-sm text-marketing-secondary">Legal</h3>
                 <div className="flex h-fit w-full flex-col gap-2">
                   <Link href="/terms" className="text-sm">
                     Terms of Service
@@ -56,8 +56,8 @@ export default function Footer() {
                 </div>
               </div>
 
-              <div className="xs:flex-col xs:pt-0 flex flex-row gap-4 pt-2">
-                <h3 className="text-marketing-secondary h-fit w-full text-sm">Follow</h3>
+              <div className="flex flex-row gap-4 pt-2 xs:flex-col xs:pt-0">
+                <h3 className="h-fit w-full text-sm text-marketing-secondary">Follow</h3>
                 <div className="flex h-fit w-full flex-col gap-2">
                   <Link href="https://discord.gg/ZdSpS4BuGd" target="_blank" className="text-sm">
                     Discord

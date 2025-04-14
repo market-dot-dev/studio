@@ -6,7 +6,7 @@ export default function PrivacyPolicy() {
       </h1>
       <p className="mb-4 text-marketing-secondary">Effective as of December 1, 2024</p>
 
-      <div className="text-marketing-secondary space-y-6">
+      <div className="space-y-6 text-marketing-secondary">
         <p>
           market.dev is committed to the highest standards of privacy and security to ensure that
           any personal information you entrust to us when using our Services is fully

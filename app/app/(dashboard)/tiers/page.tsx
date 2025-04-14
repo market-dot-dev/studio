@@ -75,7 +75,7 @@ export default async function Tiers() {
                 </div>
                 <div className="flex h-full items-center justify-center p-6 pb-4 pt-0">
                   <div className="mx-auto w-full max-w-[330px]">
-                    <TierCard tier={tier} className="shadow-border scale-90" />
+                    <TierCard tier={tier} className="scale-90 shadow-border" />
                   </div>
                 </div>
               </div>
