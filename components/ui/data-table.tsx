@@ -53,7 +53,7 @@ export function DataTable<TData, TValue>({
   tableContainerClassName,
   currentUser,
   isLoading = false
-}: DataTableProps<TData, TValue>): ReactElement {
+}: DataTableProps<TData, TValue>): ReactElement<any> {
   const table = useReactTable({
     data,
     columns,

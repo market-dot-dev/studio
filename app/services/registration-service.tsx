@@ -9,7 +9,7 @@ import {
 import prisma from "@/lib/prisma";
 import { User } from "@prisma/client";
 import { signIn } from "next-auth/react";
-import { cookies } from "next/headers";
+import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 
 interface UserDetails {
   id: string;
@@ -156,7 +156,7 @@ class RegistrationService {
       return false;
     }
 
-    cookies().set("signup_name", userAttributes.name);
+    (cookies() as unknown as UnsafeUnwrappedCookies).set("signup_name", userAttributes.name);
 
     return true;
   }

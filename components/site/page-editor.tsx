@@ -60,7 +60,7 @@ export default function PageEditor({
   onContentChange,
   onSave,
   inProgress
-}: PageEditorProps): JSX.Element {
+}: PageEditorProps) {
   const isHome = page.id === homepageId;
 
   const [editorRef, setEditorRef] = useState<any>(null);

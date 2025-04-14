@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import { Check, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
-export default function SkeletonTiers({ className }: { className?: string }): JSX.Element {
+export default function SkeletonTiers({ className }: { className?: string }) {
   return (
     <div
       className={cn(
@@ -45,6 +45,7 @@ export default function SkeletonTiers({ className }: { className?: string }): JS
                   ))}
                 </ul>
               </div>
+              {/* @TODO: This anchor must be fixed. */}
               <a
                 href="#"
                 className="inline-flex w-full items-center justify-center rounded-md bg-gradient-to-b from-gray-800 to-gray-950 px-3 py-2 text-center text-sm font-medium text-white shadow-sm ring-1 ring-black/5 transition-shadow hover:bg-gray-700 hover:shadow"

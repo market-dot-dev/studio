@@ -6,12 +6,12 @@ import GradientHeading from "./gradient-heading";
 
 interface SectionProps {
   children: React.ReactNode;
-  headline?: ReactElement | string;
-  description?: ReactElement | string;
+  headline?: ReactElement<any> | string;
+  description?: ReactElement<any> | string;
   id?: string;
   color?: string;
   badge?: {
-    icon: ReactElement;
+    icon: ReactElement<any>;
     title: string;
   };
   isFullBleed?: boolean;

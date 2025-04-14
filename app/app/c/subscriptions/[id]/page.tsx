@@ -50,7 +50,8 @@ const FeatureAction = async ({ feature }: { feature: Feature }) => {
   );
 };
 
-export default async function SubscriptionPage({ params }: { params: { id: string } }) {
+export default async function SubscriptionPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const subscription = await SubscriptionService.findSubscription(params.id);
   if (!subscription) return null;
   const tier = subscription.tier!;

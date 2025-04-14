@@ -9,12 +9,13 @@ import UserCreatedTiers from "./user-created-tiers";
 import UserPurchases from "./user-purchases";
 
 interface UserDetailPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
-export default async function UserDetailPage({ params }: UserDetailPageProps) {
+export default async function UserDetailPage(props: UserDetailPageProps) {
+  const params = await props.params;
   const user = await prisma.user.findUnique({
     where: {
       id: params.id

@@ -8,7 +8,7 @@ export default function Tiers({
 }: {
   tiers: any[];
   hasActiveFeatures?: boolean;
-}): JSX.Element {
+}) {
   return (
     <div className="mx-auto flex justify-center">
       {tiers.length ? (

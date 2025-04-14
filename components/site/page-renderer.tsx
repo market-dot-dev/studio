@@ -1,4 +1,5 @@
 import allComponents, { deprecatedComponents } from "@/components/site/insertables";
+import type { JSX } from "react";
 const componentsMap = {
   ...allComponents,
   ...deprecatedComponents
@@ -70,7 +71,7 @@ const renderElement = (
   page: any = null,
   isPreview: boolean = false,
   hasActiveFeatures?: boolean
-): JSX.Element => {
+) => {
   // in case there are multiple root elements, wrap them in a fragment
   if (Array.isArray(element)) {
     return (

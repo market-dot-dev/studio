@@ -52,7 +52,8 @@ const FeatureAction = async ({ feature }: { feature: Feature }) => {
   );
 };
 
-export default async function ChargeDetail({ params }: { params: { id: string } }) {
+export default async function ChargeDetail(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const charge = await ChargeService.findCharge(params.id);
   if (!charge) return null;
   const tier = await TierService.findTier(charge.tierId);

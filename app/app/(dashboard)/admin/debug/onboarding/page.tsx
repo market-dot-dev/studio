@@ -8,7 +8,7 @@ import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function RestoreOnboarding(): JSX.Element {
+export default function RestoreOnboarding() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleReset = async () => {

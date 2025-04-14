@@ -1,4 +1,3 @@
-// CustomerDetailPage.tsx
 "use server";
 
 import Subscription from "@/app/models/Subscription";
@@ -11,7 +10,8 @@ import { Separator } from "@/components/ui/separator";
 import { Building, Github, Mail, Send } from "lucide-react";
 import Link from "next/link";
 
-const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
+const CustomerDetailPage = async (props: { params: Promise<{ id: string }> }) => {
+  const params = await props.params;
   const userId = params.id;
   const maintainerUserId = (await UserService.getCurrentSessionUser())?.id;
 
@@ -50,7 +50,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
 
         <div className="flex flex-row flex-wrap gap-x-12 gap-y-4 text-sm">
           <div className="flex flex-col gap-1">
-            <span className="text-xxs/4 flex items-center gap-1.5 whitespace-nowrap font-semibold uppercase tracking-wide text-stone-500">
+            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
               <Building size={12} strokeWidth={2.5} />
               Company
             </span>
@@ -60,7 +60,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="text-xxs/4 flex items-center gap-1.5 whitespace-nowrap font-semibold uppercase tracking-wide text-stone-500">
+            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
               <Github size={12} strokeWidth={2.5} />
               Github
             </span>
@@ -75,7 +75,7 @@ const CustomerDetailPage = async ({ params }: { params: { id: string } }) => {
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="text-xxs/4 flex items-center gap-1.5 whitespace-nowrap font-semibold uppercase tracking-wide text-stone-500">
+            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
               <Mail size={12} strokeWidth={2.5} />
               Email
             </span>

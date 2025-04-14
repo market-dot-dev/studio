@@ -2,7 +2,8 @@ import { findTier } from "@/app/services/TierService";
 import PageHeader from "@/components/common/page-header";
 import TierForm from "./admin-tier-form";
 
-export default async function AdminEditTier({ params }: { params: { id: string } }) {
+export default async function AdminEditTier(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const tier = await findTier(params.id);
   if (!tier || !tier.id) return null;
 

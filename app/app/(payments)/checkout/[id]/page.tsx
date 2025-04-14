@@ -5,7 +5,7 @@ import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
 import TierFeatureList from "@/components/features/tier-feature-list";
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { use, useMemo } from "react";
 import RegistrationSection from "./registration-section";
 
 interface QueryParams {
@@ -38,7 +38,8 @@ const TierNotAvailable = () => {
   );
 };
 
-const CheckoutPage = ({ params }: { params: { id: string } }) => {
+const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
+  const params = use(props.params);
   const { id } = params;
 
   const searchParams = useSearchParams();
@@ -100,7 +101,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
             {isEffectiveMaintainerLoading ? (
               <Skeleton className="h-5 w-36" />
             ) : (
-              <span className="tracking-tightish font-bold">{checkoutProject}</span>
+              <span className="font-bold tracking-tightish">{checkoutProject}</span>
             )}
           </div>
 
@@ -139,7 +140,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                 <>
                   {checkoutType === "gitwallet" ? (
                     trialOffered && tier?.cadence !== "once" ? (
-                      <p className="tracking-tightish mt-1 text-sm font-semibold text-stone-500 xl:text-base">
+                      <p className="mt-1 text-sm font-semibold tracking-tightish text-stone-500 xl:text-base">
                         Starts with a{" "}
                         <strong className="font-bold text-stone-800">{trialDays} day</strong> free
                         trial

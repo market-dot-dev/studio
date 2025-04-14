@@ -7,7 +7,8 @@ import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
 import PageContainer from "@/components/site/page-container";
 import { getRootUrl } from "@/lib/domain";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) {
     redirect("/login");

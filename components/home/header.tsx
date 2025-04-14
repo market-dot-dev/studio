@@ -45,7 +45,7 @@ interface DropdownOffsets {
 }
 
 interface Product {
-  icon: ReactElement;
+  icon: ReactElement<any>;
   color: Color;
   title: string;
   description: string;
@@ -57,7 +57,7 @@ const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambu
     variant="ghost"
     onClick={toggleMenu}
     className={clsx(
-      "text-marketing-primary -m-1.5 flex items-center justify-center !p-1.5",
+      "-m-1.5 flex items-center justify-center !p-1.5 text-marketing-primary",
       className
     )}
     aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -239,7 +239,7 @@ export default function Header({ className }: { className?: string }) {
       <header
         ref={headerRef}
         className={clsx(
-          "bg-marketing-background text-marketing-sm md:text-marketing-base fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col tracking-tight transition-all ease-in-out",
+          "fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col bg-marketing-background text-marketing-sm tracking-tight transition-all ease-in-out md:text-marketing-base",
           isMobileMenuOpen && "duration-150",
           className
         )}
@@ -283,7 +283,7 @@ export default function Header({ className }: { className?: string }) {
               </button>
             </Link>
             <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
-              <Link href="/" className="!text-marketing-primary whitespace-nowrap">
+              <Link href="/" className="whitespace-nowrap !text-marketing-primary">
                 Sell
               </Link>
               <Link href="https://explore.market.dev" className="whitespace-nowrap">
@@ -402,7 +402,7 @@ export default function Header({ className }: { className?: string }) {
         {isMobileMenuOpen && (
           <motion.div
             key="mobile-menu"
-            className="shadow-t bg-marketing-background text-marketing-md fixed inset-x-0 bottom-0 z-40 overflow-y-auto text-left lg:hidden"
+            className="shadow-t fixed inset-x-0 bottom-0 z-40 overflow-y-auto bg-marketing-background text-left text-marketing-md lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}

@@ -14,9 +14,9 @@ export interface FeatureCardLinkProps {
 }
 
 interface FeatureCardProps {
-  icon: ReactElement;
-  title: ReactElement | string;
-  description: ReactElement | string;
+  icon: ReactElement<any>;
+  title: ReactElement<any> | string;
+  description: ReactElement<any> | string;
   color: Color;
   image?: {
     src: string;

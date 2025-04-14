@@ -22,7 +22,7 @@ export default function Tiers({
   hasActiveFeatures?: boolean;
   className?: string;
   disableButtons?: boolean;
-}): JSX.Element {
+}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [alteredStyle, setAlteredStyle] = useState<any>({
     transformOrigin: "top left"

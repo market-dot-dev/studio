@@ -2,13 +2,12 @@ import embedables from "@/components/site/embedables";
 import { getSiteData } from "@/lib/fetchers";
 import { notFound } from "next/navigation";
 
-export default async function EmbedServe({
-  params,
-  searchParams
-}: {
-  params: { domain: string; embed: string };
-  searchParams: any;
+export default async function EmbedServe(props: {
+  params: Promise<{ domain: string; embed: string }>;
+  searchParams: Promise<any>;
 }) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   if (!embedables[params.embed] || !params.domain) {
     notFound();
   }

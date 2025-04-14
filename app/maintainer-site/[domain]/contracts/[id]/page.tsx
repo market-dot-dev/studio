@@ -1,6 +1,7 @@
 import { getContractById } from "@/app/services/contract-service";
 
-export default async function ContractPage({ params }: { params: { id: string } }) {
+export default async function ContractPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const contract = await getContractById(params.id);
   return (
     <div>

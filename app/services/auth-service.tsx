@@ -6,7 +6,7 @@ import { User } from "@prisma/client";
 import { Account, User as NaUser } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import { JWT } from "next-auth/jwt";
-import { cookies } from "next/headers";
+import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 import { SessionUser, createSessionUser } from "../models/Session";
 import EmailService from "./EmailService";
 import { defaultOnboardingState } from "./onboarding/onboarding-steps";
@@ -103,7 +103,7 @@ class AuthService {
   }
 
   static async onCreateUser(account: any, user: NaUser) {
-    const signupName = cookies().get("signup_name") ?? null;
+    const signupName = (cookies() as unknown as UnsafeUnwrappedCookies).get("signup_name") ?? null;
     const name = (signupName?.value ?? null) as string | null;
 
     const roleId = account.provider === "github" ? "maintainer" : "customer";
@@ -154,7 +154,7 @@ class AuthService {
     }
 
     if (signupName) {
-      cookies().delete("signup_name");
+      (cookies() as unknown as UnsafeUnwrappedCookies).delete("signup_name");
     }
 
     return updatedUser;

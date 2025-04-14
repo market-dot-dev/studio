@@ -15,7 +15,7 @@ function ComponentsBlock({
 }: {
   components: Insertable[];
   insertAtCursor: (prop: string) => void;
-}): JSX.Element {
+}) {
   return (
     <div className="grid w-full gap-2">
       {Object.values(components)

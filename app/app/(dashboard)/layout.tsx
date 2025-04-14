@@ -16,13 +16,14 @@ import OnboardingModal from "@/components/onboarding/onboarding-modal";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
-export default async function DashboardLayout({
-  children,
-  params
-}: {
+export default async function DashboardLayout(props: {
   children: ReactNode;
-  params: any;
+  params: Promise<any>;
 }) {
+  const params = await props.params;
+
+  const { children } = props;
+
   const user = await UserService.getCurrentUser();
   if (!user?.id) {
     redirect("/login");

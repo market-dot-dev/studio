@@ -10,7 +10,8 @@ type SiteInfo = Partial<Site> & {
 };
 
 // Get nav items for the site of the current admin
-export async function GET(_req: Request, { params }: { params: { siteid: string } }) {
+export async function GET(_req: Request, props: { params: Promise<{ siteid: string }> }) {
+  const params = await props.params;
   const site = (await SiteService.getSiteInfo(params.siteid)) as SiteInfo;
 
   return new ImageResponse(

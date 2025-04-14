@@ -4,11 +4,10 @@ import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ReactNode } from "react";
 
-export async function generateMetadata({
-  params
-}: {
-  params: { domain: string };
+export async function generateMetadata(props: {
+  params: Promise<{ domain: string }>;
 }): Promise<Metadata | null> {
+  const params = await props.params;
   const domain = decodeURIComponent(params.domain);
   const data = await getSiteData(domain);
   if (!data) {
@@ -58,13 +57,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function SiteLayout({
-  params,
-  children
-}: {
-  params: { domain: string };
+export default async function SiteLayout(props: {
+  params: Promise<{ domain: string }>;
   children: ReactNode;
 }) {
+  const params = await props.params;
+
+  const { children } = props;
+
   const domain = decodeURIComponent(params.domain);
   const data = await getSiteData(domain);
 

@@ -6,7 +6,10 @@ import { JSDOM } from "jsdom";
 import PageService from "@/app/services/PageService";
 import FeatureService from "@/app/services/feature-service";
 
-export default async function SitePage({ params }: { params: { domain: string; slug: string } }) {
+export default async function SitePage(props: {
+  params: Promise<{ domain: string; slug: string }>;
+}) {
+  const params = await props.params;
   const domain = decodeURIComponent(params.domain);
   const data = await PageService.getPage(domain, params.slug);
   const activeFeatures = data?.userId ? await FeatureService.findActiveByUser(data.userId) : [];

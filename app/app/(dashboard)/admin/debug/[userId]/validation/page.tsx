@@ -5,7 +5,8 @@ import UserService from "@/app/services/UserService";
 import { Suspense } from "react";
 import ValidatorComponent from "./validator-component";
 
-const StripeDebug = async ({ params }: { params: { userId: string } }) => {
+const StripeDebug = async (props: { params: Promise<{ userId: string }> }) => {
+  const params = await props.params;
   const user = await UserService.findUser(params.userId);
   if (!user) {
     return <div>Not logged in</div>;

@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 
 export default async function Sitemap() {
-  const headersList = headers();
+  const headersList = await headers();
   const domain =
     headersList
       .get("host")

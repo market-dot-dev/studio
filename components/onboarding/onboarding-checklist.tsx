@@ -3,15 +3,15 @@
 import {
   OnboardingState,
   onboardingSteps,
-  type OnboardingStepsType,
-  onBoardingStepType
+  onBoardingStepType,
+  type OnboardingStepsType
 } from "@/app/services/onboarding/onboarding-steps";
 import { dismissOnboarding, refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 import { Check, ChevronRight, Goal, X } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, type JSX } from "react";
 import { useSiteId } from "../dashboard/dashboard-context";
 
 function calculateCompletionPercentage(completedSteps: OnboardingStepsType): number {
@@ -42,7 +42,7 @@ function DonutProgress({ percentage }: { percentage: number }): JSX.Element {
         width={size}
         height={size}
         viewBox={`0 0 ${size} ${size}`}
-        className="text-marketing-swamp -rotate-90"
+        className="-rotate-90 text-marketing-swamp"
       >
         <circle
           cx={size / 2}
@@ -95,7 +95,7 @@ function TodoItem({
   if (variant === "mini") {
     return (
       <div
-        className="shadow-border group flex w-full cursor-pointer items-center justify-between rounded bg-white p-1 pl-1.5 text-xs font-medium text-stone-800 transition-colors hover:bg-stone-50"
+        className="group flex w-full cursor-pointer items-center justify-between rounded bg-white p-1 pl-1.5 text-xs font-medium text-stone-800 shadow-border transition-colors hover:bg-stone-50"
         onClick={navigateToStep}
       >
         <div className="flex items-center gap-[7px]">
@@ -115,7 +115,7 @@ function TodoItem({
       <div className={clsx("flex w-full flex-row items-center gap-4 p-4 py-2")}>
         <div className="flex h-5 items-center">
           {completed ? (
-            <div className="bg-marketing-swamp flex h-4 w-4 shrink-0 items-center justify-center rounded-full ring-4 ring-white">
+            <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-marketing-swamp ring-4 ring-white">
               <Check size={12} color="white" />
             </div>
           ) : (
@@ -222,7 +222,7 @@ export default function OnboardingChecklist({
   if (!isHomepage) return <></>;
 
   return (
-    <div className="shadow-border mb-6 flex w-full flex-col items-start rounded-lg bg-white">
+    <div className="mb-6 flex w-full flex-col items-start rounded-lg bg-white shadow-border">
       <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-stone-200 bg-stone-50 py-2.5 pl-4 pr-2.5">
         <div className="flex items-center gap-4">
           <Goal size={16} className="text-stone-500" />

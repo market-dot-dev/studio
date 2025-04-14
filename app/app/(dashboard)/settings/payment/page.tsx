@@ -48,13 +48,11 @@ const AccountCheck: React.FC<AccountCheckProps> = ({ status, children }) => {
   return <li className={`${color} font-semibold`}>{children}</li>;
 };
 
-export default async function PaymentSettings({
-  params,
-  searchParams = {}
-}: {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+export default async function PaymentSettings(props: {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const searchParams = await props.searchParams;
   const code = searchParams["code"] as string;
   const state = searchParams["state"] as string;
 

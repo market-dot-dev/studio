@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { GithubAppInstallation } from "@prisma/client";
 import jwt from "jsonwebtoken";
 import { nanoid } from "nanoid";
-import { cookies } from "next/headers";
+import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 import LeadsService from "./LeadsService";
 import SessionService from "./SessionService";
 
@@ -220,7 +220,7 @@ class RepoService {
   static async getGithubAppInstallState() {
     const state = nanoid();
     // set a httpOnly cookie with the state
-    cookies().set("ghstate", state, { httpOnly: true });
+    (cookies() as unknown as UnsafeUnwrappedCookies).set("ghstate", state, { httpOnly: true });
 
     return state;
   }

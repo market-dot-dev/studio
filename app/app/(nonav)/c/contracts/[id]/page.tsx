@@ -4,16 +4,15 @@ import NoNavLayout from "../../../layout";
 import type { NextPage } from "next";
 import type { ReactElement, ReactNode } from "react";
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode;
+  getLayout?: (page: ReactElement<any>) => ReactNode;
 };
 
 type ContractPageProps = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
-const ContractPage: NextPageWithLayout<ContractPageProps> = async ({
-  params
-}: ContractPageProps) => {
+const ContractPage: NextPageWithLayout<ContractPageProps> = async (props: ContractPageProps) => {
+  const params = await props.params;
   const contract = await ContractService.getContractById(params.id);
 
   if (!contract) {
@@ -49,7 +48,7 @@ const ContractPage: NextPageWithLayout<ContractPageProps> = async ({
   );
 };
 
-ContractPage.getLayout = function getLayout(page: ReactElement) {
+ContractPage.getLayout = function getLayout(page: ReactElement<any>) {
   return <NoNavLayout>{page}</NoNavLayout>;
 };
 export default ContractPage;

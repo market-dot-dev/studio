@@ -3,7 +3,8 @@ import AnalyticsMockup from "@/components/analytics";
 import { getRootUrl } from "@/lib/domain";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
-export default async function SiteAnalytics({ params }: { params: { id: string } }) {
+export default async function SiteAnalytics(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const userId = await SessionService.getCurrentUserId();
 
   if (!userId) {
@@ -24,7 +25,7 @@ export default async function SiteAnalytics({ params }: { params: { id: string }
     <>
       <div className="flex items-center justify-center sm:justify-start">
         <div className="flex flex-col items-center space-x-0 space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0">
-          <h1 className="font-cal text-xl font-bold sm:text-3xl dark:text-white">
+          <h1 className="font-cal text-xl font-bold dark:text-white sm:text-3xl">
             Analytics for {data.name}
           </h1>
           <a

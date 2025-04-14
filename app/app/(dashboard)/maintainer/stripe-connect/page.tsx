@@ -19,13 +19,11 @@ const StripeOauthButton = async ({ userId }: { userId: string }) => {
   );
 };
 
-export default async function StripeConnect({
-  params,
-  searchParams = {}
-}: {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+export default async function StripeConnect(props: {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
+  const searchParams = await props.searchParams;
   const session = await getSession();
 
   if (!session) {

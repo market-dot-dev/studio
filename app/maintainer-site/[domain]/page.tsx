@@ -3,7 +3,8 @@ import FeatureService from "@/app/services/feature-service";
 import renderElement from "@/components/site/page-renderer";
 import { JSDOM } from "jsdom";
 import { notFound } from "next/navigation";
-export default async function SiteHomePage({ params }: { params: { domain: string } }) {
+export default async function SiteHomePage(props: { params: Promise<{ domain: string }> }) {
+  const params = await props.params;
   const domain = decodeURIComponent(params.domain);
   const data = await PageService.getHomepage(domain);
   const activeFeatures = data?.userId ? await FeatureService.findActiveByUser(data.userId) : [];

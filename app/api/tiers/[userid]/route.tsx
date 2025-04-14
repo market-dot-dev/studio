@@ -1,7 +1,8 @@
 import TierService from "@/app/services/TierService";
 import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: { userid: string } }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ userid: string }> }) {
+  const params = await props.params;
   const searchParams = req.nextUrl.searchParams;
   const onlyTiersString = searchParams.get("tiers");
   const onlyTiers = onlyTiersString ? onlyTiersString.split(",") : [];
