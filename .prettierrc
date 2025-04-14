@@ -1,0 +1,15 @@
+{
+  "endOfLine": "auto",
+  "singleQuote": false,
+  "useTabs": false,
+  "printWidth": 100,
+  "trailingComma": "none",
+  "tabWidth": 2,
+  "bracketSpacing": true,
+  "semi": true,
+  "plugins": [
+    "prettier-plugin-organize-imports",
+    "prettier-plugin-tailwindcss"
+  ],
+  "tailwindFunctions": ["tv"]
+}
