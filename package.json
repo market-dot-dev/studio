@@ -54,7 +54,7 @@
     "cmdk": "1.1.1",
     "date-fns": "^2.30.0",
     "dotenv-cli": "^7.4.2",
-    "framer-motion": "^11.11.10",
+    "framer-motion": "^12.7.2",
     "input-otp": "1.2.4",
     "js-yaml": "^4.1.0",
     "jsdom": "^23.2.0",
