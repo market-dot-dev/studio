@@ -1,22 +1,32 @@
 import { PrismaClient } from "@prisma/client";
+import "server-only";
 
-// @TODO: Need to review this file and see if it can be replaced by a more standard implementation.
-declare global {
-  const prisma: PrismaClient | undefined;
-}
-
-const isDevelopment = process.env.NODE_ENV === "development";
-const isTest = process.env.NODE_ENV === "test";
-const isDevOrTest = isDevelopment || isTest;
-
-const newPrisma = () => {
-  return false && isDevOrTest
-    ? new PrismaClient({ log: ["query", "info", "warn", "error"] })
-    : new PrismaClient();
+// Define the type for the global object to store the Prisma instance
+const globalForPrisma = global as unknown as {
+  prisma: PrismaClient | undefined;
 };
 
-const prisma = global.prisma || newPrisma();
+// Create a new Prisma instance with appropriate logging settings
+function createPrismaClient() {
+  const isDev = process.env.NODE_ENV === "development";
+  const isTest = process.env.NODE_ENV === "test";
 
-if (isDevOrTest) global.prisma = prisma;
+  // Only enable detailed logging in development/test environments
+  if (isDev || isTest) {
+    return new PrismaClient({
+      log: ["query", "info", "warn", "error"]
+    });
+  }
+
+  return new PrismaClient();
+}
+
+// Use existing instance if available to prevent multiple instances during hot reloading
+export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+
+// Only save the instance in development to prevent memory leaks in production
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
+}
 
 export default prisma;
