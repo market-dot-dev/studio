@@ -1,40 +1,35 @@
 "use client";
 
+import {
+  ContractWithUploadData,
+  createContract,
+  updateContract
+} from "@/app/services/contract-service";
+import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Contract } from "@prisma/client";
-import Link from "next/link";
-import PageHeader from "@/components/common/page-header";
-import { startTransition, useState } from "react";
-import {
-  updateContract,
-  createContract,
-  ContractWithUploadData,
-} from "@/app/services/contract-service";
-import { useRouter } from "next/navigation";
+import { Textarea } from "@/components/ui/textarea";
 import Uploader, { Attachment } from "@/components/uploader";
+import { Contract } from "@prisma/client";
 import { BookOpen, Trash } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { startTransition, useState } from "react";
 import ContractDeleteButton from "./contract-delete-button";
 
-export default function ContractEdit({
-  contract: contractObj,
-}: {
-  contract: Contract | null;
-}) {
-  
+export default function ContractEdit({ contract: contractObj }: { contract: Contract | null }) {
   const [contract, setContract] = useState<ContractWithUploadData>(
     contractObj ||
       ({
-        storage: "upload",
-      } as ContractWithUploadData),
+        storage: "upload"
+      } as ContractWithUploadData)
   );
 
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
-  
+
   const [error, setError] = useState<{ message: string } | null>(null);
   const [info, setInfo] = useState<string | null>(null);
   const router = useRouter();
@@ -43,9 +38,9 @@ export default function ContractEdit({
   const handleInputChange = (name: string, value: number | string | null) => {
     const updatedContract = {
       ...contract,
-      [name]: value,
+      [name]: value
     } as ContractWithUploadData;
-    
+
     setContract(updatedContract);
   };
 
@@ -93,18 +88,17 @@ export default function ContractEdit({
         ...contract,
         storage: "upload",
         attachmentUrl: attachment.attachmentUrl,
-        attachmentType: attachment.attachmentType,
+        attachmentType: attachment.attachmentType
       } as Contract;
     });
   };
-  
 
   const handleRemoveAttachment = () => {
     setContract((contract) => {
       return {
         ...contract,
         attachmentUrl: null,
-        attachmentType: null,
+        attachmentType: null
       } as ContractWithUploadData;
     });
   };
@@ -115,7 +109,7 @@ export default function ContractEdit({
         title={editing ? "Edit Contract" : "Create Contract"}
         backLink={{
           title: "Contracts",
-          href: "/contracts",
+          href: "/contracts"
         }}
         actions={[
           editing ? (
@@ -140,7 +134,7 @@ export default function ContractEdit({
                 Read
               </Link>
             </Button>
-          ) : null,
+          ) : null
         ]}
       />
       <form>
@@ -176,11 +170,9 @@ export default function ContractEdit({
                 value="upload"
                 checked={contract.storage === "upload"}
                 onChange={() => handleInputChange("storage", "upload")}
-                className="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                className="form-radio size-4 text-blue-600 transition duration-150 ease-in-out"
               />
-              <span className="ml-2 text-sm font-medium text-gray-700">
-                Upload File
-              </span>
+              <span className="ml-2 text-sm font-medium text-gray-700">Upload File</span>
             </label>
             <label className="flex items-center">
               <input
@@ -189,11 +181,9 @@ export default function ContractEdit({
                 value="link"
                 checked={contract.storage === "link"}
                 onChange={() => handleInputChange("storage", "link")}
-                className="form-radio h-4 w-4 text-blue-600 transition duration-150 ease-in-out"
+                className="form-radio size-4 text-blue-600 transition duration-150 ease-in-out"
               />
-              <span className="ml-2 text-sm font-medium text-gray-700">
-                Specify URL
-              </span>
+              <span className="ml-2 text-sm font-medium text-gray-700">Specify URL</span>
             </label>
           </div>
           {contract.storage === "upload" ? (
@@ -206,11 +196,7 @@ export default function ContractEdit({
                     <p className="text-sm text-stone-500">
                       {contract.attachmentUrl.split("/").pop()}
                     </p>
-                    <Button
-                      size="icon"
-                      variant="outline"
-                      onClick={handleRemoveAttachment}
-                    >
+                    <Button size="icon" variant="outline" onClick={handleRemoveAttachment}>
                       <Trash />
                     </Button>
                   </div>
@@ -251,9 +237,7 @@ export default function ContractEdit({
               onClick={handleSubmit}
               loading={isSaving || isUploading}
               disabled={isSaving || isUploading || isDeleting}
-              loadingText={
-                isSaving ? "Saving" : isUploading ? "Uploading" : undefined
-              }
+              loadingText={isSaving ? "Saving" : isUploading ? "Uploading" : undefined}
             >
               {editing ? "Save" : "Create"}
             </Button>

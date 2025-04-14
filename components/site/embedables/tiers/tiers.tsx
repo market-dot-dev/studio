@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
-import SkeletonTiers from "../../skeleton-tiers";
 import TierCard from "@/components/tiers/tier-card";
 import { cn } from "@/lib/utils";
+import { useEffect, useRef, useState } from "react";
+import SkeletonTiers from "../../skeleton-tiers";
+import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
 
 const transparentBody = "body {background: transparent}";
 // This renders the actual component for both server and client sides.
@@ -14,7 +14,7 @@ export default function Tiers({
   settings,
   hasActiveFeatures,
   className,
-  disableButtons,
+  disableButtons
 }: {
   tiers: any[];
   subdomain: string;
@@ -25,7 +25,7 @@ export default function Tiers({
 }): JSX.Element {
   const containerRef = useRef<HTMLDivElement>(null);
   const [alteredStyle, setAlteredStyle] = useState<any>({
-    transformOrigin: "top left",
+    transformOrigin: "top left"
   });
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
@@ -48,17 +48,15 @@ export default function Tiers({
       if (scale < 1) {
         setAlteredStyle({
           transform: `scale(${scale})`,
-          transformOrigin: "center",
+          transformOrigin: "center"
         });
       } else {
         setAlteredStyle({
-          transform: "none",
+          transform: "none"
         });
       }
 
-      postHeight(
-        containerRef.current.children[0].getBoundingClientRect().height,
-      );
+      postHeight(containerRef.current.children[0].getBoundingClientRect().height);
     }
   };
 
@@ -81,17 +79,11 @@ export default function Tiers({
     <>
       <div ref={containerRef} className={cn("w-full p-1", className)}>
         {alteredStyle.scale !== null ? (
-          <div
-            className="mx-auto flex w-full justify-center"
-            style={alteredStyle}
-          >
+          <div className="mx-auto flex w-full justify-center" style={alteredStyle}>
             {tiers.length ? (
               <div className="flex justify-center gap-6">
                 {tiers.map((tier: any, index: number) => (
-                  <div
-                    key={index}
-                    className="min-w-xxs w-full md:max-w-sm lg:max-w-xs"
-                  >
+                  <div key={index} className="min-w-xxs w-full md:max-w-sm lg:max-w-xs">
                     <TierCard
                       openUrlInNewTab={true}
                       tier={tier}

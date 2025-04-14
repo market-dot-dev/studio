@@ -1,14 +1,17 @@
-import { User, Tier, Subscription as SubscriptionSql } from "@prisma/client"
+import { Subscription as SubscriptionSql, Tier, User } from "@prisma/client";
 
-
-type SubscriptionState = 'active' | 'cancelled' | 'trial';
-type SubscriptionType = SubscriptionSql & { state: SubscriptionState | string; tier?: Tier; user?: User;}
-export type SubscriptionWithUser = SubscriptionType & { user: User, tier?: Tier};
+type SubscriptionState = "active" | "cancelled" | "trial";
+type SubscriptionType = SubscriptionSql & {
+  state: SubscriptionState | string;
+  tier?: Tier;
+  user?: User;
+};
+export type SubscriptionWithUser = SubscriptionType & { user: User; tier?: Tier };
 
 export const SubscriptionStates: Record<string, SubscriptionState> = {
-  renewing: 'renewing' as SubscriptionState,
-  cancelled: 'cancelled' as SubscriptionState,
-}
+  renewing: "renewing" as SubscriptionState,
+  cancelled: "cancelled" as SubscriptionState
+};
 
 class Subscription implements SubscriptionType {
   id: string;

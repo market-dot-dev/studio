@@ -8,26 +8,24 @@ export default function LeadsNav() {
   const pathname = usePathname();
   // Initialize with empty path to avoid hydration mismatch
   const [activePath, setActivePath] = useState<string>("");
-  
+
   // Update active path after component mounts to match client-side routing
   useEffect(() => {
     setActivePath(pathname);
   }, [pathname]);
-  
+
   const navItems = [
     {
       name: "All Leads",
       href: "/leads",
-      isActive: activePath === "/leads",
+      isActive: activePath === "/leads"
     },
     {
       name: "Shortlist",
       href: "/leads/shortlisted",
-      isActive: activePath === "/leads/shortlisted",
-    },
+      isActive: activePath === "/leads/shortlisted"
+    }
   ];
 
-  return (
-    <LinkTabs items={navItems} />
-  );
-} 
+  return <LinkTabs items={navItems} />;
+}

@@ -1,5 +1,5 @@
 export default {
-  name: 'Hero',
+  name: "Hero",
   template: `
     <div class="z-0 hero relative mx-auto flex flex-col items-center px-6 pb-20 md:px-12 !pt-[calc(44px+80px)] w-full">
       <div class="pointer-events-none absolute inset-0 z-[-1] h-[280px] bg-repeat opacity-5 [mask-image:linear-gradient(to_bottom,black,transparent)] [-webkit-mask-image:linear-gradient(to_bottom,black,transparent)]"></div>
@@ -24,4 +24,4 @@ export default {
       </div>
     </div>
   `
-}
+};

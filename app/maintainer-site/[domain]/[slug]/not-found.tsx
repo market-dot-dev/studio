@@ -19,9 +19,7 @@ export default async function NotFound() {
         height={400}
       />
       <p className="text-lg text-stone-500">
-        {data
-          ? data.message404
-          : "Blimey! You've found a page that doesn't exist."}
+        {data ? data.message404 : "Blimey! You've found a page that doesn't exist."}
       </p>
     </div>
   );

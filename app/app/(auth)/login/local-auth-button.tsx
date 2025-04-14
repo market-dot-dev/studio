@@ -1,17 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { signIn } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export default function LocalAuthButton() {
   const [loading, setLoading] = useState(false);
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   // Get error message added by next/auth in URL.
   const searchParams = useSearchParams();
@@ -31,7 +31,7 @@ export default function LocalAuthButton() {
     const res = await signIn("credentials", {
       redirect: false,
       gh_username: username,
-      password,
+      password
     });
 
     if (res?.error) {
@@ -42,7 +42,7 @@ export default function LocalAuthButton() {
       if (callbackUrl) {
         window.location.href = callbackUrl;
       } else {
-        window.location.href = '/';
+        window.location.href = "/";
       }
     }
   };
@@ -50,9 +50,7 @@ export default function LocalAuthButton() {
   return (
     <form onSubmit={handleSignIn} className="space-y-4">
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="username">
-          GitHub Username
-        </Label>
+        <Label htmlFor="username">GitHub Username</Label>
         <Input
           id="username"
           name="username"
@@ -65,9 +63,7 @@ export default function LocalAuthButton() {
         />
       </div>
       <div className="flex flex-col gap-1.5">
-        <Label htmlFor="password">
-          Password
-        </Label>
+        <Label htmlFor="password">Password</Label>
         <Input
           id="password"
           name="password"

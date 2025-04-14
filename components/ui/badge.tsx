@@ -1,38 +1,30 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "inline-flex items-center border border-black/10 tracking-[-0.0075em] font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-swamp focus:ring-offset-2",
+  "focus:ring-swamp inline-flex items-center border border-black/10 font-semibold tracking-[-0.0075em] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2",
   {
     variants: {
       variant: {
-        default:
-          "border-transparent bg-primary !text-primary-foreground shadow",
+        default: "bg-primary !text-primary-foreground border-transparent shadow",
         secondary: "border-transparent bg-stone-200 !text-stone-600",
-        success:
-          "border-transparent bg-swamp !text-primary-foreground shadow",
-        destructive:
-          "border-transparent bg-destructive !text-destructive-foreground shadow",
-        outline: "!text-stone-600",
+        success: "bg-swamp !text-primary-foreground border-transparent shadow",
+        destructive: "bg-destructive !text-destructive-foreground border-transparent shadow",
+        outline: "!text-stone-600"
       },
       size: {
-        default: "py-0.5 px-1.5 text-xs rounded-sm",
-        sm: "py-0.5 px-1 text-xxs tracking-[-0.02em] rounded-[3px]",
-      },
+        default: "rounded-sm px-1.5 py-0.5 text-xs",
+        sm: "text-xxs rounded-[3px] px-1 py-0.5 tracking-[-0.02em]"
+      }
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
-    },
-  },
+      size: "default"
+    }
+  }
 );
 
 export interface BadgeProps
@@ -57,17 +49,17 @@ const StyledTooltip: React.FC<StyledTooltipProps> = ({ className, children }) =>
   );
 };
 
-function Badge({ 
-  className, 
-  variant, 
+function Badge({
+  className,
+  variant,
   size,
-  tooltip, 
-  tooltipSide = "top", 
-  tooltipAlign = "center", 
-  ...props 
+  tooltip,
+  tooltipSide = "top",
+  tooltipAlign = "center",
+  ...props
 }: BadgeProps) {
   const badgeClasses = cn(badgeVariants({ variant, size }), className);
-  
+
   if (tooltip) {
     return (
       <TooltipProvider>
@@ -86,4 +78,4 @@ function Badge({
   return <div className={badgeClasses} {...props} />;
 }
 
-export { Badge, badgeVariants }
+export { Badge, badgeVariants };

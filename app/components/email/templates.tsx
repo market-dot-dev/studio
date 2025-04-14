@@ -1,5 +1,5 @@
-import { BaseEmailTemplate } from './base-template';
-import { getRootUrl } from '@/lib/domain';
+import { getRootUrl } from "@/lib/domain";
+import { BaseEmailTemplate } from "./base-template";
 
 // Helper to get URLs
 const appUrl = getRootUrl();
@@ -20,7 +20,7 @@ export const createNewSubscriptionEmail = (customerName: string, tierName: strin
 
   return BaseEmailTemplate({
     previewText: `New subscription from ${customerName} for ${tierName}!`,
-    children: content,
+    children: content
   });
 };
 
@@ -43,7 +43,7 @@ export const createWelcomeEmail = (userName: string) => {
 
   return BaseEmailTemplate({
     previewText: `Welcome to market.dev!`,
-    children: content,
+    children: content
   });
 };
 
@@ -63,7 +63,7 @@ export const createNewPurchaseEmail = (customerName: string, tierName: string) =
 
   return BaseEmailTemplate({
     previewText: `New purchase from ${customerName} for ${tierName}!`,
-    children: content,
+    children: content
   });
 };
 
@@ -83,7 +83,7 @@ export const createPurchaseConfirmationEmail = (tierName: string) => {
 
   return BaseEmailTemplate({
     previewText: `Thank you for purchasing ${tierName}!`,
-    children: content,
+    children: content
   });
 };
 
@@ -96,7 +96,7 @@ export const createSubscriptionCancelledEmail = (customerName: string, tierName:
 
   return BaseEmailTemplate({
     previewText: `Subscription Cancelled by ${customerName}`,
-    children: content,
+    children: content
   });
 };
 
@@ -109,11 +109,15 @@ export const createSubscriptionCancelledConfirmationEmail = (tierName: string) =
 
   return BaseEmailTemplate({
     previewText: `Subscription Cancelled`,
-    children: content,
+    children: content
   });
 };
 
-export const createNewProspectEmail = (prospectName: string, prospectEmail: string, tierName: string) => {
+export const createNewProspectEmail = (
+  prospectName: string,
+  prospectEmail: string,
+  tierName: string
+) => {
   const content = `
     <p style="font-size:16px;line-height:24px;margin:16px 0;color:#525f7f;text-align:left">
       Congratulations! <b>${prospectName}</b> has expressed interest in your <b>${tierName}</b> tier.
@@ -123,7 +127,7 @@ export const createNewProspectEmail = (prospectName: string, prospectEmail: stri
 
   return BaseEmailTemplate({
     previewText: `New prospect interested in ${tierName}!`,
-    children: content,
+    children: content
   });
 };
 
@@ -146,7 +150,7 @@ export const createNewCustomerSignUpEmail = (userName: string) => {
 
   return BaseEmailTemplate({
     previewText: `Welcome to market.dev!`,
-    children: content,
+    children: content
   });
 };
 
@@ -166,7 +170,7 @@ export const createSubscriptionConfirmationEmail = (tierName: string) => {
 
   return BaseEmailTemplate({
     previewText: `Thank you for purchasing ${tierName}!`,
-    children: content,
+    children: content
   });
 };
 
@@ -185,6 +189,6 @@ export const createVerificationEmail = (token: string, domain: string) => {
 
   return BaseEmailTemplate({
     previewText: `Your verification code: ${token}`,
-    children: content,
+    children: content
   });
-}; 
+};

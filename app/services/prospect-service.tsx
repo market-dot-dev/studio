@@ -7,9 +7,7 @@ import EmailService from "./EmailService";
 import UserService from "./UserService";
 
 class ProspectService {
-  static async getProspects(
-    userId: string,
-  ): Promise<(Prospect & { tier: Tier })[]> {
+  static async getProspects(userId: string): Promise<(Prospect & { tier: Tier })[]> {
     if (!userId) {
       console.warn("getProspects called without valid userId");
       return [];
@@ -17,23 +15,23 @@ class ProspectService {
 
     const response = await prisma.prospect.findMany({
       where: { userId },
-      include: { tiers: true },
+      include: { tiers: true }
     });
 
     return response.map((prospect) => ({
       ...prospect,
-      tier: prospect.tiers[0],
+      tier: prospect.tiers[0]
     }));
   }
 
   static async addNewProspectForPackage(
-    prospect: { 
-      email: string; 
+    prospect: {
+      email: string;
       name: string;
       organization: string;
       context: string;
     },
-    tier: Tier,
+    tier: Tier
   ): Promise<Prospect> {
     const user = await UserService.findUser(tier.userId);
     if (!user) {
@@ -44,19 +42,19 @@ class ProspectService {
       where: {
         email_userId: {
           email: prospect.email,
-          userId: tier.userId,
-        },
+          userId: tier.userId
+        }
       },
       create: {
         ...prospect,
         userId: tier.userId,
-        tiers: { connect: [{ id: tier.id }] },
+        tiers: { connect: [{ id: tier.id }] }
       },
       update: {
         ...prospect,
         userId: tier.userId,
-        tiers: { connect: [{ id: tier.id }] },
-      },
+        tiers: { connect: [{ id: tier.id }] }
+      }
     });
 
     await EmailService.sendNewProspectEmail(user, newProspect, tier.name);

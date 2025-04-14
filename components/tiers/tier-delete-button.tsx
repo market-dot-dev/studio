@@ -1,9 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { destroyTier } from "@/app/services/TierService";
-import { Trash2 } from 'lucide-react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,10 +9,23 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
+import { useState } from "react";
 
-const ContractDeleteButton = ({ tierId, onConfirm, onSuccess, onError }: { tierId: string, onSuccess: any, onError: any, onConfirm: any }) => {
+const ContractDeleteButton = ({
+  tierId,
+  onConfirm,
+  onSuccess,
+  onError
+}: {
+  tierId: string;
+  onSuccess: any;
+  onError: any;
+  onConfirm: any;
+}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -49,9 +59,7 @@ const ContractDeleteButton = ({ tierId, onConfirm, onSuccess, onError }: { tierI
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setOpen(false)}>
-              No, keep package
-            </AlertDialogCancel>
+            <AlertDialogCancel onClick={() => setOpen(false)}>No, keep package</AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
                 variant="destructive"
@@ -68,6 +76,6 @@ const ContractDeleteButton = ({ tierId, onConfirm, onSuccess, onError }: { tierI
       </AlertDialog>
     </>
   );
-}
+};
 
 export default ContractDeleteButton;

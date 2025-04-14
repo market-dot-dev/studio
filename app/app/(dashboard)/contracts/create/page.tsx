@@ -1,8 +1,8 @@
 "use server";
 
+import ContractEdit from "@/components/contracts/contract-edit";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import ContractEdit from "@/components/contracts/contract-edit"
 
 export default async function ContractCreatePage() {
   const session = await getSession();
@@ -11,7 +11,7 @@ export default async function ContractCreatePage() {
     redirect("/login");
   }
 
-  let contract = null;
+  const contract = null;
 
   return (
     <div className="space-y-6">

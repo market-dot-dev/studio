@@ -1,51 +1,45 @@
-import * as React from "react"
-import { cva, type VariantProps } from "class-variance-authority"
+import { cva, type VariantProps } from "class-variance-authority";
 import Link from "next/link";
+import * as React from "react";
 import { buttonVariants } from "./button";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
-  "relative w-full rounded border p-4 pb-4 text-sm [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg]:text-foreground [&>svg~*]:pl-[30px]",
+  "[&>svg]:text-foreground relative w-full rounded border p-4 text-sm [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg~*]:pl-[30px]",
   {
     variants: {
       variant: {
         default: "bg-background text-foreground",
-        warning: "border-none text-white bg-orange-600 [&>svg]:text-white",
+        warning: "border-none bg-orange-600 text-white [&>svg]:text-white",
         destructive:
-          "bg-rose-600 border-rose-600 text-white dark:border-rose-600 [&>svg]:text-white",
-      },
+          "border-rose-600 bg-rose-600 text-white dark:border-rose-600 [&>svg]:text-white"
+      }
     },
     defaultVariants: {
-      variant: "default",
-    },
-  },
+      variant: "default"
+    }
+  }
 );
 
 const Alert = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & VariantProps<typeof alertVariants>
 >(({ className, variant, ...props }, ref) => (
-  <div
-    ref={ref}
-    role="alert"
-    className={cn(alertVariants({ variant }), className)}
-    {...props}
-  />
-))
-Alert.displayName = "Alert"
+  <div ref={ref} role="alert" className={cn(alertVariants({ variant }), className)} {...props} />
+));
+Alert.displayName = "Alert";
 
-const AlertTitle = React.forwardRef<
-  HTMLParagraphElement,
-  React.HTMLAttributes<HTMLHeadingElement>
->(({ className, ...props }, ref) => (
-  <h5
-    ref={ref}
-    className={cn("alert-title mb-1 font-semibold leading-none", className)}
-    {...props}
-  />
-))
-AlertTitle.displayName = "AlertTitle"
+const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
+  ({ className, ...props }, ref) => (
+    <h5
+      ref={ref}
+      className={cn("alert-title mb-1 font-semibold leading-none", className)}
+      {...props}
+    />
+  )
+);
+AlertTitle.displayName = "AlertTitle";
 
 const AlertDescription = React.forwardRef<
   HTMLParagraphElement,
@@ -56,8 +50,8 @@ const AlertDescription = React.forwardRef<
     className={cn("alert-description text-sm [&_p]:leading-relaxed", className)}
     {...props}
   />
-))
-AlertDescription.displayName = "AlertDescription"
+));
+AlertDescription.displayName = "AlertDescription";
 
 const AlertButton = React.forwardRef<
   HTMLAnchorElement,
@@ -72,4 +66,4 @@ const AlertButton = React.forwardRef<
 ));
 AlertButton.displayName = "AlertButton";
 
-export { Alert, AlertTitle, AlertDescription, AlertButton };
+export { Alert, AlertButton, AlertDescription, AlertTitle };

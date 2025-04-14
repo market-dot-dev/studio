@@ -4,7 +4,7 @@ export async function validateMarketExpert(
   currentUser: User,
   onComplete: () => void,
   onError: (error: string) => void,
-  onSuccess: () => void,
+  onSuccess: () => void
 ) {
   if (currentUser.marketExpertId) {
     onComplete();
@@ -14,28 +14,23 @@ export async function validateMarketExpert(
   try {
     const response = await fetch(`/api/market/validate-expert`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json" }
     });
 
     const errorMessages = {
       404: "You are not an expert on Market.dev. Make sure you have an account created on Market.dev.",
-      default: "Failed to validate your Market.dev account.",
+      default: "Failed to validate your Market.dev account."
     };
 
     if (!response.ok) {
       throw new Error(
-        errorMessages[response.status as keyof typeof errorMessages] ||
-          errorMessages.default,
+        errorMessages[response.status as keyof typeof errorMessages] || errorMessages.default
       );
     }
 
     onSuccess();
   } catch (error) {
-    onError(
-      error instanceof Error
-        ? error.message
-        : "Error validating your Market.dev account.",
-    );
+    onError(error instanceof Error ? error.message : "Error validating your Market.dev account.");
     throw error;
   } finally {
     onComplete();

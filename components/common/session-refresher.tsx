@@ -14,6 +14,6 @@ const SessionRefresher = () => {
   }, [status, update, ranEffect]);
 
   return null;
-}
+};
 
 export default SessionRefresher;

@@ -2,14 +2,11 @@
 // also write a little guide for the user to follow in order to create new steps
 // like writing to db schema etc
 
+import { businessDescription, businessName } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { getCurrentUserId } from "../SessionService";
-import { defaultOnboardingState, OnboardingState } from "./onboarding-steps";
-import {
-  businessName,
-  businessDescription,
-} from "@/lib/constants/site-template";
 import { getCurrentUser } from "../UserService";
+import { defaultOnboardingState, OnboardingState } from "./onboarding-steps";
 
 class OnboardingService {
   static async saveState(state: OnboardingState) {
@@ -18,11 +15,11 @@ class OnboardingService {
 
     await prisma?.user.update({
       where: {
-        id,
+        id
       },
       data: {
-        onboarding: JSON.stringify(state),
-      },
+        onboarding: JSON.stringify(state)
+      }
     });
   }
 
@@ -32,7 +29,7 @@ class OnboardingService {
 
     const result = await prisma?.user.findUnique({
       where: {
-        id,
+        id
       },
       select: {
         onboarding: true,
@@ -51,38 +48,38 @@ class OnboardingService {
               select: {
                 id: true,
                 createdAt: true,
-                updatedAt: true,
+                updatedAt: true
               },
               orderBy: {
-                createdAt: "asc",
+                createdAt: "asc"
               },
-              take: 2,
-            },
+              take: 2
+            }
           },
           orderBy: {
-            createdAt: "asc",
+            createdAt: "asc"
           },
-          take: 1,
+          take: 1
         },
         tiers: {
           select: {
-            id: true,
+            id: true
           },
           orderBy: {
-            createdAt: "asc",
+            createdAt: "asc"
           },
-          take: 1,
+          take: 1
         },
         repos: {
           select: {
-            id: true,
+            id: true
           },
           orderBy: {
-            createdAt: "asc",
+            createdAt: "asc"
           },
-          take: 1,
-        },
-      },
+          take: 1
+        }
+      }
     });
 
     if (!result) {
@@ -103,10 +100,7 @@ class OnboardingService {
       onboardingState.setupBusiness = true;
     }
 
-    if (
-      result.projectName !== businessName &&
-      result.projectDescription !== businessDescription
-    ) {
+    if (result.projectName !== businessName && result.projectDescription !== businessDescription) {
       onboardingState.setupProject = true;
     }
 
@@ -172,16 +166,12 @@ class OnboardingService {
 
     await OnboardingService.saveState({
       ...currentOnboarding,
-      isDismissed: true,
+      isDismissed: true
     });
   }
 }
 
 export default OnboardingService;
 
-export const {
-  refreshAndGetState,
-  getCurrentState,
-  dismissOnboarding,
-  resetState,
-} = OnboardingService;
+export const { refreshAndGetState, getCurrentState, dismissOnboarding, resetState } =
+  OnboardingService;

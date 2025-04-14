@@ -6,15 +6,15 @@ export async function getSiteData(domain: string) {
 
   const site = await prisma.site.findUnique({
     where: isDomain ? { customDomain: domain } : { subdomain: domain },
-    include: { 
+    include: {
       user: {
         select: {
           name: true,
           image: true,
           projectName: true,
-          projectDescription: true,
+          projectDescription: true
         }
-      },
+      }
     }
   });
 
@@ -31,13 +31,13 @@ export async function getSiteData(domain: string) {
   } else {
     homepage = await prisma.page.findFirst({
       where: {
-        siteId: site.id,
-      },
+        siteId: site.id
+      }
     });
   }
   return {
     ...site,
-    homepage: homepage,
+    homepage: homepage
   };
 }
 
@@ -46,21 +46,21 @@ export async function getSitePage(domain: string, slug: string | undefined) {
     ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
     : null;
 
-    const site = await prisma.site.findUnique({
-      where: subdomain ? { subdomain } : { customDomain: domain },
-      include: { 
-        user: true,
-        pages: {
-          where: {
-            slug: slug,
-            draft: false,
-          },
-          take: 1
-        }
+  const site = await prisma.site.findUnique({
+    where: subdomain ? { subdomain } : { customDomain: domain },
+    include: {
+      user: true,
+      pages: {
+        where: {
+          slug: slug,
+          draft: false
+        },
+        take: 1
       }
-    });
+    }
+  });
 
-    return {
-      ...site
-    };
+  return {
+    ...site
+  };
 }

@@ -1,10 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 import { deleteSite, getCurrentSite } from "@/app/services/SiteService";
 import { resetState } from "@/app/services/onboarding/OnboardingService";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -40,11 +40,11 @@ export default function RestoreOnboarding(): JSX.Element {
           For debugging purposes only
         </Badge>
         <h2 className="text-xl font-bold">Restore Onboarding State</h2>
-        <p className="text-sm text-stone-500">User onboarding state, subdomain, location, logo will be reset to original settings at signup.</p>
-        <Button
-          loading={isLoading}
-          onClick={handleReset}
-        >
+        <p className="text-sm text-stone-500">
+          User onboarding state, subdomain, location, logo will be reset to original settings at
+          signup.
+        </p>
+        <Button loading={isLoading} onClick={handleReset}>
           Restore Onboarding State
         </Button>
       </Card>

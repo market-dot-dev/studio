@@ -8,12 +8,12 @@ interface RevenueLineChartProps {
   highestRevenueItemInMonth: number;
 }
 
-const valueFormatter = (number: number) => `$${Intl.NumberFormat('us').format(number)}`;
+const valueFormatter = (number: number) => `$${Intl.NumberFormat("us").format(number)}`;
 
 export default function RevenueLineChart({
   revenueData,
   isUsingDummyData,
-  highestRevenueItemInMonth,
+  highestRevenueItemInMonth
 }: RevenueLineChartProps) {
   return (
     <LineChart

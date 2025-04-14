@@ -1,15 +1,14 @@
 import UserService from "@/app/services/UserService";
-import { Card } from "@/components/ui/card";
-import { User, columns } from "./columns";
 import { DataTable } from "@/components/ui/data-table";
+import { User, columns } from "./columns";
 
 export default async function UsersList() {
-	const users = await UserService.getCustomersMaintainers();
-	
-	return (
-		<>
-			<h2 className="text-3xl font-bold mb-2">Users</h2>
-			<DataTable columns={columns} data={users as User[]} />
-		</>
-	  );
+  const users = await UserService.getCustomersMaintainers();
+
+  return (
+    <>
+      <h2 className="mb-2 text-3xl font-bold">Users</h2>
+      <DataTable columns={columns} data={users as User[]} />
+    </>
+  );
 }

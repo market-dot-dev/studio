@@ -1,46 +1,45 @@
-"use client"
+"use client";
 
 import {
   ColumnDef,
   flexRender,
   getCoreRowModel,
-  useReactTable,
   TableOptions,
-  Table as ReactTable,
-} from "@tanstack/react-table"
+  useReactTable
+} from "@tanstack/react-table";
 
+import { SessionUser } from "@/app/models/Session";
+import { Card } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Card } from "@/components/ui/card"
-import { ReactElement, ReactNode } from "react"
-import { cn } from "@/lib/utils"
-import { Skeleton } from "@/components/ui/skeleton"
-import { SessionUser } from "@/app/models/Session"
+  TableRow
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
+import { ReactElement, ReactNode } from "react";
 
 // Extend the ColumnDef type to include an emphasized property
 declare module "@tanstack/react-table" {
   interface ColumnMeta<TData extends unknown, TValue> {
-    emphasized?: boolean
+    emphasized?: boolean;
   }
 }
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  meta?: Record<string, any>
-  className?: string
-  tableOptions?: Partial<TableOptions<TData>>
-  noResults?: ReactNode
-  cardProps?: React.ComponentProps<typeof Card>
-  tableContainerClassName?: string
-  currentUser?: SessionUser | null | undefined
-  isLoading?: boolean
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  meta?: Record<string, any>;
+  className?: string;
+  tableOptions?: Partial<TableOptions<TData>>;
+  noResults?: ReactNode;
+  cardProps?: React.ComponentProps<typeof Card>;
+  tableContainerClassName?: string;
+  currentUser?: SessionUser | null | undefined;
+  isLoading?: boolean;
 }
 
 export function DataTable<TData, TValue>({
@@ -53,15 +52,15 @@ export function DataTable<TData, TValue>({
   cardProps,
   tableContainerClassName,
   currentUser,
-  isLoading = false,
+  isLoading = false
 }: DataTableProps<TData, TValue>): ReactElement {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     meta,
-    ...tableOptions,
-  })
+    ...tableOptions
+  });
 
   return (
     <Card className={cn("p-0", className)} {...cardProps}>
@@ -75,38 +74,33 @@ export function DataTable<TData, TValue>({
                     <TableHead key={header.id}>
                       {header.isPlaceholder
                         ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                        : flexRender(header.column.columnDef.header, header.getContext())}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {isLoading ? (
-              Array(data.length || 4).fill(0).map((_, index) => (
-                <TableRow key={`skeleton-${index}`}>
-                  {Array(columns.length).fill(0).map((_, cellIndex) => (
-                    <TableCell key={`skeleton-cell-${index}-${cellIndex}`}>
-                      <Skeleton className="h-6" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              Array(data.length || 4)
+                .fill(0)
+                .map((_, index) => (
+                  <TableRow key={`skeleton-${index}`}>
+                    {Array(columns.length)
+                      .fill(0)
+                      .map((_, cellIndex) => (
+                        <TableCell key={`skeleton-cell-${index}-${cellIndex}`}>
+                          <Skeleton className="h-6" />
+                        </TableCell>
+                      ))}
+                  </TableRow>
+                ))
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell 
-                      key={cell.id}
-                      emphasized={cell.column.columnDef.meta?.emphasized}
-                    >
+                    <TableCell key={cell.id} emphasized={cell.column.columnDef.meta?.emphasized}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
@@ -123,5 +117,5 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
     </Card>
-  )
-} 
+  );
+}

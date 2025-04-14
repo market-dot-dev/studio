@@ -1,15 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import SectionHeader from "./section-header";
+import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Tier } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
@@ -25,7 +23,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
       email: formData.get("email") as string,
       name: formData.get("name") as string,
       organization: formData.get("organization") as string,
-      context: formData.get("context") as string,
+      context: formData.get("context") as string
     };
 
     try {
@@ -49,13 +47,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
         </div>
         <div className="flex w-full flex-col gap-2">
           <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Enter your email"
-            required
-          />
+          <Input id="email" name="email" type="email" placeholder="Enter your email" required />
         </div>
         <div className="flex w-full flex-col gap-2">
           <Label htmlFor="organization">Company</Label>

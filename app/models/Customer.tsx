@@ -1,5 +1,5 @@
-import { User } from "@prisma/client"
-import Stripe from 'stripe';
+import { User } from "@prisma/client";
+import Stripe from "stripe";
 import StripeService from "../services/StripeService";
 import UserService from "../services/UserService";
 import { SessionUser } from "./Session";
@@ -14,22 +14,29 @@ class Customer {
   stripe: Stripe;
   stripeService: StripeService;
 
-  constructor(user: User | SessionUser, maintainerUserId: string, maintainerStripeAccountId: string) {
+  constructor(
+    user: User | SessionUser,
+    maintainerUserId: string,
+    maintainerStripeAccountId: string
+  ) {
     this.user = user;
     this.stripeCustomerIds = (user.stripeCustomerIds || {}) as Record<string, string>;
     this.stripePaymentMethodIds = (user.stripePaymentMethodIds || {}) as Record<string, string>;
     this.maintainerUserId = maintainerUserId;
     this.maintainerStripeAccountId = maintainerStripeAccountId;
 
-    
-    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', { stripeAccount: maintainerStripeAccountId });
+    this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+      stripeAccount: maintainerStripeAccountId
+    });
     this.stripeService = new StripeService(maintainerStripeAccountId);
   }
 
   // utility
   canBuy() {
-    return !!this.stripeCustomerIds[this.maintainerStripeAccountId] 
-      && !!this.stripePaymentMethodIds[this.maintainerStripeAccountId];
+    return (
+      !!this.stripeCustomerIds[this.maintainerStripeAccountId] &&
+      !!this.stripePaymentMethodIds[this.maintainerStripeAccountId]
+    );
   }
 
   // customer
@@ -38,10 +45,9 @@ class Customer {
   }
 
   async getOrCreateStripeCustomerId() {
-    return this.getStripeCustomerId() ||
-      (await this.createStripeCustomer()).id;
+    return this.getStripeCustomerId() || (await this.createStripeCustomer()).id;
   }
-  
+
   async setCustomerId(customerId: string) {
     this.stripeCustomerIds[this.maintainerStripeAccountId] = customerId;
     return this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });
@@ -53,7 +59,7 @@ class Customer {
   }
 
   async createStripeCustomer() {
-    if(!this.user.email) throw new Error('User does not have an email address.');
+    if (!this.user.email) throw new Error("User does not have an email address.");
     const { email, name } = this.user;
 
     const customer = await this.stripeService.createCustomer(email, name || undefined);
@@ -73,10 +79,13 @@ class Customer {
   }
 
   // payment method
-  async getStripePaymentMethod(){
-    return await this.stripeService.getPaymentMethod(await this.getStripePaymentMethodId(), this.maintainerStripeAccountId);
+  async getStripePaymentMethod() {
+    return await this.stripeService.getPaymentMethod(
+      await this.getStripePaymentMethodId(),
+      this.maintainerStripeAccountId
+    );
   }
-  
+
   async getStripePaymentMethodId() {
     return this.stripePaymentMethodIds[this.maintainerStripeAccountId];
   }
@@ -91,9 +100,12 @@ class Customer {
 
   async detachPaymentMethod() {
     try {
-      await this.stripeService.detachPaymentMethod(await this.getStripePaymentMethodId(), await this.getStripeCustomerId());
+      await this.stripeService.detachPaymentMethod(
+        await this.getStripePaymentMethodId(),
+        await this.getStripeCustomerId()
+      );
     } catch (error: any) {
-      if(error.code !== 'resource_missing') throw error;
+      if (error.code !== "resource_missing") throw error;
     }
     delete this.stripePaymentMethodIds[this.maintainerStripeAccountId];
 
@@ -111,8 +123,8 @@ export const getCustomerIds = (user: User | SessionUser, maintainerStripeAccount
 
   return {
     stripeCustomerId: stripeCustomerIds[maintainerStripeAccountId],
-    stripePaymentMethodId: stripePaymentMethodIds[maintainerStripeAccountId],
-  }
-}
+    stripePaymentMethodId: stripePaymentMethodIds[maintainerStripeAccountId]
+  };
+};
 
 export default Customer;

@@ -1,8 +1,8 @@
 "use server";
 
+import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
 import { UserAccountWidget } from "@/components/payments/user-account-widget";
-import TierService from "@/app/services/TierService";
 import { Card } from "@/components/ui/card";
 
 const StripeDebug = async () => {

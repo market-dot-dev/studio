@@ -1,10 +1,10 @@
 export default function LegalPageLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="bg-marketing-background text-marketing-base text-marketing-secondary relative overflow-hidden pt-[52px] xs:pt-[56px] font-sans font-bold antialiased [&_a]: min-h-screen"
+      className="[&_a]: relative min-h-screen overflow-hidden bg-marketing-background pt-[52px] font-sans text-marketing-base font-bold text-marketing-secondary antialiased xs:pt-[56px]"
       style={{ textRendering: "optimizeLegibility" }}
     >
-      <main className="mx-auto flex flex-col gap-[72px] sm:gap-24 overflow-visible">
+      <main className="mx-auto flex flex-col gap-[72px] overflow-visible sm:gap-24">
         {children}
       </main>
     </div>

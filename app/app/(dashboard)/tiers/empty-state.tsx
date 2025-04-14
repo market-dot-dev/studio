@@ -1,20 +1,14 @@
-'use client'
+"use client";
 
 import NewTierModal from "@/components/tiers/new-tier-modal";
 
-
-
 export default function TiersEmptyState() {
-	
-	return (
+  return (
     <div className="flex min-h-80 justify-between gap-4 rounded-lg border">
       <div className="flex basis-[50%] flex-col items-center justify-center gap-4 p-8">
-        <h2 className="text-lg font-semibold text-gray-900">
-          You have no packages defined
-        </h2>
+        <h2 className="text-lg font-semibold text-gray-900">You have no packages defined</h2>
         <p className="w-3/4 text-center text-sm text-gray-500">
-          You can use our pre-existing package templates to get you started
-          quickly.
+          You can use our pre-existing package templates to get you started quickly.
         </p>
 
         <div className="align-center flex justify-around gap-8">

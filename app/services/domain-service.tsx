@@ -44,7 +44,7 @@ class DomainService {
   }
 
   static isVercelPreview(req: NextRequest) {
-    let host = DomainService.getHostnameFromRequest(req);
+    const host = DomainService.getHostnameFromRequest(req);
     const vercelPreviewUrlPattern =
       /^store-git-[\w-]+-marketdotdev\.(?:vercel\.local|vercel\.app)(?::\d+)?$/;
 
@@ -52,7 +52,7 @@ class DomainService {
   }
 
   static getSubdomainFromRequest(req: NextRequest) {
-    let host = DomainService.getHostnameFromRequest(req);
+    const host = DomainService.getHostnameFromRequest(req);
 
     const parts = host.split(".");
 

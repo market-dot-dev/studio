@@ -1,15 +1,11 @@
-import PageHeader from "@/components/common/page-header";
 import ChargeService from "@/app/services/charge-service";
 import SubscriptionService from "@/app/services/SubscriptionService";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import SubscriptionCard from "@/components/customer/subscription-card";
+import PageHeader from "@/components/common/page-header";
 import ChargeCard from "@/components/customer/charge-card";
+import SubscriptionCard from "@/components/customer/subscription-card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-export default async function SubscriptionsAndChargesList({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function SubscriptionsAndChargesList({ params }: { params: { id: string } }) {
   const charges = (await ChargeService.findCharges()) || [];
   const subscriptions = (await SubscriptionService.findSubscriptions()) || [];
 
@@ -27,16 +23,16 @@ export default async function SubscriptionsAndChargesList({
           title="Purchases"
           description="All your subscriptions and one time purchases from market.dev will appear here."
         />
-        
+
         <Tabs defaultValue="active">
           <TabsList>
             <TabsTrigger value="active">Active Subscriptions</TabsTrigger>
             <TabsTrigger value="onetime">One Time Purchases</TabsTrigger>
             <TabsTrigger value="past">Past Subscriptions</TabsTrigger>
           </TabsList>
-          
+
           <TabsContent value="active">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {activeSubscriptions.map((element) => (
                 <SubscriptionCard subscription={element} key={element.id} />
               ))}
@@ -47,9 +43,9 @@ export default async function SubscriptionsAndChargesList({
               </div>
             )}
           </TabsContent>
-          
+
           <TabsContent value="onetime">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {charges.map((element) => (
                 <ChargeCard charge={element} key={element.id} />
               ))}
@@ -60,9 +56,9 @@ export default async function SubscriptionsAndChargesList({
               </div>
             )}
           </TabsContent>
-          
+
           <TabsContent value="past">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
               {pastSubscriptions.map((element) => (
                 <SubscriptionCard subscription={element} key={element.id} />
               ))}

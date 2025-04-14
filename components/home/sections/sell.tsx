@@ -1,39 +1,36 @@
-"use client"
+"use client";
 
-import React, { useRef, useEffect } from "react";
-import Section from "@/components/home/section";
 import FeatureCard from "@/components/home/feature-card";
+import Section from "@/components/home/section";
 import { colors } from "@/lib/home/colors";
 import {
-  HandHelping,
-  Briefcase,
-  ShoppingBag,
-  FileBox,
   BookLock,
+  Briefcase,
+  FileBox,
   GraduationCap,
-  Key,
+  HandHelping,
+  ShoppingBag
 } from "lucide-react";
+import { useEffect, useRef } from "react";
 
 const featureCards = [
   {
     icon: <HandHelping />,
     title: "Support packages",
-    description:
-      "Offer multiple support package ties with access to market rates.",
+    description: "Offer multiple support package ties with access to market rates.",
     image: {
       src: "/tiers.png",
-      alt: "Package cards illustration",
-    },
+      alt: "Package cards illustration"
+    }
   },
   {
     icon: <BookLock />,
     title: "Code repos",
-    description:
-      "Host and sell access to your private code repositories securely.",
+    description: "Host and sell access to your private code repositories securely.",
     image: {
       src: "/code-repo.png",
-      alt: "Private code repo illustration",
-    },
+      alt: "Private code repo illustration"
+    }
   },
   {
     icon: <Briefcase />,
@@ -41,28 +38,26 @@ const featureCards = [
     description: "Share your expertise through tailored consulting packages.",
     image: {
       src: "/consulting.png",
-      alt: "Package cards illustration",
-    },
+      alt: "Package cards illustration"
+    }
   },
   {
     icon: <FileBox />,
     title: "File downloads",
-    description:
-      "Upload & manage PDFs, ebooks, and other digital files for sale.",
+    description: "Upload & manage PDFs, ebooks, and other digital files for sale.",
     image: {
       src: "/file.png",
-      alt: "Digital files illustration",
-    },
+      alt: "Digital files illustration"
+    }
   },
   {
     icon: <GraduationCap />,
     title: "Training & courses",
-    description:
-      "Teach others what you know with training packages & online courses.",
+    description: "Teach others what you know with training packages & online courses.",
     image: {
       src: "/course.png",
-      alt: "Course illustration",
-    },
+      alt: "Course illustration"
+    }
   }
 ];
 
@@ -77,14 +72,14 @@ export default function Sell() {
       const scrollWidth = container.scrollWidth;
       const pxPerSecond = 50;
       const duration = scrollWidth / pxPerSecond;
-      
-      container.style.setProperty('--scroll-duration', `${duration}s`);
+
+      container.style.setProperty("--scroll-duration", `${duration}s`);
     };
 
     setScrollDuration();
-    window.addEventListener('resize', setScrollDuration);
+    window.addEventListener("resize", setScrollDuration);
 
-    return () => window.removeEventListener('resize', setScrollDuration);
+    return () => window.removeEventListener("resize", setScrollDuration);
   }, []);
 
   return (
@@ -93,7 +88,7 @@ export default function Sell() {
       color={colors.green["100"]}
       badge={{
         icon: <ShoppingBag />,
-        title: "Sell",
+        title: "Sell"
       }}
       headline="Sell Anything"
       description="Manage your offerings in one place. Use ready-made contracts & proven pricing structures to sell whatever you want, right away."
@@ -103,7 +98,7 @@ export default function Sell() {
       <div className="group relative w-full overflow-hidden">
         <div className="flex flex-col gap-6 md:hidden">
           {featureCards.map((card, index) => (
-            <div key={index} className="w-full flex-shrink-0">
+            <div key={index} className="w-full shrink-0">
               <FeatureCard
                 icon={card.icon}
                 title={card.title}
@@ -119,15 +114,15 @@ export default function Sell() {
         </div>
         <div
           ref={scrollContainerRef}
-          className="scroll-container group-hover:pause-animation group-active:pause-animation hidden animate-scroll md:flex"
+          className="scroll-container group-hover:pause-animation group-active:pause-animation animate-scroll hidden md:flex"
         >
           {[
             ...featureCards.slice(-1),
             ...featureCards.slice(0, -1),
             ...featureCards.slice(-1),
-            ...featureCards.slice(0, -1),
+            ...featureCards.slice(0, -1)
           ].map((card, index) => (
-            <div key={index} className="max-w-[360px] flex-shrink-0 px-3">
+            <div key={index} className="max-w-[360px] shrink-0 px-3">
               <FeatureCard
                 icon={card.icon}
                 title={card.title}

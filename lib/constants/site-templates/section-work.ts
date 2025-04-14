@@ -1,5 +1,5 @@
 export default {
-  name: 'Work',
+  name: "Work",
   template: `
     <div id="work" class="projects scroll-mt-8 px-6 md:px-12 py-20">
       <div class="mx-auto flex max-w-6xl flex-col items-center gap-8 md:gap-12">
@@ -115,4 +115,4 @@ export default {
       </div>
     </div>
   `
-}
+};

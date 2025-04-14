@@ -1,6 +1,6 @@
 "use server";
 
-export type Role = 'anonymous' | 'customer' | 'maintainer' | 'admin';
+export type Role = "anonymous" | "customer" | "maintainer" | "admin";
 
 class RoleService {
   static anonymousPaths = [
@@ -30,32 +30,27 @@ class RoleService {
     /^\/trending(\/|$)/,
 
     // Allow all maintainer site pages
-    /^\/maintainer-site\//,
+    /^\/maintainer-site\//
   ];
 
-  static adminOnlyPaths = [
-    /^\/admin(\/|$)/,
-  ];
+  static adminOnlyPaths = [/^\/admin(\/|$)/];
 
-  static maintainerOnlyPaths = [
-    /^\/maintainer(\/|$)/,
-    ...RoleService.adminOnlyPaths,
-  ];
+  static maintainerOnlyPaths = [/^\/maintainer(\/|$)/, ...RoleService.adminOnlyPaths];
 
   static prohibitedPathSpecs: Record<Role, RegExp[]> = {
     anonymous: [],
     customer: RoleService.maintainerOnlyPaths,
     maintainer: RoleService.adminOnlyPaths,
-    admin: [],
+    admin: []
   };
 
   static isPathBlockedForRole(path: string, blockedPaths: RegExp[]): boolean {
-    return blockedPaths.some(regex => regex.test(path));
+    return blockedPaths.some((regex) => regex.test(path));
   }
 
-  static async canViewPath(path: string, roleId: Role = 'anonymous') {
-    if (roleId === 'anonymous') {  
-      const result = RoleService.anonymousPaths.some(regex => regex.test(path));
+  static async canViewPath(path: string, roleId: Role = "anonymous") {
+    if (roleId === "anonymous") {
+      const result = RoleService.anonymousPaths.some((regex) => regex.test(path));
       console.debug("==== canViewPath anonymous", path, result ? 'allowed' : 'blocked');
       return result;
     } else {

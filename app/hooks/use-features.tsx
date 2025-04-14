@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
 import { findByTierId } from "@/app/services/feature-service";
 import { Feature } from "@prisma/client";
+import { useEffect, useState } from "react";
 
 const useFeatures = (tierId: string) => {
   const [features, setFeatures] = useState<Feature[]>();
@@ -18,6 +18,6 @@ const useFeatures = (tierId: string) => {
   }, [tierId]);
 
   return [features, isLoading] as const;
-}
+};
 
 export default useFeatures;

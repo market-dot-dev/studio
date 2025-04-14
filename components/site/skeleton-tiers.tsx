@@ -1,20 +1,16 @@
 import type { SubscriptionCadence } from "@/app/services/StripeService";
-import Link from "next/link";
-import { Check, ChevronRight } from "lucide-react";
 import tierPlaceholderData from "@/lib/constants/placeholder/tiers";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
 import { cn } from "@/lib/utils";
+import { Check, ChevronRight } from "lucide-react";
+import Link from "next/link";
 
-export default function SkeletonTiers({
-  className,
-}: {
-  className?: string;
-}): JSX.Element {
+export default function SkeletonTiers({ className }: { className?: string }): JSX.Element {
   return (
     <div
       className={cn(
         "flex w-full flex-col items-center rounded-[38px] border border-dashed border-gray-300 bg-[#FDFDFD] p-8",
-        className,
+        className
       )}
     >
       <div className="mb-8 flex h-4 items-center whitespace-nowrap rounded-full bg-white px-1.5 font-mono text-[9px] uppercase tracking-wider text-gray-500 ring-1 ring-black/10">
@@ -29,7 +25,7 @@ export default function SkeletonTiers({
           return (
             <div
               key={tier.id}
-              className="flex h-full w-full flex-col justify-between gap-8 rounded-md bg-white p-6 pt-5 shadow ring-1 ring-gray-500/10"
+              className="flex size-full flex-col justify-between gap-8 rounded-md bg-white p-6 pt-5 shadow ring-1 ring-gray-500/10"
             >
               <div>
                 <h3 className="mb-1 font-semibold">{tier.name}</h3>
@@ -37,18 +33,13 @@ export default function SkeletonTiers({
                 <p className="my-5 text-4xl">
                   <span className="font-geist-mono">${tier.price}</span>
                   {cadenceShorthand && (
-                    <span className="text-base font-normal text-gray-500">
-                      /{cadenceShorthand}
-                    </span>
+                    <span className="text-base font-normal text-gray-500">/{cadenceShorthand}</span>
                   )}
                 </p>
                 <ul className="flex flex-col gap-1">
                   {tier.features.map((feature: any) => (
-                    <li
-                      key={feature.id}
-                      className="flex items-center gap-2 text-sm"
-                    >
-                      <Check className="h-5 w-5 text-emerald-600" />
+                    <li key={feature.id} className="flex items-center gap-2 text-sm">
+                      <Check className="size-5 text-emerald-600" />
                       <p className="text-gray-500">{feature.name}</p>
                     </li>
                   ))}
@@ -58,9 +49,7 @@ export default function SkeletonTiers({
                 href="#"
                 className="inline-flex w-full items-center justify-center rounded-md bg-gradient-to-b from-gray-800 to-gray-950 px-3 py-2 text-center text-sm font-medium text-white shadow-sm ring-1 ring-black/5 transition-shadow hover:bg-gray-700 hover:shadow"
               >
-                {tier.name === "Enterprise Solution"
-                  ? "Get in touch"
-                  : "Buy package"}
+                {tier.name === "Enterprise Solution" ? "Get in touch" : "Buy package"}
               </a>
             </div>
           );
@@ -73,7 +62,7 @@ export default function SkeletonTiers({
           className="group flex items-center gap-0.5 text-xs font-medium tracking-tight text-gray-500 hover:text-gray-600"
         >
           Set up your packages
-          <ChevronRight className="-mr-[3px] mt-px h-3 w-3 transition-transform group-hover:translate-x-px group-focus:translate-x-px" />
+          <ChevronRight className="-mr-[3px] mt-px size-3 transition-transform group-hover:translate-x-px group-focus:translate-x-px" />
         </Link>
       </div>
     </div>

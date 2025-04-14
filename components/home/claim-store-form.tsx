@@ -1,15 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
-import Link from './link';
-import Button from './button';
-import { loginURL } from '@/lib/home/social-urls';
-import { ChevronRight, StoreIcon } from 'lucide-react';
+import { loginURL } from "@/lib/home/social-urls";
+import { StoreIcon } from "lucide-react";
+import React, { useState } from "react";
+import Button from "./button";
+import Link from "./link";
 
-export default function ClaimStoreForm({ 
-  id, 
-  initialValue = '' 
-}: { 
+export default function ClaimStoreForm({
+  id,
+  initialValue = ""
+}: {
   id: string;
   initialValue?: string;
 }) {
@@ -21,20 +21,20 @@ export default function ClaimStoreForm({
   };
 
   return (
-    <div className="flex w-[272px] flex-col items-center rounded-lg bg-black/[4%] ring-1 ring-black/[15%] xs:w-[320px] sm:w-[420px] sm:flex-row md:w-[500px]">
+    <div className="xs:w-[320px] flex w-[272px] flex-col items-center rounded-lg bg-black/[4%] ring-1 ring-black/[15%] sm:w-[420px] sm:flex-row md:w-[500px]">
       <div className="relative flex w-full items-center justify-between pl-3.5 pr-4 md:pl-[18px] md:pr-5">
         <div className="flex items-center gap-3 md:gap-3.5">
-          <StoreIcon className="h-5 w-5 text-marketing-green md:h-7 md:w-7" />
+          <StoreIcon className="text-marketing-green h-5 w-5 md:h-7 md:w-7" />
           <input
             id={`${id}-store-name`}
             type="text"
             value={storeInput}
             onChange={handleInputChange}
             placeholder={placeholder}
-            className="placeholder:text-marketing-secondary/[66%] h-full w-full appearance-none overflow-hidden text-clip border-none bg-transparent !px-0 py-3 text-marketing-sm text-marketing-secondary focus:outline-none focus:ring-0 md:text-marketing-base"
+            className="text-marketing-sm text-marketing-secondary placeholder:text-marketing-secondary/[66%] md:text-marketing-base size-full appearance-none overflow-hidden text-clip border-none bg-transparent !px-0 py-3 focus:outline-none focus:ring-0"
           />
         </div>
-        <span className="whitespace-nowrap text-marketing-sm text-marketing-secondary md:text-marketing-base">
+        <span className="text-marketing-sm text-marketing-secondary md:text-marketing-base whitespace-nowrap">
           .market.dev
         </span>
       </div>
@@ -45,4 +45,4 @@ export default function ClaimStoreForm({
       </Link>
     </div>
   );
-} 
+}

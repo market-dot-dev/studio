@@ -1,12 +1,11 @@
-import React from "react";
+import ProspectService from "@/app/services/prospect-service";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
-import { columns } from "./columns";
 import { getSession } from "@/lib/auth";
+import Link from "next/link";
 import { redirect } from "next/navigation";
-import ProspectService from "@/app/services/prospect-service";
+import { columns } from "./columns";
 
 export default async function ProspectsPage() {
   const session = await getSession();
@@ -28,18 +27,18 @@ export default async function ProspectsPage() {
         title="Prospects"
         description="View all prospects who have submitted an interest on one of your packages."
       />
-      
+
       <DataTable columns={columns} data={prospects} />
-      
+
       {!showAll && maxInitialRows && prospects.length > maxInitialRows && (
-        <div className="grid justify-items-end mt-4">
+        <div className="mt-4 grid justify-items-end">
           <Link href="/prospects">
             <Button size="sm" variant="outline">
               View All Prospects →
             </Button>
           </Link>
         </div>
-        )}
+      )}
     </div>
   );
 }

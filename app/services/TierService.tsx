@@ -1,15 +1,15 @@
 "use server";
 
-import prisma from "@/lib/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
-import StripeService, { SubscriptionCadence } from "./StripeService";
-import UserService, { getCurrentUser } from "./UserService";
-import { Channel, Feature, TierVersion, User } from "@prisma/client";
-import SessionService from "./SessionService";
-import FeatureService from "./feature-service";
-import SubscriptionService from "./SubscriptionService";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
+import prisma from "@/lib/prisma";
+import { Channel, Feature, TierVersion, User } from "@prisma/client";
+import FeatureService from "./feature-service";
 import { MarketService } from "./market-service";
+import SessionService from "./SessionService";
+import StripeService, { SubscriptionCadence } from "./StripeService";
+import SubscriptionService from "./SubscriptionService";
+import UserService, { getCurrentUser } from "./UserService";
 
 export type TierWithFeatures = Tier & {
   features?: Feature[];
@@ -30,42 +30,40 @@ class TierService {
 
     await prisma?.tier.update({
       where: { id: tier.id },
-      data: { stripePriceId: null },
+      data: { stripePriceId: null }
     });
   }
 
   static async updateApplicationFee(
     tierId: string,
     applicationFeePercent?: number,
-    applicationFeePrice?: number,
+    applicationFeePrice?: number
   ) {
     const user = await getCurrentUser();
     if (!user?.roleId || user.roleId !== "admin") {
-      throw new Error(
-        "User does not have permission to update application fee percent.",
-      );
+      throw new Error("User does not have permission to update application fee percent.");
     }
 
     return await prisma?.tier.update({
       where: { id: tierId },
-      data: { applicationFeePercent, applicationFeePrice },
+      data: { applicationFeePercent, applicationFeePrice }
     });
   }
 
   static async findTier(id: string): Promise<Tier | null> {
     return prisma.tier.findUnique({
       where: {
-        id,
+        id
       },
       include: {
         features: true,
         _count: {
           select: {
             Charge: true,
-            subscriptions: true,
-          },
-        },
-      },
+            subscriptions: true
+          }
+        }
+      }
     });
   }
 
@@ -79,14 +77,14 @@ class TierService {
         ...defaultTier,
         published: false,
         revision: 0,
-        contractId: "standard-msa",
+        contractId: "standard-msa"
       };
 
       const createdTier = await TierService.createTier(tier);
 
       return {
         success: true,
-        id: createdTier.id,
+        id: createdTier.id
       };
     } catch (error) {
       console.error("Error creating template tier", error);
@@ -96,11 +94,11 @@ class TierService {
   static async findTierByUserId(userId: string): Promise<Tier[]> {
     return prisma.tier.findMany({
       where: {
-        userId,
+        userId
       },
       include: {
-        features: true,
-      },
+        features: true
+      }
     });
   }
 
@@ -135,25 +133,25 @@ class TierService {
 
     if (tierData.published && !user.stripeAccountId) {
       throw new Error(
-        "Tried to publish an existing tier, but the user has no connected stripe account.",
+        "Tried to publish an existing tier, but the user has no connected stripe account."
       );
     }
 
     const attrs = newTier({
       ...tierData,
-      userId,
+      userId
     }) as Partial<Tier>;
 
     if (user.stripeAccountId) {
       const stripeService = new StripeService(user.stripeAccountId);
       const product = await stripeService.createProduct(
         tierData.name,
-        attrs.description || undefined,
+        attrs.description || undefined
       );
       const price = await stripeService.createPrice(
         product.id,
         attrs.price!,
-        attrs.cadence as SubscriptionCadence,
+        attrs.cadence as SubscriptionCadence
       );
       attrs.stripeProductId = product.id;
       attrs.stripePriceId = price.id;
@@ -161,7 +159,7 @@ class TierService {
 
     // TODO: Consider wrapping the following block in a transaction
     const createdTier = await prisma.tier.create({
-      data: attrs as Tier,
+      data: attrs as Tier
     });
 
     if (user.marketExpertId) {
@@ -182,24 +180,20 @@ class TierService {
           select: {
             Charge: true,
             subscriptions: true,
-            features: true,
-          },
-        },
-      },
+            features: true
+          }
+        }
+      }
     });
 
     if (!tier) throw new Error(`Tier with ID ${id} not found`);
 
-    if (
-      tier._count?.Charge ||
-      tier._count?.subscriptions ||
-      tier._count?.features
-    ) {
+    if (tier._count?.Charge || tier._count?.subscriptions || tier._count?.features) {
       throw new Error("Tier has existing charges, subscriptions or features");
     }
 
     const response = await prisma.tier.delete({
-      where: { id },
+      where: { id }
     });
 
     if (user.marketExpertId) {
@@ -208,27 +202,14 @@ class TierService {
     return response;
   }
 
-  static async updateTier(
-    id: string,
-    tierData: Partial<Tier>,
-    newFeatureIds?: string[],
-  ) {
+  static async updateTier(id: string, tierData: Partial<Tier>, newFeatureIds?: string[]) {
     const user = await TierService.validateUserAndGetTier(id);
     const tier = await TierService.findAndValidateTier(id, user.id);
     const attrs = TierService.prepareAttributes(tier, tierData);
 
-    const context = await TierService.buildUpdateContext(
-      user,
-      tier,
-      attrs,
-      newFeatureIds,
-    );
+    const context = await TierService.buildUpdateContext(user, tier, attrs, newFeatureIds);
 
-    await FeatureService.setFeatureCollection(
-      id,
-      context.newFeatureSetIds,
-      "tier",
-    );
+    await FeatureService.setFeatureCollection(id, context.newFeatureSetIds, "tier");
 
     if (tierData.checkoutType === "gitwallet") {
       if (context.createNewVersion) {
@@ -245,7 +226,7 @@ class TierService {
     const row = await TierService.toTierRow(attrs);
     const updatedTier = await prisma.tier.update({
       where: { id },
-      data: row,
+      data: row
     });
 
     if (user.marketExpertId) {
@@ -264,7 +245,7 @@ class TierService {
   private static async findAndValidateTier(id: string, userId: string) {
     const tier = await prisma.tier.findUnique({
       where: { id, userId },
-      include: { versions: true },
+      include: { versions: true }
     });
     if (!tier) throw new Error(`Tier with ID ${id} not found`);
     return tier;
@@ -282,17 +263,14 @@ class TierService {
     user: User,
     tier: Tier,
     attrs: Partial<Tier>,
-    newFeatureIds?: string[],
+    newFeatureIds?: string[]
   ) {
     const newFeatureSetIds = newFeatureIds || [];
     const featuresChanged = newFeatureSetIds
       ? await FeatureService.haveFeatureIdsChanged(tier.id, newFeatureSetIds)
       : false;
 
-    const hasSubscribers = await SubscriptionService.hasSubscribers(
-      tier.id,
-      tier.revision,
-    );
+    const hasSubscribers = await SubscriptionService.hasSubscribers(tier.id, tier.revision);
     const cadenceChanged = attrs.cadence !== tier.cadence;
     const priceChanged = attrs.price !== tier.price || cadenceChanged;
     const annualPriceChanged = attrs.priceAnnual !== tier.priceAnnual;
@@ -308,7 +286,7 @@ class TierService {
         hasSubscribers &&
         attrs.published &&
         (priceChanged || annualPriceChanged || featuresChanged),
-      stripeConnected: !!user.stripeAccountId,
+      stripeConnected: !!user.stripeAccountId
     };
   }
 
@@ -316,7 +294,7 @@ class TierService {
     id: string,
     tier: Tier,
     attrs: Partial<Tier>,
-    context: any,
+    context: any
   ) {
     const newVersion = await prisma.tierVersion.create({
       data: {
@@ -326,27 +304,17 @@ class TierService {
         cadence: tier.cadence,
         priceAnnual: tier.priceAnnual,
         stripePriceIdAnnual: tier.stripePriceIdAnnual,
-        revision: tier.revision,
-      },
+        revision: tier.revision
+      }
     });
 
-    const existingFeatureSetIds = (await FeatureService.findByTierId(id)).map(
-      (f) => f.id,
-    );
-    await FeatureService.setFeatureCollection(
-      newVersion.id,
-      existingFeatureSetIds,
-      "tierVersion",
-    );
+    const existingFeatureSetIds = (await FeatureService.findByTierId(id)).map((f) => f.id);
+    await FeatureService.setFeatureCollection(newVersion.id, existingFeatureSetIds, "tierVersion");
 
     attrs.revision = tier.revision + 1;
     attrs.cadence = (attrs.cadence || "month") as SubscriptionCadence;
 
-    const tierAttributes = TierService.buildTierAttributes(
-      tier,
-      attrs,
-      context,
-    );
+    const tierAttributes = TierService.buildTierAttributes(tier, attrs, context);
     await prisma.tier.update({ where: { id }, data: tierAttributes });
   }
 
@@ -354,7 +322,7 @@ class TierService {
     user: User,
     tier: Tier,
     attrs: Partial<Tier>,
-    context: any,
+    context: any
   ) {
     const stripeService = new StripeService(user.stripeAccountId!);
 
@@ -369,27 +337,23 @@ class TierService {
     }
   }
 
-  private static async handleStripeProducts(
-    attrs: Partial<Tier>,
-    stripeAccountId: string,
-  ) {
+  private static async handleStripeProducts(attrs: Partial<Tier>, stripeAccountId: string) {
     const stripeService = new StripeService(stripeAccountId);
 
     if (!attrs.stripeProductId) {
       const product = await stripeService.createProduct(
         attrs.name!,
-        attrs.description || attrs.tagline || undefined,
+        attrs.description || attrs.tagline || undefined
       );
       attrs.stripeProductId = product.id;
-      if (!attrs.stripeProductId)
-        throw new Error("Failed to create stripe product id.");
+      if (!attrs.stripeProductId) throw new Error("Failed to create stripe product id.");
     }
 
     if (!attrs.stripePriceId) {
       const price = await stripeService.createPrice(
         attrs.stripeProductId,
         attrs.price!,
-        attrs.cadence as SubscriptionCadence,
+        attrs.cadence as SubscriptionCadence
       );
       attrs.stripePriceId = price.id;
     }
@@ -398,19 +362,15 @@ class TierService {
       const priceAnnual = await stripeService.createPrice(
         attrs.stripeProductId,
         attrs.priceAnnual,
-        "year",
+        "year"
       );
       attrs.stripePriceIdAnnual = priceAnnual.id;
     }
   }
 
-  private static buildTierAttributes(
-    tier: Tier,
-    attrs: Partial<Tier>,
-    context: any,
-  ) {
+  private static buildTierAttributes(tier: Tier, attrs: Partial<Tier>, context: any) {
     const tierAttributes = {
-      revision: tier.revision + 1,
+      revision: tier.revision + 1
     } as Partial<Tier>;
 
     if (context.featuresChanged || context.priceChanged) {
@@ -426,13 +386,9 @@ class TierService {
     return tierAttributes;
   }
 
-  static shouldCreateNewVersion = async (
-    tier: Tier,
-    tierData: Partial<Tier>,
-  ): Promise<boolean> => {
+  static shouldCreateNewVersion = async (tier: Tier, tierData: Partial<Tier>): Promise<boolean> => {
     return (
-      (tierData.published === true &&
-        Number(tierData.price) !== Number(tier.price)) ||
+      (tierData.published === true && Number(tierData.price) !== Number(tier.price)) ||
       Number(tierData.priceAnnual) !== Number(tier.priceAnnual)
     );
   };
@@ -440,62 +396,54 @@ class TierService {
   static async findByUserId(userId: string) {
     return prisma.tier.findMany({
       where: {
-        userId,
+        userId
       },
       orderBy: [
         {
-          createdAt: "desc",
-        },
-      ],
+          createdAt: "desc"
+        }
+      ]
     });
   }
 
-  static async getVersionsByTierId(
-    tierId: string,
-  ): Promise<TierVersionWithFeatures[]> {
+  static async getVersionsByTierId(tierId: string): Promise<TierVersionWithFeatures[]> {
     return prisma.tierVersion.findMany({
       where: {
-        tierId,
+        tierId
       },
       include: {
-        features: true,
+        features: true
       },
       orderBy: [
         {
-          createdAt: "desc",
-        },
-      ],
+          createdAt: "desc"
+        }
+      ]
     });
   }
 
-  static async findByUserIdWithFeatures(
-    userId: string,
-  ): Promise<TierWithFeatures[]> {
+  static async findByUserIdWithFeatures(userId: string): Promise<TierWithFeatures[]> {
     return prisma.tier.findMany({
       where: { userId },
       include: {
-        features: true,
+        features: true
       },
       orderBy: [
         {
-          published: "desc",
-        },
-      ],
+          published: "desc"
+        }
+      ]
     });
   }
 
   // this pulls published tiers to display on the front end site for customers to subscribe to
-  static async getTiersForUser(
-    userId: string,
-    tierIds: string[] = [],
-    channel?: Channel,
-  ) {
+  static async getTiersForUser(userId: string, tierIds: string[] = [], channel?: Channel) {
     return prisma.tier.findMany({
       where: {
         userId,
         published: true,
         ...(tierIds.length > 0 && { id: { in: tierIds } }),
-        ...(channel && { channels: { has: channel } }),
+        ...(channel && { channels: { has: channel } })
       },
       select: {
         id: true,
@@ -510,19 +458,19 @@ class TierService {
         checkoutType: true,
         versions: {
           orderBy: {
-            createdAt: "desc", // Order by creation date in descending order
+            createdAt: "desc" // Order by creation date in descending order
           },
           take: 1, // Take only the latest version
           include: {
-            features: true, // Include the features of the latest version
-          },
-        },
+            features: true // Include the features of the latest version
+          }
+        }
       },
       orderBy: [
         {
-          price: "asc",
-        },
-      ],
+          price: "asc"
+        }
+      ]
     });
   }
   // published tiers of the current admin
@@ -536,9 +484,7 @@ class TierService {
     return TierService.getTiersForUser(userId, tierIds, channel);
   }
 
-  static async getPublishedTiersWithFeatures(
-    tierIds: string[] = [],
-  ): Promise<TierWithFeatures[]> {
+  static async getPublishedTiersWithFeatures(tierIds: string[] = []): Promise<TierWithFeatures[]> {
     if (tierIds.length === 0) {
       return [];
     }
@@ -546,16 +492,16 @@ class TierService {
     return prisma.tier.findMany({
       where: {
         published: true,
-        id: { in: tierIds },
+        id: { in: tierIds }
       },
       include: {
-        features: true,
+        features: true
       },
       orderBy: [
         {
-          published: "desc",
-        },
-      ],
+          published: "desc"
+        }
+      ]
     });
   }
 
@@ -565,12 +511,12 @@ class TierService {
 
     if (!userId) {
       return {
-        error: "Not authenticated",
+        error: "Not authenticated"
       };
     }
     return prisma.tier.findMany({
       where: {
-        userId,
+        userId
       },
       select: {
         id: true,
@@ -580,19 +526,19 @@ class TierService {
         createdAt: true,
         versions: {
           orderBy: {
-            createdAt: "desc", // Order by creation date in descending order
+            createdAt: "desc" // Order by creation date in descending order
           },
           take: 1, // Take only the latest version
           include: {
-            features: true, // Include the features of the latest version
-          },
-        },
+            features: true // Include the features of the latest version
+          }
+        }
       },
       orderBy: [
         {
-          createdAt: "desc",
-        },
-      ],
+          createdAt: "desc"
+        }
+      ]
     });
   }
 
@@ -609,10 +555,10 @@ class TierService {
         subscriptions: {
           some: {
             tier: {
-              userId,
-            },
-          },
-        },
+              userId
+            }
+          }
+        }
       },
       select: {
         id: true,
@@ -621,8 +567,8 @@ class TierService {
         subscriptions: {
           where: {
             tier: {
-              userId,
-            },
+              userId
+            }
           },
           select: {
             createdAt: true,
@@ -630,12 +576,12 @@ class TierService {
             tier: {
               select: {
                 id: true,
-                name: true,
-              },
-            },
-          },
-        },
-      },
+                name: true
+              }
+            }
+          }
+        }
+      }
     });
 
     return customers;
@@ -663,13 +609,13 @@ class TierService {
             subscriptions: {
               some: {
                 tier: {
-                  userId,
+                  userId
                 },
-                createdAt: dateFilter ? { gte: dateFilter } : undefined,
-              },
-            },
-          },
-        ],
+                createdAt: dateFilter ? { gte: dateFilter } : undefined
+              }
+            }
+          }
+        ]
       },
       select: {
         id: true,
@@ -678,9 +624,9 @@ class TierService {
         subscriptions: {
           where: {
             tier: {
-              userId,
+              userId
             },
-            createdAt: dateFilter ? { gte: dateFilter } : undefined,
+            createdAt: dateFilter ? { gte: dateFilter } : undefined
           },
           select: {
             createdAt: true,
@@ -688,13 +634,13 @@ class TierService {
             tier: {
               select: {
                 id: true,
-                name: true,
-              },
-            },
-          },
-        },
+                name: true
+              }
+            }
+          }
+        }
       },
-      take: numberOfRecords,
+      take: numberOfRecords
     });
 
     return customers;
@@ -707,8 +653,7 @@ class TierService {
       throw new Error("Not logged in");
     }
 
-    let allTiers: TierWithFeatures[] =
-      await TierService.findByUserIdWithFeatures(currentUserId);
+    let allTiers: TierWithFeatures[] = await TierService.findByUserIdWithFeatures(currentUserId);
 
     allTiers = allTiers.sort((a, b) => {
       if (tierId) {
@@ -732,7 +677,7 @@ class TierService {
 
     const originalTier = await prisma.tier.findUnique({
       where: { id: tierId },
-      include: { features: true },
+      include: { features: true }
     });
 
     if (!originalTier) {
@@ -756,7 +701,7 @@ class TierService {
       trialDays: originalTier.trialDays,
       priceAnnual: originalTier.priceAnnual,
       stripePriceIdAnnual: null,
-      contractId: originalTier.contractId,
+      contractId: originalTier.contractId
     };
 
     try {
@@ -766,11 +711,7 @@ class TierService {
       // Duplicate the features
       if (originalTier.features && originalTier.features.length > 0) {
         const featureIds = originalTier.features.map((feature) => feature.id);
-        await FeatureService.setFeatureCollection(
-          createdTier.id,
-          featureIds,
-          "tier",
-        );
+        await FeatureService.setFeatureCollection(createdTier.id, featureIds, "tier");
       }
 
       return createdTier;
@@ -797,5 +738,5 @@ export const {
   updateApplicationFee,
   updateTier,
   createTemplateTier,
-  duplicateTier,
+  duplicateTier
 } = TierService;

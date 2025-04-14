@@ -1,22 +1,22 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import UserService from "./UserService";
-import TierService from "./TierService";
+import { Charge } from "@prisma/client";
 import EmailService from "./EmailService";
 import SessionService from "./SessionService";
-import { Charge } from "@prisma/client";
+import TierService from "./TierService";
+import UserService from "./UserService";
 
 class ChargeService {
   static async findCharge(chargeId: string): Promise<Charge | null> {
     return prisma.charge.findUnique({
       where: {
-        id: chargeId,
+        id: chargeId
       },
       include: {
         user: true,
-        tier: true,
-      },
+        tier: true
+      }
     });
   }
 
@@ -24,7 +24,7 @@ class ChargeService {
     return prisma.charge.count({
       where: {
         tierId: tierId,
-        tierRevision: revision ? revision : undefined,
+        tierRevision: revision ? revision : undefined
       }
     });
   }
@@ -33,7 +33,7 @@ class ChargeService {
     const subscriptions = await prisma.charge.findMany({
       where: {
         tierId: tierId,
-        tierRevision: revision ? revision : undefined,
+        tierRevision: revision ? revision : undefined
       }
     });
 
@@ -46,24 +46,24 @@ class ChargeService {
 
   static async findChargesByTierId(tierId: string): Promise<Charge[] | null> {
     const userId = await SessionService.getCurrentUserId();
-    
-    if(!userId) return null;
+
+    if (!userId) return null;
 
     return prisma.charge.findMany({
       where: {
         tierId,
-        userId: userId,
+        userId: userId
       }
     });
   }
 
   static async findCharges(): Promise<Charge[]> {
     const userId = await SessionService.getCurrentUserId();
-    if(!userId) return [];
+    if (!userId) return [];
 
     return prisma.charge.findMany({
       where: {
-        userId: userId,
+        userId: userId
       }
     });
   }
@@ -71,30 +71,36 @@ class ChargeService {
   static async chargedByUser(userId: string): Promise<Charge[]> {
     return prisma.charge.findMany({
       where: {
-        userId: userId,
+        userId: userId
       },
       include: {
         user: true,
-        tier: true,
-      },
+        tier: true
+      }
     });
   }
 
-  static async createLocalCharge(userId: string, tierId: string, paymentIntentId: string, tierVersionId?: string): Promise<Charge> {
+  static async createLocalCharge(
+    userId: string,
+    tierId: string,
+    paymentIntentId: string,
+    tierVersionId?: string
+  ): Promise<Charge> {
     const user = await UserService.findUser(userId);
-    if (!user) throw new Error('User not found');
+    if (!user) throw new Error("User not found");
 
     const tier = await TierService.findTier(tierId);
-    if (!tier) throw new Error('Tier not found');
-    if (tier.cadence !== 'once') throw new Error('Tier is not a one-time purchase');
-    if (!tier.stripePriceId) throw new Error('Stripe price ID not found for tier');
+    if (!tier) throw new Error("Tier not found");
+    if (tier.cadence !== "once") throw new Error("Tier is not a one-time purchase");
+    if (!tier.stripePriceId) throw new Error("Stripe price ID not found for tier");
 
     const maintainer = await UserService.findUser(tier.userId);
-    if (!maintainer) throw new Error('Maintainer not found');
-    if (!maintainer.stripeAccountId) throw new Error("Maintainer's account not connected to Stripe");
+    if (!maintainer) throw new Error("Maintainer not found");
+    if (!maintainer.stripeAccountId)
+      throw new Error("Maintainer's account not connected to Stripe");
 
     const stripeCustomerId = await UserService.getCustomerId(user, maintainer.stripeAccountId);
-    if (!stripeCustomerId) throw new Error('Stripe customer ID not found for user');
+    if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
     /*
     // allowing users to purchase the same tier more than once
@@ -102,13 +108,13 @@ class ChargeService {
     if(existingCharge) throw new Error('User has already bought this tier');
     */
 
-    let res = await prisma.charge.create({
+    const res = await prisma.charge.create({
       data: {
-      userId: userId,
-      tierId: tierId,
-      tierVersionId: tierVersionId,
-      stripeChargeId: paymentIntentId,
-      tierRevision: tier.revision,
+        userId: userId,
+        tierId: tierId,
+        tierVersionId: tierVersionId,
+        stripeChargeId: paymentIntentId,
+        tierRevision: tier.revision
       }
     });
 
@@ -122,7 +128,15 @@ class ChargeService {
 
     return res;
   }
-};
+}
 
-export const { createLocalCharge, findChargesByTierId, findCharge, findCharges, anyChargesByTierId, hasCharges, chargeCount } = ChargeService;
+export const {
+  createLocalCharge,
+  findChargesByTierId,
+  findCharge,
+  findCharges,
+  anyChargesByTierId,
+  hasCharges,
+  chargeCount
+} = ChargeService;
 export default ChargeService;

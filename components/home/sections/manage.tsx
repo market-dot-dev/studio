@@ -1,8 +1,7 @@
-import React from 'react'
-import Section from '@/components/home/section';
-import FeatureCard from '@/components/home/feature-card';
-import { UsersRound, ChartLine, ListCheck, ScanSearch, ScrollText } from 'lucide-react';
-import { colors } from '@/lib/home/colors';
+import FeatureCard from "@/components/home/feature-card";
+import Section from "@/components/home/section";
+import { colors } from "@/lib/home/colors";
+import { ChartLine, ListCheck, ScanSearch, ScrollText, UsersRound } from "lucide-react";
 
 export default function Manage() {
   return (
@@ -10,7 +9,7 @@ export default function Manage() {
       id="manage"
       badge={{
         icon: <ListCheck />,
-        title: "Manage",
+        title: "Manage"
       }}
       color={colors.orange["100"]}
       headline="Manage Your Business"

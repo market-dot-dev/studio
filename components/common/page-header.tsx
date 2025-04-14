@@ -1,8 +1,8 @@
-import { Fragment, type ReactNode } from 'react';
-import Link from 'next/link';
-import { ChevronLeft } from 'lucide-react';
-import { Badge, badgeVariants } from '@/components/ui/badge';
-import { VariantProps } from 'class-variance-authority';
+import { Badge, badgeVariants } from "@/components/ui/badge";
+import { VariantProps } from "class-variance-authority";
+import { ChevronLeft } from "lucide-react";
+import Link from "next/link";
+import { type ReactNode } from "react";
 
 interface PageHeaderProps {
   title: ReactNode | string;
@@ -26,14 +26,14 @@ export default function PageHeader({
   description,
   actions,
   status,
-  className = '',
+  className = ""
 }: PageHeaderProps) {
   return (
     <div className={`flex w-full flex-col gap-5 ${className}`}>
       {backLink && (
         <Link
           href={backLink.href}
-          className="group flex w-fit -translate-x-[3px] items-center gap-1 text-sm font-semibold tracking-tightish text-stone-500 transition-colors hover:text-stone-800"
+          className="tracking-tightish group flex w-fit -translate-x-[3px] items-center gap-1 text-sm font-semibold text-stone-500 transition-colors hover:text-stone-800"
         >
           <ChevronLeft
             size={16}
@@ -44,9 +44,9 @@ export default function PageHeader({
       )}
 
       <div className="flex w-full flex-wrap items-start justify-between gap-4">
-        <div className="flex flex-grow flex-col gap-2">
+        <div className="flex grow flex-col gap-2">
           <div className="inline-flex items-center gap-3">
-            <h1 className="text-3xl/8 font-bold tracking-tightish">{title}</h1>
+            <h1 className="tracking-tightish text-3xl/8 font-bold">{title}</h1>
             {status && (
               <Badge
                 variant={status.variant}
@@ -58,18 +58,14 @@ export default function PageHeader({
             )}
           </div>
           {description && (
-            <p className="max-w-prose text-pretty text-sm text-stone-500">
-              {description}
-            </p>
+            <p className="max-w-prose text-pretty text-sm text-stone-500">{description}</p>
           )}
         </div>
 
         {actions && actions.length > 0 && (
-          <div className="flex flex-shrink-0 flex-wrap items-center gap-2">
-            {actions}
-          </div>
+          <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>
         )}
       </div>
     </div>
   );
-} 
+}

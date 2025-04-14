@@ -1,11 +1,11 @@
-import { ReactNode } from "react";
-import { notFound, redirect } from "next/navigation";
+import { getRootUrl } from "@/lib/domain";
 import { getSiteData } from "@/lib/fetchers";
 import { Metadata } from "next";
-import { getRootUrl } from "@/lib/domain";
+import { notFound, redirect } from "next/navigation";
+import { ReactNode } from "react";
 
 export async function generateMetadata({
-  params,
+  params
 }: {
   params: { domain: string };
 }): Promise<Metadata | null> {
@@ -37,17 +37,17 @@ export async function generateMetadata({
       title,
       description,
 
-      images: [image],
+      images: [image]
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
       images: [image],
-      creator: "@vercel",
+      creator: "@vercel"
     },
     icons: [logo],
-    metadataBase: new URL(`https://${domain}`),
+    metadataBase: new URL(`https://${domain}`)
     // Optional: Set canonical URL to custom domain if it exists
     // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
     //   data.customDomain && {
@@ -60,7 +60,7 @@ export async function generateMetadata({
 
 export default async function SiteLayout({
   params,
-  children,
+  children
 }: {
   params: { domain: string };
   children: ReactNode;

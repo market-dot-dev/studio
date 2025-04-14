@@ -1,22 +1,21 @@
 import ContractService from "@/app/services/contract-service";
 import NoNavLayout from "../../../layout";
 
-import type { ReactElement, ReactNode } from 'react'
-import type { NextPage } from 'next'
+import type { NextPage } from "next";
+import type { ReactElement, ReactNode } from "react";
 export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
-  getLayout?: (page: ReactElement) => ReactNode
-}
+  getLayout?: (page: ReactElement) => ReactNode;
+};
 
 type ContractPageProps = {
   params: { id: string };
 };
 
 const ContractPage: NextPageWithLayout<ContractPageProps> = async ({
-  params,
+  params
 }: ContractPageProps) => {
   const contract = await ContractService.getContractById(params.id);
-  
-  
+
   if (!contract) {
     return <div>Contract not found</div>;
   }
@@ -48,13 +47,9 @@ const ContractPage: NextPageWithLayout<ContractPageProps> = async ({
       </div>
     </div>
   );
-}
+};
 
 ContractPage.getLayout = function getLayout(page: ReactElement) {
-  return (
-    <NoNavLayout>
-      {page}
-    </NoNavLayout>
-  )
-}
+  return <NoNavLayout>{page}</NoNavLayout>;
+};
 export default ContractPage;

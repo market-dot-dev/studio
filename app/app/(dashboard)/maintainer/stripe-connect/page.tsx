@@ -1,23 +1,27 @@
 "use server";
 
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
-import UserService from "@/app/services/UserService";
 import StripeService from "@/app/services/StripeService";
+import UserService from "@/app/services/UserService";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { getSession } from "@/lib/auth";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import DisconnectStripeAccountButton from "./disconnect-stripe-account-button";
 
 const StripeOauthButton = async ({ userId }: { userId: string }) => {
   const oauthUrl = await StripeService.getOAuthLink(userId);
 
-  return <Link href={oauthUrl} className={buttonVariants({ variant: "outline" })}>Connect to Stripe</Link>;
+  return (
+    <Link href={oauthUrl} className={buttonVariants({ variant: "outline" })}>
+      Connect to Stripe
+    </Link>
+  );
 };
 
 export default async function StripeConnect({
   params,
-  searchParams = {},
+  searchParams = {}
 }: {
   params: { slug: string };
   searchParams?: { [key: string]: string | string[] | undefined };
@@ -58,32 +62,26 @@ export default async function StripeConnect({
   return (
     <div className="flex max-w-screen-xl flex-col space-y-10 p-8">
       <div className="flex flex-col space-y-6">
-        <h1 className="font-cal text-3xl font-bold dark:text-white">
-          Stripe Integration
-        </h1>
+        <h1 className="font-cal text-3xl font-bold dark:text-white">Stripe Integration</h1>
         <Card className="p-10">
           <div className="flex flex-col items-start gap-4">
             {stripeConnected ? (
               <>
-                <h2 className="font-bold text-xl">Stripe Account</h2>
-                <p className="text-sm text-stone-500">
-                  Your stripe account is connected.
-                </p>
+                <h2 className="text-xl font-bold">Stripe Account</h2>
+                <p className="text-sm text-stone-500">Your stripe account is connected.</p>
                 <DisconnectStripeAccountButton user={user} />
-                <pre>
-                  { user.stripeAccountId }
-                </pre>
+                <pre>{user.stripeAccountId}</pre>
               </>
             ) : (
               <>
-                <h2 className="font-semibold text-xl">Connect Stripe Account</h2>
+                <h2 className="text-xl font-semibold">Connect Stripe Account</h2>
                 <p className="text-sm text-stone-500">
                   Connect your Stripe account to manage and receive payments.
                 </p>
                 <StripeOauthButton userId={session.user.id!} />
               </>
             )}
-          </div>  
+          </div>
         </Card>
       </div>
     </div>

@@ -1,13 +1,13 @@
 import Nav from "@/app/components/nav";
-import Link from "next/link";
-import Logo from "@/components/home/logo";
-import UserDropdown from "@/components/header/user-dropdown";
 import FeatureService from "@/app/services/feature-service";
-import { getOnlySiteFromUserId } from "@/app/services/SiteService";
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import { MarketService } from "@/app/services/market-service";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
+import { getOnlySiteFromUserId } from "@/app/services/SiteService";
+import UserDropdown from "@/components/header/user-dropdown";
+import Logo from "@/components/home/logo";
+import { getSession } from "@/lib/auth";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function Header() {
   const session = await getSession();
@@ -19,14 +19,11 @@ export default async function Header() {
   const site = await getOnlySiteFromUserId(user.id);
   const activeFeatures = await FeatureService.findActiveByCurrentUser();
   const isMarketExpert = (await MarketService.getExpert()) != null;
-  const onboarding = user.onboarding
-    ? JSON.parse(user.onboarding)
-    : defaultOnboardingState;
-  const showOnboardingModal =
-    !onboarding.setupBusiness || !onboarding.preferredServices;
+  const onboarding = user.onboarding ? JSON.parse(user.onboarding) : defaultOnboardingState;
+  const showOnboardingModal = !onboarding.setupBusiness || !onboarding.preferredServices;
 
   return (
-    <header className="fixed inset-x-0 top-0 z-30 flex h-[var(--headerHeight)] items-center justify-between bg-black px-4 shadow-border-b">
+    <header className="shadow-border-b fixed inset-x-0 top-0 z-30 flex h-[var(--headerHeight)] items-center justify-between bg-black px-4">
       <Link href="/">
         <Logo color="white" className="h-[22px] w-auto" />
       </Link>

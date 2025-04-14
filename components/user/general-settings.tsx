@@ -1,11 +1,11 @@
 "use client";
 
+import { updateCurrentUser } from "@/app/services/UserService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
-import { updateCurrentUser } from "@/app/services/UserService";
 import { toast } from "sonner";
 
 export default function GeneralSettings({ user }: { user: Partial<User> }) {
@@ -27,8 +27,8 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
 
   return (
     <>
-      <div className="flex flex-col items-start w-full space-y-6">
-        <div className="flex flex-col items-start w-1/2 gap-1.5">
+      <div className="flex w-full flex-col items-start space-y-6">
+        <div className="flex w-1/2 flex-col items-start gap-1.5">
           <Label htmlFor="name">Name</Label>
           <Input
             placeholder=""
@@ -41,7 +41,7 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
           />
         </div>
 
-        <div className="flex flex-col items-start w-1/2 gap-1.5">
+        <div className="flex w-1/2 flex-col items-start gap-1.5">
           <Label htmlFor="email">Email</Label>
           <Input
             placeholder=""
@@ -55,10 +55,10 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
           />
         </div>
 
-        <Button 
-          loading={isSaving} 
+        <Button
+          loading={isSaving}
           loadingText="Saving Changes"
-          disabled={isSaving} 
+          disabled={isSaving}
           onClick={saveChanges}
         >
           Save

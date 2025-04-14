@@ -1,18 +1,10 @@
 "use client";
 
 import { getRootUrl } from "@/lib/domain";
-export default function Menu({
-  site,
-  page,
-  nav,
-}: {
-  site: any;
-  page: any;
-  nav: any[];
-}) {
+export default function Menu({ site, page, nav }: { site: any; page: any; nav: any[] }) {
   const url = getRootUrl(
     site.subdomain ?? "app",
-    page.id === site.homepageId ? "" : `/${page.slug}`,
+    page.id === site.homepageId ? "" : `/${page.slug}`
   );
 
   return (

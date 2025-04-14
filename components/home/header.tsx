@@ -1,23 +1,32 @@
 "use client";
 
-import type { Color } from '@/lib/home/colors';
-import type { ReactElement } from "react";
-import type { FeatureCardLinkProps } from "./feature-card";
-import React, { useState, useEffect, useCallback, useRef } from "react";
-import Image from 'next/image';
-import Link from "@/components/home/link";
-import { useRouter } from 'next/navigation';
-import Logo from "@/components/home/logo";
-import Button from '@/components/home/button';
-import { Button as UIButton } from "@/components/ui/button";
-import clsx from "clsx";
-import { Menu, X, Package, Speech, ListCheck, ChevronRight, BookOpenCheck, Store } from "lucide-react";
-import { colors } from "@/lib/home/colors";
-import { loginURL, discordURL, blogURL, twitterUrl } from '@/lib/home/social-urls';
-import { motion, AnimatePresence } from "framer-motion";
-import FeatureCard from "@/components/home/feature-card";
 import useCurrentSession from "@/app/hooks/use-current-session";
+import Button from "@/components/home/button";
+import FeatureCard from "@/components/home/feature-card";
+import Link from "@/components/home/link";
+import Logo from "@/components/home/logo";
+import { Button as UIButton } from "@/components/ui/button";
+import type { Color } from "@/lib/home/colors";
+import { colors } from "@/lib/home/colors";
+import { blogURL, discordURL, loginURL, twitterUrl } from "@/lib/home/social-urls";
+import clsx from "clsx";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  BookOpenCheck,
+  ChevronRight,
+  ListCheck,
+  Menu,
+  Package,
+  Speech,
+  Store,
+  X
+} from "lucide-react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import type { ReactElement } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import type { FeatureCardLinkProps } from "./feature-card";
 
 interface AnimatedHambugerButtonProps {
   isOpen: boolean;
@@ -43,19 +52,18 @@ interface Product {
   link: FeatureCardLinkProps;
 }
 
-const AnimatedHambugerButton = ({
-  isOpen,
-  toggleMenu,
-  className,
-}: AnimatedHambugerButtonProps) => (
+const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambugerButtonProps) => (
   <Button
     variant="ghost"
     onClick={toggleMenu}
-    className={clsx("-m-1.5 text-marketing-primary flex items-center justify-center !p-1.5", className)}
+    className={clsx(
+      "text-marketing-primary -m-1.5 flex items-center justify-center !p-1.5",
+      className
+    )}
     aria-label={isOpen ? "Close menu" : "Open menu"}
   >
     <span className="flex items-center justify-center">
-      {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+      {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
     </span>
   </Button>
 );
@@ -71,13 +79,17 @@ export default function Header({ className }: { className?: string }) {
   const { status } = useSession();
   const signedIn = isSignedIn();
   const isLoading = status === "loading";
-  const dashboardURL = process.env.NODE_ENV === 'production' ? 'https://app.market.dev' : 'http://app.market.local';
+  const dashboardURL =
+    process.env.NODE_ENV === "production" ? "https://app.market.dev" : "http://app.market.local";
 
-  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({ top: 60, right: 16 });
+  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({
+    top: 60,
+    right: 16
+  });
 
   const dropdownOffsets: DropdownOffsets = {
     vertical: 14,
-    horizontal: 0,
+    horizontal: 0
   };
 
   useEffect(() => {
@@ -87,10 +99,10 @@ export default function Header({ className }: { className?: string }) {
 
     handleScroll();
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
@@ -108,15 +120,15 @@ export default function Header({ className }: { className?: string }) {
     const updateHeaderHeight = () => {
       if (headerRef.current) {
         const headerHeight = headerRef.current.offsetHeight;
-        document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
+        document.documentElement.style.setProperty("--header-height", `${headerHeight}px`);
       }
     };
 
     updateHeaderHeight();
-    window.addEventListener('resize', updateHeaderHeight);
+    window.addEventListener("resize", updateHeaderHeight);
 
     return () => {
-      window.removeEventListener('resize', updateHeaderHeight);
+      window.removeEventListener("resize", updateHeaderHeight);
     };
   }, []);
 
@@ -127,16 +139,16 @@ export default function Header({ className }: { className?: string }) {
         desktopMenuButtonRef.current &&
         !desktopMenuButtonRef.current.contains(event.target as Node)
       ) {
-        const dropdown = document.getElementById('desktop-dropdown');
+        const dropdown = document.getElementById("desktop-dropdown");
         if (dropdown && !dropdown.contains(event.target as Node)) {
           setIsDesktopDropdownOpen(false);
         }
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [isDesktopDropdownOpen]);
 
@@ -149,14 +161,10 @@ export default function Header({ className }: { className?: string }) {
     }
   };
 
-  const handleLinkClick: React.MouseEventHandler<HTMLElement> = (
-    event,
-  ) => {
+  const handleLinkClick: React.MouseEventHandler<HTMLElement> = (event) => {
     event.preventDefault();
 
-    const href = (event.currentTarget as HTMLAnchorElement).getAttribute(
-      "href",
-    );
+    const href = (event.currentTarget as HTMLAnchorElement).getAttribute("href");
     if (!href) return;
 
     setIsMobileMenuOpen(false);
@@ -176,8 +184,8 @@ export default function Header({ className }: { className?: string }) {
         text: "Learn more",
         href: "/#sell",
         asCard: true,
-        onClick: handleLinkClick,
-      },
+        onClick: handleLinkClick
+      }
     },
     {
       icon: <Speech />,
@@ -188,8 +196,8 @@ export default function Header({ className }: { className?: string }) {
         text: "Learn more",
         href: "/#promote",
         asCard: true,
-        onClick: handleLinkClick,
-      },
+        onClick: handleLinkClick
+      }
     },
     {
       icon: <ListCheck />,
@@ -200,9 +208,9 @@ export default function Header({ className }: { className?: string }) {
         text: "Learn more",
         href: "/#manage",
         asCard: true,
-        onClick: handleLinkClick,
-      },
-    },
+        onClick: handleLinkClick
+      }
+    }
   ];
 
   const updateDropdownPosition = useCallback(() => {
@@ -218,10 +226,10 @@ export default function Header({ className }: { className?: string }) {
   useEffect(() => {
     if (isDesktopDropdownOpen) {
       updateDropdownPosition();
-      window.addEventListener('resize', updateDropdownPosition);
+      window.addEventListener("resize", updateDropdownPosition);
 
       return () => {
-        window.removeEventListener('resize', updateDropdownPosition);
+        window.removeEventListener("resize", updateDropdownPosition);
       };
     }
   }, [isDesktopDropdownOpen, updateDropdownPosition]);
@@ -231,9 +239,9 @@ export default function Header({ className }: { className?: string }) {
       <header
         ref={headerRef}
         className={clsx(
-          "fixed left-0 right-0 top-0 z-50 mx-auto flex w-full flex-col bg-marketing-background text-marketing-sm tracking-tight transition-all ease-in-out md:text-marketing-base",
+          "bg-marketing-background text-marketing-sm md:text-marketing-base fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col tracking-tight transition-all ease-in-out",
           isMobileMenuOpen && "duration-150",
-          className,
+          className
         )}
       >
         <Link
@@ -241,20 +249,18 @@ export default function Header({ className }: { className?: string }) {
           className="group flex h-10 items-center justify-center gap-0.5 bg-black px-4 text-sm font-medium tracking-normal !text-white"
         >
           <BookOpenCheck className="mr-2 size-4 opacity-60 transition-opacity group-hover:opacity-100" />
-          <span className="sm:hidden">
-            Get listed on our developer marketplace
-          </span>
+          <span className="sm:hidden">Get listed on our developer marketplace</span>
           <span className="hidden sm:inline">
             List your products & services on our developer marketplace
           </span>
-          <ChevronRight className="mt-px h-4 w-4 transition-transform group-hover:translate-x-px" />
+          <ChevronRight className="mt-px size-4 transition-transform group-hover:translate-x-px" />
         </Link>
 
         <div className="mx-auto w-full px-4 lg:max-w-[var(--marketing-max-width)] xl:px-16">
           <div
             className={clsx(
               "relative z-[100] flex h-12 w-full items-center justify-between text-[19px] transition-shadow duration-500 ease-in-out",
-              isScrolled && "shadow-border-b",
+              isScrolled && "shadow-border-b"
             )}
           >
             <Link href="/" className="flex">
@@ -265,9 +271,7 @@ export default function Header({ className }: { className?: string }) {
                 }}
               >
                 <Logo
-                  className={clsx(
-                    "hidden h-[26px] w-auto self-center justify-self-start md:block",
-                  )}
+                  className={clsx("hidden h-[26px] w-auto self-center justify-self-start md:block")}
                 />
                 <Image
                   src="/logo.svg"
@@ -279,26 +283,16 @@ export default function Header({ className }: { className?: string }) {
               </button>
             </Link>
             <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
-              <Link
-                href="/"
-                className="whitespace-nowrap !text-marketing-primary"
-              >
+              <Link href="/" className="!text-marketing-primary whitespace-nowrap">
                 Sell
               </Link>
-              <Link
-                href="https://explore.market.dev"
-                className="whitespace-nowrap"
-              >
+              <Link href="https://explore.market.dev" className="whitespace-nowrap">
                 Explore
               </Link>
             </div>
             <div className="flex w-fit items-center gap-4">
               {isLoading || !signedIn ? (
-                <Link
-                  href={loginURL}
-                  variant="primary"
-                  className="hidden px-2 sm:block"
-                >
+                <Link href={loginURL} variant="primary" className="hidden px-2 sm:block">
                   Log in
                 </Link>
               ) : (
@@ -307,7 +301,7 @@ export default function Header({ className }: { className?: string }) {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="h-9 w-9 rounded-full bg-marketing-accent !text-sm font-bold tracking-tight text-black hover:bg-marketing-accent-active focus:bg-marketing-accent-active sm:px-3 md:w-auto transition-colors"
+                  className="h-9 w-9 rounded-full bg-marketing-accent !text-sm font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active sm:px-3 md:w-auto"
                 >
                   <Store className="!size-5" />
                   <span className="hidden md:inline">Dashboard</span>
@@ -350,11 +344,11 @@ export default function Header({ className }: { className?: string }) {
             transition={{
               type: "tween",
               duration: 0.2,
-              ease: "easeOut",
+              ease: "easeOut"
             }}
             style={{
               top: dropdownPosition.top,
-              right: dropdownPosition.right,
+              right: dropdownPosition.right
             }}
           >
             {/* Product feature cards */}
@@ -408,14 +402,14 @@ export default function Header({ className }: { className?: string }) {
         {isMobileMenuOpen && (
           <motion.div
             key="mobile-menu"
-            className="shadow-t fixed inset-x-0 bottom-0 z-[40] overflow-y-auto bg-marketing-background text-left text-marketing-md lg:hidden"
+            className="shadow-t bg-marketing-background text-marketing-md fixed inset-x-0 bottom-0 z-40 overflow-y-auto text-left lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
             style={{
               top: "calc(var(--header-height, 84px))",
-              height: "calc(100vh - var(--header-height, 84px))",
+              height: "calc(100vh - var(--header-height, 84px))"
             }}
           >
             <div className="relative flex h-full flex-col">
@@ -442,7 +436,7 @@ export default function Header({ className }: { className?: string }) {
 
               <div className="mt-2 border-t border-black/10"></div>
 
-              <div className="flex flex-grow flex-col p-6 pt-2">
+              <div className="flex grow flex-col p-6 pt-2">
                 <Link
                   href={blogURL}
                   variant="primary"
@@ -469,11 +463,7 @@ export default function Header({ className }: { className?: string }) {
                 <hr className="border-black/15 sm:hidden" />
                 {isLoading ||
                   (!signedIn && (
-                    <Link
-                      href={loginURL}
-                      variant="primary"
-                      className="hidden px-2 sm:block"
-                    >
+                    <Link href={loginURL} variant="primary" className="hidden px-2 sm:block">
                       Log in
                     </Link>
                   ))}

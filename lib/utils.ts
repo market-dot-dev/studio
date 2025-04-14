@@ -10,13 +10,10 @@ export const focusRing = [
   // base
   "outline outline-offset-2 outline-0 focus-visible:outline-2",
   // outline color
-  "outline-blue-500 dark:outline-blue-500",
+  "outline-blue-500 dark:outline-blue-500"
 ];
 
-export async function fetcher<JSON = any>(
-  input: RequestInfo,
-  init?: RequestInit,
-): Promise<JSON> {
+export async function fetcher<JSON = any>(input: RequestInfo, init?: RequestInit): Promise<JSON> {
   const response = await fetch(input, { ...init, cache: "no-store" });
 
   return response.json();
@@ -40,9 +37,7 @@ export const getBlurDataURL = async (url: string | null) => {
     return "data:image/webp;base64,AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
   }
   try {
-    const response = await fetch(
-      `https://wsrv.nl/?url=${url}&w=50&h=50&blur=5`,
-    );
+    const response = await fetch(`https://wsrv.nl/?url=${url}&w=50&h=50&blur=5`);
     const buffer = await response.arrayBuffer();
     const base64 = Buffer.from(buffer).toString("base64");
 
@@ -59,7 +54,7 @@ export const toDateString = (date: Date) => {
   return new Date(date).toLocaleDateString("en-US", {
     month: "short",
     day: "numeric",
-    year: "numeric",
+    year: "numeric"
   });
 };
 
@@ -77,7 +72,7 @@ export const extractGitHubRepoInfo = (url: string | null | undefined) => {
   if (match) {
     return {
       usernameOrOrg: match[1],
-      repoName: match[2],
+      repoName: match[2]
     };
   } else {
     return null;
@@ -94,7 +89,7 @@ export const formatDate = (date: Date | string): string => {
     year: "numeric",
     month: "short",
     day: "numeric",
-    timeZone: "UTC", // Ensure consistent output by using UTC
+    timeZone: "UTC" // Ensure consistent output by using UTC
   };
 
   // Convert the date string to a Date object if it's not already
@@ -104,14 +99,11 @@ export const formatDate = (date: Date | string): string => {
   return parsedDate.toLocaleDateString("en-US", options);
 };
 
-export const formatCurrency = (
-  amount: number,
-  currency: string = "USD",
-): string => {
+export const formatCurrency = (amount: number, currency: string = "USD"): string => {
   const options: Intl.NumberFormatOptions = {
     style: "currency",
     currency,
-    minimumFractionDigits: 2,
+    minimumFractionDigits: 2
   };
   return amount.toLocaleString("en-US", options);
 };

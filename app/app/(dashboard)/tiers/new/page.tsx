@@ -2,8 +2,8 @@
 
 import { newTier } from "@/app/models/Tier";
 import ContractService from "@/app/services/contract-service";
-import TierForm from "@/components/tiers/tier-form";
 import { getCurrentUser } from "@/app/services/UserService";
+import TierForm from "@/components/tiers/tier-form";
 
 const attrs = newTier();
 

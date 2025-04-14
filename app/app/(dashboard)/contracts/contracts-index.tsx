@@ -1,16 +1,16 @@
 "use client";
 
+import useCurrentSession from "@/app/hooks/use-current-session";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { DataTable } from "@/components/ui/data-table";
 import { Contract } from "@prisma/client";
 import { useState } from "react";
-import useCurrentSession from "@/app/hooks/use-current-session";
 import { createColumns } from "./columns";
-import { DataTable } from "@/components/ui/data-table";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function ContractSettings({ contracts }: { contracts: Contract[] }) {
   const [error, setError] = useState<{ message: string } | null>(null);
   const { currentUser } = useCurrentSession();
-  
+
   // Consider the data as loading until currentUser is available
   const isLoading = currentUser === undefined || currentUser === null;
 
@@ -23,8 +23,8 @@ export default function ContractSettings({ contracts }: { contracts: Contract[] 
           <AlertDescription>{error.message}</AlertDescription>
         </Alert>
       )}
-      <DataTable 
-        columns={columns} 
+      <DataTable
+        columns={columns}
         data={contracts}
         currentUser={currentUser}
         isLoading={isLoading}

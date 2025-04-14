@@ -1,11 +1,13 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import useCurrentSession from "@/app/hooks/use-current-session";
+import useStripePaymentCollector, {
+  StripeCheckoutFormWrapper
+} from "@/app/hooks/use-stripe-payment-method-collector";
+import { canBuy, getPaymentMethod, StripeCard } from "@/app/services/StripeService";
 import { Button } from "@/components/ui/button";
-import useStripePaymentCollector, { StripeCheckoutFormWrapper } from '@/app/hooks/use-stripe-payment-method-collector';
-import { canBuy, getPaymentMethod, StripeCard } from '@/app/services/StripeService';
-import useCurrentSession from '@/app/hooks/use-current-session';
-import { CreditCard } from 'lucide-react';
+import { CreditCard } from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface UserPaymentMethodWidgetProps {
   loading?: boolean;
@@ -15,7 +17,13 @@ interface UserPaymentMethodWidgetProps {
   maintainerStripeAccountId: string;
 }
 
-const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintainerUserId, maintainerStripeAccountId }: UserPaymentMethodWidgetProps) => {
+const UserPaymentMethodWidget = ({
+  loading,
+  setPaymentReady,
+  setError,
+  maintainerUserId,
+  maintainerStripeAccountId
+}: UserPaymentMethodWidgetProps) => {
   const { currentUser: user, refreshSession } = useCurrentSession();
 
   const [cardInfo, setCardInfo] = useState<StripeCard>();
@@ -23,49 +31,62 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
 
   // detect if user has a payment method attached
   useEffect(() => {
-    if(user && maintainerUserId && maintainerStripeAccountId){
+    if (user && maintainerUserId && maintainerStripeAccountId) {
       canBuy(maintainerUserId, maintainerStripeAccountId).then((canBuy) => {
-        if(canBuy){
-          getPaymentMethod(maintainerUserId, maintainerStripeAccountId).then((paymentMethod) => {
-            setCardInfo(paymentMethod);
-            setPaymentReady(true);
-          }).catch((error) => {
-            setError(error.message);
-            setInvalidCard(true);
-          });
+        if (canBuy) {
+          getPaymentMethod(maintainerUserId, maintainerStripeAccountId)
+            .then((paymentMethod) => {
+              setCardInfo(paymentMethod);
+              setPaymentReady(true);
+            })
+            .catch((error) => {
+              setError(error.message);
+              setInvalidCard(true);
+            });
         }
       });
     }
-  }, [user, user?.stripeCustomerIds, user?.stripePaymentMethodIds, maintainerStripeAccountId, maintainerUserId]);
+  }, [
+    user,
+    user?.stripeCustomerIds,
+    user?.stripePaymentMethodIds,
+    maintainerStripeAccountId,
+    maintainerUserId
+  ]);
 
   useEffect(() => {
-    if(loading && !cardInfo){
-      handleSubmit().then(refreshSession).then(() => {
-        console.log('succeeded');
-        setPaymentReady(true)
-      }).catch((error: any) => {
-        console.log('failed', error.message);
-        setError(error.message)
-        setPaymentReady(false);
-      });
+    if (loading && !cardInfo) {
+      handleSubmit()
+        .then(refreshSession)
+        .then(() => {
+          console.log("succeeded");
+          setPaymentReady(true);
+        })
+        .catch((error: any) => {
+          console.log("failed", error.message);
+          setError(error.message);
+          setPaymentReady(false);
+        });
     }
   }, [loading]);
 
-  const {
-    CardElementComponent,
-    stripeCustomerId,
-    handleSubmit,
-    handleDetach
-  } = useStripePaymentCollector({ user, setError, maintainerUserId, maintainerStripeAccountId });
+  const { CardElementComponent, stripeCustomerId, handleSubmit, handleDetach } =
+    useStripePaymentCollector({ user, setError, maintainerUserId, maintainerStripeAccountId });
 
-  if (invalidCard){
+  if (invalidCard) {
     return (
-      <div className="flex flex-row justify-between items-center">
-        <p className="text-sm text-stone-500">Invalid payment method. Please update your payment method.</p>
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={() => handleDetach().then(refreshSession).then(() => setCardInfo(undefined))}
+      <div className="flex flex-row items-center justify-between">
+        <p className="text-sm text-stone-500">
+          Invalid payment method. Please update your payment method.
+        </p>
+        <Button
+          type="button"
+          variant="outline"
+          onClick={() =>
+            handleDetach()
+              .then(refreshSession)
+              .then(() => setCardInfo(undefined))
+          }
         >
           Remove
         </Button>
@@ -73,26 +94,29 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
     );
   }
 
-  if (!!cardInfo) {
+  if (cardInfo) {
     return (
-        <div className="flex flex-row justify-between items-center">
-          <div className="flex items-center gap-3">
-            <CreditCard className='text-stone-500' />
-            <p className="text-sm font-semibold">{cardInfo?.brand.toUpperCase()} ••••{cardInfo?.last4}</p>
-          </div>
-          <Button 
-            type="button" 
-            size="sm" 
-            variant="outline" 
-            onClick={() => {
-              handleDetach()
-                .then(refreshSession)
-                .then(refreshSession)
-                .then(() => setCardInfo(undefined))
-            }}>
-            Use another card
-          </Button>
+      <div className="flex flex-row items-center justify-between">
+        <div className="flex items-center gap-3">
+          <CreditCard className="text-stone-500" />
+          <p className="text-sm font-semibold">
+            {cardInfo?.brand.toUpperCase()} ••••{cardInfo?.last4}
+          </p>
         </div>
+        <Button
+          type="button"
+          size="sm"
+          variant="outline"
+          onClick={() => {
+            handleDetach()
+              .then(refreshSession)
+              .then(refreshSession)
+              .then(() => setCardInfo(undefined));
+          }}
+        >
+          Use another card
+        </Button>
+      </div>
     );
   }
 
@@ -104,9 +128,13 @@ const UserPaymentMethodWidget = ({ loading, setPaymentReady, setError, maintaine
 };
 
 const UserPaymentMethodWidgetWrapper = (props: UserPaymentMethodWidgetProps) => {
-  return <StripeCheckoutFormWrapper maintainerStripeAccountId={props.maintainerStripeAccountId}>
-    {(innerProps: UserPaymentMethodWidgetProps) => <UserPaymentMethodWidget {...props} {...innerProps} />}
-  </StripeCheckoutFormWrapper>
+  return (
+    <StripeCheckoutFormWrapper maintainerStripeAccountId={props.maintainerStripeAccountId}>
+      {(innerProps: UserPaymentMethodWidgetProps) => (
+        <UserPaymentMethodWidget {...props} {...innerProps} />
+      )}
+    </StripeCheckoutFormWrapper>
+  );
 };
 
 export default UserPaymentMethodWidgetWrapper;

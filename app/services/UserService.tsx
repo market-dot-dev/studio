@@ -1,13 +1,13 @@
 "use server";
 
-import { Charge, Prospect, Subscription, User } from "@prisma/client";
-import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
-import TierService from "./TierService";
-import SessionService from "./SessionService";
+import prisma from "@/lib/prisma";
+import { Charge, Prospect, Subscription, User } from "@prisma/client";
 import Customer from "../models/Customer";
 import { createSessionUser } from "../models/Session";
 import Tier from "../models/Tier";
+import SessionService from "./SessionService";
+import TierService from "./TierService";
 
 type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
@@ -45,8 +45,8 @@ class UserService {
   static async findUser(id: string): Promise<User | undefined | null> {
     return prisma?.user.findUnique({
       where: {
-        id,
-      },
+        id
+      }
     });
   }
 
@@ -61,8 +61,8 @@ class UserService {
     return prisma?.user.findMany({
       where: {
         roleId: {
-          in: ["customer", "maintainer", "admin"],
-        },
+          in: ["customer", "maintainer", "admin"]
+        }
       },
       select: {
         id: true,
@@ -74,24 +74,22 @@ class UserService {
         updatedAt: true,
         company: true,
         businessType: true,
-        businessLocation: true,
-      },
+        businessLocation: true
+      }
     });
   }
 
-  static async findUserByGithubId(
-    gh_username: string,
-  ): Promise<User | undefined | null> {
+  static async findUserByGithubId(gh_username: string): Promise<User | undefined | null> {
     return prisma?.user.findFirst({
       where: {
-        gh_username,
-      },
+        gh_username
+      }
     });
   }
 
   static async customerOfMaintainer(
     maintainerId: string,
-    userId: string,
+    userId: string
   ): Promise<CustomerWithChargesAndSubscriptions | null> {
     const customer = await prisma.user.findFirst({
       where: {
@@ -101,51 +99,51 @@ class UserService {
             charges: {
               some: {
                 tier: {
-                  userId: maintainerId,
-                },
-              },
-            },
+                  userId: maintainerId
+                }
+              }
+            }
           },
           {
             subscriptions: {
               some: {
                 tier: {
-                  userId: maintainerId,
-                },
-              },
-            },
-          },
-        ],
+                  userId: maintainerId
+                }
+              }
+            }
+          }
+        ]
       },
       include: {
         charges: {
           where: {
             tier: {
-              userId: maintainerId,
-            },
+              userId: maintainerId
+            }
           },
           include: {
-            tier: true,
-          },
+            tier: true
+          }
         },
         subscriptions: {
           where: {
             tier: {
-              userId: maintainerId,
-            },
+              userId: maintainerId
+            }
           },
           include: {
-            tier: true,
-          },
-        },
-      },
+            tier: true
+          }
+        }
+      }
     });
 
     return customer as CustomerWithChargesAndSubscriptions | null;
   }
 
   static async customersOfMaintainer(
-    maintainerId: string,
+    maintainerId: string
   ): Promise<CustomerWithChargesAndSubscriptions[]> {
     const customers = await prisma.user.findMany({
       where: {
@@ -154,51 +152,51 @@ class UserService {
             charges: {
               some: {
                 tier: {
-                  userId: maintainerId,
-                },
-              },
-            },
+                  userId: maintainerId
+                }
+              }
+            }
           },
           {
             subscriptions: {
               some: {
                 tier: {
-                  userId: maintainerId,
-                },
-              },
-            },
-          },
-        ],
+                  userId: maintainerId
+                }
+              }
+            }
+          }
+        ]
       },
       include: {
         charges: {
           where: {
             tier: {
-              userId: maintainerId,
-            },
+              userId: maintainerId
+            }
           },
           include: {
-            tier: true,
-          },
+            tier: true
+          }
         },
         subscriptions: {
           where: {
             tier: {
-              userId: maintainerId,
-            },
+              userId: maintainerId
+            }
           },
           include: {
-            tier: true,
-          },
-        },
-      },
+            tier: true
+          }
+        }
+      }
     });
 
     return customers as CustomerWithChargesAndSubscriptions[];
   }
 
   static async customersAndProspectsOfMaintainer(
-    maintainerId: string,
+    maintainerId: string
   ): Promise<CustomerWithChargesSubscriptionsAndProspects[]> {
     const customers = await prisma.user.findMany({
       where: {
@@ -207,79 +205,79 @@ class UserService {
             charges: {
               some: {
                 tier: {
-                  userId: maintainerId,
-                },
-              },
-            },
+                  userId: maintainerId
+                }
+              }
+            }
           },
           {
             subscriptions: {
               some: {
                 tier: {
-                  userId: maintainerId,
-                },
-              },
-            },
+                  userId: maintainerId
+                }
+              }
+            }
           },
           {
             prospects: {
               some: {
                 tiers: {
                   some: {
-                    userId: maintainerId,
-                  },
-                },
-              },
-            },
-          },
-        ],
+                    userId: maintainerId
+                  }
+                }
+              }
+            }
+          }
+        ]
       },
       include: {
         charges: {
           where: {
             tier: {
-              userId: maintainerId,
-            },
+              userId: maintainerId
+            }
           },
           include: {
-            tier: true,
+            tier: true
           },
           orderBy: {
-            createdAt: "desc",
+            createdAt: "desc"
           },
-          take: 5,
+          take: 5
         },
         subscriptions: {
           where: {
             tier: {
-              userId: maintainerId,
-            },
+              userId: maintainerId
+            }
           },
           include: {
-            tier: true,
+            tier: true
           },
           orderBy: {
-            createdAt: "desc",
+            createdAt: "desc"
           },
-          take: 5,
+          take: 5
         },
         prospects: {
           where: {
             tiers: {
               some: {
-                userId: maintainerId,
-              },
-            },
+                userId: maintainerId
+              }
+            }
           },
           include: {
-            tiers: true,
+            tiers: true
           },
           orderBy: {
-            updatedAt: "desc",
+            updatedAt: "desc"
           },
-          take: 5,
-        },
-      },
+          take: 5
+        }
+      }
     });
 
     return customers as CustomerWithChargesSubscriptionsAndProspects[];
@@ -298,7 +296,7 @@ class UserService {
   static async updateUser(id: string, userData: any) {
     return prisma?.user.update({
       where: { id },
-      data: userData,
+      data: userData
     });
   }
 
@@ -307,17 +305,13 @@ class UserService {
     return lookup[maintainerStripeAccountId];
   }
 
-  static async setCustomerId(
-    user: User,
-    maintainerStripeAccountId: string,
-    customerId: string,
-  ) {
+  static async setCustomerId(user: User, maintainerStripeAccountId: string, customerId: string) {
     const lookup = user.stripeCustomerIds as Record<string, string>;
     lookup[maintainerStripeAccountId] = customerId;
 
     await prisma?.user.update({
       where: { id: user.id },
-      data: { stripeCustomerIds: lookup },
+      data: { stripeCustomerIds: lookup }
     });
   }
 
@@ -327,7 +321,7 @@ class UserService {
 
     await prisma?.user.update({
       where: { id: user.id },
-      data: { stripeCustomerIds: lookup },
+      data: { stripeCustomerIds: lookup }
     });
   }
 }
@@ -335,25 +329,21 @@ class UserService {
 export const clearStripeCustomerById = async (
   userId: string,
   maintainerUserId: string,
-  maintainerStripeAccountId: string,
+  maintainerStripeAccountId: string
 ) => {
   const user = await UserService.findUser(userId);
   if (!user) {
     throw new Error("User not found.");
   }
 
-  const customer = new Customer(
-    user,
-    maintainerUserId,
-    maintainerStripeAccountId,
-  );
+  const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
   return await customer.destroyCustomer();
 };
 
 export const createStripeCustomerById = async (
   userId: string,
   maintainerUserId: string,
-  stripeAccountId: string,
+  stripeAccountId: string
 ) => {
   const user = await UserService.findUser(userId);
   if (!user) {
@@ -384,14 +374,12 @@ export const ensureTierId = async (tierId: string) => {
 };
 
 export const customersOfMaintainer = async (
-  maintainerId: string,
+  maintainerId: string
 ): Promise<CustomerWithChargesAndSubscriptions[]> => {
   return UserService.customersOfMaintainer(maintainerId);
 };
 
-export const customers = async (): Promise<
-  CustomerWithChargesAndSubscriptions[]
-> => {
+export const customers = async (): Promise<CustomerWithChargesAndSubscriptions[]> => {
   const sessionUser = await SessionService.getSessionUser();
   if (!sessionUser) {
     throw new Error("User not found.");
@@ -405,5 +393,5 @@ export const {
   findUser,
   updateCurrentUser,
   getCurrentSessionUser,
-  customersAndProspectsOfMaintainer,
+  customersAndProspectsOfMaintainer
 } = UserService;

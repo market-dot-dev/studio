@@ -1,16 +1,16 @@
 "use client";
-import { useState, useEffect } from "react";
-import Tiers from "./tiers";
 import { getPublishedTiers } from "@/app/services/TierService";
-import { Channel, Tier } from "@prisma/client";
 import placeholderTiers from "@/lib/constants/placeholder/tiers";
+import { Channel, Tier } from "@prisma/client";
+import { useEffect, useState } from "react";
+import Tiers from "./tiers";
 
 // This component will be used to prepare data for the preview mode
 export default function TiersClient({
   site,
   page,
   tiers,
-  hasActiveFeatures,
+  hasActiveFeatures
 }: {
   site: any;
   page: any;

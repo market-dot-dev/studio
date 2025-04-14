@@ -3,21 +3,13 @@ import { redirect } from "next/navigation";
 
 import SiteAdmin from "@/components/site/site-admin";
 
-async function SitePage({
-  params,
-}: {
-  params: { id: string };
-}) {
-
+async function SitePage({ params }: { params: { id: string } }) {
   const session = await getSession();
   if (!session) {
     redirect("/login");
   }
-  
 
-  return (
-    <SiteAdmin id={params.id} />
-  );
+  return <SiteAdmin id={params.id} />;
 }
 
 export default SitePage;

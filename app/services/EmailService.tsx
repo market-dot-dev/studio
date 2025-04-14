@@ -1,11 +1,10 @@
 "use server";
 
-import { User } from "@prisma/client";
-import { Prospect } from "@prisma/client";
+import * as EmailTemplates from "@/app/components/email/templates";
+import { domainCopy, getRootUrl } from "@/lib/domain";
+import { Prospect, User } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import UserService from "./UserService";
-import { getRootUrl, domainCopy } from "@/lib/domain";
-import * as EmailTemplates from '@/app/components/email/templates';
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
@@ -25,12 +24,7 @@ const rootURLWithProtocol = getRootUrl();
 const appURLWithProtocol = getRootUrl("app");
 
 class EmailService {
-  static async sendEmail(
-    email: string | null,
-    subject: string,
-    text: string,
-    html: string,
-  ) {
+  static async sendEmail(email: string | null, subject: string, text: string, html: string) {
     // console.log('sending email', email, subject, html);
     if (!email) {
       console.error("Invalid email address");
@@ -40,11 +34,11 @@ class EmailService {
       to: email, // recipient
       from: {
         name: process.env.SENDGRID_FROM_NAME, // verified sender
-        email: process.env.SENDGRID_FROM_EMAIL, // verified sender
+        email: process.env.SENDGRID_FROM_EMAIL // verified sender
       },
       subject: subject,
       text: text,
-      html: html,
+      html: html
     } as any;
 
     try {
@@ -62,7 +56,7 @@ class EmailService {
   static async newSubscriptionInformation(
     userId: string,
     customer: RequiredUserProps,
-    tierName: string,
+    tierName: string
   ) {
     const subject = `You have a new customer for ${tierName}!`;
     const html = EmailTemplates.createNewSubscriptionEmail(customer.name || "", tierName);
@@ -82,7 +76,11 @@ class EmailService {
     }
   }
 
-  static async newPurchaseInformation(userId: string, customer: RequiredUserProps, tierName: string) {
+  static async newPurchaseInformation(
+    userId: string,
+    customer: RequiredUserProps,
+    tierName: string
+  ) {
     const subject = `You have a new customer for ${tierName}!`;
     const html = EmailTemplates.createNewPurchaseEmail(customer.name || "", tierName);
     const text = `Congratulations! ${customer.name} has purchased your ${tierName} package.`;
@@ -101,10 +99,7 @@ class EmailService {
     }
   }
 
-  static async newSubscriptionConfirmation(
-    customer: RequiredUserProps,
-    tierName: string,
-  ) {
+  static async newSubscriptionConfirmation(customer: RequiredUserProps, tierName: string) {
     const subject = `Thank you for purchasing ${tierName}!`;
     const html = EmailTemplates.createSubscriptionConfirmationEmail(tierName);
     const text = `Thank you for purchasing the ${tierName} tier. You now have access to all the benefits of this tier. Please visit your dashboard at ${appURLWithProtocol} to manage your subscription & benefits.`;
@@ -130,7 +125,11 @@ class EmailService {
     }
   }
 
-  static async subscriptionCancelledInfo(user: RequiredUserProps, customer: RequiredUserProps, tierName: string) {
+  static async subscriptionCancelledInfo(
+    user: RequiredUserProps,
+    customer: RequiredUserProps,
+    tierName: string
+  ) {
     const subject = `Subscription Cancelled by ${customer.name}`;
     const html = EmailTemplates.createSubscriptionCancelledEmail(customer.name || "", tierName);
     const text = `${customer.name} has cancelled their subscription to your ${tierName} tier.`;
@@ -156,9 +155,17 @@ class EmailService {
     }
   }
 
-  static async sendNewProspectEmail(user: RequiredUserProps, prospect: RequiredProspectProps, tierName: string): Promise<void> {
+  static async sendNewProspectEmail(
+    user: RequiredUserProps,
+    prospect: RequiredProspectProps,
+    tierName: string
+  ): Promise<void> {
     const subject = `A new prospect is interested in ${tierName}!`;
-    const html = EmailTemplates.createNewProspectEmail(prospect.name || "", prospect.email, tierName);
+    const html = EmailTemplates.createNewProspectEmail(
+      prospect.name || "",
+      prospect.email,
+      tierName
+    );
     const text = `Congratulations! ${prospect.name} has expressed interest in your ${tierName} tier.`;
 
     try {
@@ -169,9 +176,7 @@ class EmailService {
     }
   }
 
-  static async sendNewMaintainerSignUpEmail(
-    user: RequiredUserProps,
-  ): Promise<void> {
+  static async sendNewMaintainerSignUpEmail(user: RequiredUserProps): Promise<void> {
     const subject = `Welcome to market.dev!`;
     const html = EmailTemplates.createWelcomeEmail(user.name || "");
     const text = `Hello ${user.name},\n\nThank you for registering with market.dev!`;

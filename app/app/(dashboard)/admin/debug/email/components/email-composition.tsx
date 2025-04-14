@@ -16,17 +16,15 @@ export default function EmailCompositionStep({
   emailSubject,
   setEmailSubject,
   emailContent,
-  setEmailContent,
+  setEmailContent
 }: EmailCompositionStepProps) {
   return (
     <div>
-      <h2 className="text-lg font-semibold mb-4">Compose Email</h2>
-      
+      <h2 className="mb-4 text-lg font-semibold">Compose Email</h2>
+
       <div className="space-y-6">
         <div>
-          <Label htmlFor="email-subject">
-            Subject
-          </Label>
+          <Label htmlFor="email-subject">Subject</Label>
           <Input
             id="email-subject"
             placeholder="Enter email subject"
@@ -34,11 +32,9 @@ export default function EmailCompositionStep({
             onChange={(e) => setEmailSubject(e.target.value)}
           />
         </div>
-        
+
         <div>
-          <Label htmlFor="email-content">
-            Content
-          </Label>
+          <Label htmlFor="email-content">Content</Label>
           <Textarea
             id="email-content"
             placeholder="Enter email content"
@@ -47,20 +43,23 @@ export default function EmailCompositionStep({
             rows={10}
           />
           <p className="mt-2 text-sm text-gray-500">
-            Basic HTML formatting is supported. You can use tags like &lt;b&gt;, &lt;i&gt;, &lt;a&gt;, etc.
+            Basic HTML formatting is supported. You can use tags like &lt;b&gt;, &lt;i&gt;,
+            &lt;a&gt;, etc.
           </p>
         </div>
-        
+
         <Card>
-          <h3 className="text-sm font-medium text-gray-700 mb-2">
-            Available Variables
-          </h3>
-          <ul className="text-sm text-gray-600 space-y-1">
-            <li><code>{'{name}'}</code> - User name</li>
-            <li><code>{'{email}'}</code> - User email</li>
+          <h3 className="mb-2 text-sm font-medium text-gray-700">Available Variables</h3>
+          <ul className="space-y-1 text-sm text-gray-600">
+            <li>
+              <code>{"{name}"}</code> - User name
+            </li>
+            <li>
+              <code>{"{email}"}</code> - User email
+            </li>
           </ul>
         </Card>
       </div>
     </div>
   );
-} 
+}

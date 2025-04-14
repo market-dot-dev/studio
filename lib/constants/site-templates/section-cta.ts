@@ -1,6 +1,6 @@
 export default {
-    name: 'Call to Action',
-    template: `
+  name: "Call to Action",
+  template: `
         <div class="flex w-full flex-col items-center gap-16 p-6 py-16 md:py-24">
             <div class="mx-auto flex max-w-xl flex-col items-center">
                 <h2 class="font-gray-900 mb-5 text-center text-3xl font-medium tracking-tight sm:text-4xl md:text-5xl">
@@ -15,4 +15,4 @@ export default {
             </div>
         </div>
     `
-}
+};

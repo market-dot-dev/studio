@@ -1,7 +1,6 @@
-import type { ReactElement } from 'react'
-import React from 'react'
-import Image from 'next/image';
-import Link from './link';
+import Image from "next/image";
+import type { ReactElement } from "react";
+import Link from "./link";
 
 interface TestimonialProps {
   quote: ReactElement | string;
@@ -16,16 +15,12 @@ interface TestimonialProps {
       src: string;
       alt?: string;
     };
-  }
+  };
 }
 
 const CompanyName = ({ name, url }: { name: string; url?: string }) =>
   url ? (
-    <Link
-      href={url}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
+    <Link href={url} target="_blank" rel="noopener noreferrer">
       {name}
     </Link>
   ) : (
@@ -35,8 +30,8 @@ const CompanyName = ({ name, url }: { name: string; url?: string }) =>
 export default function Testimonial({ quote, quotee }: TestimonialProps) {
   return (
     <div className="mx-auto w-full max-w-[800px] px-6 lg:max-w-[var(--marketing-max-width)] lg:px-12">
-      <div className="mt-9 mb-12 sm:mt-12 sm:mb-16 flex flex-col md:items-center gap-4 text-pretty border-black/[15%] sm:gap-6 md:text-center">
-        <blockquote className="text-marketing-lg lg:text-marketing-2xl text-pretty md:max-w-[40ch]">
+      <div className="mb-12 mt-9 flex flex-col gap-4 text-pretty border-black/[15%] sm:mb-16 sm:mt-12 sm:gap-6 md:items-center md:text-center">
+        <blockquote className="text-pretty text-marketing-lg md:max-w-[40ch] lg:text-marketing-2xl">
           {quote}
         </blockquote>
         <div className="flex w-fit items-center gap-3">
@@ -46,10 +41,7 @@ export default function Testimonial({ quote, quotee }: TestimonialProps) {
               width={32}
               height={32}
               className="rounded-full"
-              alt={
-                quotee.image.alt ||
-                `${quotee.name}, ${quotee.title} at ${quotee.company.name}`
-              }
+              alt={quotee.image.alt || `${quotee.name}, ${quotee.title} at ${quotee.company.name}`}
             />
           )}
           <p>

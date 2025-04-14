@@ -9,10 +9,10 @@ const isTest = process.env.NODE_ENV === "test";
 const isDevOrTest = isDevelopment || isTest;
 
 const newPrisma = () => {
-  return false && isDevOrTest ?
-    new PrismaClient({ log: ['query', 'info', 'warn', 'error'] }) :
-    new PrismaClient();
-}
+  return false && isDevOrTest
+    ? new PrismaClient({ log: ["query", "info", "warn", "error"] })
+    : new PrismaClient();
+};
 
 const prisma = global.prisma || newPrisma();
 

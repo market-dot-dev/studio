@@ -1,10 +1,10 @@
 "use client";
 
-import { User, Contract } from "@prisma/client";
-import Tier from "@/app/models/Tier";
 import useCurrentSession from "@/app/hooks/use-current-session";
-import ProspectiveCheckout from "@/components/checkout/prospective-checkout";
+import Tier from "@/app/models/Tier";
 import RegistrationCheckoutSection from "@/components/checkout/checkout";
+import ProspectiveCheckout from "@/components/checkout/prospective-checkout";
+import { Contract, User } from "@prisma/client";
 
 interface CheckoutProps {
   tier: Tier;

@@ -1,13 +1,11 @@
-"use client"
+"use client";
 
-import React, { useState } from 'react'
-import Link from 'next/link';
-import Image from 'next/image';
-import Section from '@/components/home/section';
-import FeatureCard from '@/components/home/feature-card';
-import { Speech, ShoppingCart, CodeSquare, BookOpenCheck, StoreIcon } from "lucide-react";
-import { colors } from '@/lib/home/colors';
-import { cn } from '@/lib/utils';
+import FeatureCard from "@/components/home/feature-card";
+import Section from "@/components/home/section";
+import { colors } from "@/lib/home/colors";
+import { cn } from "@/lib/utils";
+import { BookOpenCheck, CodeSquare, ShoppingCart, Speech, StoreIcon } from "lucide-react";
+import React, { useState } from "react";
 
 const featureCards = [
   {
@@ -17,12 +15,12 @@ const featureCards = [
       "market.dev is a marketplace of services & resources from top open source developers in any ecosystem.",
     image: {
       src: "/market-dot-dev.png",
-      alt: "market.dev screenshot",
+      alt: "market.dev screenshot"
     },
     link: {
       text: "Explore market.dev",
-      href: "https://market.dev",
-    },
+      href: "https://market.dev"
+    }
   },
   {
     icon: <StoreIcon />,
@@ -31,8 +29,8 @@ const featureCards = [
       "Sell with your own standalone store. Start with a beautiful template or pop the hood with a full-screen code editor.",
     image: {
       src: "/landing-page.png",
-      alt: "Package cards illustration",
-    },
+      alt: "Package cards illustration"
+    }
   },
   {
     icon: <ShoppingCart />,
@@ -41,8 +39,8 @@ const featureCards = [
       "Share payment links to let people buy with one click. Great for selling through social media & emails.",
     image: {
       src: "/checkout.png",
-      alt: "Package cards illustration",
-    },
+      alt: "Package cards illustration"
+    }
   },
   {
     icon: <CodeSquare />,
@@ -51,9 +49,9 @@ const featureCards = [
       "Use single-purpose, customizable embeds to promote services on your repo, read.me, or anywhere really.",
     image: {
       src: "/embeds.png",
-      alt: "Package cards illustration",
-    },
-  },
+      alt: "Package cards illustration"
+    }
+  }
 ];
 
 export default function Promote() {
@@ -64,7 +62,7 @@ export default function Promote() {
       id="promote"
       badge={{
         icon: <Speech />,
-        title: "Promote",
+        title: "Promote"
       }}
       color={colors.purple["100"]}
       headline={
@@ -89,7 +87,7 @@ export default function Promote() {
             link={feature.link}
             className={cn(
               "sm:aspect-[4/3]",
-              index === 0 && "col-span-full max-h-[500px] lg:aspect-[3/2]",
+              index === 0 && "col-span-full max-h-[500px] lg:aspect-[3/2]"
             )}
           />
         ))}
@@ -103,7 +101,7 @@ export default function Promote() {
                 onClick={() => setActiveTab(index)}
                 className={cn(
                   "border-b-none group h-1/4 w-full px-9 py-6 text-left transition-colors hover:bg-[#fafafa]",
-                  activeTab === index ? "bg-[#fafafa]" : "bg-transparent",
+                  activeTab === index ? "bg-[#fafafa]" : "bg-transparent"
                 )}
               >
                 <div className="flex flex-col justify-center gap-3">
@@ -111,7 +109,7 @@ export default function Promote() {
                     className={cn(
                       "text-marketing-secondary",
                       "group-hover:text-marketing-purple group-focus:text-marketing-purple",
-                      activeTab === index && "text-marketing-purple",
+                      activeTab === index && "text-marketing-purple"
                     )}
                   >
                     {feature.icon}
@@ -120,7 +118,7 @@ export default function Promote() {
                     className={cn(
                       "text-marketing-secondary",
                       "group-hover:text-marketing-purple group-focus:text-marketing-purple",
-                      activeTab === index && "text-marketing-purple",
+                      activeTab === index && "text-marketing-purple"
                     )}
                   >
                     {feature.title}
@@ -132,7 +130,7 @@ export default function Promote() {
           ))}
         </div>
 
-        <div className="h-full min-h-[530px] w-full xl:min-h-[550px]">
+        <div className="size-full min-h-[530px] xl:min-h-[550px]">
           <FeatureCard
             icon={featureCards[activeTab].icon}
             title={featureCards[activeTab].title}

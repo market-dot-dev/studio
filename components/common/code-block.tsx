@@ -1,12 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Highlight, themes } from "prism-react-renderer";
-import { Check, Copy, FileCode2 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { format as prettierFormat } from "prettier/standalone";
-import * as parserHtml from "prettier/plugins/html";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Check, Copy, FileCode2 } from "lucide-react";
+import * as parserHtml from "prettier/plugins/html";
+import { format as prettierFormat } from "prettier/standalone";
+import { Highlight, themes } from "prism-react-renderer";
+import { useEffect, useState } from "react";
 
 interface CodeBlockProps {
   code: string;
@@ -14,11 +14,7 @@ interface CodeBlockProps {
   fileName?: string;
 }
 
-export default function CodeBlock({
-  code,
-  language,
-  fileName,
-}: CodeBlockProps) {
+export default function CodeBlock({ code, language, fileName }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
   const [formattedCode, setFormattedCode] = useState(code);
 
@@ -33,7 +29,7 @@ export default function CodeBlock({
             tabWidth: 2,
             htmlWhitespaceSensitivity: "css",
             bracketSameLine: true,
-            singleAttributePerLine: false,
+            singleAttributePerLine: false
           });
           setFormattedCode(formatted.trim());
         } catch (err) {
@@ -71,32 +67,32 @@ export default function CodeBlock({
       {fileName && (
         <div className="flex items-center justify-between border-b border-zinc-800 bg-black px-4 py-2">
           <div className="flex items-center gap-2">
-            <FileCode2 className="h-4 w-4 text-zinc-400" />
+            <FileCode2 className="size-4 text-zinc-400" />
             <span className="font-mono text-sm text-zinc-400">{fileName}</span>
           </div>
           <Button
             variant="ghost"
             size="icon"
             aria-label="Copy code"
-            className="relative text-zinc-400 transition-colors hover:text-zinc-300 hover:bg-white/15"
+            className="relative text-zinc-400 transition-colors hover:bg-white/15 hover:text-zinc-300"
             onClick={copyToClipboard}
           >
             <div className="p-2">
               <div
                 className={cn(
                   "transition-all",
-                  copied ? "scale-50 opacity-0" : "scale-100 opacity-100",
+                  copied ? "scale-50 opacity-0" : "scale-100 opacity-100"
                 )}
               >
-                <Copy className="h-4 w-4" />
+                <Copy className="size-4" />
               </div>
               <div
                 className={cn(
                   "absolute inset-0 -left-0.5 -top-px p-2 transition-all",
-                  copied ? "scale-100 opacity-100" : "scale-50 opacity-0",
+                  copied ? "scale-100 opacity-100" : "scale-50 opacity-0"
                 )}
               >
-                <Check className="h-4 w-4 text-green-500" />
+                <Check className="size-4 text-green-500" />
               </div>
             </div>
           </Button>
@@ -111,17 +107,14 @@ export default function CodeBlock({
             { types: ["keyword"], style: { color: "#FF69B4" } },
             { types: ["function"], style: { color: "#56B6C2" } },
             { types: ["string"], style: { color: "#98C379" } },
-            { types: ["tag"], style: { color: "#E06C75" } },
-          ],
+            { types: ["tag"], style: { color: "#E06C75" } }
+          ]
         }}
         code={formattedCode}
         language={language}
       >
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre
-            className={cn(className, "overflow-x-auto bg-black p-4 text-sm")}
-            style={style}
-          >
+          <pre className={cn(className, "overflow-x-auto bg-black p-4 text-sm")} style={style}>
             <code>
               {tokens.map((line, i) => (
                 <div key={i} {...getLineProps({ line })} className="table-row">

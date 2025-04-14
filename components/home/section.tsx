@@ -31,8 +31,8 @@ export default function FeatureSection({
   return (
     <div
       className={clsx(
-        "relative mx-auto flex w-full max-w-[800px] flex-col items-center px-6 scroll-mt-28 lg:max-w-[var(--marketing-max-width)] lg:px-16",
-        className,
+        "relative mx-auto flex w-full max-w-[800px] scroll-mt-28 flex-col items-center px-6 lg:max-w-[var(--marketing-max-width)] lg:px-16",
+        className
       )}
       {...attributes}
     >
@@ -44,7 +44,7 @@ export default function FeatureSection({
           <div style={{ color }}>
             {React.cloneElement(badge.icon, {
               size: 32,
-              className: "h-6 sm:h-7 w-auto",
+              className: "h-6 sm:h-7 w-auto"
             })}
           </div>
           <p>{badge.title}</p>
@@ -53,7 +53,7 @@ export default function FeatureSection({
       {headline && (
         <GradientHeading
           as="h2"
-          className="mb-3 max-w-[25ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-[1] tracking-[-0.035em] sm:mb-4 sm:text-marketing-2xl lg:text-marketing-3xl"
+          className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[25ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-none tracking-[-0.035em] sm:mb-4"
         >
           {headline}
         </GradientHeading>
@@ -63,12 +63,7 @@ export default function FeatureSection({
           {description}
         </p>
       )}
-      <div
-        className={clsx(
-          "relative",
-          isFullBleed ? "-mx-6 w-screen md:m-0 md:w-full" : "w-full",
-        )}
-      >
+      <div className={clsx("relative", isFullBleed ? "-mx-6 w-screen md:m-0 md:w-full" : "w-full")}>
         {children}
       </div>
     </div>

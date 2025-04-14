@@ -1,16 +1,11 @@
 "use server";
 
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
-import ContractEdit from "../../../../../components/contracts/contract-edit";
 import { getContractById } from "@/app/services/contract-service";
-import { notFound } from "next/navigation";
+import { getSession } from "@/lib/auth";
+import { notFound, redirect } from "next/navigation";
+import ContractEdit from "../../../../../components/contracts/contract-edit";
 
-export default async function ContractEditPage({
-  params,
-}: {
-  params?: { id: string };
-}) {
+export default async function ContractEditPage({ params }: { params?: { id: string } }) {
   const session = await getSession();
 
   if (!session) {

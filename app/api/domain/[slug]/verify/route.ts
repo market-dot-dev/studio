@@ -1,21 +1,14 @@
-import {
-  getConfigResponse,
-  getDomainResponse,
-  verifyDomain,
-} from "@/lib/domains";
+import { getConfigResponse, getDomainResponse, verifyDomain } from "@/lib/domains";
 import { DomainVerificationStatusProps } from "@/lib/types";
 import { NextResponse } from "next/server";
 
-export async function GET(
-  _req: Request,
-  { params }: { params: { slug: string } },
-) {
+export async function GET(_req: Request, { params }: { params: { slug: string } }) {
   const domain = decodeURIComponent(params.slug);
   let status: DomainVerificationStatusProps = "Valid Configuration";
 
   const [domainJson, configJson] = await Promise.all([
     getDomainResponse(domain),
-    getConfigResponse(domain),
+    getConfigResponse(domain)
   ]);
 
   if (domainJson?.error?.code === "not_found") {
@@ -43,6 +36,6 @@ export async function GET(
 
   return NextResponse.json({
     status,
-    domainJson,
+    domainJson
   });
 }

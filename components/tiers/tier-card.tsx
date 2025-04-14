@@ -1,20 +1,17 @@
 "use client";
 
 import type { SubscriptionCadence } from "@/app/services/StripeService";
-import type {
-  CheckoutType,
-  TierWithFeatures,
-} from "@/app/services/TierService";
+import type { CheckoutType, TierWithFeatures } from "@/app/services/TierService";
+import TierFeatureList from "@/components/features/tier-feature-list";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
-import Link from "next/link";
-import TierFeatureList from "@/components/features/tier-feature-list";
-import { Feature } from "@prisma/client";
-import { useState } from "react";
-import { cn, parseTierDescription } from "@/lib/utils";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
+import { cn, parseTierDescription } from "@/lib/utils";
+import { Feature } from "@prisma/client";
 import clsx from "clsx";
+import Link from "next/link";
+import { useState } from "react";
 
 type TierCardProps = {
   url?: string;
@@ -29,11 +26,7 @@ type TierCardProps = {
   children?: React.ReactNode;
 };
 
-export const generateLink = (
-  url: string | null,
-  tierId: string,
-  annual: boolean,
-) => {
+export const generateLink = (url: string | null, tierId: string, annual: boolean) => {
   return `${url ? url : ""}/checkout/${tierId}${annual ? "?annual=true" : ""}`;
 };
 
@@ -45,7 +38,7 @@ const CheckoutButton = ({
   variant = "default",
   checkoutType = "gitwallet",
   darkMode = false,
-  disabled = false,
+  disabled = false
 }: {
   url: string | null;
   openUrlInNewTab?: boolean;
@@ -59,10 +52,7 @@ const CheckoutButton = ({
   const checkoutUrl = generateLink(url, tierId, annual);
 
   return (
-    <Link
-      href={disabled ? "" : checkoutUrl}
-      target={openUrlInNewTab ? "_blank" : "_self"}
-    >
+    <Link href={disabled ? "" : checkoutUrl} target={openUrlInNewTab ? "_blank" : "_self"}>
       <Button
         variant={variant}
         className={cn("w-full", darkMode && "!bg-white !text-stone-800 hover:bg-stone-100")}
@@ -83,76 +73,58 @@ const TierCard: React.FC<TierCardProps> = ({
   className,
   children,
   buttonDisabled = false,
-  openUrlInNewTab = false,
+  openUrlInNewTab = false
 }) => {
   const [showAnnual, setShowAnnual] = useState(false);
 
-  const containerClasses = darkMode
-    ? "text-white bg-stone-900"
-    : "text-stone-900 bg-white";
+  const containerClasses = darkMode ? "text-white bg-stone-900" : "text-stone-900 bg-white";
   const headingClasses = darkMode ? "text-white" : "text-stone-900";
   const textClasses = darkMode ? "text-stone-300" : "text-stone-500";
 
   const hasAnnual = (tier.priceAnnual || 0) > 0;
   const isntOnce = tier.cadence !== "once";
-  const cadenceShorthand =
-    subscriptionCadenceShorthands[tier.cadence as SubscriptionCadence];
+  const cadenceShorthand = subscriptionCadenceShorthands[tier.cadence as SubscriptionCadence];
 
   const directlyProvidedFeatures = !!features && features.length > 0;
-  const tierFeatures =
-    (directlyProvidedFeatures ? features : tier.features) || [];
+  const tierFeatures = (directlyProvidedFeatures ? features : tier.features) || [];
   const parsedDescription = parseTierDescription(tier.description || "");
 
   return (
     <Card
       className={clsx(
-        "relative flex h-full w-full flex-col justify-between p-6 pt-5",
+        "relative flex size-full flex-col justify-between p-6 pt-5",
         containerClasses,
-        className,
+        className
       )}
     >
-      <div
-        className={clsx(
-          "flex flex-col gap-4",
-          alignment === "center" && "items-center",
-        )}
-      >
+      <div className={clsx("flex flex-col gap-4", alignment === "center" && "items-center")}>
         <div>
           <h3
             className={clsx(
               "mb-1 text-lg font-semibold",
               alignment === "center" && "text-center",
-              headingClasses,
+              headingClasses
             )}
           >
             {tier.name}
           </h3>
-          <p
-            className={clsx(
-              "text-sm",
-              alignment === "center" && "text-center",
-              textClasses,
-            )}
-          >
+          <p className={clsx("text-sm", alignment === "center" && "text-center", textClasses)}>
             {tier.tagline}
           </p>
         </div>
         {tier.checkoutType === "gitwallet" && (
-          <div
-            className={clsx(
-              "flex flex-col gap-1",
-              alignment === "center" && "items-center",
-            )}
-          >
-            <p className="text-4xl h-fit">
+          <div className={clsx("flex flex-col gap-1", alignment === "center" && "items-center")}>
+            <p className="h-fit text-4xl">
               <span className="tracking-tight">
-                $
-                {showAnnual
-                  ? Math.round((tier.priceAnnual || 0) / 12)
-                  : tier.price}
+                ${showAnnual ? Math.round((tier.priceAnnual || 0) / 12) : tier.price}
               </span>
               {cadenceShorthand && (
-                <span className={cn("text-base/10 font-normal", darkMode ? "text-stone-500" : "text-stone-400")}>
+                <span
+                  className={cn(
+                    "text-base/10 font-normal",
+                    darkMode ? "text-stone-500" : "text-stone-400"
+                  )}
+                >
                   <span className="mr-px">/</span>
                   {cadenceShorthand}
                 </span>
@@ -163,10 +135,7 @@ const TierCard: React.FC<TierCardProps> = ({
                 <p className="text-xxs font-medium uppercase tracking-wider text-stone-500">
                   Monthly
                 </p>
-                <Switch
-                  checked={showAnnual}
-                  onCheckedChange={() => setShowAnnual(!showAnnual)}
-                />
+                <Switch checked={showAnnual} onCheckedChange={() => setShowAnnual(!showAnnual)} />
                 <p className="text-xxs font-medium uppercase tracking-wider text-stone-500">
                   Yearly
                 </p>
@@ -194,13 +163,11 @@ const TierCard: React.FC<TierCardProps> = ({
               return (
                 <TierFeatureList
                   key={dex}
-                  features={section.features.map(
-                    (feature: string, index: number) => ({
-                      id: index,
-                      name: feature,
-                      isEnabled: true,
-                    }),
-                  )}
+                  features={section.features.map((feature: string, index: number) => ({
+                    id: index,
+                    name: feature,
+                    isEnabled: true
+                  }))}
                   darkMode={darkMode}
                 />
               );

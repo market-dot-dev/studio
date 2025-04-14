@@ -1,13 +1,13 @@
 "use server";
 
-import Stripe from "stripe";
-import UserService from "./UserService";
-import TierService from "./TierService";
 import { createSubscription as createLocalSubscription } from "@/app/services/SubscriptionService";
-import { Tier, User } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import { Tier, User } from "@prisma/client";
+import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";
+import TierService from "./TierService";
+import UserService from "./UserService";
 
 export type StripeCard = {
   brand: string;
@@ -16,7 +16,7 @@ export type StripeCard = {
 
 import {
   GLOBAL_APPLICATION_FEE_DOLLARS,
-  GLOBAL_APPLICATION_FEE_PCT,
+  GLOBAL_APPLICATION_FEE_PCT
 } from "@/app/config/stripe-fees";
 import { getRootUrl } from "@/lib/domain";
 
@@ -35,22 +35,19 @@ enum ErrorMessageCode {
   StripeChargeNotEnabled = "err_stripe_charge_enabled_false",
   StripePayoutNotEnabled = "err_stripe_payout_enabled_false",
   StripeAccountInfoFetchError = "err_stripe_account_info_fetch_fail",
-  StripeAccountDisabled = "err_stripe_account_disabled",
+  StripeAccountDisabled = "err_stripe_account_disabled"
 }
 
 const errorMessageMapping: Record<ErrorMessageCode, string> = {
   [ErrorMessageCode.UserNotFound]: "User not found.",
-  [ErrorMessageCode.StripeAccountNotConnected]:
-    "You need to connect your Stripe account.",
-  [ErrorMessageCode.StripeProductIdCreationFailed]:
-    "Error creating stripe product id.",
+  [ErrorMessageCode.StripeAccountNotConnected]: "You need to connect your Stripe account.",
+  [ErrorMessageCode.StripeProductIdCreationFailed]: "Error creating stripe product id.",
   [ErrorMessageCode.StripeChargeNotEnabled]:
     "Stripe account cannot currently charge customers. Check your Stripe dashboard for more details.",
   [ErrorMessageCode.StripePayoutNotEnabled]:
     "Stripe account cannot currently perform payouts. Check your Stripe dashboard for more details.",
-  [ErrorMessageCode.StripeAccountInfoFetchError]:
-    "Error fetching stripe account info.",
-  [ErrorMessageCode.StripeAccountDisabled]: "Your Stripe account is disabled.",
+  [ErrorMessageCode.StripeAccountInfoFetchError]: "Error fetching stripe account info.",
+  [ErrorMessageCode.StripeAccountDisabled]: "Your Stripe account is disabled."
 };
 
 const connStripe = async (stripeAccountId: string) => {
@@ -59,7 +56,7 @@ const connStripe = async (stripeAccountId: string) => {
   }
 
   return new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-    stripeAccount: stripeAccountId,
+    stripeAccount: stripeAccountId
   });
 };
 
@@ -71,7 +68,7 @@ class StripeService {
 
   constructor(accountId: string) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-      stripeAccount: accountId,
+      stripeAccount: accountId
     });
     this.stripeAccountId = accountId;
   }
@@ -87,9 +84,7 @@ class StripeService {
 
     if (user.stripeAccountId) {
       try {
-        const account = (await platformStripe.accounts.retrieve(
-          user.stripeAccountId,
-        )) as any;
+        const account = (await platformStripe.accounts.retrieve(user.stripeAccountId)) as any;
 
         // Extracting only relevant information
         accountInfo = {
@@ -99,8 +94,8 @@ class StripeService {
           defaultCurrency: account.default_currency,
           requirements: {
             currentlyDue: account.requirements.currently_due,
-            disabledReason: account.requirements.disabled_reason,
-          },
+            disabledReason: account.requirements.disabled_reason
+          }
         };
       } catch (error) {
         console.error("Error fetching Stripe account info:", error);
@@ -118,12 +113,10 @@ class StripeService {
   static async performStripeAccountHealthCheck(): Promise<HealthCheckResult> {
     const { messageCodes, canSell, disabledReasons } =
       await StripeService.stripeAccountHealthCheck();
-    const reasons = JSON.stringify(
-      messageCodes.map((code) => StripeService.getErrorMessage(code)),
-    );
+    const reasons = JSON.stringify(messageCodes.map((code) => StripeService.getErrorMessage(code)));
     UserService.updateCurrentUser({
       stripeAccountDisabled: !canSell,
-      stripeAccountDisabledReason: reasons,
+      stripeAccountDisabledReason: reasons
     });
 
     return { messageCodes, canSell, disabledReasons };
@@ -175,12 +168,9 @@ class StripeService {
   }
 
   async validatePayment(paymentIntentId: string, clientSecret: string) {
-    const paymentIntent =
-      await this.stripe.paymentIntents.retrieve(paymentIntentId);
+    const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
     if (paymentIntent.client_secret !== clientSecret) {
-      throw new Error(
-        "Payment validation failed: Client secret does not match.",
-      );
+      throw new Error("Payment validation failed: Client secret does not match.");
     } else if (paymentIntent.status !== "succeeded") {
       throw new Error("Payment validation failed: Payment did not succeed.");
     } else {
@@ -192,22 +182,22 @@ class StripeService {
   async createPrice(
     stripeProductId: string,
     price: number,
-    cadence: SubscriptionCadence = "month",
+    cadence: SubscriptionCadence = "month"
   ) {
     const attrs: any = {
       unit_amount: price * 100, // Stripe requires the price in cents
       currency: "usd",
-      product: stripeProductId,
+      product: stripeProductId
     };
 
     if (cadence === "quarter") {
       attrs["recurring"] = {
         interval: "month",
-        interval_count: 3,
+        interval_count: 3
       };
     } else if (cadence !== "once") {
       attrs["recurring"] = {
-        interval: cadence,
+        interval: cadence
       };
     }
 
@@ -226,7 +216,7 @@ class StripeService {
   async createProduct(name: string, description?: string) {
     const product = await this.stripe.products.create({
       name,
-      description,
+      description
     });
 
     return product;
@@ -235,7 +225,7 @@ class StripeService {
   async updateProduct(productId: string, name: string, description?: string) {
     const product = await this.stripe.products.update(productId, {
       name,
-      description,
+      description
     });
 
     return product;
@@ -260,7 +250,7 @@ class StripeService {
   async createCustomer(
     email: string,
     name?: string,
-    paymentMethodId?: string,
+    paymentMethodId?: string
   ): Promise<Stripe.Customer> {
     const payload = {
       email: email,
@@ -269,10 +259,10 @@ class StripeService {
         ? {
             payment_method: paymentMethodId,
             invoice_settings: {
-              default_payment_method: paymentMethodId,
-            },
+              default_payment_method: paymentMethodId
+            }
           }
-        : {}),
+        : {})
     };
 
     return await this.stripe.customers.create(payload);
@@ -280,28 +270,22 @@ class StripeService {
 
   async attachPaymentMethod(paymentMethodId: string, stripeCustomerId: string) {
     await this.stripe.paymentMethods.attach(paymentMethodId, {
-      customer: stripeCustomerId,
+      customer: stripeCustomerId
     });
 
     await this.stripe.customers.update(stripeCustomerId, {
       invoice_settings: {
-        default_payment_method: paymentMethodId,
-      },
+        default_payment_method: paymentMethodId
+      }
     });
   }
 
-  async getPaymentMethod(
-    paymentMethodId: string,
-    maintainerId: string,
-  ): Promise<StripeCard> {
-    const paymentMethod =
-      await this.stripe.paymentMethods.retrieve(paymentMethodId);
+  async getPaymentMethod(paymentMethodId: string, maintainerId: string): Promise<StripeCard> {
+    const paymentMethod = await this.stripe.paymentMethods.retrieve(paymentMethodId);
 
     // Check if the retrieved payment method is of type 'card'
     if (paymentMethod.type !== "card" || !paymentMethod.card) {
-      throw new Error(
-        "Invalid payment method type or card details not available.",
-      );
+      throw new Error("Invalid payment method type or card details not available.");
     }
 
     const { brand, last4 } = paymentMethod.card;
@@ -312,8 +296,8 @@ class StripeService {
     await this.stripe.paymentMethods.detach(paymentMethodId);
     await this.stripe.customers.update(stripeCustomerId, {
       invoice_settings: {
-        default_payment_method: undefined,
-      },
+        default_payment_method: undefined
+      }
     });
   }
 
@@ -321,34 +305,28 @@ class StripeService {
     await this.stripe.customers.del(customerId);
   }
 
-  async createSubscription(
-    stripeCustomerId: string,
-    stripePriceId: string,
-    trialDays: number = 0,
-  ) {
+  async createSubscription(stripeCustomerId: string, stripePriceId: string, trialDays: number = 0) {
     return await this.stripe.subscriptions.create(
       {
         customer: stripeCustomerId,
         items: [{ price: stripePriceId! }],
         payment_behavior: "error_if_incomplete",
         expand: ["latest_invoice.payment_intent"],
-        trial_period_days: trialDays,
+        trial_period_days: trialDays
       },
       {
-        idempotencyKey: `${stripeCustomerId}-${stripePriceId}`,
-      },
+        idempotencyKey: `${stripeCustomerId}-${stripePriceId}`
+      }
     );
   }
 
   static async calculateApplicationFee(
     price: number,
     applicationFeePercent: number = 0,
-    applicationFeePrice: number = 0,
+    applicationFeePrice: number = 0
   ) {
-    const totalPercent =
-      (applicationFeePercent + (GLOBAL_APPLICATION_FEE_PCT || 0)) / 100;
-    const totalFee =
-      applicationFeePrice + (GLOBAL_APPLICATION_FEE_DOLLARS || 0);
+    const totalPercent = (applicationFeePercent + (GLOBAL_APPLICATION_FEE_PCT || 0)) / 100;
+    const totalFee = applicationFeePrice + (GLOBAL_APPLICATION_FEE_DOLLARS || 0);
 
     return Math.round(price * totalPercent) + totalFee;
   }
@@ -359,7 +337,7 @@ class StripeService {
     price: number,
     stripePaymentMethodId: string,
     applicationFeePercent?: number,
-    applicationFeePrice?: number,
+    applicationFeePrice?: number
   ) {
     const timestampMod10 = (Date.now() % 10000).toString().padStart(4, "0"); // Convert to string and pad with leading zeros if necessary
 
@@ -371,14 +349,14 @@ class StripeService {
       application_fee_amount: await StripeService.calculateApplicationFee(
         price,
         applicationFeePercent,
-        applicationFeePrice,
-      ),
+        applicationFeePrice
+      )
     });
 
     await this.stripe.invoiceItems.create({
       customer: stripeCustomerId,
       invoice: invoice.id,
-      price: stripePriceId,
+      price: stripePriceId
     });
 
     const finalInvoice = await this.stripe.invoices.finalizeInvoice(invoice.id);
@@ -386,35 +364,27 @@ class StripeService {
     const confirmedPaymentIntent = await this.stripe.paymentIntents.confirm(
       finalInvoice.payment_intent,
       {
-        payment_method: stripePaymentMethodId,
+        payment_method: stripePaymentMethodId
       },
       {
-        idempotencyKey: `${stripeCustomerId}-${stripePriceId}-${timestampMod10}`,
-      },
+        idempotencyKey: `${stripeCustomerId}-${stripePriceId}-${timestampMod10}`
+      }
     );
 
     return confirmedPaymentIntent;
   }
 
   async updateSubscription(subscriptionId: string, priceId: string) {
-    const subscription = await this.stripe.subscriptions.update(
-      subscriptionId,
-      {
-        items: [{ price: priceId }],
-        expand: ["latest_invoice.payment_intent"],
-      },
-    );
+    const subscription = await this.stripe.subscriptions.update(subscriptionId, {
+      items: [{ price: priceId }],
+      expand: ["latest_invoice.payment_intent"]
+    });
 
     return subscription;
   }
 
-  static async cancelSubscription(
-    subscriptionId: string,
-    stripeAccountId: string,
-  ) {
-    return await (
-      await connStripe(stripeAccountId)
-    ).subscriptions.cancel(subscriptionId);
+  static async cancelSubscription(subscriptionId: string, stripeAccountId: string) {
+    return await (await connStripe(stripeAccountId)).subscriptions.cancel(subscriptionId);
   }
 
   static async generateStripeCSRF(userId: string) {
@@ -427,8 +397,7 @@ class StripeService {
       throw new Error("User not found");
     }
 
-    const state =
-      user.stripeCSRF || (await StripeService.generateStripeCSRF(userId));
+    const state = user.stripeCSRF || (await StripeService.generateStripeCSRF(userId));
 
     if (!user.stripeCSRF) {
       await UserService.updateUser(userId, { stripeCSRF: state }); // Save the state in your database for later verification
@@ -455,7 +424,7 @@ class StripeService {
     const subscriptions = await this.stripe.subscriptions.list({
       customer: stripeCustomerId,
       price: stripePriceId,
-      status: "active",
+      status: "active"
     });
 
     return subscriptions.data.length > 0;
@@ -471,13 +440,13 @@ class StripeService {
 
     const response = await platformStripe.oauth.token({
       grant_type: "authorization_code",
-      code,
+      code
     });
 
     const connectedAccountId = response.stripe_user_id;
     await UserService.updateUser(user.id, {
       stripeAccountId: connectedAccountId,
-      stripeCSRF: null,
+      stripeCSRF: null
     });
 
     return connectedAccountId;
@@ -501,11 +470,7 @@ interface StripeCheckoutComponentProps {
   tierId: string;
 }
 
-export const onClickSubscribe = async (
-  userId: string,
-  tierId: string,
-  annual: boolean,
-) => {
+export const onClickSubscribe = async (userId: string, tierId: string, annual: boolean) => {
   let subscription = null;
 
   const tier = await TierService.findTier(tierId);
@@ -532,13 +497,9 @@ export const onClickSubscribe = async (
     throw new Error("Maintainer does not have a connected Stripe account.");
   }
 
-  const customer = new Customer(
-    user,
-    maintainer.id,
-    maintainer.stripeAccountId,
-  );
+  const customer = new Customer(user, maintainer.id, maintainer.stripeAccountId);
 
-  let stripeCustomerId = await customer.getOrCreateStripeCustomerId();
+  const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
   const stripeService = new StripeService(maintainer.stripeAccountId);
 
   const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
@@ -556,7 +517,7 @@ export const onClickSubscribe = async (
       tier.price!,
       await customer.getStripePaymentMethodId(),
       tier.applicationFeePercent || 0,
-      tier.applicationFeePrice || 0,
+      tier.applicationFeePrice || 0
     );
 
     if (charge.status === "succeeded") {
@@ -569,13 +530,13 @@ export const onClickSubscribe = async (
     if (await stripeService.isSubscribedToTier(stripeCustomerId, tier)) {
       console.log("[purchase]: FAIL already subscribed");
       throw new Error(
-        "You are already subscribed to this product. If you dont see it in your dashboard, please contact support.",
+        "You are already subscribed to this product. If you dont see it in your dashboard, please contact support."
       );
     } else {
       subscription = await stripeService.createSubscription(
         stripeCustomerId,
         stripePriceId,
-        tier.trialDays,
+        tier.trialDays
       );
     }
 
@@ -591,12 +552,10 @@ export const onClickSubscribe = async (
         console.log("[purchase]: invoice paid");
       } else if (invoice.payment_intent) {
         throw new Error(
-          "Subscription attempt returned a payment intent, which should never happen.",
+          "Subscription attempt returned a payment intent, which should never happen."
         );
       } else {
-        throw new Error(
-          `Unknown error occurred: subscription status was ${subscription.status}`,
-        );
+        throw new Error(`Unknown error occurred: subscription status was ${subscription.status}`);
       }
     }
   }
@@ -604,7 +563,7 @@ export const onClickSubscribe = async (
 
 const getCustomer = async (
   maintainerId: string,
-  maintainerStripeAccountId: string,
+  maintainerStripeAccountId: string
 ): Promise<Customer> => {
   const user = await UserService.getCurrentUser();
 
@@ -618,52 +577,38 @@ const getCustomer = async (
 export const attachPaymentMethod = async (
   paymentMethodId: string,
   maintainerUserId: string,
-  maintainerStripeAccountId: string,
+  maintainerStripeAccountId: string
 ) => {
-  const customer = await getCustomer(
-    maintainerUserId,
-    maintainerStripeAccountId,
-  );
+  const customer = await getCustomer(maintainerUserId, maintainerStripeAccountId);
   const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
   await customer.attachPaymentMethod(paymentMethodId);
 };
 
 export const detachPaymentMethod = async (
   maintainerUserId: string,
-  maintainerStripeAccountId: string,
+  maintainerStripeAccountId: string
 ) => {
-  const customer = await getCustomer(
-    maintainerUserId,
-    maintainerStripeAccountId,
-  );
+  const customer = await getCustomer(maintainerUserId, maintainerStripeAccountId);
   await customer.detachPaymentMethod();
 };
 
 export const getPaymentMethod = async (
   maintainerUserId: string,
-  maintainerStripeAccountId: string,
+  maintainerStripeAccountId: string
 ): Promise<StripeCard> => {
-  const customer = await getCustomer(
-    maintainerUserId,
-    maintainerStripeAccountId,
-  );
+  const customer = await getCustomer(maintainerUserId, maintainerStripeAccountId);
   return await customer.getStripePaymentMethod();
 };
 
-export const canBuy = async (
-  maintainerUserId: string,
-  maintainerStripeAccountId: string,
-) => {
-  return (
-    await getCustomer(maintainerUserId, maintainerStripeAccountId)
-  ).canBuy();
+export const canBuy = async (maintainerUserId: string, maintainerStripeAccountId: string) => {
+  return (await getCustomer(maintainerUserId, maintainerStripeAccountId)).canBuy();
 };
 
 export const {
   disconnectStripeAccount,
   userHasStripeAccountIdById,
   getAccountInfo,
-  calculateApplicationFee,
+  calculateApplicationFee
 } = StripeService;
 
 export default StripeService;

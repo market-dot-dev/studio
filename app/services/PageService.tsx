@@ -1,24 +1,24 @@
 "use server";
 
+import { getSession } from "@/lib/auth";
+import { newPageTemplate } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { Page } from "@prisma/client";
-import { getSession } from "@/lib/auth";
-import SiteService from "./SiteService";
-import { newPageTemplate} from "@/lib/constants/site-template";
 import SessionService from "./SessionService";
+import SiteService from "./SiteService";
 
 class PageService {
   static getSubdomain(domain: string) {
     return domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
-    : null;
+      ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
+      : null;
   }
 
   // meant for frontend site rendering
   static async getPage(subdomain: string, slug: string) {
     const site = await prisma.site.findUnique({
-      where: { 
-        subdomain,
+      where: {
+        subdomain
       },
       select: {
         id: true,
@@ -28,7 +28,7 @@ class PageService {
             name: true,
             image: true,
             projectName: true,
-            projectDescription: true,
+            projectDescription: true
           }
         },
         pages: {
@@ -43,7 +43,7 @@ class PageService {
         }
       }
     });
-  
+
     return site;
   }
 
@@ -51,17 +51,17 @@ class PageService {
   static async getHomepage(subdomain: string) {
     const site = await prisma.site.findUnique({
       where: {
-        subdomain,
+        subdomain
       },
       select: {
         id: true,
-        userId: true, 
+        userId: true,
         user: {
           select: {
             name: true,
             image: true,
             projectName: true,
-            projectDescription: true,
+            projectDescription: true
           }
         },
         homepageId: true
@@ -81,19 +81,18 @@ class PageService {
         content: true
       }
     });
-  
-    return {...site, homepage: page};
-  }
-  
-  static async findPage(subdomain: string, slug: string) {
 
+    return { ...site, homepage: page };
+  }
+
+  static async findPage(subdomain: string, slug: string) {
     const currentUserId = await SessionService.getCurrentUserId();
-  
+
     const site = await prisma.site.findUnique({
-      where: { 
-        subdomain,
+      where: {
+        subdomain
       },
-      include: { 
+      include: {
         user: true,
         pages: {
           where: {
@@ -105,15 +104,15 @@ class PageService {
                 }
               },
               { draft: false }
-            ],
+            ]
           },
           take: 1
         }
       }
     });
-  
+
     return site;
-  };
+  }
 
   static async setHomepage(siteId: string, id: string) {
     const userId = await SessionService.getCurrentUserId();
@@ -125,8 +124,8 @@ class PageService {
       data: {
         homepageId: id
       }
-    })
-  };
+    });
+  }
 
   static async deletePage(id: string) {
     const userId = await SessionService.getCurrentUserId();
@@ -145,7 +144,7 @@ class PageService {
         }
       }
     });
-    
+
     if (!page) {
       throw new Error("Page not found.");
     }
@@ -153,55 +152,55 @@ class PageService {
     if (page.site.userId !== userId) {
       throw new Error("You don't own that page.");
     }
-  
+
     if (page.site.homepageId === id) {
       throw new Error("Cannot delete the homepage of a site.");
     }
-  
+
     // If the checks pass, proceed to delete the page
     return await prisma.page.delete({
       where: { id }
     });
-  } 
+  }
 
   static async updatePage(id: string, pageAttributes: Partial<Page>) {
     const session = await getSession();
 
     if (!session?.user.id) {
       return {
-        error: "Not authenticated",
+        error: "Not authenticated"
       };
     }
     const page = await prisma.page.findUnique({
       where: {
-        id,
+        id
       },
       include: {
-        site: true,
-      },
+        site: true
+      }
     });
     if (!page || page.userId !== session.user.id) {
       return {
-        error: "Page not found",
+        error: "Page not found"
       };
     }
     try {
       const response = await prisma.page.update({
         where: {
-          id: id,
+          id: id
         },
         data: {
           title: pageAttributes.title,
           slug: pageAttributes.slug,
           content: pageAttributes.content,
-          draft: pageAttributes.draft,
-        },
+          draft: pageAttributes.draft
+        }
       });
 
       return response;
     } catch (error: any) {
       return {
-        error: error.message,
+        error: error.message
       };
     }
   }
@@ -219,13 +218,12 @@ class PageService {
       throw new Error("Site not found.");
     }
 
-
     const response = await prisma.page.create({
       data: {
         siteId: site.id,
         userId: session.user.id,
-        content: newPageTemplate ?? "",
-      },
+        content: newPageTemplate ?? ""
+      }
     });
 
     // await revalidateTag(
@@ -235,8 +233,8 @@ class PageService {
 
     return response;
   }
-};
+}
 
-export const { findPage, updatePage, setHomepage, deletePage, createPage } = PageService
+export const { findPage, updatePage, setHomepage, deletePage, createPage } = PageService;
 
 export default PageService;

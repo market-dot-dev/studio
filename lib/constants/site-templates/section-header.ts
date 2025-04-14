@@ -1,5 +1,5 @@
 export default {
-  name: 'Header',
+  name: "Header",
   template: `
     <header class="fixed left-0 right-0 top-0 p-6 z-50">
       <div class="relative flex justify-between gap-6">
@@ -37,4 +37,4 @@ export default {
       </div>
     </header>
   `
-}
+};

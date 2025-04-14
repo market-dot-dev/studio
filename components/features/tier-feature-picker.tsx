@@ -1,15 +1,11 @@
 "use client";
 // tier-feature-picker-widget.tsx
 
-import React, { useState, useEffect } from "react";
-import { Feature, Tier } from "@prisma/client";
-import { Checkbox } from "@/components/ui/checkbox";
 import { TierWithFeatures, getTiersForMatrix } from "@/app/services/TierService";
 import { findByCurrentUser } from "@/app/services/feature-service";
-import LoadingDots from "../icons/loading-dots";
-import {
-  CheckSquare2 as CheckSquare,
-} from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Feature, Tier } from "@prisma/client";
+import React, { useEffect, useState } from "react";
 
 interface TierFeaturePickerWidgetProps {
   tierId?: string;
@@ -23,11 +19,18 @@ interface TierFeaturePickerWidgetProps {
 // whyyyyyyyyyyyyyyy
 const setsEqual = (a: Set<any>, b: Set<any>) => {
   if (a.size !== b.size) return false;
-  for (let item of a) if (!b.has(item)) return false;
+  for (const item of a) if (!b.has(item)) return false;
   return true;
-}
+};
 
-const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierId, newTier, selectedFeatureIds, setSelectedFeatureIds, setFeaturesChanged, setFeatureObjs }) => {
+const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({
+  tierId,
+  newTier,
+  selectedFeatureIds,
+  setSelectedFeatureIds,
+  setFeaturesChanged,
+  setFeatureObjs
+}) => {
   const newRecord = !tierId;
   const [allFeatures, setAllFeatures] = useState<Feature[]>([]);
 
@@ -44,10 +47,10 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
 
   // if we get a new tier object, set the initial statae
   useEffect(() => {
-    if(newRecord) {
+    if (newRecord) {
       setTier(newTier);
 
-      if(tiersLoading){
+      if (tiersLoading) {
         setPristineFeatureIds(new Set());
         setSelectedFeatureIds(new Set());
         setTiersLoading(false);
@@ -56,57 +59,74 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
   }, [newTier, setSelectedFeatureIds, setPristineFeatureIds, setTier, setTiersLoading]);
 
   useEffect(() => {
-    if(!newRecord) {
+    if (!newRecord) {
       setTier(newTier);
     }
   }, [newTier]);
 
-  // load the user's features 
+  // load the user's features
   useEffect(() => {
-    if(featuresLoading) {
-      findByCurrentUser().then((featuresData) => {
-        setAllFeatures(featuresData.filter(f => f.isEnabled));
-      }).then(() => setFeaturesLoading(false));
+    if (featuresLoading) {
+      findByCurrentUser()
+        .then((featuresData) => {
+          setAllFeatures(featuresData.filter((f) => f.isEnabled));
+        })
+        .then(() => setFeaturesLoading(false));
     }
   }, [featuresLoading, setAllFeatures, setFeaturesLoading]);
 
   //if we get a tierId, load the features and tiers
   useEffect(() => {
-    if(tiersLoading && (tierId || newTier)) {
-      getTiersForMatrix(tierId).then((tiersData) => {
-        if(newRecord) {
-          setOtherTiers(tiersData.filter(t => t.published));
-        } else {
-          const tiers = tiersData.filter(t => t.published && t.id !== tierId);
-          const tier = tiersData.find(t => t.id === tierId);
+    if (tiersLoading && (tierId || newTier)) {
+      getTiersForMatrix(tierId)
+        .then((tiersData) => {
+          if (newRecord) {
+            setOtherTiers(tiersData.filter((t) => t.published));
+          } else {
+            const tiers = tiersData.filter((t) => t.published && t.id !== tierId);
+            const tier = tiersData.find((t) => t.id === tierId);
 
-          if(!tier || !tier.features) {
-            console.error("Tier not found", tier, tier?.features);
-            throw new Error("Tier not found");
+            if (!tier || !tier.features) {
+              console.error("Tier not found", tier, tier?.features);
+              throw new Error("Tier not found");
+            }
+
+            setTier(tier);
+            setSelectedFeatureIds(new Set(tier.features.map((f) => f.id)));
+            setPristineFeatureIds(new Set(tier.features.map((f) => f.id)));
+            setOtherTiers(tiers);
           }
-
-          setTier(tier);
-          setSelectedFeatureIds(new Set(tier.features.map(f => f.id)));
-          setPristineFeatureIds(new Set(tier.features.map(f => f.id)));
-          setOtherTiers(tiers);
-        }
-      }).then(() => setTiersLoading(false));
+        })
+        .then(() => setTiersLoading(false));
     }
-  }, [newTier, tierId, newRecord, featuresLoading, tiersLoading, setSelectedFeatureIds, setPristineFeatureIds, setTier, setTiersLoading, setFeaturesLoading, setOtherTiers, setAllFeatures]);
+  }, [
+    newTier,
+    tierId,
+    newRecord,
+    featuresLoading,
+    tiersLoading,
+    setSelectedFeatureIds,
+    setPristineFeatureIds,
+    setTier,
+    setTiersLoading,
+    setFeaturesLoading,
+    setOtherTiers,
+    setAllFeatures
+  ]);
 
   // when features change, note if they == pristine
   useEffect(() => {
-    if(setFeaturesChanged){
+    if (setFeaturesChanged) {
       setFeaturesChanged(!setsEqual(selectedFeatureIds, pristineFeatureIds));
     }
 
-    if(setFeatureObjs) {
-      setFeatureObjs(allFeatures.filter(f => selectedFeatureIds.has(f.id)));
+    if (setFeatureObjs) {
+      setFeatureObjs(allFeatures.filter((f) => selectedFeatureIds.has(f.id)));
     }
   }, [selectedFeatureIds, pristineFeatureIds, setFeaturesChanged, setFeatureObjs, allFeatures]);
 
   const handleFeatureToggle = async (feature: Feature) => {
-    let updatedFeatures = new Set(selectedFeatureIds);
+    const updatedFeatures = new Set(selectedFeatureIds);
     const featureId = feature.id;
 
     if (selectedFeatureIds?.has(featureId)) {
@@ -123,9 +143,9 @@ const TierFeaturePickerWidget: React.FC<TierFeaturePickerWidgetProps> = ({ tierI
       {featuresLoading && (
         <div className="space-y-2">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="flex items-center space-x-3 h-5">
-              <div className="h-4 w-4 rounded bg-stone-200 animate-pulse" />
-              <div className="h-3 w-32 rounded bg-stone-200 animate-pulse" />
+            <div key={i} className="flex h-5 items-center space-x-3">
+              <div className="size-4 animate-pulse rounded bg-stone-200" />
+              <div className="h-3 w-32 animate-pulse rounded bg-stone-200" />
             </div>
           ))}
         </div>

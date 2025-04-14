@@ -1,15 +1,12 @@
 "use server";
 
-import { Contract, Prisma } from "@prisma/client";
 import prisma from "@/lib/prisma";
-import { getCurrentUser } from "./UserService";
+import { Contract, Prisma } from "@prisma/client";
 import { put } from "@vercel/blob";
 import { customAlphabet } from "nanoid";
+import { getCurrentUser } from "./UserService";
 
-const nanoid = customAlphabet(
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-  7,
-);
+const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 7);
 
 export type ContractWithUploadData = Contract & { uploadData?: File };
 
@@ -25,13 +22,11 @@ class ContractService {
     return ContractService.getContractsByMaintainerId(currentUser.id);
   }
 
-  static async getContractsByMaintainerId(
-    maintainerId: string | null,
-  ): Promise<Contract[]> {
+  static async getContractsByMaintainerId(maintainerId: string | null): Promise<Contract[]> {
     return prisma.contract.findMany({
       where: {
-        OR: [{ maintainerId: null }, { maintainerId: maintainerId }],
-      },
+        OR: [{ maintainerId: null }, { maintainerId: maintainerId }]
+      }
     });
   }
 
@@ -43,37 +38,32 @@ class ContractService {
       throw new Error("Contract not found");
     }
 
-    if (
-      contract.maintainerId !== currentUser?.id &&
-      currentUser?.roleId !== "admin"
-    ) {
+    if (contract.maintainerId !== currentUser?.id && currentUser?.roleId !== "admin") {
       throw new Error("Unauthorized");
     }
 
     return prisma.contract.delete({ where: { id } });
   }
 
-  private static async uploadFile(
-    file: File,
-  ): Promise<{ url: string; type: string }> {
+  private static async uploadFile(file: File): Promise<{ url: string; type: string }> {
     if (!process.env.BLOB_READ_WRITE_TOKEN) {
       throw new Error(
-        "Missing BLOB_READ_WRITE_TOKEN token. Note: Vercel Blob is currently in beta – please fill out this form for access: https://tally.so/r/nPDMNd",
+        "Missing BLOB_READ_WRITE_TOKEN token. Note: Vercel Blob is currently in beta – please fill out this form for access: https://tally.so/r/nPDMNd"
       );
     }
 
     const filename = `${nanoid()}.${file.type.split("/")[1]}`;
     const { url } = await put(filename, file, {
-      access: "public",
+      access: "public"
     });
 
     return { url, type: file.type };
   }
 
   private static async uploadAttachment(
-    contract: ContractWithUploadData,
+    contract: ContractWithUploadData
   ): Promise<Prisma.ContractCreateInput> {
-    let data: Partial<Prisma.ContractCreateInput> = {};
+    const data: Partial<Prisma.ContractCreateInput> = {};
 
     console.log("~~~~~~~~~~~~~~ uploading");
     if (contract.uploadData) {
@@ -97,32 +87,27 @@ class ContractService {
 
   static async updateContract(
     id: string,
-    contractAttributes: ContractWithUploadData,
+    contractAttributes: ContractWithUploadData
   ): Promise<Contract> {
     const currentUser = await getCurrentUser();
     const existingContract = await prisma.contract.findUnique({
-      where: { id },
+      where: { id }
     });
 
     if (!existingContract) {
       throw new Error("Contract not found");
     }
 
-    if (
-      existingContract.maintainerId !== currentUser?.id &&
-      currentUser?.roleId !== "admin"
-    ) {
+    if (existingContract.maintainerId !== currentUser?.id && currentUser?.roleId !== "admin") {
       throw new Error("Unauthorized");
     }
-    
+
     // const updateData = await this.uploadAttachment(contractAttributes);
 
     return prisma.contract.update({ where: { id }, data: contractAttributes });
   }
 
-  static async createContract(
-    contractAttributes: ContractWithUploadData,
-  ): Promise<Contract> {
+  static async createContract(contractAttributes: ContractWithUploadData): Promise<Contract> {
     const maintainerId = (await getCurrentUser())?.id;
 
     if (!maintainerId) {
@@ -135,8 +120,8 @@ class ContractService {
       data: {
         ...contract,
         maintainer: undefined,
-        maintainerId,
-      },
+        maintainerId
+      }
     });
   }
 }
@@ -147,10 +132,7 @@ export const getContractById = async (id: string) => {
   return ContractService.getContractById(id);
 };
 
-export const updateContract = async (
-  id: string,
-  contract: ContractWithUploadData,
-) => {
+export const updateContract = async (id: string, contract: ContractWithUploadData) => {
   return ContractService.updateContract(id, contract);
 };
 

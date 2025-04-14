@@ -36,7 +36,7 @@ const MOCK_USERS = [
 
 export async function GET(req: NextRequest) {
   // Simulate a delay to test loading states
-  await new Promise(resolve => setTimeout(resolve, 1000));
-  
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   return NextResponse.json(MOCK_USERS);
-} 
+}

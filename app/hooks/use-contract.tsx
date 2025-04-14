@@ -1,6 +1,6 @@
+import { Contract } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { getContractById } from "../services/contract-service";
-import { Contract } from "@prisma/client";
 
 const useContract = (id: string | undefined) => {
   const [contract, setContract] = useState<Contract>();

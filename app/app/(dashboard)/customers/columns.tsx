@@ -1,13 +1,13 @@
-"use client"
+"use client";
 
-import { User, Subscription, Charge } from "@prisma/client";
-import { ColumnDef } from "@tanstack/react-table";
 import Tier from "@/app/models/Tier";
-import { formatDate } from "@/lib/utils";
-import SubscriptionStatusBadge from "./subscription-state";
-import PurchaseStatusBadge from "./purchase-state";
-import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { formatDate } from "@/lib/utils";
+import { Charge, Subscription, User } from "@prisma/client";
+import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
+import PurchaseStatusBadge from "./purchase-state";
+import SubscriptionStatusBadge from "./subscription-state";
 
 export type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
@@ -37,8 +37,8 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
     cell: ({ row, table }) => {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
-      const rowIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);
-      
+      const rowIndex = table.getRowModel().rows.findIndex((r) => r.id === row.id);
+
       // Hide name if this is not the first row for this customer
       if (rowIndex > 0) {
         const prevRow = table.getRowModel().rows[rowIndex - 1];
@@ -46,7 +46,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
           return null;
         }
       }
-      
+
       return row.original.userName;
     }
   },
@@ -56,8 +56,8 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
     cell: ({ row, table }) => {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
-      const rowIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);
-      
+      const rowIndex = table.getRowModel().rows.findIndex((r) => r.id === row.id);
+
       // Hide company if this is not the first row for this customer
       if (rowIndex > 0) {
         const prevRow = table.getRowModel().rows[rowIndex - 1];
@@ -65,7 +65,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
           return null;
         }
       }
-      
+
       return row.original.userCompany || "(unknown)";
     }
   },
@@ -75,8 +75,8 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
     cell: ({ row, table }) => {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
-      const rowIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);
-      
+      const rowIndex = table.getRowModel().rows.findIndex((r) => r.id === row.id);
+
       // Hide email if this is not the first row for this customer
       if (rowIndex > 0) {
         const prevRow = table.getRowModel().rows[rowIndex - 1];
@@ -84,13 +84,13 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
           return null;
         }
       }
-      
+
       return <Link href={`mailto:${row.original.userEmail}`}>{row.original.userEmail}</Link>;
     }
   },
   {
     accessorKey: "tierName",
-    header: "Package",
+    header: "Package"
   },
   {
     id: "status",
@@ -116,8 +116,8 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
     cell: ({ row, table }) => {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
-      const rowIndex = table.getRowModel().rows.findIndex(r => r.id === row.id);
-      
+      const rowIndex = table.getRowModel().rows.findIndex((r) => r.id === row.id);
+
       // Hide actions if this is not the first row for this customer
       if (rowIndex > 0) {
         const prevRow = table.getRowModel().rows[rowIndex - 1];
@@ -125,7 +125,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
           return null;
         }
       }
-      
+
       return (
         <div className="flex flex-row justify-end gap-1">
           <Button variant="outline" size="sm" asChild>
@@ -135,4 +135,4 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
       );
     }
   }
-]; 
+];

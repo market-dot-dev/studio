@@ -1,6 +1,6 @@
 export const BaseEmailTemplate = ({
   previewText,
-  children,
+  children
 }: {
   previewText: string;
   children: React.ReactNode;
@@ -98,4 +98,4 @@ export const BaseEmailTemplate = ({
       </body>
     </html>
   `;
-}; 
+};

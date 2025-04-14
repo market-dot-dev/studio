@@ -1,7 +1,7 @@
 "use server";
 
-import { redirect } from "next/navigation";
 import { getRootUrl } from "@/lib/domain";
+import { redirect } from "next/navigation";
 
 const SubscriptionSuccess = () => {
   redirect(getRootUrl("app", "/"));

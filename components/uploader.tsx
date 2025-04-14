@@ -1,8 +1,7 @@
 "use client";
 
-import { useState, useCallback, useMemo, ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
-import LoadingDots from "@/components/icons/loading-dots";
 import { Button } from "./ui/button";
 
 export type Attachment = {
@@ -17,18 +16,13 @@ type UploadPreviewProps = {
   attachmentType: string | null | undefined;
 };
 
-const UploadPreview = ({
-  uploadData,
-  file,
-  attachmentUrl,
-  attachmentType,
-}: UploadPreviewProps) => {
+const UploadPreview = ({ uploadData, file, attachmentUrl, attachmentType }: UploadPreviewProps) => {
   if ((file?.type || attachmentType) === "application/pdf") {
     return (
       <>
-        <div className="absolute z-[4] flex h-full w-full flex-col items-center justify-center rounded-md bg-white/80 px-10 backdrop-blur-md">
+        <div className="absolute z-[4] flex size-full flex-col items-center justify-center rounded-md bg-white/80 px-10 backdrop-blur-md">
           <svg
-            className="h-7 w-7 text-gray-500"
+            className="size-7 text-gray-500"
             xmlns="http://www.w3.org/2000/svg"
             width="24"
             height="24"
@@ -42,7 +36,9 @@ const UploadPreview = ({
             <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
             <polyline points="13 2 13 9 20 9"></polyline>
           </svg>
-          <p className="mt-2 text-center text-sm text-gray-500">{file?.name || '[filename missing]'}</p>
+          <p className="mt-2 text-center text-sm text-gray-500">
+            {file?.name || "[filename missing]"}
+          </p>
         </div>
       </>
     );
@@ -51,11 +47,7 @@ const UploadPreview = ({
     if (!uploadData && !attachmentUrl) return <></>;
     return (
       // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={imageUrl}
-        alt="Preview"
-        className="h-full w-full rounded-md object-cover"
-      />
+      <img src={imageUrl} alt="Preview" className="size-full rounded-md object-cover" />
     );
   }
 };
@@ -71,7 +63,7 @@ type UploaderProps = {
 };
 
 const defaultAllowedTypes = ["png", "jpg", "gif", "mp4"];
-const defaultAcceptTypes = "image/*"
+const defaultAcceptTypes = "image/*";
 
 export default function Uploader({
   allowedTypes = defaultAllowedTypes,
@@ -80,17 +72,14 @@ export default function Uploader({
   attachmentType,
   onChange,
   autoUpload = false,
-  setUploading,
+  setUploading
 }: UploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [uploadData, setUploadData] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [progress, setProgress] = useState(0);
   const [dragActive, setDragActive] = useState(false);
-  const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(
-    attachmentUrl || null,
-  );
-  
+  const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(attachmentUrl || null);
 
   const onChangePicture = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
@@ -106,12 +95,12 @@ export default function Uploader({
           };
           reader.readAsDataURL(file);
           if (autoUpload) {
-            onSubmit(file);  // Automatically start the upload process if autoUpload is true
+            onSubmit(file); // Automatically start the upload process if autoUpload is true
           }
         }
       }
     },
-    [setUploadData, autoUpload],
+    [setUploadData, autoUpload]
   );
 
   const toastUploadSuccess = (url: string) => {
@@ -133,9 +122,9 @@ export default function Uploader({
         </div>
       </div>,
       {
-        closeButton: true,
+        closeButton: true
       }
-    )
+    );
   };
 
   const onDropEvent = (e: any) => {
@@ -152,7 +141,7 @@ export default function Uploader({
         };
         reader.readAsDataURL(file);
         if (autoUpload) {
-          onSubmit(file);  // Automatically start the upload process if autoUpload is true
+          onSubmit(file); // Automatically start the upload process if autoUpload is true
         }
       }
     }
@@ -208,7 +197,7 @@ export default function Uploader({
 
   useEffect(() => {
     setUploading?.(saving);
-  }, [saving])
+  }, [saving]);
 
   return (
     <form className="grid w-full gap-6">
@@ -216,8 +205,7 @@ export default function Uploader({
         <div className="mb-4 space-y-1">
           <h2 className="text-xl font-semibold">Upload a file</h2>
           <p className="text-sm text-gray-500">
-            Accepted formats:{" "}
-            {allowedTypes.map((type) => `.${type}`).join(", ")}
+            Accepted formats: {allowedTypes.map((type) => `.${type}`).join(", ")}
           </p>
         </div>
         <label
@@ -225,7 +213,7 @@ export default function Uploader({
           className="group relative mt-2 flex h-72 cursor-pointer flex-col items-center justify-center rounded-md border border-gray-300 bg-white shadow-sm transition-all hover:bg-gray-50"
         >
           <div
-            className="absolute z-[5] h-full w-full rounded-md"
+            className="absolute z-[5] size-full rounded-md"
             onDragOver={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -252,7 +240,7 @@ export default function Uploader({
           <div
             className={`${
               dragActive ? "border-2 border-black" : ""
-            } absolute z-[3] flex h-full w-full flex-col items-center justify-center rounded-md px-10 transition-all ${
+            } absolute z-[3] flex size-full flex-col items-center justify-center rounded-md px-10 transition-all ${
               uploadData || uploadedFilePath
                 ? "bg-white/80 opacity-0 hover:opacity-100 hover:backdrop-blur-md"
                 : "bg-white opacity-100 hover:bg-gray-50"
@@ -261,7 +249,7 @@ export default function Uploader({
             <svg
               className={`${
                 dragActive ? "scale-110" : "scale-100"
-              } h-7 w-7 text-gray-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95`}
+              } size-7 text-gray-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95`}
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -279,9 +267,7 @@ export default function Uploader({
             <p className="mt-2 text-center text-sm text-gray-500">
               Drag and drop or click to upload.
             </p>
-            <p className="mt-2 text-center text-sm text-gray-500">
-              Max file size: 50MB
-            </p>
+            <p className="mt-2 text-center text-sm text-gray-500">Max file size: 50MB</p>
             <span className="sr-only">Photo upload</span>
           </div>
           {((file && uploadData) || attachmentUrl) && (

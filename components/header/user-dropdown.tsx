@@ -1,8 +1,5 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
-import { signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,8 +7,10 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { signOut } from "next-auth/react";
+import Image from "next/image";
 
 export default function UserDropdown({ user }: { user: any }) {
   return (
@@ -28,37 +27,29 @@ export default function UserDropdown({ user }: { user: any }) {
             width={32}
             height={32}
             alt={user.name ?? "User avatar"}
-            className="h-7 w-7 rounded-full"
+            className="size-7 rounded-full"
           />
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent
-        className="z-[40] w-[250px]"
-        sideOffset={5}
-        align="end"
-        alignOffset={0}
-      >
+      <DropdownMenuContent className="z-40 w-[250px]" sideOffset={5} align="end" alignOffset={0}>
         <div className="flex items-center gap-2 p-2">
           <Image
             src={user.image ?? `https://avatar.vercel.sh/${user.id}`}
             width={28}
             height={28}
             alt={user.name ?? "User avatar"}
-            className="h-7 w-7 rounded-full"
+            className="size-7 rounded-full"
           />
           <h3 className="text-sm font-semibold tracking-tightish">{user.name}</h3>
         </div>
 
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem 
+          <DropdownMenuItem
             onClick={() =>
               signOut({
-                callbackUrl:
-                  user.roleId === "maintainer"
-                    ? "/login"
-                    : "/customer-login",
+                callbackUrl: user.roleId === "maintainer" ? "/login" : "/customer-login"
               })
             }
           >

@@ -1,31 +1,32 @@
-import PageHeader from "@/components/common/page-header";
-import { Feature } from "@prisma/client";
 import FeatureService from "@/app/services/feature-service";
-import prisma from "@/lib/prisma";
-import Link from 'next/link';
-import { buttonVariants } from "@/components/ui/button";
 import UserService from "@/app/services/UserService";
-import { CheckSquare2 as CheckSquare } from "lucide-react";
+import PageHeader from "@/components/common/page-header";
+import { buttonVariants } from "@/components/ui/button";
+import prisma from "@/lib/prisma";
 import { cn } from "@/lib/utils";
+import { Feature } from "@prisma/client";
+import { CheckSquare2 as CheckSquare } from "lucide-react";
+import Link from "next/link";
 
 import ChargeService from "@/app/services/charge-service";
 import TierService from "@/app/services/TierService";
 
 const formatFeatureLink = async (feature: Feature) => {
   const service = await prisma.service.findUnique({
-    where: { id: feature.serviceId! },
+    where: { id: feature.serviceId! }
   });
 
   if (!service || !service.requiresUri) return <></>;
 
-  const uri = service.protocol
-    ? `${service.protocol}${feature.uri}`
-    : feature.uri;
+  const uri = service.protocol ? `${service.protocol}${feature.uri}` : feature.uri;
 
   return (
     <Link
       href={uri || ""}
-      className={cn(buttonVariants({ variant: "default" }), feature.isEnabled && 'opacity-50 cursor-not-allowed')}
+      className={cn(
+        buttonVariants({ variant: "default" }),
+        feature.isEnabled && "cursor-not-allowed opacity-50"
+      )}
     >
       {feature.name || service.name}
     </Link>
@@ -37,9 +38,7 @@ const FeatureAction = async ({ feature }: { feature: Feature }) => {
   return (
     <div className="mb-2 flex w-full items-start justify-between rounded-md border-2 p-4 xl:w-3/4">
       <div className="flex items-start">
-        <CheckSquare
-          className={`mr-4 ${feature.isEnabled ? "text-green-500" : "text-gray-400"}`}
-        />
+        <CheckSquare className={`mr-4 ${feature.isEnabled ? "text-green-500" : "text-gray-400"}`} />
         <div className="ml-4">
           <div className="flex flex-col">
             <h4 className="font-semibold">{feature.name}</h4>
@@ -53,11 +52,7 @@ const FeatureAction = async ({ feature }: { feature: Feature }) => {
   );
 };
 
-export default async function ChargeDetail({
-  params,
-}: {
-  params: { id: string };
-}) {
+export default async function ChargeDetail({ params }: { params: { id: string } }) {
   const charge = await ChargeService.findCharge(params.id);
   if (!charge) return null;
   const tier = await TierService.findTier(charge.tierId);
@@ -76,8 +71,7 @@ export default async function ChargeDetail({
           ))}
         </div>
         <div>
-          Paid ${tier.price} on{" "}
-          {new Date(charge.createdAt).toLocaleDateString()}
+          Paid ${tier.price} on {new Date(charge.createdAt).toLocaleDateString()}
         </div>
       </div>
     </div>

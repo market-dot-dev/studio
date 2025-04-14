@@ -1,9 +1,9 @@
 "use server";
 
+import { getRepos } from "@/app/services/RepoService";
+import RepositorySettings from "@/components/user/repository-settings";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
-import RepositorySettings from "@/components/user/repository-settings";
-import RepoService, { getRepos } from "@/app/services/RepoService";
 
 export default async function RepositorySettingsPage() {
   const session = await getSession();
@@ -11,12 +11,12 @@ export default async function RepositorySettingsPage() {
   if (!session) {
     redirect("/login");
   }
-  
+
   const repos = await getRepos();
 
-  return (    
+  return (
     <div className="space-y-6">
       <RepositorySettings repos={repos} />
-  </div>
+    </div>
   );
 }

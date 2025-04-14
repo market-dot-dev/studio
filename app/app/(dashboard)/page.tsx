@@ -1,7 +1,7 @@
-import DashboardCharts from "@/components/dashboard/dashboard-charts";
-import PageHeader from "@/components/common/page-header";
 import SessionService from "@/app/services/SessionService";
 import { customersAndProspectsOfMaintainer } from "@/app/services/UserService";
+import PageHeader from "@/components/common/page-header";
+import DashboardCharts from "@/components/dashboard/dashboard-charts";
 import { redirect } from "next/navigation";
 import SalesTable from "./customers/sales/sales-table";
 

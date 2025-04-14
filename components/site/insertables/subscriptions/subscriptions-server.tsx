@@ -1,6 +1,6 @@
+import SessionService from "@/app/services/SessionService";
 import { getSubscriptions } from "@/lib/tiers/fetchers";
 import Subscriptions from "./subscriptions";
-import SessionService from "@/app/services/SessionService";
 
 // This is the component that will render at the frontend of the site, facing the customer
 export async function SubscriptionsServer({
@@ -16,12 +16,12 @@ export async function SubscriptionsServer({
   const userId = await SessionService.getCurrentUserId();
 
   if (!userId) {
-    return <h2 className="text-xl font-bold">You need to be logged in to view your subscriptions</h2>;
+    return (
+      <h2 className="text-xl font-bold">You need to be logged in to view your subscriptions</h2>
+    );
   }
 
-  const subs = site?.userId
-    ? ((await getSubscriptions(site.userId)) as any[])
-    : [];
+  const subs = site?.userId ? ((await getSubscriptions(site.userId)) as any[]) : [];
 
   return <Subscriptions subscriptions={subs} />;
 }

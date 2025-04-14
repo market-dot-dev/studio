@@ -1,23 +1,18 @@
 "use client";
 
-import {
-  getPublishedTiers,
-  TierWithFeatures,
-} from "@/app/services/TierService";
-import { useEffect, useState } from "react";
+import { getPublishedTiers, TierWithFeatures } from "@/app/services/TierService";
 import SkeletonLoader from "@/components/common/skeleton-loader";
 import TierCard from "@/components/tiers/tier-card";
+import { useEffect, useState } from "react";
 
-export default function PublishedPackagesSelectionModal({ 
+export default function PublishedPackagesSelectionModal({
   initTiers,
   onSelectionChange
-}: { 
+}: {
   initTiers?: TierWithFeatures[];
   onSelectionChange?: (tiers: TierWithFeatures[]) => void;
 }) {
-  const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>(
-    initTiers || [],
-  );
+  const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>(initTiers || []);
   const [publishedTiers, setPublishedTiers] = useState<TierWithFeatures[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,12 +28,12 @@ export default function PublishedPackagesSelectionModal({
       const newSelection = prev.some((t) => t.id === tier.id)
         ? prev.filter((t) => t.id !== tier.id)
         : [...prev, tier];
-      
+
       // Notify parent component about selection change
       if (onSelectionChange) {
         onSelectionChange(newSelection);
       }
-      
+
       return newSelection;
     });
   };
@@ -65,14 +60,14 @@ export default function PublishedPackagesSelectionModal({
 function PublishedPackagesSelectionModalContent({
   selectedTiers,
   onTierSelect,
-  publishedTiers,
+  publishedTiers
 }: {
   selectedTiers: TierWithFeatures[];
   onTierSelect: (tier: TierWithFeatures) => void;
   publishedTiers: TierWithFeatures[];
 }) {
   return (
-    <div className="flex w-full flex-col gap-4 h-full">
+    <div className="flex size-full flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {publishedTiers.map((tier) => (
           <div
@@ -95,9 +90,9 @@ function PublishedPackagesSelectionModalContent({
 function PublishedPackagesSelectionLoadingContent() {
   return (
     <div className="grid grid-cols-1 gap-2 sm:gap-6 lg:grid-cols-2 xl:grid-cols-3">
-      <SkeletonLoader className="aspect-3/4 h-full w-full rounded-lg" />
-      <SkeletonLoader className="aspect-3/4 h-full w-full rounded-lg" />
-      <SkeletonLoader className="aspect-3/4 h-full w-full rounded-lg" />
+      <SkeletonLoader className="aspect-3/4 size-full rounded-lg" />
+      <SkeletonLoader className="aspect-3/4 size-full rounded-lg" />
+      <SkeletonLoader className="aspect-3/4 size-full rounded-lg" />
     </div>
   );
 }
