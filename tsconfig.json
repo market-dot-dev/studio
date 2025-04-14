@@ -33,7 +33,6 @@
   },
   "include": [
     "next-env.d.ts",
-    "eslint.config.mjs",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts"
@@ -42,6 +41,7 @@
     "node_modules",
     "cypress",
     "cypress.config.ts",
-    "**/*.cy.jsx"
+    "**/*.cy.jsx",
+    "eslint.config.mjs",
   ]
 }
