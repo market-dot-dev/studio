@@ -10,8 +10,6 @@ import FeatureService from "./feature-service";
 import SubscriptionService from "./SubscriptionService";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import { MarketService } from "./market-service";
-import { getCurrentSite } from "./SiteService";
-import { getRootUrl } from "@/lib/domain";
 
 export type TierWithFeatures = Tier & {
   features?: Feature[];

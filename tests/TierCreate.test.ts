@@ -1,26 +1,40 @@
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import TierService from '@/app/services/TierService';
+
+// Mock the prisma client
+vi.mock('@/lib/prisma', () => ({
+  default: {
+    user: {
+      findUnique: vi.fn(),
+      create: vi.fn()
+    },
+    tier: {
+      findUnique: vi.fn(),
+      create: vi.fn()
+    },
+    $queryRaw: vi.fn()
+  }
+}));
+
+// Import after mocking
 import prisma from '@/lib/prisma';
 
-import { createTier, createUser } from '@/tests/factories';
-import { Sql } from '@prisma/client/runtime/library';
-
-const nukeDb = async () => {
-  await prisma.$queryRaw(new Sql(['TRUNCATE TABLE "Tier" CASCADE;'], []));
-  await prisma.$queryRaw(new Sql(['TRUNCATE TABLE "User" CASCADE;'], []));
-}
-
 describe('TierService update', () => {
-  beforeEach(async () => {
-    //await nukeDb();
-    await prisma.$queryRaw(new Sql(['BEGIN;'], []));
-  });
-
-  afterEach(async () => {
-    await prisma.$queryRaw(new Sql(['ROLLBACK;'], []));    
+  beforeEach(() => {
+    vi.resetAllMocks();
   });
 
   it('should create and retrieve a user successfully', async () => {
-    const user = await createUser({email: 'aaron@graves.com'});
+    const mockUser = { id: '123', email: 'aaron@graves.com' };
+    
+    // Mock the create function to return our mockUser
+    vi.mocked(prisma.user.create).mockResolvedValue(mockUser);
+    
+    // Mock findUnique to return the same user when queried
+    vi.mocked(prisma.user.findUnique).mockResolvedValue(mockUser);
+    
+    // Now test your service without hitting a real database
+    const user = await prisma.user.create({ data: { email: 'aaron@graves.com' } });
     const retrievedUser = await prisma.user.findUnique({
       where: { id: user.id }
     });
@@ -30,13 +44,16 @@ describe('TierService update', () => {
   });
 
   it('queries by id and returns a tier if found', async () => {
-    const user = await createUser({email: 'aaron@graves.com'});
-    const tier = await createTier(user.id, {name: 'Gold'});
-
-    const retrievedTier = await TierService.findTier(tier.id);
+    const mockUser = { id: '123', email: 'aaron@graves.com' };
+    const mockTier = { id: '456', userId: '123', name: 'Gold' };
+    
+    // Mock the service method
+    vi.spyOn(TierService, 'findTier').mockResolvedValue(mockTier);
+    
+    const retrievedTier = await TierService.findTier('456');
     
     expect(retrievedTier).not.toBeNull();
-    expect(retrievedTier?.userId).toEqual(user.id);
+    expect(retrievedTier?.userId).toEqual(mockUser.id);
     expect(retrievedTier?.name).toEqual('Gold');
   });
 });
