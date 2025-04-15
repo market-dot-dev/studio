@@ -29,11 +29,6 @@ export default function SettingsNav() {
       name: "Payout Info",
       href: `/settings/payment`,
       isActive: activeSegment === "payment"
-    },
-    {
-      name: "Connected Repositories",
-      href: `/settings/repos`,
-      isActive: activeSegment === "repos"
     }
   ];
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { type FiltersState } from "@/app/services/LeadsService";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import countryCodes from "@/lib/constants/country-codes";
@@ -14,17 +15,6 @@ type OptionType = {
 
 type DataDictionary = {
   [key: string]: { [key: string]: number };
-};
-
-export type FiltersState = {
-  country_code: string;
-  state: string;
-  industry: string;
-  size: string;
-  company_type: string;
-  founded: string;
-  city: string;
-  kind: string;
 };
 
 export const emptyFilters: FiltersState = {

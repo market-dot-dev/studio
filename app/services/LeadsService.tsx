@@ -1,8 +1,18 @@
 "use server";
 
-import { FiltersState } from "@/components/leads/filters-panel";
 import prisma from "@/lib/prisma";
 import SessionService from "./SessionService";
+
+export type FiltersState = {
+  country_code: string;
+  state: string;
+  industry: string;
+  size: string;
+  company_type: string;
+  founded: string;
+  city: string;
+  kind: string;
+};
 
 const radarAPIEndpoint = process.env.RADAR_API_ENDPOINT;
 const radarAPIKey = process.env.RADAR_API_KEY;
@@ -160,42 +170,6 @@ class LeadsService {
     }
   }
 
-  static async getDependentPackages(packageId: number, filters?: any) {
-    const queryParams = Object.keys(filters)
-      .map((key) => `${key}=${filters[key]}`)
-      .join("&");
-
-    try {
-      const response = await fetch(
-        `${radarAPIEndpoint}packages/${packageId}/dependent_packages${queryParams ? "?" + queryParams : ""}`,
-        { headers: LeadsService.commonHeaders }
-      );
-      return {
-        data: await response.json()
-      };
-    } catch (error: any) {
-      return {
-        error: "Failed to get dependent packages"
-      };
-    }
-  }
-
-  static async getDependentPackagesFacets(packageId: number) {
-    try {
-      const response = await fetch(
-        `${radarAPIEndpoint}packages/${packageId}/dependent_packages/facets`,
-        { headers: LeadsService.commonHeaders }
-      );
-      return {
-        data: await response.json()
-      };
-    } catch (error: any) {
-      return {
-        error: "Failed to get dependent packages facets"
-      };
-    }
-  }
-
   static async getDependentOwners(
     radarId: number,
     page: number,
@@ -236,8 +210,5 @@ export const {
   getShortlistedLeadsKeysList,
   lookup,
   removeLeadFromShortlist,
-  getFacets,
-  getDependentPackages,
-  getDependentPackagesFacets,
-  getPackages
+  getFacets
 } = LeadsService;

@@ -215,9 +215,9 @@ export default function Nav({
       {
         type: "link",
         name: "Research",
-        href: "/leads",
+        href: "/research",
         isBeta: true,
-        isActive: urlSegments[0] === "leads",
+        isActive: urlSegments[0] === "research",
         icon: <ScanSearch width={18} />
       },
       {

@@ -5,48 +5,40 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Lead } from "@prisma/client";
 import { useCallback, useState } from "react";
-import LeadItem from "./lead-item";
+import ResearchItem from "./research-item";
 
-// export type ShortListedLead = {
-//     // repo: {
-//     //     id: string;
-//     //     name: string;
-//     //     url: string | null;
-//     // };
-// } & Lead;
-
-export default function ShortlistedLeads({ leads: loadedLeads }: { leads: Lead[] }) {
+export function ShortlistedResearch({ research: loadedResearch }: { research: Lead[] }) {
   const [isRemoving, setIsRemoving] = useState(false);
-  const [leads, setLeads] = useState<Lead[]>(loadedLeads);
+  const [researchItems, setResearchItems] = useState<Lead[]>(loadedResearch);
 
-  const removeLead = useCallback(
-    (leadId: number) => {
+  const removeResearchItem = useCallback(
+    (itemId: number) => {
       setIsRemoving(true);
-      removeLeadFromShortlist(leadId)
+      removeLeadFromShortlist(itemId)
         .then(() => {
-          setLeads((leads) => leads.filter((lead) => lead.id !== leadId));
+          setResearchItems((items) => items.filter((item) => item.id !== itemId));
         })
         .catch((error) => {
-          console.error("Error removing lead from shortlist", error);
+          console.error("Error removing research item from shortlist", error);
         })
         .finally(() => {
           setIsRemoving(false);
         });
     },
-    [setLeads]
+    [setResearchItems]
   );
 
   return (
     <>
-      {leads.map((lead: Lead, index: number) => (
+      {researchItems.map((item: Lead, index: number) => (
         <Card className="relative z-0 my-2 flex flex-col" key={index}>
-          <LeadItem lead={lead} />
+          <ResearchItem research={item} />
           <div className="absolute right-10 top-10 flex flex-col">
             <Button
               variant="outline"
               loading={isRemoving}
               loadingText="Removing"
-              onClick={() => removeLead(lead.id)}
+              onClick={() => removeResearchItem(item.id)}
             >
               Remove
             </Button>

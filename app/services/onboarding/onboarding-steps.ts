@@ -1,5 +1,4 @@
 export const defaultOnboardingState: OnboardingState = {
-  connectRepos: false,
   setupProject: false,
   setupPayment: false,
   setupTiers: false,
@@ -15,7 +14,6 @@ export interface OnboardingState extends Exclude<OnboardingStepsType, null> {
 }
 
 export type OnboardingStepsType = {
-  connectRepos: boolean;
   setupProject: boolean;
   setupPayment: boolean;
   setupTiers: boolean;

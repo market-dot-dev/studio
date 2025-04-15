@@ -4,7 +4,7 @@ import { LinkTabs } from "@/components/ui/tabs";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function LeadsNav() {
+export default function ResearchNav() {
   const pathname = usePathname();
   // Initialize with empty path to avoid hydration mismatch
   const [activePath, setActivePath] = useState<string>("");
@@ -16,14 +16,14 @@ export default function LeadsNav() {
 
   const navItems = [
     {
-      name: "All Leads",
-      href: "/leads",
-      isActive: activePath === "/leads"
+      name: "All",
+      href: "/research",
+      isActive: activePath === "/research"
     },
     {
       name: "Shortlist",
-      href: "/leads/shortlisted",
-      isActive: activePath === "/leads/shortlisted"
+      href: "/research/shortlisted",
+      isActive: activePath === "/research/shortlisted"
     }
   ];
 

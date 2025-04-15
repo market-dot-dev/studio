@@ -106,7 +106,7 @@ const SalesTable = ({
             </p>
             <div className="mt-4">
               <Button variant="outline" asChild>
-                <Link href="/leads">
+                <Link href="/research">
                   <ScanSearch />
                   Find customers
                 </Link>
