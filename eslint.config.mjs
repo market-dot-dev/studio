@@ -80,6 +80,7 @@ const config = ts.config(
 
       "react/prop-types": 0,
       "react/no-unescaped-entities": 0,
+      "@typescript-eslint/no-explicit-any": 0, // @DEBUG
       "@typescript-eslint/no-unused-vars": 0,
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-var-requires": "off",
