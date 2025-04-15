@@ -10,7 +10,6 @@ class RoleService {
     /^\/api\/og\//,
     /^\/api\/users\/verify/,
     /^\/api\/tiers\//,
-    /^\/api\/buybutton\//,
     /^\/terms/,
     /^\/privacy/,    
     /^\/home$/,

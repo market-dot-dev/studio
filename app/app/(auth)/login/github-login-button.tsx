@@ -5,7 +5,7 @@ import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 
-import LoginButton from "@/components/common/login-button";
+import { LoginButton } from "@/components/common/login-button";
 
 const GithubLoginButton = ({ callbackUrl }: { callbackUrl?: string }) => {
   const [loading, setLoading] = useState(false);

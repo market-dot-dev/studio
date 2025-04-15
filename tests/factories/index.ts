@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import prisma from '@/lib/prisma';
-import { WaitlistUser, Account, Session, Post, Site, Page, TierVersion, Subscription, Repo, Feature, Media, User, Tier } from '@prisma/client';
+import { Account, Session, Site, Page, TierVersion, Subscription, Repo, Feature, Media, User, Tier } from '@prisma/client';
 
 export const createUser = async (overrides?: Partial<User>): Promise<User> => {
   return prisma.user.create({
@@ -26,15 +26,6 @@ export const createTier = async (userId: string, overrides?: Partial<Tier>): Pro
   });
 };
 
-export const createWaitlistUser = async (overrides?: Partial<WaitlistUser>): Promise<WaitlistUser> => {
-  return prisma.waitlistUser.create({
-    data: {
-      email: faker.internet.email(),
-      ...overrides,
-    },
-  });
-};
-
 export const createAccount = async (userId: string, overrides?: Partial<Account>): Promise<Account> => {
   return prisma.account.create({
     data: {
@@ -53,17 +44,6 @@ export const createSession = async (userId: string, overrides?: Partial<Session>
       userId,
       sessionToken: faker.datatype.uuid(),
       expires: faker.date.future(),
-      ...overrides,
-    },
-  });
-};
-
-export const createPost = async (userId: string, siteId: string, overrides?: Partial<Post>): Promise<Post> => {
-  return prisma.post.create({
-    data: {
-      userId,
-      siteId,
-      slug: faker.datatype.uuid(),
       ...overrides,
     },
   });

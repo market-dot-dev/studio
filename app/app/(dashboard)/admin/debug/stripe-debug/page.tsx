@@ -1,17 +1,14 @@
-
 "use server";
 
 import UserService from "@/app/services/UserService";
-import UserAccountWidget from "@/components/payments/user-account-widget";
+import { UserAccountWidget } from "@/components/payments/user-account-widget";
 import TierService from "@/app/services/TierService";
 import { Card } from "@/components/ui/card";
-//import UserPaymentMethodWidgetWrapper from "@/components/common/user-payment-method-widget";
-//import TierPriceWidget from "@/components/payments/tier-price-widget";
 
 const StripeDebug = async () => {
   const user = await UserService.getCurrentUser();
 
-  if(!user) {
+  if (!user) {
     return <div>Not logged in</div>;
   }
 
@@ -26,11 +23,10 @@ const StripeDebug = async () => {
         <h2>Customer ID (for buying subscriptions)</h2>
         {/* <UserCustomerWidget user={user} /> */}
         <h2>Payment method</h2>
-        {/* <UserPaymentMethodWidgetWrapper maintainerStripeAccountId={user.stripeAccountId!} maintainerUserId={user.id} /> */ }
-        
+        {/* <UserPaymentMethodWidgetWrapper maintainerStripeAccountId={user.stripeAccountId!} maintainerUserId={user.id} /> */}
       </Card>
 
-      <br/>
+      <br />
 
       <Card className="p-6">
         <h2>Maintainer</h2>
@@ -38,16 +34,18 @@ const StripeDebug = async () => {
         {/*
         <h2>Product ID (for selling subscriptions)</h2>
       <UserProductWidget user={user} /> */}
-        
+
         <h2>Account ID (for getting paid)</h2>
         <UserAccountWidget user={user} />
       </Card>
 
-      { tiers.map((tier) => (
+      {tiers.map((tier) => (
         <div key={tier.id}>
           <Card className="p-6">
-            <h2>{tier.name} | {tier.price}</h2>
-            { /* <TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } /> */ }
+            <h2>
+              {tier.name} | {tier.price}
+            </h2>
+            {/* <TierPriceWidget tierId={tier.id} price={tier.price} stripePriceId={tier.stripePriceId || '' } /> */}
           </Card>
         </div>
       ))}

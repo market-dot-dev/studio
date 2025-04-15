@@ -4,7 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
 import { Eye, Code, SquareSplitHorizontal, Maximize, Minimize, SquareArrowOutUpRight } from "lucide-react";
 import clsx from "clsx";
-import { toast } from "sonner";
 
 import renderElement from "./page-renderer";
 

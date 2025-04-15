@@ -17,6 +17,7 @@ export default async function LoginPage() {
         height={36}
         className="relative mx-auto h-9 w-auto"
         src="/market-dot-dev-logo.svg"
+        priority
       />
 
       <div className="mx-auto mt-4 flex flex-col gap-6 sm:w-full">

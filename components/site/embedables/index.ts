@@ -1,6 +1,6 @@
 import TiersServer from "./tiers/tiers-server";
 import TiersClient from "./tiers/tiers-client";
-import PackageEmbeddings from "@/components/embedables/package-embeddings/package-embeddings";
+import { PackageEmbeddings } from "@/components/embedables/package-embeddings/package-embeddings";
 
 const embedables = {
   tiers: {

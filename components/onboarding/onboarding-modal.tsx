@@ -3,7 +3,8 @@
 import {
   Dialog,
   DialogContent,
-  DialogFooter
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { Site, User } from "@prisma/client";
 import { useEffect, useState } from "react";
@@ -20,6 +21,8 @@ import { updateCurrentUser } from "@/app/services/UserService";
 import { createSite } from "@/app/services/registration-service";
 import { updateCurrentSite } from "@/app/services/SiteService";
 import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
+import { DialogTitle } from "@radix-ui/react-dialog";
+import { VisuallyHidden } from "@radix-ui/themes";
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
@@ -46,13 +49,17 @@ const LoadingState = () => (
   </div>
 );
 
-const ErrorState = ({ error, onRetry }: { error: string, onRetry: () => void }) => (
+const ErrorState = ({
+  error,
+  onRetry,
+}: {
+  error: string;
+  onRetry: () => void;
+}) => (
   <div className="flex h-full w-full flex-col items-center justify-center gap-4">
     <AlertCircleIcon className="h-5 w-5" />
     <p className="text-md">{error}</p>
-    <Button onClick={onRetry}>
-      Try again
-    </Button>
+    <Button onClick={onRetry}>Try again</Button>
   </div>
 );
 
@@ -103,18 +110,13 @@ const NavigationButtons = ({
 }) => (
   <div className="flex w-full justify-between">
     {step === "offerings" && (
-      <Button 
-        variant="ghost" 
-        size="lg" 
-        onClick={onBack} 
-        type="button"
-      >
+      <Button variant="ghost" size="lg" onClick={onBack} type="button">
         Back
       </Button>
     )}
-    <Button 
-      type="button" 
-      size="lg" 
+    <Button
+      type="button"
+      size="lg"
       disabled={isLoading}
       loading={isLoading}
       onClick={onSubmit}
@@ -216,7 +218,9 @@ export default function OnboardingModal({
   const handleSubmitClick = () => {
     const form = document.querySelector("form");
     if (form) {
-      form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+      form.dispatchEvent(
+        new Event("submit", { cancelable: true, bubbles: true }),
+      );
     }
   };
 
@@ -225,8 +229,12 @@ export default function OnboardingModal({
   // Note: unless source is market.dev where user is intentionally trying to connect their market.dev account, we shouldn't surface connection errors
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <VisuallyHidden>
+        <DialogTitle>Welcome to market.dev</DialogTitle>
+        <DialogDescription>Tell us about your business</DialogDescription>
+      </VisuallyHidden>
       <DialogContent
-        className="bg-stone-100 max-w-[calc(100vw-32px)] sm:max-w-xl flex max-h-[calc(100vh-32px)] flex-col items-center rounded-lg p-0 sm:max-h-[calc(100vh-48px)]"
+        className="flex max-h-[calc(100vh-32px)] max-w-[calc(100vw-32px)] flex-col items-center rounded-lg bg-stone-100 p-0 sm:max-h-[calc(100vh-48px)] sm:max-w-xl"
         hideCloseButton
         preventOutsideClose
       >
@@ -244,7 +252,7 @@ export default function OnboardingModal({
               onProfileSubmit={handleProfileSubmit}
               onOfferingsSubmit={handleFinalSubmit}
             />
-            <DialogFooter className="w-full py-4 px-6 sm:px-9 border-t border-stone-200">
+            <DialogFooter className="w-full border-t border-stone-200 px-6 py-4 sm:px-9">
               <NavigationButtons
                 step={step}
                 isLoading={isLoading}

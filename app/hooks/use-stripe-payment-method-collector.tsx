@@ -38,7 +38,7 @@ interface UseStripePaymentCollectorReturns {
   handleDetach: () => Promise<void>;
 }
 
-export const StripeCardElement = () => {
+const StripeCardElement = () => {
   return <CardElement options={CARD_ELEMENT_OPTIONS} />
 }
 

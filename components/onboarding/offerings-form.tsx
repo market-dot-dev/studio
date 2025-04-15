@@ -109,6 +109,7 @@ export default function OfferingsForm({
               className="h-9 w-9 shrink-0"
               height={36}
               width={36}
+              priority
             />
           </div>
 

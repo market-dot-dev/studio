@@ -94,4 +94,4 @@ export const getServerSession = async () => {
 };
 
 export default SessionService;
-export const { getAccessToken, getCurrentUserId, getSessionUser, signedIn } = SessionService;
+export const { getAccessToken, getCurrentUserId, getSessionUser } = SessionService;

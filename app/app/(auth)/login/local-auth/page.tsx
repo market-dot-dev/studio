@@ -25,6 +25,7 @@ export default function LoginPage({
         height={36}
         className="relative mx-auto h-9 w-auto"
         src="/market-dot-dev-logo.svg"
+        priority
       />
       <p className="mt-3 text-center text-sm text-stone-500 dark:text-stone-400">
         Log in with local auth credentials

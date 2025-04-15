@@ -6,12 +6,13 @@ type tierData = {
   description: string;
   checkoutType: "gitwallet" | "contact-form";
 };
-export type defaultTier = {
+
+type defaultTier = {
   data: tierData;
   metaDescription: string;
 };
 
-const defaultTiers = [
+const defaultTiers: defaultTier[] = [
   {
     data: {
       name: "Blank",

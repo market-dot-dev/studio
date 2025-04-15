@@ -21,6 +21,7 @@ export default function Logo({
       height={32}
       width={164}
       className={clsx(className)}
+      priority
     />
   );
 }

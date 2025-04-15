@@ -13,7 +13,7 @@ const defaultContextValue: DashboardContextType = {
   setFullscreen: () => {}
 };
 
-export const DashboardContext = createContext<DashboardContextType>(defaultContextValue);
+const DashboardContext = createContext<DashboardContextType>(defaultContextValue);
 
 export function DashboardProvider({ children, siteId }: { children: ReactNode; siteId: string | null }) {
   const [fullscreen, setFullscreen] = useState<boolean>(false);
