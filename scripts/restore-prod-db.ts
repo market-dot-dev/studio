@@ -1,7 +1,7 @@
 #!/usr/bin/env tsx
-import { execSync } from 'child_process';
-import { existsSync } from 'fs';
-import path from 'path';
+import { execSync } from "child_process";
+import { existsSync } from "fs";
+import path from "path";
 
 /**
  * Database restore script
@@ -11,7 +11,7 @@ import path from 'path';
 function executeCommand(command: string): void {
   try {
     console.log(`Executing: ${command}`);
-    execSync(command, { stdio: 'inherit' });
+    execSync(command, { stdio: "inherit" });
   } catch (error) {
     console.error(`Failed to execute command: ${command}`);
     console.error(error);
@@ -21,14 +21,14 @@ function executeCommand(command: string): void {
 
 function restoreDatabase(): void {
   // Check if running in Vercel
-  if (process.env.VERCEL === '1') {
-    console.log('This script is intended for local development only. Exiting...');
+  if (process.env.VERCEL === "1") {
+    console.log("This script is intended for local development only. Exiting...");
     process.exit(0);
   }
 
-  const DB_NAME = 'gitwallet_prod';
-  const DUMP_FILE = path.join('..', 'gitwallet_prod.dump');
-  const OWNERSHIP_SCRIPT = path.join('scripts', 'dev-assign-ownership.sql');
+  const DB_NAME = "gitwallet_prod";
+  const DUMP_FILE = path.join("..", "gitwallet_prod.dump");
+  const OWNERSHIP_SCRIPT = path.join("scripts", "dev-assign-ownership.sql");
 
   // Verify dump file exists
   if (!existsSync(DUMP_FILE)) {
