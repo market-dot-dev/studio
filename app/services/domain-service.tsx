@@ -19,8 +19,6 @@ class DomainService {
 
     const subdomain = this.getSubdomainFromRequest(req);
 
-    console.log("Subdomain: ", subdomain);
-
     if (!!subdomain && !RESERVED_SUBDOMAINS.includes(subdomain)) {
       return null;
     } else {
