@@ -5,7 +5,6 @@ import {
   Feature,
   Media,
   Page,
-  Repo,
   Session,
   Site,
   Subscription,
@@ -114,17 +113,6 @@ export const createSubscription = async (
       userId,
       tierId,
       stripeSubscriptionId: faker.datatype.uuid(),
-      ...overrides
-    }
-  });
-};
-
-export const createRepo = async (userId: string, overrides?: Partial<Repo>): Promise<Repo> => {
-  return prisma.repo.create({
-    data: {
-      userId,
-      repoId: faker.datatype.uuid(),
-      name: faker.random.word(),
       ...overrides
     }
   });
