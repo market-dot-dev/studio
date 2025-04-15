@@ -78,11 +78,12 @@ async function customMiddleware(req: NextRequest) {
     }
 
     // Redirect all other paths to explore.market.dev
+    // @TODO: This should use an env var, not hardcoded hosts.
     const targetHost =
       process.env.NODE_ENV === "development" ? "localhost:4000" : "explore.market.dev";
 
     return NextResponse.redirect(
-      `http${process.env.NODE_ENV === "development" ? "" : "s"}://${targetHost}${url.pathname}`,
+      `http${process.env.NODE_ENV === "development" ? "" : "s"}://${targetHost}${path}`,
       { status: 301 }
     );
   }
