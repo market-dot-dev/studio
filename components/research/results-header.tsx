@@ -1,6 +1,6 @@
 "use client";
+import { type FiltersState } from "@/app/services/LeadsService";
 import FilterBadges from "./filter-badges";
-import { FiltersState } from "./filters-panel";
 import Pagination from "./pagination";
 import ResultsPerPage from "./results-per-page";
 

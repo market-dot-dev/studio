@@ -1,5 +1,6 @@
 "use client";
 import {
+  type FiltersState,
   getDependentOwners,
   getFacets,
   getShortlistedLeadsKeysList,
@@ -9,7 +10,7 @@ import { gitHubRepoOrgAndName } from "@/lib/utils";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import LoadingSpinner from "../form/loading-spinner";
-import FiltersPanel, { FiltersState, emptyFilters, hashFiltersState } from "./filters-panel";
+import FiltersPanel, { emptyFilters, hashFiltersState } from "./filters-panel";
 import ResearchResults from "./research-results";
 import ResultsHeader from "./results-header";
 import { SearchBar } from "./search-bar";
