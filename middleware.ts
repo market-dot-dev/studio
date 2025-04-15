@@ -9,12 +9,12 @@ import { getRootUrl } from "./lib/domain";
 export const config = {
   matcher: [
     /*
-     * Match all paths except for:
-     * 2. /_next (Next.js internals)
-     * 3. /_static (inside /public)
-     * 4. all root files inside /public (e.g. /favicon.ico)
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    "/((?!_next/|_static/|_vercel|[\\w-]+\\.\\w+).*)"
+    "/((?!_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)"
   ]
 };
 
