@@ -1,18 +1,19 @@
 import { authOptions } from "@/lib/auth";
 import NextAuth from "next-auth";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
-const nextAuthHandler = NextAuth(authOptions);
-
-const handler = async (req: NextRequest, res: NextResponse) => {
-  // in case its an email verification callback request, then the redirect should be made to the subdomain of the given host
-  if (req.nextUrl.pathname === "/api/auth/callback/email") {
+// Create the handler function that will check for email verification
+const handler = async (req: NextRequest) => {
+  // In case it's an email verification callback request, use custom options
+  if (req.nextUrl.pathname.includes("/api/auth/callback/email")) {
     const referer = req.headers.get("referer") as string;
     let subdomain = "app";
 
     try {
       subdomain = referer.split(".")[0].split("://")[1];
-    } catch {}
+    } catch {
+      // empty
+    }
 
     const options = {
       ...authOptions,
@@ -28,10 +29,12 @@ const handler = async (req: NextRequest, res: NextResponse) => {
       }
     };
 
-    return NextAuth(options)(req, res);
+    return NextAuth(options)(req);
   }
 
-  return nextAuthHandler(req, res);
+  // Otherwise use standard options
+  return NextAuth(authOptions)(req);
 };
 
+// Export the handler for both GET and POST
 export { handler as GET, handler as POST };
