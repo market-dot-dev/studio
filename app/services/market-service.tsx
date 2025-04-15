@@ -3,6 +3,7 @@ import { Channel } from "@prisma/client";
 import { getCurrentSite } from "./SiteService";
 import TierService from "./TierService";
 import { getCurrentUser } from "./UserService";
+
 const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;
 const API_KEY = process.env.MARKET_DEV_API_KEY;
 

@@ -134,6 +134,7 @@ class LeadsService {
         data: await response.json()
       };
     } catch (error: any) {
+      console.error(error);
       return {
         error: "Failed to lookup repository"
       };
