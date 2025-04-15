@@ -14,7 +14,7 @@ import { ChevronRight, Receipt, ScanSearch } from "lucide-react";
 import Link from "next/link";
 import { Sale, columns } from "./columns";
 
-export type CustomerWithChargesSubscriptionsAndProspects = User & {
+type CustomerWithChargesSubscriptionsAndProspects = User & {
   charges: (Charge & { tier: Tier })[];
   subscriptions: (Subscription & { tier: Tier })[];
   prospects: (Prospect & { tiers: Tier[] })[];

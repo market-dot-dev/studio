@@ -22,7 +22,7 @@ function createPrismaClient() {
 }
 
 // Use existing instance if available to prevent multiple instances during hot reloading
-export const prisma = globalForPrisma.prisma ?? createPrismaClient();
+const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 // Only save the instance in development to prevent memory leaks in production
 if (process.env.NODE_ENV !== "production") {
