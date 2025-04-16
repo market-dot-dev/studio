@@ -22,7 +22,7 @@ export default function SearchHistory({
     <div className="relative w-full">
       <div className="absolute left-0 top-0 z-50 flex w-full flex-col rounded-b-md border border-t-0 bg-white py-2 text-sm shadow-lg">
         {history.map((url: string, index: number) => (
-          <div
+          <button
             key={index}
             className="group flex cursor-pointer items-center justify-between px-4 hover:bg-gray-200"
             onClick={() => onSelect(url)}
@@ -35,7 +35,7 @@ export default function SearchHistory({
                 onDelete(url);
               }}
             />
-          </div>
+          </button>
         ))}
       </div>
     </div>

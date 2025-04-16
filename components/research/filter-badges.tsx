@@ -18,9 +18,9 @@ export default function FilterBadges({ filters, onRemoveFilter }: FilterBadgesPr
               <p className="text-sm text-stone-500">
                 {key}: {filters[key as keyof FiltersState]}
               </p>
-              <div className="cursor-pointer" onClick={() => onRemoveFilter(key)}>
+              <button onClick={() => onRemoveFilter(key)}>
                 <XCircle className="size-5 shrink-0" />
-              </div>
+              </button>
             </div>
           </Badge>
         );

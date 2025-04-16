@@ -33,7 +33,7 @@ export default function PageHeader({
       {backLink && (
         <Link
           href={backLink.href}
-          className="tracking-tightish group flex w-fit -translate-x-[3px] items-center gap-1 text-sm font-semibold text-stone-500 transition-colors hover:text-stone-800"
+          className="tracking-tightish group flex w-fit translate-x-[-3px] items-center gap-1 text-sm font-semibold text-stone-500 transition-colors hover:text-stone-800"
         >
           <ChevronLeft
             size={16}

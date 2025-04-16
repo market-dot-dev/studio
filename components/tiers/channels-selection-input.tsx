@@ -15,6 +15,7 @@ export default function ChannelsSelectionInput({
 }) {
   return (
     <div className="flex flex-col gap-2">
+      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
       <label htmlFor={`${idPrefix}channel-site`} className="block w-full">
         <div className="shadow-border-sm focus-within:ring-swamp hover:shadow-border flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2">
           <div className="flex w-full items-center justify-between">
@@ -28,6 +29,7 @@ export default function ChannelsSelectionInput({
               value={Channel.site}
               checked={selectedChannels.includes(Channel.site)}
               onCheckedChange={() => handleInputChange(Channel.site)}
+              aria-label="Landing Page"
             />
           </div>
           <p className="text-left text-xs leading-4 text-stone-500">
@@ -36,6 +38,7 @@ export default function ChannelsSelectionInput({
         </div>
       </label>
       {userIsMarketExpert && (
+        // eslint-disable-next-line jsx-a11y/label-has-associated-control
         <label htmlFor={`${idPrefix}channel-market`} className="block size-full">
           <div className="shadow-border-sm focus-within:ring-swamp hover:shadow-border flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2">
             <div className="flex size-full items-center justify-between">
@@ -49,7 +52,9 @@ export default function ChannelsSelectionInput({
                 value={Channel.market}
                 checked={selectedChannels.includes(Channel.market)}
                 onCheckedChange={() => handleInputChange(Channel.market)}
+                aria-label="Marketplace"
               />
+              <span className="sr-only">Marketplace</span>
             </div>
             <p className="text-left text-xs leading-4 text-stone-500">
               List your package for sale on your market.dev expert page

@@ -24,6 +24,7 @@ export default function TeamSelectionRadioGroup({
               type="radio"
               name="team-type"
               value="team"
+              aria-label="We're a team"
               checked={teamType === "team"}
               onChange={(e) => setTeamType("team")}
               required
@@ -41,6 +42,7 @@ export default function TeamSelectionRadioGroup({
               type="radio"
               name="team-type"
               value="individual"
+              aria-label="It's just me"
               checked={teamType === "individual"}
               onChange={(e) => setTeamType("individual")}
               required
