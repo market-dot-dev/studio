@@ -57,7 +57,7 @@ export function CustomerLoginComponent({
 
     // check for email format
     const re =
-      /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     if (!re.test(String(verificationEmail).toLowerCase())) {
       setError("Please enter a valid email.");
       return;
@@ -236,7 +236,7 @@ export function CustomerLoginComponent({
               </Button>
             </div>
           </div>
-          <p className="cursor-pointer text-center text-sm text-stone-500" onClick={toggleSignUp}>
+          <p className="cursor-pointer text-center text-sm text-stone-500">
             {isSignUp ? (
               <>
                 <span>Already have an account?</span>{" "}
@@ -256,9 +256,9 @@ export function CustomerLoginComponent({
         </div>
       ) : (
         <div className="">
-          <label className="block text-center text-sm text-stone-500">
+          <p className="block text-center text-sm text-stone-500">
             A verification code has been sent to your email. Please enter the value here.
-          </label>
+          </p>
           <div className="mt-6 flex w-full flex-col items-center gap-4">
             <div className="w-full items-center">
               <OTPInputElement

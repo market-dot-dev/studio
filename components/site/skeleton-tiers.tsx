@@ -4,6 +4,7 @@ import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-
 import { cn } from "@/lib/utils";
 import { Check, ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { Button } from "../ui/button";
 
 export default function SkeletonTiers({ className }: { className?: string }) {
   return (
@@ -45,13 +46,9 @@ export default function SkeletonTiers({ className }: { className?: string }) {
                   ))}
                 </ul>
               </div>
-              {/* @TODO: This anchor must be fixed. */}
-              <a
-                href="#"
-                className="inline-flex w-full items-center justify-center rounded-md bg-gradient-to-b from-gray-800 to-gray-950 px-3 py-2 text-center text-sm font-medium text-white shadow-sm ring-1 ring-black/5 transition-shadow hover:bg-gray-700 hover:shadow"
-              >
+              <Button>
                 {tier.name === "Enterprise Solution" ? "Get in touch" : "Buy package"}
-              </a>
+              </Button>
             </div>
           );
         })}
@@ -63,7 +60,7 @@ export default function SkeletonTiers({ className }: { className?: string }) {
           className="group flex items-center gap-0.5 text-xs font-medium tracking-tight text-gray-500 hover:text-gray-600"
         >
           Set up your packages
-          <ChevronRight className="-mr-[3px] mt-px size-3 transition-transform group-hover:translate-x-px group-focus:translate-x-px" />
+          <ChevronRight className="mr-[-3px] mt-px size-3 transition-transform group-hover:translate-x-px group-focus:translate-x-px" />
         </Link>
       </div>
     </div>

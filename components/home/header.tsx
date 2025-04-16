@@ -301,7 +301,7 @@ export default function Header({ className }: { className?: string }) {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="h-9 w-9 rounded-full bg-marketing-accent !text-sm font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active sm:px-3 md:w-auto"
+                  className="size-9 rounded-full bg-marketing-accent !text-sm font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active sm:px-3 md:w-auto"
                 >
                   <Store className="!size-5" />
                   <span className="hidden md:inline">Dashboard</span>
@@ -468,7 +468,7 @@ export default function Header({ className }: { className?: string }) {
                     </Link>
                   ))}
               </div>
-              <div className="sticky bottom-0 left-0 right-0 border-t border-black/10 bg-marketing-background p-6">
+              <div className="sticky inset-x-0 bottom-0 border-t border-black/10 bg-marketing-background p-6">
                 {isLoading || !signedIn ? (
                   <Button className="w-full">
                     <Image

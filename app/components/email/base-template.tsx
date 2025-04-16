@@ -1,3 +1,4 @@
+/* eslint-disable no-irregular-whitespace */
 export const BaseEmailTemplate = ({
   previewText,
   children

@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function TermsOfService() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
@@ -222,9 +224,9 @@ export default function TermsOfService() {
         <p>
           By using our market.dev Platform, you agree to our Privacy Policy, which can be
           found&nbsp;
-          <a href="#" className="text-marketing-primary hover:text-marketing-primary/90">
+          <Link href="/privacy" className="text-marketing-primary hover:text-marketing-primary/90">
             here
-          </a>
+          </Link>
           &nbsp;(link to Privacy Policy).
         </p>
 

@@ -1,3 +1,5 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 "use client";
 
 import { deleteMedia, listMedia, uploadFile } from "@/app/services/MediaService";
@@ -8,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import Spinner from "@/components/ui/spinner";
 import { Media as DBMedia } from "@prisma/client";
 import { format } from "date-fns";
+import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -38,7 +41,7 @@ const StyledDropzone = ({ onFileAccepted, isUploading }: any) => {
       ) : (
         <p className="text-sm text-stone-500">
           Drop files here or{" "}
-          <a href="#" className="text-swamp font-medium">
+          <a href="#" className="font-medium text-swamp">
             pick an image
           </a>
         </p>
@@ -150,7 +153,7 @@ function ImageInsertModal({
                 }`}
                 onClick={() => handleSelectMedia(media)}
               >
-                <img src={media.url} className="size-full object-cover" alt="" />
+                {media.url && <Image src={media.url} className="size-full object-cover" alt="" />}
               </div>
             ))}
           </div>

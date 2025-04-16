@@ -70,17 +70,17 @@ function PublishedPackagesSelectionModalContent({
     <div className="flex size-full flex-col gap-4">
       <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         {publishedTiers.map((tier) => (
-          <div
+          <button
             key={tier.id}
             onClick={() => onTierSelect(tier)}
-            className={`cursor-pointer rounded-lg ${
+            className={`rounded-lg ${
               selectedTiers.some((t) => t.id === tier.id)
                 ? "ring-4 ring-swamp transition-shadow"
                 : ""
             }`}
           >
             <TierCard tier={tier} buttonDisabled={true} />
-          </div>
+          </button>
         ))}
       </div>
     </div>

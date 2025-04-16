@@ -6,6 +6,7 @@ import SectionHero from "./section-hero";
 import SectionTiers from "./section-tiers";
 import SectionWork from "./section-work";
 
+// @TODO: Site-template doesn't allow replacing the anchor with a <Button />, it needs to to avoid these hardcoded styles.
 export default [
   SectionHeader,
   SectionHero,

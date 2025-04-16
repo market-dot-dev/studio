@@ -137,6 +137,7 @@ function TiersTemplatesModal({ hide, multiple }: { hide: () => void; multiple?: 
                 const determinedIndex = determineIndex(cIndex, index);
                 const isSelected = selected.indexOf(determinedIndex) !== -1;
                 return (
+                  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
                   <div
                     key={index}
                     className={
@@ -175,7 +176,7 @@ function TiersTemplatesModal({ hide, multiple }: { hide: () => void; multiple?: 
                       </svg>
                     </div>
                     {!multiple && (
-                      <div className="absolute left-0 top-0 flex size-full cursor-default items-center justify-center bg-white bg-opacity-50 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="bg-opacity/50 absolute left-0 top-0 flex size-full cursor-default items-center justify-center bg-white opacity-0 transition-opacity group-hover:opacity-100">
                         <Button
                           size="icon"
                           onClick={() => {
@@ -193,7 +194,7 @@ function TiersTemplatesModal({ hide, multiple }: { hide: () => void; multiple?: 
           </div>
         ))}
         {!multiple && singleTierInProgress ? (
-          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-50">
+          <div className="bg-opacity/50 absolute inset-0 flex items-center justify-center bg-white">
             <div className="w-1/2 rounded-lg border bg-white p-6 shadow-lg">
               <ProgressBar done={done} total={total} label={"Creating " + noun} />
             </div>

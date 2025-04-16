@@ -35,7 +35,7 @@ function ComponentsBlock({
                     {buttonContent}
                   </component.insert>
                 ) : (
-                  <div
+                  <button
                     className="p-2 py-4"
                     onClick={() => {
                       insertAtCursor(
@@ -51,7 +51,7 @@ function ComponentsBlock({
                     }}
                   >
                     {buttonContent}
-                  </div>
+                  </button>
                 )}
               </div>
             </div>
