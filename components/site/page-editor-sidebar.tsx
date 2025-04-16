@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import ComponentsPanel from "./components-panel";
-import ThemesPanel from "./themes-panel";
+import { ThemesPanel } from "./themes-panel";
 
 export default function PageEditorSidebar({
   editorRef,
