@@ -107,10 +107,11 @@ export default function Header({ className }: { className?: string }) {
   }, []);
 
   useEffect(() => {
-    isMobileMenuOpen
-      ? document.body.classList.add("overflow-hidden")
-      : document.body.classList.remove("overflow-hidden");
-
+    if (isMobileMenuOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
     return () => {
       document.body.classList.remove("overflow-hidden");
     };
@@ -264,23 +265,17 @@ export default function Header({ className }: { className?: string }) {
             )}
           >
             <Link href="/" className="flex">
-              <button
-                onClick={() => {
-                  isMobileMenuOpen && setIsMobileMenuOpen(false);
-                  isDesktopDropdownOpen && setIsDesktopDropdownOpen(false);
-                }}
-              >
-                <Logo
-                  className={clsx("hidden h-[26px] w-auto self-center justify-self-start md:block")}
-                />
-                <Image
-                  src="/logo.svg"
-                  alt="market.dev logo"
-                  width={22}
-                  height={22}
-                  className="self-center justify-self-start md:hidden"
-                />
-              </button>
+              <Logo
+                className={clsx("hidden h-[26px] w-auto self-center justify-self-start md:block")}
+              />
+              <Image
+                src="/logo.svg"
+                alt="market.dev logo"
+                width={22}
+                height={22}
+                className="self-center justify-self-start md:hidden"
+                priority
+              />
             </Link>
             <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
               <Link href="/" className="!text-marketing-primary whitespace-nowrap">
