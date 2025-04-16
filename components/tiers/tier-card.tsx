@@ -51,15 +51,29 @@ const CheckoutButton = ({
 }) => {
   const checkoutUrl = generateLink(url, tierId, annual);
 
-  // @TODO: Fix below link error
+  const buttonElement = (
+    <Button
+      variant={variant}
+      className={cn(
+        "w-full",
+        darkMode && "!bg-white !text-stone-800 hover:bg-stone-100", // @TODO: Styling fix needed
+        disabled && "cursor-not-allowed opacity-60"
+      )}
+      disabled={disabled}
+    >
+      {checkoutType === "gitwallet" ? "Get Started" : "Get in touch"}
+    </Button>
+  );
+
+  // If disabled, only render the button without the link
+  if (disabled) {
+    return buttonElement;
+  }
+
+  // Otherwise wrap with Link
   return (
-    <Link href={disabled ? "" : checkoutUrl} target={openUrlInNewTab ? "_blank" : "_self"}>
-      <Button
-        variant={variant}
-        className={cn("w-full", darkMode && "!bg-white !text-stone-800 hover:bg-stone-100")}
-      >
-        {checkoutType === "gitwallet" ? "Get Started" : "Get in touch"}
-      </Button>
+    <Link href={checkoutUrl} target={openUrlInNewTab ? "_blank" : "_self"}>
+      {buttonElement}
     </Link>
   );
 };

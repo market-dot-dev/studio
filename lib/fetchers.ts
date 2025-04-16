@@ -40,27 +40,3 @@ export async function getSiteData(domain: string) {
     homepage: homepage
   };
 }
-
-export async function getSitePage(domain: string, slug: string | undefined) {
-  const subdomain = domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`)
-    ? domain.replace(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`, "")
-    : null;
-
-  const site = await prisma.site.findUnique({
-    where: subdomain ? { subdomain } : { customDomain: domain },
-    include: {
-      user: true,
-      pages: {
-        where: {
-          slug: slug,
-          draft: false
-        },
-        take: 1
-      }
-    }
-  });
-
-  return {
-    ...site
-  };
-}
