@@ -20,9 +20,7 @@ const Debug = async () => {
     { name: "Stripe Debug", href: "/admin/debug/stripe-debug" },
     { name: "Stripe Connect", href: "/settings/payment" },
     { name: "Stripe Validation", href: `/admin/debug/${user?.id}/validation` },
-    { name: "Active Subscriptions", href: "/subscriptions" },
-    { name: "Session Viewer", href: "/admin/debug/session" },
-    { name: "Sentry Example", href: "/admin/debug/sentry-example-page" }
+    { name: "Session Viewer", href: "/admin/debug/session" }
   ];
 
   // Add the role switcher as a special row that will be handled separately
