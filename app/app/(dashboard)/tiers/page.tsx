@@ -39,7 +39,7 @@ export default async function Tiers() {
         {tiers.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
             {tiers.map((tier, index) => (
-              <div key={index} className="flex flex-col rounded-xl border bg-stone-150 text-center">
+              <div key={index} className="bg-stone-150 flex flex-col rounded-xl border text-center">
                 <div className="flex items-center justify-between gap-4 p-3 pb-2 pl-5">
                   <div className="flex items-center gap-2">
                     <span
@@ -75,7 +75,7 @@ export default async function Tiers() {
                 </div>
                 <div className="flex h-full items-center justify-center p-6 pb-4 pt-0">
                   <div className="mx-auto w-full max-w-[330px]">
-                    <TierCard tier={tier} className="scale-90 shadow-border" />
+                    <TierCard tier={tier} className="shadow-border scale-90" />
                   </div>
                 </div>
               </div>

@@ -1,12 +1,12 @@
 export default function PrivacyPolicy() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
-      <h1 className="text-pretty text-marketing-base font-bold tracking-tight text-marketing-primary">
+      <h1 className="text-marketing-base text-marketing-primary text-pretty font-bold tracking-tight">
         Privacy Policy
       </h1>
-      <p className="mb-4 text-marketing-secondary">Effective as of December 1, 2024</p>
+      <p className="text-marketing-secondary mb-4">Effective as of December 1, 2024</p>
 
-      <div className="space-y-6 text-marketing-secondary">
+      <div className="text-marketing-secondary space-y-6">
         <p>
           market.dev is committed to the highest standards of privacy and security to ensure that
           any personal information you entrust to us when using our Services is fully
@@ -15,7 +15,7 @@ export default function PrivacyPolicy() {
           Platform (<strong>“Privacy Policy”</strong>).
         </p>
 
-        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">
+        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">
           Information we collect and use in delivery Services
         </h2>
 
@@ -50,7 +50,7 @@ export default function PrivacyPolicy() {
           </li>
         </ul>
 
-        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">
+        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">
           International transfers
         </h2>
         <p>
@@ -61,7 +61,7 @@ export default function PrivacyPolicy() {
           information outside of your jurisdiction when necessary for delivering the Services.
         </p>
 
-        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Privacy Rights</h2>
+        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Privacy Rights</h2>
         <p>
           Subject to certain limitations and depending on the privacy laws applicable to you, you
           may have the following legal rights to your information:
@@ -93,7 +93,7 @@ export default function PrivacyPolicy() {
           this policy to reach us.
         </p>
 
-        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">
+        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">
           Safeguarding your information
         </h2>
         <p>
@@ -102,7 +102,7 @@ export default function PrivacyPolicy() {
           accidental loss and destruction.
         </p>
 
-        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Data Retention</h2>
+        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Data Retention</h2>
         <p>
           market.dev retains personal information only as long as necessary to provide and improve
           the Services or to meet legal obligations. Your information retained by market.dev will be
@@ -110,7 +110,7 @@ export default function PrivacyPolicy() {
           purposes.
         </p>
 
-        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">
+        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">
           Cookies and other similar technologies
         </h2>
         <p>
@@ -120,21 +120,21 @@ export default function PrivacyPolicy() {
           <strong>“Contact Us”</strong> section at the end of this policy to reach us.
         </p>
 
-        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Third Party links</h2>
+        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Third Party links</h2>
         <p>
           The market.dev Platform may contain links or enable maintainers to link to other websites
           that are not under our control and we assume no responsibility for those links or the
           privacy practices of the websites should you choose to navigate to them.
         </p>
 
-        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Updates</h2>
+        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Updates</h2>
         <p>
           We may update this Privacy Policy from time to time to reflect changes to how we handle
           your information held by us. Your continued use of our website, the market.dev Platform or
           Services will be deemed acceptance by you of the updated Privacy Policy.
         </p>
 
-        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Contact Us</h2>
+        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Contact Us</h2>
         <p>
           If you have any questions or concerns about our privacy practices or this policy, you may
           contact us by email:&nbsp;

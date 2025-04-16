@@ -53,7 +53,7 @@ export default function CustomerPackageFeatures({
                 </div>
               ) : (
                 <div className="start flex gap-2 text-stone-600" key={feature.id}>
-                  <Check strokeWidth={2.75} className="my-0.5 size-4 text-swamp-500" /> &nbsp;{" "}
+                  <Check strokeWidth={2.75} className="text-swamp-500 my-0.5 size-4" /> &nbsp;{" "}
                   {feature.name}
                 </div>
               )

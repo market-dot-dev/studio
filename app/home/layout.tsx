@@ -3,7 +3,7 @@ import Header from "@/components/home/header";
 export default function HomePageLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="[&_a]: relative overflow-hidden bg-marketing-background pt-[88px] text-marketing-base text-marketing-secondary antialiased"
+      className="[&_a]: bg-marketing-background text-marketing-base text-marketing-secondary relative overflow-hidden pt-[88px] antialiased"
       style={{
         textRendering: "optimizeLegibility",
         fontFamily: "'Helvetica Neue', Helvetica, sans-serif",

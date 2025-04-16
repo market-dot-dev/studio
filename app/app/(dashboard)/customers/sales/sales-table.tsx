@@ -67,7 +67,7 @@ const SalesTable = ({
   return (
     <div className="space-y-4">
       <div className="flex w-full items-end justify-between">
-        <h3 className="text-xl font-bold tracking-tightish">Sales & Prospects</h3>
+        <h3 className="tracking-tightish text-xl font-bold">Sales & Prospects</h3>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="group gap-0.5 pr-1">
@@ -98,7 +98,7 @@ const SalesTable = ({
       {sales.length === 0 ? (
         <Card className="mb-8 flex h-72 flex-col items-center justify-center border border-dashed border-stone-400/50 bg-stone-200/30 shadow-none">
           <div className="flex flex-col items-center justify-center py-6">
-            <Receipt className="mb-3 size-9 text-swamp" strokeWidth={1.5} />
+            <Receipt className="text-swamp mb-3 size-9" strokeWidth={1.5} />
             <h3 className="mb-2 text-xl font-semibold">No sales... yet</h3>
             <p className="max-w-md text-center text-sm text-stone-500">
               When you make your first sale

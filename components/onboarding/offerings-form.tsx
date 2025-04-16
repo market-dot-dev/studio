@@ -106,7 +106,7 @@ export default function OfferingsForm({ user, onSubmit, isLoading }: OfferingsFo
             />
           </div>
 
-          <h1 className="text-center text-xl font-bold tracking-tightish text-stone-800">
+          <h1 className="tracking-tightish text-center text-xl font-bold text-stone-800">
             Last, what are you selling?
           </h1>
         </div>
@@ -118,7 +118,7 @@ export default function OfferingsForm({ user, onSubmit, isLoading }: OfferingsFo
               className="block size-full rounded focus-within:outline-none focus-within:ring-2 focus-within:ring-stone-300"
             >
               <div className="relative h-full">
-                <div className="relative flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-all focus-within:border-stone-300 hover:shadow-border hover:focus-within:bg-white [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-marketing-swamp">
+                <div className="shadow-border-sm hover:shadow-border [&:has(input:checked)]:ring-marketing-swamp relative flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 transition-all focus-within:border-stone-300 hover:focus-within:bg-white [&:has(input:checked)]:ring-2">
                   <div className="flex flex-wrap items-center gap-2.5">
                     <Icon className="my-px size-[18px] shrink-0 text-stone-500" />
                     <h3 className="text-sm font-semibold text-stone-900">{title}</h3>

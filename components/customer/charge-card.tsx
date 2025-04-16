@@ -64,7 +64,7 @@ const ChargeCard = async ({
         <div className="flex flex-row flex-wrap gap-x-10 gap-y-4">
           {isCustomerView && (
             <div className="flex flex-col gap-1">
-              <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+              <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
                 Purchased from
               </span>
               <div className="flex items-center gap-1.5">
@@ -75,14 +75,14 @@ const ChargeCard = async ({
           )}
 
           <div className="flex flex-col gap-1">
-            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+            <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
               Purchased On
             </span>
             <span className="font-medium">{charge.createdAt.toLocaleDateString()}</span>
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+            <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
               Contract
             </span>
             <ContractLink contract={contract} />

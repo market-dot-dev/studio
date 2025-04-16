@@ -171,7 +171,7 @@ export function CustomerLoginComponent({
         <Card className="flex min-h-[60px] w-full items-center justify-between gap-4 px-5 py-4">
           <div className="flex items-start gap-3">
             <UserRoundCheck className="my-0.5 size-5 shrink-0 text-stone-500" />
-            <div className="text-medium flex flex-wrap items-baseline gap-x-2 self-center text-sm font-medium tracking-tightish text-stone-500">
+            <div className="text-medium tracking-tightish flex flex-wrap items-baseline gap-x-2 self-center text-sm font-medium text-stone-500">
               <span className="text-base font-bold text-stone-800">{currentUser.name}</span>
               <span className="truncate leading-6">{currentUser.email}</span>
             </div>

@@ -101,7 +101,7 @@ const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
             {isEffectiveMaintainerLoading ? (
               <Skeleton className="h-5 w-36" />
             ) : (
-              <span className="font-bold tracking-tightish">{checkoutProject}</span>
+              <span className="tracking-tightish font-bold">{checkoutProject}</span>
             )}
           </div>
 
@@ -140,7 +140,7 @@ const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
                 <>
                   {checkoutType === "gitwallet" ? (
                     trialOffered && tier?.cadence !== "once" ? (
-                      <p className="mt-1 text-sm font-semibold tracking-tightish text-stone-500 xl:text-base">
+                      <p className="tracking-tightish mt-1 text-sm font-semibold text-stone-500 xl:text-base">
                         Starts with a{" "}
                         <strong className="font-bold text-stone-800">{trialDays} day</strong> free
                         trial

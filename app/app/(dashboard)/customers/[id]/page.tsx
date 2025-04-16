@@ -50,7 +50,7 @@ const CustomerDetailPage = async (props: { params: Promise<{ id: string }> }) =>
 
         <div className="flex flex-row flex-wrap gap-x-12 gap-y-4 text-sm">
           <div className="flex flex-col gap-1">
-            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
+            <span className="text-xxs/4 flex items-center gap-1.5 whitespace-nowrap font-semibold uppercase tracking-wide text-stone-500">
               <Building size={12} strokeWidth={2.5} />
               Company
             </span>
@@ -60,7 +60,7 @@ const CustomerDetailPage = async (props: { params: Promise<{ id: string }> }) =>
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
+            <span className="text-xxs/4 flex items-center gap-1.5 whitespace-nowrap font-semibold uppercase tracking-wide text-stone-500">
               <Github size={12} strokeWidth={2.5} />
               Github
             </span>
@@ -75,7 +75,7 @@ const CustomerDetailPage = async (props: { params: Promise<{ id: string }> }) =>
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
+            <span className="text-xxs/4 flex items-center gap-1.5 whitespace-nowrap font-semibold uppercase tracking-wide text-stone-500">
               <Mail size={12} strokeWidth={2.5} />
               Email
             </span>

@@ -8,7 +8,7 @@ function Spinner() {
     <div role="status">
       <svg
         aria-hidden="true"
-        className="mx-2 inline size-6 animate-spin fill-swamp text-gray-200 dark:text-gray-600"
+        className="fill-swamp mx-2 inline size-6 animate-spin text-gray-200 dark:text-gray-600"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

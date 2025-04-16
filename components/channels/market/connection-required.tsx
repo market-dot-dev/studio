@@ -32,7 +32,7 @@ export default function ConnectionRequired({ user }: { user: User }) {
   };
 
   return (
-    <div className="relative space-y-8 rounded-lg border bg-gradient-to-b from-muted/50 to-muted/30 p-8">
+    <div className="from-muted/50 to-muted/30 relative space-y-8 rounded-lg border bg-gradient-to-b p-8">
       <div
         className="absolute inset-0 opacity-5"
         style={{
@@ -42,13 +42,13 @@ export default function ConnectionRequired({ user }: { user: User }) {
 
       <div className="relative space-y-4">
         <h2 className="text-4xl font-bold tracking-tight">Get listed on market.dev</h2>
-        <p className="max-w-2xl text-xl text-muted-foreground">
+        <p className="text-muted-foreground max-w-2xl text-xl">
           Join a marketplace of services & resources from top open source developers in any
           ecosystem.
         </p>
       </div>
 
-      <Card className="relative overflow-hidden border bg-background/95 backdrop-blur">
+      <Card className="bg-background/95 relative overflow-hidden border backdrop-blur">
         <Image src="/market-dot-dev.png" alt="Market.dev" width={1000} height={1000} />
       </Card>
 

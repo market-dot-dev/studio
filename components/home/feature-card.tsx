@@ -140,7 +140,7 @@ export default function FeatureCard({
           <div className={clsx("flex flex-col", size === "small" ? "gap-1" : "gap-2")}>
             <h3
               className={clsx(
-                "text-pretty text-marketing-base font-bold tracking-tight text-marketing-primary",
+                "text-marketing-base text-marketing-primary text-pretty font-bold tracking-tight",
                 image && "sm:text-xl xl:text-[19px] xl:leading-6",
                 size === "small" && "text-marketing-sm"
               )}
@@ -161,7 +161,7 @@ export default function FeatureCard({
         {image && (
           <div
             className={clsx(
-              "z-[-2] ml-auto max-w-screen-lg justify-self-end overflow-visible pl-12 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] xs:pl-12 sm:pl-24",
+              "xs:pl-12 z-[-2] ml-auto max-w-screen-lg justify-self-end overflow-visible pl-12 drop-shadow-[-1px_-1px_0_rgba(0,0,0,0.09)] sm:pl-24",
               orientation === "horizontal" ? "md:pt-3" : "w-full sm:pt-3",
               imageMaxWidth
             )}

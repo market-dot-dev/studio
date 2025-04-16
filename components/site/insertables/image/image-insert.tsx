@@ -41,7 +41,7 @@ const StyledDropzone = ({ onFileAccepted, isUploading }: any) => {
       ) : (
         <p className="text-sm text-stone-500">
           Drop files here or{" "}
-          <a href="#" className="font-medium text-swamp">
+          <a href="#" className="text-swamp font-medium">
             pick an image
           </a>
         </p>
@@ -148,7 +148,7 @@ function ImageInsertModal({
                 key={media.id}
                 className={`aspect-square cursor-pointer overflow-hidden rounded border ${
                   selectedMedia?.id === media.id
-                    ? "ring-2 ring-swamp ring-offset-2"
+                    ? "ring-swamp ring-2 ring-offset-2"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
                 onClick={() => handleSelectMedia(media)}

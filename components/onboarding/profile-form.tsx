@@ -117,7 +117,7 @@ export default function ProfileForm({ user, onSubmit, currentSite }: ProfileForm
           </div>
 
           <div className="space-y-1 text-center">
-            <h1 className="text-xl font-bold tracking-tightish text-stone-800">
+            <h1 className="tracking-tightish text-xl font-bold text-stone-800">
               Welcome to market.dev
             </h1>
             <h2 className="text-sm font-normal text-stone-500">Tell us about your business</h2>
@@ -139,7 +139,7 @@ export default function ProfileForm({ user, onSubmit, currentSite }: ProfileForm
 
           <div className="space-y-2">
             <Label htmlFor="subdomain">Domain</Label>
-            <div className="flex items-center justify-between gap-4 rounded bg-white shadow-border-sm">
+            <div className="shadow-border-sm flex items-center justify-between gap-4 rounded bg-white">
               <Input
                 id="subdomain"
                 className="rounded-r-none shadow-none"
@@ -166,7 +166,7 @@ export default function ProfileForm({ user, onSubmit, currentSite }: ProfileForm
             </Label>
             <div
               className={clsx(
-                "rounded-lg border border-dashed bg-stone-150 p-10 text-center transition-colors",
+                "bg-stone-150 rounded-lg border border-dashed p-10 text-center transition-colors",
                 isDraggingOverDropzone ? "border-stone-400" : "border-stone-300"
               )}
               onDragEnter={handleDragEnter}

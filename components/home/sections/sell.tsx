@@ -114,7 +114,7 @@ export default function Sell() {
         </div>
         <div
           ref={scrollContainerRef}
-          className="scroll-container group-hover:pause-animation group-active:pause-animation hidden animate-scroll md:flex"
+          className="scroll-container group-hover:pause-animation group-active:pause-animation animate-scroll hidden md:flex"
         >
           {[
             ...featureCards.slice(-1),

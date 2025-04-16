@@ -38,7 +38,7 @@ export default function FeatureSection({
     >
       {badge && (
         <div
-          className="mb-4 flex items-center gap-2 sm:mb-6 sm:text-marketing-md"
+          className="sm:text-marketing-md mb-4 flex items-center gap-2 sm:mb-6"
           style={{ color }}
         >
           <div style={{ color }}>
@@ -53,13 +53,13 @@ export default function FeatureSection({
       {headline && (
         <GradientHeading
           as="h2"
-          className="mb-3 max-w-[25ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-none tracking-[-0.035em] sm:mb-4 sm:text-marketing-2xl lg:text-marketing-3xl"
+          className="sm:text-marketing-2xl lg:text-marketing-3xl mb-3 max-w-[25ch] text-balance text-center text-[clamp(30px,11vw,37px)] font-bold leading-none tracking-[-0.035em] sm:mb-4"
         >
           {headline}
         </GradientHeading>
       )}
       {description && (
-        <p className="mb-6 max-w-[45ch] text-pretty text-center text-marketing-sm/5 sm:mb-8 sm:text-marketing-base">
+        <p className="text-marketing-sm/5 sm:text-marketing-base mb-6 max-w-[45ch] text-pretty text-center sm:mb-8">
           {description}
         </p>
       )}

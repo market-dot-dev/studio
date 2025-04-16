@@ -27,7 +27,7 @@ export default async function LoginPage(props: {
         className="relative mx-auto size-10"
         src="/gw-logo-nav.png"
       />
-      <h1 className="mt-4 text-center text-2xl font-bold tracking-tightish dark:text-white">
+      <h1 className="tracking-tightish mt-4 text-center text-2xl font-bold dark:text-white">
         Login to market.dev
       </h1>
       <p className="mt-3 text-center text-sm text-stone-500 dark:text-stone-400">

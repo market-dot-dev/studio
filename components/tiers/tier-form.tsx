@@ -199,7 +199,7 @@ const TierLinkCopier = ({
   }
 
   return (
-    <div className="flex flex-row items-center justify-center rounded shadow-border-sm">
+    <div className="shadow-border-sm flex flex-row items-center justify-center rounded">
       <Input
         id="checkoutLink"
         className="min-w-none w-fit truncate rounded-r-none shadow-none active:shadow-none"
@@ -674,7 +674,7 @@ export default function TierForm({
                       label="This package is available for sale"
                     />
                     {canPublishLoading && (
-                      <div className="flex items-center gap-1.5 text-xxs font-semibold text-stone-500">
+                      <div className="text-xxs flex items-center gap-1.5 font-semibold text-stone-500">
                         <Spinner />
                         Checking Stripe connection...
                       </div>
@@ -934,7 +934,7 @@ export default function TierForm({
                 features={featureObjs}
                 buttonDisabled={newRecord}
                 hasActiveFeatures={hasActiveFeatures}
-                className="mx-auto w-full max-w-[300px] shadow-border-md"
+                className="shadow-border-md mx-auto w-full max-w-[300px]"
               />
             </TabsContent>
           </Tabs>
@@ -957,7 +957,7 @@ export default function TierForm({
                 label="This package is available for sale"
               />
               {canPublishLoading && (
-                <div className="flex items-center gap-1.5 text-xxs font-semibold text-stone-500">
+                <div className="text-xxs flex items-center gap-1.5 font-semibold text-stone-500">
                   <Spinner />
                   Checking Stripe connection...
                 </div>
@@ -1185,7 +1185,7 @@ export default function TierForm({
             features={featureObjs}
             buttonDisabled={newRecord}
             hasActiveFeatures={hasActiveFeatures}
-            className="w-[300px] shadow-border"
+            className="shadow-border w-[300px]"
           />
           {!newRecord && (
             <div className="mt-4 flex flex-col items-center gap-4 rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">
