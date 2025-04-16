@@ -63,7 +63,7 @@ const config = ts.config(
           singleQuote: false,
           useTabs: false,
           semi: true,
-          plugins: ["prettier-plugin-organize-imports", "prettier-plugin-tailwindcss"]
+          plugins: ["prettier-plugin-organize-imports"]
         }
       ],
 
@@ -87,10 +87,10 @@ const config = ts.config(
       "@typescript-eslint/ban-ts-comment": "off",
 
       "tailwindcss/no-custom-classname": [
-        "warn",
+        "off", // @DEBUG
         {
           whitelist: ["list-lower-alpha"],
-          callees: ["classnames", "clsx", "twMerge", "cn"]
+          callees: ["clsx", "twMerge", "cn"]
         }
       ]
     }

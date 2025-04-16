@@ -7,9 +7,5 @@
   "tabWidth": 2,
   "bracketSpacing": true,
   "semi": true,
-  "plugins": [
-    "prettier-plugin-organize-imports",
-    "prettier-plugin-tailwindcss"
-  ],
-  "tailwindFunctions": ["tv"]
+  "plugins": ["prettier-plugin-organize-imports"]
 }
