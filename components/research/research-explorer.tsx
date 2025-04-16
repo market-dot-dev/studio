@@ -6,7 +6,7 @@ import {
   getShortlistedLeadsKeysList,
   lookup
 } from "@/app/services/LeadsService";
-import { gitHubRepoOrgAndName } from "@/lib/utils";
+import { extractGitHubRepoInfo } from "@/lib/github";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import LoadingSpinner from "../form/loading-spinner";
@@ -99,7 +99,7 @@ export default function ResearchExplorer() {
       updatedUrl = "https://" + updatedUrl;
     }
 
-    if (!updatedUrl.match(/^https?:\/\/github\.com\/([^\/]+)\/([^\/]+)$/)) {
+    if (!updatedUrl.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)$/)) {
       setSearchError("Please enter a valid GitHub repository URL.");
       return null;
     }
@@ -244,7 +244,7 @@ export default function ResearchExplorer() {
     });
   }, []);
 
-  const repoOrgName = gitHubRepoOrgAndName(repoUrl);
+  const repoOrgName = extractGitHubRepoInfo(repoUrl);
 
   // Load initial search history
   useEffect(() => {
