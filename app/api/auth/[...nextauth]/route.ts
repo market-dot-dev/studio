@@ -3,7 +3,7 @@ import NextAuth from "next-auth";
 import { NextRequest } from "next/server";
 
 // Create the handler function that will check for email verification
-const handler = async (req: NextRequest) => {
+const handler = async (req: NextRequest, context: any) => {
   // In case it's an email verification callback request, use custom options
   if (req.nextUrl.pathname.includes("/api/auth/callback/email")) {
     const referer = req.headers.get("referer") as string;
@@ -29,11 +29,11 @@ const handler = async (req: NextRequest) => {
       }
     };
 
-    return NextAuth(options)(req);
+    return NextAuth(options)(req, context);
   }
 
   // Otherwise use standard options
-  return NextAuth(authOptions)(req);
+  return NextAuth(authOptions)(req, context);
 };
 
 // Export the handler for both GET and POST

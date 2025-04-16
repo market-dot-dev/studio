@@ -2,7 +2,7 @@
   "private": true,
   "scripts": {
     "generate-routes": "tsx scripts/generate-routes.ts",
-    "dev": "prisma generate && next dev --turbopack -H market.local",
+    "dev": "prisma generate && next dev -H market.local",
     "build": "prisma generate && prisma migrate deploy && next build --no-lint && tsx prisma/sync.ts",
     "lint": "next lint",
     "lint:fix": "next lint --fix",
