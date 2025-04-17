@@ -163,6 +163,10 @@ export default function Nav({
         icon: <Settings width={18} />
       },
       {
+        type: "title",
+        name: "Services"
+      },
+      {
         type: "link",
         name: "Packages",
         href: "/tiers",
