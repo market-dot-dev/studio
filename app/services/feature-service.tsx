@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/prisma"; // Adjust the import path based on your actual Prisma setup
+import prisma from "@/lib/prisma";
 import { Feature } from "@prisma/client";
 import UserService from "./UserService";
 

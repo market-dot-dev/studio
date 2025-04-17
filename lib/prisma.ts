@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import "server-only";
+// import "server-only"; // @NOTE: Outcommented as it was breaking a client component in vercel build... somewhere.
 
 // Define the type for the global object to store the Prisma instance
 const globalForPrisma = global as unknown as {
