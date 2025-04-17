@@ -193,7 +193,7 @@ function OptionsList({
         );
       })}
       {filteredOptions.length > 8 && (
-        <div
+        <button
           className="flex cursor-pointer items-center justify-center text-sm text-blue-600"
           onClick={toggleCollapse}
         >
@@ -203,7 +203,7 @@ function OptionsList({
             <ChevronUp className="mr-2 size-5" aria-hidden="true" />
           )}
           {collapsed ? "More" : "Less"}
-        </div>
+        </button>
       )}
     </div>
   );

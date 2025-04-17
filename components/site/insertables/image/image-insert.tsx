@@ -40,10 +40,7 @@ const StyledDropzone = ({ onFileAccepted, isUploading }: any) => {
         <Spinner />
       ) : (
         <p className="text-sm text-stone-500">
-          Drop files here or{" "}
-          <a href="#" className="text-swamp font-medium">
-            pick an image
-          </a>
+          Drop files here or <a className="text-swamp cursor-pointer font-medium">pick an image</a>
         </p>
       )}
     </div>

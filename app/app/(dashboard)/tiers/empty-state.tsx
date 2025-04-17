@@ -5,7 +5,7 @@ import NewTierModal from "@/components/tiers/new-tier-modal";
 export default function TiersEmptyState() {
   return (
     <div className="flex min-h-80 justify-between gap-4 rounded-lg border">
-      <div className="flex basis-[50%] flex-col items-center justify-center gap-4 p-8">
+      <div className="flex basis-1/2 flex-col items-center justify-center gap-4 p-8">
         <h2 className="text-lg font-semibold text-gray-900">You have no packages defined</h2>
         <p className="w-3/4 text-center text-sm text-gray-500">
           You can use our pre-existing package templates to get you started quickly.
@@ -15,7 +15,7 @@ export default function TiersEmptyState() {
           <NewTierModal multiple={false}>Create a Package</NewTierModal>
         </div>
       </div>
-      <div className="mt-6 flex basis-[50%] flex-col items-center justify-center">
+      <div className="mt-6 flex basis-1/2 flex-col items-center justify-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="256"

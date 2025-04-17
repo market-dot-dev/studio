@@ -94,7 +94,7 @@ function TodoItem({
 
   if (variant === "mini") {
     return (
-      <div
+      <button
         className="shadow-border group flex w-full cursor-pointer items-center justify-between rounded bg-white p-1 pl-1.5 text-xs font-medium text-stone-800 transition-colors hover:bg-stone-50"
         onClick={navigateToStep}
       >
@@ -106,7 +106,7 @@ function TodoItem({
           size={14}
           className="ml-0.5 inline-block transition-transform group-hover:translate-x-px"
         />
-      </div>
+      </button>
     );
   }
 
