@@ -25,7 +25,10 @@ class TierService {
     }
 
     const maintainer = await UserService.findUser(tier.userId);
-    const stripeService = new StripeService(maintainer?.stripeAccountId!);
+    if (!maintainer || !maintainer.stripeAccountId) {
+      throw new Error("Maintainer not found for this tier.");
+    }
+    const stripeService = new StripeService(maintainer.stripeAccountId);
     await stripeService.destroyPrice(tier.stripePriceId);
 
     await prisma?.tier.update({

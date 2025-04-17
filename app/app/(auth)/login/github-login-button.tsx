@@ -15,7 +15,7 @@ const GithubLoginButton = ({ callbackUrl }: { callbackUrl?: string }) => {
   useEffect(() => {
     if (error) console.log("gh error", error);
     const errorMessage = Array.isArray(error) ? error.pop() : error;
-    errorMessage && toast.error(errorMessage);
+    if (errorMessage) toast.error(errorMessage);
   }, [error]);
 
   const handleLogin = async () => {

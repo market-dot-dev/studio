@@ -27,7 +27,9 @@ export const LoginButton: FC<LoginButtonProps> = ({
   const handleClick = () => {
     // If no href provided, use the onClick handler
     if (!href) {
-      onClick && onClick({} as any);
+      if (onClick) {
+        onClick({} as any);
+      }
       return;
     }
 

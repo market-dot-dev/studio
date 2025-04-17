@@ -29,8 +29,10 @@ interface ServiceForSaleOnMarketDev {
   updated_at: string;
 }
 
-interface ServiceForSaleOnMarketDevParams
-  extends Omit<ServiceForSaleOnMarketDev, "user_id" | "created_at" | "updated_at"> {}
+type ServiceForSaleOnMarketDevParams = Omit<
+  ServiceForSaleOnMarketDev,
+  "user_id" | "created_at" | "updated_at"
+>;
 
 export class MarketService {
   static async getExpert(): Promise<Expert | null> {

@@ -17,7 +17,7 @@ interface AttachDetachAttributes {
   referenceId: string; // Either Tier or TierVersion ID
 }
 
-interface FeatureUpdateAttributes extends Partial<FeatureCreateAttributes> {}
+type FeatureUpdateAttributes = Partial<FeatureCreateAttributes>;
 
 class FeatureService {
   static async find(id: string) {

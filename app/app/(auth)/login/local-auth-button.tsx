@@ -20,7 +20,7 @@ export default function LocalAuthButton() {
 
   useEffect(() => {
     const errorMessage = Array.isArray(error) ? error.pop() : error;
-    errorMessage && toast.error(errorMessage);
+    if (errorMessage) toast.error(errorMessage);
   }, [error]);
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
