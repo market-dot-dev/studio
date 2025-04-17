@@ -33,7 +33,6 @@ interface PageEditorProps {
   };
   homepageId: string | null;
   siteUrl: string | null;
-  hasActiveFeatures?: boolean;
   isDraft: boolean;
   titleError: string | null;
   slugError: string | null;
@@ -50,7 +49,6 @@ export default function PageEditor({
   page,
   homepageId,
   siteUrl,
-  hasActiveFeatures,
   isDraft,
   titleError,
   slugError,
@@ -114,9 +112,7 @@ export default function PageEditor({
 
   const preview = (
     <PreviewFrame>
-      {previewElement
-        ? renderElement(previewElement as Element, 0, site, page, true, hasActiveFeatures)
-        : null}
+      {previewElement ? renderElement(previewElement as Element, 0, site, page, true) : null}
     </PreviewFrame>
   );
 

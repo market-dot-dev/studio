@@ -7,22 +7,13 @@ import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
 export default function TiersClient({
   site,
   settings,
-  tiers,
-  hasActiveFeatures
+  tiers
 }: {
   site: any;
   settings: TiersEmbedSettingsProps;
   tiers: any[];
-  hasActiveFeatures?: boolean;
 }) {
   const filteredTiers = tiers.filter((tier: any) => (settings.tiers ?? []).includes(tier.id));
 
-  return (
-    <Tiers
-      tiers={filteredTiers}
-      subdomain={site.subdomain}
-      settings={settings}
-      hasActiveFeatures={hasActiveFeatures}
-    />
-  );
+  return <Tiers tiers={filteredTiers} subdomain={site.subdomain} settings={settings} />;
 }

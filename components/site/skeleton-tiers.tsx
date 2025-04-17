@@ -2,7 +2,7 @@ import type { SubscriptionCadence } from "@/app/services/StripeService";
 import tierPlaceholderData from "@/lib/constants/placeholder/tiers";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
 import { cn } from "@/lib/utils";
-import { Check, ChevronRight } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Button } from "../ui/button";
 
@@ -37,14 +37,6 @@ export default function SkeletonTiers({ className }: { className?: string }) {
                     <span className="text-base font-normal text-gray-500">/{cadenceShorthand}</span>
                   )}
                 </p>
-                <ul className="flex flex-col gap-1">
-                  {tier.features.map((feature: any) => (
-                    <li key={feature.id} className="flex items-center gap-2 text-sm">
-                      <Check className="size-5 text-emerald-600" />
-                      <p className="text-gray-500">{feature.name}</p>
-                    </li>
-                  ))}
-                </ul>
               </div>
               <Button>
                 {tier.name === "Enterprise Solution" ? "Get in touch" : "Buy package"}

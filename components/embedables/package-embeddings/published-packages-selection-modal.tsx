@@ -1,6 +1,6 @@
 "use client";
 
-import { getPublishedTiers, TierWithFeatures } from "@/app/services/TierService";
+import { getPublishedTiers, TierWithCount } from "@/app/services/TierService";
 import SkeletonLoader from "@/components/common/skeleton-loader";
 import TierCard from "@/components/tiers/tier-card";
 import { useEffect, useState } from "react";
@@ -9,21 +9,21 @@ export default function PublishedPackagesSelectionModal({
   initTiers,
   onSelectionChange
 }: {
-  initTiers?: TierWithFeatures[];
-  onSelectionChange?: (tiers: TierWithFeatures[]) => void;
+  initTiers?: TierWithCount[];
+  onSelectionChange?: (tiers: TierWithCount[]) => void;
 }) {
-  const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>(initTiers || []);
-  const [publishedTiers, setPublishedTiers] = useState<TierWithFeatures[]>([]);
+  const [selectedTiers, setSelectedTiers] = useState<TierWithCount[]>(initTiers || []);
+  const [publishedTiers, setPublishedTiers] = useState<TierWithCount[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     getPublishedTiers().then((tiers) => {
-      setPublishedTiers(tiers as any as TierWithFeatures[]);
+      setPublishedTiers(tiers as any as TierWithCount[]);
       setIsLoading(false);
     });
   }, []);
 
-  const toggleTier = (tier: TierWithFeatures) => {
+  const toggleTier = (tier: TierWithCount) => {
     setSelectedTiers((prev) => {
       const newSelection = prev.some((t) => t.id === tier.id)
         ? prev.filter((t) => t.id !== tier.id)
@@ -62,9 +62,9 @@ function PublishedPackagesSelectionModalContent({
   onTierSelect,
   publishedTiers
 }: {
-  selectedTiers: TierWithFeatures[];
-  onTierSelect: (tier: TierWithFeatures) => void;
-  publishedTiers: TierWithFeatures[];
+  selectedTiers: TierWithCount[];
+  onTierSelect: (tier: TierWithCount) => void;
+  publishedTiers: TierWithCount[];
 }) {
   return (
     <div className="flex size-full flex-col gap-4">

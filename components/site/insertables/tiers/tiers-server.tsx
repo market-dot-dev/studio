@@ -6,18 +6,16 @@ import Tiers from "./tiers";
 export default async function TiersServer({
   site,
   page,
-  tiers,
-  hasActiveFeatures
+  tiers
 }: {
   site: any;
   page: any;
   tiers?: string;
-  hasActiveFeatures?: boolean;
 }) {
   const tierIds = tiers ? tiers?.split(",").map((id: string) => id.trim()) : [];
   // getting the tiers by means of server functions
   const tierItems = site?.userId
     ? await TierService.getTiersForUser(site.userId, tierIds, Channel.site)
     : [];
-  return <Tiers tiers={tierItems ?? []} hasActiveFeatures={hasActiveFeatures} />;
+  return <Tiers tiers={tierItems ?? []} />;
 }

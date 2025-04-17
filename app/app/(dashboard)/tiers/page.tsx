@@ -1,6 +1,5 @@
 import SessionService from "@/app/services/SessionService";
 import TierService from "@/app/services/TierService";
-import FeatureService from "@/app/services/feature-service";
 import PageHeader from "@/components/common/page-header";
 import CopyCheckoutLinkButton from "@/components/tiers/copy-checkout-link-button";
 import NewTierModal from "@/components/tiers/new-tier-modal";
@@ -14,10 +13,7 @@ export default async function Tiers() {
   const currentUserId = await SessionService.getCurrentUserId();
   if (!currentUserId) return <>You must log in</>;
 
-  const [tiers, activeFeatures] = await Promise.all([
-    TierService.findByUserIdWithFeatures(currentUserId),
-    FeatureService.findActiveByCurrentUser()
-  ]);
+  const tiers = await TierService.findByUserIdWithCount(currentUserId);
 
   return (
     <div className="max-w flex max-w-screen-xl flex-col space-y-10">
