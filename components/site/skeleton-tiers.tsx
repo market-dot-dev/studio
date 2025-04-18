@@ -32,7 +32,7 @@ export default function SkeletonTiers({ className }: { className?: string }) {
                 <h3 className="mb-1 font-semibold">{tier.name}</h3>
                 <p className="text-sm text-gray-500">{tier.tagline}</p>
                 <p className="my-5 text-4xl">
-                  <span className="font-geist-mono">${tier.price}</span>
+                  <span className="font-mono">${tier.price}</span>
                   {cadenceShorthand && (
                     <span className="text-base font-normal text-gray-500">/{cadenceShorthand}</span>
                   )}

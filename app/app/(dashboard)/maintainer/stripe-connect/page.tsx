@@ -62,7 +62,7 @@ export default async function StripeConnect(props: {
   return (
     <div className="flex max-w-screen-xl flex-col space-y-10 p-8">
       <div className="flex flex-col space-y-6">
-        <h1 className="font-cal text-3xl font-bold dark:text-white">Stripe Integration</h1>
+        <h1 className="text-3xl font-bold dark:text-white">Stripe Integration</h1>
         <Card className="p-10">
           <div className="flex flex-col items-start gap-4">
             {stripeConnected ? (
