@@ -14,7 +14,7 @@ export default function LocalAuthSection() {
 
   return (
     <Suspense>
-      <LoginButton href={"/login/local-auth"} isLoading={false} className="w-full">
+      <LoginButton href={"/login/local-auth"} loading={false} className="w-full">
         Log in with Local Auth
       </LoginButton>
     </Suspense>
