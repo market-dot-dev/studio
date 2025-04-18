@@ -1,19 +1,13 @@
 "use client";
 
 import PageHeader from "@/components/common/page-header";
-import { Check } from "lucide-react";
-import { Tier, User } from "@prisma/client";
-import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Tier, User } from "@prisma/client";
+import { Check } from "lucide-react";
+import { useState } from "react";
 
-const ValidatorComponent = ({
-  user,
-  tiers,
-}: {
-  user: User;
-  tiers: Tier[];
-}) => {
+const ValidatorComponent = ({ user, tiers }: { user: User; tiers: Tier[] }) => {
   const [password, setPassword] = useState("");
 
   return (
@@ -33,14 +27,10 @@ const ValidatorComponent = ({
       </div>
       <div>
         <h2>Current user check: {user.name}</h2>
-        <div>Email: {!!user.email ? <Check className="inline" /> : "X"}</div>
+        <div>Email: {user.email ? <Check className="inline" /> : "X"}</div>
+        <div>Connected Account: {user.stripeAccountId ? <Check className="inline" /> : "X"}</div>
         <div>
-          Connected Account:{" "}
-          {!!user.stripeAccountId ? <Check className="inline" /> : "X"}
-        </div>
-        <div>
-          Legacy stripeProductId:{" "}
-          {!!user.legacyStripeProductId ? <Check className="inline" /> : "X"}
+          Legacy stripeProductId: {user.legacyStripeProductId ? <Check className="inline" /> : "X"}
         </div>
         <br />
 
@@ -54,12 +44,8 @@ const ValidatorComponent = ({
           {tiers.map((tier) => (
             <tr key={tier.id}>
               <td>{tier.name}</td>
-              <td>
-                {!!tier.stripeProductId ? <Check className="inline" /> : "X"}
-              </td>
-              <td>
-                {!!tier.stripePriceId ? <Check className="inline" /> : "X"}
-              </td>
+              <td>{tier.stripeProductId ? <Check className="inline" /> : "X"}</td>
+              <td>{tier.stripePriceId ? <Check className="inline" /> : "X"}</td>
             </tr>
           ))}
         </table>

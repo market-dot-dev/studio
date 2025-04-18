@@ -1,12 +1,12 @@
 "use client";
 
-import RegistrationSection from "./registration-section";
+import useFeatures from "@/app/hooks/use-features";
 import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
-import useFeatures from "@/app/hooks/use-features";
 import TierFeatureList from "@/components/features/tier-feature-list";
 import { useSearchParams } from "next/navigation";
-import { useMemo } from "react";
+import { use, useMemo } from "react";
+import RegistrationSection from "./registration-section";
 
 interface QueryParams {
   [key: string]: string | string[] | undefined;
@@ -15,12 +15,12 @@ interface QueryParams {
 const checkoutCurrency = "USD";
 const checkoutCurrencySymbol = "$";
 
-import Image from "next/image";
 import useContract from "@/app/hooks/use-contract";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { parseTierDescription } from "@/lib/utils";
 import { Store } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 import Link from "next/link";
 
 const TierNotAvailable = () => {
@@ -38,7 +38,8 @@ const TierNotAvailable = () => {
   );
 };
 
-const CheckoutPage = ({ params }: { params: { id: string } }) => {
+const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
+  const params = use(props.params);
   const { id } = params;
 
   const searchParams = useSearchParams();
@@ -46,27 +47,23 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   const isAnnual = queryParams.annual === "true";
 
   const [tier, isTierLoading] = useTier(id);
-  const [contract, isContractLoading] = useContract(
-    tier?.contractId || undefined,
-  );
-  const [maintainer, isMaintainerLoading, hasActiveFeatures] = useUser(
-    tier?.userId,
-  );
+  const [contract, isContractLoading] = useContract(tier?.contractId || undefined);
+  const [maintainer, isMaintainerLoading, hasActiveFeatures] = useUser(tier?.userId);
   const [features, isFeaturesLoading] = useFeatures(id);
 
   // Derived loading states that account for dependencies
-  const isEffectiveMaintainerLoading = useMemo(() => 
-    isTierLoading || (tier?.userId && isMaintainerLoading), 
+  const isEffectiveMaintainerLoading = useMemo(
+    () => isTierLoading || (tier?.userId && isMaintainerLoading),
     [isTierLoading, tier?.userId, isMaintainerLoading]
   );
-  
-  const isEffectiveContractLoading = useMemo(() => 
-    isTierLoading || (tier?.contractId && isContractLoading), 
+
+  const isEffectiveContractLoading = useMemo(
+    () => isTierLoading || (tier?.contractId && isContractLoading),
     [isTierLoading, tier?.contractId, isContractLoading]
   );
 
-  const isEffectiveFeaturesLoading = useMemo(() => 
-    isTierLoading || isFeaturesLoading, 
+  const isEffectiveFeaturesLoading = useMemo(
+    () => isTierLoading || isFeaturesLoading,
     [isTierLoading, isFeaturesLoading]
   );
 
@@ -95,7 +92,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
   return (
     <div className="flex min-h-screen flex-col text-stone-800 lg:flex-row">
       {/* Left Column */}
-      <div className="left-0 top-0 flex h-full w-full flex-col justify-between gap-6 bg-stone-200/80 p-6 pb-9 pt-4 sm:gap-12 sm:px-9 sm:pt-6 lg:fixed lg:w-2/5 xl:p-16 xl:pt-12">
+      <div className="left-0 top-0 flex size-full flex-col justify-between gap-6 bg-stone-200/80 p-6 pb-9 pt-4 sm:gap-12 sm:px-9 sm:pt-6 lg:fixed lg:w-2/5 xl:p-16 xl:pt-12">
         <div className="flex flex-col gap-9 lg:gap-12">
           <div className="flex items-center gap-3">
             <div className="flex size-7 items-center justify-center rounded-full bg-gradient-to-b from-stone-800/90 to-stone-800 text-white/85">
@@ -104,9 +101,7 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
             {isEffectiveMaintainerLoading ? (
               <Skeleton className="h-5 w-36" />
             ) : (
-              <span className="font-bold tracking-tightish">
-                {checkoutProject}
-              </span>
+              <span className="tracking-tightish font-bold">{checkoutProject}</span>
             )}
           </div>
 
@@ -126,14 +121,9 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                 <h1 className="text-4xl font-semibold tracking-tight xl:text-5xl">
                   {checkoutType === "gitwallet" ? (
                     <>
-                      {checkoutCurrency +
-                        " " +
-                        checkoutCurrencySymbol +
-                        checkoutPrice}
+                      {checkoutCurrency + " " + checkoutCurrencySymbol + checkoutPrice}
                       {checkoutCadence !== "once" ? (
-                        <span className="font-semibold text-stone-400">
-                          /{shortenedCadence}
-                        </span>
+                        <span className="font-semibold text-stone-400">/{shortenedCadence}</span>
                       ) : (
                         ""
                       )}
@@ -150,12 +140,10 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                 <>
                   {checkoutType === "gitwallet" ? (
                     trialOffered && tier?.cadence !== "once" ? (
-                      <p className="mt-1 text-sm font-semibold tracking-tightish text-stone-500 xl:text-base">
+                      <p className="tracking-tightish mt-1 text-sm font-semibold text-stone-500 xl:text-base">
                         Starts with a{" "}
-                        <strong className="font-bold text-stone-800">
-                          {trialDays} day
-                        </strong>{" "}
-                        free trial
+                        <strong className="font-bold text-stone-800">{trialDays} day</strong> free
+                        trial
                       </p>
                     ) : null
                   ) : (
@@ -204,13 +192,11 @@ const CheckoutPage = ({ params }: { params: { id: string } }) => {
                       return (
                         <TierFeatureList
                           key={dex}
-                          features={section.features.map(
-                            (feature: string, index: number) => ({
-                              id: `${index}`,
-                              name: feature,
-                              isEnabled: true,
-                            }),
-                          )}
+                          features={section.features.map((feature: string, index: number) => ({
+                            id: `${index}`,
+                            name: feature,
+                            isEnabled: true
+                          }))}
                         />
                       );
                     })}

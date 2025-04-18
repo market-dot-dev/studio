@@ -1,28 +1,28 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { User } from "@prisma/client"
-import { format } from "date-fns"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { User } from "@prisma/client";
+import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
+import { ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 export const columns: ColumnDef<User>[] = [
   {
     accessorKey: "id",
     header: "ID",
     cell: ({ row }) => {
-      const id = row.getValue("id") as string
-      return <div className="font-mono text-xs">{id.substring(0, 8)}...</div>
-    },
+      const id = row.getValue("id") as string;
+      return <div className="font-mono text-xs">{id.substring(0, 8)}...</div>;
+    }
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: "Name"
   },
   {
     accessorKey: "email",
-    header: "Email",
+    header: "Email"
   },
   {
     accessorKey: "createdAt",
@@ -30,23 +30,19 @@ export const columns: ColumnDef<User>[] = [
     cell: ({ row }) => {
       try {
         const rawDate = row.getValue("createdAt");
-        
+
         // Display raw date format for debugging
         const rawStr = rawDate ? String(rawDate) : "N/A";
-        
+
         if (!rawDate) return <div>N/A</div>;
-        
+
         // Try to format the date
         try {
           const date = new Date(rawDate as Date | string);
           if (isNaN(date.getTime())) {
-            return (
-              <div className="text-red-500">
-                Invalid date: {rawStr.substring(0, 30)}
-              </div>
-            );
+            return <div className="text-red-500">Invalid date: {rawStr.substring(0, 30)}</div>;
           }
-          
+
           return (
             <div>
               <div>{format(date, "MMM d, yyyy")}</div>
@@ -62,38 +58,33 @@ export const columns: ColumnDef<User>[] = [
       }
     },
     sortingFn: "datetime",
-    sortDescFirst: true,
+    sortDescFirst: true
   },
   {
     accessorKey: "gh_username",
     header: "GitHub Username",
     cell: ({ row }) => {
-      const username = row.getValue("gh_username") as string | undefined
-      return <div>{username || "N/A"}</div>
-    },
+      const username = row.getValue("gh_username") as string | undefined;
+      return <div>{username || "N/A"}</div>;
+    }
   },
   {
     accessorKey: "roleId",
-    header: "Role",
+    header: "Role"
   },
   {
     id: "actions",
     header: "",
     cell: ({ row }) => {
-      const userId = row.original.id
+      const userId = row.original.id;
       return (
-        <Button 
-          asChild 
-          variant="ghost" 
-          size="sm"
-          className="flex items-center gap-1"
-        >
+        <Button asChild variant="ghost" size="sm" className="flex items-center gap-1">
           <Link href={`/admin/users/${userId}`}>
             View Details
-            <ArrowRight className="ml-1 h-4 w-4" />
+            <ArrowRight className="ml-1 size-4" />
           </Link>
         </Button>
-      )
-    },
-  },
-] 
+      );
+    }
+  }
+];

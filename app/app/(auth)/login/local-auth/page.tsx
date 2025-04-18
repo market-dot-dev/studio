@@ -1,17 +1,13 @@
 import Image from "next/image";
-import DevLoginButton from "../local-auth-button";
-import { Suspense } from "react";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import DevLoginButton from "../local-auth-button";
 
 import { LOCAL_AUTH_AVAILABLE } from "@/app/config/local-auth";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
-export default function LoginPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default function LoginPage() {
   // This check happens only on the server
   if (!LOCAL_AUTH_AVAILABLE) {
     notFound();

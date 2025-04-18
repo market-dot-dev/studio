@@ -12,7 +12,7 @@ export class GitWalletError extends Error {
   toJSON() {
     return {
       message: this.message,
-      code: this.code,
+      code: this.code
     };
   }
 }

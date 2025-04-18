@@ -1,22 +1,21 @@
-'use client'
-import { useState, useEffect } from "react";
+"use client";
+import { useEffect, useState } from "react";
 import Menu from "./menu";
 
-export default function MenuClient( { site, page }: { site: any, page: any } ) {
-    // getting the tiers by means of API routes
-    const [nav, setNav] = useState([]);
+// @TODO: Just use a server-action? See note in corresponding endpoint.
 
-    useEffect(() => {
-        const getNav = async () => {
-            const response = await fetch('/api/preview/nav');
-            const nav = await response.json();
-            setNav(nav);
-        }
-        getNav();
-    }, []);
+export default function MenuClient({ site, page }: { site: any; page: any }) {
+  // getting the tiers by means of API routes
+  const [nav, setNav] = useState([]);
 
-    return (
-        <Menu site={site} page={page} nav={nav} />
-    )
+  useEffect(() => {
+    const getNav = async () => {
+      const response = await fetch("/api/preview/nav");
+      const nav = await response.json();
+      setNav(nav);
+    };
+    getNav();
+  }, []);
+
+  return <Menu site={site} page={page} nav={nav} />;
 }
-

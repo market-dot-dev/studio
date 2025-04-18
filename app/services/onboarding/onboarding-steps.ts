@@ -1,11 +1,10 @@
 export const defaultOnboardingState: OnboardingState = {
-  connectRepos: false,
   setupProject: false,
   setupPayment: false,
   setupTiers: false,
   setupSite: false,
   setupBusiness: false,
-  isDismissed: false,
+  isDismissed: false
 };
 
 export interface OnboardingState extends Exclude<OnboardingStepsType, null> {
@@ -15,7 +14,6 @@ export interface OnboardingState extends Exclude<OnboardingStepsType, null> {
 }
 
 export type OnboardingStepsType = {
-  connectRepos: boolean;
   setupProject: boolean;
   setupPayment: boolean;
   setupTiers: boolean;
@@ -37,19 +35,19 @@ export const onboardingSteps: onBoardingStepType[] = [
     name: "setupPayment",
     description: "Connect a Stripe account to start receiving payments.",
     urls: ["/settings/payment"],
-    title: "Connect Stripe",
+    title: "Connect Stripe"
   },
   {
     name: "setupTiers",
     description: "Define your service offerings and create a package to sell.",
     urls: ["/tiers"],
-    title: "Create a Package",
+    title: "Create a Package"
   },
   {
     name: "setupSite",
     description:
       "Your store is your first sales channel. Make it match your brand & start selling.",
     urls: ["/site/", "/page/"],
-    title: "Customize your landing page",
-  },
+    title: "Customize your landing page"
+  }
 ];

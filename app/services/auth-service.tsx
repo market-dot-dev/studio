@@ -1,19 +1,16 @@
 "use server";
 
+import { businessDescription, businessName } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
-import { defaultOnboardingState } from "./onboarding/onboarding-steps";
-import { cookies } from "next/headers";
-import {
-  businessDescription,
-  businessName,
-} from "@/lib/constants/site-template";
-import { SessionUser, createSessionUser } from "../models/Session";
-import UserService from "./UserService";
-import EmailService from "./EmailService";
-import { JWT } from "next-auth/jwt";
+import { User } from "@prisma/client";
 import { Account, User as NaUser } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
-import { User } from "@prisma/client";
+import { JWT } from "next-auth/jwt";
+import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
+import { SessionUser, createSessionUser } from "../models/Session";
+import EmailService from "./EmailService";
+import { defaultOnboardingState } from "./onboarding/onboarding-steps";
+import UserService from "./UserService";
 
 type JwtCallbackParams = {
   token: JWT;
@@ -26,18 +23,14 @@ type JwtCallbackParams = {
 
 class AuthService {
   static async jwtCallback(callbackParams: JwtCallbackParams) {
-    const { token, user, account, trigger, session, isNewUser } =
-      callbackParams;
+    const { token, user, account, trigger, session, isNewUser } = callbackParams;
     const sessionUser = token?.user as SessionUser | undefined | null;
 
-    let newToken = { ...token };
+    const newToken = { ...token };
     let userData: User | undefined | null = undefined;
 
     if (trigger === "update") {
-      if (
-        session?.["impersonate"] !== undefined &&
-        sessionUser?.roleId === "admin"
-      ) {
+      if (session?.["impersonate"] !== undefined && sessionUser?.roleId === "admin") {
         userData = await UserService.findUser(session.impersonate);
       } else if (sessionUser?.id) {
         userData = await UserService.findUser(sessionUser.id);
@@ -67,12 +60,10 @@ class AuthService {
 
     // backfill the gh_id if it is not present
     if (!user.gh_id && account.provider === "github") {
-      const ghId = account.providerAccountId
-        ? parseInt(account.providerAccountId)
-        : null;
+      const ghId = account.providerAccountId ? parseInt(account.providerAccountId) : null;
       if (ghId) {
         user = await UserService.updateUser(user.id, {
-          gh_id: ghId,
+          gh_id: ghId
         });
       }
     }
@@ -85,8 +76,8 @@ class AuthService {
     const existingAccount = await prisma.account.findFirst({
       where: {
         provider: account.provider,
-        providerAccountId: account.providerAccountId,
-      },
+        providerAccountId: account.providerAccountId
+      }
     });
 
     // FIXME
@@ -97,22 +88,22 @@ class AuthService {
       where: {
         provider_providerAccountId: {
           provider: account.provider,
-          providerAccountId: account.providerAccountId,
-        },
+          providerAccountId: account.providerAccountId
+        }
       },
       data: {
         access_token: account.access_token,
         expires_at: account.expires_at,
         refresh_token: account.refresh_token,
-        refresh_token_expires_in: account.refresh_token_expires_in,
-      },
+        refresh_token_expires_in: account.refresh_token_expires_in
+      }
     });
 
     return user;
   }
 
   static async onCreateUser(account: any, user: NaUser) {
-    const signupName = cookies().get("signup_name") ?? null;
+    const signupName = (cookies() as unknown as UnsafeUnwrappedCookies).get("signup_name") ?? null;
     const name = (signupName?.value ?? null) as string | null;
 
     const roleId = account.provider === "github" ? "maintainer" : "customer";
@@ -122,8 +113,8 @@ class AuthService {
         where: {
           provider_providerAccountId: {
             provider: account.provider,
-            providerAccountId: account.providerAccountId,
-          },
+            providerAccountId: account.providerAccountId
+          }
         },
         // this create might not even be required, assuming that the nextauth has already created the account, but just in case
         create: {
@@ -135,14 +126,14 @@ class AuthService {
           // just ensuring that the account object has the following values
           expires_at: account.expires_at,
           refresh_token: account.refresh_token,
-          refresh_token_expires_in: account.refresh_token_expires_in,
+          refresh_token_expires_in: account.refresh_token_expires_in
         },
         // the default nextauth implementation does not add the following values to the account object, so updating here
         update: {
           expires_at: account.expires_at,
           refresh_token: account.refresh_token,
-          refresh_token_expires_in: account.refresh_token_expires_in,
-        },
+          refresh_token_expires_in: account.refresh_token_expires_in
+        }
       });
     }
 
@@ -152,8 +143,8 @@ class AuthService {
         roleId,
         projectName: businessName,
         projectDescription: businessDescription,
-        ...(name ? { name } : {}),
-      },
+        ...(name ? { name } : {})
+      }
     });
 
     if (updatedUser.roleId === "maintainer") {
@@ -163,7 +154,7 @@ class AuthService {
     }
 
     if (signupName) {
-      cookies().delete("signup_name");
+      (cookies() as unknown as UnsafeUnwrappedCookies).delete("signup_name");
     }
 
     return updatedUser;

@@ -1,28 +1,23 @@
 "use client";
 
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Site, User } from "@prisma/client";
-import { useEffect, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import { toast } from "sonner";
-import LoadingDots from "../icons/loading-dots";
-import { AlertCircleIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { validateMarketExpert } from "@/lib/market";
-import ProfileForm from "./profile-form";
-import OfferingsForm from "./offerings-form";
-import { updateCurrentUser } from "@/app/services/UserService";
-import { createSite } from "@/app/services/registration-service";
 import { updateCurrentSite } from "@/app/services/SiteService";
+import { updateCurrentUser } from "@/app/services/UserService";
 import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
+import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
+import { createSite } from "@/app/services/registration-service";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { validateMarketExpert } from "@/lib/market";
+import { Site, User } from "@prisma/client";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/themes";
+import { AlertCircleIcon } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import LoadingDots from "../icons/loading-dots";
+import OfferingsForm from "./offerings-form";
+import ProfileForm from "./profile-form";
 
 function useMounted() {
   const [mounted, setMounted] = useState(false);
@@ -44,20 +39,14 @@ interface OfferingsData {
 
 // Internal UI components
 const LoadingState = () => (
-  <div className="flex h-10 w-10 items-center justify-center">
+  <div className="flex size-10 items-center justify-center">
     <LoadingDots />
   </div>
 );
 
-const ErrorState = ({
-  error,
-  onRetry,
-}: {
-  error: string;
-  onRetry: () => void;
-}) => (
-  <div className="flex h-full w-full flex-col items-center justify-center gap-4">
-    <AlertCircleIcon className="h-5 w-5" />
+const ErrorState = ({ error, onRetry }: { error: string; onRetry: () => void }) => (
+  <div className="flex size-full flex-col items-center justify-center gap-4">
+    <AlertCircleIcon className="size-5" />
     <p className="text-md">{error}</p>
     <Button onClick={onRetry}>Try again</Button>
   </div>
@@ -69,7 +58,7 @@ const FormContent = ({
   currentSite,
   isLoading,
   onProfileSubmit,
-  onOfferingsSubmit,
+  onOfferingsSubmit
 }: {
   step: "profile" | "offerings";
   user: User;
@@ -81,17 +70,9 @@ const FormContent = ({
   <div className="w-full overflow-y-auto">
     <div className="flex w-full items-center justify-center p-6 sm:p-9">
       {step === "profile" ? (
-        <ProfileForm
-          user={user}
-          currentSite={currentSite}
-          onSubmit={onProfileSubmit}
-        />
+        <ProfileForm user={user} currentSite={currentSite} onSubmit={onProfileSubmit} />
       ) : (
-        <OfferingsForm
-          user={user}
-          onSubmit={onOfferingsSubmit}
-          isLoading={isLoading}
-        />
+        <OfferingsForm user={user} onSubmit={onOfferingsSubmit} isLoading={isLoading} />
       )}
     </div>
   </div>
@@ -101,7 +82,7 @@ const NavigationButtons = ({
   step,
   isLoading,
   onBack,
-  onSubmit,
+  onSubmit
 }: {
   step: "profile" | "offerings";
   isLoading: boolean;
@@ -130,7 +111,7 @@ const NavigationButtons = ({
 export default function OnboardingModal({
   user,
   currentSite,
-  onboardingState,
+  onboardingState
 }: {
   user: User;
   currentSite?: Site;
@@ -140,13 +121,10 @@ export default function OnboardingModal({
   const [isOpen, setIsOpen] = useState(
     !onboardingState.setupBusiness ||
       !onboardingState.preferredServices ||
-      (!user.marketExpertId && searchParams.get("source") === "market.dev"),
+      (!user.marketExpertId && searchParams.get("source") === "market.dev")
   );
-  const [validateMarketExpertLoading, setValidateMarketExpertLoading] =
-    useState(true);
-  const [validateMarketExpertError, setValidateMarketExpertError] = useState<
-    string | null
-  >(null);
+  const [validateMarketExpertLoading, setValidateMarketExpertLoading] = useState(true);
+  const [validateMarketExpertError, setValidateMarketExpertError] = useState<string | null>(null);
   const [step, setStep] = useState<"profile" | "offerings">("profile");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -171,7 +149,7 @@ export default function OnboardingModal({
         if (sourceIsMarketDev) {
           toast.success("Market.dev account connected successfully");
         }
-      },
+      }
     ).catch(() => {
       setValidateMarketExpertLoading(false);
     });
@@ -190,7 +168,7 @@ export default function OnboardingModal({
       await updateCurrentUser({
         projectName: profileData.businessName,
         businessLocation: profileData.location,
-        businessType: profileData.teamType,
+        businessType: profileData.teamType
       });
 
       if (currentSite) {
@@ -218,9 +196,7 @@ export default function OnboardingModal({
   const handleSubmitClick = () => {
     const form = document.querySelector("form");
     if (form) {
-      form.dispatchEvent(
-        new Event("submit", { cancelable: true, bubbles: true }),
-      );
+      form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
     }
   };
 

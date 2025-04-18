@@ -1,14 +1,13 @@
-import { ReactNode } from "react";
-import { notFound, redirect } from "next/navigation";
+import { getRootUrl } from "@/lib/domain";
 import { getSiteData } from "@/lib/fetchers";
 import { Metadata } from "next";
-import { getRootUrl } from "@/lib/domain";
+import { notFound, redirect } from "next/navigation";
+import { ReactNode } from "react";
 
-export async function generateMetadata({
-  params,
-}: {
-  params: { domain: string };
+export async function generateMetadata(props: {
+  params: Promise<{ domain: string }>;
 }): Promise<Metadata | null> {
+  const params = await props.params;
   const domain = decodeURIComponent(params.domain);
   const data = await getSiteData(domain);
   if (!data) {
@@ -37,17 +36,17 @@ export async function generateMetadata({
       title,
       description,
 
-      images: [image],
+      images: [image]
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
       images: [image],
-      creator: "@vercel",
+      creator: "@vercel"
     },
     icons: [logo],
-    metadataBase: new URL(`https://${domain}`),
+    metadataBase: new URL(`https://${domain}`)
     // Optional: Set canonical URL to custom domain if it exists
     // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
     //   data.customDomain && {
@@ -58,13 +57,14 @@ export async function generateMetadata({
   };
 }
 
-export default async function SiteLayout({
-  params,
-  children,
-}: {
-  params: { domain: string };
+export default async function SiteLayout(props: {
+  params: Promise<{ domain: string }>;
   children: ReactNode;
 }) {
+  const params = await props.params;
+
+  const { children } = props;
+
   const domain = decodeURIComponent(params.domain);
   const data = await getSiteData(domain);
 

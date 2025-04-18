@@ -1,22 +1,22 @@
-import { Charge, Feature, Contract } from "@prisma/client";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Store } from "lucide-react";
+import Tier from "@/app/models/Tier";
 import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
-import FeatureService from "@/app/services/feature-service";
 import ContractService from "@/app/services/contract-service";
-import CustomerPackageFeatures from "./customer-package-features";
-import ContractLink from "./contract-link";
-import Tier from "@/app/models/Tier";
+import FeatureService from "@/app/services/feature-service";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
 import { parseTierDescription } from "@/lib/utils";
+import { Charge, Feature } from "@prisma/client";
+import { Store } from "lucide-react";
+import ContractLink from "./contract-link";
+import CustomerPackageFeatures from "./customer-package-features";
 
 type TierWithFeatures = (Tier & { features: Feature[] }) | null;
 
-const ChargeCard = async ({ 
+const ChargeCard = async ({
   charge,
-  isCustomerView = true,
-}: { 
+  isCustomerView = true
+}: {
   charge: Charge;
   isCustomerView?: boolean;
 }) => {
@@ -27,7 +27,7 @@ const ChargeCard = async ({
 
   const [maintainer, hasActiveFeatures] = await Promise.all([
     UserService.findUser(tier.userId),
-    FeatureService.hasActiveFeaturesForUser(tier.userId),
+    FeatureService.hasActiveFeaturesForUser(tier.userId)
   ]);
 
   if (!maintainer) return null;
@@ -40,14 +40,13 @@ const ChargeCard = async ({
         .map((feature: string, index: number) => ({
           id: `${index}`,
           name: feature,
-          isEnabled: true,
+          isEnabled: true
         }))
     : [];
 
-  let status = "paid";
+  const status = "paid";
 
-  const contract =
-    (await ContractService.getContractById(tier.contractId || "")) || undefined;
+  const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
 
   return (
     <Card className="text-sm">
@@ -55,23 +54,17 @@ const ChargeCard = async ({
         <div className="flex flex-col">
           <div className="flex justify-between gap-2">
             <h3 className="text-base font-semibold">{tier.name}</h3>
-            <Badge variant="success" className="h-fit w-fit">
+            <Badge variant="success" className="size-fit">
               {status.charAt(0).toUpperCase() + status.slice(1)}
             </Badge>
           </div>
-          {tier.tagline && (
-            <p className="line-clamp-2 text-sm text-stone-500">
-              {tier.tagline}
-            </p>
-          )}
+          {tier.tagline && <p className="line-clamp-2 text-sm text-stone-500">{tier.tagline}</p>}
         </div>
-        <p className="mb-1 text-xl font-semibold text-stone-800">
-          USD ${tier.price}
-        </p>
+        <p className="mb-1 text-xl font-semibold text-stone-800">USD ${tier.price}</p>
         <div className="flex flex-row flex-wrap gap-x-10 gap-y-4">
           {isCustomerView && (
             <div className="flex flex-col gap-1">
-              <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+              <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
                 Purchased from
               </span>
               <div className="flex items-center gap-1.5">
@@ -82,16 +75,14 @@ const ChargeCard = async ({
           )}
 
           <div className="flex flex-col gap-1">
-            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+            <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
               Purchased On
             </span>
-            <span className="font-medium">
-              {charge.createdAt.toLocaleDateString()}
-            </span>
+            <span className="font-medium">{charge.createdAt.toLocaleDateString()}</span>
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+            <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
               Contract
             </span>
             <ContractLink contract={contract} />
@@ -108,4 +99,4 @@ const ChargeCard = async ({
   );
 };
 
-export default ChargeCard; 
+export default ChargeCard;

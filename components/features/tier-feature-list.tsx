@@ -1,13 +1,12 @@
 "use client";
 
+import { cn } from "@/lib/utils";
 import { Feature } from "@prisma/client";
 import { Check } from "lucide-react";
-import clsx from "clsx";
-import { cn } from "@/lib/utils";
 
 const TierFeatureList = ({
   features,
-  darkMode = false,
+  darkMode = false
 }: {
   features: Partial<Feature>[];
   darkMode?: boolean;

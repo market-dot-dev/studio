@@ -1,8 +1,8 @@
 import { TierWithFeatures } from "@/app/services/TierService";
-import { Mail, CreditCard } from "lucide-react";
-import { User } from "@prisma/client";
-import { Tooltip, TooltipTrigger, TooltipProvider, TooltipContent } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { User } from "@prisma/client";
+import { CreditCard, Mail } from "lucide-react";
 
 export default function CheckoutTypeSelectionInput({
   user,
@@ -21,13 +21,13 @@ export default function CheckoutTypeSelectionInput({
     const disabled = !gitwalletCheckoutEnabled;
 
     const InputComponent = ({ disabled = false }: { disabled?: boolean }) => (
-      <label className="flex h-full w-full transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-swamp">
+      <label className="focus-within:ring-swamp flex size-full transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-inset">
         <div
           className={cn(
             "flex h-full w-full flex-col items-start justify-start gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp",
             disabled
               ? "border-shadow cursor-default opacity-50"
-              : "border-shadow cursor-pointer hover:bg-stone-50",
+              : "border-shadow cursor-pointer hover:bg-stone-50"
           )}
         >
           <div className="flex w-full items-center justify-between">
@@ -43,13 +43,10 @@ export default function CheckoutTypeSelectionInput({
               type="radio"
               name={`${idPrefix}checkout-type`}
               value="gitwallet"
-              className="border-stone-400 checked:border-swamp shadow-sm checked:text-swamp focus:outline-none focus:ring-0"
+              className="checked:border-swamp checked:text-swamp border-stone-400 shadow-sm focus:outline-none focus:ring-0"
               checked={tier.checkoutType === "gitwallet"}
               onChange={(e) =>
-                handleInputChange(
-                  "checkoutType",
-                  e.target.checked ? "gitwallet" : "contact-form",
-                )
+                handleInputChange("checkoutType", e.target.checked ? "gitwallet" : "contact-form")
               }
             />
           </div>
@@ -80,27 +77,22 @@ export default function CheckoutTypeSelectionInput({
   return (
     <div className="flex flex-col gap-2">
       <GitWalletCheckout />
-      <label className="flex h-full w-full rounded focus-within:outline-none">
-        <div className="flex h-full w-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-[background-color,box-shadow] hover:shadow-border [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp">
-          <div className="flex h-full w-full items-center justify-between">
+      <label className="flex size-full rounded focus-within:outline-none">
+        <div className="shadow-border-sm hover:shadow-border [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-swamp flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 transition-[background-color,box-shadow] [&:has(input:checked)]:ring-2">
+          <div className="flex size-full items-center justify-between">
             <div className="flex items-center">
               <Mail className="mr-2.5 size-[18px] text-stone-500" />
-              <span className="text-left text-sm font-semibold text-stone-800">
-                Contact Form
-              </span>
+              <span className="text-left text-sm font-semibold text-stone-800">Contact Form</span>
             </div>
             <input
               id={`${idPrefix}checkout-type-contact-form`}
               type="radio"
               name={`${idPrefix}checkout-type`}
               value="contact-form"
-              className="border-stone-400 shadow-sm checked:border-swamp checked:text-swamp focus:outline-none focus:ring-0"
+              className="checked:border-swamp checked:text-swamp border-stone-400 shadow-sm focus:outline-none focus:ring-0"
               checked={tier.checkoutType === "contact-form"}
               onChange={(e) =>
-                handleInputChange(
-                  "checkoutType",
-                  e.target.checked ? "contact-form" : "gitwallet",
-                )
+                handleInputChange("checkoutType", e.target.checked ? "contact-form" : "gitwallet")
               }
             />
           </div>

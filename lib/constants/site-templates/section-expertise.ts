@@ -1,5 +1,5 @@
 export default {
-    name: 'Expertise',
+  name: "Expertise",
   template: `
     <div id="expertise" class="w-full scroll-mt-8 px-6 md:px-12 py-20">
       <div class="mx-auto flex max-w-5xl flex-col items-center gap-9 md:gap-12">
@@ -61,4 +61,4 @@ export default {
       </div>
     </div>
   `
-}
+};

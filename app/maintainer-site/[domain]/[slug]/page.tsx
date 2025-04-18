@@ -1,41 +1,66 @@
-import React from 'react';
 import { notFound } from "next/navigation";
 
+import renderElement from "@/components/site/page-renderer";
 import { JSDOM } from "jsdom";
-import renderElement from '@/components/site/page-renderer';
 
-import PageService from '@/app/services/PageService';
-import FeatureService from '@/app/services/feature-service';
+import PageService from "@/app/services/PageService";
+import FeatureService from "@/app/services/feature-service";
 
-export default async function SitePage({
-  params,
-}: {
-  params: { domain: string, slug: string };
+// @TODO: These typings should be universal for all "maintainer-site" pages
+// Define types matching the ones we created for renderElement
+interface Site {
+  userId?: string;
+  user?: {
+    projectDescription?: string;
+    [key: string]: any;
+  };
+  [key: string]: any;
+}
+
+interface Page {
+  content?: string;
+  [key: string]: any;
+}
+
+export default async function SitePage(props: {
+  params: Promise<{ domain: string; slug: string }>;
 }) {
+  const params = await props.params;
   const domain = decodeURIComponent(params.domain);
   const data = await PageService.getPage(domain, params.slug);
-  const activeFeatures = data?.userId ? await FeatureService.findActiveByUser(data.userId) : [];
-  
-  
+
   if (!data) {
     notFound();
   }
-  
-  const body = data.pages?.[0]?.content ?? '';
+
+  const userId = data.userId;
+  const activeFeatures = userId ? await FeatureService.findActiveByUser(userId) : [];
+  const hasActiveFeatures = Array.isArray(activeFeatures) && activeFeatures.length > 0;
+
+  const page = data.pages?.[0];
+  const body = page?.content ?? "";
 
   if (!body) {
     notFound();
   }
 
-  const dom = new JSDOM(body)
+  // Extract site data, removing pages property
+  const { pages, ...siteData } = data;
+
+  // Create DOM from HTML content
+  const dom = new JSDOM(body);
   const rootElement = dom.window.document.body;
-  const {pages, ...site} = data;
   const elements: Element[] = Array.from(rootElement.children);
-  const reactElement = renderElement(elements, 0, site, pages?.[0], false, !!activeFeatures?.length);
-  
-  return (
-    <>
-      {reactElement}
-    </>
+
+  // Render the page with properly typed data
+  const reactElement = renderElement(
+    elements,
+    0,
+    siteData as Site,
+    page as Page,
+    false,
+    hasActiveFeatures
   );
+
+  return <>{reactElement}</>;
 }

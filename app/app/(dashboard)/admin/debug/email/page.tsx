@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import UserSelectionStep from "./components/user-selection";
+import { User } from "@prisma/client";
+import { useState } from "react";
 import EmailCompositionStep from "./components/email-composition";
 import EmailPreviewStep from "./components/email-preview";
-import { User } from "@prisma/client";
-import PageHeader from "@/components/common/page-header";
+import UserSelectionStep from "./components/user-selection";
 
 const steps = ["Select Users", "Compose Email", "Preview & Send"];
 
@@ -16,7 +16,7 @@ export default function EmailTool() {
   const [selectedUsers, setSelectedUsers] = useState<User[]>([]);
   const [emailSubject, setEmailSubject] = useState("");
   const [emailContent, setEmailContent] = useState("");
-  
+
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
@@ -32,12 +32,12 @@ export default function EmailTool() {
   return (
     <div className="flex max-w-screen-xl flex-col space-y-6 p-8">
       <PageHeader title="Bulk Email Tool" />
-      
-      <div className="flex justify-between mb-4">
+
+      <div className="mb-4 flex justify-between">
         {steps.map((step, index) => (
           <div key={index} className="flex items-center">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center ${
+              className={`flex size-8 items-center justify-center rounded-full ${
                 index <= currentStep ? "bg-black text-white" : "bg-gray-200"
               }`}
             >
@@ -45,49 +45,38 @@ export default function EmailTool() {
             </div>
             <span className="ml-2">{step}</span>
             {index < steps.length - 1 && (
-              <div className="w-12 h-1 mx-2 bg-gray-200">
-                <div
-                  className={`h-full ${
-                    index < currentStep ? "bg-black" : "bg-gray-200"
-                  }`}
-                />
+              <div className="mx-2 h-1 w-12 bg-gray-200">
+                <div className={`h-full ${index < currentStep ? "bg-black" : "bg-gray-200"}`} />
               </div>
             )}
           </div>
         ))}
       </div>
-      
+
       <Card className="p-6">
         {currentStep === 0 && (
-          <UserSelectionStep 
-            selectedUsers={selectedUsers} 
-            setSelectedUsers={setSelectedUsers} 
-          />
+          <UserSelectionStep selectedUsers={selectedUsers} setSelectedUsers={setSelectedUsers} />
         )}
-        
+
         {currentStep === 1 && (
-          <EmailCompositionStep 
+          <EmailCompositionStep
             emailSubject={emailSubject}
             setEmailSubject={setEmailSubject}
             emailContent={emailContent}
             setEmailContent={setEmailContent}
           />
         )}
-        
+
         {currentStep === 2 && (
-          <EmailPreviewStep 
+          <EmailPreviewStep
             selectedUsers={selectedUsers}
             emailSubject={emailSubject}
             emailContent={emailContent}
           />
         )}
-        
-        <div className="flex justify-between mt-6">
-          <Button
-            variant="secondary"
-            onClick={prevStep}
-            disabled={currentStep === 0}
-          >
+
+        <div className="mt-6 flex justify-between">
+          <Button variant="secondary" onClick={prevStep} disabled={currentStep === 0}>
             Back
           </Button>
           <Button
@@ -104,4 +93,4 @@ export default function EmailTool() {
       </Card>
     </div>
   );
-} 
+}

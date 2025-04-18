@@ -1,57 +1,70 @@
 "use server";
 
-import { redirect } from "next/navigation";
-import { Card } from "@/components/ui/card";
-import { buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
 import StripeService from "@/app/services/StripeService";
-import DisconnectStripeAccountButton from "../../maintainer/stripe-connect/disconnect-stripe-account-button";
 import UserService from "@/app/services/UserService";
+import { buttonVariants } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import DisconnectStripeAccountButton from "../../maintainer/stripe-connect/disconnect-stripe-account-button";
 
 const StripeOauthButton = async ({ userId }: { userId: string }) => {
   const oauthUrl = await StripeService.getOAuthLink(userId);
 
-  return <Link href={oauthUrl} className={buttonVariants({ variant: "outline" })}>Connect to Stripe</Link>;
+  return (
+    <Link href={oauthUrl} className={buttonVariants({ variant: "outline" })}>
+      Connect to Stripe
+    </Link>
+  );
 };
 
 const ActionRequiredBanner: React.FC = () => (
-  <div className="flex flex-col mb-2">
+  <div className="mb-2 flex flex-col">
     <p className="font-semibold">Action Required!</p>
-    <p>It looks like there are some issues with your Stripe account settings. Please visit your <a href="https://dashboard.stripe.com" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Stripe Dashboard</a> to resolve these issues and ensure your account is fully operational. See below for details:</p>
+    <p>
+      It looks like there are some issues with your Stripe account settings. Please visit your{" "}
+      <a
+        href="https://dashboard.stripe.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-blue-600 hover:underline"
+      >
+        Stripe Dashboard
+      </a>{" "}
+      to resolve these issues and ensure your account is fully operational. See below for details:
+    </p>
   </div>
 );
 
 interface AccountCheckProps {
-  status: 'pass' | 'fail';
+  status: "pass" | "fail";
   children: React.ReactNode;
 }
 
 const AccountCheck: React.FC<AccountCheckProps> = ({ status, children }) => {
-  const color = status === 'pass' ? 'text-green-600' : 'text-red-600';
+  const color = status === "pass" ? "text-green-600" : "text-red-600";
 
-  return (
-    <li className={`${color} font-semibold`}>{children}</li>
-  );
+  return <li className={`${color} font-semibold`}>{children}</li>;
 };
 
-export default async function PaymentSettings({
-  params,
-  searchParams = {},
-}: {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+export default async function PaymentSettings(props: {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
-  const code = searchParams["code"] as string;
-  const state = searchParams["state"] as string;
+  const searchParams = await props.searchParams;
+  if (searchParams) {
+    const code = searchParams["code"] as string;
+    const state = searchParams["state"] as string;
 
-  // Check for OAuth callback
-  if (code && state) {
-    try {
-      await StripeService.handleOAuthResponse(code, state);
-    } catch (error) {
-      console.error("Error handling Stripe OAuth callback:", error);
-      // Handle error
+    // Check for OAuth callback
+    if (code && state) {
+      try {
+        await StripeService.handleOAuthResponse(code, state);
+      } catch (error) {
+        console.error("Error handling Stripe OAuth callback:", error);
+        // Handle error
+      }
     }
   }
 
@@ -61,7 +74,8 @@ export default async function PaymentSettings({
     redirect("/login");
   }
 
-  const { canSell, messageCodes, disabledReasons } = await StripeService.performStripeAccountHealthCheck();
+  const { canSell, messageCodes, disabledReasons } =
+    await StripeService.performStripeAccountHealthCheck();
 
   const stripeConnected = !!user.stripeAccountId;
 
@@ -71,25 +85,19 @@ export default async function PaymentSettings({
         <div className="flex flex-col items-start gap-4">
           {!stripeConnected && (
             <>
-              <h2 className="font-semibold text-xl">
-                Connect Stripe Account
-              </h2>
+              <h2 className="text-xl font-semibold">Connect Stripe Account</h2>
               <p className="text-sm text-stone-500">
-                Connect your Stripe account to manage and receive payments.If
-                you have made changes recently, try refreshing this page to see
-                the latest status.
+                Connect your Stripe account to manage and receive payments.If you have made changes
+                recently, try refreshing this page to see the latest status.
               </p>
               <StripeOauthButton userId={user.id!} />
             </>
           )}
           {stripeConnected ? (
             <>
-              <h2 className="font-semibold text-xl">
-                Stripe Account
-              </h2>
+              <h2 className="text-xl font-semibold">Stripe Account</h2>
               <p className="text-sm text-stone-500">
-                Your Stripe account is connected. Your account ID is:{" "}
-                {user.stripeAccountId}
+                Your Stripe account is connected. Your account ID is: {user.stripeAccountId}
               </p>
               <DisconnectStripeAccountButton user={user} />
               <>
@@ -114,8 +122,8 @@ export default async function PaymentSettings({
 
                     {disabledReasons && (
                       <p className="mt-2 text-sm text-stone-500">
-                        Stripe Error Codes (These specific codes provide a hint
-                        about what may be wrong with the account).
+                        Stripe Error Codes (These specific codes provide a hint about what may be
+                        wrong with the account).
                       </p>
                     )}
                     {disabledReasons?.map((message, index) => (

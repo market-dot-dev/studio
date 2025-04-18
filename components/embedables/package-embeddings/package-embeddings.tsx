@@ -1,23 +1,18 @@
 "use client";
 
-import CodeSnippet from "@/components/embedables/code-snippet";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
-import { useState, useEffect } from "react";
 import { TierWithFeatures } from "@/app/services/TierService";
-import embeddables from "@/components/site/embedables/index";
 import DashedCard from "@/components/common/dashed-card";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipProvider,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+import CodeSnippet from "@/components/embedables/code-snippet";
+import embeddables from "@/components/site/embedables/index";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useEffect, useState } from "react";
+import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 
 export function PackageEmbeddings({
   site,
   rootUrl,
-  searchParams,
+  searchParams
 }: {
   site: any;
   rootUrl?: string;
@@ -31,8 +26,7 @@ export function PackageEmbeddings({
   const handleDarkMode = () => setDarkmode(!darkmode);
 
   const finalRootUrl =
-    rootUrl ||
-    `https://${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+    rootUrl || `https://${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
   const tiers = selectedTiers.length
     ? "tiers=" + selectedTiers.map((tier) => tier.id).join(",")
@@ -82,9 +76,7 @@ export function PackageEmbeddings({
                         Code
                       </TabsTrigger>
                     </TooltipTrigger>
-                    <TooltipContent>
-                      Select packages in settings first
-                    </TooltipContent>
+                    <TooltipContent>Select packages in settings first</TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
               )}
@@ -107,7 +99,7 @@ export function PackageEmbeddings({
                   site={site}
                   settings={{
                     darkmode: darkmode,
-                    tiers: selectedTiers.map((tier) => tier.id),
+                    tiers: selectedTiers.map((tier) => tier.id)
                   }}
                   tiers={selectedTiers}
                   hasActiveFeatures={false}
@@ -131,10 +123,10 @@ export function PackageEmbeddings({
                   data-settings='${JSON.stringify(
                     {
                       darkMode: darkmode,
-                      tiers: selectedTiers.map((tier) => tier.id),
+                      tiers: selectedTiers.map((tier) => tier.id)
                     },
                     null,
-                    2,
+                    2
                   )}'
                   src="//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js"
                 ></script>`}

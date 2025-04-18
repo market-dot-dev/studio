@@ -1,4 +1,4 @@
-import { Channel, Prisma, Tier as TierTable } from "@prisma/client";
+import { Channel, Tier as TierTable } from "@prisma/client";
 
 //type TierWithFeatures = Prisma.TierGetPayload<{ include: { features: true } }>
 type Tier = TierTable;
@@ -11,7 +11,7 @@ const newTier = (tierData: Partial<Tier> = {}): Partial<Tier> => {
     revision: 0,
     cadence: "month",
     channels: [Channel.site],
-    ...tierData,
+    ...tierData
   };
 };
 

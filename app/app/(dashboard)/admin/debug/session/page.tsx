@@ -16,9 +16,7 @@ export default function Page() {
         <br />
         <pre>{JSON.stringify(currentUser, null, 2)}</pre>
         <br />
-        <Button onClick={async () => await refreshSession()}>
-          Refresh session data
-        </Button>
+        <Button onClick={async () => await refreshSession()}>Refresh session data</Button>
       </Card>
     );
   }

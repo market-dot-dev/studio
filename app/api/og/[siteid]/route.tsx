@@ -1,6 +1,7 @@
-import { ImageResponse } from "@vercel/og";
 import SiteService from "@/app/services/SiteService";
 import { Site } from "@prisma/client";
+import { ImageResponse } from "@vercel/og";
+import Image from "next/image";
 
 type SiteInfo = Partial<Site> & {
   user: {
@@ -10,10 +11,8 @@ type SiteInfo = Partial<Site> & {
 };
 
 // Get nav items for the site of the current admin
-export async function GET(
-  _req: Request,
-  { params }: { params: { siteid: string } },
-) {
+export async function GET(_req: Request, props: { params: Promise<{ siteid: string }> }) {
+  const params = await props.params;
   const site = (await SiteService.getSiteInfo(params.siteid)) as SiteInfo;
 
   return new ImageResponse(
@@ -29,11 +28,11 @@ export async function GET(
           backgroundImage: "linear-gradient(to bottom, #B4B4B4, #EEEEEE)",
           justifyContent: "flex-end",
           backgroundColor: "#FFF",
-          fontWeight: 800,
+          fontWeight: 800
         }}
       >
         {site.logo ? (
-          <img alt="Logo" width={65} src={site.logo ?? ""} />
+          <Image alt="Logo" width={65} src={site.logo ?? ""} />
         ) : (
           <svg
             width="65"
@@ -59,7 +58,7 @@ export async function GET(
           style={{
             fontSize: 60,
             lineHeight: 1.2,
-            color: "#000",
+            color: "#000"
           }}
         >
           {site.user?.projectName ?? ""}
@@ -69,7 +68,7 @@ export async function GET(
             fontSize: 30,
             lineHeight: 1,
             color: "#000",
-            marginBottom: "50px",
+            marginBottom: "50px"
           }}
         >
           {site.subdomain ? `${site.subdomain}.market.dev` : ""}
@@ -78,7 +77,7 @@ export async function GET(
     ),
     {
       width: 1200,
-      height: 600,
-    },
+      height: 600
+    }
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 
+import { updateCurrentUser } from "@/app/services/UserService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
-import { updateCurrentUser } from "@/app/services/UserService";
 import { toast } from "sonner";
 
 export default function BusinessSettings({ user }: { user: Partial<User> }) {
@@ -18,9 +18,9 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
     try {
       await updateCurrentUser(userData);
 
-      // call the refreshOnboarding function if it exists
-      if (window?.hasOwnProperty("refreshOnboarding")) {
-        (window as any)["refreshOnboarding"]();
+      // Use Object.prototype.hasOwnProperty.call instead of direct method access
+      if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
+        (window as any).refreshOnboarding();
       }
 
       toast.success("Project updated");
@@ -62,9 +62,8 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
                 Business Description
               </Label>
               <p className="text-xs text-stone-500">
-                Your business description is used in your store homepage (and
-                other pages where you embed the {`<SiteDescription>`}{" "}
-                component).
+                Your business description is used in your store homepage (and other pages where you
+                embed the {`<SiteDescription>`} component).
               </p>
             </div>
             <Textarea
@@ -76,17 +75,13 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
               onChange={(e) => {
                 setUserData({
                   ...userData,
-                  projectDescription: e.target.value,
+                  projectDescription: e.target.value
                 });
               }}
             />
           </div>
 
-          <Button
-            loading={isSaving}
-            loadingText="Saving Changes"
-            onClick={saveChanges}
-          >
+          <Button loading={isSaving} loadingText="Saving Changes" onClick={saveChanges}>
             Save
           </Button>
         </div>

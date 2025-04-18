@@ -42,15 +42,14 @@ model User {
   tiers                       Tier[]
   features                    Feature[]
   subscriptions               Subscription[]
-  repos                       Repo[]
   leads                       Lead[]
   onboarding                  String?
   company                     String?
   legacyStripeProductId       String?
-  charges                  Charge[]
-  contracts                Contract[]
-  prospects                Prospect[]
-  marketExpertId           String?
+  charges                     Charge[]
+  contracts                   Contract[]
+  prospects                   Prospect[]
+  marketExpertId              String?
 }
 
 model Account {
@@ -161,12 +160,12 @@ model Tier {
   features      Feature[]      @relation("FeatureToTier")
   subscriptions Subscription[]
 
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  Charge        Charge[]
-  contractId    String?
-  contract      Contract?       @relation(fields: [contractId], references: [id])
-  Prospects     Prospect[]
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  Charge     Charge[]
+  contractId String?
+  contract   Contract?  @relation(fields: [contractId], references: [id])
+  Prospects  Prospect[]
 
   @@index([userId, stripePriceId])
 }
@@ -220,24 +219,11 @@ model Subscription {
   state                String    @default("renewing")
   priceAnnual          Boolean   @default(false)
 
-  user          User            @relation(fields: [userId], references: [id])
-  tierVersion   TierVersion?    @relation(fields: [tierVersionId], references: [id])
-  tier          Tier            @relation(fields: [tierId], references: [id])
+  user        User         @relation(fields: [userId], references: [id])
+  tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
+  tier        Tier         @relation(fields: [tierId], references: [id])
 
   @@unique([userId, tierId])
-}
-
-model Repo {
-  id        String   @id @default(cuid())
-  repoId    String
-  radarId   Int?
-  name      String
-  url       String?
-  createdAt DateTime @default(now())
-  userId    String
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([repoId, userId])
 }
 
 model Service {
@@ -277,27 +263,6 @@ model Media {
   updatedAt DateTime @updatedAt
 
   @@index([siteId])
-}
-
-model GithubAppInstallation {
-  id        Int      @id
-  login     String?
-  token     String
-  expiresAt DateTime
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  members GithubOrgMember[]
-}
-
-model GithubOrgMember {
-  id                      Int @id @default(autoincrement())
-  gh_id                   Int
-  githubAppInstallationId Int
-
-  githubAppInstallation GithubAppInstallation @relation(fields: [githubAppInstallationId], references: [id], onDelete: Cascade)
-
-  @@unique([githubAppInstallationId, gh_id])
 }
 
 model Lead {

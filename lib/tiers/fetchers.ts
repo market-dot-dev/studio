@@ -1,14 +1,13 @@
-import { unstable_cache } from "next/cache";
-import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/auth";
+import prisma from "@/lib/prisma";
+import { unstable_cache } from "next/cache";
 
 // get subscriptions of the logged in customer from a specific user/site
-export async function getSubscriptions( sellerId: string) {
-  
+export async function getSubscriptions(sellerId: string) {
   const session = await getSession();
   if (!session?.user.id) {
     return {
-      error: "Not authenticated",
+      error: "Not authenticated"
     };
   }
 
@@ -33,7 +32,7 @@ export async function getSubscriptions( sellerId: string) {
                   id: true,
                   name: true,
                   tagline: true,
-                  description: true,
+                  description: true
                 }
               }
             }
@@ -41,15 +40,15 @@ export async function getSubscriptions( sellerId: string) {
         },
         orderBy: [
           {
-            createdAt: "desc",
-          },
-        ],
+            createdAt: "desc"
+          }
+        ]
       });
     },
     [`$subs-${session.user.id}-tiers`],
     {
       revalidate: 900,
-      tags: [`subs-${session.user.id}-tiers`],
-    },
+      tags: [`subs-${session.user.id}-tiers`]
+    }
   )();
 }

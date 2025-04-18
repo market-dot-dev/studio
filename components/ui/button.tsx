@@ -1,74 +1,71 @@
-import * as React from "react"
-import { Slot } from "@radix-ui/react-slot"
-import { cva, type VariantProps } from "class-variance-authority"
+import { Slot } from "@radix-ui/react-slot";
+import { cva, type VariantProps } from "class-variance-authority";
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip"
-import Spinner from "./spinner"
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import Spinner from "./spinner";
 
 const buttonVariants = cva(
-  "inline-flex items-center border-none justify-center gap-2 whitespace-nowrap rounded text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "focus-visible:ring-swamp inline-flex items-center justify-center gap-2 whitespace-nowrap rounded border-none text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "bg-gradient-to-b from-primary/90 to-primary text-primary-foreground shadow-border hover:bg-primary/90 active:shadow-border-sm",
+          "from-primary/90 to-primary text-primary-foreground shadow-border hover:bg-primary/90 active:shadow-border-sm bg-gradient-to-b",
         destructive:
-          "bg-gradient-to-b from-destructive/90 to-destructive text-destructive-foreground shadow-border hover:bg-destructive/90 active:shadow-border-sm",
-        outline:
-          "bg-white text-foreground shadow-border hover:bg-stone-50 active:shadow-border-sm",
+          "from-destructive/90 to-destructive text-destructive-foreground shadow-border hover:bg-destructive/90 active:shadow-border-sm bg-gradient-to-b",
+        outline: "text-foreground shadow-border active:shadow-border-sm bg-white hover:bg-stone-50",
         secondary: "bg-stone-200/80 text-stone-600 hover:bg-stone-200",
-        ghost: "hover:bg-stone-200 hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        ghost: "hover:text-accent-foreground hover:bg-stone-200",
+        link: "text-primary underline-offset-4 hover:underline"
       },
       size: {
         default: "h-8 px-3 ",
-        sm: "h-6 px-2 text-xs [&_svg]:size-3.5 gap-1",
+        sm: "h-6 gap-1 px-2 text-xs [&_svg]:size-3.5",
         lg: "h-10 px-6",
-        icon: "h-8 w-8 [&_svg]:size-4",
-        "icon-sm": "h-6 w-6 [&_svg]:size-4",
-      },
+        icon: "size-8 [&_svg]:size-4",
+        "icon-sm": "size-6 [&_svg]:size-4"
+      }
     },
     defaultVariants: {
       variant: "default",
-      size: "default",
-    },
-  },
+      size: "default"
+    }
+  }
 );
 
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
-  asChild?: boolean
-  loading?: boolean
-  loadingText?: string
-  tooltip?: string
-  tooltipSide?: "top" | "right" | "bottom" | "left"
-  tooltipAlign?: "start" | "center" | "end"
+  asChild?: boolean;
+  loading?: boolean;
+  loadingText?: string;
+  tooltip?: string;
+  tooltipSide?: "top" | "right" | "bottom" | "left";
+  tooltipAlign?: "start" | "center" | "end";
 }
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ 
-    className, 
-    variant, 
-    size, 
-    asChild = false, 
-    loading = false, 
-    loadingText, 
-    tooltip,
-    tooltipSide = "top",
-    tooltipAlign = "center",
-    children, 
-    disabled, 
-    ...props 
-  }, ref) => {
-    const Comp = asChild ? Slot : "button"
-    
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      loadingText,
+      tooltip,
+      tooltipSide = "top",
+      tooltipAlign = "center",
+      children,
+      disabled,
+      ...props
+    },
+    ref
+  ) => {
+    const Comp = asChild ? Slot : "button";
+
     const buttonContent = (
       <Comp
         className={cn(buttonVariants({ variant, size, className }))}
@@ -86,7 +83,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           children
         )}
       </Comp>
-    )
+    );
 
     if (tooltip) {
       return (
@@ -101,9 +98,9 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       );
     }
 
-    return buttonContent
+    return buttonContent;
   }
-)
-Button.displayName = "Button"
+);
+Button.displayName = "Button";
 
-export { Button, buttonVariants }
+export { Button, buttonVariants };

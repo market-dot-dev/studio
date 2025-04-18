@@ -1,12 +1,12 @@
 "use server";
 
+import ContractService from "@/app/services/contract-service";
+import PageHeader from "@/components/common/page-header";
+import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/auth";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import ContractSettings from "./contracts-index";
-import ContractService from "@/app/services/contract-service";
-import { Button } from "@/components/ui/button";
-import Link from 'next/link';
-import PageHeader from "@/components/common/page-header";
 
 export default async function ContractSettingsPage() {
   const session = await getSession();

@@ -1,25 +1,20 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { User } from "@prisma/client";
 import { Checkbox } from "@/components/ui/checkbox";
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import { Input } from "@/components/ui/input";
 import {
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
-  TableRow,
+  TableRow
 } from "@/components/ui/table";
+import { User } from "@prisma/client";
+import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { useEffect, useMemo, useState } from "react";
 
 interface UserSelectionStepProps {
   selectedUsers: User[];
@@ -27,21 +22,17 @@ interface UserSelectionStepProps {
 }
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[]
-  data: TData[]
-  onRowClick?: (row: TData) => void
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+  onRowClick?: (row: TData) => void;
 }
 
-function DataTable<TData, TValue>({
-  columns,
-  data,
-  onRowClick,
-}: DataTableProps<TData, TValue>) {
+function DataTable<TData, TValue>({ columns, data, onRowClick }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-  })
+    getCoreRowModel: getCoreRowModel()
+  });
 
   return (
     <Table>
@@ -53,12 +44,9 @@ function DataTable<TData, TValue>({
                 <TableHead key={header.id}>
                   {header.isPlaceholder
                     ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
+                    : flexRender(header.column.columnDef.header, header.getContext())}
                 </TableHead>
-              )
+              );
             })}
           </TableRow>
         ))}
@@ -88,35 +76,38 @@ function DataTable<TData, TValue>({
         )}
       </TableBody>
     </Table>
-  )
+  );
 }
 
-export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: UserSelectionStepProps) {
+export default function UserSelectionStep({
+  selectedUsers,
+  setSelectedUsers
+}: UserSelectionStepProps) {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
         setError(null);
-        
+
         const response = await fetch("/api/admin/users");
-        
+
         if (!response.ok) {
           // Get error details from response
           const errorData = await response.json().catch(() => ({}));
           throw new Error(errorData.message || `Error ${response.status}: ${response.statusText}`);
         }
-        
+
         const data = await response.json();
-        
+
         if (!data || !Array.isArray(data)) {
           throw new Error("Invalid data format returned from API");
         }
-        
+
         console.log(`Loaded ${data.length} users from API`);
         setUsers(data);
       } catch (error) {
@@ -126,23 +117,24 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
         setLoading(false);
       }
     };
-    
+
     fetchUsers();
   }, []);
-  
-  const filteredUsers = users.filter(user => 
-    user.email?.toLowerCase().includes(searchTerm.toLowerCase()) || 
-    user.name?.toLowerCase().includes(searchTerm.toLowerCase())
+
+  const filteredUsers = users.filter(
+    (user) =>
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.name?.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+
   const handleSelectUser = (user: User) => {
-    if (selectedUsers.some(u => u.id === user.id)) {
-      setSelectedUsers(selectedUsers.filter(u => u.id !== user.id));
+    if (selectedUsers.some((u) => u.id === user.id)) {
+      setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id));
     } else {
       setSelectedUsers([...selectedUsers, user]);
     }
   };
-  
+
   const handleSelectAll = () => {
     if (selectedUsers.length === filteredUsers.length) {
       setSelectedUsers([]);
@@ -150,99 +142,99 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
       setSelectedUsers([...filteredUsers]);
     }
   };
-  
+
   const isUserSelected = (userId: string) => {
-    return selectedUsers.some(user => user.id === userId);
+    return selectedUsers.some((user) => user.id === userId);
   };
-  
+
   const isAllSelected = filteredUsers.length > 0 && selectedUsers.length === filteredUsers.length;
-  
+
   // Define columns for the table
-  const columns = useMemo<ColumnDef<User>[]>(() => [
-    {
-      id: "select",
-      header: function SelectHeader() {
-        return (
-          <Checkbox
-            checked={isAllSelected}
-            onCheckedChange={handleSelectAll}
-            aria-label="Select all"
-          />
-        );
+  const columns = useMemo<ColumnDef<User>[]>(
+    () => [
+      {
+        id: "select",
+        header: function SelectHeader() {
+          return (
+            <Checkbox
+              checked={isAllSelected}
+              onCheckedChange={handleSelectAll}
+              aria-label="Select all"
+            />
+          );
+        },
+        cell: function SelectCell({ row }) {
+          const user = row.original;
+          return (
+            <Checkbox
+              checked={isUserSelected(user.id!)}
+              onCheckedChange={() => handleSelectUser(user)}
+              aria-label="Select row"
+              onClick={(e) => e.stopPropagation()}
+            />
+          );
+        }
       },
-      cell: function SelectCell({ row }) {
-        const user = row.original;
-        return (
-          <Checkbox
-            checked={isUserSelected(user.id!)}
-            onCheckedChange={() => handleSelectUser(user)}
-            aria-label="Select row"
-            onClick={(e) => e.stopPropagation()}
-          />
-        );
+      {
+        accessorKey: "name",
+        header: "Name",
+        cell: function NameCell({ row }) {
+          return <div>{row.original.name || "N/A"}</div>;
+        }
       },
-    },
-    {
-      accessorKey: "name",
-      header: "Name",
-      cell: function NameCell({ row }) {
-        return <div>{row.original.name || "N/A"}</div>;
-      },
-    },
-    {
-      accessorKey: "email",
-      header: "Email",
-      cell: function EmailCell({ row }) {
-        return <div>{row.original.email || "N/A"}</div>;
-      },
-    },
-  ], [isAllSelected, handleSelectAll, isUserSelected, handleSelectUser]);
-  
+      {
+        accessorKey: "email",
+        header: "Email",
+        cell: function EmailCell({ row }) {
+          return <div>{row.original.email || "N/A"}</div>;
+        }
+      }
+    ],
+    [isAllSelected, handleSelectAll, isUserSelected, handleSelectUser]
+  );
+
   // Error state
   if (error) {
     return (
-      <Card className="p-4 border border-red-200 bg-red-50">
-        <h2 className="text-lg font-semibold text-red-700 mb-2">Error Loading Users</h2>
-        <p className="text-red-600 mb-4">{error}</p>
+      <Card className="border border-red-200 bg-red-50 p-4">
+        <h2 className="mb-2 text-lg font-semibold text-red-700">Error Loading Users</h2>
+        <p className="mb-4 text-red-600">{error}</p>
         <p className="text-sm text-gray-700">
-          This could be due to insufficient permissions or server issues. 
-          Please ensure you have admin privileges and try again.
+          This could be due to insufficient permissions or server issues. Please ensure you have
+          admin privileges and try again.
         </p>
-        <Button
-          onClick={() => window.location.reload()}
-          className="mt-4"
-        >
+        <Button onClick={() => window.location.reload()} className="mt-4">
           Retry
         </Button>
       </Card>
     );
   }
-  
+
   // Loading state
   if (loading) {
     return (
       <div className="py-8 text-center">
-        <div className="animate-spin w-8 h-8 border-4 border-gray-300 border-t-black rounded-full mx-auto mb-4"></div>
+        <div className="mx-auto mb-4 size-8 animate-spin rounded-full border-4 border-gray-300 border-t-black"></div>
         <p className="text-gray-600">Loading users...</p>
       </div>
     );
   }
-  
+
   // Empty state
   if (users.length === 0) {
     return (
       <Card className="p-4 text-center">
-        <h2 className="text-lg font-semibold mb-2">No Users Found</h2>
-        <p className="text-gray-600 mb-4">
+        <h2 className="mb-2 text-lg font-semibold">No Users Found</h2>
+        <p className="mb-4 text-gray-600">
           There are no users in the system or you may not have permission to view them.
         </p>
       </Card>
     );
   }
-  
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
+      <div className="mb-4 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold">Select Recipients</h2>
           <p className="text-sm text-gray-500">
@@ -256,12 +248,8 @@ export default function UserSelectionStep({ selectedUsers, setSelectedUsers }: U
           className="max-w-xs"
         />
       </div>
-      
-      <DataTable 
-        columns={columns} 
-        data={filteredUsers} 
-        onRowClick={handleSelectUser}
-      />
+
+      <DataTable columns={columns} data={filteredUsers} onRowClick={handleSelectUser} />
     </div>
   );
-} 
+}

@@ -1,15 +1,15 @@
-import { getServerSession, type NextAuthOptions } from "next-auth";
-import GitHubProvider from "next-auth/providers/github";
-import EmailProvider from "next-auth/providers/email";
-import CredentialsProvider from "next-auth/providers/credentials";
-import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import prisma from "@/lib/prisma";
-import { Provider } from "next-auth/providers";
+import Session from "@/app/models/Session";
+import AuthService from "@/app/services/auth-service";
 import EmailService from "@/app/services/EmailService";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import RegistrationService from "@/app/services/registration-service";
-import Session from "@/app/models/Session";
-import AuthService from "@/app/services/auth-service";
+import prisma from "@/lib/prisma";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
+import { getServerSession, type NextAuthOptions } from "next-auth";
+import { Provider } from "next-auth/providers";
+import CredentialsProvider from "next-auth/providers/credentials";
+import EmailProvider from "next-auth/providers/email";
+import GitHubProvider from "next-auth/providers/github";
 import { domainCopy } from "./domain";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
@@ -31,8 +31,8 @@ export const authOptions: NextAuthOptions = {
         port: process.env.EMAIL_SERVER_PORT,
         auth: {
           user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.SENDGRID_API_KEY,
-        },
+          pass: process.env.SENDGRID_API_KEY
+        }
       },
       from: process.env.SENDGRID_FROM_EMAIL,
       // the following configuration of EmailProvider makes it use a 6 digit token number instead of a magic link
@@ -42,7 +42,7 @@ export const authOptions: NextAuthOptions = {
       },
       sendVerificationRequest: ({ identifier: email, token }) => {
         return EmailService.sendVerificationEmail(email, token, domainCopy());
-      },
+      }
     }),
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
@@ -55,9 +55,9 @@ export const authOptions: NextAuthOptions = {
           gh_id: profile.id,
           gh_username: profile.login,
           email: profile.email,
-          image: profile.avatar_url,
+          image: profile.avatar_url
         };
-      },
+      }
     }),
     isDevelopment &&
       CredentialsProvider({
@@ -66,13 +66,13 @@ export const authOptions: NextAuthOptions = {
           gh_username: {
             label: "GitHub Username",
             type: "text",
-            placeholder: "Enter your GitHub username",
+            placeholder: "Enter your GitHub username"
           },
           password: {
             label: "Password",
             type: "password",
-            placeholder: "Enter the override password",
-          },
+            placeholder: "Enter the override password"
+          }
         },
         async authorize(credentials, req) {
           if (
@@ -89,7 +89,7 @@ export const authOptions: NextAuthOptions = {
               name: "", // No default name, it will be set based on existing data or remain empty
               email: `${credentials.gh_username}@gh.${domainCopy()}`, // No default email, it will be set based on existing data or remain empty
               image: "", // No default image, it will be set based on existing data or remain empty
-              roleId: "admin",
+              roleId: "admin"
             };
 
             const user = await RegistrationService.upsertUser(userDetails);
@@ -99,13 +99,13 @@ export const authOptions: NextAuthOptions = {
 
           // If verification fails or credentials are missing, return null
           return null;
-        },
-      }),
+        }
+      })
   ].filter(Boolean) as Provider[],
   pages: {
     signIn: `/login`,
     verifyRequest: `/api/authresponse`,
-    error: "/api/authresponse", // Error code passed in query string as ?error=
+    error: "/api/authresponse" // Error code passed in query string as ?error=
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -117,15 +117,15 @@ export const authOptions: NextAuthOptions = {
         sameSite: "lax",
         path: "/",
         domain: cookieDomain,
-        secure: VERCEL_DEPLOYMENT,
-      },
-    },
+        secure: VERCEL_DEPLOYMENT
+      }
+    }
   },
   callbacks: {
     jwt: AuthService.jwtCallback,
     session: AuthService.sessionCallback,
     redirect({ url, baseUrl }: { url: string; baseUrl: string }): string {
-      // custom redirect logic 
+      // custom redirect logic
       if (!/^https?:\/\//.test(url)) {
         return url.startsWith(baseUrl) ? url : baseUrl;
       }
@@ -138,7 +138,7 @@ export const authOptions: NextAuthOptions = {
             return url;
           }
         } catch (error) {
-          console.error('Error parsing redirect URL:', error);
+          console.error("Error parsing redirect URL:", error);
         }
       }
       return url.startsWith(baseUrl) ? url : baseUrl;
@@ -155,11 +155,11 @@ export const authOptions: NextAuthOptions = {
       await prisma.user.update({
         where: { id: user.id },
         data: {
-          onboarding: JSON.stringify(defaultOnboardingState),
-        },
+          onboarding: JSON.stringify(defaultOnboardingState)
+        }
       });
-    },
-  },
+    }
+  }
 };
 
 export async function getSession() {

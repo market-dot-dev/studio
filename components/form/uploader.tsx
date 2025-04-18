@@ -17,7 +17,7 @@ export default function Uploader({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const [data, setData] = useState({
-    [name]: defaultValue,
+    [name]: defaultValue
   });
 
   const [dragActive, setDragActive] = useState(false);
@@ -33,12 +33,12 @@ export default function Uploader({
       ) {
         toast.error("Invalid file type (must be .png, .jpg, or .jpeg)");
       } else {
-        if(setChanged) setChanged(true)
+        if (setChanged) setChanged(true);
         const reader = new FileReader();
         reader.onload = (e) => {
           setData((prev) => ({ ...prev, [name]: e.target?.result as string }));
         };
-        
+
         reader.readAsDataURL(file);
       }
     }
@@ -49,11 +49,11 @@ export default function Uploader({
       <label
         htmlFor={`${name}-upload`}
         className={cn(
-          "group relative flex w-full cursor-pointer flex-col items-center justify-center rounded-md border border-stone-300/95 bg-stone-50/80 border-dashed transition-colors hover:border-stone-400 p-6",
+          "group relative flex w-full cursor-pointer flex-col items-center justify-center rounded-md border border-dashed border-stone-300/95 bg-stone-50/80 p-6 transition-colors hover:border-stone-400"
         )}
       >
         <div
-          className="absolute z-[5] h-full w-full rounded-md"
+          className="absolute z-[5] size-full rounded-md"
           onDragOver={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -84,17 +84,20 @@ export default function Uploader({
           <img
             src={data[name] as string}
             alt="Preview"
-            className={cn("h-full max-h-48 w-auto rounded-md object-cover object-center shadow-border-sm", {
-              "max-w-screen-md": aspectRatio === "aspect-video",
-              "max-w-xs": aspectRatio === "aspect-square",
-              aspectRatio,
-            })}
+            className={cn(
+              "h-full max-h-48 w-auto rounded-md object-cover object-center shadow-border-sm",
+              {
+                "max-w-screen-md": aspectRatio === "aspect-video",
+                "max-w-xs": aspectRatio === "aspect-square",
+                aspectRatio
+              }
+            )}
           />
         ) : (
           <div
             className={`${
               dragActive ? "border-2 border-black" : ""
-            }2 z-[3] flex h-full w-full flex-col items-center justify-center rounded-md px-10 transition-all ${
+            }2 z-[3] flex size-full flex-col items-center justify-center rounded-md px-10 transition-all ${
               data[name]
                 ? "bg-white/80 opacity-0 hover:opacity-100 hover:backdrop-blur-md"
                 : "bg-white opacity-100 hover:bg-stone-50"
@@ -103,7 +106,7 @@ export default function Uploader({
             <svg
               className={`${
                 dragActive ? "scale-110" : "scale-100"
-              } h-7 w-7 text-stone-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95`}
+              } size-7 text-stone-500 transition-all duration-75 group-hover:scale-110 group-active:scale-95`}
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -121,9 +124,7 @@ export default function Uploader({
             <p className="mt-2 text-center text-sm text-stone-500">
               Drag and drop or click to upload.
             </p>
-            <p className="mt-2 text-center text-sm text-stone-500">
-              Max file size: 50MB
-            </p>
+            <p className="mt-2 text-center text-sm text-stone-500">Max file size: 50MB</p>
             <span className="sr-only">Photo upload</span>
           </div>
         )}

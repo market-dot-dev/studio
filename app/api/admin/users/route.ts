@@ -1,43 +1,39 @@
-import { NextRequest, NextResponse } from "next/server";
 import UserService from "@/app/services/UserService";
-import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
-import { SessionUser } from "@/app/models/Session";
+import { getServerSession } from "next-auth";
+import { NextResponse } from "next/server";
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     // Check admin permissions
     const session = await getServerSession(authOptions);
-    
+
     if (!session?.user) {
       return NextResponse.json(
         { message: "Unauthorized - Please sign in to access this resource" },
         { status: 401 }
       );
     }
-    
+
     // For testing purposes, we can comment out the admin check to see users
     // In production, this should always be enabled
-    
+
     // Cast the session user to include our custom fields
     const user = session.user as any; // Using 'any' to avoid TypeScript errors
-    
+
     console.log("User session for admin/users API:", {
       hasRoleId: !!user?.roleId,
-      roleId: user?.roleId || 'undefined',
+      roleId: user?.roleId || "undefined"
     });
-    
+
     // Verify user is an admin
     if (user?.roleId !== "admin") {
-      return NextResponse.json(
-        { message: "Forbidden - Admin access required" },
-        { status: 403 }
-      );
+      return NextResponse.json({ message: "Forbidden - Admin access required" }, { status: 403 });
     }
-    
+
     // Use the UserService to get all users
     const users = await UserService.getCustomersMaintainers();
-    
+
     if (!users || !Array.isArray(users)) {
       console.error("UserService.getCustomersMaintainers() returned invalid data", users);
       return NextResponse.json(
@@ -45,7 +41,7 @@ export async function GET(req: NextRequest) {
         { status: 500 }
       );
     }
-    
+
     console.log(`Retrieved ${users.length} users from UserService`);
     return NextResponse.json(users);
   } catch (error) {
@@ -55,4 +51,4 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   }
-} 
+}

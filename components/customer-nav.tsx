@@ -1,16 +1,8 @@
 "use client";
 
+import { Banknote, Menu, Settings } from "lucide-react";
 import Link from "next/link";
-import {
-  Menu,
-  Settings,
-  Banknote
-} from "lucide-react";
-import {
-  useParams,
-  usePathname,
-  useSelectedLayoutSegments,
-} from "next/navigation";
+import { useParams, usePathname, useSelectedLayoutSegments } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 export default function CustomerNav() {
@@ -23,14 +15,14 @@ export default function CustomerNav() {
         name: "Purchases",
         href: "/",
         isActive: urlSegments.length === 0,
-        icon: <Banknote width={18} />,
+        icon: <Banknote width={18} />
       },
       {
         name: "Settings",
         href: "/settings",
         isActive: urlSegments[0] === "settings",
-        icon: <Settings width={18} />,
-      },
+        icon: <Settings width={18} />
+      }
     ];
   }, [urlSegments, id]);
 
@@ -59,18 +51,15 @@ export default function CustomerNav() {
         <Menu width={20} />
       </button>
       <div
-        className={`transform ${
+        className={`${
           showSidebar ? "w-full translate-x-0" : "-translate-x-full"
-        } fixed z-10 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-3 transition-all dark:border-stone-700 dark:bg-stone-900 sm:w-[var(--navWidth)] sm:translate-x-0`}
+        } fixed z-10 flex h-full flex-col justify-between border-r border-stone-200 bg-stone-100 p-3 transition-all sm:w-[var(--navWidth)] sm:translate-x-0 dark:border-stone-700 dark:bg-stone-900`}
       >
         <div className="grid gap-2">
           <div className="grid">
             {tabs.map(({ name, href, isActive, icon }) =>
               href === "" ? (
-                <span
-                  key={name}
-                  className="mt-4 text-xs font-semibold uppercase tracking-wide"
-                >
+                <span key={name} className="mt-4 text-xs font-semibold uppercase tracking-wide">
                   {name}
                 </span>
               ) : (
@@ -78,15 +67,13 @@ export default function CustomerNav() {
                   key={name}
                   href={href}
                   className={`flex items-center space-x-3 ${
-                    isActive
-                      ? "bg-white text-stone-800 shadow-border dark:bg-stone-700"
-                      : ""
-                  } rounded px-1 transition-all duration-150 ease-in-out hover:bg-white hover:shadow-border dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
+                    isActive ? "shadow-border bg-white text-stone-800 dark:bg-stone-700" : ""
+                  } hover:shadow-border rounded px-1 transition-all duration-150 ease-in-out hover:bg-white dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
                 >
                   {icon}
                   <span className="text-sm font-medium">{name}</span>
                 </Link>
-              ),
+              )
             )}
           </div>
         </div>

@@ -1,5 +1,5 @@
-'use client'
-import { createContext, useContext, useState, ReactNode } from "react";
+"use client";
+import { createContext, ReactNode, useContext, useState } from "react";
 
 interface DashboardContextType {
   siteId: string | null;
@@ -15,7 +15,13 @@ const defaultContextValue: DashboardContextType = {
 
 const DashboardContext = createContext<DashboardContextType>(defaultContextValue);
 
-export function DashboardProvider({ children, siteId }: { children: ReactNode; siteId: string | null }) {
+export function DashboardProvider({
+  children,
+  siteId
+}: {
+  children: ReactNode;
+  siteId: string | null;
+}) {
   const [fullscreen, setFullscreen] = useState<boolean>(false);
 
   return (

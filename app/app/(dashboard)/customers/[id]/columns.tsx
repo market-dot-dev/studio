@@ -1,10 +1,10 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table"
-import { User } from "@prisma/client"
-import Link from "next/link"
-import { buttonVariants } from "@/components/ui/button"
-import { ReactNode } from "react"
+import { buttonVariants } from "@/components/ui/button";
+import { User } from "@prisma/client";
+import { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
+import { ReactNode } from "react";
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -20,27 +20,27 @@ export const columns: ColumnDef<User>[] = [
     accessorKey: "company",
     header: "Company",
     cell: ({ row }) => {
-      const company = row.getValue("company") as string | null
-      return company || "(Unknown)"
+      const company = row.getValue("company") as string | null;
+      return company || "(Unknown)";
     }
   },
   {
     accessorKey: "gh_username",
     header: "Github",
     cell: ({ row }) => {
-      const username = row.getValue("gh_username") as string
+      const username = row.getValue("gh_username") as string;
       return (
         <a href={`https://www.github.com/${username}`} className="underline">
           {username}
         </a>
-      )
+      );
     }
   },
   {
     accessorKey: "email",
     header: "Email",
     cell: ({ row }) => {
-      const email = row.getValue("email") as string
+      const email = row.getValue("email") as string;
       return (
         <div className="flex items-center gap-4">
           <Link href={`mailto:${email}`} className="underline">
@@ -50,16 +50,16 @@ export const columns: ColumnDef<User>[] = [
             Contact
           </Link>
         </div>
-      )
+      );
     }
   }
-]
+];
 
 // Customer Overview Table
 export type KeyValuePair = {
-  field: string
-  value: string | number | ReactNode | null
-}
+  field: string;
+  value: string | number | ReactNode | null;
+};
 
 export const customerOverviewColumns: ColumnDef<KeyValuePair>[] = [
   {
@@ -74,21 +74,21 @@ export const customerOverviewColumns: ColumnDef<KeyValuePair>[] = [
       const value = row.getValue("value");
       return value;
     }
-  },
-]
+  }
+];
 
 // Subscription Table
 export type CustomerSubscription = {
-  id: string
+  id: string;
   tier: {
-    name: string
-    price: number | null
-  }
-  tierVersionId: string | null
-  status: string
-  createdAt: string
-  cancelledAt: string | null
-}
+    name: string;
+    price: number | null;
+  };
+  tierVersionId: string | null;
+  status: string;
+  createdAt: string;
+  cancelledAt: string | null;
+};
 
 export const subscriptionColumns: ColumnDef<KeyValuePair>[] = [
   {
@@ -103,18 +103,18 @@ export const subscriptionColumns: ColumnDef<KeyValuePair>[] = [
       const value = row.getValue("value");
       return value;
     }
-  },
-]
+  }
+];
 
 // Charge Table
 export type CustomerCharge = {
-  id: string
+  id: string;
   tier: {
-    name: string
-    price: number | null
-  }
-  createdAt: string
-}
+    name: string;
+    price: number | null;
+  };
+  createdAt: string;
+};
 
 export const chargeColumns: ColumnDef<KeyValuePair>[] = [
   {
@@ -129,5 +129,5 @@ export const chargeColumns: ColumnDef<KeyValuePair>[] = [
       const value = row.getValue("value");
       return value;
     }
-  },
-] 
+  }
+];

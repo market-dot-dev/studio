@@ -1,9 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import { destroyContract } from "@/app/services/contract-service";
-import { Trash } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,17 +9,30 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { Trash } from "lucide-react";
+import { useState } from "react";
 
-const ContractDeleteButton = ({ contractId, onConfirm, onSuccess, onError }: { contractId: string, onSuccess: any, onError: any, onConfirm: any }) => {
+const ContractDeleteButton = ({
+  contractId,
+  onConfirm,
+  onSuccess,
+  onError
+}: {
+  contractId: string;
+  onSuccess: any;
+  onError: any;
+  onConfirm: any;
+}) => {
   const [loading, setLoading] = useState(false);
   const [open, setOpen] = useState(false);
 
   const handleDelete = async () => {
     setLoading(true);
     onConfirm();
-    
+
     try {
       await destroyContract(contractId);
       onSuccess();
@@ -42,11 +52,7 @@ const ContractDeleteButton = ({ contractId, onConfirm, onSuccess, onError }: { c
 
   return (
     <>
-      <Button 
-        className="w-min" 
-        variant="destructive" 
-        onClick={showWarning}
-      >
+      <Button className="w-min" variant="destructive" onClick={showWarning}>
         <Trash />
         Delete
       </Button>
@@ -60,12 +66,8 @@ const ContractDeleteButton = ({ contractId, onConfirm, onSuccess, onError }: { c
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setOpen(false)}>
-              No, keep contract
-            </AlertDialogCancel>
-            <AlertDialogAction
-              asChild
-            >
+            <AlertDialogCancel onClick={() => setOpen(false)}>No, keep contract</AlertDialogCancel>
+            <AlertDialogAction asChild>
               <Button
                 variant="destructive"
                 loading={loading}
@@ -81,6 +83,6 @@ const ContractDeleteButton = ({ contractId, onConfirm, onSuccess, onError }: { c
       </AlertDialog>
     </>
   );
-}
+};
 
 export default ContractDeleteButton;

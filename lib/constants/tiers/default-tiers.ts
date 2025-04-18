@@ -20,10 +20,10 @@ const defaultTiers: defaultTier[] = [
       price: 0,
       cadence: "month",
       description: "",
-      checkoutType: "contact-form",
+      checkoutType: "contact-form"
     },
-    metaDescription: "A blank package to start from scratch.",
-  },
+    metaDescription: "A blank package to start from scratch."
+  }
 ];
 
 const supportTiers = [
@@ -37,15 +37,14 @@ const supportTiers = [
 - Access to private support channels
 - Assistance with bug fixes and minor issues
 `,
-      checkoutType: "contact-form",
+      checkoutType: "contact-form"
     },
-    metaDescription: "Provide essential support for your project.",
+    metaDescription: "Provide essential support for your project."
   },
   {
     data: {
       name: "Premium Support",
-      tagline:
-        "Ideal for teams that need quicker response times and premium support.",
+      tagline: "Ideal for teams that need quicker response times and premium support.",
       price: 5000,
       cadence: "month",
       description: `- All features of Basic Support, plus
@@ -53,15 +52,14 @@ const supportTiers = [
 - Monthly office hours for your team
 - Regular project status updates and performance monitoring
 `,
-      checkoutType: "contact-form",
+      checkoutType: "contact-form"
     },
-    metaDescription: "Provide premium support and quicker response times.",
+    metaDescription: "Provide premium support and quicker response times."
   },
   {
     data: {
       name: "Enterprise Support",
-      tagline:
-        "Comprehensive support ideal for enterprises and larger scale projects",
+      tagline: "Comprehensive support ideal for enterprises and larger scale projects",
       price: 8000,
       cadence: "month",
       description: `- All features of Premium Support, plus
@@ -73,11 +71,10 @@ const supportTiers = [
 - Assistance with major issues and project optimization
 - Monthly performance reviews and strategic planning sessions
 `,
-      checkoutType: "contact-form",
+      checkoutType: "contact-form"
     },
-    metaDescription:
-      "Provide the highest level of support & rapid response to your customers.",
-  },
+    metaDescription: "Provide the highest level of support & rapid response to your customers."
+  }
 ] as defaultTier[];
 
 const trainingTiers = [
@@ -91,10 +88,9 @@ const trainingTiers = [
 - Upto 5 hours of training sessions per month
 - Access to private repos and training materials
 `,
-      checkoutType: "contact-form",
+      checkoutType: "contact-form"
     },
-    metaDescription:
-      "Offer training sessions for users of your open source project.",
+    metaDescription: "Offer training sessions for users of your open source project."
   },
   {
     data: {
@@ -107,11 +103,10 @@ const trainingTiers = [
 - Access to private repos and training materials
 - Availability in your Slack server
 `,
-      checkoutType: "contact-form",
+      checkoutType: "contact-form"
     },
-    metaDescription:
-      "Offer a comprehensive training package to larger companies.",
-  },
+    metaDescription: "Offer a comprehensive training package to larger companies."
+  }
 ] as defaultTier[];
 
 const consultingTiers = [
@@ -126,10 +121,9 @@ const consultingTiers = [
 - Performance audits
 - Recommendations for performance enhancements
 - Regular performance reports`,
-      checkoutType: "contact-form",
+      checkoutType: "contact-form"
     },
-    metaDescription:
-      "Offer performance optimization services for a specific ecosystem.",
+    metaDescription: "Offer performance optimization services for a specific ecosystem."
   },
   {
     data: {
@@ -144,29 +138,29 @@ const consultingTiers = [
 - Penetration testing
 - Setting up security monitoring tools
 `,
-      checkoutType: "contact-form",
+      checkoutType: "contact-form"
     },
-    metaDescription: "Offer security auditing services for a specific .",
-  },
+    metaDescription: "Offer security auditing services for a specific ."
+  }
 ] as defaultTier[];
 
 export const categorizedTiers = [
   {
     name: "Default",
-    tiers: defaultTiers,
+    tiers: defaultTiers
   },
   {
     name: "Support",
-    tiers: supportTiers,
+    tiers: supportTiers
   },
   {
     name: "Training",
-    tiers: trainingTiers,
+    tiers: trainingTiers
   },
   {
     name: "Consulting",
-    tiers: consultingTiers,
-  },
+    tiers: consultingTiers
+  }
 ];
 
 export default categorizedTiers.map(({ tiers }) => tiers).flat();

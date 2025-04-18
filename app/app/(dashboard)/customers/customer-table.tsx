@@ -1,9 +1,9 @@
-import { User, Subscription, Charge } from "@prisma/client";
-import React from "react";
 import Tier from "@/app/models/Tier";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
 import { DataTable } from "@/components/ui/data-table";
+import { Charge, Subscription, User } from "@prisma/client";
+import Link from "next/link";
+import React from "react";
 import { CustomerTableItem, columns } from "./columns";
 
 export type CustomerWithChargesAndSubscriptions = User & {
@@ -29,7 +29,7 @@ export const CustomersTable: React.FC<{
         tierName: sub.tier.name,
         statusType: "subscription" as const,
         createdAt: sub.createdAt,
-        subscription: sub,
+        subscription: sub
       })),
       ...customer.charges.map((charge) => ({
         id: charge.id,
@@ -40,8 +40,8 @@ export const CustomersTable: React.FC<{
         tierName: charge.tier.name,
         statusType: "charge" as const,
         createdAt: charge.createdAt,
-        charge: charge,
-      })),
+        charge: charge
+      }))
     ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
     return allItems;
@@ -51,17 +51,12 @@ export const CustomersTable: React.FC<{
 
   return (
     <>
-      <DataTable 
-        columns={columns} 
-        data={visibleData} 
-      />
-      
+      <DataTable columns={columns} data={visibleData} />
+
       {!showAll && maxInitialRows && tableData.length > maxInitialRows && (
         <div className="grid justify-items-end">
           <Button variant="outline" asChild>
-            <Link href="/customers">
-              View All Customers
-            </Link>
+            <Link href="/customers">View All Customers</Link>
           </Button>
         </div>
       )}

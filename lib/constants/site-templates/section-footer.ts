@@ -1,6 +1,6 @@
 export default {
-    name: 'Footer',
-    template: `
+  name: "Footer",
+  template: `
         <footer class="flex w-full items-center justify-center gap-6 p-6">
             <a href="#" class="group flex items-center gap-1 rounded-sm font-medium text-gray-500 transition-all hover:text-gray-600 focus-visible:text-gray-600">
                 Github
@@ -25,4 +25,4 @@ export default {
             </a>
         </footer>
     `
-}
+};

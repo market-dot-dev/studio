@@ -1,20 +1,18 @@
-import Image from "next/image";
-import clsx from "clsx";
+import { uploadLogo, validateSubdomain } from "@/app/services/SiteService";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { ImageIcon } from "lucide-react";
-import { useRef, useState } from "react";
-import { Site, User } from "@prisma/client";
-import { uploadLogo, validateSubdomain } from "@/app/services/SiteService";
-import { toast } from "sonner";
-import { isGitWalletError } from "@/lib/errors";
-import * as Sentry from "@sentry/nextjs";
 import { getRootUrl } from "@/lib/domain";
-import TeamSelectionRadioGroup, {
-  TeamType,
-} from "./team-selection-radio-group";
+import { isGitWalletError } from "@/lib/errors";
+import { Site, User } from "@prisma/client";
+import * as Sentry from "@sentry/nextjs";
+import clsx from "clsx";
+import { ImageIcon } from "lucide-react";
+import Image from "next/image";
+import { useRef, useState } from "react";
+import { toast } from "sonner";
 import LocationEntryInput from "./location-entry-input";
+import TeamSelectionRadioGroup, { TeamType } from "./team-selection-radio-group";
 
 interface ProfileData {
   businessName: string;
@@ -30,11 +28,7 @@ interface ProfileFormProps {
   currentSite?: Site;
 }
 
-export default function ProfileForm({
-  user,
-  onSubmit,
-  currentSite,
-}: ProfileFormProps) {
+export default function ProfileForm({ user, onSubmit, currentSite }: ProfileFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isDraggingOverDropzone, setIsDraggingOverDropzone] = useState(false);
@@ -93,7 +87,7 @@ export default function ProfileForm({
         subdomain,
         location: form.location.value,
         teamType: teamType!,
-        logo,
+        logo
       });
     } catch (error) {
       if (isGitWalletError(error)) {
@@ -116,27 +110,23 @@ export default function ProfileForm({
             <Image
               src="/gw-logo-nav.png"
               alt="Gitwallet Logo"
-              className="h-9 w-9 shrink-0"
+              className="size-9 shrink-0"
               height={36}
               width={36}
             />
           </div>
 
           <div className="space-y-1 text-center">
-            <h1 className="text-xl font-bold tracking-tightish text-stone-800">
+            <h1 className="tracking-tightish text-xl font-bold text-stone-800">
               Welcome to market.dev
             </h1>
-            <h2 className="text-sm font-normal text-stone-500">
-              Tell us about your business
-            </h2>
+            <h2 className="text-sm font-normal text-stone-500">Tell us about your business</h2>
           </div>
         </div>
 
         <div className="space-y-6">
           <div className="space-y-2">
-            <Label htmlFor="businessName">
-              Business Name
-            </Label>
+            <Label htmlFor="businessName">Business Name</Label>
             <Input
               id="businessName"
               name="businessName"
@@ -148,10 +138,8 @@ export default function ProfileForm({
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="subdomain">
-              Domain
-            </Label>
-            <div className="flex items-center justify-between gap-4 rounded bg-white shadow-border-sm">
+            <Label htmlFor="subdomain">Domain</Label>
+            <div className="shadow-border-sm flex items-center justify-between gap-4 rounded bg-white">
               <Input
                 id="subdomain"
                 className="rounded-r-none shadow-none"
@@ -161,9 +149,7 @@ export default function ProfileForm({
                 name="subdomain"
                 required
               />
-              <span className="pr-3 text-sm text-stone-400">
-                .market.dev
-              </span>
+              <span className="pr-3 text-sm text-stone-400">.market.dev</span>
             </div>
             {/* {subdomainError && (
               <p className="text-sm text-red-500">{subdomainError}</p>
@@ -176,14 +162,12 @@ export default function ProfileForm({
           <div className="space-y-2">
             <Label>
               Logo
-              <span className="ml-1 text-xs font-normal text-stone-500">
-                (Optional)
-              </span>
+              <span className="ml-1 text-xs font-normal text-stone-500">(Optional)</span>
             </Label>
             <div
               className={clsx(
-                "rounded-lg border border-dashed bg-stone-150 p-10 text-center transition-colors",
-                isDraggingOverDropzone ? "border-stone-400" : "border-stone-300",
+                "bg-stone-150 rounded-lg border border-dashed p-10 text-center transition-colors",
+                isDraggingOverDropzone ? "border-stone-400" : "border-stone-300"
               )}
               onDragEnter={handleDragEnter}
               onDragOver={handleDragEnter}
@@ -197,13 +181,10 @@ export default function ProfileForm({
                 className="hidden"
                 accept="image/*"
               />
-              {file ||
-              (currentSite?.logo && currentSite.logo !== defaultLogoUrl) ? (
+              {file || (currentSite?.logo && currentSite.logo !== defaultLogoUrl) ? (
                 <div className="mx-auto flex flex-col items-center">
                   <Image
-                    src={
-                      file ? URL.createObjectURL(file) : currentSite!.logo ?? ""
-                    }
+                    src={file ? URL.createObjectURL(file) : (currentSite!.logo ?? "")}
                     alt="Selected file preview"
                     height={80}
                     width={80}
@@ -221,7 +202,7 @@ export default function ProfileForm({
                 </div>
               ) : (
                 <div className="mx-auto flex flex-col items-center">
-                  <ImageIcon className="mx-auto h-6 w-6 text-stone-400" />
+                  <ImageIcon className="mx-auto size-6 text-stone-400" />
                   <div className="mt-3 text-xs text-stone-500">
                     <p>Drag & drop a .png or .jpg</p>
                     <p>
@@ -230,7 +211,7 @@ export default function ProfileForm({
                         type="button"
                         variant="link"
                         onClick={handleFilePicker}
-                        className="!h-fit text-xs font-semibold p-0 cursor-pointer underline"
+                        className="!h-fit cursor-pointer p-0 text-xs font-semibold underline"
                       >
                         pick an image
                       </Button>
@@ -242,10 +223,7 @@ export default function ProfileForm({
           </div>
 
           <LocationEntryInput />
-          <TeamSelectionRadioGroup
-            teamType={teamType}
-            setTeamType={setTeamType}
-          />
+          <TeamSelectionRadioGroup teamType={teamType} setTeamType={setTeamType} />
         </div>
       </div>
     </form>

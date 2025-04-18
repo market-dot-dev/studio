@@ -1,7 +1,7 @@
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
 import UserService from "@/app/services/UserService";
 import GeneralSettings from "@/components/user/general-settings";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
 export default async function GeneralSettingsPage() {
   const session = await getSession();
@@ -16,10 +16,9 @@ export default async function GeneralSettingsPage() {
     redirect("/login");
   }
 
-  return (    
+  return (
     <div className="space-y-6">
-        <GeneralSettings user={user} />
+      <GeneralSettings user={user} />
     </div>
-    
   );
 }

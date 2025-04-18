@@ -1,64 +1,63 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import * as TabsPrimitive from "@radix-ui/react-tabs"
-import { cva, type VariantProps } from "class-variance-authority"
-import Link from "next/link"
+import * as TabsPrimitive from "@radix-ui/react-tabs";
+import { cva, type VariantProps } from "class-variance-authority";
+import Link from "next/link";
+import * as React from "react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
-const Tabs = TabsPrimitive.Root
+const Tabs = TabsPrimitive.Root;
 
-const tabsListVariants = cva("inline-flex items-center text-muted-foreground", {
+const tabsListVariants = cva("text-muted-foreground inline-flex items-center", {
   variants: {
     variant: {
       default:
-        "border-b border-stone-200 w-full gap-6 overflow-x-auto overflow-y-visible scrollbar-hide",
-      background: "p-1 rounded-lg bg-stone-900/5 w-fit",
-      pills: "gap-1 w-fit",
-    },
+        "scrollbar-hide w-full gap-6 overflow-x-auto overflow-y-visible border-b border-stone-200",
+      background: "w-fit rounded-lg bg-stone-900/5 p-1",
+      pills: "w-fit gap-1"
+    }
   },
   defaultVariants: {
-    variant: "default",
-  },
+    variant: "default"
+  }
 });
 
-export interface TabsListProps 
+export interface TabsListProps
   extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>,
     VariantProps<typeof tabsListVariants> {}
 
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  TabsListProps
->(({ className, variant, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={cn(tabsListVariants({ variant, className }))}
-    {...props}
-  />
-))
-TabsList.displayName = TabsPrimitive.List.displayName
+const TabsList = React.forwardRef<React.ElementRef<typeof TabsPrimitive.List>, TabsListProps>(
+  ({ className, variant, ...props }, ref) => (
+    <TabsPrimitive.List
+      ref={ref}
+      className={cn(tabsListVariants({ variant, className }))}
+      {...props}
+    />
+  )
+);
+TabsList.displayName = TabsPrimitive.List.displayName;
 
 const tabsTriggerVariants = cva(
-  "relative inline-flex items-center justify-center whitespace-nowrap rounded text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4",
+  "ring-offset-background focus-visible:ring-swamp relative inline-flex items-center justify-center whitespace-nowrap rounded text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4",
   {
     variants: {
       variant: {
         default:
-          "py-2 data-[state=active]:text-foreground hover:text-foreground data-[state=active]:after:content-[''] data-[state=active]:after:absolute data-[state=active]:after:left-0 data-[state=active]:after:right-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-[2px] data-[state=active]:after:bg-foreground data-[state=active]:after:rounded-t-[2px]",
+          "data-[state=active]:text-foreground hover:text-foreground data-[state=active]:after:bg-foreground py-2 data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-[2px] data-[state=active]:after:rounded-t-[2px] data-[state=active]:after:content-['']",
         background:
-          "py-1.5 px-3 data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-border-sm hover:text-foreground focus:text-foreground",
+          "data-[state=active]:text-foreground data-[state=active]:shadow-border-sm hover:text-foreground focus:text-foreground px-3 py-1.5 data-[state=active]:bg-white",
         pills:
-          "py-1.5 px-3 rounded-full data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-border hover:text-foreground",
-      },
+          "data-[state=active]:text-foreground data-[state=active]:shadow-border hover:text-foreground rounded-full px-3 py-1.5 data-[state=active]:bg-white"
+      }
     },
     defaultVariants: {
-      variant: "default",
-    },
-  },
+      variant: "default"
+    }
+  }
 );
 
-export interface TabsTriggerProps 
+export interface TabsTriggerProps
   extends React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>,
     VariantProps<typeof tabsTriggerVariants> {}
 
@@ -71,8 +70,8 @@ const TabsTrigger = React.forwardRef<
     className={cn(tabsTriggerVariants({ variant, className }))}
     {...props}
   />
-))
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+));
+TabsTrigger.displayName = TabsPrimitive.Trigger.displayName;
 
 const TabsContent = React.forwardRef<
   React.ElementRef<typeof TabsPrimitive.Content>,
@@ -86,8 +85,8 @@ const TabsContent = React.forwardRef<
     )}
     {...props}
   />
-))
-TabsContent.displayName = TabsPrimitive.Content.displayName
+));
+TabsContent.displayName = TabsPrimitive.Content.displayName;
 
 export interface LinkTabsProps {
   items: {
@@ -100,12 +99,15 @@ export interface LinkTabsProps {
 }
 
 // LinkTab component for individual tabs - helps with hydration
-function LinkTab({ item, variant }: { 
+function LinkTab({
+  item,
+  variant
+}: {
   item: { name: string; href: string; isActive: boolean };
   variant: "default" | "background" | "pills";
 }) {
   const [mounted, setMounted] = React.useState(false);
-  
+
   // Only set the data-state attribute after component has mounted on client
   React.useEffect(() => {
     setMounted(true);
@@ -131,7 +133,13 @@ function LinkTab({ item, variant }: {
 
 function LinkTabs({ items, variant = "default", className }: LinkTabsProps) {
   return (
-    <div className={cn(tabsListVariants({ variant }), "relative overflow-x-auto overflow-y-visible scrollbar-hide", className)}>
+    <div
+      className={cn(
+        tabsListVariants({ variant }),
+        "scrollbar-hide relative overflow-x-auto overflow-y-visible",
+        className
+      )}
+    >
       {items.map((item) => (
         <LinkTab key={item.name} item={item} variant={variant} />
       ))}
@@ -139,4 +147,4 @@ function LinkTabs({ items, variant = "default", className }: LinkTabsProps) {
   );
 }
 
-export { Tabs, TabsList, TabsTrigger, TabsContent, LinkTabs }
+export { LinkTabs, Tabs, TabsContent, TabsList, TabsTrigger };

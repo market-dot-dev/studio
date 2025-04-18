@@ -2,13 +2,13 @@
 
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
+import { DataTable } from "@/components/ui/data-table";
 import RoleSwitcher from "@/components/user/role-switcher";
 import { columns, DebugLink } from "./columns";
-import { DataTable } from "@/components/ui/data-table";
 
 const Debug = async () => {
   const user = await UserService.getCurrentUser();
-  if(!user || !(user.roleId === "admin")) {
+  if (!user || !(user.roleId === "admin")) {
     return <div>Not logged in</div>;
   }
 
@@ -20,9 +20,7 @@ const Debug = async () => {
     { name: "Stripe Debug", href: "/admin/debug/stripe-debug" },
     { name: "Stripe Connect", href: "/settings/payment" },
     { name: "Stripe Validation", href: `/admin/debug/${user?.id}/validation` },
-    { name: "Active Subscriptions", href: "/subscriptions" },
-    { name: "Session Viewer", href: "/admin/debug/session" },
-    { name: "Sentry Example", href: "/admin/debug/sentry-example-page" },
+    { name: "Session Viewer", href: "/admin/debug/session" }
   ];
 
   // Add the role switcher as a special row that will be handled separately
@@ -33,7 +31,7 @@ const Debug = async () => {
       <PageHeader title="Debug Tools" />
 
       <DataTable columns={columns} data={debugLinks} />
-      
+
       <div className="mt-4 border-t pt-4">
         <div className="flex items-center justify-between">
           <div className="font-medium">Switch Role</div>

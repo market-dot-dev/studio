@@ -1,21 +1,32 @@
 import { PrismaClient } from "@prisma/client";
+// import "server-only"; // @NOTE: Outcommented as it was breaking a client component in vercel build... somewhere.
 
-declare global {
-  var prisma: PrismaClient | undefined;
+// Define the type for the global object to store the Prisma instance
+const globalForPrisma = global as unknown as {
+  prisma: PrismaClient | undefined;
+};
+
+// Create a new Prisma instance with appropriate logging settings
+function createPrismaClient() {
+  const isDev = process.env.NODE_ENV === "development";
+  const isTest = process.env.NODE_ENV === "test";
+
+  // Only enable detailed logging in development/test environments
+  if (isDev || isTest) {
+    return new PrismaClient({
+      log: ["query", "info", "warn", "error"]
+    });
+  }
+
+  return new PrismaClient();
 }
 
-const isDevelopment = process.env.NODE_ENV === "development";
-const isTest = process.env.NODE_ENV === "test";
-const isDevOrTest = isDevelopment || isTest;
+// Use existing instance if available to prevent multiple instances during hot reloading
+const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
-const newPrisma = () => {
-  return false && isDevOrTest ?
-    new PrismaClient({ log: ['query', 'info', 'warn', 'error'] }) :
-    new PrismaClient();
+// Only save the instance in development to prevent memory leaks in production
+if (process.env.NODE_ENV !== "production") {
+  globalForPrisma.prisma = prisma;
 }
-
-const prisma = global.prisma || newPrisma();
-
-if (isDevOrTest) global.prisma = prisma;
 
 export default prisma;

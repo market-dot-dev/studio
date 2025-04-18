@@ -1,21 +1,28 @@
 "use client";
 
-import React, { useCallback, useEffect, useRef, useState } from "react";
 import Editor from "@monaco-editor/react";
-import { Eye, Code, SquareSplitHorizontal, Maximize, Minimize, SquareArrowOutUpRight } from "lucide-react";
 import clsx from "clsx";
+import {
+  Code,
+  Eye,
+  Maximize,
+  Minimize,
+  SquareArrowOutUpRight,
+  SquareSplitHorizontal
+} from "lucide-react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import renderElement from "./page-renderer";
 
 import { Button } from "@/components/ui/button";
-import { Page, Site } from "@prisma/client";
-import PageEditorSidebar from "./page-editor-sidebar";
-import { useFullscreen } from "../dashboard/dashboard-context";
-import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
-import Link from "next/link";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { Page, Site } from "@prisma/client";
+import Link from "next/link";
+import { useFullscreen } from "../dashboard/dashboard-context";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
+import PageEditorSidebar from "./page-editor-sidebar";
 
 interface PageEditorProps {
   site: Partial<Site>;
@@ -53,21 +60,21 @@ export default function PageEditor({
   onContentChange,
   onSave,
   inProgress
-}: PageEditorProps): JSX.Element {
+}: PageEditorProps) {
   const isHome = page.id === homepageId;
 
   const [editorRef, setEditorRef] = useState<any>(null);
   const [monacoRef, setMonacoRef] = useState<any>(null);
-  
+
   // 0: "preview",
   // 1: "code",
   // 2: "split",
   const [viewMode, setViewMode] = useState<number>(0);
-  
+
   const [previewElement, setPreviewElement] = useState<any>(null);
 
-  const {fullscreen, setFullscreen} = useFullscreen();
-  
+  const { fullscreen, setFullscreen } = useFullscreen();
+
   function handleEditorDidMount(editor: any, monaco: any) {
     setMonacoRef(monaco);
     setEditorRef(editor);
@@ -76,7 +83,7 @@ export default function PageEditor({
   const generatePreview = useCallback(() => {
     try {
       const parser = new DOMParser();
-      const content = typeof page?.content === 'string' ? page.content : '';
+      const content = typeof page?.content === "string" ? page.content : "";
       const doc = parser.parseFromString(content, "text/html");
       const rootElement = doc.body.children;
       setPreviewElement(Array.from(rootElement));
@@ -93,7 +100,7 @@ export default function PageEditor({
       setPreviewElement(null);
     }
   }, [viewMode, generatePreview]);
-  
+
   // Preview generation on content changes
   useEffect(() => {
     // Only regenerate preview when content changes
@@ -103,31 +110,18 @@ export default function PageEditor({
     }
   }, [page?.content, generatePreview]);
 
-  const linkWithSlug = siteUrl ? siteUrl + (isHome ? '' : page.slug || '') : '';
+  const linkWithSlug = siteUrl ? siteUrl + (isHome ? "" : page.slug || "") : "";
 
   const preview = (
     <PreviewFrame>
       {previewElement
-        ? (
-          renderElement(
-            previewElement as Element,
-            0,
-            site,
-            page,
-            true,
-            hasActiveFeatures
-          )
-        ) : null}
+        ? renderElement(previewElement as Element, 0, site, page, true, hasActiveFeatures)
+        : null}
     </PreviewFrame>
-  )
+  );
 
   const codeview = (useWithRefs?: boolean) => (
-    <div
-      className={clsx(
-        "grid gap-4 pt-0",
-        fullscreen ? "grid-cols-5" : "grid-cols-4",
-      )}
-    >
+    <div className={clsx("grid gap-4 pt-0", fullscreen ? "grid-cols-5" : "grid-cols-4")}>
       {viewMode !== 2 ? (
         <div className="col-span-1">
           <PageEditorSidebar editorRef={editorRef} monacoRef={monacoRef} />
@@ -141,10 +135,10 @@ export default function PageEditor({
               : "col-span-5"
             : viewMode < 2
               ? "col-span-3"
-              : "col-span-4",
+              : "col-span-4"
         )}
       >
-        <div className="sticky top-0 h-[100vh] w-full border border-y-0 border-r-0">
+        <div className="sticky top-0 h-screen w-full border border-y-0 border-r-0">
           <Editor
             height="max(100%, 90vh)" // By default, it does not have a size
             defaultLanguage="html"
@@ -157,8 +151,8 @@ export default function PageEditor({
             onMount={useWithRefs ? handleEditorDidMount : () => {}}
             options={{
               minimap: {
-                enabled: false,
-              },
+                enabled: false
+              }
             }}
           />
         </div>
@@ -186,9 +180,7 @@ export default function PageEditor({
                         value={page?.title || ""}
                         onChange={(e) => onTitleChange(e.target.value)}
                       />
-                      {titleError && (
-                        <p className="text-sm text-rose-500">{titleError}</p>
-                      )}
+                      {titleError && <p className="text-sm text-rose-500">{titleError}</p>}
                     </div>
                   </td>
                 </tr>
@@ -205,9 +197,7 @@ export default function PageEditor({
                         value={page?.slug || ""}
                         onChange={(e) => onSlugChange(e.target.value)}
                       />
-                      {slugError && (
-                        <p className="text-sm text-rose-500">{slugError}</p>
-                      )}
+                      {slugError && <p className="text-sm text-rose-500">{slugError}</p>}
                     </div>
                   </td>
                 </tr>
@@ -216,16 +206,8 @@ export default function PageEditor({
                     <Label>Live Link</Label>
                   </td>
                   <td className="pt-2">
-                    <Button
-                      variant="secondary"
-                      disabled={isDraft || !page.slug}
-                      asChild
-                    >
-                      <Link
-                        href={linkWithSlug}
-                        target="_blank"
-                        className="align-bottom"
-                      >
+                    <Button variant="secondary" disabled={isDraft || !page.slug} asChild>
+                      <Link href={linkWithSlug} target="_blank" className="align-bottom">
                         {linkWithSlug} ↗
                       </Link>
                     </Button>
@@ -238,9 +220,7 @@ export default function PageEditor({
       ) : null}
       <div>
         <Tabs
-          defaultValue={
-            viewMode === 0 ? "preview" : viewMode === 1 ? "code" : "split"
-          }
+          defaultValue={viewMode === 0 ? "preview" : viewMode === 1 ? "code" : "split"}
           onValueChange={(value) => {
             setViewMode(value === "preview" ? 0 : value === "code" ? 1 : 2);
           }}
@@ -253,11 +233,7 @@ export default function PageEditor({
                 (fullscreen ? "z-10" : "rounded-t-lg")
               }
             >
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={() => setFullscreen(!fullscreen)}
-              >
+              <Button size="icon" variant="ghost" onClick={() => setFullscreen(!fullscreen)}>
                 {fullscreen ? (
                   <Minimize size={4} className="text-stone-500" />
                 ) : (
@@ -297,24 +273,17 @@ export default function PageEditor({
               {fullscreen && (
                 <div className="flex gap-2">
                   {page.slug ? (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      tooltip="See live preview"
-                      asChild
-                    >
+                    <Button variant="ghost" size="icon" tooltip="See live preview" asChild>
                       <Link href={linkWithSlug} target="_blank">
                         <SquareArrowOutUpRight />
                       </Link>
                     </Button>
                   ) : null}
-                  <Button
-                    loading={inProgress}
-                    onClick={onSave}
-                    className="gap-0.5"
-                  >
+                  <Button loading={inProgress} onClick={onSave} className="gap-0.5">
                     Save
-                    <span className="translate-x-1 text-[10px]/3 font-semibold border border-white/[12%] py-0.5 px-1 rounded bg-white/[6%]">⌘S</span>
+                    <span className="translate-x-1 rounded border border-white/[12%] bg-white/[6%] px-1 py-0.5 text-[10px]/3 font-semibold">
+                      ⌘S
+                    </span>
                   </Button>
                 </div>
               )}
@@ -326,7 +295,7 @@ export default function PageEditor({
             className={cn(
               "mt-0",
               !fullscreen &&
-                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]",
+                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]"
             )}
           >
             {preview}
@@ -336,7 +305,7 @@ export default function PageEditor({
             className={cn(
               "mt-0",
               !fullscreen &&
-                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]",
+                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]"
             )}
           >
             {codeview(true)}
@@ -346,7 +315,7 @@ export default function PageEditor({
             className={cn(
               "mt-0",
               !fullscreen &&
-                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]",
+                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]"
             )}
           >
             <div className="grid grid-cols-2 gap-4">
@@ -363,8 +332,8 @@ export default function PageEditor({
                   }}
                   options={{
                     minimap: {
-                      enabled: false,
-                    },
+                      enabled: false
+                    }
                   }}
                 />
               </div>
@@ -380,7 +349,7 @@ function PreviewFrame({ children }: { children: React.ReactNode }) {
   const wrappingDiv = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState<number>(1);
   const observerRef = useRef<ResizeObserver | null>(null);
-  
+
   useEffect(() => {
     if (!wrappingDiv.current) return;
 

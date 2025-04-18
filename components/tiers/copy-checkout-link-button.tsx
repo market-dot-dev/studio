@@ -1,69 +1,69 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Link as LinkIcon, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, Link as LinkIcon } from "lucide-react";
+import { useEffect, useState } from "react";
 
 export default function CopyCheckoutLinkButton({ tierId }: { tierId: string }) {
   const [isCopied, setIsCopied] = useState(false);
   const [shouldCopy, setShouldCopy] = useState(false);
-  
+
   useEffect(() => {
     if (!shouldCopy) return;
-    
+
     const copyText = async () => {
       try {
         const baseUrl = window.location.origin;
         const checkoutUrl = `${baseUrl}/checkout/${tierId}`;
-        
+
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(checkoutUrl);
         } else {
-          const textarea = document.createElement('textarea');
+          const textarea = document.createElement("textarea");
           textarea.value = checkoutUrl;
-          textarea.style.position = 'fixed'; // Prevent scrolling to bottom
+          textarea.style.position = "fixed"; // Prevent scrolling to bottom
           document.body.appendChild(textarea);
           textarea.focus();
           textarea.select();
-          
+
           // @ts-ignore - execCommand is deprecated but needed for fallback support
-          const successful = document.execCommand('copy');
+          const successful = document.execCommand("copy");
           if (!successful) {
-            throw new Error('Fallback clipboard copy failed');
+            throw new Error("Fallback clipboard copy failed");
           }
-          
+
           document.body.removeChild(textarea);
         }
-        
+
         setIsCopied(true);
-        
+
         const timer = setTimeout(() => {
           setIsCopied(false);
           setShouldCopy(false);
         }, 2000);
-        
+
         return () => clearTimeout(timer);
       } catch (err) {
         console.error("Failed to copy text:", err);
         setShouldCopy(false);
       }
     };
-    
+
     copyText();
   }, [shouldCopy, tierId]);
-  
+
   const handleClick = () => {
     setShouldCopy(true);
   };
-  
+
   return (
     <Button
       variant="ghost"
       size="sm"
       onClick={handleClick}
       tooltip={isCopied ? "Copied checkout link!" : "Copy checkout link"}
-      className="flex items-center justify-center gap-1.5 rounded size-6 text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
+      className="flex size-6 items-center justify-center gap-1.5 rounded text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
     >
       <AnimatePresence mode="wait" initial={false}>
         {isCopied ? (
@@ -74,7 +74,7 @@ export default function CopyCheckoutLinkButton({ tierId }: { tierId: string }) {
             exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
             transition={{ duration: 0.1, type: "easeInOut" }}
           >
-            <Check className="h-3.5 w-3.5" strokeWidth={2.25} />
+            <Check className="size-3.5" strokeWidth={2.25} />
           </motion.div>
         ) : (
           <motion.div
@@ -84,10 +84,10 @@ export default function CopyCheckoutLinkButton({ tierId }: { tierId: string }) {
             exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
             transition={{ duration: 0.1, type: "easeInOut" }}
           >
-            <LinkIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
+            <LinkIcon className="size-3.5" strokeWidth={2.25} />
           </motion.div>
         )}
       </AnimatePresence>
     </Button>
   );
-} 
+}

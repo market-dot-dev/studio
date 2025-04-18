@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/prisma"; // Adjust the import path based on your actual Prisma setup
+import prisma from "@/lib/prisma";
 import { Feature } from "@prisma/client";
 import UserService from "./UserService";
 
@@ -17,23 +17,23 @@ interface AttachDetachAttributes {
   referenceId: string; // Either Tier or TierVersion ID
 }
 
-interface FeatureUpdateAttributes extends Partial<FeatureCreateAttributes> {}
+type FeatureUpdateAttributes = Partial<FeatureCreateAttributes>;
 
 class FeatureService {
   static async find(id: string) {
     return prisma.feature.findUnique({
-      where: { id },
+      where: { id }
     });
   }
 
   static async findByTierId(tierId: string): Promise<Feature[]> {
     const tierWithFeatures = await prisma.tier.findUnique({
       where: {
-        id: tierId,
+        id: tierId
       },
       include: {
-        features: true,
-      },
+        features: true
+      }
     });
 
     // If the tier is not found or it has no features, return an empty array
@@ -47,11 +47,11 @@ class FeatureService {
   static async findByTierVersionId(tierVersionId: string): Promise<Feature[]> {
     const tierWithFeatures = await prisma.tierVersion.findUnique({
       where: {
-        id: tierVersionId,
+        id: tierVersionId
       },
       include: {
-        features: true,
-      },
+        features: true
+      }
     });
 
     // If the tier is not found or it has no features, return an empty array
@@ -65,8 +65,8 @@ class FeatureService {
   static async findByUserId(userId: string): Promise<Feature[]> {
     const features = await prisma.feature.findMany({
       where: {
-        userId,
-      },
+        userId
+      }
     });
 
     return features || [];
@@ -75,141 +75,159 @@ class FeatureService {
   static async findByCurrentUser(): Promise<Feature[]> {
     const user = await UserService.getCurrentUser();
 
-    if(!user){
+    if (!user) {
       throw new Error("not logged in");
     }
 
     const features = await prisma.feature.findMany({
       where: {
-        userId: user?.id,
-      },
+        userId: user?.id
+      }
     });
 
     return features || [];
   }
-  
+
   static async hasActiveFeaturesForUser(userId: string): Promise<boolean> {
-    
     const features = await FeatureService.findActiveByUser(userId);
     return features.length > 0;
-
-  } 
+  }
 
   static async findActiveByUser(userId: string): Promise<Feature[]> {
     const features = await prisma.feature.findMany({
       where: {
         userId,
-        isEnabled: true,
-      },
+        isEnabled: true
+      }
     });
-    
+
     return features || [];
   }
 
   static async findActiveByCurrentUser(): Promise<Feature[]> {
     const user = await UserService.getCurrentUser();
 
-    if(!user){
+    if (!user) {
       return [];
     }
 
     return FeatureService.findActiveByUser(user.id);
   }
 
-  
-
   static async create(attributes: FeatureCreateAttributes) {
     // Ensure the required `userId` is available when a feature is created.
     if (!attributes.userId) {
       throw new Error("UserId is required to create a feature.");
     }
-    
+
     const attrs = attributes as any;
-    attrs['id'] = undefined;
+    attrs["id"] = undefined;
 
     return prisma.feature.create({
-      data: attrs as FeatureCreateAttributes,
+      data: attrs as FeatureCreateAttributes
     });
   }
 
   static async update(id: string, attributes: FeatureUpdateAttributes) {
     return prisma.feature.update({
       where: { id },
-      data: attributes,
+      data: attributes
     });
   }
 
-  static async attach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
+  static async attach(
+    { featureId, referenceId }: AttachDetachAttributes,
+    type: "tier" | "tierVersion"
+  ) {
     return FeatureService.attachMany({ featureIds: [featureId], referenceId }, type);
   }
 
-  static async attachMany({ featureIds, referenceId }: { featureIds: string[]; referenceId: string; }, type: 'tier' | 'tierVersion') {
+  static async attachMany(
+    { featureIds, referenceId }: { featureIds: string[]; referenceId: string },
+    type: "tier" | "tierVersion"
+  ) {
     const query = {
       where: { id: referenceId },
       data: {
         features: {
-          connect: featureIds.map(featureId => ({ id: featureId })),
+          connect: featureIds.map((featureId) => ({ id: featureId }))
         }
-      },
-    }
+      }
+    };
 
-    return type === 'tier' ? prisma.tier.update(query) : prisma.tierVersion.update(query);
+    return type === "tier" ? prisma.tier.update(query) : prisma.tierVersion.update(query);
   }
 
-  static async detachMany({ featureIds, referenceId }: { featureIds: string[]; referenceId: string; }, type: 'tier' | 'tierVersion') {
+  static async detachMany(
+    { featureIds, referenceId }: { featureIds: string[]; referenceId: string },
+    type: "tier" | "tierVersion"
+  ) {
     const query = {
       where: { id: referenceId },
       data: {
         features: {
-          disconnect: featureIds.map(featureId => ({ id: featureId })),
+          disconnect: featureIds.map((featureId) => ({ id: featureId }))
         }
-      },
-    }
+      }
+    };
 
-    return type === 'tier' ? prisma.tier.update(query) : prisma.tierVersion.update(query);
+    return type === "tier" ? prisma.tier.update(query) : prisma.tierVersion.update(query);
   }
 
-  static async detach({ featureId, referenceId }: AttachDetachAttributes, type: 'tier' | 'tierVersion') {
+  static async detach(
+    { featureId, referenceId }: AttachDetachAttributes,
+    type: "tier" | "tierVersion"
+  ) {
     return FeatureService.detachMany({ featureIds: [featureId], referenceId }, type);
   }
 
-  static async setFeatureCollection(referenceId: string, featureIds: string[], type: 'tier' | 'tierVersion') {
-    const isTier = type === 'tier';
+  static async setFeatureCollection(
+    referenceId: string,
+    featureIds: string[],
+    type: "tier" | "tierVersion"
+  ) {
+    const isTier = type === "tier";
 
     const query = {
       where: { id: referenceId },
-      include: { features: true },
+      include: { features: true }
     };
 
-    const features = isTier ? await FeatureService.findByTierId(referenceId) : await FeatureService.findByTierVersionId(referenceId);
-  
-    const existingFeatureIds = new Set(features.map(f => f.id));
+    const features = isTier
+      ? await FeatureService.findByTierId(referenceId)
+      : await FeatureService.findByTierVersionId(referenceId);
+
+    const existingFeatureIds = new Set(features.map((f) => f.id));
     const newFeatureIds = new Set(featureIds);
-  
-    const featuresToAttach = [...newFeatureIds].filter(id => !existingFeatureIds.has(id));
-    const featuresToDetach = [...existingFeatureIds].filter(id => !newFeatureIds.has(id));
+
+    const featuresToAttach = [...newFeatureIds].filter((id) => !existingFeatureIds.has(id));
+    const featuresToDetach = [...existingFeatureIds].filter((id) => !newFeatureIds.has(id));
 
     const operations = [];
-  
+
     if (featuresToDetach.length > 0) {
-      operations.push(FeatureService.detachMany({ referenceId, featureIds: featuresToDetach }, type));
+      operations.push(
+        FeatureService.detachMany({ referenceId, featureIds: featuresToDetach }, type)
+      );
     }
-  
+
     if (featuresToAttach.length > 0) {
-      operations.push(FeatureService.attachMany({ referenceId, featureIds: featuresToAttach }, type));
+      operations.push(
+        FeatureService.attachMany({ referenceId, featureIds: featuresToAttach }, type)
+      );
     }
-  
+
     await Promise.all(operations);
   }
 
   static async haveFeatureIdsChanged(tierId: string, newFeatureIds?: string[]): Promise<boolean> {
     const currentFeatures = await FeatureService.findByTierId(tierId);
-    const currentFeatureIds = new Set(currentFeatures.map(feature => feature.id));
+    const currentFeatureIds = new Set(currentFeatures.map((feature) => feature.id));
     const newFeatureIdsSet = new Set(newFeatureIds || []);
-  
+
     return !FeatureService.setsAreEqual(currentFeatureIds, newFeatureIdsSet);
   }
-  
+
   static setsAreEqual<T>(setA: Set<T>, setB: Set<T>): boolean {
     if (setA.size !== setB.size) return false;
     for (const item of setA) if (!setB.has(item)) return false;
@@ -217,6 +235,19 @@ class FeatureService {
   }
 }
 
-export const { create, find, update, attach, detach, findByTierId, findByUserId, findByCurrentUser, attachMany, setFeatureCollection, haveFeatureIdsChanged, hasActiveFeaturesForUser } = FeatureService;
+export const {
+  create,
+  find,
+  update,
+  attach,
+  detach,
+  findByTierId,
+  findByUserId,
+  findByCurrentUser,
+  attachMany,
+  setFeatureCollection,
+  haveFeatureIdsChanged,
+  hasActiveFeaturesForUser
+} = FeatureService;
 
 export default FeatureService;

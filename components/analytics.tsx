@@ -1,34 +1,34 @@
 "use client";
 
-import { BarList, AreaChart } from "@tremor/react";
 import { Card } from "@/components/ui/card";
+import { AreaChart, BarList } from "@tremor/react";
 import Image from "next/image";
 
 const chartdata = [
   {
     date: "Jan 23",
-    Visitors: 2890,
+    Visitors: 2890
   },
   {
     date: "Feb 23",
-    Visitors: 2756,
+    Visitors: 2756
   },
   {
     date: "Mar 23",
-    Visitors: 3322,
+    Visitors: 3322
   },
   {
     date: "Apr 23",
-    Visitors: 3470,
+    Visitors: 3470
   },
   {
     date: "May 23",
-    Visitors: 3475,
+    Visitors: 3475
   },
   {
     date: "Jun 23",
-    Visitors: 3129,
-  },
+    Visitors: 3129
+  }
 ];
 
 const pages = [
@@ -36,7 +36,7 @@ const pages = [
   { name: "/vercel-is-now-bercel", value: 751 },
   { name: "/nextjs-conf", value: 471 },
   { name: "/150m-series-d", value: 280 },
-  { name: "/about", value: 78 },
+  { name: "/about", value: 78 }
 ];
 
 const referrers = [
@@ -46,8 +46,8 @@ const referrers = [
   { name: "google.com", value: 191 },
   {
     name: "news.ycombinator.com",
-    value: 71,
-  },
+    value: 71
+  }
 ];
 
 const countries = [
@@ -55,25 +55,25 @@ const countries = [
   { name: "India", value: 676, code: "IN" },
   { name: "Germany", value: 564, code: "DE" },
   { name: "United Kingdom", value: 234, code: "GB" },
-  { name: "Spain", value: 191, code: "ES" },
+  { name: "Spain", value: 191, code: "ES" }
 ];
 
 const categories = [
   {
     title: "Top Pages",
     subtitle: "Page",
-    data: pages,
+    data: pages
   },
   {
     title: "Top Referrers",
     subtitle: "Source",
-    data: referrers,
+    data: referrers
   },
   {
     title: "Countries",
     subtitle: "Country",
-    data: countries,
-  },
+    data: countries
+  }
 ];
 
 export default function AnalyticsMockup() {
@@ -87,16 +87,14 @@ export default function AnalyticsMockup() {
           index="date"
           categories={["Visitors"]}
           colors={["indigo"]}
-          valueFormatter={(number: number) =>
-            Intl.NumberFormat("us").format(number).toString()
-          }
+          valueFormatter={(number: number) => Intl.NumberFormat("us").format(number).toString()}
         />
       </Card>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {categories.map(({ title, subtitle, data }) => (
           <Card key={title} className="max-w-lg">
             <h2 className="text-xl font-bold">{title}</h2>
-            <div className="flex mt-4">
+            <div className="mt-4 flex">
               <p className="text-sm text-stone-500">
                 <strong>{subtitle}</strong>
               </p>
@@ -133,7 +131,7 @@ export default function AnalyticsMockup() {
                   } else {
                     return null;
                   }
-                },
+                }
               }))}
               className="mt-2"
             />

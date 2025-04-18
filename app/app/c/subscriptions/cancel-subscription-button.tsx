@@ -1,8 +1,6 @@
 "use client";
 
 import { cancelSubscription } from "@/app/services/SubscriptionService";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,8 +9,10 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
+import { useState } from "react";
 
 const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }) => {
   const [loading, setLoading] = useState<boolean>(false);
@@ -67,6 +67,6 @@ const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }
       </AlertDialog>
     </>
   );
-}
+};
 
 export default CancelSubscriptionButton;

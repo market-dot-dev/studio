@@ -1,15 +1,15 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
-import { useEffect, useState } from "react";
-import { User, Contract } from "@prisma/client";
+import Tier from "@/app/models/Tier";
 import { onClickSubscribe } from "@/app/services/StripeService";
 import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
-import Tier from "@/app/models/Tier";
+import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { getRootUrl } from "@/lib/domain";
+import { Contract, User } from "@prisma/client";
+import { useEffect, useState } from "react";
 import { Separator } from "../ui/separator";
 
 const checkoutCurrency = "USD";
@@ -24,9 +24,7 @@ interface RegistrationCheckoutSectionProps {
 
 const ContractText = ({ contract }: { contract?: Contract }) => {
   const baseUrl = getRootUrl("app", "/c/contracts");
-  const url = contract
-    ? `${baseUrl}/${contract.id}`
-    : `${baseUrl}/standard-msa`;
+  const url = contract ? `${baseUrl}/${contract.id}` : `${baseUrl}/standard-msa`;
 
   const contractName = contract?.name || "Standard MSA";
 
@@ -46,7 +44,7 @@ export default function RegistrationCheckoutSection({
   maintainer,
   contract,
   annual = false,
-  userId,
+  userId
 }: RegistrationCheckoutSectionProps) {
   const tierId = tier?.id;
   const checkoutPrice = annual ? tier?.priceAnnual : tier?.price;
@@ -98,19 +96,15 @@ export default function RegistrationCheckoutSection({
     return (
       <div className="mx-auto flex w-full flex-col gap-9 lg:max-w-lg">
         <section>
-          <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">
-            Account
-          </h2>
+          <h2 className="tracking-tightish mb-6 text-2xl/6 font-bold text-stone-800">Account</h2>
           <CustomerLoginComponent signup={true} />
         </section>
 
         <Separator />
 
         <section>
-          <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">
-            Payment
-          </h2>
-          <Card className="p-5 min-h-[60px]">
+          <h2 className="tracking-tightish mb-6 text-2xl/6 font-bold text-stone-800">Payment</h2>
+          <Card className="min-h-[60px] p-5">
             {maintainer.stripeAccountId && (
               <UserPaymentMethodWidget
                 loading={submittingPayment}
@@ -125,7 +119,7 @@ export default function RegistrationCheckoutSection({
         </section>
 
         <section>
-          <div className="mb-4 text-center text-xs font-medium tracking-tightish text-stone-500">
+          <div className="tracking-tightish mb-4 text-center text-xs font-medium text-stone-500">
             <ContractText contract={contract} />
           </div>
           <Button
@@ -143,14 +137,11 @@ export default function RegistrationCheckoutSection({
                 : `Pay $${checkoutPrice} ${checkoutCurrency}`}
           </Button>
           {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 ? (
-            <p className="mt-6 text-pretty text-center text-xs font-medium tracking-tightish text-stone-500">
+            <p className="tracking-tightish mt-6 text-pretty text-center text-xs font-medium text-stone-500">
               You won&apos;t be charged now. After your{" "}
-              <strong className="text-stone-800">
-                {tier.trialDays} day trial
-              </strong>
-              , your card will be charged{" "}
-              <strong className="text-stone-800">{`${checkoutCurrency} $${checkoutPrice}`}</strong>
-              .
+              <strong className="text-stone-800">{tier.trialDays} day trial</strong>, your card will
+              be charged{" "}
+              <strong className="text-stone-800">{`${checkoutCurrency} $${checkoutPrice}`}</strong>.
             </p>
           ) : null}
         </section>
@@ -159,7 +150,5 @@ export default function RegistrationCheckoutSection({
 }
 
 const AlreadySubscribedCard = () => {
-  return (
-      <p className="text-sm text-stone-500">You&apos;re already subscribed to this product.</p>
-  );
+  return <p className="text-sm text-stone-500">You&apos;re already subscribed to this product.</p>;
 };

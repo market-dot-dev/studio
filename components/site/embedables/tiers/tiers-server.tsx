@@ -1,11 +1,11 @@
-import Tiers from "./tiers";
 import TierService from "@/app/services/TierService";
 import FeatureService from "@/app/services/feature-service";
+import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
 // This is the component that will prepare data before rendering the page at the frontend
 export default async function TiersServer({
   site,
-  searchParams,
+  searchParams
 }: {
   site: any;
   searchParams: TiersEmbedSettingsProps;
@@ -13,11 +13,9 @@ export default async function TiersServer({
   // getting the tiers by means of server functions
   const [tiers, activeFeatures] = await Promise.all([
     TierService.getTiersForUser(site.userId),
-    FeatureService.findActiveByUser(site.userId),
+    FeatureService.findActiveByUser(site.userId)
   ]);
-  const filteredTiers = tiers.filter((tier: any) =>
-    (searchParams.tiers ?? []).includes(tier.id),
-  );
+  const filteredTiers = tiers.filter((tier: any) => (searchParams.tiers ?? []).includes(tier.id));
   return (
     <Tiers
       tiers={filteredTiers ?? []}

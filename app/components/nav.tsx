@@ -1,31 +1,31 @@
 "use client";
 
-import Link from "next/link";
+import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
+import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import clsx from "clsx";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  Package,
-  Scroll,
-  UsersRound,
-  Settings,
-  Menu,
-  Code2,
-  ScanSearch,
-  Box,
-  Home,
-  UserRoundSearch,
-  ChartNoAxesColumnIncreasing as Chart,
-  X,
   AppWindowMac,
+  Box,
+  ChartNoAxesColumnIncreasing as Chart,
+  Code2,
+  Home,
+  Menu,
+  Package,
+  ScanSearch,
+  Scroll,
+  Settings,
   ShoppingBag,
+  UserRoundSearch,
+  UsersRound,
+  X
 } from "lucide-react";
+import Link from "next/link";
+import { usePathname, useSelectedLayoutSegments } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { FaDiscord, FaGithubAlt } from "react-icons/fa";
-import { Badge } from "@/components/ui/badge";
-import { usePathname, useSelectedLayoutSegments } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
-import clsx from "clsx";
-import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
-import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import { Button } from "@/components/ui/button";
 
 interface BaseNavItem {
   name: string;
@@ -55,7 +55,7 @@ type NavItem = TitleItem | LinkItem;
 function Item({ item }: { item: NavItem }) {
   if (item.type === "title") {
     return (
-      <span className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
+      <span className="font-small text-xxs/4 mb-1 ml-1 mt-4 font-semibold uppercase tracking-wide text-stone-500">
         {item.name}
       </span>
     );
@@ -69,21 +69,16 @@ function Item({ item }: { item: NavItem }) {
         className={clsx(
           "flex h-6 items-center space-x-2",
           "rounded px-1 transition-all duration-150 ease-in-out",
-          "hover:bg-white hover:shadow-border-sm",
-          "focus-visible:bg-white focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp",
+          "hover:shadow-border-sm hover:bg-white",
+          "focus-visible:shadow-border-sm focus-visible:ring-swamp focus-visible:bg-white focus-visible:outline-none focus-visible:ring-2",
           "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800",
-          item.isActive &&
-            "bg-white text-black shadow-border-sm dark:bg-stone-700",
+          item.isActive && "shadow-border-sm bg-white text-black dark:bg-stone-700"
         )}
       >
         {item.icon}
         <span className="text-sm font-medium">{item.name}</span>
         {item.isBeta && (
-          <Badge
-            size="sm"
-            variant="secondary"
-            tooltip="This feature is still in Beta"
-          >
+          <Badge size="sm" variant="secondary" tooltip="This feature is still in Beta">
             Beta
           </Badge>
         )}
@@ -95,9 +90,7 @@ function Item({ item }: { item: NavItem }) {
               key={child.name}
               href={child.href}
               className={`flex items-center space-x-3 ${
-                child.isActive
-                  ? "bg-stone-200 text-black dark:bg-stone-700"
-                  : ""
+                child.isActive ? "bg-stone-200 text-black dark:bg-stone-700" : ""
               } rounded px-1 text-sm transition-all duration-150 ease-in-out hover:bg-stone-200 active:bg-stone-300 dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800`}
             >
               {child.icon}
@@ -129,7 +122,7 @@ export default function Nav({
   isMobile = false,
   className,
   onboarding,
-  showOnboardingModal,
+  showOnboardingModal
 }: NavProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const urlSegments = useSelectedLayoutSegments();
@@ -143,8 +136,8 @@ export default function Nav({
         name: "Services",
         href: "/features",
         isActive: urlSegments[0] === "features",
-        icon: <Box width={18} />,
-      },
+        icon: <Box width={18} />
+      }
     ];
 
     const siteItems: LinkItem[] = [
@@ -153,8 +146,8 @@ export default function Nav({
         name: "Landing Page",
         href: `/site/${siteId}`,
         isActive: urlSegments[0] === "site" || urlSegments[0] === "page",
-        icon: <AppWindowMac width={18} />,
-      },
+        icon: <AppWindowMac width={18} />
+      }
     ];
 
     const marketItems: LinkItem[] = [
@@ -163,8 +156,8 @@ export default function Nav({
         name: "Marketplace",
         href: "/channels/market",
         icon: <ShoppingBag width={18} />,
-        isActive: urlSegments[1] === "market",
-      },
+        isActive: urlSegments[1] === "market"
+      }
     ];
 
     const mainItems: NavItem[] = [
@@ -173,18 +166,18 @@ export default function Nav({
         name: "Home",
         href: "/",
         isActive: urlSegments.length === 0,
-        icon: <Home width={18} />,
+        icon: <Home width={18} />
       },
       {
         type: "link",
         name: "Settings",
         href: "/settings",
         isActive: urlSegments[0] === "settings",
-        icon: <Settings width={18} />,
+        icon: <Settings width={18} />
       },
       {
         type: "title",
-        name: "Services",
+        name: "Services"
       },
       ...(hasFeatures ? featureItems : []),
       {
@@ -192,44 +185,44 @@ export default function Nav({
         name: "Packages",
         href: "/tiers",
         isActive: urlSegments[0] === "tiers",
-        icon: <Package width={18} />,
+        icon: <Package width={18} />
       },
       {
         type: "link",
         name: "Contracts",
         href: "/contracts",
         isActive: urlSegments[0] === "contracts",
-        icon: <Scroll width={18} />,
+        icon: <Scroll width={18} />
       },
       {
         type: "title",
-        name: "Customers",
+        name: "Customers"
       },
       {
         type: "link",
         name: "Customers",
         href: "/customers",
         isActive: urlSegments[0] === "customers",
-        icon: <UsersRound width={18} />,
+        icon: <UsersRound width={18} />
       },
       {
         type: "link",
         name: "Prospects",
         href: "/prospects",
         isActive: urlSegments[0] === "prospects",
-        icon: <UserRoundSearch width={18} />,
+        icon: <UserRoundSearch width={18} />
       },
       {
         type: "link",
         name: "Research",
-        href: "/leads",
+        href: "/research",
         isBeta: true,
-        isActive: urlSegments[0] === "leads",
-        icon: <ScanSearch width={18} />,
+        isActive: urlSegments[0] === "research",
+        icon: <ScanSearch width={18} />
       },
       {
         type: "title",
-        name: "Channels",
+        name: "Channels"
       },
       ...(siteId ? siteItems : []),
       ...(isMarketExpert ? marketItems : []),
@@ -238,33 +231,33 @@ export default function Nav({
         name: "Embeds",
         href: "/channels/embeds",
         icon: <Code2 width={18} />,
-        isActive: urlSegments[1] === "embeds",
+        isActive: urlSegments[1] === "embeds"
       },
       {
         type: "title",
-        name: "Analytics",
+        name: "Analytics"
       },
       {
         type: "link",
         name: "Reports",
         href: "/reports",
         isActive: urlSegments[0] === "reports",
-        icon: <Chart width={18} />,
-      },
+        icon: <Chart width={18} />
+      }
     ] as const;
 
     const debugItems: NavItem[] = ["admin"].includes(roleId || "")
       ? [
           {
             type: "title",
-            name: "⚠️ DEBUG MENU ⚠️",
+            name: "⚠️ DEBUG MENU ⚠️"
           },
           {
             type: "link",
             name: "Debug",
             href: `/admin/debug`,
-            icon: <Settings width={18} />,
-          },
+            icon: <Settings width={18} />
+          }
         ]
       : [];
 
@@ -278,15 +271,15 @@ export default function Nav({
         name: "Github",
         href: "https://www.github.com/market-dot-dev/",
         target: "_blank",
-        icon: <FaGithubAlt width={18} className="text-stone-700" />,
+        icon: <FaGithubAlt width={18} className="text-stone-700" />
       },
       {
         type: "link",
         name: "Join Discord",
         href: "https://discord.gg/ZdSpS4BuGd",
         target: "_blank",
-        icon: <FaDiscord width={18} className="text-stone-700" />,
-      },
+        icon: <FaDiscord width={18} className="text-stone-700" />
+      }
     ];
   }, []);
 
@@ -343,14 +336,14 @@ export default function Nav({
       )}
       <nav
         className={clsx(
-          `fixed flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 bg-stone-150 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
+          `bg-stone-150 fixed flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
           isMobile
             ? [
-                "inset-0 top-[var(--headerHeight)] z-50 flex h-[calc(100vh-var(--headerHeight))] w-full transform md:hidden",
-                isSidebarOpen ? "translate-x-0" : "-translate-x-full",
+                "inset-0 top-[var(--headerHeight)] z-50 flex h-[calc(100vh-var(--headerHeight))] w-full md:hidden",
+                isSidebarOpen ? "translate-x-0" : "-translate-x-full"
               ]
             : "z-20 hidden h-[var(--navHeight)] w-[var(--navWidth)] md:flex",
-          className,
+          className
         )}
       >
         <div className="flex flex-col gap-2">
@@ -375,7 +368,7 @@ export default function Nav({
                     type: "spring",
                     stiffness: 200,
                     damping: 20,
-                    duration: 0.8,
+                    duration: 0.8
                   }}
                   className="mb-4"
                 >
@@ -390,4 +383,4 @@ export default function Nav({
       </nav>
     </>
   );
-} 
+}

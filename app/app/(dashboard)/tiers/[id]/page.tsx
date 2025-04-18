@@ -1,15 +1,12 @@
 "use server";
 
-import { findTier } from "@/app/services/TierService";
 import ContractService from "@/app/services/contract-service";
-import TierForm from "@/components/tiers/tier-form";
 import FeatureService from "@/app/services/feature-service";
+import { findTier } from "@/app/services/TierService";
 import { getCurrentUser } from "@/app/services/UserService";
-export default async function EditTierPage({
-  params,
-}: {
-  params: { id: string };
-}) {
+import TierForm from "@/components/tiers/tier-form";
+export default async function EditTierPage(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   // const tier = await findTier(params.id);
   // const contracts = await ContractService.getContractsByCurrentMaintainer();
   // const activeFeatures = await FeatureService.findActiveByCurrentUser();
@@ -17,7 +14,7 @@ export default async function EditTierPage({
   const [tier, contracts, activeFeatures] = await Promise.all([
     findTier(params.id),
     ContractService.getContractsByCurrentMaintainer(),
-    FeatureService.findActiveByCurrentUser(),
+    FeatureService.findActiveByCurrentUser()
   ]);
 
   if (!tier || !tier.id) return null;

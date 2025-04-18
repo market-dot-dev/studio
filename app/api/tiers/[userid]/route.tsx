@@ -1,11 +1,8 @@
 import TierService from "@/app/services/TierService";
-import { parseTierDescription } from "@/lib/utils";
 import { NextRequest } from "next/server";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { userid: string } },
-) {
+export async function GET(req: NextRequest, props: { params: Promise<{ userid: string }> }) {
+  const params = await props.params;
   const searchParams = req.nextUrl.searchParams;
   const onlyTiersString = searchParams.get("tiers");
   const onlyTiers = onlyTiersString ? onlyTiersString.split(",") : [];
@@ -200,7 +197,7 @@ export async function GET(
       "Content-Type": "image/svg+xml",
       "Access-Control-Allow-Origin": "*",
       "Access-Control-Allow-Methods": "GET, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
+      "Access-Control-Allow-Headers": "Content-Type"
+    }
   });
 }

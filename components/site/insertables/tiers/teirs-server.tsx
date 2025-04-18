@@ -1,13 +1,13 @@
+import TierService from "@/app/services/TierService";
 import { Channel } from "@prisma/client";
 import Tiers from "./tiers";
-import TierService from "@/app/services/TierService";
 
 // This is the component that will prepare data before rendering the page at the frontend
 export default async function TiersServer({
   site,
   page,
   tiers,
-  hasActiveFeatures,
+  hasActiveFeatures
 }: {
   site: any;
   page: any;
@@ -19,7 +19,5 @@ export default async function TiersServer({
   const tierItems = site?.userId
     ? await TierService.getTiersForUser(site.userId, tierIds, Channel.site)
     : [];
-  return (
-    <Tiers tiers={tierItems ?? []} hasActiveFeatures={hasActiveFeatures} />
-  );
+  return <Tiers tiers={tierItems ?? []} hasActiveFeatures={hasActiveFeatures} />;
 }

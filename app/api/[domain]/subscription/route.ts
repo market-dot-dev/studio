@@ -2,66 +2,66 @@ import { onClickSubscribe } from "@/app/services/StripeService";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
-export async function POST(req: Request, res: Response) {
-    const session = await getSession();
-    
-    if (!session?.user?.id) {
-        return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401 });
-    }
+export async function POST(req: Request) {
+  const session = await getSession();
 
-    const body = await req.json();
-    const { tierId } = body;
+  if (!session?.user?.id) {
+    return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401 });
+  }
 
-    if(!tierId) {
-        return new Response(JSON.stringify({ error: "Tier ID not provided" }), { status: 400 });
-    }
+  const body = await req.json();
+  const { tierId } = body;
 
-    const latestTierVersion = await prisma.tierVersion.findFirst({
-        where: { tierId },
-        orderBy: { createdAt: "desc" },
-    });
+  if (!tierId) {
+    return new Response(JSON.stringify({ error: "Tier ID not provided" }), { status: 400 });
+  }
 
-    if (!latestTierVersion) {
-        return new Response(JSON.stringify({ error: "Tier not found" }), { status: 404 });
-    }
+  const latestTierVersion = await prisma.tierVersion.findFirst({
+    where: { tierId },
+    orderBy: { createdAt: "desc" }
+  });
 
-    await onClickSubscribe(session.user.id, latestTierVersion.id, false);
+  if (!latestTierVersion) {
+    return new Response(JSON.stringify({ error: "Tier not found" }), { status: 404 });
+  }
 
-    const response = { success: true };
-    
-    return new Response(JSON.stringify(response), { status: 200 });
+  await onClickSubscribe(session.user.id, latestTierVersion.id, false);
+
+  const response = { success: true };
+
+  return new Response(JSON.stringify(response), { status: 200 });
 }
 
-export async function DELETE(req: Request, res: Response) {
-    const session = await getSession();
-    
-    if (!session?.user?.id) {
-        return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401 });
-    }
+export async function DELETE(req: Request) {
+  const session = await getSession();
 
-    const body = await req.json();
-    const { subscriptionId } = body;
+  if (!session?.user?.id) {
+    return new Response(JSON.stringify({ error: "Not authenticated" }), { status: 401 });
+  }
 
-    if(!subscriptionId) {
-        return new Response(JSON.stringify({ error: "Subscription ID not provided" }), { status: 400 });
-    }
+  const body = await req.json();
+  const { subscriptionId } = body;
 
-    const subscription = await prisma.subscription.findUnique({
-        where: { id: subscriptionId },
-        include: { tierVersion: { include: { tier: true } } },
-    });
+  if (!subscriptionId) {
+    return new Response(JSON.stringify({ error: "Subscription ID not provided" }), { status: 400 });
+  }
 
-    if (!subscription) {
-        return new Response(JSON.stringify({ error: "Subscription not found" }), { status: 404 });
-    }
+  const subscription = await prisma.subscription.findUnique({
+    where: { id: subscriptionId },
+    include: { tierVersion: { include: { tier: true } } }
+  });
 
-    if (subscription.userId !== session.user.id) {
-        return new Response(JSON.stringify({ error: "Not authorized" }), { status: 403 });
-    }
+  if (!subscription) {
+    return new Response(JSON.stringify({ error: "Subscription not found" }), { status: 404 });
+  }
 
-    await prisma.subscription.delete({
-        where: { id: subscriptionId },
-    });
+  if (subscription.userId !== session.user.id) {
+    return new Response(JSON.stringify({ error: "Not authorized" }), { status: 403 });
+  }
 
-    return new Response(null, { status: 204 });
+  await prisma.subscription.delete({
+    where: { id: subscriptionId }
+  });
+
+  return new Response(null, { status: 204 });
 }

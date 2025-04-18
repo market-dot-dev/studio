@@ -2,12 +2,13 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 
-import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
 import FeatureService from "@/app/services/feature-service";
-import { getRootUrl } from "@/lib/domain";
+import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
 import PageContainer from "@/components/site/page-container";
+import { getRootUrl } from "@/lib/domain";
 
-export default async function Page({ params }: { params: { id: string } }) {
+export default async function Page(props: { params: Promise<{ id: string }> }) {
+  const params = await props.params;
   const session = await getSession();
   if (!session) {
     redirect("/login");
@@ -42,7 +43,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   const [data, activeFeatures] = await Promise.all([
     prisma.page.findUnique({
       where: {
-        id: decodeURIComponent(params.id),
+        id: decodeURIComponent(params.id)
       },
       include: {
         site: {
@@ -57,14 +58,14 @@ export default async function Page({ params }: { params: { id: string } }) {
                 name: true,
                 image: true,
                 projectName: true,
-                projectDescription: true,
-              },
-            },
-          },
-        },
-      },
+                projectDescription: true
+              }
+            }
+          }
+        }
+      }
     }),
-    FeatureService.findActiveByCurrentUser(),
+    FeatureService.findActiveByCurrentUser()
   ]);
 
   if (!data || data.userId !== session.user.id) {
@@ -73,24 +74,24 @@ export default async function Page({ params }: { params: { id: string } }) {
 
   const siteUrl = getRootUrl(data?.site?.subdomain ?? "app");
   const isHome = data.id === data.site?.homepageId;
-  
+
   const getRelativeTimeString = (date: Date) => {
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
     const diffSecs = Math.floor(diffMs / 1000);
     const diffMins = Math.floor(diffSecs / 60);
     const diffHours = Math.floor(diffMins / 60);
-    
+
     // Less than a minute ago
     if (diffSecs < 60) {
       return "just now";
     }
-    
+
     // Less than an hour ago
     if (diffMins < 60) {
       return `${diffMins} ${diffMins === 1 ? "min" : "mins"} ago`;
     }
-    
+
     // Today but more than an hour ago
     if (
       now.getDate() === date.getDate() &&
@@ -99,7 +100,7 @@ export default async function Page({ params }: { params: { id: string } }) {
     ) {
       return `${diffHours} ${diffHours === 1 ? "hour" : "hours"} ago`;
     }
-    
+
     // Check if it was yesterday
     const yesterday = new Date(now);
     yesterday.setDate(yesterday.getDate() - 1);
@@ -110,15 +111,15 @@ export default async function Page({ params }: { params: { id: string } }) {
     ) {
       return "yesterday";
     }
-    
+
     // Beyond yesterday
     return date.toLocaleString("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric",
+      year: "numeric"
     });
   };
-  
+
   const lastUpdateDate = getRelativeTimeString(new Date(data.updatedAt));
 
   return (

@@ -1,21 +1,20 @@
-import { User, Subscription, Charge, Prospect } from "@prisma/client";
-import React from "react";
 import Tier from "@/app/models/Tier";
-import Link from "next/link";
-import { ChevronRight, Receipt, ScanSearch } from "lucide-react";
-import { Button } from "@/components/ui/button"; 
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { DataTable } from "@/components/ui/data-table";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuTrigger,
-  DropdownMenuItem,
   DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Card } from "@/components/ui/card";
-import { DataTable } from "@/components/ui/data-table";
+import { Charge, Prospect, Subscription, User } from "@prisma/client";
+import { ChevronRight, Receipt, ScanSearch } from "lucide-react";
+import Link from "next/link";
 import { Sale, columns } from "./columns";
 
-export type CustomerWithChargesSubscriptionsAndProspects = User & {
+type CustomerWithChargesSubscriptionsAndProspects = User & {
   charges: (Charge & { tier: Tier })[];
   subscriptions: (Subscription & { tier: Tier })[];
   prospects: (Prospect & { tiers: Tier[] })[];
@@ -23,7 +22,7 @@ export type CustomerWithChargesSubscriptionsAndProspects = User & {
 
 const SalesTable = ({
   customersAndProspects,
-  maxInitialRows,
+  maxInitialRows
 }: {
   customersAndProspects: CustomerWithChargesSubscriptionsAndProspects[];
   maxInitialRows?: number;
@@ -39,7 +38,7 @@ const SalesTable = ({
       tierName: subscription.tier.name,
       createdAt: subscription.createdAt,
       userId: customer.id,
-      subscription: subscription,
+      subscription: subscription
     })),
     ...customer.charges.map((charge, index) => ({
       id: `charge-${customer.id}-${index}`,
@@ -48,7 +47,7 @@ const SalesTable = ({
       tierName: charge.tier.name,
       createdAt: charge.createdAt,
       userId: customer.id,
-      charge: charge,
+      charge: charge
     })),
     ...customer.prospects.map((prospect, index) => ({
       id: `prospect-${customer.id}-${index}`,
@@ -56,8 +55,8 @@ const SalesTable = ({
       user: prospect,
       tierNames: prospect.tiers.map((tier) => tier.name),
       createdAt: prospect.updatedAt,
-      userId: customer.id,
-    })),
+      userId: customer.id
+    }))
   ]);
 
   // Sort by createdAt in descending order (latest first)
@@ -68,16 +67,10 @@ const SalesTable = ({
   return (
     <div className="space-y-4">
       <div className="flex w-full items-end justify-between">
-        <h3 className="text-xl font-bold tracking-tightish">
-          Sales & Prospects
-        </h3>
+        <h3 className="tracking-tightish text-xl font-bold">Sales & Prospects</h3>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              className="group gap-0.5 pr-1"
-            >
+            <Button variant="outline" size="sm" className="group gap-0.5 pr-1">
               View All
               <ChevronRight
                 size={10}
@@ -105,7 +98,7 @@ const SalesTable = ({
       {sales.length === 0 ? (
         <Card className="mb-8 flex h-72 flex-col items-center justify-center border border-dashed border-stone-400/50 bg-stone-200/30 shadow-none">
           <div className="flex flex-col items-center justify-center py-6">
-            <Receipt className="mb-3 h-9 w-9 text-swamp" strokeWidth={1.5} />
+            <Receipt className="text-swamp mb-3 size-9" strokeWidth={1.5} />
             <h3 className="mb-2 text-xl font-semibold">No sales... yet</h3>
             <p className="max-w-md text-center text-sm text-stone-500">
               When you make your first sale
@@ -113,7 +106,7 @@ const SalesTable = ({
             </p>
             <div className="mt-4">
               <Button variant="outline" asChild>
-                <Link href="/leads">
+                <Link href="/research">
                   <ScanSearch />
                   Find customers
                 </Link>
@@ -130,4 +123,4 @@ const SalesTable = ({
   );
 };
 
-export default SalesTable; 
+export default SalesTable;

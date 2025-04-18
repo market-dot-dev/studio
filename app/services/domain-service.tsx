@@ -19,8 +19,6 @@ class DomainService {
 
     const subdomain = this.getSubdomainFromRequest(req);
 
-    console.log("Subdomain: ", subdomain);
-
     if (!!subdomain && !RESERVED_SUBDOMAINS.includes(subdomain)) {
       return null;
     } else {
@@ -44,7 +42,7 @@ class DomainService {
   }
 
   static isVercelPreview(req: NextRequest) {
-    let host = DomainService.getHostnameFromRequest(req);
+    const host = DomainService.getHostnameFromRequest(req);
     const vercelPreviewUrlPattern =
       /^store-git-[\w-]+-marketdotdev\.(?:vercel\.local|vercel\.app)(?::\d+)?$/;
 
@@ -52,7 +50,7 @@ class DomainService {
   }
 
   static getSubdomainFromRequest(req: NextRequest) {
-    let host = DomainService.getHostnameFromRequest(req);
+    const host = DomainService.getHostnameFromRequest(req);
 
     const parts = host.split(".");
 

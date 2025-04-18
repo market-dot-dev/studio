@@ -1,13 +1,12 @@
-"use client"
+"use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { User, Prospect, Subscription, Charge } from "@prisma/client";
 import Tier from "@/app/models/Tier";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/utils";
-import SubscriptionStatusBadge from "../subscription-state";
+import { capitalize, formatDate } from "@/lib/utils";
+import { Charge, Prospect, Subscription, User } from "@prisma/client";
+import { ColumnDef } from "@tanstack/react-table";
 import PurchaseStatusBadge from "../purchase-state";
-import { capitalize } from "@/lib/utils";
+import SubscriptionStatusBadge from "../subscription-state";
 
 export type Sale = {
   id: string;
@@ -73,4 +72,4 @@ export const columns: ColumnDef<Sale>[] = [
       return formatDate(row.original.createdAt);
     }
   }
-]; 
+];

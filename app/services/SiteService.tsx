@@ -1,21 +1,18 @@
 "use server";
 
-import { Site, User } from "@prisma/client";
 import prisma from "@/lib/prisma";
+import { Site } from "@prisma/client";
 
 import { revalidateTag } from "next/cache";
 
-import { customAlphabet } from "nanoid";
+import { GitWalletError } from "@/lib/errors";
+import { put } from "@vercel/blob";
 import fs from "fs";
 import yaml from "js-yaml";
-import { put } from "@vercel/blob";
+import { customAlphabet } from "nanoid";
 import SessionService from "./SessionService";
-import { GitWalletError } from "@/lib/errors";
 
-const nanoid = customAlphabet(
-  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-  7,
-);
+const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 7);
 
 const loadReservedSubdomains = () => {
   try {
@@ -45,7 +42,7 @@ class SiteService {
   static async getSiteInfo(siteId: string) {
     const site = await prisma.site.findUnique({
       where: {
-        id: siteId,
+        id: siteId
       },
       select: {
         userId: true,
@@ -54,10 +51,10 @@ class SiteService {
         user: {
           select: {
             projectName: true,
-            projectDescription: true,
-          },
-        },
-      },
+            projectDescription: true
+          }
+        }
+      }
     });
     return site;
   }
@@ -67,11 +64,11 @@ class SiteService {
     const site = await prisma.site.findUnique({
       where: {
         id: decodeURIComponent(id),
-        userId,
+        userId
       },
       include: {
-        pages: true,
-      },
+        pages: true
+      }
     });
     return site;
   }
@@ -79,11 +76,11 @@ class SiteService {
   static async getOnlySiteFromUserId(userId: string) {
     const site = await prisma.site.findFirst({
       where: {
-        userId,
+        userId
       },
       orderBy: {
-        createdAt: "asc",
-      },
+        createdAt: "asc"
+      }
     });
     return site;
   }
@@ -97,30 +94,24 @@ class SiteService {
 
     // Check length constraints
     if (subdomain.length < 3 || subdomain.length > 63) {
-      throw new GitWalletError(
-        "Subdomain must be between 3 and 63 characters long",
-      );
+      throw new GitWalletError("Subdomain must be between 3 and 63 characters long");
     }
 
     // Check reserved subdomains
     if (reservedSubdomains.includes(subdomain)) {
-      throw new GitWalletError(
-        `The subdomain "${subdomain}" is reserved and cannot be used`,
-      );
+      throw new GitWalletError(`The subdomain "${subdomain}" is reserved and cannot be used`);
     }
 
     // Check if subdomain is already taken
     const existingSite = await prisma.site.findFirst({
       where: {
         subdomain,
-        ...(currentSite && { NOT: { id: currentSite.id } }),
-      },
+        ...(currentSite && { NOT: { id: currentSite.id } })
+      }
     });
 
     if (existingSite) {
-      throw new GitWalletError(
-        `The subdomain "${subdomain}" is already taken.`,
-      );
+      throw new GitWalletError(`The subdomain "${subdomain}" is already taken.`);
     }
   }
 
@@ -132,7 +123,7 @@ class SiteService {
   static async uploadLogoFile(file: File) {
     const filename = `${nanoid()}.${file.type.split("/")[1]}`;
     const { url } = await put(filename, file, {
-      access: "public",
+      access: "public"
     });
 
     return url;
@@ -141,10 +132,10 @@ class SiteService {
   static async updateCurrentSite(formData: FormData) {
     const site = (await SiteService.getCurrentSite()) as Site;
     try {
-      let updateData: Partial<Site> = {};
+      const updateData: Partial<Site> = {};
       let hasSubdomainUpdate = false;
 
-      for (let [key, value] of formData.entries()) {
+      for (const [key, value] of formData.entries()) {
         // Handle subdomain separately with validation
         if (key === "subdomain") {
           const subdomain = value.toString().toLocaleLowerCase();
@@ -154,7 +145,7 @@ class SiteService {
         } else if (key === "logo") {
           if (!process.env.BLOB_READ_WRITE_TOKEN) {
             throw new Error(
-              "Missing BLOB_READ_WRITE_TOKEN token. Note: Vercel Blob is currently in beta – please fill out this form for access: https://tally.so/r/nPDMNd",
+              "Missing BLOB_READ_WRITE_TOKEN token. Note: Vercel Blob is currently in beta – please fill out this form for access: https://tally.so/r/nPDMNd"
             );
           }
 
@@ -172,17 +163,15 @@ class SiteService {
       // Perform the update with the constructed data
       const response = await prisma.site.update({
         where: { id: site.id },
-        data: updateData,
+        data: updateData
       });
 
       // Revalidation if subdomain is updated
       if (hasSubdomainUpdate) {
-        await revalidateTag(
-          `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
-        );
+        await revalidateTag(`${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`);
         console.log(
           "Updated site data! Revalidating tags: ",
-          `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`,
+          `${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}-metadata`
         );
       }
 
@@ -196,26 +185,26 @@ class SiteService {
   static async getSiteNav(siteId: any = null, userId: any = null) {
     if (!siteId && !userId) {
       return {
-        error: "No siteId or userId provided",
+        error: "No siteId or userId provided"
       };
     }
 
     return prisma.page.findMany({
       where: {
         ...(siteId ? { siteId } : { userId }),
-        draft: false,
+        draft: false
       },
       select: {
         id: true,
         title: true,
-        slug: true,
-      },
+        slug: true
+      }
     });
   }
 
   static async deleteSite(siteId: string) {
     return prisma.site.delete({
-      where: { id: siteId },
+      where: { id: siteId }
     });
   }
 }
@@ -229,5 +218,5 @@ export const {
   getSiteAndPages,
   deleteSite,
   validateSubdomain,
-  uploadLogo,
+  uploadLogo
 } = SiteService;

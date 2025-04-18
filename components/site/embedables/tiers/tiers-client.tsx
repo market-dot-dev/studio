@@ -8,16 +8,14 @@ export default function TiersClient({
   site,
   settings,
   tiers,
-  hasActiveFeatures,
+  hasActiveFeatures
 }: {
   site: any;
   settings: TiersEmbedSettingsProps;
   tiers: any[];
   hasActiveFeatures?: boolean;
 }) {
-  const filteredTiers = tiers.filter((tier: any) =>
-    (settings.tiers ?? []).includes(tier.id),
-  );
+  const filteredTiers = tiers.filter((tier: any) => (settings.tiers ?? []).includes(tier.id));
 
   return (
     <Tiers

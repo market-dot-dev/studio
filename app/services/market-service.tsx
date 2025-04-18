@@ -1,8 +1,9 @@
+import { getRootUrl } from "@/lib/domain";
 import { Channel } from "@prisma/client";
+import { getCurrentSite } from "./SiteService";
 import TierService from "./TierService";
 import { getCurrentUser } from "./UserService";
-import { getCurrentSite } from "./SiteService";
-import { getRootUrl } from "@/lib/domain";
+
 const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;
 const API_KEY = process.env.MARKET_DEV_API_KEY;
 
@@ -28,11 +29,10 @@ interface ServiceForSaleOnMarketDev {
   updated_at: string;
 }
 
-interface ServiceForSaleOnMarketDevParams
-  extends Omit<
-    ServiceForSaleOnMarketDev,
-    "user_id" | "created_at" | "updated_at"
-  > {}
+type ServiceForSaleOnMarketDevParams = Omit<
+  ServiceForSaleOnMarketDev,
+  "user_id" | "created_at" | "updated_at"
+>;
 
 export class MarketService {
   static async getExpert(): Promise<Expert | null> {
@@ -42,23 +42,17 @@ export class MarketService {
     }
 
     try {
-      const response = await fetch(
-        `${API_ENDPOINT}store/experts/${user.gh_id}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${API_KEY}`,
-          },
-        },
-      );
+      const response = await fetch(`${API_ENDPOINT}store/experts/${user.gh_id}`, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${API_KEY}`
+        }
+      });
 
       const data = await response.json();
       return data as Expert;
     } catch (error) {
-      console.error(
-        `Error getting Market expert for user ${user.gh_id}:`,
-        error,
-      );
+      console.error(`Error getting Market expert for user ${user.gh_id}:`, error);
       return null;
     }
   }
@@ -77,12 +71,12 @@ export class MarketService {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${API_KEY}`,
+        Authorization: `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
         store_id: user.id,
-        github_id: user.gh_id,
-      }),
+        github_id: user.gh_id
+      })
     });
 
     return response;
@@ -106,16 +100,13 @@ export class MarketService {
       throw new Error("User is not an expert on Market.dev");
     }
 
-    const response = await fetch(
-      `${API_ENDPOINT}store/experts/${user.marketExpertId}/services`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${API_KEY}`,
-        },
-      },
-    );
+    const response = await fetch(`${API_ENDPOINT}store/experts/${user.marketExpertId}/services`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`
+      }
+    });
 
     const data = await response.json();
     if (!data.services) {
@@ -143,21 +134,16 @@ export class MarketService {
       throw new Error("User must have a subdomain to sync with market");
     }
 
-    const tiers = await TierService.getTiersForUser(
-      user.id,
-      undefined,
-      Channel.market,
-    );
-    const serviceForSaleOnMarketDevParams: ServiceForSaleOnMarketDevParams[] =
-      tiers.map((tier) => {
-        return {
-          store_package_id: tier.id,
-          name: tier.name,
-          description: tier.description,
-          price: tier.price,
-          currency: "usd",
-        };
-      });
+    const tiers = await TierService.getTiersForUser(user.id, undefined, Channel.market);
+    const serviceForSaleOnMarketDevParams: ServiceForSaleOnMarketDevParams[] = tiers.map((tier) => {
+      return {
+        store_package_id: tier.id,
+        name: tier.name,
+        description: tier.description,
+        price: tier.price,
+        currency: "usd"
+      };
+    });
 
     const response = await fetch(
       `${API_ENDPOINT}store/experts/${user.marketExpertId}/sync_services`,
@@ -165,14 +151,14 @@ export class MarketService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${API_KEY}`,
+          Authorization: `Bearer ${API_KEY}`
         },
         body: JSON.stringify({
           gitwallet_id: user.id,
           site_url: getRootUrl(site.subdomain!),
-          services: serviceForSaleOnMarketDevParams,
-        }),
-      },
+          services: serviceForSaleOnMarketDevParams
+        })
+      }
     );
 
     return response;

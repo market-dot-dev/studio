@@ -1,28 +1,35 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import CreatePageButton from "@/components/create-page-button";
-import Pages from "./pages";
-import PageHeader from "@/components/common/page-header";
-import { formatDistanceToNow } from "date-fns";
 import { getSiteAndPages, updateCurrentSite } from "@/app/services/SiteService";
-import { Page, Site } from "@prisma/client";
-import { useEffect, useState } from "react";
-import PreviewSection from "../preview-section";
-import { getRootUrl } from "@/lib/domain";
-import Link from "next/link";
+import PageHeader from "@/components/common/page-header";
+import CreatePageButton from "@/components/create-page-button";
+import Uploader from "@/components/form/uploader";
+import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { Settings } from "lucide-react";
+import { Card } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Uploader from "@/components/form/uploader";
-import { toast } from "sonner";
-import * as Sentry from "@sentry/nextjs";
-import { isGitWalletError } from "@/lib/errors";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { getRootUrl } from "@/lib/domain";
+import { isGitWalletError } from "@/lib/errors";
+import { Page, Site } from "@prisma/client";
+import * as Sentry from "@sentry/nextjs";
+import { formatDistanceToNow } from "date-fns";
+import { Settings } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+import PreviewSection from "../preview-section";
+import Pages from "./pages";
 
 type SiteData = Partial<Site> & {
   pages: Page[];
@@ -40,14 +47,12 @@ export default function SiteAdmin({ id }: { id: string }) {
   const refreshSiteData = async () => {
     try {
       const data = await getSiteAndPages(id);
-      const url = data?.subdomain
-        ? getRootUrl(data.subdomain ?? "app")
-        : "";
+      const url = data?.subdomain ? getRootUrl(data.subdomain ?? "app") : "";
 
       setSiteData(data);
       setUrl(url);
     } catch (e) {
-      console.error('Error loading site data:', e);
+      console.error("Error loading site data:", e);
     }
   };
 
@@ -56,16 +61,16 @@ export default function SiteAdmin({ id }: { id: string }) {
     if (id) {
       refreshSiteData();
     }
-    
+
     // Set up event listener for focus to refresh data
     const handleFocus = () => {
       refreshSiteData();
     };
-    
-    window.addEventListener('focus', handleFocus);
-    
+
+    window.addEventListener("focus", handleFocus);
+
     return () => {
-      window.removeEventListener('focus', handleFocus);
+      window.removeEventListener("focus", handleFocus);
     };
   }, [id]);
 
@@ -97,9 +102,7 @@ export default function SiteAdmin({ id }: { id: string }) {
     }
   };
 
-  const homepage =
-    siteData?.pages?.find((page: Page) => page.id === siteData.homepageId) ??
-    null;
+  const homepage = siteData?.pages?.find((page: Page) => page.id === siteData.homepageId) ?? null;
 
   if (!siteData) {
     return <div>Loading...</div>;
@@ -109,8 +112,8 @@ export default function SiteAdmin({ id }: { id: string }) {
 
   return (
     <div className="flex flex-col gap-8 sm:gap-10">
-      <PageHeader 
-        title="Landing Pages" 
+      <PageHeader
+        title="Landing Pages"
         actions={[
           url ? (
             <Button key="view-site" variant="secondary" className="text-stone-600" asChild>
@@ -122,7 +125,7 @@ export default function SiteAdmin({ id }: { id: string }) {
           <Dialog key="settings-dialog" open={settingsOpen} onOpenChange={setSettingsOpen}>
             <DialogTrigger asChild>
               <Button variant="outline" size="icon">
-                <Settings className="h-4 w-4" />
+                <Settings className="size-4" />
                 <span className="sr-only">Settings</span>
               </Button>
             </DialogTrigger>
@@ -131,8 +134,12 @@ export default function SiteAdmin({ id }: { id: string }) {
                 <DialogTitle>Storefront Settings</DialogTitle>
               </DialogHeader>
               <ScrollArea>
-                <form id="site-settings-form" onSubmit={handleSubmitSettings} className="space-y-6 px-6 pb-3 pt-2">
-                  <div className="flex flex-col items-start w-full gap-2">
+                <form
+                  id="site-settings-form"
+                  onSubmit={handleSubmitSettings}
+                  className="space-y-6 px-6 pb-3 pt-2"
+                >
+                  <div className="flex w-full flex-col items-start gap-2">
                     <div>
                       <Label htmlFor="subdomain" className="mb-1">
                         Subdomain
@@ -151,10 +158,8 @@ export default function SiteAdmin({ id }: { id: string }) {
                       defaultValue={siteData.subdomain ?? ""}
                     />
                   </div>
-                  <div className="flex flex-col items-start w-full gap-2">
-                    <Label htmlFor="name">
-                      Name
-                    </Label>
+                  <div className="flex w-full flex-col items-start gap-2">
+                    <Label htmlFor="name">Name</Label>
                     <Input
                       placeholder="Your store title"
                       name="name"
@@ -162,7 +167,7 @@ export default function SiteAdmin({ id }: { id: string }) {
                       defaultValue={siteData.name ?? ""}
                     />
                   </div>
-                  <div className="flex flex-col items-start w-full gap-2">
+                  <div className="flex w-full flex-col items-start gap-2">
                     <div>
                       <Label htmlFor="logo" className="mb-1">
                         Logo
@@ -181,8 +186,8 @@ export default function SiteAdmin({ id }: { id: string }) {
                 </form>
               </ScrollArea>
               <DialogFooter className="px-6 pb-6">
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   form="site-settings-form"
                   loading={isSaving}
                   loadingText="Saving"
@@ -195,7 +200,7 @@ export default function SiteAdmin({ id }: { id: string }) {
         ].filter(Boolean)}
       />
 
-      <Card className="relative lg:mt-9 p-6 pt-5">
+      <Card className="relative p-6 pt-5 lg:mt-9">
         <div className="flex w-full flex-col lg:flex-row lg:justify-between">
           <div className="absolute bottom-0 left-4 hidden lg:block">
             <PreviewSection
@@ -231,7 +236,7 @@ export default function SiteAdmin({ id }: { id: string }) {
                 Last Updated:{" "}
                 {homepage?.updatedAt
                   ? formatDistanceToNow(new Date(homepage.updatedAt), {
-                      addSuffix: true,
+                      addSuffix: true
                     })
                   : "Unknown"}
               </p>
@@ -263,12 +268,11 @@ export default function SiteAdmin({ id }: { id: string }) {
             />
           ) : (
             <p className="text-sm text-stone-500">
-              You do not have any other pages yet. Create more pages to start
-              building your store.
+              You do not have any other pages yet. Create more pages to start building your store.
             </p>
           )}
         </div>
       </div>
     </div>
   );
-} 
+}
