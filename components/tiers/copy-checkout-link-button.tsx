@@ -20,30 +20,25 @@ export default function CopyCheckoutLinkButton({ tierId }: { tierId: string }) {
         if (navigator.clipboard && navigator.clipboard.writeText) {
           await navigator.clipboard.writeText(checkoutUrl);
         } else {
+          // Fallback for browsers without clipboard API
           const textarea = document.createElement("textarea");
           textarea.value = checkoutUrl;
           textarea.style.position = "fixed"; // Prevent scrolling to bottom
           document.body.appendChild(textarea);
           textarea.focus();
           textarea.select();
-
-          // @ts-ignore - execCommand is deprecated but needed for fallback support
           const successful = document.execCommand("copy");
           if (!successful) {
             throw new Error("Fallback clipboard copy failed");
           }
-
           document.body.removeChild(textarea);
         }
 
         setIsCopied(true);
-
-        const timer = setTimeout(() => {
+        setTimeout(() => {
           setIsCopied(false);
           setShouldCopy(false);
         }, 2000);
-
-        return () => clearTimeout(timer);
       } catch (err) {
         console.error("Failed to copy text:", err);
         setShouldCopy(false);
@@ -53,17 +48,14 @@ export default function CopyCheckoutLinkButton({ tierId }: { tierId: string }) {
     copyText();
   }, [shouldCopy, tierId]);
 
-  const handleClick = () => {
-    setShouldCopy(true);
-  };
-
   return (
     <Button
       variant="ghost"
       size="sm"
-      onClick={handleClick}
+      onClick={() => setShouldCopy(true)}
       tooltip={isCopied ? "Copied checkout link!" : "Copy checkout link"}
       className="flex size-6 items-center justify-center gap-1.5 rounded text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
+      disabled={isCopied}
     >
       <AnimatePresence mode="wait" initial={false}>
         {isCopied ? (
