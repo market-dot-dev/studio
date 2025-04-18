@@ -145,7 +145,8 @@ const renderElement = (
     }
 
     const children = Array.from(element.childNodes).map((child, childIndex) => {
-      if (child.nodeType === Node.TEXT_NODE) return child.textContent;
+      // if the child is a text node, return the text content
+      if (child.nodeType === 3) return child.textContent;
       return renderElement(child as Element, childIndex, site, page, isPreview, hasActiveFeatures);
     });
 
@@ -192,7 +193,8 @@ const renderElement = (
         {...attributes}
       >
         {Array.from(element.childNodes).map((child, childIndex) => {
-          if (child.nodeType === Node.TEXT_NODE) {
+          // if the child is a text node, return the text content
+          if (child.nodeType === 3) {
             return child.textContent;
           }
           return renderElement(
