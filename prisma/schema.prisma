@@ -44,7 +44,6 @@ model User {
   leads                       Lead[]
   onboarding                  String?
   company                     String?
-  legacyStripeProductId       String?
   charges                     Charge[]
   contracts                   Contract[]
   prospects                   Prospect[]

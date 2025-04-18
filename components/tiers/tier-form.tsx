@@ -641,9 +641,9 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                   </Card>
 
                   <p className="my-6 text-xs text-stone-500">
-                    Please note that package versions are only recorded when you make feature or
-                    price changes to a package where you have existing customers. Customers will be
-                    charged what they originally purchased.
+                    Please note that package versions are only recorded when you make price changes
+                    to a package where you have existing customers. Customers will be charged what
+                    they originally purchased.
                   </p>
                 </>
               )}
