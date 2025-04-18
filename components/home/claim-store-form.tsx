@@ -3,7 +3,7 @@
 import { loginURL } from "@/lib/home/social-urls";
 import { StoreIcon } from "lucide-react";
 import React, { useState } from "react";
-import Button from "./button";
+import { MarketingButton } from "./button";
 import Link from "./link";
 
 export default function ClaimStoreForm({
@@ -39,9 +39,9 @@ export default function ClaimStoreForm({
         </span>
       </div>
       <Link href={loginURL} className="flex w-full sm:w-fit">
-        <Button fullWidth={true} className="!gap-2">
+        <MarketingButton fullWidth={true} className="!gap-2">
           Setup For Free
-        </Button>
+        </MarketingButton>
       </Link>
     </div>
   );

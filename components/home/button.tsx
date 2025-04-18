@@ -10,7 +10,7 @@ interface ButtonProps {
   className?: string;
 }
 
-export default function Button({
+export function MarketingButton({
   children,
   onClick,
   className,
