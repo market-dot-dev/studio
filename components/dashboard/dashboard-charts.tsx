@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { BarChart } from "@tremor/react";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import RevenueLineChart from "./revenue-line-chart";
+import { RevenueLineChart } from "./revenue-line-chart";
 
 export default function DashboardCharts({
   customers
@@ -305,7 +305,6 @@ export default function DashboardCharts({
 
               <RevenueLineChart
                 revenueData={revenueData}
-                isUsingDummyData={isUsingDummyData}
                 highestRevenueItemInMonth={highestRevenueItemInMonth}
               />
             </CardContent>
