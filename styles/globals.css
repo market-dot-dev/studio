@@ -6,13 +6,13 @@
   .overflow-hidden {
     -webkit-mask-image: -webkit-radial-gradient(white, black);
   }
-  
+
   /* Hide scrollbar but maintain scroll functionality */
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
   }
-  
+
   /* Hide scrollbar for Chrome, Safari and Opera */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
@@ -218,8 +218,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --chart-5: 340 75% 55%;
   }
 }
-
-
 
 @layer base {
   * {
