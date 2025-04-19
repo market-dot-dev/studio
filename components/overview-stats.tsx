@@ -2,7 +2,6 @@
 import { type CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import { LineChartCard } from "./charts/LineChartCard";
 
-// Keep existing labels for consistency
 const labels = {
   newSubscriptions: "Subscriptions",
   cancellations: "Cancellations",
@@ -17,7 +16,6 @@ const labels = {
   averageOrderValue: "Average Order Value"
 } as any;
 
-// Map original Tremor colors to the same Tailwind colors
 const categoryColorMap = {
   newSubscriptions: "hsl(var(--chart-1))",
   newSubscriptionsRevenue: "hsl(var(--chart-2))",
