@@ -3,9 +3,9 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { BarChart } from "@tremor/react";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
+import { CustomerBarChart } from "./customer-bar-chart";
 import { RevenueLineChart } from "./revenue-line-chart";
 
 export default function DashboardCharts({
@@ -271,20 +271,10 @@ export default function DashboardCharts({
                   {totalNewCustomers}
                 </h3>
               </div>
-              <BarChart
-                className="mt-3 h-72"
-                data={customerTotals}
-                index="date"
-                categories={["New Subscriptions", "Cancellations", "Renewals", "One-time Charges"]}
-                colors={
-                  isUsingDummyData
-                    ? ["stone-300", "stone-300", "stone-300", "stone-300"]
-                    : ["stone-400", "orange-400", "swamp", "purple-400"]
-                }
-                autoMinValue={true}
-                maxValue={Math.ceil((highestCustChangesInAMonth * 120) / 100)}
-                intervalType="preserveStartEnd"
-                allowDecimals={false}
+              <CustomerBarChart
+                customerTotals={customerTotals}
+                highestCustChangesInAMonth={highestCustChangesInAMonth}
+                isUsingDummyData={false}
               />
             </CardContent>
           </Card>
