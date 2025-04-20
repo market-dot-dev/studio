@@ -1,13 +1,15 @@
 import TierService from "@/app/services/TierService";
 import FeatureService from "@/app/services/feature-service";
+import { SiteMeta } from "@/lib/site/fetchers";
 import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
+
 // This is the component that will prepare data before rendering the page at the frontend
 export default async function TiersServer({
   site,
   searchParams
 }: {
-  site: any;
+  site: SiteMeta;
   searchParams: TiersEmbedSettingsProps;
 }) {
   // getting the tiers by means of server functions
@@ -19,7 +21,7 @@ export default async function TiersServer({
   return (
     <Tiers
       tiers={filteredTiers ?? []}
-      subdomain={site.subdomain}
+      subdomain={site.subdomain ?? ""}
       settings={searchParams}
       hasActiveFeatures={!!activeFeatures?.length}
     />

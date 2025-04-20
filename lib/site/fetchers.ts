@@ -1,15 +1,25 @@
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 
+export const includeSiteMeta = Prisma.validator<Prisma.SiteDefaultArgs>()({
+  select: {
+    id: true,
+    userId: true,
+    subdomain: true,
+    homepageId: true
+  }
+});
+
+export type SiteMeta = Prisma.SiteGetPayload<typeof includeSiteMeta>;
+
 // gets site from admin session
-export async function getSite() {
+export async function getSiteMeta(): Promise<SiteMeta | null> {
   const session = await getSession();
 
   if (!session?.user.id) {
-    return {
-      error: "Not authenticated"
-    };
+    throw new Error("Not authenticated");
   }
 
   return await unstable_cache(
@@ -18,12 +28,7 @@ export async function getSite() {
         where: {
           userId: session.user.id
         },
-        select: {
-          id: true,
-          userId: true,
-          subdomain: true,
-          homepageId: true
-        }
+        ...includeSiteMeta
       });
     },
     [`admin-${session.user.id}-site`],

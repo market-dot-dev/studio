@@ -6,6 +6,7 @@ import CodeSnippet from "@/components/embedables/code-snippet";
 import embeddables from "@/components/site/embedables/index";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { SiteMeta } from "@/lib/site/fetchers";
 import { useEffect, useState } from "react";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 
@@ -14,19 +15,19 @@ export function PackageEmbeddings({
   rootUrl,
   searchParams
 }: {
-  site: any;
+  site: SiteMeta | null;
   rootUrl?: string;
   searchParams?: any;
 }) {
   const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>([]);
   const [useSVG, setUseSVG] = useState(false);
-  const domain = `${process.env.VERCEL_ENV === "production" ? "https://" : ""}${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const domain = `${process.env.VERCEL_ENV === "production" ? "https://" : ""}${site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   const initialDarkmode = searchParams?.darkmode === "true" || false;
   const [darkmode, setDarkmode] = useState(initialDarkmode);
   const handleDarkMode = () => setDarkmode(!darkmode);
 
   const finalRootUrl =
-    rootUrl || `https://${site.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+    rootUrl ?? `https://${site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
   const tiers = selectedTiers.length
     ? "tiers=" + selectedTiers.map((tier) => tier.id).join(",")
@@ -91,10 +92,10 @@ export function PackageEmbeddings({
                 <a href={finalRootUrl} target="_blank">
                   <img
                     src={`/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`}
-                    alt={site}
+                    alt={site?.id}
                   />
                 </a>
-              ) : embeddables?.tiers?.preview ? (
+              ) : embeddables?.tiers?.preview && site ? (
                 <embeddables.tiers.preview
                   site={site}
                   settings={{

@@ -1,15 +1,10 @@
-import FeatureService from "@/app/services/feature-service";
 import PageHeader from "@/components/common/page-header";
 import { PackageEmbeddings } from "@/components/embedables/package-embeddings/package-embeddings";
 import { getRootUrl } from "@/lib/domain";
-import { getSite } from "@/lib/site/fetchers";
+import { getSiteMeta } from "@/lib/site/fetchers";
 
 export default async function EmbedChannel() {
-  const [site, activeFeatures] = (await Promise.all([
-    getSite(),
-    FeatureService.findActiveByCurrentUser()
-  ])) as any;
-
+  const site = await getSiteMeta();
   const rootUrl = getRootUrl(site?.subdomain ?? "app");
 
   return (
