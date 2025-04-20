@@ -195,18 +195,6 @@ module.exports = {
       tracking: {
         tightish: "-0.0125em"
       },
-      width: {
-        1536: "1536px"
-      },
-      maxWidth: {
-        xxs: "300px"
-      },
-      height: {
-        150: "37.5rem"
-      },
-      margin: {
-        30: "7.5rem"
-      },
       fontFamily: {
         sans: [...fontFamily.sans],
         mono: ["Consolas", ...fontFamily.mono] // @TODO: Check if "Consolas" is actually a default font
@@ -223,84 +211,7 @@ module.exports = {
           }
         }
       },
-      keyframes: {
-        wiggle: {
-          "0%, 100%": {
-            transform: "translateX(0%)",
-            transformOrigin: "50% 50%"
-          },
-          "15%": {
-            transform: "translateX(-6px) rotate(-6deg)"
-          },
-          "30%": {
-            transform: "translateX(9px) rotate(6deg)"
-          },
-          "45%": {
-            transform: "translateX(-9px) rotate(-3.6deg)"
-          },
-          "60%": {
-            transform: "translateX(3px) rotate(2.4deg)"
-          },
-          "75%": {
-            transform: "translateX(-2px) rotate(-1.2deg)"
-          }
-        },
-        hide: {
-          from: {
-            opacity: "1"
-          },
-          to: {
-            opacity: "0"
-          }
-        },
-        slideDownAndFade: {
-          from: {
-            opacity: "0",
-            transform: "translateY(-6px)"
-          },
-          to: {
-            opacity: "1",
-            transform: "translateY(0)"
-          }
-        },
-        slideLeftAndFade: {
-          from: {
-            opacity: "0",
-            transform: "translateX(6px)"
-          },
-          to: {
-            opacity: "1",
-            transform: "translateX(0)"
-          }
-        },
-        slideUpAndFade: {
-          from: {
-            opacity: "0",
-            transform: "translateY(6px)"
-          },
-          to: {
-            opacity: "1",
-            transform: "translateY(0)"
-          }
-        },
-        slideRightAndFade: {
-          from: {
-            opacity: "0",
-            transform: "translateX(-6px)"
-          },
-          to: {
-            opacity: "1",
-            transform: "translateX(0)"
-          }
-        }
-      },
       animation: {
-        wiggle: "wiggle 0.8s both",
-        hide: "hide 150ms cubic-bezier(0.16, 1, 0.3, 1)",
-        slideDownAndFade: "slideDownAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
-        slideLeftAndFade: "slideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
-        slideUpAndFade: "slideUpAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
-        slideRightAndFade: "slideRightAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
         scroll: "scroll 40s linear infinite"
       },
       screens: {
