@@ -274,7 +274,6 @@ export default function DashboardCharts({
               <CustomerBarChart
                 customerTotals={customerTotals}
                 highestCustChangesInAMonth={highestCustChangesInAMonth}
-                isUsingDummyData={false}
               />
             </CardContent>
           </Card>
