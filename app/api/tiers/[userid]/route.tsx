@@ -19,19 +19,14 @@ export async function GET(req: NextRequest, props: { params: Promise<{ userid: s
     return onlyTiers.includes(tier.id);
   });
 
-  // find heighest number of features a tier among all tiers
-  const maxFeatures = tiers.reduce((max, tier) => {
-    return Math.max(max, tier.features.length);
-  }, 0);
-
   const width = (250 + 100) * tiers.length;
   let height = 300;
 
+  // @TODO: This will likely need a cleanup
   if (enforceHeight) {
     height = enforceHeight;
   } else if (tiers.find((tier) => tier.checkoutType == "gitwallet")) {
-    // If there checkout type if gitwallet then we display the features, so need to add the height of the features
-    height = 300 + maxFeatures * 24;
+    height = 300;
   }
 
   const darkModeStyles = `
@@ -40,7 +35,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ userid: s
     border: rgb(31, 41, 55);
     color: rgb(156, 163, 175)
   }
-  .title, .price, .features ul > li {
+  .title, .price {
     color: rgb(156, 163, 175)
   }
   .button {
@@ -50,25 +45,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ userid: s
   .button:hover {
     background: rgb(55, 65, 81); 
   }
-  .features ul > li > svg {
-    stroke: rgb(49, 196, 141);
-  }
 `;
-
-  const featuresList = (features: any[]) => {
-    return `<div class="features">
-            <ul>
-          ${features
-            .filter((feature) => feature["isEnabled"])
-            .map((feature: any) => {
-              return `<li>
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="min-width: 24px; margin-top: -2px" fill="none" stroke="rgb(14, 159, 110)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500"><rect width="18" height="18" x="3" y="3" rx="2"></rect><path d="m9 12 2 2 4-4"></path></svg>
-              ${feature.name}</li>`;
-            })
-            .join(" ")}
-            </ul>
-          </div>`;
-  };
 
   const tiersMarkup = tiers
     .map((tier) => {
@@ -84,16 +61,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ userid: s
             <span class="duration"> / month</span>
           </div>`
               : ""
-          }
-          ${
-            tier.checkoutType == "gitwallet" && tier.features?.length
-              ? `<p class="included">What's Included:</p>` +
-                `<div class="features-wrap">` +
-                featuresList(tier.features) +
-                `</div>`
-              : ""
-          }
-    
+          }    
           <div class="button">Get Started</div>
         </div>
       </div>
@@ -146,26 +114,6 @@ export async function GET(req: NextRequest, props: { params: Promise<{ userid: s
           .included {
             font-size: 0.75rem;
             color: rgb(156, 163, 175);
-          }
-          .features {
-            text-align: left;
-            width: 100%;
-            flex-grow: 1;
-          }
-          .features ul {
-            list-style: none;
-            margin: 0;
-            padding: 0;
-          }
-          .features-wrap {
-            flex-grow: 1
-          }
-          .features ul > li {
-            display: flex;
-            align-items: start;
-            gap: 0.5rem;
-            margin-top: 0.25rem;
-            margin-bottom: 0.25rem;
           }
           .button {
             width: 100%;

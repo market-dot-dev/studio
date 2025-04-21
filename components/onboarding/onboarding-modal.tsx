@@ -137,20 +137,22 @@ export default function OnboardingModal({
 
   useEffect(() => {
     if (!mounted || !sourceIsMarketDev || isMarketExpert !== null) return;
-    
+
     const connectMarketExpert = async () => {
       try {
         const success = await validateMarketExpert();
         if (success && sourceIsMarketDev) {
           toast.success("Market.dev account connected successfully");
         } else if (!success && sourceIsMarketDev) {
-          setValidateMarketExpertError("Failed to connect your Market.dev account. Make sure you have an account on Market.dev.");
+          setValidateMarketExpertError(
+            "Failed to connect your Market.dev account. Make sure you have an account on Market.dev."
+          );
         }
       } catch (error) {
         setValidateMarketExpertError("Error connecting to market.dev");
       }
     };
-    
+
     connectMarketExpert();
   }, [mounted, sourceIsMarketDev, isMarketExpert, validateMarketExpert]);
 

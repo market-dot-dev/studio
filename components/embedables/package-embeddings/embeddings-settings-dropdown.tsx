@@ -1,6 +1,6 @@
 "use client";
 
-import { TierWithFeatures } from "@/app/services/TierService";
+import { TierWithCount } from "@/app/services/TierService";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,14 +32,14 @@ export default function EmbeddingsSettingsDropdown({
 }: {
   darkMode: boolean;
   darkModeCallback: () => void;
-  selectedTiers: TierWithFeatures[];
-  setSelectedTiers: (tiers: TierWithFeatures[]) => void;
+  selectedTiers: TierWithCount[];
+  setSelectedTiers: (tiers: TierWithCount[]) => void;
   useSVG: boolean;
   setUseSVG: (useSVG: boolean) => void;
 }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [temporarySelectedTiers, setTemporarySelectedTiers] =
-    useState<TierWithFeatures[]>(selectedTiers);
+    useState<TierWithCount[]>(selectedTiers);
   const atleastOneTierSelected = selectedTiers.length > 0;
 
   useEffect(() => {

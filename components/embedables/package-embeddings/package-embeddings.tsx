@@ -1,6 +1,6 @@
 "use client";
 
-import { TierWithFeatures } from "@/app/services/TierService";
+import { TierWithCount } from "@/app/services/TierService";
 import DashedCard from "@/components/common/dashed-card";
 import CodeSnippet from "@/components/embedables/code-snippet";
 import embeddables from "@/components/site/embedables/index";
@@ -19,7 +19,7 @@ export function PackageEmbeddings({
   rootUrl?: string;
   searchParams?: any;
 }) {
-  const [selectedTiers, setSelectedTiers] = useState<TierWithFeatures[]>([]);
+  const [selectedTiers, setSelectedTiers] = useState<TierWithCount[]>([]);
   const [useSVG, setUseSVG] = useState(false);
   const domain = `${process.env.VERCEL_ENV === "production" ? "https://" : ""}${site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
   const initialDarkmode = searchParams?.darkmode === "true" || false;
@@ -103,7 +103,6 @@ export function PackageEmbeddings({
                     tiers: selectedTiers.map((tier) => tier.id)
                   }}
                   tiers={selectedTiers}
-                  hasActiveFeatures={false}
                 />
               ) : (
                 <div>Preview component not available</div>

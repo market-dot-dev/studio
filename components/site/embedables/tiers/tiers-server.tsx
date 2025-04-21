@@ -1,5 +1,4 @@
 import TierService from "@/app/services/TierService";
-import FeatureService from "@/app/services/feature-service";
 import { SiteMeta } from "@/lib/site/fetchers";
 import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
@@ -12,18 +11,9 @@ export default async function TiersServer({
   site: SiteMeta;
   searchParams: TiersEmbedSettingsProps;
 }) {
-  // getting the tiers by means of server functions
-  const [tiers, activeFeatures] = await Promise.all([
-    TierService.getTiersForUser(site.userId),
-    FeatureService.findActiveByUser(site.userId)
-  ]);
+  const tiers = await TierService.getTiersForUser(site.userId);
   const filteredTiers = tiers.filter((tier: any) => (searchParams.tiers ?? []).includes(tier.id));
   return (
-    <Tiers
-      tiers={filteredTiers ?? []}
-      subdomain={site.subdomain ?? ""}
-      settings={searchParams}
-      hasActiveFeatures={!!activeFeatures?.length}
-    />
+    <Tiers tiers={filteredTiers ?? []} subdomain={site.subdomain ?? ""} settings={searchParams} />
   );
 }

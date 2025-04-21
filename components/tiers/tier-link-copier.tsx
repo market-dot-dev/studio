@@ -1,0 +1,127 @@
+import Tier from "@/app/models/Tier";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { getRootUrl } from "@/lib/domain";
+import { AnimatePresence, motion } from "framer-motion";
+import { Check, LinkIcon } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+interface TierLinkCopierProps {
+  tier: Tier;
+  savedPublishedState: boolean;
+  className?: string;
+}
+
+/**
+ * Component for displaying and copying a tier's checkout link
+ */
+const TierLinkCopier: React.FC<TierLinkCopierProps> = ({
+  tier,
+  savedPublishedState,
+  className
+}) => {
+  const [isCopied, setIsCopied] = useState(false);
+  const [shouldCopy, setShouldCopy] = useState(false);
+  const link = getRootUrl("app", `/checkout/${tier.id}`);
+
+  useEffect(() => {
+    if (!shouldCopy) return;
+
+    const copyToClipboard = async () => {
+      try {
+        // Check if the Clipboard API is available
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(link);
+        } else {
+          // Fallback for browsers without clipboard API
+          const textarea = document.createElement("textarea");
+          textarea.value = link;
+          textarea.style.position = "fixed"; // Prevent scrolling to bottom
+          document.body.appendChild(textarea);
+          textarea.focus();
+          textarea.select();
+
+          // Try the execCommand as fallback (works in more browsers)
+          const successful = document.execCommand("copy");
+          if (!successful) {
+            throw new Error("Fallback clipboard copy failed");
+          }
+
+          document.body.removeChild(textarea);
+        }
+
+        setIsCopied(true);
+
+        const timer = setTimeout(() => {
+          setIsCopied(false);
+          setShouldCopy(false);
+        }, 2000);
+
+        return () => clearTimeout(timer);
+      } catch (err) {
+        console.error("Failed to copy text: ", err);
+        toast.error("Failed to copy the link. Please try again.");
+        setShouldCopy(false);
+      }
+    };
+
+    copyToClipboard();
+  }, [shouldCopy, link]);
+
+  const handleCopy = () => {
+    setShouldCopy(true);
+  };
+
+  if (!link || !savedPublishedState) {
+    return null;
+  }
+
+  return (
+    <div
+      className={`shadow-border-sm flex flex-row items-center justify-center rounded ${className}`}
+    >
+      <Input
+        id="checkoutLink"
+        className="min-w-none w-fit truncate rounded-r-none shadow-none active:shadow-none"
+        readOnly
+        value={link}
+        onClick={(e) => (e.target as HTMLInputElement).select()}
+      />
+      <span className="h-full w-0 border-l border-stone-300"></span>
+      <Button
+        variant="outline"
+        onClick={handleCopy}
+        disabled={isCopied}
+        tooltip={isCopied ? "Copied!" : "Copy checkout link"}
+        className="z-1 size-9 rounded-l-none text-stone-900 shadow-none active:shadow-none md:size-8"
+      >
+        <AnimatePresence mode="wait" initial={false}>
+          {isCopied ? (
+            <motion.div
+              key="check"
+              initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
+              transition={{ duration: 0.1, type: "easeInOut" }}
+            >
+              <Check className="size-4 text-stone-900" />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="link"
+              initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
+              transition={{ duration: 0.1, type: "easeInOut" }}
+            >
+              <LinkIcon className="size-4 text-stone-900" />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </Button>
+    </div>
+  );
+};
+
+export default TierLinkCopier;

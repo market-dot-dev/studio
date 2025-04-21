@@ -1,5 +1,4 @@
 import Nav from "@/app/components/nav";
-import FeatureService from "@/app/services/feature-service";
 import { userIsMarketExpert } from "@/app/services/MarketService";
 import {
   defaultOnboardingState,
@@ -16,12 +15,7 @@ import OnboardingModal from "@/components/onboarding/onboarding-modal";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
-export default async function DashboardLayout(props: {
-  children: ReactNode;
-  params: Promise<any>;
-}) {
-  const params = await props.params;
-
+export default async function DashboardLayout(props: { children: ReactNode }) {
   const { children } = props;
 
   const user = await UserService.getCurrentUser();
@@ -37,10 +31,7 @@ export default async function DashboardLayout(props: {
     : defaultOnboardingState;
 
   const site = await getOnlySiteFromUserId(user.id);
-  const activeFeatures = await FeatureService.findActiveByCurrentUser();
   const showOnboardingModal = !onboarding.setupBusiness || !onboarding.preferredServices;
-
-  const segments = params?.segments || [];
 
   return (
     <DashboardProvider siteId={site?.id ?? null} initialExpertStatus={isMarketExpert}>
@@ -52,7 +43,6 @@ export default async function DashboardLayout(props: {
           <Nav
             siteId={site?.id ?? null}
             roleId={user.roleId || "anonymous"}
-            hasFeatures={activeFeatures.length != 0}
             onboarding={onboarding}
             showOnboardingModal={showOnboardingModal}
           />

@@ -9,7 +9,6 @@ import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AppWindowMac,
-  Box,
   ChartNoAxesColumnIncreasing as Chart,
   Code2,
   Home,
@@ -107,7 +106,6 @@ function Item({ item }: { item: NavItem }) {
 interface NavProps {
   siteId: string | null;
   roleId: string | null;
-  hasFeatures: boolean | null;
   isMobile?: boolean;
   className?: string;
   onboarding: OnboardingState;
@@ -117,7 +115,6 @@ interface NavProps {
 export default function Nav({
   siteId,
   roleId,
-  hasFeatures,
   isMobile = false,
   className,
   onboarding,
@@ -130,16 +127,6 @@ export default function Nav({
   const isHomepage = urlSegments.length === 0;
 
   const items = useMemo(() => {
-    const featureItems: LinkItem[] = [
-      {
-        type: "link",
-        name: "Services",
-        href: "/features",
-        isActive: urlSegments[0] === "features",
-        icon: <Box width={18} />
-      }
-    ];
-
     const siteItems: LinkItem[] = [
       {
         type: "link",
@@ -179,7 +166,6 @@ export default function Nav({
         type: "title",
         name: "Services"
       },
-      ...(hasFeatures ? featureItems : []),
       {
         type: "link",
         name: "Packages",
@@ -262,7 +248,7 @@ export default function Nav({
       : [];
 
     return [...mainItems, ...debugItems] as NavItem[];
-  }, [urlSegments, siteId, roleId, hasFeatures, isMarketExpert]);
+  }, [urlSegments, siteId, roleId, isMarketExpert]);
 
   const serviceItems: NavItem[] = useMemo(() => {
     return [

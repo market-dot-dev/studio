@@ -4,12 +4,12 @@ import {
   GLOBAL_APPLICATION_FEE_PCT
 } from "@/app/config/stripe-fees";
 import { calculateApplicationFee } from "@/app/services/StripeService";
-import { TierWithFeatures, updateApplicationFee } from "@/app/services/TierService";
+import { TierWithCount, updateApplicationFee } from "@/app/services/TierService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
 
-export default function TierForm({ tier }: { tier: TierWithFeatures }) {
+export default function TierForm({ tier }: { tier: TierWithCount }) {
   const [applicationFeePercent, setApplicationFeePercent] = useState(
     tier.applicationFeePercent || 0
   );
