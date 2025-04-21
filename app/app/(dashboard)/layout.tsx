@@ -1,6 +1,6 @@
 import Nav from "@/app/components/nav";
 import FeatureService from "@/app/services/feature-service";
-import { MarketService } from "@/app/services/market-service";
+import { userIsMarketExpert } from "@/app/services/MarketService";
 import {
   defaultOnboardingState,
   OnboardingState
@@ -29,7 +29,8 @@ export default async function DashboardLayout(props: {
     redirect("/login");
   }
 
-  const isMarketExpert = (await MarketService.getExpert()) != null;
+  // Check if the user is a market expert once at load time
+  const isMarketExpert = await userIsMarketExpert();
 
   const onboarding = user.onboarding
     ? (JSON.parse(user.onboarding) as OnboardingState)
@@ -42,7 +43,7 @@ export default async function DashboardLayout(props: {
   const segments = params?.segments || [];
 
   return (
-    <DashboardProvider siteId={site?.id ?? null}>
+    <DashboardProvider siteId={site?.id ?? null} initialExpertStatus={isMarketExpert}>
       <SessionRefresher />
       <OnboardingModal user={user} currentSite={site ?? undefined} onboardingState={onboarding} />
       <div>
@@ -52,7 +53,6 @@ export default async function DashboardLayout(props: {
             siteId={site?.id ?? null}
             roleId={user.roleId || "anonymous"}
             hasFeatures={activeFeatures.length != 0}
-            isMarketExpert={isMarketExpert}
             onboarding={onboarding}
             showOnboardingModal={showOnboardingModal}
           />

@@ -5,7 +5,7 @@ import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import prisma from "@/lib/prisma";
 import { Channel, Feature, TierVersion, User } from "@prisma/client";
 import FeatureService from "./feature-service";
-import { MarketService } from "./market-service";
+import { updateServicesForSale } from "./MarketService";
 import SessionService from "./SessionService";
 import StripeService, { SubscriptionCadence } from "./StripeService";
 import SubscriptionService from "./SubscriptionService";
@@ -166,7 +166,7 @@ class TierService {
     });
 
     if (user.marketExpertId) {
-      await MarketService.updateServicesForSale();
+      await updateServicesForSale();
     }
     return createdTier;
   }
@@ -200,7 +200,7 @@ class TierService {
     });
 
     if (user.marketExpertId) {
-      await MarketService.updateServicesForSale();
+      await updateServicesForSale();
     }
     return response;
   }
@@ -233,7 +233,7 @@ class TierService {
     });
 
     if (user.marketExpertId) {
-      await MarketService.updateServicesForSale();
+      await updateServicesForSale();
     }
     return updatedTier;
   }
