@@ -122,7 +122,12 @@ export default {
         sm: "calc(var(--radius) - 4px)"
       },
       fontSize: {
-        xxs: ["11px", "12px"],
+        xxs: [
+          "11px",
+          {
+            lineHeight: "12px"
+          }
+        ],
         "marketing-xs": [
           "12px",
           {
