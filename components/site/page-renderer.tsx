@@ -93,15 +93,14 @@ const renderElement = (
   index: number,
   site: Site | null = null,
   page: Page | null = null,
-  isPreview: boolean = false,
-  hasActiveFeatures?: boolean
+  isPreview: boolean = false
 ): JSX.Element => {
   // in case there are multiple root elements, wrap them in a fragment
   if (Array.isArray(element)) {
     return (
       <>
         {element.map((child, childIndex) =>
-          renderElement(child, childIndex, site, page, isPreview, hasActiveFeatures)
+          renderElement(child, childIndex, site, page, isPreview)
         )}
       </>
     );
@@ -141,13 +140,12 @@ const renderElement = (
     if (!componentsMap[tag].ui) {
       if (site) props.site = site;
       if (page) props.page = page;
-      if (hasActiveFeatures !== undefined) props.hasActiveFeatures = hasActiveFeatures;
     }
 
     const children = Array.from(element.childNodes).map((child, childIndex) => {
       // if the child is a text node, return the text content
       if (child.nodeType === 3) return child.textContent;
-      return renderElement(child as Element, childIndex, site, page, isPreview, hasActiveFeatures);
+      return renderElement(child as Element, childIndex, site, page, isPreview);
     });
 
     return (
@@ -197,14 +195,7 @@ const renderElement = (
           if (child.nodeType === 3) {
             return child.textContent;
           }
-          return renderElement(
-            child as Element,
-            childIndex,
-            site,
-            page,
-            isPreview,
-            hasActiveFeatures
-          );
+          return renderElement(child as Element, childIndex, site, page, isPreview);
         })}
       </DynamicComponent>
     );

@@ -32,14 +32,12 @@ export default function PageContainer({
   page,
   siteUrl,
   homepageId,
-  hasActiveFeatures,
   lastUpdateDate
 }: {
   site: Partial<Site>;
   page: Partial<Page>;
   siteUrl: string | null;
   homepageId: string | null;
-  hasActiveFeatures?: boolean;
   lastUpdateDate: string;
 }) {
   const router = useRouter();
@@ -361,7 +359,6 @@ export default function PageContainer({
         page={pageData}
         siteUrl={siteUrl}
         homepageId={homepageId}
-        hasActiveFeatures={hasActiveFeatures}
         isDraft={isDraft}
         titleError={titleError}
         slugError={slugError}

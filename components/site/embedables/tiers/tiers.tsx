@@ -12,14 +12,12 @@ export default function Tiers({
   tiers,
   subdomain,
   settings,
-  hasActiveFeatures,
   className,
   disableButtons
 }: {
   tiers: any[];
   subdomain: string;
   settings: TiersEmbedSettingsProps;
-  hasActiveFeatures?: boolean;
   className?: string;
   disableButtons?: boolean;
 }) {
@@ -88,7 +86,6 @@ export default function Tiers({
                       openUrlInNewTab={true}
                       tier={tier}
                       darkMode={settings.darkmode}
-                      hasActiveFeatures={hasActiveFeatures}
                       alignment={tiers.length === 1 ? "center" : "left"}
                       buttonDisabled={disableButtons}
                     />

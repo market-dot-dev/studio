@@ -7,9 +7,7 @@ export async function getSite() {
   const session = await getSession();
 
   if (!session?.user.id) {
-    return {
-      error: "Not authenticated"
-    };
+    throw new Error("Not authenticated");
   }
 
   return await unstable_cache(

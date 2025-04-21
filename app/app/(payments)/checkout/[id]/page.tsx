@@ -1,9 +1,7 @@
 "use client";
 
-import useFeatures from "@/app/hooks/use-features";
 import useTier from "@/app/hooks/use-tier";
 import useUser from "@/app/hooks/use-user";
-import TierFeatureList from "@/components/features/tier-feature-list";
 import { useSearchParams } from "next/navigation";
 import { use, useMemo } from "react";
 import RegistrationSection from "./registration-section";
@@ -48,8 +46,7 @@ const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
 
   const [tier, isTierLoading] = useTier(id);
   const [contract, isContractLoading] = useContract(tier?.contractId || undefined);
-  const [maintainer, isMaintainerLoading, hasActiveFeatures] = useUser(tier?.userId);
-  const [features, isFeaturesLoading] = useFeatures(id);
+  const [maintainer, isMaintainerLoading] = useUser(tier?.userId);
 
   // Derived loading states that account for dependencies
   const isEffectiveMaintainerLoading = useMemo(
@@ -60,11 +57,6 @@ const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
   const isEffectiveContractLoading = useMemo(
     () => isTierLoading || (tier?.contractId && isContractLoading),
     [isTierLoading, tier?.contractId, isContractLoading]
-  );
-
-  const isEffectiveFeaturesLoading = useMemo(
-    () => isTierLoading || isFeaturesLoading,
-    [isTierLoading, isFeaturesLoading]
   );
 
   const checkoutType = tier?.checkoutType;
@@ -85,8 +77,6 @@ const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
     return TierNotAvailable();
   }
 
-  const directlyProvidedFeatures = !!features && features.length > 0;
-  const tierFeatures = directlyProvidedFeatures ? features : [];
   const parsedDescription = parseTierDescription(tier?.description || "");
 
   return (
@@ -156,18 +146,13 @@ const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
             </div>
 
             <div className="flex flex-col gap-6 overflow-y-scroll">
-              {isEffectiveFeaturesLoading ? (
+              {isTierLoading ? (
                 <div className="space-y-3">
                   <Skeleton className="h-5 w-full" />
                   <Skeleton className="h-5 w-5/6" />
                   <Skeleton className="h-5 w-4/6" />
                   <Skeleton className="h-5 w-3/4" />
                 </div>
-              ) : hasActiveFeatures && tierFeatures.length !== 0 ? (
-                <>
-                  <Separator className="bg-stone-300/50" />
-                  <TierFeatureList features={tierFeatures} />
-                </>
               ) : (
                 <>
                   <Separator className="bg-stone-300/50" />
@@ -188,17 +173,6 @@ const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
                           </div>
                         );
                       }
-
-                      return (
-                        <TierFeatureList
-                          key={dex}
-                          features={section.features.map((feature: string, index: number) => ({
-                            id: `${index}`,
-                            name: feature,
-                            isEnabled: true
-                          }))}
-                        />
-                      );
                     })}
                 </>
               )}

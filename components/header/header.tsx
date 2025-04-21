@@ -1,5 +1,4 @@
 import Nav from "@/app/components/nav";
-import FeatureService from "@/app/services/feature-service";
 import { MarketService } from "@/app/services/market-service";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { getOnlySiteFromUserId } from "@/app/services/SiteService";
@@ -17,7 +16,6 @@ export default async function Header() {
 
   const user = session.user;
   const site = await getOnlySiteFromUserId(user.id);
-  const activeFeatures = await FeatureService.findActiveByCurrentUser();
   const isMarketExpert = (await MarketService.getExpert()) != null;
   const onboarding = user.onboarding ? JSON.parse(user.onboarding) : defaultOnboardingState;
   const showOnboardingModal = !onboarding.setupBusiness || !onboarding.preferredServices;
@@ -32,7 +30,6 @@ export default async function Header() {
         <Nav
           siteId={site?.id ?? null}
           roleId={user.roleId || "anonymous"}
-          hasFeatures={activeFeatures.length != 0}
           isMarketExpert={isMarketExpert}
           isMobile={true}
           onboarding={onboarding}

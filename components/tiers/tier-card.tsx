@@ -1,14 +1,12 @@
 "use client";
 
 import type { SubscriptionCadence } from "@/app/services/StripeService";
-import type { CheckoutType, TierWithFeatures } from "@/app/services/TierService";
-import TierFeatureList from "@/components/features/tier-feature-list";
+import type { CheckoutType, TierWithCount } from "@/app/services/TierService";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
 import { cn, parseTierDescription } from "@/lib/utils";
-import { Feature } from "@prisma/client";
 import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
@@ -16,12 +14,10 @@ import { useState } from "react";
 type TierCardProps = {
   url?: string;
   openUrlInNewTab?: boolean;
-  tier: TierWithFeatures;
+  tier: TierWithCount;
   buttonDisabled?: boolean;
   alignment?: "left" | "center";
   darkMode?: boolean;
-  features?: Feature[];
-  hasActiveFeatures?: boolean;
   className?: string;
   children?: React.ReactNode;
 };
@@ -82,8 +78,6 @@ const TierCard: React.FC<TierCardProps> = ({
   tier,
   url = null,
   darkMode = false,
-  features = [],
-  hasActiveFeatures,
   alignment = "left",
   className,
   children,
@@ -100,8 +94,6 @@ const TierCard: React.FC<TierCardProps> = ({
   const isntOnce = tier.cadence !== "once";
   const cadenceShorthand = subscriptionCadenceShorthands[tier.cadence as SubscriptionCadence];
 
-  const directlyProvidedFeatures = !!features && features.length > 0;
-  const tierFeatures = (directlyProvidedFeatures ? features : tier.features) || [];
   const parsedDescription = parseTierDescription(tier.description || "");
 
   return (
@@ -159,35 +151,19 @@ const TierCard: React.FC<TierCardProps> = ({
           </div>
         )}
         <div className="flex flex-col gap-4">
-          {hasActiveFeatures && tierFeatures.length !== 0 ? (
-            <TierFeatureList features={tierFeatures} darkMode={darkMode} />
-          ) : (
-            parsedDescription.map((section, dex) => {
-              if (section.text) {
-                return (
-                  <div key={dex}>
-                    {section.text.map((text: string, index: number) => (
-                      <p key={index} className={cn("text-sm", textClasses)}>
-                        {text}
-                      </p>
-                    ))}
-                  </div>
-                );
-              }
-
+          {parsedDescription.map((section, dex) => {
+            if (section.text) {
               return (
-                <TierFeatureList
-                  key={dex}
-                  features={section.features.map((feature: string, index: number) => ({
-                    id: index,
-                    name: feature,
-                    isEnabled: true
-                  }))}
-                  darkMode={darkMode}
-                />
+                <div key={dex}>
+                  {section.text.map((text: string, index: number) => (
+                    <p key={index} className={cn("text-sm", textClasses)}>
+                      {text}
+                    </p>
+                  ))}
+                </div>
               );
-            })
-          )}
+            }
+          })}
         </div>
       </div>
       <div className="mt-8 w-full">

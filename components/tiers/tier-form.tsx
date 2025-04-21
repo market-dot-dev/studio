@@ -1,7 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "framer-motion";
-import { AlertTriangle, Check, Copy, LinkIcon } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -10,16 +9,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import {
   Table,
@@ -35,7 +26,6 @@ import Spinner from "../ui/spinner";
 import { Switch } from "../ui/switch";
 
 import PageHeader from "../common/page-header";
-import TierFeaturePicker from "../features/tier-feature-picker";
 import ChannelsSelectionInput from "./channels-selection-input";
 import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
 import TierCard from "./tier-card";
@@ -46,457 +36,40 @@ import { userHasStripeAccountIdById } from "@/app/services/StripeService";
 import { subscriberCount } from "@/app/services/SubscriptionService";
 import {
   createTier,
-  duplicateTier,
   getVersionsByTierId,
-  TierVersionWithFeatures,
-  TierWithFeatures,
+  TierWithCount,
   updateTier
 } from "@/app/services/TierService";
-import { attachMany } from "@/app/services/feature-service";
-import { getRootUrl } from "@/lib/domain";
 import { toast } from "sonner";
 
 import useCurrentSession from "@/app/hooks/use-current-session";
 
-import { Channel, Contract, Feature, User } from "@prisma/client";
+import { Channel, Contract, TierVersion, User } from "@prisma/client";
+import DuplicateTierButton from "./duplicate-tier-button";
+import StandardCheckoutForm from "./standard-checkout-form";
+import TierLinkCopier from "./tier-link-copier";
+import TierVersionNotice from "./tier-version-notice";
+import TierVersionRow from "./tier-version-row";
 
 interface TierFormProps {
   tier?: Partial<Tier>;
   contracts: Contract[];
-  hasActiveFeatures?: boolean;
   user: User;
 }
 
-const TierVersionRow = ({ tierVersion }: { tierVersion: TierVersionWithFeatures }) => {
-  const features = tierVersion.features || [];
-  const [versionSubscribers, setVersionSubscribers] = useState(0);
-
-  useEffect(() => {
-    subscriberCount(tierVersion.tierId, tierVersion.revision).then(setVersionSubscribers);
-  }, [tierVersion.tierId, tierVersion.revision]);
-
-  return (
-    <TableRow>
-      <TableCell>{tierVersion.createdAt.toDateString()}</TableCell>
-      <TableCell>${tierVersion.price}</TableCell>
-      <TableCell>
-        ${tierVersion.price}
-        {tierVersion.cadence ? `/${tierVersion.cadence}` : ""}
-      </TableCell>
-      <TableCell>{versionSubscribers}</TableCell>
-      <TableCell>
-        {features.length > 0 ? (
-          <>
-            <ul>
-              {features.map((f) => (
-                <li key={f.id}>· {f.name}</li>
-              ))}
-            </ul>
-          </>
-        ) : (
-          <>&nbsp;none</>
-        )}
-      </TableCell>
-    </TableRow>
-  );
-};
-
-interface NewVersionCalloutProps {
-  versionedAttributesChanged: boolean;
-  featuresChanged: boolean;
-  tierHasSubscribers: boolean;
-}
-
-const NewVersionCallout: React.FC<NewVersionCalloutProps> = ({
-  versionedAttributesChanged,
-  featuresChanged,
-  tierHasSubscribers
-}) => {
-  if (tierHasSubscribers && (versionedAttributesChanged || featuresChanged)) {
-    const reasons: string[] = [];
-    if (versionedAttributesChanged) reasons.push("price");
-    if (featuresChanged) reasons.push("features");
-
-    const reasonsText = reasons.join(" and ");
-
-    return (
-      <Alert variant="destructive" className="mb-5 mt-2">
-        <AlertTitle>New Version</AlertTitle>
-        <AlertDescription>
-          You&apos;re changing the <strong>{reasonsText}</strong> of a package with subscribers,
-          which will result in a new version.
-        </AlertDescription>
-      </Alert>
-    );
-  } else {
-    return <></>;
-  }
-};
-
-const TierLinkCopier = ({
-  tier,
-  savedPublishedState
-}: {
-  tier: Tier;
-  savedPublishedState: boolean;
-}) => {
-  const [isCopied, setIsCopied] = useState(false);
-  const [shouldCopy, setShouldCopy] = useState(false);
-  const link = getRootUrl("app", `/checkout/${tier.id}`);
-
-  useEffect(() => {
-    if (!shouldCopy) return;
-
-    const copyToClipboard = async () => {
-      try {
-        console.log("Link to copy:", link);
-
-        // Check if the Clipboard API is available
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(link);
-        } else {
-          // Fallback for browsers without clipboard API
-          const textarea = document.createElement("textarea");
-          textarea.value = link;
-          textarea.style.position = "fixed"; // Prevent scrolling to bottom
-          document.body.appendChild(textarea);
-          textarea.focus();
-          textarea.select();
-
-          // Try the execCommand as fallback (works in more browsers)
-          const successful = document.execCommand("copy");
-          if (!successful) {
-            throw new Error("Fallback clipboard copy failed");
-          }
-
-          document.body.removeChild(textarea);
-        }
-
-        setIsCopied(true);
-
-        const timer = setTimeout(() => {
-          setIsCopied(false);
-          setShouldCopy(false);
-        }, 2000);
-
-        return () => clearTimeout(timer);
-      } catch (err) {
-        console.error("Failed to copy text: ", err);
-        toast.error("Failed to copy the link. Please try again.");
-        setShouldCopy(false);
-      }
-    };
-
-    copyToClipboard();
-  }, [shouldCopy, link]);
-
-  const handleCopy = () => {
-    setShouldCopy(true);
-  };
-
-  if (!link || !savedPublishedState) {
-    return null;
-  }
-
-  return (
-    <div className="shadow-border-sm flex flex-row items-center justify-center rounded">
-      <Input
-        id="checkoutLink"
-        className="min-w-none w-fit truncate rounded-r-none shadow-none active:shadow-none"
-        readOnly
-        value={link}
-        onClick={(e) => (e.target as HTMLInputElement).select()}
-      />
-      <span className="h-full w-0 border-l border-stone-300"></span>
-      <Button
-        variant="outline"
-        onClick={handleCopy}
-        disabled={isCopied}
-        tooltip={isCopied ? "Copied!" : "Copy checkout link"}
-        className="z-1 size-9 rounded-l-none text-stone-900 shadow-none active:shadow-none md:size-8"
-      >
-        <AnimatePresence mode="wait" initial={false}>
-          {isCopied ? (
-            <motion.div
-              key="check"
-              initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
-              transition={{ duration: 0.1, type: "easeInOut" }}
-            >
-              <Check className="size-4 text-stone-900" />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="link"
-              initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
-              transition={{ duration: 0.1, type: "easeInOut" }}
-            >
-              <LinkIcon className="size-4 text-stone-900" />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </Button>
-    </div>
-  );
-};
-
-const calcDiscount = (price: number, annualPrice: number) => {
-  if (price === 0) return 0;
-  if (annualPrice === 0) return 100;
-  const twelveMonths = price * 12;
-  return Math.round(((twelveMonths - annualPrice) / twelveMonths) * 100 * 10) / 10;
-};
-
-const DuplicateTierButton = ({ tierId }: { tierId: string }) => {
+export default function TierForm({ tier: tierObj, contracts, user }: TierFormProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleDuplicate = async () => {
-    setIsLoading(true);
-    const newTier = await duplicateTier(tierId);
-    if (newTier) {
-      toast.success("Package duplicated successfully");
-      router.push(`/tiers/${newTier.id}`);
-    } else {
-      toast.error("Failed to duplicate package");
-    }
-    setIsLoading(false);
-  };
-
-  return (
-    <Button variant="outline" onClick={handleDuplicate} loading={isLoading}>
-      <Copy />
-      Duplicate
-    </Button>
-  );
-};
-
-const StandardCheckoutForm = ({
-  tier,
-  contracts,
-  handleTierDataChange,
-  idPrefix = ""
-}: {
-  tier: Tier;
-  contracts: Contract[];
-  handleTierDataChange: (name: string, value: number | string | null) => void;
-  idPrefix?: string;
-}) => {
-  const [trialEnabled, setTrialEnabled] = useState(tier?.trialDays > 0);
-  const [annualPlanEnabled, setAnnualPlanEnabled] = useState(
-    tier?.priceAnnual ? tier.priceAnnual > 0 : false
-  );
-  const [annualDiscountPercent, setAnnualDiscountPercent] = useState(
-    calcDiscount(tier.price || 0, tier.priceAnnual || 0)
-  );
-
-  return (
-    <div className="flex flex-col gap-6">
-      <div>
-        <Label htmlFor={`${idPrefix}contractId`} className="mb-2 block">
-          Contract
-        </Label>
-        <Select
-          value={tier.contractId || "standard-msa"}
-          onValueChange={(v) => handleTierDataChange("contractId", v)}
-        >
-          <SelectTrigger className="w-full">
-            <SelectValue placeholder="Choose contract" />
-          </SelectTrigger>
-          <SelectContent>
-            {contracts.map((c, index) => (
-              <SelectItem value={c.id} key={index}>
-                {c.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="flex flex-col gap-6">
-        <div>
-          <Label htmlFor={`${idPrefix}cadence`} className="mb-2 block">
-            Billing Type
-          </Label>
-          <Select
-            value={tier.cadence || "month"}
-            onValueChange={(v) => handleTierDataChange("cadence", v)}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue placeholder="Billing Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="month">Recurring (Monthly)</SelectItem>
-              {/*
-              <SelectItem value="year">year</SelectItem>
-              <SelectItem value="quarter">quarter</SelectItem>
-              */}
-              <SelectItem value="once">One Time</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor={`${idPrefix}price`} className="mb-2 block">
-            {tier.cadence === "month" ? "Monthly Price (USD)" : "Price (USD)"}
-          </Label>
-          <div className="flex gap-2">
-            <Input
-              id={`${idPrefix}price`}
-              name="price"
-              type="number"
-              value={tier.price || 0}
-              placeholder="0"
-              min={0}
-              required
-              onChange={(e) => {
-                console.log("price", e.target.value);
-                console.log("pricetype", typeof e.target.value);
-                console.log("price", Number(e.target.value));
-                console.log("pricetype", typeof Number(e.target.value));
-                const v = Number(e.target.value);
-                if (annualPlanEnabled) {
-                  setAnnualDiscountPercent(calcDiscount(v, tier.priceAnnual || 0));
-                }
-
-                handleTierDataChange("price", v);
-              }}
-            />
-          </div>
-        </div>
-
-        {tier.cadence === "month" && (
-          <div className="space-y-6">
-            <div className="flex flex-col gap-6">
-              <Checkbox
-                id={`${idPrefix}annualPlanEnabled`}
-                checked={annualPlanEnabled}
-                onCheckedChange={(checked) => {
-                  const isChecked = checked === true;
-                  setAnnualPlanEnabled(isChecked);
-
-                  if (isChecked) {
-                    handleTierDataChange("priceAnnual", tier.priceAnnual || (tier.price || 0) * 12);
-                    setAnnualDiscountPercent(0);
-                  } else {
-                    handleTierDataChange("priceAnnual", 0);
-                    setAnnualDiscountPercent(0);
-                  }
-                }}
-                label="Offer annual plan"
-              />
-
-              {annualPlanEnabled && (
-                <div className="mb-4">
-                  <Label htmlFor={`${idPrefix}priceAnnual`} className="mb-2 block">
-                    Annual Price (USD)
-                  </Label>
-                  <Input
-                    id={`${idPrefix}priceAnnual`}
-                    name="priceAnnual"
-                    type="number"
-                    placeholder="0"
-                    required
-                    disabled={!annualPlanEnabled}
-                    value={tier.priceAnnual || 0}
-                    onChange={(e) => {
-                      const v = Number(e.target.value);
-                      setAnnualDiscountPercent(calcDiscount(tier.price || 0, v));
-                      handleTierDataChange("priceAnnual", v);
-                    }}
-                    className={
-                      !!tier.priceAnnual && (tier.price || 0) * 12 < (tier.priceAnnual || 0)
-                        ? "border-rose-500"
-                        : ""
-                    }
-                  />
-                  {!!tier.priceAnnual && (tier.price || 0) * 12 < (tier.priceAnnual || 0) && (
-                    <p className="mt-2 text-xs text-rose-600">
-                      Your annual plan is equal to or more expensive than the Monthly Plan x 12 ($
-                      {(tier.price || 0) * 12}). Please adjust.
-                    </p>
-                  )}
-                  <p className="font-regular mt-3 block text-xs text-stone-500">
-                    <strong className="font-semibold">Effective Discount Rate</strong>:{" "}
-                    {annualDiscountPercent ? annualDiscountPercent + "%" : "0%"} (compared to
-                    annualized monthly {<>${(tier.price || 0) * 12}</>})
-                  </p>
-                </div>
-              )}
-
-              {/* <div className="mb-4">
-                <Input
-                  id="annualDiscountPercent"
-                  placeholder="Annual Discount (%)"
-                  readOnly={true}
-                  disabled={!annualPlanEnabled}
-                  required
-                  type="number"
-                  min={0}
-                  max={100}
-                  name="annualDiscountPercent"
-                  value={annualDiscountPercent}
-                />
-              </div> */}
-            </div>
-
-            <div className="flex flex-col gap-6">
-              <Checkbox
-                id={`${idPrefix}trialEnabled`}
-                checked={trialEnabled}
-                onCheckedChange={(checked) => setTrialEnabled(checked === true)}
-                label="Offer trial period"
-              />
-
-              {trialEnabled && (
-                <div>
-                  <Label htmlFor={`${idPrefix}trialDays`} className="mb-2 block">
-                    Trial Length (Days)
-                  </Label>
-                  <Input
-                    id={`${idPrefix}trialDays`}
-                    name="trialDays"
-                    type="number"
-                    placeholder="Trial length in days"
-                    required
-                    disabled={!trialEnabled}
-                    value={tier.trialDays || 0}
-                    min={0}
-                    onChange={(e) => handleTierDataChange("trialDays", Number(e.target.value))}
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default function TierForm({
-  tier: tierObj,
-  contracts,
-  hasActiveFeatures = false,
-  user
-}: TierFormProps) {
-  const router = useRouter();
-  const [tier, setTier] = useState<TierWithFeatures>((tierObj ? tierObj : newTier()) as Tier);
+  const [tier, setTier] = useState<TierWithCount>((tierObj ? tierObj : newTier()) as Tier);
 
   // Add savedPublishedState to track the persisted published status
   const [savedPublishedState, setSavedPublishedState] = useState<boolean>(
     tierObj?.published || false
   );
 
-  const [selectedFeatureIds, setSelectedFeatureIds] = useState<Set<string>>(new Set<string>());
   const [versionedAttributesChanged, setVersionedAttributesChanged] = useState(false);
   const [tierSubscriberCount, setTierSubscriberCount] = useState(0);
   const [currentRevisionSubscriberCount, setCurrentRevisionSubscriberCount] = useState(0);
-  const [versions, setVersions] = useState<TierVersionWithFeatures[]>([]);
-  const [featuresChanged, setFeaturesChanged] = useState(false);
-  const [featureObjs, setFeatureObjs] = useState<Feature[]>([]);
+  const [versions, setVersions] = useState<TierVersion[]>([]);
 
   const [isDeleting, setIsDeleting] = useState(false);
   const newRecord = !tier?.id;
@@ -531,15 +104,8 @@ export default function TierForm({
       let savedTier;
       if (newRecord) {
         savedTier = await createTier(tier);
-        await attachMany(
-          {
-            referenceId: savedTier.id,
-            featureIds: Array.from(selectedFeatureIds)
-          },
-          "tier"
-        );
       } else {
-        savedTier = await updateTier(tier.id as string, tier, Array.from(selectedFeatureIds));
+        savedTier = await updateTier(tier.id as string, tier);
       }
       // Update the saved published state when the tier is successfully saved
       setSavedPublishedState(savedTier.published);
@@ -695,10 +261,9 @@ export default function TierForm({
                 <Separator className="my-2" />
 
                 <div>
-                  <NewVersionCallout
+                  <TierVersionNotice
                     tierHasSubscribers={tierHasSubscribers}
                     versionedAttributesChanged={versionedAttributesChanged}
-                    featuresChanged={featuresChanged}
                   />
                   <Label htmlFor="mobile-tierName" className="mb-2">
                     Name
@@ -741,30 +306,6 @@ export default function TierForm({
                     onChange={(e) => handleInputChange("description", e.target.value)}
                   />
                 </div>
-                {hasActiveFeatures && (
-                  <div>
-                    <Label htmlFor="mobile-features" className="mb-3 block">
-                      Features
-                    </Label>
-                    {tier?.id ? (
-                      <TierFeaturePicker
-                        tierId={tier.id}
-                        newTier={tier}
-                        selectedFeatureIds={selectedFeatureIds}
-                        setSelectedFeatureIds={setSelectedFeatureIds}
-                        setFeaturesChanged={setFeaturesChanged}
-                        setFeatureObjs={setFeatureObjs}
-                      />
-                    ) : (
-                      <TierFeaturePicker
-                        newTier={tier}
-                        selectedFeatureIds={selectedFeatureIds}
-                        setSelectedFeatureIds={setSelectedFeatureIds}
-                        setFeatureObjs={setFeatureObjs}
-                      />
-                    )}
-                  </div>
-                )}
 
                 <Separator className="my-2" />
 
@@ -828,9 +369,9 @@ export default function TierForm({
                         {currentRevisionSubscriberCount === 0
                           ? "no customers yet"
                           : currentRevisionSubscriberCount + " customers"}
-                        . If you make any price or feature changes for a package that has customers,
-                        your changes to the previous package will be kept as a package version.
-                        Customers will be charged what they originally purchased.
+                        . If you make any price changes for a package that has customers, your
+                        changes to the previous package will be kept as a package version. Customers
+                        will be charged what they originally purchased.
                       </p>
                     )}
 
@@ -843,7 +384,6 @@ export default function TierForm({
                                 <TableHead>Created</TableHead>
                                 <TableHead>Price</TableHead>
                                 <TableHead>Customers</TableHead>
-                                <TableHead>Features</TableHead>
                               </TableRow>
                             </TableHeader>
                             <TableBody>
@@ -859,19 +399,6 @@ export default function TierForm({
                                   {tier.cadence ? `/${tier.cadence}` : ""}
                                 </TableCell>
                                 <TableCell>{currentRevisionSubscriberCount}</TableCell>
-                                <TableCell>
-                                  {tier.features && tier.features.length > 0 ? (
-                                    <>
-                                      <ul>
-                                        {tier.features.map((f) => (
-                                          <li key={f.id}>· {f.name}</li>
-                                        ))}
-                                      </ul>
-                                    </>
-                                  ) : (
-                                    <>&nbsp;None</>
-                                  )}
-                                </TableCell>
                               </TableRow>
                               {versions.map((version) => (
                                 <TierVersionRow tierVersion={version} key={version.id} />
@@ -881,9 +408,9 @@ export default function TierForm({
                         </Card>
 
                         <p className="my-6 text-xs text-stone-500">
-                          Please note that package versions are only recorded when you make feature
-                          or price changes to a package where you have existing customers. Customers
-                          will be charged what they originally purchased.
+                          Please note that package versions are only recorded when you make price
+                          changes to a package where you have existing customers. Customers will be
+                          charged what they originally purchased.
                         </p>
                       </>
                     )}
@@ -915,7 +442,7 @@ export default function TierForm({
                       </div>
                       {!tier._count?.Charge && !tier._count?.subscriptions && (
                         <p className="text-sm text-stone-500">
-                          This package can be deleted as it has no active customers or features.
+                          This package can be deleted as it has no active customers.
                         </p>
                       )}
                     </div>
@@ -931,9 +458,7 @@ export default function TierForm({
             <TabsContent value="preview">
               <TierCard
                 tier={{ ...tier, published: savedPublishedState }}
-                features={featureObjs}
                 buttonDisabled={newRecord}
-                hasActiveFeatures={hasActiveFeatures}
                 className="shadow-border-md mx-auto w-full max-w-[300px]"
               />
             </TabsContent>
@@ -978,10 +503,9 @@ export default function TierForm({
           <Separator className="my-2" />
 
           <div>
-            <NewVersionCallout
+            <TierVersionNotice
               tierHasSubscribers={tierHasSubscribers}
               versionedAttributesChanged={versionedAttributesChanged}
-              featuresChanged={featuresChanged}
             />
             <Label htmlFor="tierName" className="mb-2">
               Name
@@ -1022,30 +546,6 @@ export default function TierForm({
               onChange={(e) => handleInputChange("description", e.target.value)}
             />
           </div>
-          {hasActiveFeatures && (
-            <div>
-              <Label htmlFor="features" className="mb-3 block">
-                Features
-              </Label>
-              {tier?.id ? (
-                <TierFeaturePicker
-                  tierId={tier.id}
-                  newTier={tier}
-                  selectedFeatureIds={selectedFeatureIds}
-                  setSelectedFeatureIds={setSelectedFeatureIds}
-                  setFeaturesChanged={setFeaturesChanged}
-                  setFeatureObjs={setFeatureObjs}
-                />
-              ) : (
-                <TierFeaturePicker
-                  newTier={tier}
-                  selectedFeatureIds={selectedFeatureIds}
-                  setSelectedFeatureIds={setSelectedFeatureIds}
-                  setFeatureObjs={setFeatureObjs}
-                />
-              )}
-            </div>
-          )}
 
           <Separator className="my-2" />
 
@@ -1107,9 +607,9 @@ export default function TierForm({
                   {currentRevisionSubscriberCount === 0
                     ? "no customers yet"
                     : currentRevisionSubscriberCount + " customers"}
-                  . If you make any price or feature changes for a package that has customers, your
-                  changes to the previous package will be kept as a package version. Customers will
-                  be charged what they originally purchased.
+                  . If you make any price changes for a package that has customers, your changes to
+                  the previous package will be kept as a package version. Customers will be charged
+                  what they originally purchased.
                 </p>
               )}
 
@@ -1128,35 +628,11 @@ export default function TierForm({
                       <TableHeader>
                         <TableRow>
                           <TableHead>Created</TableHead>
-                          <TableHead>Features</TableHead>
                           <TableHead>Price</TableHead>
-                          <TableHead>#Customers</TableHead>
+                          <TableHead>Customers</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
-                        <TableRow>
-                          <TableCell>
-                            {tier.createdAt.toDateString()}
-                            <Badge variant="success" size="sm" className="ms-1">
-                              Current
-                            </Badge>
-                          </TableCell>
-                          <TableCell>
-                            {tier.features && tier.features.length > 0 ? (
-                              <>
-                                <ul>
-                                  {tier.features.map((f) => (
-                                    <li key={f.id}>· {f.name}</li>
-                                  ))}
-                                </ul>
-                              </>
-                            ) : (
-                              <>&nbsp;None</>
-                            )}
-                          </TableCell>
-                          <TableCell>${tier.price}</TableCell>
-                          <TableCell>{currentRevisionSubscriberCount}</TableCell>
-                        </TableRow>
                         {versions.map((version) => (
                           <TierVersionRow tierVersion={version} key={version.id} />
                         ))}
@@ -1165,9 +641,9 @@ export default function TierForm({
                   </Card>
 
                   <p className="my-6 text-xs text-stone-500">
-                    Please note that package versions are only recorded when you make feature or
-                    price changes to a package where you have existing customers. Customers will be
-                    charged what they originally purchased.
+                    Please note that package versions are only recorded when you make price changes
+                    to a package where you have existing customers. Customers will be charged what
+                    they originally purchased.
                   </p>
                 </>
               )}
@@ -1182,9 +658,7 @@ export default function TierForm({
         <div className="sticky top-20 mx-auto mb-auto hidden max-w-[300px] text-center lg:block">
           <TierCard
             tier={{ ...tier, published: savedPublishedState }}
-            features={featureObjs}
             buttonDisabled={newRecord}
-            hasActiveFeatures={hasActiveFeatures}
             className="shadow-border w-[300px]"
           />
           {!newRecord && (
@@ -1209,7 +683,7 @@ export default function TierForm({
                 </div>
                 {!tier._count?.Charge && !tier._count?.subscriptions && (
                   <p className="text-sm text-stone-500">
-                    This package can be deleted as it has no active customers or features.
+                    This package can be deleted as it has no active customers.
                   </p>
                 )}
               </div>

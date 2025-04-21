@@ -1,17 +1,11 @@
-import Tier from "@/app/models/Tier";
 import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
 import ContractService from "@/app/services/contract-service";
-import FeatureService from "@/app/services/feature-service";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { parseTierDescription } from "@/lib/utils";
-import { Charge, Feature } from "@prisma/client";
+import { Charge } from "@prisma/client";
 import { Store } from "lucide-react";
 import ContractLink from "./contract-link";
-import CustomerPackageFeatures from "./customer-package-features";
-
-type TierWithFeatures = (Tier & { features: Feature[] }) | null;
 
 const ChargeCard = async ({
   charge,
@@ -22,27 +16,12 @@ const ChargeCard = async ({
 }) => {
   if (!charge || !charge.tierId) return null;
 
-  const tier = (await TierService.findTier(charge.tierId!)) as TierWithFeatures;
+  const tier = await TierService.findTier(charge.tierId!);
   if (!tier) return null;
 
-  const [maintainer, hasActiveFeatures] = await Promise.all([
-    UserService.findUser(tier.userId),
-    FeatureService.hasActiveFeaturesForUser(tier.userId)
-  ]);
+  const maintainer = await UserService.findUser(tier.userId);
 
   if (!maintainer) return null;
-
-  const featuresFromDescription = tier?.description
-    ? parseTierDescription(tier.description)
-        .filter((section) => section.features)
-        .map((section) => section.features)
-        .flat()
-        .map((feature: string, index: number) => ({
-          id: `${index}`,
-          name: feature,
-          isEnabled: true
-        }))
-    : [];
 
   const status = "paid";
 
@@ -88,12 +67,6 @@ const ChargeCard = async ({
             <ContractLink contract={contract} />
           </div>
         </div>
-      </div>
-      <div className="flex flex-row justify-between gap-2 rounded-b-md border-t bg-stone-50 px-5 py-3">
-        <CustomerPackageFeatures
-          features={hasActiveFeatures ? tier.features : featuresFromDescription}
-          maintainerEmail={isCustomerView ? maintainer?.email : null}
-        />
       </div>
     </Card>
   );

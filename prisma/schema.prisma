@@ -40,12 +40,10 @@ model User {
   sessions                    Session[]
   sites                       Site[]
   tiers                       Tier[]
-  features                    Feature[]
   subscriptions               Subscription[]
   leads                       Lead[]
   onboarding                  String?
   company                     String?
-  legacyStripeProductId       String?
   charges                     Charge[]
   contracts                   Contract[]
   prospects                   Prospect[]
@@ -157,7 +155,6 @@ model Tier {
 
   revision      Int
   versions      TierVersion[]
-  features      Feature[]      @relation("FeatureToTier")
   subscriptions Subscription[]
 
   createdAt  DateTime   @default(now())
@@ -182,7 +179,6 @@ model TierVersion {
   stripePriceIdAnnual String?
 
   tier          Tier           @relation(fields: [tierId], references: [id])
-  features      Feature[]      @relation("FeatureToTierVersion")
   subscriptions Subscription[]
 
   createdAt DateTime @default(now())
@@ -224,34 +220,6 @@ model Subscription {
   tier        Tier         @relation(fields: [tierId], references: [id])
 
   @@unique([userId, tierId])
-}
-
-model Service {
-  id          String    @id
-  name        String
-  category    String
-  description String?
-  requiresUri Boolean
-  features    Feature[]
-  protocol    String?
-}
-
-model Feature {
-  id           String        @id @default(cuid())
-  userId       String
-  name         String?
-  uri          String?
-  description  String?
-  tiers        Tier[]        @relation("FeatureToTier")
-  tierVersions TierVersion[] @relation("FeatureToTierVersion")
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  user         User          @relation(fields: [userId], references: [id])
-  service      Service?      @relation(fields: [serviceId], references: [id])
-  serviceId    String?
-  isEnabled    Boolean       @default(false)
-
-  @@index([userId])
 }
 
 model Media {

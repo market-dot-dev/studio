@@ -29,9 +29,6 @@ const ValidatorComponent = ({ user, tiers }: { user: User; tiers: Tier[] }) => {
         <h2>Current user check: {user.name}</h2>
         <div>Email: {user.email ? <Check className="inline" /> : "X"}</div>
         <div>Connected Account: {user.stripeAccountId ? <Check className="inline" /> : "X"}</div>
-        <div>
-          Legacy stripeProductId: {user.legacyStripeProductId ? <Check className="inline" /> : "X"}
-        </div>
         <br />
 
         <h3>Tiers</h3>
