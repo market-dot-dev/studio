@@ -1,5 +1,4 @@
 import PageService from "@/app/services/PageService";
-import FeatureService from "@/app/services/feature-service";
 import renderElement from "@/components/site/page-renderer";
 import { JSDOM } from "jsdom";
 import { notFound } from "next/navigation";
@@ -29,10 +28,6 @@ export default async function SiteHomePage(props: { params: Promise<{ domain: st
     notFound();
   }
 
-  const userId = data.userId;
-  const activeFeatures = userId ? await FeatureService.findActiveByUser(userId) : [];
-  const hasActiveFeatures = Array.isArray(activeFeatures) && activeFeatures.length > 0;
-
   // Ensure homepage content exists
   if (!data.homepage?.content) {
     notFound();
@@ -48,14 +43,7 @@ export default async function SiteHomePage(props: { params: Promise<{ domain: st
   const elements: Element[] = Array.from(rootElement.children);
 
   // Render the page with properly typed data
-  const reactElement = renderElement(
-    elements,
-    0,
-    siteData as Site,
-    homepage as Page,
-    false,
-    hasActiveFeatures
-  );
+  const reactElement = renderElement(elements, 0, siteData as Site, homepage as Page, false);
 
   return <>{reactElement}</>;
 }

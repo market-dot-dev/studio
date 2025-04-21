@@ -9,13 +9,11 @@ import Tiers from "./tiers";
 export default function TiersClient({
   site,
   page,
-  tiers,
-  hasActiveFeatures
+  tiers
 }: {
   site: any;
   page: any;
   tiers?: string;
-  hasActiveFeatures?: boolean;
 }) {
   // getting the tiers by means of API routes
   const [tierItems, setTierItems] = useState<Partial<Tier>[]>([]);
@@ -26,13 +24,20 @@ export default function TiersClient({
         setTierItems(tiers);
       });
     } else {
-      setTierItems(placeholderTiers);
+      setTierItems(
+        placeholderTiers.map((p) => {
+          return {
+            ...p,
+            createdAt: new Date(p.createdAt) // Cast string to date
+          };
+        })
+      );
     }
   }, []);
 
   return (
     <>
-      <Tiers tiers={tierItems} hasActiveFeatures={hasActiveFeatures} />
+      <Tiers tiers={tierItems} />
     </>
   );
 }

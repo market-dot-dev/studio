@@ -1,8 +1,8 @@
-import { Contract, Feature, PrismaClient, Tier, User } from "@prisma/client";
-import fs from "fs";
-import path from "path";
-import yaml from "js-yaml";
 import RegistrationService from "@/app/services/registration-service";
+import { Contract, PrismaClient, Tier, User } from "@prisma/client";
+import fs from "fs";
+import yaml from "js-yaml";
+import path from "path";
 
 const prisma = new PrismaClient();
 
@@ -20,15 +20,13 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("[seed] Loading users, tiers, and features...");
+  console.log("[seed] Loading users, sites, tiers and contracts...");
   console.log("[seed] * users");
   const users = await loadUsers();
   console.log("[seed] * sites");
   users.forEach((user) => RegistrationService.createSite(user));
   console.log("[seed] * tiers");
   await loadTiers(users);
-  console.log("[seed] * features");
-  await loadFeatures(users);
   console.log("[seed] * contracts");
   await loadContracts(users);
   console.log("[seed] done");
@@ -47,8 +45,8 @@ const loadUsers = async () => {
         stripePaymentMethodIds: {},
         emailVerified: new Date().toISOString(),
         roleId: "admin",
-        company: user.company || "market.dev",
-      },
+        company: user.company || "market.dev"
+      }
     });
     createdUsers.push(createdUser);
   }
@@ -72,26 +70,8 @@ const loadTiers = async (users: User[]) => {
           applicationFeePrice: tier.applicationFeePrice || 0,
           trialDays: tier.trialDays || 0,
           cadence: tier.cadence || "month",
-          priceAnnual: tier.priceAnnual || null,
-        },
-      });
-    }
-  }
-};
-
-const loadFeatures = async (users: User[]) => {
-  const features = loadYaml<Feature>("features");
-
-  for (const user of users) {
-    for (const feature of features) {
-      await prisma.feature.create({
-        data: {
-          ...feature,
-          userId: user.id,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-          isEnabled: feature.isEnabled || false,
-        },
+          priceAnnual: tier.priceAnnual || null
+        }
       });
     }
   }
@@ -106,8 +86,8 @@ const loadContracts = async (users: User[]) => {
         data: {
           ...contract,
           id: `${contract.id}-${user.id}`,
-          maintainerId: user.id,
-        },
+          maintainerId: user.id
+        }
       });
     }
   }

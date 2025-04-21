@@ -1,22 +1,18 @@
 import { User } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { findUser } from "../services/UserService";
-import { hasActiveFeaturesForUser } from "../services/feature-service";
 
 const useUser = (id?: string) => {
-  const [user, setUser] = useState<User>();
-  const [hasActiveFeatures, setHasActiveFeatures] = useState<boolean>(false);
+  const [user, setUser] = useState<User | undefined>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (id) {
-      Promise.all([findUser(id), hasActiveFeaturesForUser(id)])
-
-        .then(([user, hasActiveFeatures]) => {
+      findUser(id)
+        .then((user) => {
           if (user) {
             setUser(user);
           }
-          setHasActiveFeatures(hasActiveFeatures);
         })
         .catch(console.error)
         .finally(() => setIsLoading(false));
@@ -25,7 +21,7 @@ const useUser = (id?: string) => {
     }
   }, [id]);
 
-  return [user, isLoading, hasActiveFeatures] as const;
+  return [user, isLoading] as const;
 };
 
 export default useUser;

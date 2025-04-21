@@ -2,7 +2,6 @@ import prisma from "@/lib/prisma";
 import { faker } from "@faker-js/faker";
 import {
   Account,
-  Feature,
   Media,
   Page,
   Session,
@@ -113,19 +112,6 @@ export const createSubscription = async (
       userId,
       tierId,
       stripeSubscriptionId: faker.datatype.uuid(),
-      ...overrides
-    }
-  });
-};
-
-export const createFeature = async (
-  userId: string,
-  overrides?: Partial<Feature>
-): Promise<Feature> => {
-  return prisma.feature.create({
-    data: {
-      userId,
-      isEnabled: false,
       ...overrides
     }
   });

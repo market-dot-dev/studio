@@ -2,7 +2,6 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 
-import FeatureService from "@/app/services/feature-service";
 import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
 import PageContainer from "@/components/site/page-container";
 import { getRootUrl } from "@/lib/domain";
@@ -13,67 +12,37 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   if (!session) {
     redirect("/login");
   }
-  // const data = await prisma.page.findUnique({
-  // 	where: {
-  // 		id: decodeURIComponent(params.id),
-  // 	},
-  // 	include: {
-  // 		site: {
-  // 			select: {
-  // 				id: true,
-  // 				name: true,
-  // 				description: true,
-  // 				subdomain: true,
-  // 				homepageId: true,
-  // 				user: {
-  // 					select: {
-  // 						name: true,
-  // 						image: true,
-  // 						projectName: true,
-  // 						projectDescription: true,
-  // 					}
-  // 				}
-  // 			},
-  // 		},
-  // 	},
-  // });
 
-  // const activeFeatures = await FeatureService.findActiveByCurrentUser();
-
-  const [data, activeFeatures] = await Promise.all([
-    prisma.page.findUnique({
-      where: {
-        id: decodeURIComponent(params.id)
-      },
-      include: {
-        site: {
-          select: {
-            id: true,
-            name: true,
-            description: true,
-            subdomain: true,
-            homepageId: true,
-            user: {
-              select: {
-                name: true,
-                image: true,
-                projectName: true,
-                projectDescription: true
-              }
+  const data = await prisma.page.findUnique({
+    where: {
+      id: decodeURIComponent(params.id)
+    },
+    include: {
+      site: {
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          subdomain: true,
+          homepageId: true,
+          user: {
+            select: {
+              name: true,
+              image: true,
+              projectName: true,
+              projectDescription: true
             }
           }
         }
       }
-    }),
-    FeatureService.findActiveByCurrentUser()
-  ]);
+    }
+  });
 
   if (!data || data.userId !== session.user.id) {
     notFound();
   }
 
   const siteUrl = getRootUrl(data?.site?.subdomain ?? "app");
-  const isHome = data.id === data.site?.homepageId;
 
   const getRelativeTimeString = (date: Date) => {
     const now = new Date();
@@ -129,7 +98,6 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         page={data}
         siteUrl={siteUrl}
         homepageId={data.site?.homepageId || null}
-        hasActiveFeatures={!!activeFeatures?.length}
         lastUpdateDate={lastUpdateDate}
       />
     </FullScreenSwitcher>

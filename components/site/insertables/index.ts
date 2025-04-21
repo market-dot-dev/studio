@@ -14,9 +14,9 @@ import {
 } from "@radix-ui/themes";
 import SiteDescription from "./site-description/site-description";
 import SiteName from "./site-name/site-name";
-import TiersServer from "./tiers/teirs-server";
 import TiersClient from "./tiers/tiers-client";
 import TiersInsert from "./tiers/tiers-insert";
+import TiersServer from "./tiers/tiers-server";
 
 import Section from "./section/section";
 

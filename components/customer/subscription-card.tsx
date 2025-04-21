@@ -1,19 +1,13 @@
 import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button";
 import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
-import Tier from "@/app/models/Tier";
 import TierService from "@/app/services/TierService";
 import UserService from "@/app/services/UserService";
 import ContractService from "@/app/services/contract-service";
-import FeatureService from "@/app/services/feature-service";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { cn, parseTierDescription } from "@/lib/utils";
-import { Feature } from "@prisma/client";
+import { cn } from "@/lib/utils";
 import { Store } from "lucide-react";
 import ContractLink from "./contract-link";
-import CustomerPackageFeatures from "./customer-package-features";
-
-type TierWithFeatures = (Tier & { features: Feature[] }) | null;
 
 const SubscriptionCard = async ({
   subscription,
@@ -24,27 +18,12 @@ const SubscriptionCard = async ({
 }) => {
   if (!subscription || !subscription.tierId) return null;
 
-  const tier = (await TierService.findTier(subscription.tierId!)) as TierWithFeatures;
+  const tier = await TierService.findTier(subscription.tierId!);
   if (!tier) return null;
 
-  const [maintainer, hasActiveFeatures] = await Promise.all([
-    UserService.findUser(tier.userId),
-    FeatureService.hasActiveFeaturesForUser(tier.userId)
-  ]);
+  const maintainer = await UserService.findUser(tier.userId);
 
   if (!maintainer) return null;
-
-  const featuresFromDescription = tier?.description
-    ? parseTierDescription(tier.description)
-        .filter((section) => section.features)
-        .map((section) => section.features)
-        .flat()
-        .map((feature: string, index: number) => ({
-          id: `${index}`,
-          name: feature,
-          isEnabled: true
-        }))
-    : [];
 
   const actualCadence = subscription.priceAnnual ? "year" : tier.cadence;
   const actualPrice = subscription.priceAnnual ? tier.priceAnnual : tier.price;
@@ -124,10 +103,6 @@ const SubscriptionCard = async ({
           "justify-between": subscription.state !== SubscriptionStates.cancelled
         })}
       >
-        <CustomerPackageFeatures
-          features={hasActiveFeatures ? tier.features : featuresFromDescription}
-          maintainerEmail={isCustomerView ? maintainer?.email : null}
-        />
         {subscription.state !== SubscriptionStates.cancelled && (
           <CancelSubscriptionButton subscriptionId={subscription.id} />
         )}

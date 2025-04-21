@@ -1,4 +1,4 @@
-import { TierWithFeatures } from "@/app/services/TierService";
+import { TierWithCount } from "@/app/services/TierService";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { User } from "@prisma/client";
@@ -11,7 +11,7 @@ export default function CheckoutTypeSelectionInput({
   idPrefix = ""
 }: {
   user: User;
-  tier: TierWithFeatures;
+  tier: TierWithCount;
   handleInputChange: (key: string, value: string) => void;
   idPrefix?: string;
 }) {

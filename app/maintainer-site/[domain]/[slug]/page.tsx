@@ -4,7 +4,6 @@ import renderElement from "@/components/site/page-renderer";
 import { JSDOM } from "jsdom";
 
 import PageService from "@/app/services/PageService";
-import FeatureService from "@/app/services/feature-service";
 
 // @TODO: These typings should be universal for all "maintainer-site" pages
 // Define types matching the ones we created for renderElement
@@ -33,10 +32,6 @@ export default async function SitePage(props: {
     notFound();
   }
 
-  const userId = data.userId;
-  const activeFeatures = userId ? await FeatureService.findActiveByUser(userId) : [];
-  const hasActiveFeatures = Array.isArray(activeFeatures) && activeFeatures.length > 0;
-
   const page = data.pages?.[0];
   const body = page?.content ?? "";
 
@@ -53,14 +48,7 @@ export default async function SitePage(props: {
   const elements: Element[] = Array.from(rootElement.children);
 
   // Render the page with properly typed data
-  const reactElement = renderElement(
-    elements,
-    0,
-    siteData as Site,
-    page as Page,
-    false,
-    hasActiveFeatures
-  );
+  const reactElement = renderElement(elements, 0, siteData as Site, page as Page, false);
 
   return <>{reactElement}</>;
 }
