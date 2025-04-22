@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
 
-export const includeSiteMeta = Prisma.validator<Prisma.SiteDefaultArgs>()({
+const includeSiteMeta = Prisma.validator<Prisma.SiteDefaultArgs>()({
   select: {
     id: true,
     userId: true,

@@ -3,12 +3,12 @@
 import Tier, { newTier } from "@/app/models/Tier";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import prisma from "@/lib/prisma";
-import { Channel, User } from "@prisma/client";
+import { Channel } from "@prisma/client";
 import { updateServicesForSale } from "./MarketService";
 import SessionService from "./SessionService";
 import StripeService, { SubscriptionCadence } from "./StripeService";
-import SubscriptionService from "./SubscriptionService";
 import UserService, { getCurrentUser } from "./UserService";
+import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
 
 export type TierWithCount = Tier & {
   _count?: { Charge: number; subscriptions: number };
@@ -183,13 +183,24 @@ class TierService {
     const tier = await TierService.findAndValidateTier(id, user.id);
     const attrs = TierService.prepareAttributes(tier, tierData);
 
-    const context = await TierService.buildUpdateContext(user, tier, attrs);
+    // Use the extracted version service to handle versioning context
+    const versionContext = await buildVersionContext(tier, attrs);
+
+    // Create a complete context with additional properties needed for tier updates
+    const context = {
+      ...versionContext,
+      stripeConnected: !!user.stripeAccountId
+    };
 
     if (tierData.checkoutType === "gitwallet") {
       if (context.createNewVersion) {
-        await TierService.handleVersioning(id, tier, attrs, context);
+        // Use the extracted version service for handling version creation
+        await handleVersioning(id, tier, attrs, context);
       } else {
-        await TierService.handlePriceUpdates(user, tier, attrs, context);
+        // Use the extracted version service for handling price updates
+        if (context.stripeConnected) {
+          await handlePriceUpdates(tier, attrs, user.stripeAccountId!, context);
+        }
       }
 
       if (context.stripeConnected && attrs.published) {
@@ -233,66 +244,6 @@ class TierService {
     return attrs;
   }
 
-  private static async buildUpdateContext(user: User, tier: Tier, attrs: Partial<Tier>) {
-    const hasSubscribers = await SubscriptionService.hasSubscribers(tier.id, tier.revision);
-    const cadenceChanged = attrs.cadence !== tier.cadence;
-    const priceChanged = attrs.price !== tier.price || cadenceChanged;
-    const annualPriceChanged = attrs.priceAnnual !== tier.priceAnnual;
-
-    return {
-      hasSubscribers,
-      priceChanged,
-      annualPriceChanged,
-      materialChange: priceChanged || annualPriceChanged,
-      createNewVersion: hasSubscribers && attrs.published && (priceChanged || annualPriceChanged),
-      stripeConnected: !!user.stripeAccountId
-    };
-  }
-
-  private static async handleVersioning(
-    id: string,
-    tier: Tier,
-    attrs: Partial<Tier>,
-    context: any
-  ) {
-    const newVersion = await prisma.tierVersion.create({
-      data: {
-        tierId: id,
-        price: tier.price,
-        stripePriceId: tier.stripePriceId,
-        cadence: tier.cadence,
-        priceAnnual: tier.priceAnnual,
-        stripePriceIdAnnual: tier.stripePriceIdAnnual,
-        revision: tier.revision
-      }
-    });
-
-    attrs.revision = tier.revision + 1;
-    attrs.cadence = (attrs.cadence || "month") as SubscriptionCadence;
-
-    const tierAttributes = TierService.buildTierAttributes(tier, attrs, context);
-    await prisma.tier.update({ where: { id }, data: tierAttributes });
-  }
-
-  private static async handlePriceUpdates(
-    user: User,
-    tier: Tier,
-    attrs: Partial<Tier>,
-    context: any
-  ) {
-    const stripeService = new StripeService(user.stripeAccountId!);
-
-    if (context.priceChanged && tier.stripePriceId) {
-      attrs.stripePriceId = null;
-      await stripeService.destroyPrice(tier.stripePriceId);
-    }
-
-    if (context.annualPriceChanged && tier.stripePriceIdAnnual) {
-      attrs.stripePriceIdAnnual = null;
-      await stripeService.destroyPrice(tier.stripePriceIdAnnual);
-    }
-  }
-
   private static async handleStripeProducts(attrs: Partial<Tier>, stripeAccountId: string) {
     const stripeService = new StripeService(stripeAccountId);
 
@@ -324,41 +275,10 @@ class TierService {
     }
   }
 
-  private static buildTierAttributes(tier: Tier, attrs: Partial<Tier>, context: any) {
-    const tierAttributes = {
-      revision: tier.revision + 1
-    } as Partial<Tier>;
-
-    if (context.priceChanged) {
-      attrs.stripePriceId = null;
-      tierAttributes.stripePriceId = null;
-    }
-
-    if (context.annualPriceChanged) {
-      attrs.stripePriceIdAnnual = null;
-      tierAttributes.stripePriceIdAnnual = null;
-    }
-
-    return tierAttributes;
-  }
-
   static async findByUserId(userId: string) {
     return prisma.tier.findMany({
       where: {
         userId
-      },
-      orderBy: [
-        {
-          createdAt: "desc"
-        }
-      ]
-    });
-  }
-
-  static async getVersionsByTierId(tierId: string) {
-    return prisma.tierVersion.findMany({
-      where: {
-        tierId
       },
       orderBy: [
         {
@@ -477,7 +397,6 @@ export const {
   findTier,
   getPublishedTiers,
   getTiersForUser,
-  getVersionsByTierId,
   updateApplicationFee,
   updateTier,
   createTemplateTier,

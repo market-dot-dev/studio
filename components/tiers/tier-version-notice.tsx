@@ -13,6 +13,7 @@ const TierVersionNotice: React.FC<TierVersionNoticeProps> = ({
   versionedAttributesChanged,
   tierHasSubscribers
 }) => {
+  // Only show the notice if there are subscribers and versioned attributes have changed
   if (tierHasSubscribers && versionedAttributesChanged) {
     return (
       <Alert variant="destructive" className="mb-5 mt-2">
