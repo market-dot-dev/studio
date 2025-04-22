@@ -1,5 +1,6 @@
 "use client";
 
+import { OrganizationSwitcher } from "@/app/components/organization-switcher";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
@@ -334,6 +335,7 @@ export default function Nav({
       >
         <div className="flex flex-col gap-2">
           <div className="flex flex-col">
+            <OrganizationSwitcher />
             {items.map((item, index) => (
               <Item key={item.name + index} item={item} />
             ))}

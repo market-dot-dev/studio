@@ -284,12 +284,14 @@ module.exports = {
 				'tightish': "-0.0125em"
 			},
   		width: {
+				'4.5': '18px',
   			'1536': '1536px'
   		},
   		maxWidth: {
   			xxs: '300px'
   		},
   		height: {
+				'4.5': '18px',
   			'150': '37.5rem'
   		},
   		margin: {
