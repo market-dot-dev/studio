@@ -5,9 +5,9 @@ import { updateCurrentUser } from "@/app/services/UserService";
 import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { createSite } from "@/app/services/registration-service";
+import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { validateMarketExpert } from "@/lib/market";
 import { Site, User } from "@prisma/client";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/themes";
@@ -123,7 +123,7 @@ export default function OnboardingModal({
       !onboardingState.preferredServices ||
       (!user.marketExpertId && searchParams.get("source") === "market.dev")
   );
-  const [validateMarketExpertLoading, setValidateMarketExpertLoading] = useState(true);
+  const { isMarketExpert, isLoadingMarketExpert, validateMarketExpert } = useMarketExpert();
   const [validateMarketExpertError, setValidateMarketExpertError] = useState<string | null>(null);
   const [step, setStep] = useState<"profile" | "offerings">("profile");
   const [isLoading, setIsLoading] = useState(false);
@@ -136,24 +136,25 @@ export default function OnboardingModal({
   const mounted = useMounted();
 
   useEffect(() => {
-    if (!mounted) return;
-    validateMarketExpert(
-      user,
-      () => {
-        setValidateMarketExpertLoading(false);
-      },
-      (error) => {
-        setValidateMarketExpertError(error);
-      },
-      () => {
-        if (sourceIsMarketDev) {
+    if (!mounted || !sourceIsMarketDev || isMarketExpert !== null) return;
+
+    const connectMarketExpert = async () => {
+      try {
+        const success = await validateMarketExpert();
+        if (success && sourceIsMarketDev) {
           toast.success("Market.dev account connected successfully");
+        } else if (!success && sourceIsMarketDev) {
+          setValidateMarketExpertError(
+            "Failed to connect your Market.dev account. Make sure you have an account on Market.dev."
+          );
         }
+      } catch (error) {
+        setValidateMarketExpertError("Error connecting to market.dev");
       }
-    ).catch(() => {
-      setValidateMarketExpertLoading(false);
-    });
-  }, [mounted]);
+    };
+
+    connectMarketExpert();
+  }, [mounted, sourceIsMarketDev, isMarketExpert, validateMarketExpert]);
 
   const handleProfileSubmit = (data: ProfileData) => {
     setProfileData(data);
@@ -214,7 +215,7 @@ export default function OnboardingModal({
         hideCloseButton
         preventOutsideClose
       >
-        {validateMarketExpertLoading ? (
+        {isLoadingMarketExpert ? (
           <LoadingState />
         ) : sourceIsMarketDev && validateMarketExpertError ? (
           <ErrorState error={validateMarketExpertError} onRetry={handleRetry} />

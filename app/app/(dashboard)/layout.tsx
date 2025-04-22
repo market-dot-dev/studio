@@ -1,5 +1,5 @@
 import Nav from "@/app/components/nav";
-import { MarketService } from "@/app/services/market-service";
+import { userIsMarketExpert } from "@/app/services/MarketService";
 import {
   defaultOnboardingState,
   OnboardingState
@@ -15,12 +15,7 @@ import OnboardingModal from "@/components/onboarding/onboarding-modal";
 import { redirect } from "next/navigation";
 import { ReactNode } from "react";
 
-export default async function DashboardLayout(props: {
-  children: ReactNode;
-  params: Promise<any>;
-}) {
-  const params = await props.params;
-
+export default async function DashboardLayout(props: { children: ReactNode }) {
   const { children } = props;
 
   const user = await UserService.getCurrentUser();
@@ -28,7 +23,8 @@ export default async function DashboardLayout(props: {
     redirect("/login");
   }
 
-  const isMarketExpert = (await MarketService.getExpert()) != null;
+  // Check if the user is a market expert once at load time
+  const isMarketExpert = await userIsMarketExpert();
 
   const onboarding = user.onboarding
     ? (JSON.parse(user.onboarding) as OnboardingState)
@@ -38,7 +34,7 @@ export default async function DashboardLayout(props: {
   const showOnboardingModal = !onboarding.setupBusiness || !onboarding.preferredServices;
 
   return (
-    <DashboardProvider siteId={site?.id ?? null}>
+    <DashboardProvider siteId={site?.id ?? null} initialExpertStatus={isMarketExpert}>
       <SessionRefresher />
       <OnboardingModal user={user} currentSite={site ?? undefined} onboardingState={onboarding} />
       <div>
@@ -47,7 +43,6 @@ export default async function DashboardLayout(props: {
           <Nav
             siteId={site?.id ?? null}
             roleId={user.roleId || "anonymous"}
-            isMarketExpert={isMarketExpert}
             onboarding={onboarding}
             showOnboardingModal={showOnboardingModal}
           />

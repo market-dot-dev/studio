@@ -42,22 +42,36 @@ export const formatDate = (date: Date | string): string => {
   return parsedDate.toLocaleDateString("en-US", options);
 };
 
-export const parseTierDescription = (description: string) => {
+interface TextSection {
+  text: string[];
+  features?: undefined;
+}
+
+interface FeatureSection {
+  features: string[];
+  text?: undefined;
+}
+
+type ContentSection = TextSection | FeatureSection;
+
+export const parseTierDescription = (description: string): ContentSection[] => {
   const lines = description.split("\n");
-  const result = [] as any[];
+  const result: ContentSection[] = [];
 
   lines.forEach((content) => {
     const line = content.trim();
     if (line.length === 0) return;
+
     const latest = result[result.length - 1];
+
     if (line.startsWith("-")) {
-      if (latest?.features) {
+      if (latest && latest.features) {
         latest.features.push(line.replace(/^-+\s*/, ""));
       } else {
         result.push({ features: [line.replace(/^-+\s*/, "")] });
       }
     } else {
-      if (latest?.text) {
+      if (latest && latest.text) {
         latest.text.push(line);
       } else {
         result.push({ text: [line] });

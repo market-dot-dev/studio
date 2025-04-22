@@ -1,6 +1,7 @@
 "use client";
 
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
+import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -105,7 +106,6 @@ function Item({ item }: { item: NavItem }) {
 interface NavProps {
   siteId: string | null;
   roleId: string | null;
-  isMarketExpert: boolean | null;
   isMobile?: boolean;
   className?: string;
   onboarding: OnboardingState;
@@ -115,12 +115,12 @@ interface NavProps {
 export default function Nav({
   siteId,
   roleId,
-  isMarketExpert,
   isMobile = false,
   className,
   onboarding,
   showOnboardingModal
 }: NavProps) {
+  const { isMarketExpert } = useMarketExpert();
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const urlSegments = useSelectedLayoutSegments();
   const pathname = usePathname();
@@ -211,7 +211,7 @@ export default function Nav({
         name: "Channels"
       },
       ...(siteId ? siteItems : []),
-      ...(isMarketExpert ? marketItems : []),
+      ...(isMarketExpert === true ? marketItems : []),
       {
         type: "link",
         name: "Embeds",

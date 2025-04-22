@@ -1,34 +1,36 @@
 "use client";
 
+import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { validateMarketExpert } from "@/lib/market";
 import { User } from "@prisma/client";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function ConnectionRequired({ user }: { user: User }) {
+  const { validateMarketExpert, isLoadingMarketExpert } = useMarketExpert();
   const [isConnecting, setIsConnecting] = useState(false);
 
-  const handleConnect = () => {
+  const handleConnect = async () => {
     setIsConnecting(true);
-    validateMarketExpert(
-      user,
-      () => {
-        setIsConnecting(false);
-      },
-      (error) => {
-        toast.error(error);
-      },
-      () => {
+    try {
+      const success = await validateMarketExpert();
+      if (success) {
         toast.success("Market.dev account connected successfully");
+      } else {
+        toast.error(
+          "Failed to connect your Market.dev account. Make sure you have an account on Market.dev."
+        );
       }
-    ).catch((error) => {
+    } catch (error) {
       console.error(error);
-      toast.error(`Error connecting to market.dev: ${error}`);
+      toast.error(
+        `Error connecting to market.dev: ${error instanceof Error ? error.message : "Unknown error"}`
+      );
+    } finally {
       setIsConnecting(false);
-    });
+    }
   };
 
   return (
@@ -54,7 +56,7 @@ export default function ConnectionRequired({ user }: { user: User }) {
 
       <div className="relative flex flex-col gap-4 sm:flex-row">
         <Button
-          loading={isConnecting}
+          loading={isConnecting || isLoadingMarketExpert}
           loadingText="Connecting to market.dev"
           onClick={() => handleConnect()}
         >

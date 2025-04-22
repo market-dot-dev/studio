@@ -1,5 +1,6 @@
 "use client";
 
+import type { SiteMeta } from "@/lib/site/fetchers";
 import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
 
@@ -9,11 +10,11 @@ export default function TiersClient({
   settings,
   tiers
 }: {
-  site: any;
+  site: SiteMeta | null;
   settings: TiersEmbedSettingsProps;
   tiers: any[];
 }) {
   const filteredTiers = tiers.filter((tier: any) => (settings.tiers ?? []).includes(tier.id));
 
-  return <Tiers tiers={filteredTiers} subdomain={site.subdomain} settings={settings} />;
+  return <Tiers tiers={filteredTiers} subdomain={site?.subdomain ?? ""} settings={settings} />;
 }

@@ -10,6 +10,7 @@ import { cn, parseTierDescription } from "@/lib/utils";
 import clsx from "clsx";
 import Link from "next/link";
 import { useState } from "react";
+import { TierDescriptionFeatures } from "./tier-description-features";
 
 type TierCardProps = {
   url?: string;
@@ -95,7 +96,6 @@ const TierCard: React.FC<TierCardProps> = ({
   const cadenceShorthand = subscriptionCadenceShorthands[tier.cadence as SubscriptionCadence];
 
   const parsedDescription = parseTierDescription(tier.description || "");
-
   return (
     <Card
       className={clsx(
@@ -163,6 +163,17 @@ const TierCard: React.FC<TierCardProps> = ({
                 </div>
               );
             }
+
+            return (
+              <TierDescriptionFeatures
+                key={dex}
+                features={section.features.map((feature: string, index: number) => ({
+                  id: index,
+                  name: feature
+                }))}
+                darkMode={darkMode}
+              />
+            );
           })}
         </div>
       </div>
