@@ -8,6 +8,7 @@ import SessionService from "./SessionService";
 import StripeService from "./StripeService";
 import TierService from "./TierService";
 import UserService from "./UserService";
+import { getStripeCustomerId } from "./customer-service";
 
 class SubscriptionService {
   static async findSubscription(subscriptionId: string): Promise<Subscription | null> {
@@ -152,7 +153,7 @@ class SubscriptionService {
     if (!maintainer.stripeAccountId)
       throw new Error("Maintainer's account not connected to Stripe");
 
-    const stripeCustomerId = await UserService.getCustomerId(user, maintainer.stripeAccountId);
+    const stripeCustomerId = await getStripeCustomerId(user, maintainer.stripeAccountId);
     if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
     const existingSubscription = await SubscriptionService.findSubscriptionByTierId({ tierId });

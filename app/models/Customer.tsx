@@ -48,11 +48,6 @@ class Customer {
     return this.getStripeCustomerId() || (await this.createStripeCustomer()).id;
   }
 
-  async setCustomerId(customerId: string) {
-    this.stripeCustomerIds[this.maintainerStripeAccountId] = customerId;
-    return this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });
-  }
-
   async clearCustomerId() {
     delete this.stripeCustomerIds[this.maintainerStripeAccountId];
     return this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });
@@ -116,15 +111,5 @@ class Customer {
     return await UserService.updateUser(this.user.id, userData);
   }
 }
-
-export const getCustomerIds = (user: User | SessionUser, maintainerStripeAccountId: string) => {
-  const stripeCustomerIds = (user.stripeCustomerIds || {}) as Record<string, string>;
-  const stripePaymentMethodIds = (user.stripePaymentMethodIds || {}) as Record<string, string>;
-
-  return {
-    stripeCustomerId: stripeCustomerIds[maintainerStripeAccountId],
-    stripePaymentMethodId: stripePaymentMethodIds[maintainerStripeAccountId]
-  };
-};
 
 export default Customer;

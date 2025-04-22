@@ -466,10 +466,6 @@ class StripeService {
   }
 }
 
-interface StripeCheckoutComponentProps {
-  tierId: string;
-}
-
 export const onClickSubscribe = async (userId: string, tierId: string, annual: boolean) => {
   let subscription = null;
 

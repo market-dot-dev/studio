@@ -1,5 +1,5 @@
 import SessionService from "@/app/services/SessionService";
-import { customersAndProspectsOfMaintainer } from "@/app/services/UserService";
+import { getCustomersAndProspectsByMaintainer } from "@/app/services/customer-service";
 import PageHeader from "@/components/common/page-header";
 import DashboardCharts from "@/components/dashboard/dashboard-charts";
 import { redirect } from "next/navigation";
@@ -12,7 +12,7 @@ export default async function Overview() {
     redirect("/login");
   }
 
-  const customers = await customersAndProspectsOfMaintainer(user.id);
+  const customers = await getCustomersAndProspectsByMaintainer(user.id);
   const title = user?.name ? `Welcome ${user.name}` : "Your Dashboard";
 
   return (

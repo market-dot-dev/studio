@@ -6,6 +6,7 @@ import EmailService from "./EmailService";
 import SessionService from "./SessionService";
 import TierService from "./TierService";
 import UserService from "./UserService";
+import { getStripeCustomerId } from "./customer-service";
 
 class ChargeService {
   static async findCharge(chargeId: string): Promise<Charge | null> {
@@ -99,7 +100,7 @@ class ChargeService {
     if (!maintainer.stripeAccountId)
       throw new Error("Maintainer's account not connected to Stripe");
 
-    const stripeCustomerId = await UserService.getCustomerId(user, maintainer.stripeAccountId);
+    const stripeCustomerId = await getStripeCustomerId(user, maintainer.stripeAccountId);
     if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
     /*
