@@ -155,9 +155,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
       if (tierObj.published === true && Number(tierObj.price) !== Number(tier.price)) {
         setVersionedAttributesChanged(true);
       }
-      // shouldCreateNewVersion(tierObj as Tier, tier).then(ret => {
-      // 	setVersionedAttributesChanged(ret);
-      // });
     }
   }, [tier, tierObj]);
 
@@ -240,7 +237,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                       label="This package is available for sale"
                     />
                     {canPublishLoading && (
-                      <div className="text-xxs flex items-center gap-1.5 font-semibold text-stone-500">
+                      <div className="flex items-center gap-1.5 text-xxs font-semibold text-stone-500">
                         <Spinner />
                         Checking Stripe connection...
                       </div>
@@ -459,7 +456,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
               <TierCard
                 tier={{ ...tier, published: savedPublishedState }}
                 buttonDisabled={newRecord}
-                className="shadow-border-md mx-auto w-full max-w-[300px]"
+                className="mx-auto w-full max-w-[300px] shadow-border-md"
               />
             </TabsContent>
           </Tabs>
@@ -482,7 +479,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                 label="This package is available for sale"
               />
               {canPublishLoading && (
-                <div className="text-xxs flex items-center gap-1.5 font-semibold text-stone-500">
+                <div className="flex items-center gap-1.5 text-xxs font-semibold text-stone-500">
                   <Spinner />
                   Checking Stripe connection...
                 </div>
@@ -659,7 +656,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
           <TierCard
             tier={{ ...tier, published: savedPublishedState }}
             buttonDisabled={newRecord}
-            className="shadow-border w-[300px]"
+            className="w-[300px] shadow-border"
           />
           {!newRecord && (
             <div className="mt-4 flex flex-col items-center gap-4 rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">

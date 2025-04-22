@@ -16,24 +16,6 @@ export type TierWithCount = Tier & {
 export type CheckoutType = "gitwallet" | "contact-form";
 
 class TierService {
-  static async destroyStripePrice(tier: Tier) {
-    if (!tier.stripePriceId) {
-      throw new Error("Tier does not have a Stripe price ID.");
-    }
-
-    const maintainer = await UserService.findUser(tier.userId);
-    if (!maintainer || !maintainer.stripeAccountId) {
-      throw new Error("Maintainer not found for this tier.");
-    }
-    const stripeService = new StripeService(maintainer.stripeAccountId);
-    await stripeService.destroyPrice(tier.stripePriceId);
-
-    await prisma?.tier.update({
-      where: { id: tier.id },
-      data: { stripePriceId: null }
-    });
-  }
-
   static async updateApplicationFee(
     tierId: string,
     applicationFeePercent?: number,
@@ -360,13 +342,6 @@ class TierService {
     return tierAttributes;
   }
 
-  static shouldCreateNewVersion = async (tier: Tier, tierData: Partial<Tier>): Promise<boolean> => {
-    return (
-      (tierData.published === true && Number(tierData.price) !== Number(tier.price)) ||
-      Number(tierData.priceAnnual) !== Number(tier.priceAnnual)
-    );
-  };
-
   static async findByUserId(userId: string) {
     return prisma.tier.findMany({
       where: {
@@ -449,26 +424,6 @@ class TierService {
     return TierService.getTiersForUser(userId, tierIds, channel);
   }
 
-  static async getTiersForMatrix(tierId?: string): Promise<TierWithCount[]> {
-    const currentUserId = await SessionService.getCurrentUserId();
-
-    if (!currentUserId) {
-      throw new Error("Not logged in");
-    }
-
-    let allTiers: TierWithCount[] = await TierService.findByUserIdWithCount(currentUserId);
-
-    allTiers = allTiers.sort((a, b) => {
-      if (tierId) {
-        if (a.id === tierId) return -1;
-        if (b.id === tierId) return 1;
-      }
-      return (a.price || 0) - (b.price || 0);
-    });
-
-    return allTiers;
-  }
-
   static async duplicateTier(tierId: string) {
     const user = await UserService.getCurrentUser();
 
@@ -518,14 +473,11 @@ class TierService {
 export default TierService;
 export const {
   createTier,
-  destroyStripePrice,
   destroyTier,
   findTier,
   getPublishedTiers,
-  getTiersForMatrix,
   getTiersForUser,
   getVersionsByTierId,
-  shouldCreateNewVersion,
   updateApplicationFee,
   updateTier,
   createTemplateTier,

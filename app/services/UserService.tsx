@@ -3,11 +3,9 @@
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { Charge, Prospect, Subscription, User } from "@prisma/client";
-import Customer from "../models/Customer";
 import { createSessionUser } from "../models/Session";
 import Tier from "../models/Tier";
 import SessionService from "./SessionService";
-import TierService from "./TierService";
 
 type CustomerWithChargesAndSubscriptions = User & {
   charges: (Charge & { tier: Tier })[];
@@ -300,11 +298,13 @@ class UserService {
     });
   }
 
+  // @TODO: Does not belong in UserService
   static async getCustomerId(user: User, maintainerStripeAccountId: string) {
     const lookup = user.stripeCustomerIds as Record<string, string>;
     return lookup[maintainerStripeAccountId];
   }
 
+  // @TODO: Does not belong in UserService
   static async setCustomerId(user: User, maintainerStripeAccountId: string, customerId: string) {
     const lookup = user.stripeCustomerIds as Record<string, string>;
     lookup[maintainerStripeAccountId] = customerId;
@@ -315,6 +315,7 @@ class UserService {
     });
   }
 
+  // @TODO: Does not belong in UserService
   static async clearCustomerId(user: User, maintainerStripeAccountId: string) {
     const lookup = user.stripeCustomerIds as Record<string, string>;
     delete lookup[maintainerStripeAccountId];
@@ -325,59 +326,6 @@ class UserService {
     });
   }
 }
-
-export const clearStripeCustomerById = async (
-  userId: string,
-  maintainerUserId: string,
-  maintainerStripeAccountId: string
-) => {
-  const user = await UserService.findUser(userId);
-  if (!user) {
-    throw new Error("User not found.");
-  }
-
-  const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
-  return await customer.destroyCustomer();
-};
-
-export const createStripeCustomerById = async (
-  userId: string,
-  maintainerUserId: string,
-  stripeAccountId: string
-) => {
-  const user = await UserService.findUser(userId);
-  if (!user) {
-    throw new Error("User not found.");
-  }
-
-  const customer = new Customer(user, maintainerUserId, maintainerUserId);
-  return await customer.createStripeCustomer();
-};
-
-export const ensureTierId = async (tierId: string) => {
-  return new Promise((resolve, reject) => {
-    TierService.findTier(tierId)
-      .then((tier) => {
-        if (!tier) {
-          return reject("Tier not found.");
-        }
-
-        if (!tier.stripePriceId) {
-          return reject("Tier missing required stripe keys");
-        }
-        resolve(tierId);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-};
-
-export const customersOfMaintainer = async (
-  maintainerId: string
-): Promise<CustomerWithChargesAndSubscriptions[]> => {
-  return UserService.customersOfMaintainer(maintainerId);
-};
 
 export const customers = async (): Promise<CustomerWithChargesAndSubscriptions[]> => {
   const sessionUser = await SessionService.getSessionUser();
