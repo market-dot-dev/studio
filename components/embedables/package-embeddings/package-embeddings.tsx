@@ -1,6 +1,6 @@
 "use client";
 
-import { TierWithCount } from "@/app/services/TierService";
+import { TierWithCount } from "@/app/services/tier-service";
 import DashedCard from "@/components/common/dashed-card";
 import CodeSnippet from "@/components/embedables/code-snippet";
 import embeddables from "@/components/site/embedables/index";

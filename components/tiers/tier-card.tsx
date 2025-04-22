@@ -1,7 +1,7 @@
 "use client";
 
 import type { SubscriptionCadence } from "@/app/services/StripeService";
-import type { CheckoutType, TierWithCount } from "@/app/services/TierService";
+import type { CheckoutType, TierWithCount } from "@/app/services/tier-service";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";

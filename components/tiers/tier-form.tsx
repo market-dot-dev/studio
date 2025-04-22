@@ -34,7 +34,7 @@ import TierDeleteButton from "./tier-delete-button";
 import Tier, { newTier } from "@/app/models/Tier";
 import { userHasStripeAccountIdById } from "@/app/services/StripeService";
 import { subscriberCount } from "@/app/services/SubscriptionService";
-import { createTier, TierWithCount, updateTier } from "@/app/services/TierService";
+import { createTier, TierWithCount, updateTier } from "@/app/services/tier-service";
 import { toast } from "sonner";
 
 import useCurrentSession from "@/app/hooks/use-current-session";

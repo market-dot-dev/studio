@@ -2,11 +2,11 @@
 
 import prisma from "@/lib/prisma";
 import { Charge } from "@prisma/client";
+import { getStripeCustomerId } from "./customer-service";
 import EmailService from "./EmailService";
 import SessionService from "./SessionService";
-import TierService from "./TierService";
+import TierService from "./tier-service";
 import UserService from "./UserService";
-import { getStripeCustomerId } from "./customer-service";
 
 class ChargeService {
   static async findCharge(chargeId: string): Promise<Charge | null> {

@@ -1,4 +1,4 @@
-import TierService from "@/app/services/TierService";
+import TierService from "@/app/services/tier-service";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest, props: { params: Promise<{ userid: string }> }) {

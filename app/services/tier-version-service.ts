@@ -100,14 +100,14 @@ export async function createTierVersion(
  * @param context - The version context
  * @returns Tier attributes for the update
  */
-export function buildTierVersionAttributes(
+export async function buildTierVersionAttributes(
   tier: Tier,
   attrs: Partial<Tier>,
   context: {
     priceChanged: boolean;
     annualPriceChanged: boolean;
   }
-): Partial<Tier> {
+): Promise<Partial<Tier>> {
   const tierAttributes = {
     revision: tier.revision + 1
   } as Partial<Tier>;
@@ -144,7 +144,7 @@ export async function handleVersioning(
 ): Promise<void> {
   await createTierVersion(tierId, tier, attrs);
 
-  const tierAttributes = buildTierVersionAttributes(tier, attrs, context);
+  const tierAttributes = await buildTierVersionAttributes(tier, attrs, context);
   await prisma.tier.update({
     where: { id: tierId },
     data: tierAttributes

@@ -1,4 +1,4 @@
-import TierService from "@/app/services/TierService";
+import TierService from "@/app/services/tier-service";
 import { SiteMeta } from "@/lib/site/fetchers";
 import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";

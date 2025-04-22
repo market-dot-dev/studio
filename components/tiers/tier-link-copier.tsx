@@ -79,7 +79,7 @@ const TierLinkCopier: React.FC<TierLinkCopierProps> = ({
 
   return (
     <div
-      className={`shadow-border-sm flex flex-row items-center justify-center rounded ${className}`}
+      className={`flex flex-row items-center justify-center rounded shadow-border-sm ${className}`}
     >
       <Input
         id="checkoutLink"

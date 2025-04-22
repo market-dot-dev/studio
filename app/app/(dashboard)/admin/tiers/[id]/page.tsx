@@ -1,4 +1,4 @@
-import { findTier } from "@/app/services/TierService";
+import { findTier } from "@/app/services/tier-service";
 import PageHeader from "@/components/common/page-header";
 import TierForm from "./admin-tier-form";
 

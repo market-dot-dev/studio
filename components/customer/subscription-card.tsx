@@ -1,8 +1,8 @@
 import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button";
 import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
-import TierService from "@/app/services/TierService";
-import UserService from "@/app/services/UserService";
 import ContractService from "@/app/services/contract-service";
+import TierService from "@/app/services/tier-service";
+import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";

@@ -1,6 +1,6 @@
 "use server";
 
-import TierService from "@/app/services/TierService";
+import TierService from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { UserAccountWidget } from "@/components/payments/user-account-widget";
 import { Card } from "@/components/ui/card";

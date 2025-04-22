@@ -1,7 +1,7 @@
 "use server";
 
 import ContractService from "@/app/services/contract-service";
-import { findTier } from "@/app/services/TierService";
+import { findTier } from "@/app/services/tier-service";
 import { getCurrentUser } from "@/app/services/UserService";
 import TierForm from "@/components/tiers/tier-form";
 

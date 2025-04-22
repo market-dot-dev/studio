@@ -6,7 +6,7 @@ import { Tier, User } from "@prisma/client";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";
-import TierService from "./TierService";
+import TierService from "./tier-service";
 import UserService from "./UserService";
 
 export type StripeCard = {

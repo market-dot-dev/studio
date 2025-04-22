@@ -1,4 +1,4 @@
-import { duplicateTier } from "@/app/services/TierService";
+import { duplicateTier } from "@/app/services/tier-service";
 import { Button } from "@/components/ui/button";
 import { Copy } from "lucide-react";
 import { useRouter } from "next/navigation";

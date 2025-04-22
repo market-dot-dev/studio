@@ -3,7 +3,7 @@
 import { getRootUrl } from "@/lib/domain";
 import { Channel } from "@prisma/client";
 import { getCurrentSite } from "./SiteService";
-import TierService from "./TierService";
+import TierService from "./tier-service";
 import UserService, { getCurrentUser } from "./UserService";
 
 const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;

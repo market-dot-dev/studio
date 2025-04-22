@@ -1,5 +1,5 @@
 "use client";
-import { getPublishedTiers } from "@/app/services/TierService";
+import { getPublishedTiers } from "@/app/services/tier-service";
 import placeholderTiers from "@/lib/constants/placeholder/tiers";
 import { Channel, Tier } from "@prisma/client";
 import { useEffect, useState } from "react";

@@ -1,5 +1,5 @@
 import ChargeService from "@/app/services/charge-service";
-import TierService from "@/app/services/TierService";
+import TierService from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
 

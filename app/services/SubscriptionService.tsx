@@ -3,12 +3,12 @@
 import prisma from "@/lib/prisma";
 import { Subscription as SubscriptionSql } from "@prisma/client";
 import Subscription, { SubscriptionStates, SubscriptionWithUser } from "../models/Subscription";
+import { getStripeCustomerId } from "./customer-service";
 import EmailService from "./EmailService";
 import SessionService from "./SessionService";
 import StripeService from "./StripeService";
-import TierService from "./TierService";
+import TierService from "./tier-service";
 import UserService from "./UserService";
-import { getStripeCustomerId } from "./customer-service";
 
 class SubscriptionService {
   static async findSubscription(subscriptionId: string): Promise<Subscription | null> {

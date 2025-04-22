@@ -1,6 +1,6 @@
 "use client";
 
-import { destroyTier } from "@/app/services/TierService";
+import { destroyTier } from "@/app/services/tier-service";
 import {
   AlertDialog,
   AlertDialogAction,

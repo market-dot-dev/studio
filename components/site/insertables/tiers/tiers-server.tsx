@@ -1,4 +1,4 @@
-import TierService from "@/app/services/TierService";
+import TierService from "@/app/services/tier-service";
 import { Channel } from "@prisma/client";
 import Tiers from "./tiers";
 

@@ -4,7 +4,7 @@ import {
   GLOBAL_APPLICATION_FEE_PCT
 } from "@/app/config/stripe-fees";
 import { calculateApplicationFee } from "@/app/services/StripeService";
-import { TierWithCount, updateApplicationFee } from "@/app/services/TierService";
+import { TierWithCount, updateApplicationFee } from "@/app/services/tier-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";

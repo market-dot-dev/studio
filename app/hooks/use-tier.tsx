@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Tier from "../models/Tier";
-import { findTier } from "../services/TierService";
+import { findTier } from "../services/tier-service";
 
 const useTier = (id: string) => {
   const [tier, setTier] = useState<Tier>();

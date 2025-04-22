@@ -1,6 +1,6 @@
 "use server";
 
-import TierService from "@/app/services/TierService";
+import TierService from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { Suspense } from "react";
 import ValidatorComponent from "./validator-component";

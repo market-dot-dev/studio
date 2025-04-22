@@ -1,5 +1,5 @@
 import SessionService from "@/app/services/SessionService";
-import TierService from "@/app/services/TierService";
+import TierService from "@/app/services/tier-service";
 import PageHeader from "@/components/common/page-header";
 import CopyCheckoutLinkButton from "@/components/tiers/copy-checkout-link-button";
 import NewTierModal from "@/components/tiers/new-tier-modal";

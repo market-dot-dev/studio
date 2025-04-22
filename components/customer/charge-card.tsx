@@ -1,6 +1,6 @@
-import TierService from "@/app/services/TierService";
-import UserService from "@/app/services/UserService";
 import ContractService from "@/app/services/contract-service";
+import TierService from "@/app/services/tier-service";
+import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Charge } from "@prisma/client";
