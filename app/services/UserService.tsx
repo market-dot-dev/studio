@@ -65,14 +65,6 @@ class UserService {
     });
   }
 
-  static async findUserByGithubId(gh_username: string): Promise<User | undefined | null> {
-    return prisma?.user.findFirst({
-      where: {
-        gh_username
-      }
-    });
-  }
-
   static async updateCurrentUser(userData: Partial<User>) {
     const userId = await SessionService.getCurrentUserId();
     if (!userId) return null;

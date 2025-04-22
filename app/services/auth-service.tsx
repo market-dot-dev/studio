@@ -46,6 +46,7 @@ class AuthService {
     return newToken;
   }
 
+  //{ session: Session; token: JWT }
   static async sessionCallback({ session, token }: any) {
     session.user = token.user;
     return session;
