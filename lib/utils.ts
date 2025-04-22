@@ -1,8 +1,17 @@
 import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { extendTailwindMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs));
+  const customTwMerge = extendTailwindMerge({
+    extend: {
+      // Adds custom sizes to existing classGroups, so they don't get filtered out
+      classGroups: {
+        "font-size": [{ text: ["xxs"] }, { text: ["xxs/4", "xxs/5"] }]
+      }
+    }
+  });
+
+  return customTwMerge(clsx(inputs));
 }
 
 export const capitalize = (s: string) => {

@@ -2,10 +2,10 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Lead } from "@prisma/client";
-import { ProgressCircle } from "@tremor/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { ProgressCircle } from "../ui/progress-circle";
 
 function getDependencyScoreBadge(dependentReposCount: number) {
   return dependentReposCount > 5 ? "High" : "Low";
@@ -96,7 +96,7 @@ export default function ResearchItem({ research }: { research: Lead }) {
               </div>
 
               <div className="flex items-center gap-2">
-                <ProgressCircle color="blue" value={dependencyPercentage} size="sm">
+                <ProgressCircle color="primary" value={dependencyPercentage} size="sm">
                   <span className="text-xs font-medium text-slate-700">
                     {dependencyPercentage}%
                   </span>

@@ -1,4 +1,4 @@
-import AllCharts from "@/components/overview-stats";
+import { DashboardCharts } from "@/components/overview-stats";
 import { CustomerWithChargesAndSubscriptions } from "../customers/customer-table";
 
 export default function Reports({
@@ -6,5 +6,5 @@ export default function Reports({
 }: {
   customers: CustomerWithChargesAndSubscriptions[];
 }) {
-  return <AllCharts customers={customers} />;
+  return <DashboardCharts customers={customers} />;
 }

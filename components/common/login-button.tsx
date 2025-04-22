@@ -1,35 +1,23 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { useRouter, useSearchParams } from "next/navigation";
-import { FC, MouseEventHandler, ReactNode } from "react";
+import { FC, ReactNode } from "react";
 
-interface LoginButtonProps {
+interface LoginButtonProps extends Omit<ButtonProps, "onClick"> {
   children: ReactNode;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  isLoading: boolean;
   href?: string;
-  loadingText?: string;
-  className?: string;
+  onClick?: () => void;
 }
 
-export const LoginButton: FC<LoginButtonProps> = ({
-  children,
-  onClick,
-  isLoading,
-  loadingText,
-  href,
-  className = ""
-}) => {
+export const LoginButton: FC<LoginButtonProps> = ({ children, onClick, href, ...props }) => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
   const handleClick = () => {
     // If no href provided, use the onClick handler
     if (!href) {
-      if (onClick) {
-        onClick({} as any);
-      }
+      onClick?.();
       return;
     }
 
@@ -47,13 +35,7 @@ export const LoginButton: FC<LoginButtonProps> = ({
   };
 
   return (
-    <Button
-      variant="outline"
-      loading={isLoading}
-      loadingText={loadingText}
-      onClick={handleClick}
-      className={className}
-    >
+    <Button variant="outline" onClick={handleClick} {...props}>
       {children}
     </Button>
   );

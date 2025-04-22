@@ -1,6 +1,6 @@
-import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { LineChart } from "@tremor/react";
+"use client";
+import { type CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
+import { LineChartCard } from "./charts/LineChartCard";
 
 const labels = {
   newSubscriptions: "Subscriptions",
@@ -16,7 +16,21 @@ const labels = {
   averageOrderValue: "Average Order Value"
 } as any;
 
-export default function DashboardCharts({
+const categoryColorMap = {
+  newSubscriptions: "hsl(var(--chart-1))",
+  newSubscriptionsRevenue: "hsl(var(--chart-2))",
+  renewals: "hsl(var(--chart-3))",
+  renewedSubscriptionsRevenue: "hsl(var(--chart-4))",
+  activeSubscriptions: "hsl(var(--chart-5))",
+  monthlyRecurringRevenue: "hsl(var(--chart-1))",
+  oneTimeCharges: "hsl(var(--chart-2))",
+  oneTimeChargesRevenue: "hsl(var(--chart-3))",
+  orders: "hsl(var(--chart-4))",
+  averageOrderValue: "hsl(var(--chart-5))",
+  cancellations: "hsl(var(--chart-1))"
+};
+
+export function DashboardCharts({
   customers
 }: {
   customers: CustomerWithChargesAndSubscriptions[];
@@ -149,80 +163,98 @@ export default function DashboardCharts({
 
   const data = processCustomers(customers);
 
-  const renderChart = (title: string, data: any[], category: string, color: string) => {
-    const heighestValue = Math.max(...data.map((d) => d[labels[category]]));
-
-    return (
-      <Card>
-        <CardHeader className="pb-5">
-          <CardTitle>
-            <span className="mr-2">{title}</span>
-            <span className="text-sm font-normal text-stone-500">Last 6 months</span>
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <LineChart
-            className="mt-4 h-72"
-            data={data}
-            index="date"
-            categories={[labels[category]]}
-            colors={[color]}
-            connectNulls={true}
-            autoMinValue={true}
-            maxValue={Math.ceil((heighestValue * 120) / 100)}
-            intervalType="preserveStartEnd"
-            allowDecimals={false}
-          />
-        </CardContent>
-      </Card>
-    );
-  };
+  // Custom value formatter for currency values
+  const currencyFormatter = (value: number) =>
+    `$${value.toLocaleString("en-US", {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0
+    })}`;
 
   return (
     <>
       <div className="mt-4 flex max-w-screen-xl flex-col space-y-4">
-        <div className="grid gap-6 sm:grid-cols-2">
-          {renderChart("New Subscriptions", data.newSubscriptions, "newSubscriptions", "gray-500")}
-          {renderChart(
-            "New Subscriptions Revenue",
-            data.newSubscriptionsRevenue,
-            "newSubscriptionsRevenue",
-            "blue-500"
-          )}
-          {renderChart("Renewed Subscriptions", data.renewals, "renewals", "green-500")}
-          {renderChart(
-            "Renewed Subscriptions Revenue",
-            data.renewedSubscriptionsRevenue,
-            "renewedSubscriptionsRevenue",
-            "yellow-500"
-          )}
-          {renderChart(
-            "Active Subscriptions",
-            data.activeSubscriptions,
-            "activeSubscriptions",
-            "purple-500"
-          )}
-          {renderChart(
-            "Monthly Recurring Revenue",
-            data.monthlyRecurringRevenue,
-            "monthlyRecurringRevenue",
-            "red-500"
-          )}
-          {renderChart("One-time Charges", data.oneTimeCharges, "oneTimeCharges", "orange-500")}
-          {renderChart(
-            "One-time Charges Revenue",
-            data.oneTimeChargesRevenue,
-            "oneTimeChargesRevenue",
-            "cyan-500"
-          )}
-          {renderChart("Orders", data.orders, "orders", "green-500")}
-          {renderChart(
-            "Average Order Value",
-            data.averageOrderValue,
-            "averageOrderValue",
-            "teal-500"
-          )}
-          {renderChart("Cancellations", data.cancellations, "cancellations", "pink-500")}
+        <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <LineChartCard
+            title="New Subscriptions"
+            data={data.newSubscriptions}
+            categories={[labels.newSubscriptions]}
+            colors={[categoryColorMap.newSubscriptions]}
+          />
+
+          <LineChartCard
+            title="New Subscriptions Revenue"
+            data={data.newSubscriptionsRevenue}
+            categories={[labels.newSubscriptionsRevenue]}
+            colors={[categoryColorMap.newSubscriptionsRevenue]}
+            valueFormatter={currencyFormatter}
+          />
+
+          <LineChartCard
+            title="Renewed Subscriptions"
+            data={data.renewals}
+            categories={[labels.renewals]}
+            colors={[categoryColorMap.renewals]}
+          />
+
+          <LineChartCard
+            title="Renewed Subscriptions Revenue"
+            data={data.renewedSubscriptionsRevenue}
+            categories={[labels.renewedSubscriptionsRevenue]}
+            colors={[categoryColorMap.renewedSubscriptionsRevenue]}
+            valueFormatter={currencyFormatter}
+          />
+
+          <LineChartCard
+            title="Active Subscriptions"
+            data={data.activeSubscriptions}
+            categories={[labels.activeSubscriptions]}
+            colors={[categoryColorMap.activeSubscriptions]}
+          />
+
+          <LineChartCard
+            title="Monthly Recurring Revenue"
+            data={data.monthlyRecurringRevenue}
+            categories={[labels.monthlyRecurringRevenue]}
+            colors={[categoryColorMap.monthlyRecurringRevenue]}
+            valueFormatter={currencyFormatter}
+          />
+
+          <LineChartCard
+            title="One-time Charges"
+            data={data.oneTimeCharges}
+            categories={[labels.oneTimeCharges]}
+            colors={[categoryColorMap.oneTimeCharges]}
+          />
+
+          <LineChartCard
+            title="One-time Charges Revenue"
+            data={data.oneTimeChargesRevenue}
+            categories={[labels.oneTimeChargesRevenue]}
+            colors={[categoryColorMap.oneTimeChargesRevenue]}
+            valueFormatter={currencyFormatter}
+          />
+
+          <LineChartCard
+            title="Orders"
+            data={data.orders}
+            categories={[labels.orders]}
+            colors={[categoryColorMap.orders]}
+          />
+
+          <LineChartCard
+            title="Average Order Value"
+            data={data.averageOrderValue}
+            categories={[labels.averageOrderValue]}
+            colors={[categoryColorMap.averageOrderValue]}
+            valueFormatter={currencyFormatter}
+          />
+
+          <LineChartCard
+            title="Cancellations"
+            data={data.cancellations}
+            categories={[labels.cancellations]}
+            colors={[categoryColorMap.cancellations]}
+          />
         </div>
       </div>
     </>

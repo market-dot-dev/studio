@@ -1,10 +1,16 @@
 "use client";
 
+import {
+  ChartConfig,
+  ChartContainer,
+  ChartTooltip,
+  ChartTooltipContent
+} from "@/components/ui/chart";
 import { User } from "@prisma/client";
-import { LineChart } from "@tremor/react";
 import { format } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 
 interface UserAnalyticsChartProps {
   users: User[];
@@ -61,35 +67,87 @@ export default function UserAnalyticsChart({ users }: UserAnalyticsChartProps) {
     return result;
   }, [users]);
 
+  // Chart configuration for Shadcn
+  const chartConfig = {
+    "Total Users": {
+      label: "Total Users",
+      color: "hsl(var(--chart-2))"
+    }
+  } satisfies ChartConfig;
+
+  // Custom value formatter for tooltips
+  const valueFormatter = (value: number) => `${value.toLocaleString()} users`;
+
   return (
     <div className="space-y-4">
       <div>
         <h3 className="text-xl font-semibold">User Growth</h3>
-        <p className="text-sm text-gray-500">
+        <p className="text-muted-foreground text-sm">
           {period === "all"
             ? "All time user growth"
             : `User growth in the last ${period === "30days" ? "30" : "60"} days`}
         </p>
       </div>
 
-      {chartData.length > 0 ? (
-        <LineChart
-          className="mt-4 h-72"
-          data={chartData}
-          index="date"
-          categories={["Total Users"]}
-          colors={["blue"]}
-          valueFormatter={(value) => `${value.toLocaleString()} users`}
-          showLegend={false}
-          showXAxis={true}
-          showYAxis={true}
-          showGridLines={true}
-        />
-      ) : (
-        <div className="flex h-72 items-center justify-center rounded-lg border bg-gray-50">
-          <p className="text-gray-500">No user data available to display</p>
-        </div>
-      )}
+      <div className="mt-4">
+        {chartData.length > 0 ? (
+          <ChartContainer config={chartConfig} className="h-72 w-full">
+            <LineChart
+              accessibilityLayer
+              data={chartData}
+              margin={{
+                top: 5,
+                right: 0,
+                left: 0,
+                bottom: 0
+              }}
+            >
+              <CartesianGrid vertical={false} />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tick={{ fontSize: 12 }}
+                tickFormatter={(value) => {
+                  // Shorten date format for x-axis to save space
+                  const parts = value.split(", ");
+                  if (parts.length > 1) {
+                    return `${parts[0]}, ${parts[1].slice(2)}`;
+                  }
+                  return value;
+                }}
+              />
+              <YAxis
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                tickFormatter={(value) => value.toLocaleString()}
+                allowDecimals={false}
+                tickCount={5}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={
+                  <ChartTooltipContent formatter={(value) => valueFormatter(Number(value))} />
+                }
+              />
+              <Line
+                dataKey="Total Users"
+                type="monotone"
+                strokeWidth={2}
+                stroke="hsl(var(--chart-2))"
+                dot={false}
+                connectNulls={true}
+              />
+            </LineChart>
+          </ChartContainer>
+        ) : (
+          <div className="bg-muted/50 flex h-72 items-center justify-center rounded-lg border">
+            <p className="text-muted-foreground">No user data available to display</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

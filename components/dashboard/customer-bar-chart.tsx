@@ -8,40 +8,42 @@ import {
   ChartTooltip,
   ChartTooltipContent
 } from "@/components/ui/chart";
-import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from "recharts";
 
-interface RevenueLineChartProps {
-  revenueData: any[];
-  highestRevenueItemInMonth: number;
+interface CustomerBarChartProps {
+  customerTotals: any[];
+  highestCustChangesInAMonth: number;
 }
 
-const valueFormatter = (number: number) => `$${Intl.NumberFormat("us").format(number)}`;
-
-export function RevenueLineChart({
-  revenueData,
-  highestRevenueItemInMonth
-}: RevenueLineChartProps) {
+export function CustomerBarChart({
+  customerTotals,
+  highestCustChangesInAMonth
+}: CustomerBarChartProps) {
   const chartConfig = {
     "New Subscriptions": {
       label: "New Subscriptions",
       color: "hsl(var(--chart-1))"
     },
+    Cancellations: {
+      label: "Cancellations",
+      color: "hsl(var(--chart-2))"
+    },
     Renewals: {
       label: "Renewals",
-      color: "hsl(var(--chart-2))"
+      color: "hsl(var(--chart-3))"
     },
     "One-time Charges": {
       label: "One-time Charges",
-      color: "hsl(var(--chart-3))"
+      color: "hsl(var(--chart-4))"
     }
   } satisfies ChartConfig;
 
   return (
     <div className="mt-3">
       <ChartContainer config={chartConfig} className="min-h-72 max-w-full">
-        <LineChart
+        <BarChart
           accessibilityLayer
-          data={revenueData}
+          data={customerTotals}
           margin={{
             top: 0,
             bottom: 0,
@@ -55,47 +57,31 @@ export function RevenueLineChart({
             tickLine={false}
             axisLine={false}
             tickMargin={8}
-            tickCount={revenueData.length}
+            tickCount={customerTotals.length}
           />
           <YAxis
             tickLine={false}
             axisLine={false}
             tickMargin={8}
-            tickFormatter={valueFormatter}
             allowDecimals={false}
             tick={{ transform: "translate(-3, 0)" }}
             tickCount={5}
+            domain={[0, Math.ceil((highestCustChangesInAMonth * 120) / 100)]}
           />
           <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
           <ChartLegend
             content={<ChartLegendContent className="justify-end" />}
             verticalAlign="top"
           />
-          <Line
+          <Bar
             dataKey="New Subscriptions"
-            type="linear"
-            strokeWidth={2}
-            stroke="hsl(var(--chart-1))"
-            dot={false}
-            connectNulls={true}
+            fill={chartConfig["New Subscriptions"].color}
+            radius={4}
           />
-          <Line
-            dataKey="Renewals"
-            type="linear"
-            strokeWidth={2}
-            stroke="hsl(var(--chart-2))"
-            dot={false}
-            connectNulls={true}
-          />
-          <Line
-            dataKey="One-time Charges"
-            type="linear"
-            strokeWidth={2}
-            stroke="hsl(var(--chart-3))"
-            dot={false}
-            connectNulls={true}
-          />
-        </LineChart>
+          <Bar dataKey="Cancellations" fill={chartConfig["Cancellations"].color} radius={4} />
+          <Bar dataKey="Renewals" fill={chartConfig["Renewals"].color} radius={4} />
+          <Bar dataKey="One-time Charges" fill={chartConfig["One-time Charges"].color} radius={4} />
+        </BarChart>
       </ChartContainer>
     </div>
   );

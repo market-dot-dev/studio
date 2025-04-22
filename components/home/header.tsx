@@ -1,7 +1,7 @@
 "use client";
 
 import useCurrentSession from "@/app/hooks/use-current-session";
-import Button from "@/components/home/button";
+import { MarketingButton } from "@/components/home/button";
 import FeatureCard from "@/components/home/feature-card";
 import Link from "@/components/home/link";
 import Logo from "@/components/home/logo";
@@ -53,7 +53,7 @@ interface Product {
 }
 
 const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambugerButtonProps) => (
-  <Button
+  <MarketingButton
     variant="ghost"
     onClick={toggleMenu}
     className={clsx(
@@ -65,7 +65,7 @@ const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambu
     <span className="flex items-center justify-center">
       {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
     </span>
-  </Button>
+  </MarketingButton>
 );
 
 export default function Header({ className }: { className?: string }) {
@@ -465,7 +465,7 @@ export default function Header({ className }: { className?: string }) {
               </div>
               <div className="bg-marketing-background sticky inset-x-0 bottom-0 border-t border-black/10 p-6">
                 {isLoading || !signedIn ? (
-                  <Button className="w-full">
+                  <MarketingButton className="w-full">
                     <Image
                       src="/github.svg"
                       alt="github logo"
@@ -474,9 +474,9 @@ export default function Header({ className }: { className?: string }) {
                       className="xs:h-[18px] col-span-2 col-start-1 h-[22px] w-auto md:h-6"
                     />
                     Sign up with Github
-                  </Button>
+                  </MarketingButton>
                 ) : (
-                  <Button
+                  <MarketingButton
                     onClick={() => {
                       router.push(dashboardURL);
                     }}
@@ -484,7 +484,7 @@ export default function Header({ className }: { className?: string }) {
                   >
                     <Store className="!size-5" />
                     Go to Dashboard
-                  </Button>
+                  </MarketingButton>
                 )}
               </div>
             </div>
