@@ -1,5 +1,5 @@
 import Nav from "@/app/components/nav";
-import { userIsMarketExpert } from "@/app/services/MarketService";
+import { userIsMarketExpert } from "@/app/services/market-service";
 import {
   defaultOnboardingState,
   OnboardingState

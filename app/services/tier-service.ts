@@ -4,7 +4,7 @@ import Tier, { newTier } from "@/app/models/Tier";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import prisma from "@/lib/prisma";
 import { Channel } from "@prisma/client";
-import { updateServicesForSale } from "./MarketService";
+import { updateServicesForSale } from "./market-service";
 import SessionService from "./session-service";
 import StripeService, { SubscriptionCadence } from "./StripeService";
 import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
