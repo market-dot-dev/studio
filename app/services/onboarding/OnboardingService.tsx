@@ -4,7 +4,7 @@
 
 import { businessDescription, businessName } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
-import { getCurrentUserId } from "../SessionService";
+import { getCurrentUserId } from "../session-service";
 import { getCurrentUser } from "../UserService";
 import { defaultOnboardingState, OnboardingState } from "./onboarding-steps";
 

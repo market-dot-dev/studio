@@ -10,7 +10,7 @@ import { put } from "@vercel/blob";
 import fs from "fs";
 import yaml from "js-yaml";
 import { customAlphabet } from "nanoid";
-import SessionService from "./SessionService";
+import SessionService from "./session-service";
 
 const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 7);
 

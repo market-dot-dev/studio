@@ -5,10 +5,10 @@ import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import prisma from "@/lib/prisma";
 import { Channel } from "@prisma/client";
 import { updateServicesForSale } from "./MarketService";
-import SessionService from "./SessionService";
+import SessionService from "./session-service";
 import StripeService, { SubscriptionCadence } from "./StripeService";
-import UserService, { getCurrentUser } from "./UserService";
 import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
+import UserService, { getCurrentUser } from "./UserService";
 
 export type TierWithCount = Tier & {
   _count?: { Charge: number; subscriptions: number };

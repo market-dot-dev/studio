@@ -1,4 +1,4 @@
-import SessionService from "@/app/services/SessionService";
+import SessionService from "@/app/services/session-service";
 import TierService from "@/app/services/tier-service";
 import PageHeader from "@/components/common/page-header";
 import CopyCheckoutLinkButton from "@/components/tiers/copy-checkout-link-button";

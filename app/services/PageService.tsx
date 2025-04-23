@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth";
 import { newPageTemplate } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { Page } from "@prisma/client";
-import SessionService from "./SessionService";
+import SessionService from "./session-service";
 import SiteService from "./SiteService";
 
 class PageService {

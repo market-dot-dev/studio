@@ -5,7 +5,7 @@ import { Charge, Prospect, Subscription, User } from "@prisma/client";
 import Customer from "../models/Customer";
 import { SessionUser } from "../models/Session";
 import Tier from "../models/Tier";
-import SessionService from "./SessionService";
+import SessionService from "./session-service";
 
 /**
  * Type for customer with their charges and subscriptions

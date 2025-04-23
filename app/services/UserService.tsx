@@ -4,7 +4,7 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { User } from "@prisma/client";
 import { createSessionUser } from "../models/Session";
-import SessionService from "./SessionService";
+import SessionService from "./session-service";
 
 class UserService {
   static filterUserAttributes(user: User | Partial<User>) {

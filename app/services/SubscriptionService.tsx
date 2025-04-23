@@ -5,7 +5,7 @@ import { Subscription as SubscriptionSql } from "@prisma/client";
 import Subscription, { SubscriptionStates, SubscriptionWithUser } from "../models/Subscription";
 import { getStripeCustomerId } from "./customer-service";
 import EmailService from "./EmailService";
-import SessionService from "./SessionService";
+import SessionService from "./session-service";
 import StripeService from "./StripeService";
 import TierService from "./tier-service";
 import UserService from "./UserService";

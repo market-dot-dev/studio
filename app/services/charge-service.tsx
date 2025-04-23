@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { Charge } from "@prisma/client";
 import { getStripeCustomerId } from "./customer-service";
 import EmailService from "./EmailService";
-import SessionService from "./SessionService";
+import SessionService from "./session-service";
 import TierService from "./tier-service";
 import UserService from "./UserService";
 

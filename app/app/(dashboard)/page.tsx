@@ -1,5 +1,5 @@
-import SessionService from "@/app/services/SessionService";
 import { getCustomersAndProspectsByMaintainer } from "@/app/services/customer-service";
+import SessionService from "@/app/services/session-service";
 import PageHeader from "@/components/common/page-header";
 import DashboardCharts from "@/components/dashboard/dashboard-charts";
 import { redirect } from "next/navigation";

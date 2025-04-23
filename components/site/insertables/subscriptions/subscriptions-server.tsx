@@ -1,4 +1,4 @@
-import SessionService from "@/app/services/SessionService";
+import SessionService from "@/app/services/session-service";
 import { getSubscriptions } from "@/lib/tiers/fetchers";
 import Subscriptions from "./subscriptions";
 
