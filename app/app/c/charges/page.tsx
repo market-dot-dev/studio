@@ -1,5 +1,5 @@
 import ChargeService from "@/app/services/charge-service";
-import TierService from "@/app/services/tier-service";
+import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import Link from "next/link";
 const ChargeCard = async ({ charge }: { charge: Charge }) => {
   if (!charge || !charge.tierId) return null;
 
-  const tier = await TierService.findTier(charge.tierId!);
+  const tier = await getTierById(charge.tierId!);
   if (!tier) return null;
 
   const maintainer = await UserService.findUser(tier.userId);

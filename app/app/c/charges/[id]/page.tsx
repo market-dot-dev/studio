@@ -1,5 +1,5 @@
 import ChargeService from "@/app/services/charge-service";
-import TierService from "@/app/services/tier-service";
+import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
 
@@ -7,7 +7,7 @@ export default async function ChargeDetail(props: { params: Promise<{ id: string
   const params = await props.params;
   const charge = await ChargeService.findCharge(params.id);
   if (!charge) return null;
-  const tier = await TierService.findTier(charge.tierId);
+  const tier = await getTierById(charge.tierId);
   if (!tier) return null;
   const maintainer = await UserService.findUser(tier.userId);
 

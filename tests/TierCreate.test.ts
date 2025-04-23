@@ -1,4 +1,4 @@
-import TierService from "@/app/services/tier-service";
+import TierService, { getTierById } from "@/app/services/tier-service";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock the prisma client
@@ -50,7 +50,7 @@ describe("TierService update", () => {
     // Mock the service method
     vi.spyOn(TierService, "findTier").mockResolvedValue(mockTier);
 
-    const retrievedTier = await TierService.findTier("456");
+    const retrievedTier = await getTierById("456");
 
     expect(retrievedTier).not.toBeNull();
     expect(retrievedTier?.userId).toEqual(mockUser.id);

@@ -3,7 +3,7 @@
 import { getRootUrl } from "@/lib/domain";
 import { Channel } from "@prisma/client";
 import { getCurrentSite } from "./SiteService";
-import TierService from "./tier-service";
+import { getPublishedTiersForUser } from "./tier-service";
 import UserService, { getCurrentUser } from "./UserService";
 
 const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;
@@ -137,7 +137,7 @@ export async function updateServicesForSale() {
     throw new Error("User must have a subdomain to sync with market");
   }
 
-  const tiers = await TierService.getTiersForUser(user.id, undefined, Channel.market);
+  const tiers = await getPublishedTiersForUser(user.id, undefined, Channel.market);
   const serviceForSaleOnMarketDevParams: ServiceForSaleOnMarketDevParams[] = tiers.map((tier) => {
     return {
       store_package_id: tier.id,

@@ -5,7 +5,7 @@ import { Charge } from "@prisma/client";
 import { getStripeCustomerId } from "./customer-service";
 import EmailService from "./EmailService";
 import SessionService from "./session-service";
-import TierService from "./tier-service";
+import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
 class ChargeService {
@@ -90,7 +90,7 @@ class ChargeService {
     const user = await UserService.findUser(userId);
     if (!user) throw new Error("User not found");
 
-    const tier = await TierService.findTier(tierId);
+    const tier = await getTierById(tierId);
     if (!tier) throw new Error("Tier not found");
     if (tier.cadence !== "once") throw new Error("Tier is not a one-time purchase");
     if (!tier.stripePriceId) throw new Error("Stripe price ID not found for tier");

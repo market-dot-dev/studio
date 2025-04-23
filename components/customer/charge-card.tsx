@@ -1,5 +1,5 @@
 import ContractService from "@/app/services/contract-service";
-import TierService from "@/app/services/tier-service";
+import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -16,7 +16,7 @@ const ChargeCard = async ({
 }) => {
   if (!charge || !charge.tierId) return null;
 
-  const tier = await TierService.findTier(charge.tierId!);
+  const tier = await getTierById(charge.tierId!);
   if (!tier) return null;
 
   const maintainer = await UserService.findUser(tier.userId);
@@ -43,7 +43,7 @@ const ChargeCard = async ({
         <div className="flex flex-row flex-wrap gap-x-10 gap-y-4">
           {isCustomerView && (
             <div className="flex flex-col gap-1">
-              <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
+              <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
                 Purchased from
               </span>
               <div className="flex items-center gap-1.5">
@@ -54,14 +54,14 @@ const ChargeCard = async ({
           )}
 
           <div className="flex flex-col gap-1">
-            <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
               Purchased On
             </span>
             <span className="font-medium">{charge.createdAt.toLocaleDateString()}</span>
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
               Contract
             </span>
             <ContractLink contract={contract} />

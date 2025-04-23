@@ -7,7 +7,7 @@ import { getStripeCustomerId } from "./customer-service";
 import EmailService from "./EmailService";
 import SessionService from "./session-service";
 import StripeService from "./StripeService";
-import TierService from "./tier-service";
+import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
 class SubscriptionService {
@@ -144,7 +144,7 @@ class SubscriptionService {
     const user = await UserService.findUser(userId);
     if (!user) throw new Error("User not found");
 
-    const tier = await TierService.findTier(tierId);
+    const tier = await getTierById(tierId);
     if (!tier) throw new Error("Tier not found");
     if (!tier.stripePriceId) throw new Error("Stripe price ID not found for tier");
 
