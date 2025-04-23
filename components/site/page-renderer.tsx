@@ -1,12 +1,6 @@
 import allComponents, { deprecatedComponents } from "@/components/site/insertables";
+import { ComponentType } from "@/lib/site/types";
 import type { JSX, ReactNode } from "react";
-
-// Create a proper type for the component map
-type ComponentType = {
-  element: React.ComponentType<any>;
-  preview?: React.ComponentType<any>;
-  ui?: boolean;
-};
 
 // Explicitly type the components map
 const componentsMap: Record<string, ComponentType> = {
@@ -21,6 +15,7 @@ type DynamicComponentProps = {
   [key: string]: any; // For other attributes
 };
 
+// Elements that should be ignored during rendering
 const ignoreElements = [
   "html",
   "head",
@@ -33,6 +28,7 @@ const ignoreElements = [
   "noscript"
 ];
 
+// HTML void elements that should not have closing tags
 const voidElements = [
   "area",
   "base",
@@ -50,6 +46,10 @@ const voidElements = [
   "wbr"
 ];
 
+/**
+ * Sanitizes HTML attribute names to valid React props
+ * Converts kebab-case to camelCase and removes invalid characters
+ */
 function sanitizeAttributeName(attrName: string): string {
   // Convert kebab-case to camelCase (e.g., data-value to dataValue)
   const camelCased = attrName.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
@@ -59,6 +59,9 @@ function sanitizeAttributeName(attrName: string): string {
   return camelCased.replace(invalidChars, "");
 }
 
+/**
+ * Dynamic component for rendering arbitrary HTML elements
+ */
 const DynamicComponent: React.FC<DynamicComponentProps> = ({
   tag,
   className,
@@ -73,21 +76,38 @@ const DynamicComponent: React.FC<DynamicComponentProps> = ({
   );
 };
 
-// @TODO: These typings should be universal for all "maintainer-site" pages
-// Define proper site and page types (replace with your actual types)
+// Simple type definitions for site and page - compatible with what's passed from components
 interface Site {
+  id?: string;
+  userId?: string;
   user?: {
-    projectDescription?: string;
+    name?: string | null;
+    image?: string | null;
+    projectName?: string | null;
+    projectDescription?: string | null;
     [key: string]: any;
-  };
+  } | null;
   [key: string]: any;
 }
 
 interface Page {
+  id?: string;
+  title?: string | null;
+  content?: string | null;
+  slug?: string | null;
   [key: string]: any;
 }
 
-// For recursively rendering elements
+/**
+ * Renders DOM elements as React components
+ *
+ * @param element - DOM element(s) to render
+ * @param index - Current element index for key generation
+ * @param site - Site data context
+ * @param page - Page data context
+ * @param isPreview - Whether rendering in preview mode
+ * @returns JSX representing the rendered element(s)
+ */
 const renderElement = (
   element: Element | Element[],
   index: number,
@@ -95,7 +115,7 @@ const renderElement = (
   page: Page | null = null,
   isPreview: boolean = false
 ): JSX.Element => {
-  // in case there are multiple root elements, wrap them in a fragment
+  // In case there are multiple root elements, wrap them in a fragment
   if (Array.isArray(element)) {
     return (
       <>
@@ -109,7 +129,7 @@ const renderElement = (
   if (!element?.tagName) return <></>;
   const tag = element.tagName.toLowerCase();
 
-  // ignore some elements
+  // Ignore certain elements
   if (ignoreElements.includes(tag)) return <></>;
 
   // Check if the element is a custom component
@@ -119,11 +139,11 @@ const renderElement = (
         ? componentsMap[tag].preview
         : componentsMap[tag].element;
 
-    // collect all props on elements
+    // Collect all props on elements
     const props: Record<string, any> = {};
 
     element.getAttributeNames().forEach((attr) => {
-      // sanitize attr as html attributes can be anything
+      // Sanitize attr as html attributes can be anything
       const sanitizedAttr = sanitizeAttributeName(attr);
       const val = element.getAttribute(attr);
 
@@ -136,14 +156,14 @@ const renderElement = (
       }
     });
 
-    // if it is not just a ui, pass site and page as props too
+    // If it is not just a UI component, pass site and page as props too
     if (!componentsMap[tag].ui) {
       if (site) props.site = site;
       if (page) props.page = page;
     }
 
     const children = Array.from(element.childNodes).map((child, childIndex) => {
-      // if the child is a text node, return the text content
+      // If the child is a text node, return the text content
       if (child.nodeType === 3) return child.textContent;
       return renderElement(child as Element, childIndex, site, page, isPreview);
     });
@@ -191,7 +211,7 @@ const renderElement = (
         {...attributes}
       >
         {Array.from(element.childNodes).map((child, childIndex) => {
-          // if the child is a text node, return the text content
+          // If the child is a text node, return the text content
           if (child.nodeType === 3) {
             return child.textContent;
           }

@@ -6,7 +6,7 @@ import CodeSnippet from "@/components/embedables/code-snippet";
 import embeddables from "@/components/site/embedables/index";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { SiteMeta } from "@/lib/site/fetchers";
+import type { SiteMeta } from "@/lib/site/types";
 import { useEffect, useState } from "react";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 

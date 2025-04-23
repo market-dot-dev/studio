@@ -14,7 +14,10 @@ class PageService {
       : null;
   }
 
-  // meant for frontend site rendering
+  /**
+   * Get a specific page by subdomain and slug
+   * Used for frontend site rendering
+   */
   static async getPage(subdomain: string, slug: string) {
     const site = await prisma.site.findUnique({
       where: {
@@ -38,7 +41,10 @@ class PageService {
           },
           take: 1,
           select: {
-            content: true
+            content: true,
+            title: true,
+            slug: true,
+            id: true
           }
         }
       }
@@ -47,7 +53,10 @@ class PageService {
     return site;
   }
 
-  // meant for frontend site rendering
+  /**
+   * Get the homepage for a site by subdomain
+   * Used for frontend site rendering
+   */
   static async getHomepage(subdomain: string) {
     const site = await prisma.site.findUnique({
       where: {
@@ -78,7 +87,10 @@ class PageService {
         draft: false
       },
       select: {
-        content: true
+        content: true,
+        title: true,
+        slug: true,
+        id: true
       }
     });
 
