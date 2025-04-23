@@ -8,7 +8,7 @@ import { updateServicesForSale } from "./MarketService";
 import SessionService from "./session-service";
 import StripeService, { SubscriptionCadence } from "./StripeService";
 import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
-import UserService, { getCurrentUser } from "./UserService";
+import UserService from "./UserService";
 
 export type TierWithCount = Tier & {
   _count?: { Charge: number; subscriptions: number };
@@ -16,22 +16,6 @@ export type TierWithCount = Tier & {
 export type CheckoutType = "gitwallet" | "contact-form";
 
 class TierService {
-  static async updateApplicationFee(
-    tierId: string,
-    applicationFeePercent?: number,
-    applicationFeePrice?: number
-  ) {
-    const user = await getCurrentUser();
-    if (!user?.roleId || user.roleId !== "admin") {
-      throw new Error("User does not have permission to update application fee percent.");
-    }
-
-    return await prisma?.tier.update({
-      where: { id: tierId },
-      data: { applicationFeePercent, applicationFeePrice }
-    });
-  }
-
   static async findTier(id: string): Promise<Tier | null> {
     return prisma.tier.findUnique({
       where: {
@@ -397,7 +381,6 @@ export const {
   findTier,
   getPublishedTiers,
   getTiersForUser,
-  updateApplicationFee,
   updateTier,
   createTemplateTier,
   duplicateTier
