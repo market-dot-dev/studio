@@ -75,7 +75,7 @@ function PublishedPackagesSelectionModalContent({
             onClick={() => onTierSelect(tier)}
             className={`rounded-lg ${
               selectedTiers.some((t) => t.id === tier.id)
-                ? "ring-swamp ring-4 transition-shadow"
+                ? "ring-4 ring-swamp transition-shadow"
                 : ""
             }`}
           >

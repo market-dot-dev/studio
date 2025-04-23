@@ -1,6 +1,6 @@
 import { BaseEmailTemplate } from "@/app/components/email/base-template";
 import { SessionUser } from "@/app/models/Session";
-import EmailService from "@/app/services/EmailService";
+import { sendEmail } from "@/app/services/email-service";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
           .replace(/{email}/g, user.email || "");
 
         try {
-          await EmailService.sendEmail(user.email, subject, text, html);
+          await sendEmail(user.email, subject, text, html);
           return { success: true, email: user.email };
         } catch (error) {
           console.error("Failed to send email to", user.email, error);

@@ -4,7 +4,12 @@ import prisma from "@/lib/prisma";
 import { Subscription as SubscriptionSql } from "@prisma/client";
 import Subscription, { SubscriptionStates, SubscriptionWithUser } from "../models/Subscription";
 import { getStripeCustomerId } from "./customer-service";
-import EmailService from "./EmailService";
+import {
+  confirmCustomerSubscription,
+  confirmCustomerSubscriptionCancellation,
+  notifyOwnerOfNewSubscription,
+  notifyOwnerOfSubscriptionCancellation
+} from "./email-service";
 import SessionService from "./session-service";
 import StripeService from "./StripeService";
 import { getTierById } from "./tier-service";
@@ -186,9 +191,9 @@ class SubscriptionService {
 
     await Promise.all([
       // send email to the tier owner
-      EmailService.newSubscriptionInformation(tier.userId, user, tier.name),
+      notifyOwnerOfNewSubscription(tier.userId, user, tier.name),
       // send email to the customer
-      EmailService.newSubscriptionConfirmation(user, tier.name)
+      confirmCustomerSubscription(user, tier.name)
     ]);
 
     return res;
@@ -251,7 +256,7 @@ class SubscriptionService {
     await Promise.all([
       // inform the tier owner
       subscription?.tier?.user
-        ? EmailService.subscriptionCancelledInfo(
+        ? notifyOwnerOfSubscriptionCancellation(
             subscription?.tier?.user,
             subscription.user,
             subscription?.tier?.name
@@ -259,10 +264,7 @@ class SubscriptionService {
         : null,
       // inform the customer
       subscription.user
-        ? EmailService.subscriptionCancelledConfirmation(
-            subscription.user,
-            subscription?.tier?.name ?? ""
-          )
+        ? confirmCustomerSubscriptionCancellation(subscription.user, subscription?.tier?.name ?? "")
         : null
     ]);
   }

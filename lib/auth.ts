@@ -1,6 +1,6 @@
 import Session from "@/app/models/Session";
 import AuthService from "@/app/services/auth-service";
-import EmailService from "@/app/services/EmailService";
+import { sendVerificationEmail } from "@/app/services/email-service";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import RegistrationService from "@/app/services/registration-service";
 import prisma from "@/lib/prisma";
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         return Math.floor(100000 + Math.random() * 900000).toString();
       },
       sendVerificationRequest: ({ identifier: email, token }) => {
-        return EmailService.sendVerificationEmail(email, token, domainCopy());
+        return sendVerificationEmail(email, token, domainCopy());
       }
     }),
     GitHubProvider({

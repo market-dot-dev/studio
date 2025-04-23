@@ -8,7 +8,7 @@ import { AdapterUser } from "next-auth/adapters";
 import { JWT } from "next-auth/jwt";
 import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 import { SessionUser, createSessionUser } from "../models/Session";
-import EmailService from "./EmailService";
+import { sendWelcomeEmailToCustomer, sendWelcomeEmailToMaintainer } from "./email-service";
 import { defaultOnboardingState } from "./onboarding/onboarding-steps";
 import UserService from "./UserService";
 
@@ -149,9 +149,9 @@ class AuthService {
     });
 
     if (updatedUser.roleId === "maintainer") {
-      await EmailService.sendNewMaintainerSignUpEmail({ ...updatedUser });
+      await sendWelcomeEmailToMaintainer({ ...updatedUser });
     } else {
-      await EmailService.sendNewCustomerSignUpEmail({ ...updatedUser });
+      await sendWelcomeEmailToCustomer({ ...updatedUser });
     }
 
     if (signupName) {

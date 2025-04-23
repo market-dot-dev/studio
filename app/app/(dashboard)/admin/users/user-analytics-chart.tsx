@@ -82,7 +82,7 @@ export default function UserAnalyticsChart({ users }: UserAnalyticsChartProps) {
     <div className="space-y-4">
       <div>
         <h3 className="text-xl font-semibold">User Growth</h3>
-        <p className="text-muted-foreground text-sm">
+        <p className="text-sm text-muted-foreground">
           {period === "all"
             ? "All time user growth"
             : `User growth in the last ${period === "30days" ? "30" : "60"} days`}
@@ -143,7 +143,7 @@ export default function UserAnalyticsChart({ users }: UserAnalyticsChartProps) {
             </LineChart>
           </ChartContainer>
         ) : (
-          <div className="bg-muted/50 flex h-72 items-center justify-center rounded-lg border">
+          <div className="flex h-72 items-center justify-center rounded-lg border bg-muted/50">
             <p className="text-muted-foreground">No user data available to display</p>
           </div>
         )}

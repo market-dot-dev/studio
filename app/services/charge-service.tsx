@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { Charge } from "@prisma/client";
 import { getStripeCustomerId } from "./customer-service";
-import EmailService from "./EmailService";
+import { confirmCustomerPurchase, notifyOwnerOfNewPurchase } from "./email-service";
 import SessionService from "./session-service";
 import { getTierById } from "./tier-service";
 import UserService from "./UserService";
@@ -122,9 +122,9 @@ class ChargeService {
     await Promise.all([
       // FIXME -- implement charge emails
       // send email to the tier owner
-      EmailService.newPurchaseInformation(tier.userId, user, tier.name),
+      notifyOwnerOfNewPurchase(tier.userId, user, tier.name),
       // send email to the customer
-      EmailService.newPurchaseConfirmation(user, tier.name)
+      confirmCustomerPurchase(user, tier.name)
     ]);
 
     return res;
