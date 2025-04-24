@@ -1,10 +1,10 @@
-import { findTier } from "@/app/services/TierService";
+import { getTierById } from "@/app/services/tier-service";
 import PageHeader from "@/components/common/page-header";
 import TierForm from "./admin-tier-form";
 
 export default async function AdminEditTier(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const tier = await findTier(params.id);
+  const tier = await getTierById(params.id);
   if (!tier || !tier.id) return null;
 
   return (

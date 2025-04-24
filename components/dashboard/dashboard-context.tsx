@@ -1,5 +1,5 @@
 "use client";
-import { validateMarketExpert as validateMarketExpertServerAction } from "@/app/services/MarketService";
+import { validateMarketExpert as validateMarketExpertServerAction } from "@/app/services/market-service";
 import { createContext, ReactNode, useContext, useState } from "react";
 
 interface DashboardContextType {

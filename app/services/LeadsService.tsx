@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import SessionService from "./SessionService";
+import SessionService from "./session-service";
 
 export type FiltersState = {
   country_code: string;

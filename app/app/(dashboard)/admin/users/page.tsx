@@ -14,15 +14,8 @@ export default async function UsersAnalytics() {
     createdAt: Date | null;
   })[];
 
-  console.log(`Found ${users.length} users`);
-
-  // Current date and time for comparison
-  const now = new Date();
-
-  // Count users with dates
-  const usersWithDates = users.filter((user) => !!user.createdAt);
-
   // Sort users by join date (newest first) for the table display
+  const now = new Date();
   const sortedUsers = [...users].sort((a, b) => {
     // Handle missing dates
     if (!a.createdAt) return 1; // Push items without dates to the end

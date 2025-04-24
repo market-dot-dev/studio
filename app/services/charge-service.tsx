@@ -2,9 +2,10 @@
 
 import prisma from "@/lib/prisma";
 import { Charge } from "@prisma/client";
-import EmailService from "./EmailService";
-import SessionService from "./SessionService";
-import TierService from "./TierService";
+import { getStripeCustomerId } from "./customer-service";
+import { confirmCustomerPurchase, notifyOwnerOfNewPurchase } from "./email-service";
+import SessionService from "./session-service";
+import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
 class ChargeService {
@@ -89,7 +90,7 @@ class ChargeService {
     const user = await UserService.findUser(userId);
     if (!user) throw new Error("User not found");
 
-    const tier = await TierService.findTier(tierId);
+    const tier = await getTierById(tierId);
     if (!tier) throw new Error("Tier not found");
     if (tier.cadence !== "once") throw new Error("Tier is not a one-time purchase");
     if (!tier.stripePriceId) throw new Error("Stripe price ID not found for tier");
@@ -99,7 +100,7 @@ class ChargeService {
     if (!maintainer.stripeAccountId)
       throw new Error("Maintainer's account not connected to Stripe");
 
-    const stripeCustomerId = await UserService.getCustomerId(user, maintainer.stripeAccountId);
+    const stripeCustomerId = await getStripeCustomerId(user, maintainer.stripeAccountId);
     if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
     /*
@@ -121,9 +122,9 @@ class ChargeService {
     await Promise.all([
       // FIXME -- implement charge emails
       // send email to the tier owner
-      EmailService.newPurchaseInformation(tier.userId, user, tier.name),
+      notifyOwnerOfNewPurchase(tier.userId, user, tier.name),
       // send email to the customer
-      EmailService.newPurchaseConfirmation(user, tier.name)
+      confirmCustomerPurchase(user, tier.name)
     ]);
 
     return res;

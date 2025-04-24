@@ -1,18 +1,7 @@
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { Prisma } from "@prisma/client";
 import { unstable_cache } from "next/cache";
-
-export const includeSiteMeta = Prisma.validator<Prisma.SiteDefaultArgs>()({
-  select: {
-    id: true,
-    userId: true,
-    subdomain: true,
-    homepageId: true
-  }
-});
-
-export type SiteMeta = Prisma.SiteGetPayload<typeof includeSiteMeta>;
+import { includeSiteMeta, type SiteMeta } from "./types";
 
 // gets site from admin session
 export async function getSiteMeta(): Promise<SiteMeta | null> {

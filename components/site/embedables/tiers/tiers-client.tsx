@@ -1,6 +1,6 @@
 "use client";
 
-import type { SiteMeta } from "@/lib/site/fetchers";
+import type { SiteMeta } from "@/lib/site/types";
 import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
 

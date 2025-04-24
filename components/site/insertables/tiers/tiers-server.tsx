@@ -1,4 +1,4 @@
-import TierService from "@/app/services/TierService";
+import { getPublishedTiersForUser } from "@/app/services/tier-service";
 import { Channel } from "@prisma/client";
 import Tiers from "./tiers";
 
@@ -15,7 +15,7 @@ export default async function TiersServer({
   const tierIds = tiers ? tiers?.split(",").map((id: string) => id.trim()) : [];
   // getting the tiers by means of server functions
   const tierItems = site?.userId
-    ? await TierService.getTiersForUser(site.userId, tierIds, Channel.site)
+    ? await getPublishedTiersForUser(site.userId, tierIds, Channel.site)
     : [];
   return <Tiers tiers={tierItems ?? []} />;
 }

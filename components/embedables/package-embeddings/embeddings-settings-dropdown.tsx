@@ -1,6 +1,6 @@
 "use client";
 
-import { TierWithCount } from "@/app/services/TierService";
+import { TierWithCount } from "@/app/services/tier-service";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

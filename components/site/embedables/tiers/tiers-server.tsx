@@ -1,5 +1,5 @@
-import TierService from "@/app/services/TierService";
-import { SiteMeta } from "@/lib/site/fetchers";
+import { getPublishedTiersForUser } from "@/app/services/tier-service";
+import type { SiteMeta } from "@/lib/site/types";
 import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
 
@@ -11,7 +11,7 @@ export default async function TiersServer({
   site: SiteMeta;
   searchParams: TiersEmbedSettingsProps;
 }) {
-  const tiers = await TierService.getTiersForUser(site.userId);
+  const tiers = await getPublishedTiersForUser(site.userId);
   const filteredTiers = tiers.filter((tier: any) => (searchParams.tiers ?? []).includes(tier.id));
   return (
     <Tiers tiers={filteredTiers ?? []} subdomain={site.subdomain ?? ""} settings={searchParams} />

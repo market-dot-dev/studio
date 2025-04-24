@@ -6,7 +6,7 @@ import { Tier, User } from "@prisma/client";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";
-import TierService from "./TierService";
+import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
 export type StripeCard = {
@@ -466,14 +466,10 @@ class StripeService {
   }
 }
 
-interface StripeCheckoutComponentProps {
-  tierId: string;
-}
-
 export const onClickSubscribe = async (userId: string, tierId: string, annual: boolean) => {
   let subscription = null;
 
-  const tier = await TierService.findTier(tierId);
+  const tier = await getTierById(tierId);
   if (!tier) {
     throw new Error("Tier not found.");
   }

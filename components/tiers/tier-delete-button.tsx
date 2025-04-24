@@ -1,6 +1,6 @@
 "use client";
 
-import { destroyTier } from "@/app/services/TierService";
+import { deleteTier } from "@/app/services/tier-service";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,7 +33,7 @@ const ContractDeleteButton = ({
     setLoading(true);
     onConfirm();
     try {
-      await destroyTier(tierId);
+      await deleteTier(tierId);
       onSuccess();
     } catch (error) {
       onError(error);

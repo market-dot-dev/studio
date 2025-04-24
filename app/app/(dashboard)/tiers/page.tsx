@@ -1,5 +1,5 @@
-import SessionService from "@/app/services/SessionService";
-import TierService from "@/app/services/TierService";
+import SessionService from "@/app/services/session-service";
+import { listTiersByUserIdWithCounts } from "@/app/services/tier-service";
 import PageHeader from "@/components/common/page-header";
 import CopyCheckoutLinkButton from "@/components/tiers/copy-checkout-link-button";
 import NewTierModal from "@/components/tiers/new-tier-modal";
@@ -13,7 +13,7 @@ export default async function Tiers() {
   const currentUserId = await SessionService.getCurrentUserId();
   if (!currentUserId) return <>You must log in</>;
 
-  const tiers = await TierService.findByUserIdWithCount(currentUserId);
+  const tiers = await listTiersByUserIdWithCounts(currentUserId);
 
   return (
     <div className="max-w flex max-w-screen-xl flex-col space-y-10">
@@ -35,7 +35,7 @@ export default async function Tiers() {
         {tiers.length > 0 ? (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 xl:grid-cols-3">
             {tiers.map((tier, index) => (
-              <div key={index} className="bg-stone-150 flex flex-col rounded-xl border text-center">
+              <div key={index} className="flex flex-col rounded-xl border bg-stone-150 text-center">
                 <div className="flex items-center justify-between gap-4 p-3 pb-2 pl-5">
                   <div className="flex items-center gap-2">
                     <span
@@ -71,7 +71,7 @@ export default async function Tiers() {
                 </div>
                 <div className="flex h-full items-center justify-center p-6 pb-4 pt-0">
                   <div className="mx-auto w-full max-w-[330px]">
-                    <TierCard tier={tier} className="shadow-border scale-90" />
+                    <TierCard tier={tier} className="scale-90 shadow-border" />
                   </div>
                 </div>
               </div>

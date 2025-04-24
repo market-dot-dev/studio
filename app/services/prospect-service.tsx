@@ -3,8 +3,8 @@
 import prisma from "@/lib/prisma";
 import { Prospect } from "@prisma/client";
 import Tier from "../models/Tier";
-import EmailService from "./EmailService";
 import UserService from "./UserService";
+import { notifyOwnerOfNewProspect } from "./email-service";
 
 class ProspectService {
   static async getProspects(userId: string): Promise<(Prospect & { tier: Tier })[]> {
@@ -57,7 +57,7 @@ class ProspectService {
       }
     });
 
-    await EmailService.sendNewProspectEmail(user, newProspect, tier.name);
+    await notifyOwnerOfNewProspect(user, newProspect, tier.name);
     return newProspect;
   }
 }

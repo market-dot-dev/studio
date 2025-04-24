@@ -1,6 +1,6 @@
 "use server";
 
-import TierService from "@/app/services/TierService";
+import { findByUserId } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { Suspense } from "react";
 import ValidatorComponent from "./validator-component";
@@ -12,7 +12,7 @@ const StripeDebug = async (props: { params: Promise<{ userId: string }> }) => {
     return <div>Not logged in</div>;
   }
 
-  const tiers = await TierService.findByUserId(user.id);
+  const tiers = await findByUserId(user.id);
 
   return (
     <Suspense>

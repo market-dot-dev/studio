@@ -55,7 +55,7 @@ type NavItem = TitleItem | LinkItem;
 function Item({ item }: { item: NavItem }) {
   if (item.type === "title") {
     return (
-      <span className="font-small text-xxs/4 mb-1 ml-1 mt-4 font-semibold uppercase tracking-wide text-stone-500">
+      <span className="font-small mb-1 ml-1 mt-4 text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
         {item.name}
       </span>
     );
@@ -69,10 +69,10 @@ function Item({ item }: { item: NavItem }) {
         className={clsx(
           "flex h-6 items-center space-x-2",
           "rounded px-1 transition-all duration-150 ease-in-out",
-          "hover:shadow-border-sm hover:bg-white",
-          "focus-visible:shadow-border-sm focus-visible:ring-swamp focus-visible:bg-white focus-visible:outline-none focus-visible:ring-2",
+          "hover:bg-white hover:shadow-border-sm",
+          "focus-visible:bg-white focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp",
           "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800",
-          item.isActive && "shadow-border-sm bg-white text-black dark:bg-stone-700"
+          item.isActive && "bg-white text-black shadow-border-sm dark:bg-stone-700"
         )}
       >
         {item.icon}
@@ -322,7 +322,7 @@ export default function Nav({
       )}
       <nav
         className={clsx(
-          `bg-stone-150 fixed flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
+          `fixed flex-col justify-between gap-12 overflow-y-scroll border-r border-stone-200 bg-stone-150 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900`,
           isMobile
             ? [
                 "inset-0 top-[var(--headerHeight)] z-50 flex h-[calc(100vh-var(--headerHeight))] w-full md:hidden",

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import Tier from "../models/Tier";
-import { findTier } from "../services/TierService";
+import { getTierById } from "../services/tier-service";
 
 const useTier = (id: string) => {
   const [tier, setTier] = useState<Tier>();
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    findTier(id)
+    getTierById(id)
       .then((tier) => {
         if (tier) {
           setTier(tier);

@@ -1,6 +1,6 @@
 "use server";
 
-import TierService from "@/app/services/TierService";
+import { findByUserId } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { UserAccountWidget } from "@/components/payments/user-account-widget";
 import { Card } from "@/components/ui/card";
@@ -12,7 +12,7 @@ const StripeDebug = async () => {
     return <div>Not logged in</div>;
   }
 
-  const tiers = await TierService.findByUserId(user.id);
+  const tiers = await findByUserId(user.id);
   const tier = tiers[0];
 
   return (

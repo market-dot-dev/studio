@@ -3,10 +3,16 @@
 import prisma from "@/lib/prisma";
 import { Subscription as SubscriptionSql } from "@prisma/client";
 import Subscription, { SubscriptionStates, SubscriptionWithUser } from "../models/Subscription";
-import EmailService from "./EmailService";
-import SessionService from "./SessionService";
+import { getStripeCustomerId } from "./customer-service";
+import {
+  confirmCustomerSubscription,
+  confirmCustomerSubscriptionCancellation,
+  notifyOwnerOfNewSubscription,
+  notifyOwnerOfSubscriptionCancellation
+} from "./email-service";
+import SessionService from "./session-service";
 import StripeService from "./StripeService";
-import TierService from "./TierService";
+import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
 class SubscriptionService {
@@ -143,7 +149,7 @@ class SubscriptionService {
     const user = await UserService.findUser(userId);
     if (!user) throw new Error("User not found");
 
-    const tier = await TierService.findTier(tierId);
+    const tier = await getTierById(tierId);
     if (!tier) throw new Error("Tier not found");
     if (!tier.stripePriceId) throw new Error("Stripe price ID not found for tier");
 
@@ -152,7 +158,7 @@ class SubscriptionService {
     if (!maintainer.stripeAccountId)
       throw new Error("Maintainer's account not connected to Stripe");
 
-    const stripeCustomerId = await UserService.getCustomerId(user, maintainer.stripeAccountId);
+    const stripeCustomerId = await getStripeCustomerId(user, maintainer.stripeAccountId);
     if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
     const existingSubscription = await SubscriptionService.findSubscriptionByTierId({ tierId });
@@ -185,9 +191,9 @@ class SubscriptionService {
 
     await Promise.all([
       // send email to the tier owner
-      EmailService.newSubscriptionInformation(tier.userId, user, tier.name),
+      notifyOwnerOfNewSubscription(tier.userId, user, tier.name),
       // send email to the customer
-      EmailService.newSubscriptionConfirmation(user, tier.name)
+      confirmCustomerSubscription(user, tier.name)
     ]);
 
     return res;
@@ -250,7 +256,7 @@ class SubscriptionService {
     await Promise.all([
       // inform the tier owner
       subscription?.tier?.user
-        ? EmailService.subscriptionCancelledInfo(
+        ? notifyOwnerOfSubscriptionCancellation(
             subscription?.tier?.user,
             subscription.user,
             subscription?.tier?.name
@@ -258,10 +264,7 @@ class SubscriptionService {
         : null,
       // inform the customer
       subscription.user
-        ? EmailService.subscriptionCancelledConfirmation(
-            subscription.user,
-            subscription?.tier?.name ?? ""
-          )
+        ? confirmCustomerSubscriptionCancellation(subscription.user, subscription?.tier?.name ?? "")
         : null
     ]);
   }
