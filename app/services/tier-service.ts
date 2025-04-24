@@ -6,8 +6,8 @@ import prisma from "@/lib/prisma";
 import { Channel } from "@prisma/client";
 import { updateServicesForSale } from "./market-service";
 import SessionService from "./session-service";
+import { createStripePrice, type SubscriptionCadence } from "./stripe-price-service";
 import { createStripeProduct } from "./stripe-product-service";
-import StripeService, { SubscriptionCadence } from "./StripeService";
 import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
 import { getCurrentUser } from "./UserService";
 
@@ -114,8 +114,8 @@ export async function createTier(tierData: Partial<Tier>) {
       tierData.name,
       attrs.description || undefined
     );
-    const stripeService = new StripeService(user.stripeAccountId);
-    const price = await stripeService.createPrice(
+    const price = await createStripePrice(
+      user.stripeAccountId,
       product.id,
       attrs.price!,
       attrs.cadence as SubscriptionCadence
@@ -255,8 +255,6 @@ function prepareAttributes(tier: Tier, tierData: Partial<Tier>) {
  * @private
  */
 async function handleStripeProducts(attrs: Partial<Tier>, stripeAccountId: string) {
-  const stripeService = new StripeService(stripeAccountId);
-
   if (!attrs.stripeProductId) {
     const product = await createStripeProduct(
       stripeAccountId,
@@ -268,7 +266,8 @@ async function handleStripeProducts(attrs: Partial<Tier>, stripeAccountId: strin
   }
 
   if (!attrs.stripePriceId) {
-    const price = await stripeService.createPrice(
+    const price = await createStripePrice(
+      stripeAccountId,
       attrs.stripeProductId,
       attrs.price!,
       attrs.cadence as SubscriptionCadence
@@ -277,7 +276,8 @@ async function handleStripeProducts(attrs: Partial<Tier>, stripeAccountId: strin
   }
 
   if (!attrs.stripePriceIdAnnual && attrs.priceAnnual) {
-    const priceAnnual = await stripeService.createPrice(
+    const priceAnnual = await createStripePrice(
+      stripeAccountId,
       attrs.stripeProductId,
       attrs.priceAnnual,
       "year"

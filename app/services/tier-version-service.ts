@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { Tier, TierVersion } from "@prisma/client";
-import StripeService, { SubscriptionCadence } from "./StripeService";
+import { deactivateStripePrice, type SubscriptionCadence } from "./stripe-price-service";
 import SubscriptionService from "./SubscriptionService";
 
 // Define the version context type
@@ -168,16 +168,14 @@ export async function handlePriceUpdates(
     annualPriceChanged: boolean;
   }
 ): Promise<void> {
-  const stripeService = new StripeService(stripeAccountId);
-
   if (context.priceChanged && tier.stripePriceId) {
     attrs.stripePriceId = null;
-    await stripeService.destroyPrice(tier.stripePriceId);
+    await deactivateStripePrice(stripeAccountId, tier.stripePriceId);
   }
 
   if (context.annualPriceChanged && tier.stripePriceIdAnnual) {
     attrs.stripePriceIdAnnual = null;
-    await stripeService.destroyPrice(tier.stripePriceIdAnnual);
+    await deactivateStripePrice(stripeAccountId, tier.stripePriceIdAnnual);
   }
 }
 

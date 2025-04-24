@@ -1,11 +1,13 @@
 "use server";
 
 import { createSubscription as createLocalSubscription } from "@/app/services/SubscriptionService";
+import { getRootUrl } from "@/lib/domain";
 import prisma from "@/lib/prisma";
-import { Tier, User } from "@prisma/client";
+import { Tier } from "@prisma/client";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";
+import { calculateApplicationFee } from "./stripe-price-service";
 import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
@@ -13,14 +15,6 @@ export type StripeCard = {
   brand: string;
   last4: string;
 };
-
-import {
-  GLOBAL_APPLICATION_FEE_DOLLARS,
-  GLOBAL_APPLICATION_FEE_PCT
-} from "@/app/config/stripe-fees";
-import { getRootUrl } from "@/lib/domain";
-
-export type SubscriptionCadence = "month" | "year" | "quarter" | "once";
 
 interface HealthCheckResult {
   canSell: boolean;
@@ -179,42 +173,9 @@ class StripeService {
     return true;
   }
 
-  async createPrice(
-    stripeProductId: string,
-    price: number,
-    cadence: SubscriptionCadence = "month"
-  ) {
-    const attrs: any = {
-      unit_amount: price * 100, // Stripe requires the price in cents
-      currency: "usd",
-      product: stripeProductId
-    };
-
-    if (cadence === "quarter") {
-      attrs["recurring"] = {
-        interval: "month",
-        interval_count: 3
-      };
-    } else if (cadence !== "once") {
-      attrs["recurring"] = {
-        interval: cadence
-      };
-    }
-
-    return await this.stripe.prices.create(attrs);
-  }
-
-  async destroyPrice(stripePriceId: string) {
-    await this.stripe.prices.update(stripePriceId, { active: false });
-  }
-
   static async onPaymentSuccess() {
     // Implement what should happen when payment is successful
     console.log("Payment was successful");
-  }
-
-  static async userCanSell(user: User) {
-    return !!user.stripeAccountId;
   }
 
   static async userHasStripeAccountIdById() {
@@ -298,17 +259,6 @@ class StripeService {
     );
   }
 
-  static async calculateApplicationFee(
-    price: number,
-    applicationFeePercent: number = 0,
-    applicationFeePrice: number = 0
-  ) {
-    const totalPercent = (applicationFeePercent + (GLOBAL_APPLICATION_FEE_PCT || 0)) / 100;
-    const totalFee = applicationFeePrice + (GLOBAL_APPLICATION_FEE_DOLLARS || 0);
-
-    return Math.round(price * totalPercent) + totalFee;
-  }
-
   async createCharge(
     stripeCustomerId: string,
     stripePriceId: string,
@@ -324,7 +274,7 @@ class StripeService {
       auto_advance: true,
       currency: "usd",
       collection_method: "charge_automatically",
-      application_fee_amount: await StripeService.calculateApplicationFee(
+      application_fee_amount: await calculateApplicationFee(
         price,
         applicationFeePercent,
         applicationFeePrice
@@ -578,11 +528,7 @@ export const canBuy = async (maintainerUserId: string, maintainerStripeAccountId
   return (await getCustomer(maintainerUserId, maintainerStripeAccountId)).canBuy();
 };
 
-export const {
-  disconnectStripeAccount,
-  userHasStripeAccountIdById,
-  getAccountInfo,
-  calculateApplicationFee
-} = StripeService;
+export const { disconnectStripeAccount, userHasStripeAccountIdById, getAccountInfo } =
+  StripeService;
 
 export default StripeService;
