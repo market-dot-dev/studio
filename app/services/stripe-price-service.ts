@@ -24,7 +24,7 @@ export async function createStripePrice(
   price: number,
   cadence: SubscriptionCadence = "month"
 ): Promise<Stripe.Price> {
-  const stripe = createStripeClient(stripeAccountId);
+  const stripe = await createStripeClient(stripeAccountId);
 
   const attrs: any = {
     unit_amount: price * 100, // Stripe requires the price in cents
@@ -57,7 +57,7 @@ export async function deactivateStripePrice(
   stripeAccountId: string,
   stripePriceId: string
 ): Promise<Stripe.Price> {
-  const stripe = createStripeClient(stripeAccountId);
+  const stripe = await createStripeClient(stripeAccountId);
   return await stripe.prices.update(stripePriceId, { active: false });
 }
 

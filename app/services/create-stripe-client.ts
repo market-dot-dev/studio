@@ -7,7 +7,7 @@ import Stripe from "stripe";
  * @param stripeAccountId - Optional Stripe Connect account ID
  * @returns Stripe client instance
  */
-export function createStripeClient(stripeAccountId?: string): Stripe {
+export async function createStripeClient(stripeAccountId?: string): Promise<Stripe> {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error("STRIPE_SECRET_KEY environment variable is not set");
   }
@@ -24,6 +24,6 @@ export function createStripeClient(stripeAccountId?: string): Stripe {
 /**
  * Get a Stripe client for the Stripe platform account (not connected to any specific merchant)
  */
-export function getPlatformStripeClient(): Stripe {
+export async function getPlatformStripeClient() {
   return createStripeClient();
 }

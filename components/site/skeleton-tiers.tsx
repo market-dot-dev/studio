@@ -1,4 +1,4 @@
-import type { SubscriptionCadence } from "@/app/services/StripeService";
+import type { SubscriptionCadence } from "@/app/services/stripe-price-service";
 import tierPlaceholderData from "@/lib/constants/placeholder/tiers";
 import { subscriptionCadenceShorthands } from "@/lib/tiers/subscription-cadence-shorthands";
 import { cn } from "@/lib/utils";

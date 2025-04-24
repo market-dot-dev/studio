@@ -16,7 +16,7 @@ export async function createStripeProduct(
   name: string,
   description?: string
 ): Promise<Stripe.Product> {
-  const stripe = createStripeClient(stripeAccountId);
+  const stripe = await createStripeClient(stripeAccountId);
 
   return await stripe.products.create({
     name,
@@ -39,7 +39,7 @@ export async function updateStripeProduct(
   name: string,
   description?: string
 ): Promise<Stripe.Product> {
-  const stripe = createStripeClient(stripeAccountId);
+  const stripe = await createStripeClient(stripeAccountId);
 
   return await stripe.products.update(productId, {
     name,
@@ -55,7 +55,7 @@ export async function updateStripeProduct(
  * @returns The deleted Stripe product
  */
 export async function deleteStripeProduct(stripeAccountId: string, stripeProductId: string) {
-  const stripe = createStripeClient(stripeAccountId);
+  const stripe = await createStripeClient(stripeAccountId);
 
   return await stripe.products.del(stripeProductId);
 }

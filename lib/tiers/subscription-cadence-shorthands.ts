@@ -1,4 +1,4 @@
-import type { SubscriptionCadence } from "@/app/services/StripeService";
+import type { SubscriptionCadence } from "@/app/services/stripe-price-service";
 
 export const subscriptionCadenceShorthands: Record<SubscriptionCadence, string | null> = {
   month: "mo",
