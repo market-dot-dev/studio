@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { Channel } from "@prisma/client";
 import { updateServicesForSale } from "./market-service";
 import SessionService from "./session-service";
+import { createStripeProduct } from "./stripe-product-service";
 import StripeService, { SubscriptionCadence } from "./StripeService";
 import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
 import { getCurrentUser } from "./UserService";
@@ -108,11 +109,12 @@ export async function createTier(tierData: Partial<Tier>) {
   }) as Partial<Tier>;
 
   if (user.stripeAccountId) {
-    const stripeService = new StripeService(user.stripeAccountId);
-    const product = await stripeService.createProduct(
+    const product = await createStripeProduct(
+      user.stripeAccountId,
       tierData.name,
       attrs.description || undefined
     );
+    const stripeService = new StripeService(user.stripeAccountId);
     const price = await stripeService.createPrice(
       product.id,
       attrs.price!,
@@ -256,7 +258,8 @@ async function handleStripeProducts(attrs: Partial<Tier>, stripeAccountId: strin
   const stripeService = new StripeService(stripeAccountId);
 
   if (!attrs.stripeProductId) {
-    const product = await stripeService.createProduct(
+    const product = await createStripeProduct(
+      stripeAccountId,
       attrs.name!,
       attrs.description || attrs.tagline || undefined
     );

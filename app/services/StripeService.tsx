@@ -213,28 +213,6 @@ class StripeService {
     console.log("Payment was successful");
   }
 
-  async createProduct(name: string, description?: string) {
-    const product = await this.stripe.products.create({
-      name,
-      description
-    });
-
-    return product;
-  }
-
-  async updateProduct(productId: string, name: string, description?: string) {
-    const product = await this.stripe.products.update(productId, {
-      name,
-      description
-    });
-
-    return product;
-  }
-
-  async destroyProduct(stripeProductId: string) {
-    const deletedProduct = await this.stripe.products.del(stripeProductId);
-  }
-
   static async userCanSell(user: User) {
     return !!user.stripeAccountId;
   }
