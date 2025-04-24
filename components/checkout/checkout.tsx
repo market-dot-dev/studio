@@ -3,7 +3,7 @@
 import Tier from "@/app/models/Tier";
 import { onClickSubscribe } from "@/app/services/StripeService";
 import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
-import UserPaymentMethodWidget from "@/components/common/user-payment-method-widget";
+import { StripePaymentForm } from "@/components/common/stripe-payment-form";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -96,17 +96,17 @@ export default function RegistrationCheckoutSection({
     return (
       <div className="mx-auto flex w-full flex-col gap-9 lg:max-w-lg">
         <section>
-          <h2 className="tracking-tightish mb-6 text-2xl/6 font-bold text-stone-800">Account</h2>
+          <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">Account</h2>
           <CustomerLoginComponent signup={true} />
         </section>
 
         <Separator />
 
         <section>
-          <h2 className="tracking-tightish mb-6 text-2xl/6 font-bold text-stone-800">Payment</h2>
+          <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">Payment</h2>
           <Card className="min-h-[60px] p-5">
             {maintainer.stripeAccountId && (
-              <UserPaymentMethodWidget
+              <StripePaymentForm
                 loading={submittingPayment}
                 setError={setError}
                 setPaymentReady={setPaymentReady}
@@ -119,7 +119,7 @@ export default function RegistrationCheckoutSection({
         </section>
 
         <section>
-          <div className="tracking-tightish mb-4 text-center text-xs font-medium text-stone-500">
+          <div className="mb-4 text-center text-xs font-medium tracking-tightish text-stone-500">
             <ContractText contract={contract} />
           </div>
           <Button
@@ -137,7 +137,7 @@ export default function RegistrationCheckoutSection({
                 : `Pay $${checkoutPrice} ${checkoutCurrency}`}
           </Button>
           {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 ? (
-            <p className="tracking-tightish mt-6 text-pretty text-center text-xs font-medium text-stone-500">
+            <p className="mt-6 text-pretty text-center text-xs font-medium tracking-tightish text-stone-500">
               You won&apos;t be charged now. After your{" "}
               <strong className="text-stone-800">{tier.trialDays} day trial</strong>, your card will
               be charged{" "}

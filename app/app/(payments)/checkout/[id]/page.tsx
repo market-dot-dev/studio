@@ -188,6 +188,7 @@ const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
               height={16}
               className="inline h-5 w-auto -translate-y-px sm:h-[19px]"
               src="/market-dot-dev-logo.svg"
+              priority
             />
           </Link>
         </p>

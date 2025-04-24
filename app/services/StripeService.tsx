@@ -528,6 +528,44 @@ export const canBuy = async (maintainerUserId: string, maintainerStripeAccountId
   return (await getCustomer(maintainerUserId, maintainerStripeAccountId)).canBuy();
 };
 
+/**
+ * Creates a setup intent for the current user with the specified maintainer.
+ * This allows securely collecting payment details with PaymentElement
+ */
+export async function createSetupIntent(
+  maintainerUserId: string,
+  maintainerStripeAccountId: string
+): Promise<{ clientSecret: string | null; error: string | null }> {
+  try {
+    const user = await UserService.getCurrentUser();
+
+    if (!user) {
+      return { clientSecret: null, error: "Not authenticated" };
+    }
+
+    // Get or create Stripe customer ID for this user/maintainer combination
+    const customer = new Customer(user, maintainerUserId, maintainerStripeAccountId);
+    const customerId = await customer.getOrCreateStripeCustomerId();
+
+    // Create a Stripe instance with the connected account
+    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
+      stripeAccount: maintainerStripeAccountId
+    });
+
+    // Create setup intent
+    const setupIntent = await stripe.setupIntents.create({
+      customer: customerId,
+      payment_method_types: ["card"],
+      usage: "off_session"
+    });
+
+    return { clientSecret: setupIntent.client_secret, error: null };
+  } catch (error: any) {
+    console.error("Error creating setup intent:", error);
+    return { clientSecret: null, error: error.message };
+  }
+}
+
 export const { disconnectStripeAccount, userHasStripeAccountIdById, getAccountInfo } =
   StripeService;
 
