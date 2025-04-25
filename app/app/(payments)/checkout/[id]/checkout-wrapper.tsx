@@ -1,9 +1,9 @@
-"use client";
+"use client"; // @TODO: This should be a server component
 
+import { ContactFormCheckout } from "@/app/app/(payments)/checkout/[id]/contact-form-checkout";
+import { DirectPaymentCheckout } from "@/app/app/(payments)/checkout/[id]/direct-payment-checkout";
 import useCurrentSession from "@/app/hooks/use-current-session";
 import Tier from "@/app/models/Tier";
-import RegistrationCheckoutSection from "@/components/checkout/checkout";
-import ProspectiveCheckout from "@/components/checkout/prospective-checkout";
 import { Contract, User } from "@prisma/client";
 
 interface CheckoutProps {
@@ -13,16 +13,16 @@ interface CheckoutProps {
   annual?: boolean;
 }
 
-const Checkout = ({ tier, maintainer, contract, annual = false }: CheckoutProps) => {
+export const CheckoutWrapper = ({ tier, maintainer, contract, annual = false }: CheckoutProps) => {
   const { currentUser: user } = useCurrentSession();
   const userId = user?.id;
 
   if (tier.checkoutType === "contact-form") {
-    return <ProspectiveCheckout tier={tier} />;
+    return <ContactFormCheckout tier={tier} />;
   }
 
   return (
-    <RegistrationCheckoutSection
+    <DirectPaymentCheckout
       tier={tier}
       maintainer={maintainer}
       contract={contract}
@@ -31,5 +31,3 @@ const Checkout = ({ tier, maintainer, contract, annual = false }: CheckoutProps)
     />
   );
 };
-
-export default Checkout;

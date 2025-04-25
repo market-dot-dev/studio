@@ -1,25 +1,24 @@
-"use client";
-
-import useTier from "@/app/hooks/use-tier";
-import useUser from "@/app/hooks/use-user";
-import { useSearchParams } from "next/navigation";
-import { use, useMemo } from "react";
-import RegistrationSection from "./registration-section";
-
-interface QueryParams {
-  [key: string]: string | string[] | undefined;
-}
-
-const checkoutCurrency = "USD";
-const checkoutCurrencySymbol = "$";
+"use client"; // @TODO: This should be a server component
 
 import useContract from "@/app/hooks/use-contract";
+import useTier from "@/app/hooks/use-tier";
+import useUser from "@/app/hooks/use-user";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { parseTierDescription } from "@/lib/utils";
 import { Store } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+import { use, useMemo } from "react";
+import { CheckoutWrapper } from "./checkout-wrapper";
+
+interface QueryParams {
+  [key: string]: string | string[] | undefined;
+}
+
+const checkoutCurrency = "USD"; // @TODO: This should be a config value
+const checkoutCurrencySymbol = "$"; // @TODO: This should be a config value
 
 const TierNotAvailable = () => {
   return (
@@ -35,6 +34,8 @@ const TierNotAvailable = () => {
     </div>
   );
 };
+
+// @NOTE: Wtf is this page even trying to do?
 
 const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
   const params = use(props.params);
@@ -208,7 +209,7 @@ const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
         ) : (
           <>
             {tier && maintainer && (
-              <RegistrationSection
+              <CheckoutWrapper
                 tier={tier}
                 maintainer={maintainer}
                 contract={contract}

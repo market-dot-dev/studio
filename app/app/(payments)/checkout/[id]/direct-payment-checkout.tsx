@@ -1,18 +1,18 @@
 "use client";
 
+import { StripePaymentForm } from "@/app/app/(payments)/checkout/[id]/stripe-payment-form";
 import Tier from "@/app/models/Tier";
 import { onClickSubscribe } from "@/app/services/StripeService";
 import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
-import { StripePaymentForm } from "@/components/common/stripe-payment-form";
+import { ContractLink } from "@/components/contracts/contract-link";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { getRootUrl } from "@/lib/domain";
+import { Separator } from "@/components/ui/separator";
 import { Contract, User } from "@prisma/client";
 import { useEffect, useState } from "react";
-import { Separator } from "../ui/separator";
 
-const checkoutCurrency = "USD";
+const checkoutCurrency = "USD"; // @TODO: This should be a config value
 
 interface RegistrationCheckoutSectionProps {
   tier: Tier;
@@ -22,24 +22,7 @@ interface RegistrationCheckoutSectionProps {
   userId?: string;
 }
 
-const ContractText = ({ contract }: { contract?: Contract }) => {
-  const baseUrl = getRootUrl("app", "/c/contracts");
-  const url = contract ? `${baseUrl}/${contract.id}` : `${baseUrl}/standard-msa`;
-
-  const contractName = contract?.name || "Standard MSA";
-
-  return (
-    <>
-      By clicking checkout, you agree to the terms detailed in{" "}
-      <a href={url} className="underline" target="_blank">
-        {contractName}
-      </a>
-      .
-    </>
-  );
-};
-
-export default function RegistrationCheckoutSection({
+export function DirectPaymentCheckout({
   tier,
   maintainer,
   contract,
@@ -120,7 +103,7 @@ export default function RegistrationCheckoutSection({
 
         <section>
           <div className="mb-4 text-center text-xs font-medium tracking-tightish text-stone-500">
-            <ContractText contract={contract} />
+            <ContractLink contract={contract} />
           </div>
           <Button
             loading={loading || submittingPayment}
