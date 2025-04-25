@@ -1,8 +1,5 @@
 "use client";
-import {
-  GLOBAL_APPLICATION_FEE_DOLLARS,
-  GLOBAL_APPLICATION_FEE_PCT
-} from "@/app/config/stripe-fees";
+import { GLOBAL_APPLICATION_FEE_DOLLARS, GLOBAL_APPLICATION_FEE_PCT } from "@/app/config/checkout";
 import { calculateApplicationFee } from "@/app/services/stripe-price-service";
 import { updateApplicationFee } from "@/app/services/tier-fee-service";
 import { TierWithCount } from "@/app/services/tier-service";

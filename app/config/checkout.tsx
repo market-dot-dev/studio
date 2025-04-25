@@ -1,2 +1,5 @@
 export const GLOBAL_APPLICATION_FEE_DOLLARS = 0;
 export const GLOBAL_APPLICATION_FEE_PCT = 0;
+
+export const CHECKOUT_CURRENCY = "USD";
+export const CHECKOUT_CURRENCY_SYMBOL = "$";
