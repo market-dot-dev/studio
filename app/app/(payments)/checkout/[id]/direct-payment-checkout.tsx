@@ -96,8 +96,8 @@ export function DirectPaymentCheckout({
               loading={isProcessing}
               setError={(error) => error && setPaymentState({ status: "error", message: error })}
               setPaymentReady={setPaymentReady}
-              maintainerUserId={tier.userId}
-              maintainerStripeAccountId={vendor.stripeAccountId}
+              userId={tier.userId}
+              vendorStripeAccountId={vendor.stripeAccountId}
             />
           )}
           {errorMessage && <div className="mt-4 text-red-600">{errorMessage}</div>}

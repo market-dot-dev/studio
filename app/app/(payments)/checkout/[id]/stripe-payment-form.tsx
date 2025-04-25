@@ -17,8 +17,8 @@ interface StripePaymentFormProps {
   loading?: boolean;
   setError: (error: string | null) => void;
   setPaymentReady: (ready: boolean) => void;
-  maintainerUserId: string;
-  maintainerStripeAccountId: string;
+  userId: string;
+  vendorStripeAccountId: string;
 }
 
 /**
@@ -28,8 +28,8 @@ export const StripePaymentForm = ({
   loading,
   setPaymentReady,
   setError,
-  maintainerUserId,
-  maintainerStripeAccountId
+  userId: userId,
+  vendorStripeAccountId
 }: StripePaymentFormProps) => {
   const { currentUser: user, refreshSession } = useCurrentSession();
 
@@ -39,21 +39,18 @@ export const StripePaymentForm = ({
 
   // Check if user has a payment method attached
   useEffect(() => {
-    if (!user || !maintainerUserId || !maintainerStripeAccountId) {
+    if (!user || !userId || !vendorStripeAccountId) {
       setInitialLoading(false);
       return;
     }
 
     async function checkPaymentMethod() {
       try {
-        const userCanBuy = await canBuy(maintainerUserId, maintainerStripeAccountId);
+        const userCanBuy = await canBuy(userId, vendorStripeAccountId);
 
         if (userCanBuy) {
           try {
-            const paymentMethod = await getPaymentMethod(
-              maintainerUserId,
-              maintainerStripeAccountId
-            );
+            const paymentMethod = await getPaymentMethod(userId, vendorStripeAccountId);
             setCardInfo(paymentMethod);
             setPaymentReady(true);
           } catch (error) {
@@ -69,20 +66,20 @@ export const StripePaymentForm = ({
     }
 
     checkPaymentMethod();
-  }, [user, maintainerStripeAccountId, maintainerUserId, setPaymentReady]);
+  }, [user, vendorStripeAccountId, userId, setPaymentReady]);
 
   // Get the hook props ready to pass to the wrapper
   const hookProps = {
     user,
     setError,
-    maintainerUserId,
-    maintainerStripeAccountId
+    maintainerUserId: userId,
+    maintainerStripeAccountId: vendorStripeAccountId
   };
 
   return (
     <StripeCheckoutFormWrapper
-      maintainerUserId={maintainerUserId}
-      maintainerStripeAccountId={maintainerStripeAccountId}
+      maintainerUserId={userId}
+      maintainerStripeAccountId={vendorStripeAccountId}
       hookProps={hookProps}
     >
       {({ status, stripeHook }) => (
@@ -90,8 +87,8 @@ export const StripePaymentForm = ({
           loading={loading}
           setPaymentReady={setPaymentReady}
           setError={setError}
-          maintainerUserId={maintainerUserId}
-          maintainerStripeAccountId={maintainerStripeAccountId}
+          userId={userId}
+          vendorStripeAccountId={vendorStripeAccountId}
           wrapperStatus={status}
           stripeHook={stripeHook}
           user={user}
@@ -107,6 +104,7 @@ export const StripePaymentForm = ({
   );
 };
 
+// @NOTE: This really shouldn't extend.
 /**
  * Content component that renders differently based on status and card info
  */
@@ -126,11 +124,8 @@ const StripePaymentFormContent = ({
   loading,
   setPaymentReady,
   setError,
-  maintainerUserId,
-  maintainerStripeAccountId,
   wrapperStatus,
   stripeHook,
-  user,
   cardInfo,
   setCardInfo,
   invalidCard,

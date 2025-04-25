@@ -524,8 +524,8 @@ export const getPaymentMethod = async (
   return await customer.getStripePaymentMethod();
 };
 
-export const canBuy = async (maintainerUserId: string, maintainerStripeAccountId: string) => {
-  return (await getCustomer(maintainerUserId, maintainerStripeAccountId)).canBuy();
+export const canBuy = async (userId: string, vendorStripeAccountId: string) => {
+  return (await getCustomer(userId, vendorStripeAccountId)).canBuy();
 };
 
 /**
