@@ -1,6 +1,7 @@
 "use client";
 
 import { StripePaymentForm } from "@/app/app/(payments)/checkout/[id]/stripe-payment-form";
+import { CHECKOUT_CURRENCY } from "@/app/config/checkout";
 import Tier from "@/app/models/Tier";
 import { onClickSubscribe } from "@/app/services/StripeService";
 import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
@@ -12,19 +13,17 @@ import { Separator } from "@/components/ui/separator";
 import { Contract, User } from "@prisma/client";
 import { useEffect, useState } from "react";
 
-const checkoutCurrency = "USD"; // @TODO: This should be a config value
-
 interface RegistrationCheckoutSectionProps {
   tier: Tier;
-  maintainer: User;
-  contract?: Contract;
+  vendor: User;
+  contract?: Contract | null;
   annual?: boolean;
   userId?: string;
 }
 
 export function DirectPaymentCheckout({
   tier,
-  maintainer,
+  vendor,
   contract,
   annual = false,
   userId
@@ -88,13 +87,13 @@ export function DirectPaymentCheckout({
         <section>
           <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">Payment</h2>
           <Card className="min-h-[60px] p-5">
-            {maintainer.stripeAccountId && (
+            {vendor.stripeAccountId && (
               <StripePaymentForm
                 loading={submittingPayment}
                 setError={setError}
                 setPaymentReady={setPaymentReady}
                 maintainerUserId={tier.userId}
-                maintainerStripeAccountId={maintainer.stripeAccountId}
+                maintainerStripeAccountId={vendor.stripeAccountId}
               />
             )}
             {error && <div className="mt-4 text-red-600">{error}</div>}
@@ -102,9 +101,11 @@ export function DirectPaymentCheckout({
         </section>
 
         <section>
-          <div className="mb-4 text-center text-xs font-medium tracking-tightish text-stone-500">
-            <ContractLink contract={contract} />
-          </div>
+          {contract && (
+            <div className="mb-4 text-center text-xs font-medium tracking-tightish text-stone-500">
+              <ContractLink contract={contract} />
+            </div>
+          )}
           <Button
             loading={loading || submittingPayment}
             disabled={loading || !userId || submittingPayment}
@@ -114,17 +115,18 @@ export function DirectPaymentCheckout({
             onClick={() => setLoading(true)}
           >
             {tier.cadence === "once"
-              ? `Pay $${checkoutPrice} ${checkoutCurrency}`
+              ? `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`
               : tier.trialDays && tier.trialDays !== 0
                 ? "Start your free trial"
-                : `Pay $${checkoutPrice} ${checkoutCurrency}`}
+                : `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`}
           </Button>
           {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 ? (
             <p className="mt-6 text-pretty text-center text-xs font-medium tracking-tightish text-stone-500">
               You won&apos;t be charged now. After your{" "}
               <strong className="text-stone-800">{tier.trialDays} day trial</strong>, your card will
               be charged{" "}
-              <strong className="text-stone-800">{`${checkoutCurrency} $${checkoutPrice}`}</strong>.
+              <strong className="text-stone-800">{`${CHECKOUT_CURRENCY} $${checkoutPrice}`}</strong>
+              .
             </p>
           ) : null}
         </section>

@@ -7,7 +7,7 @@ import { Contract, Tier, User } from "@prisma/client";
 export interface CheckoutData {
   tier: Tier | null;
   contract: Contract | null;
-  maintainer: User | null;
+  vendor: User | null;
   currentUser: User | null;
   isAnnual: boolean;
 }
@@ -31,14 +31,14 @@ export async function getCheckoutData(
     return {
       tier: null,
       contract: null,
-      maintainer: null,
+      vendor: null,
       currentUser,
       isAnnual
     };
   }
 
-  // Fetch maintainer and contract in parallel
-  const [maintainer, contract] = await Promise.all([
+  // Fetch vendor and contract in parallel
+  const [vendor, contract] = await Promise.all([
     tier.userId ? prisma.user.findUnique({ where: { id: tier.userId } }) : null,
     tier.contractId ? prisma.contract.findUnique({ where: { id: tier.contractId } }) : null
   ]);
@@ -46,7 +46,7 @@ export async function getCheckoutData(
   return {
     tier,
     contract,
-    maintainer,
+    vendor,
     currentUser,
     isAnnual
   };

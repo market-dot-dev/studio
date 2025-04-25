@@ -4,19 +4,13 @@ import { DirectPaymentCheckout } from "./direct-payment-checkout";
 
 interface CheckoutProps {
   tier: Tier;
-  maintainer: User;
+  vendor: User;
   contract?: Contract | null;
   annual: boolean;
   currentUser?: User | null;
 }
 
-export function CheckoutWrapper({
-  tier,
-  maintainer,
-  contract,
-  annual,
-  currentUser
-}: CheckoutProps) {
+export function CheckoutWrapper({ tier, vendor, contract, annual, currentUser }: CheckoutProps) {
   const userId = currentUser?.id;
 
   if (tier.checkoutType === "contact-form") {
@@ -26,7 +20,7 @@ export function CheckoutWrapper({
   return (
     <DirectPaymentCheckout
       tier={tier}
-      maintainer={maintainer}
+      vendor={vendor}
       contract={contract}
       annual={annual}
       userId={userId}

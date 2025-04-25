@@ -10,12 +10,12 @@ import Link from "next/link";
 
 interface ProductInfoProps {
   tier: Tier;
-  maintainer: User | null;
+  vendor: User | null;
   isAnnual: boolean;
 }
 
-export function ProductInfo({ tier, maintainer, isAnnual }: ProductInfoProps) {
-  const checkoutProject = maintainer?.projectName || maintainer?.name;
+export function ProductInfo({ tier, vendor, isAnnual }: ProductInfoProps) {
+  const checkoutProject = vendor?.projectName || vendor?.name;
   const checkoutPrice = isAnnual ? tier.priceAnnual : tier.price;
   const shortenedCadence = getShortenedCadence(isAnnual ? "year" : tier.cadence);
   const trialDays = tier.trialDays || 0;
