@@ -1,6 +1,6 @@
-// components/checkout/ProductInfo.tsx
 import { CHECKOUT_CURRENCY, CHECKOUT_CURRENCY_SYMBOL } from "@/app/config/checkout";
 import { getShortenedCadence } from "@/app/services/checkout-service";
+import { TierDescriptionFeatures } from "@/components/tiers/tier-description-features";
 import { Separator } from "@/components/ui/separator";
 import { parseTierDescription } from "@/lib/utils";
 import { Tier, User } from "@prisma/client";
@@ -65,23 +65,35 @@ export function ProductInfo({ tier, vendor, isAnnual }: ProductInfoProps) {
             )}
           </div>
 
-          <div className="flex flex-col gap-6 overflow-y-scroll">
+          <div className="flex flex-col gap-6">
             <Separator className="bg-stone-300/50" />
 
-            {parsedDescription.map((section, dex) => {
-              if (section.text) {
+            <div className="flex flex-col gap-4">
+              {parsedDescription.map((section, dex) => {
+                if (section.text) {
+                  return (
+                    <div key={dex}>
+                      {section.text.map((text: string, index: number) => (
+                        <p key={index} className={"text-sm"}>
+                          {text}
+                        </p>
+                      ))}
+                    </div>
+                  );
+                }
+
                 return (
-                  <div key={dex}>
-                    {section.text.map((text: string, index: number) => (
-                      <p key={index} className="max-w-prose text-pretty text-sm text-stone-500">
-                        {text}
-                      </p>
-                    ))}
-                  </div>
+                  <TierDescriptionFeatures
+                    key={dex}
+                    features={section.features.map((feature: string, index: number) => ({
+                      id: index,
+                      name: feature
+                    }))}
+                    darkMode={false}
+                  />
                 );
-              }
-              return null;
-            })}
+              })}
+            </div>
           </div>
         </div>
       </div>
