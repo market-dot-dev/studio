@@ -19,7 +19,7 @@ export default async function CheckoutPage(props: {
   const { tier, contract, vendor, currentUser } = await getCheckoutData(id, isAnnual);
 
   // Handle tier not found
-  if (!tier || (tier.id && !tier.published)) {
+  if (!tier || (tier.id && !tier.published) || !vendor) {
     return <TierNotAvailable />;
   }
 

@@ -2,13 +2,13 @@
 
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { Contract, Tier, User } from "@prisma/client";
+import { includeVendorProfile, VendorProfile } from "@/types/checkout";
+import { Contract, Tier } from "@prisma/client";
 
 export interface CheckoutData {
   tier: Tier | null;
   contract: Contract | null;
-  vendor: User | null;
-  currentUser: User | null;
+  vendor: VendorProfile | null;
   isAnnual: boolean;
 }
 
@@ -28,20 +28,21 @@ export async function getCheckoutData(
   });
 
   if (!tier) {
-    return {
-      tier: null,
-      contract: null,
-      vendor: null,
-      currentUser,
-      isAnnual
-    };
+    return { tier: null, contract: null, vendor: null, currentUser, isAnnual };
   }
 
-  // Fetch vendor and contract in parallel
-  const [vendor, contract] = await Promise.all([
-    tier.userId ? prisma.user.findUnique({ where: { id: tier.userId } }) : null,
-    tier.contractId ? prisma.contract.findUnique({ where: { id: tier.contractId } }) : null
-  ]);
+  // Fetch vendor with minimal data
+  const vendor = tier.userId
+    ? await prisma.user.findUnique({
+        where: { id: tier.userId },
+        ...includeVendorProfile
+      })
+    : null;
+
+  // Fetch contract if needed
+  const contract = tier.contractId
+    ? await prisma.contract.findUnique({ where: { id: tier.contractId } })
+    : null;
 
   return {
     tier,

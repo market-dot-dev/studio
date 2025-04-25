@@ -10,12 +10,13 @@ import { CustomerLoginComponent } from "@/components/login/customer-login";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Contract, User } from "@prisma/client";
+import { type VendorProfile } from "@/types/checkout";
+import { Contract } from "@prisma/client";
 import { useEffect, useState } from "react";
 
 interface RegistrationCheckoutSectionProps {
   tier: Tier;
-  vendor: User;
+  vendor: VendorProfile;
   contract?: Contract | null;
   annual?: boolean;
   userId?: string;

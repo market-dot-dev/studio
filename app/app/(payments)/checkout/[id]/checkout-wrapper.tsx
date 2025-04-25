@@ -1,10 +1,11 @@
+import { type VendorProfile } from "@/types/checkout";
 import { Contract, Tier, User } from "@prisma/client";
 import { ContactFormCheckout } from "./contact-form-checkout";
 import { DirectPaymentCheckout } from "./direct-payment-checkout";
 
 interface CheckoutProps {
   tier: Tier;
-  vendor: User;
+  vendor: VendorProfile;
   contract?: Contract | null;
   annual: boolean;
   currentUser?: User | null;

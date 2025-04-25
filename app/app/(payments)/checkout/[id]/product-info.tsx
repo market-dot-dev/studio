@@ -3,14 +3,15 @@ import { getShortenedCadence } from "@/app/services/checkout-service";
 import { TierDescriptionFeatures } from "@/components/tiers/tier-description-features";
 import { Separator } from "@/components/ui/separator";
 import { parseTierDescription } from "@/lib/utils";
-import { Tier, User } from "@prisma/client";
+import { type VendorProfile } from "@/types/checkout";
+import { Tier } from "@prisma/client";
 import { Store } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
 interface ProductInfoProps {
   tier: Tier;
-  vendor: User | null;
+  vendor: VendorProfile | null;
   isAnnual: boolean;
 }
 
