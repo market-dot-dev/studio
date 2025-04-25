@@ -3,7 +3,7 @@ import { Contract, Tier, User } from "@prisma/client";
 import { ContactFormCheckout } from "./contact-form-checkout";
 import { DirectPaymentCheckout } from "./direct-payment-checkout";
 
-interface CheckoutProps {
+interface CheckoutWrapperProps {
   tier: Tier;
   vendor: VendorProfile;
   contract?: Contract | null;
@@ -11,7 +11,13 @@ interface CheckoutProps {
   currentUser?: User | null;
 }
 
-export function CheckoutWrapper({ tier, vendor, contract, annual, currentUser }: CheckoutProps) {
+export function CheckoutWrapper({
+  tier,
+  vendor,
+  contract,
+  annual,
+  currentUser
+}: CheckoutWrapperProps) {
   const userId = currentUser?.id;
 
   if (tier.checkoutType === "contact-form") {

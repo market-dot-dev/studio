@@ -1,4 +1,4 @@
-"use client";
+"use client"; // @TODO: Can this be a server file too?
 
 import { StripePaymentForm } from "@/app/app/(payments)/checkout/[id]/stripe-payment-form";
 import { CHECKOUT_CURRENCY } from "@/app/config/checkout";
@@ -38,6 +38,7 @@ export function DirectPaymentCheckout({
   const [paymentReady, setPaymentReady] = useState(false);
   const [subscribed, setSubscribed] = useState(false);
 
+  // @NOTE: Wtf is this?
   useEffect(() => {
     if (error) {
       console.log("error found, bailing");
@@ -46,6 +47,7 @@ export function DirectPaymentCheckout({
     }
   }, [error]);
 
+  // @NOTE: This seems to trigger an effect when loading state changes; submitting the payment?
   useEffect(() => {
     if (loading) {
       setError(null);
@@ -66,6 +68,8 @@ export function DirectPaymentCheckout({
     }
   }, [loading, userId, paymentReady]);
 
+  // @NOTE: This shouldn't be here either, cause if the user changes, the page should reload.
+  // @NOTE: Essentially this should be passed down by the server, not checked here.
   // when user changes, check subscription
   useEffect(() => {
     if (!!userId && !!tierId) {
@@ -113,6 +117,7 @@ export function DirectPaymentCheckout({
             data-cy="checkout-button"
             className="w-full"
             size="lg"
+            // @TODO: Setting loading here, but what else? Doesn't seem to do much. Pretty bad practice if this fires a useEffect.
             onClick={() => setLoading(true)}
           >
             {tier.cadence === "once"
