@@ -35,7 +35,7 @@ export default async function CheckoutPage(props: {
           vendor={vendor}
           contract={contract}
           annual={isAnnual}
-          currentUser={currentUser}
+          userId={currentUser?.id}
         />
       </div>
     </div>

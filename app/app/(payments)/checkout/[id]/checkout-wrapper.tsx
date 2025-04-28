@@ -1,6 +1,6 @@
 import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
 import { type VendorProfile } from "@/types/checkout";
-import { Contract, Tier, User } from "@prisma/client";
+import { Contract, Tier } from "@prisma/client";
 import { ContactFormCheckout } from "./contact-form-checkout";
 import { DirectPaymentCheckout } from "./direct-payment-checkout";
 
@@ -9,7 +9,7 @@ interface CheckoutWrapperProps {
   vendor: VendorProfile;
   contract?: Contract | null;
   annual: boolean;
-  currentUser?: User | null;
+  userId?: string | undefined;
 }
 
 export async function CheckoutWrapper({
@@ -17,10 +17,8 @@ export async function CheckoutWrapper({
   vendor,
   contract,
   annual,
-  currentUser
+  userId
 }: CheckoutWrapperProps) {
-  const userId = currentUser?.id;
-
   if (tier.checkoutType === "contact-form") {
     return <ContactFormCheckout tier={tier} />;
   }
