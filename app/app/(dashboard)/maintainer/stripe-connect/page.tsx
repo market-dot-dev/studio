@@ -1,6 +1,9 @@
 "use server";
 
-import { getOAuthLink, handleOAuthResponse } from "@/app/services/stripe-vendor-service";
+import {
+  getVendorStripeConnectURL,
+  processVendorStripeConnectCallback
+} from "@/app/services/stripe-vendor-service";
 import UserService from "@/app/services/UserService";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,7 +13,7 @@ import { redirect } from "next/navigation";
 import DisconnectStripeAccountButton from "./disconnect-stripe-account-button";
 
 const StripeOauthButton = async ({ userId }: { userId: string }) => {
-  const oauthUrl = await getOAuthLink(userId);
+  const oauthUrl = await getVendorStripeConnectURL(userId);
 
   return (
     <Link href={oauthUrl} className={buttonVariants({ variant: "outline" })}>
@@ -44,7 +47,7 @@ export default async function StripeConnect(props: {
     // Check for OAuth callback
     if (code && state) {
       try {
-        await handleOAuthResponse(code, state);
+        await processVendorStripeConnectCallback(code, state);
         user = await UserService.findUser(session.user.id!);
       } catch (error) {
         console.error("Error handling Stripe OAuth callback:", error);

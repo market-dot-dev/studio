@@ -1,11 +1,12 @@
 "use client";
 
-import { disconnectStripeAccount } from "@/app/services/stripe-vendor-service";
+import { disconnectVendorStripeAccount } from "@/app/services/stripe-vendor-service";
 import { Button } from "@/components/ui/button";
 import { User } from "@prisma/client";
 
 import { useEffect } from "react";
 
+// @TODO: This really should use the router, not window.location.reload()
 const DisconnectStripeAccountButton = ({ user }: { user: User }) => {
   // this is to refresh the onboarding guide if it exists
   useEffect(() => {
@@ -19,7 +20,7 @@ const DisconnectStripeAccountButton = ({ user }: { user: User }) => {
       <Button
         variant="outline"
         disabled={!user?.stripeAccountId}
-        onClick={() => disconnectStripeAccount(user?.id).then(() => window.location.reload())}
+        onClick={() => disconnectVendorStripeAccount(user?.id).then(() => window.location.reload())}
       >
         Disconnect Stripe Account
       </Button>

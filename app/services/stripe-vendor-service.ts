@@ -9,14 +9,14 @@ import UserService from "./UserService";
 /**
  * Get the human-readable error message for a given error code
  */
-export async function getErrorMessage(code: ErrorMessageCode) {
+export async function getVendorStripeErrorMessage(code: ErrorMessageCode): Promise<string> {
   return errorMessageMapping[code] || "An unknown error occurred.";
 }
 
 /**
  * Get account information for a Stripe vendor
  */
-export async function getAccountInfo() {
+export async function getVendorStripeAccountInfo() {
   const user = await UserService.getCurrentUser();
 
   if (!user) {
@@ -51,24 +51,15 @@ export async function getAccountInfo() {
 }
 
 /**
- * Perform a health check on the current user's Stripe account and update user record
+ * Check the health of the current user's Stripe account
+ * Optionally update the user record with the results
+ *
+ * @param updateUserRecord - Whether to update the user record with the results
+ * @returns The health check results
  */
-export async function performStripeAccountHealthCheck(): Promise<HealthCheckResult> {
-  const { messageCodes, canSell, disabledReasons } = await stripeAccountHealthCheck();
-  const reasons = JSON.stringify(messageCodes.map((code) => getErrorMessage(code)));
-
-  await UserService.updateCurrentUser({
-    stripeAccountDisabled: !canSell,
-    stripeAccountDisabledReason: reasons
-  });
-
-  return { messageCodes, canSell, disabledReasons };
-}
-
-/**
- * Check the health of the current user's Stripe account without updating user record
- */
-export async function stripeAccountHealthCheck(): Promise<HealthCheckResult> {
+export async function checkVendorStripeStatus(
+  updateUserRecord: boolean = false
+): Promise<HealthCheckResult> {
   const messageCodes: ErrorMessageCode[] = [];
   let canSell = true;
   let disabledReasons: string[] = [];
@@ -85,7 +76,7 @@ export async function stripeAccountHealthCheck(): Promise<HealthCheckResult> {
   }
 
   try {
-    const { accountInfo } = await getAccountInfo();
+    const { accountInfo } = await getVendorStripeAccountInfo();
 
     if (accountInfo) {
       if (!accountInfo.chargesEnabled) {
@@ -110,13 +101,22 @@ export async function stripeAccountHealthCheck(): Promise<HealthCheckResult> {
     canSell = false;
   }
 
+  if (updateUserRecord) {
+    const reasons = JSON.stringify(messageCodes.map((code) => getVendorStripeErrorMessage(code)));
+
+    await UserService.updateCurrentUser({
+      stripeAccountDisabled: !canSell,
+      stripeAccountDisabledReason: reasons
+    });
+  }
+
   return { canSell, messageCodes, disabledReasons };
 }
 
 /**
  * Check if a user has a connected Stripe account
  */
-export async function userHasStripeAccountIdById(): Promise<boolean> {
+export async function hasVendorStripeAccount(): Promise<boolean> {
   const user = await UserService.getCurrentUser();
   if (!user) {
     throw new Error("User not found");
@@ -126,21 +126,22 @@ export async function userHasStripeAccountIdById(): Promise<boolean> {
 
 /**
  * Generate a CSRF token to protect against CSRF attacks during Stripe OAuth
+ * @private
  */
-export async function generateStripeCSRF(userId: string): Promise<string> {
+async function generateVendorStripeOAuthToken(userId: string): Promise<string> {
   return `${userId}-${Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}`;
 }
 
 /**
  * Get OAuth link for Stripe Connect
  */
-export async function getOAuthLink(userId: string): Promise<string> {
+export async function getVendorStripeConnectURL(userId: string): Promise<string> {
   const user = await UserService.findUser(userId);
   if (!user) {
     throw new Error("User not found");
   }
 
-  const state = user.stripeCSRF || (await generateStripeCSRF(userId));
+  const state = user.stripeCSRF || (await generateVendorStripeOAuthToken(userId));
 
   if (!user.stripeCSRF) {
     await UserService.updateUser(userId, { stripeCSRF: state });
@@ -155,7 +156,10 @@ export async function getOAuthLink(userId: string): Promise<string> {
 /**
  * Handle OAuth response from Stripe Connect
  */
-export async function handleOAuthResponse(code: string, state: string): Promise<string> {
+export async function processVendorStripeConnectCallback(
+  code: string,
+  state: string
+): Promise<string> {
   // Verify the state parameter to prevent CSRF attacks
   const user = await prisma.user.findUnique({ where: { stripeCSRF: state } });
 
@@ -181,7 +185,7 @@ export async function handleOAuthResponse(code: string, state: string): Promise<
 /**
  * Disconnect a vendor's Stripe account
  */
-export async function disconnectStripeAccount(userId: string): Promise<void> {
+export async function disconnectVendorStripeAccount(userId: string): Promise<void> {
   const user = await UserService.findUser(userId);
   if (!user) {
     throw new Error("User not found");
