@@ -9,6 +9,7 @@ import { Contract, Tier } from "@prisma/client";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";
+import { createStripeSubscription, isSubscribedToStripeTier } from "./stripe-subscription-service";
 import StripeService from "./StripeService";
 import { getTierById } from "./tier-service";
 import UserService from "./UserService";
@@ -240,6 +241,7 @@ export const processPayment = async (customerId: string, tierId: string, annual:
   console.log("[purchase]: vendor, product check");
 
   if (tier.cadence === "once") {
+    // @TODO: Update
     const charge = await stripeService.createCharge(
       stripeCustomerId,
       stripePriceId,
@@ -256,13 +258,14 @@ export const processPayment = async (customerId: string, tierId: string, annual:
       throw new Error("Error creating charge on stripe: " + charge.status);
     }
   } else {
-    if (await stripeService.isSubscribedToTier(stripeCustomerId, tier)) {
+    if (await isSubscribedToStripeTier(vendor.stripeAccountId, stripeCustomerId, tier)) {
       console.log("[purchase]: FAIL already subscribed");
       throw new Error(
         "You are already subscribed to this product. If you dont see it in your dashboard, please contact support."
       );
     } else {
-      subscription = await stripeService.createSubscription(
+      subscription = await createStripeSubscription(
+        vendor.stripeAccountId,
         stripeCustomerId,
         stripePriceId,
         tier.trialDays

@@ -11,7 +11,7 @@ import {
   notifyOwnerOfSubscriptionCancellation
 } from "./email-service";
 import SessionService from "./session-service";
-import StripeService from "./StripeService";
+import { cancelStripeSubscription } from "./stripe-subscription-service";
 import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
@@ -237,9 +237,9 @@ class SubscriptionService {
       throw new Error("Not authorized to cancel subscription or stripe account not connected");
     }
 
-    const stripeSubscription = await StripeService.cancelSubscription(
-      subscription.stripeSubscriptionId,
-      maintainer.stripeAccountId
+    const stripeSubscription = await cancelStripeSubscription(
+      maintainer.stripeAccountId,
+      subscription.stripeSubscriptionId
     );
 
     await prisma.subscription.update({

@@ -1,7 +1,6 @@
 "use server";
 
 import { type StripeCard } from "@/types/stripe";
-import { Tier } from "@prisma/client";
 import Stripe from "stripe";
 import { calculateApplicationFee } from "./stripe-price-service";
 
@@ -24,18 +23,6 @@ class StripeService {
       stripeAccount: accountId
     });
     this.stripeAccountId = accountId;
-  }
-
-  async validatePayment(paymentIntentId: string, clientSecret: string) {
-    const paymentIntent = await this.stripe.paymentIntents.retrieve(paymentIntentId);
-    if (paymentIntent.client_secret !== clientSecret) {
-      throw new Error("Payment validation failed: Client secret does not match.");
-    } else if (paymentIntent.status !== "succeeded") {
-      throw new Error("Payment validation failed: Payment did not succeed.");
-    } else {
-      console.log("Payment was successful");
-    }
-    return true;
   }
 
   async createCustomer(
@@ -99,21 +86,6 @@ class StripeService {
     await this.stripe.customers.del(customerId);
   }
 
-  async createSubscription(stripeCustomerId: string, stripePriceId: string, trialDays: number = 0) {
-    return await this.stripe.subscriptions.create(
-      {
-        customer: stripeCustomerId,
-        items: [{ price: stripePriceId! }],
-        payment_behavior: "error_if_incomplete",
-        expand: ["latest_invoice.payment_intent"],
-        trial_period_days: trialDays
-      },
-      {
-        idempotencyKey: `${stripeCustomerId}-${stripePriceId}`
-      }
-    );
-  }
-
   async createCharge(
     stripeCustomerId: string,
     stripePriceId: string,
@@ -155,40 +127,6 @@ class StripeService {
     );
 
     return confirmedPaymentIntent;
-  }
-
-  async updateSubscription(subscriptionId: string, priceId: string) {
-    const subscription = await this.stripe.subscriptions.update(subscriptionId, {
-      items: [{ price: priceId }],
-      expand: ["latest_invoice.payment_intent"]
-    });
-
-    return subscription;
-  }
-
-  static async cancelSubscription(subscriptionId: string, stripeAccountId: string) {
-    return await (await connStripe(stripeAccountId)).subscriptions.cancel(subscriptionId);
-  }
-
-  async isSubscribedToTier(stripeCustomerId: string, tier: Tier) {
-    return (
-      (tier.stripePriceId
-        ? await this.isSubscribed(stripeCustomerId, tier.stripePriceId)
-        : false) ||
-      (tier.stripePriceIdAnnual
-        ? await this.isSubscribed(stripeCustomerId, tier.stripePriceIdAnnual)
-        : false)
-    );
-  }
-
-  async isSubscribed(stripeCustomerId: string, stripePriceId: string) {
-    const subscriptions = await this.stripe.subscriptions.list({
-      customer: stripeCustomerId,
-      price: stripePriceId,
-      status: "active"
-    });
-
-    return subscriptions.data.length > 0;
   }
 }
 
