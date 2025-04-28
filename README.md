@@ -1,4 +1,4 @@
-market.dev is a commerce platform for developers. 
+market.dev is a commerce platform for developers.
 
 ## Getting Started
 
@@ -12,18 +12,6 @@ market.dev is a commerce platform for developers.
 1. merge to `main`
 1. CD will automatically run migrations (even destructive ones! for now)
 
-## Tests
-
-To run the cypress integration tests:
-
-NB: tests run in local dev and will reset your db
-
-1. $ pnpm cypress open
-1. choose "e2e" -> "chrome"
-1. click the name of the test to run e.g. "smoke-test.cy.js"
-
-Tests are located under `cypress/e2e/`.
-
 ## Preview branches
 
 NB preview builds use their own db, so it does not affect prod
@@ -36,7 +24,7 @@ NB preview builds use their own db, so it does not affect prod
 Local Development Setup for Prisma with PostgreSQL
 
 1. Create User and Database in PostgreSQL:
-Run the following commands in your PostgreSQL terminal to set up the user and database:
+   Run the following commands in your PostgreSQL terminal to set up the user and database:
 
 ```bash
 CREATE USER gitwallet WITH PASSWORD 'gitwallet_dev' CREATEDB;
@@ -44,7 +32,7 @@ CREATE DATABASE gitwallet_dev OWNER gitwallet;
 ```
 
 2. Set up Environment Variable:
-Create a .env file in your project root and add the following line:
+   Create a .env file in your project root and add the following line:
 
 ```env
 POSTGRES_PRISMA_URL="postgresql://gitwallet:gitwallet_dev@localhost:5432/gitwallet_dev?schema=public"
@@ -52,7 +40,7 @@ POSTGRES_URL_NON_POOLING="postgresql://gitwallet:gitwallet_dev@localhost:5432/gi
 ```
 
 3. Install Dependencies:
-Run the following command to install necessary Node.js packages:
+   Run the following command to install necessary Node.js packages:
 
 ```bash
 pnpm install
@@ -72,11 +60,12 @@ pnpm prisma db push
 pnpm sync:services
 ```
 
-5. Setup Nginx 
+5. Setup Nginx
 
 We use a reverse proxy in production, which sends traffic from [market.dev](https://market.dev) to our [NextJS app](https://github.com/market-dot-dev/store), and for [explore.market.dev](https://explore.market.dev) to this app. We use a similar reverse proxy in development, pointing to [market.local](http://market.local) and [explore.market.local](http://explore.market.local). This is only required if you're running both apps locally (required for shared login). If not, you can skip and just run it on `localhost:4000`. The easiest way to get Nginx running (assuming you're on a Mac) is with Brew:
 
 i. Install Nginx via Homebrew
+
 ```
 brew install nginx
 brew services start nginx
@@ -114,7 +103,7 @@ iii. Verify things are running:
 
 ```
 nginx -t
-brew services list 
+brew services list
 sudo nginx -s reload
 ```
 
