@@ -394,7 +394,7 @@ class StripeService {
   }
 }
 
-export const onClickSubscribe = async (userId: string, tierId: string, annual: boolean) => {
+export const onClickSubscribe = async (customerId: string, tierId: string, annual: boolean) => {
   let subscription = null;
 
   const tier = await getTierById(tierId);
@@ -402,29 +402,29 @@ export const onClickSubscribe = async (userId: string, tierId: string, annual: b
     throw new Error("Tier not found.");
   }
 
-  if (!userId) {
+  if (!customerId) {
     throw new Error("Not logged in.");
   }
 
-  const user = await UserService.findUser(userId);
-  if (!user) {
+  const customerUser = await UserService.findUser(customerId);
+  if (!customerUser) {
     throw new Error("User not found");
   }
 
-  const maintainer = await UserService.findUser(tier.userId);
+  const vendor = await UserService.findUser(tier.userId);
 
-  if (!maintainer) {
-    throw new Error("Maintainer not found.");
+  if (!vendor) {
+    throw new Error("Vendor not found.");
   }
 
-  if (!maintainer.stripeAccountId) {
-    throw new Error("Maintainer does not have a connected Stripe account.");
+  if (!vendor.stripeAccountId) {
+    throw new Error("Vendor does not have a connected Stripe account.");
   }
 
-  const customer = new Customer(user, maintainer.id, maintainer.stripeAccountId);
+  const customer = new Customer(customerUser, vendor.id, vendor.stripeAccountId);
 
   const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
-  const stripeService = new StripeService(maintainer.stripeAccountId);
+  const stripeService = new StripeService(vendor.stripeAccountId);
 
   const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
 
@@ -432,7 +432,7 @@ export const onClickSubscribe = async (userId: string, tierId: string, annual: b
     throw new Error("Tier does not have a Stripe Price ID.");
   }
 
-  console.log("[purchase]: maintainer, product check");
+  console.log("[purchase]: vendor, product check");
 
   if (tier.cadence === "once") {
     const charge = await stripeService.createCharge(
@@ -445,7 +445,7 @@ export const onClickSubscribe = async (userId: string, tierId: string, annual: b
     );
 
     if (charge.status === "succeeded") {
-      await createLocalCharge(userId, tierId, charge.id);
+      await createLocalCharge(customerId, tierId, charge.id);
     } else {
       console.log("[purchase]: FAIL charge failed", charge);
       throw new Error("Error creating charge on stripe: " + charge.status);
@@ -472,7 +472,7 @@ export const onClickSubscribe = async (userId: string, tierId: string, annual: b
       const invoice = subscription.latest_invoice as Stripe.Invoice;
 
       if (invoice.status === "paid") {
-        await createLocalSubscription(userId, tierId, subscription.id);
+        await createLocalSubscription(customerId, tierId, subscription.id);
         console.log("[purchase]: invoice paid");
       } else if (invoice.payment_intent) {
         throw new Error(

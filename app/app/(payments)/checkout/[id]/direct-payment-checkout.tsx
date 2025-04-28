@@ -1,16 +1,15 @@
 "use client";
 
-import { StripePaymentForm } from "@/app/app/(payments)/checkout/[id]/stripe-payment-form";
 import { CHECKOUT_CURRENCY } from "@/app/config/checkout";
-import Tier from "@/app/models/Tier";
 import { onClickSubscribe } from "@/app/services/StripeService";
+import { SimplePaymentElement } from "@/components/checkout/stripe-payment-element";
 import { ContractLink } from "@/components/contracts/contract-link";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { type VendorProfile } from "@/types/checkout";
-import { Contract } from "@prisma/client";
+import { Contract, Tier } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -25,8 +24,7 @@ interface DirectPaymentCheckoutProps {
 
 type PaymentState =
   | { status: "idle" }
-  | { status: "submitting" }
-  | { status: "paymentProcessing" }
+  | { status: "processing" }
   | { status: "error"; message: string }
   | { status: "success" };
 
@@ -46,17 +44,17 @@ export function DirectPaymentCheckout({
   const [paymentReady, setPaymentReady] = useState(false);
 
   const handleSubmit = async () => {
-    if (paymentState.status === "submitting" || paymentState.status === "paymentProcessing") {
+    if (paymentState.status === "processing") {
       return; // Prevent multiple submissions
     }
 
     // Check if payment method is ready
     if (!paymentReady) {
-      setPaymentState({ status: "paymentProcessing" });
+      setPaymentState({ status: "processing" });
       return;
     }
 
-    setPaymentState({ status: "submitting" });
+    setPaymentState({ status: "processing" });
 
     try {
       await onClickSubscribe(userId!, tierId, annual);
@@ -71,12 +69,13 @@ export function DirectPaymentCheckout({
   };
 
   if (isAlreadySubscribed) {
-    return <AlreadySubscribedCard />;
+    return (
+      <p className="text-sm text-stone-500">You&apos;re already subscribed to this product.</p>
+    );
   }
 
-  const isLoading = paymentState.status === "submitting";
-  const isProcessing = paymentState.status === "paymentProcessing";
-  const isDisabled = isLoading || !userId || isProcessing;
+  const isProcessing = paymentState.status === "processing";
+  const isDisabled = isProcessing || !userId || !paymentReady;
   const errorMessage = paymentState.status === "error" ? paymentState.message : null;
 
   return (
@@ -91,13 +90,11 @@ export function DirectPaymentCheckout({
       <section>
         <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">Payment</h2>
         <Card className="min-h-[60px] p-5">
-          {vendor.stripeAccountId && (
-            <StripePaymentForm
-              loading={isProcessing}
-              setError={(error) => error && setPaymentState({ status: "error", message: error })}
-              setPaymentReady={setPaymentReady}
+          {vendor.stripeAccountId && userId && (
+            <SimplePaymentElement
               userId={tier.userId}
               vendorStripeAccountId={vendor.stripeAccountId}
+              setPaymentReady={setPaymentReady}
             />
           )}
           {errorMessage && <div className="mt-4 text-red-600">{errorMessage}</div>}
@@ -111,7 +108,7 @@ export function DirectPaymentCheckout({
           </div>
         )}
         <Button
-          loading={isLoading || isProcessing}
+          loading={isProcessing}
           disabled={isDisabled}
           data-cy="checkout-button"
           className="w-full"
@@ -136,7 +133,3 @@ export function DirectPaymentCheckout({
     </div>
   );
 }
-
-const AlreadySubscribedCard = () => {
-  return <p className="text-sm text-stone-500">You&apos;re already subscribed to this product.</p>;
-};
