@@ -20,10 +20,3 @@ export async function createStripeClient(stripeAccountId?: string): Promise<Stri
 
   return new Stripe(process.env.STRIPE_SECRET_KEY, options);
 }
-
-/**
- * Get a Stripe client for the Stripe platform account (not connected to any specific merchant)
- */
-export async function getPlatformStripeClient() {
-  return createStripeClient();
-}
