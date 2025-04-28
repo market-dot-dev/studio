@@ -246,7 +246,7 @@ class SubscriptionService {
       data: {
         state: SubscriptionStates.cancelled,
         cancelledAt: new Date(),
-        activeUntil: new Date(stripeSubscription.current_period_end * 1000)
+        activeUntil: new Date(stripeSubscription.items.data[0].current_period_end * 1000)
       },
       where: {
         id: subscriptionId

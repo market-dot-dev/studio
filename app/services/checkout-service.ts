@@ -278,12 +278,27 @@ export const processPayment = async (customerId: string, tierId: string, annual:
       if (invoice.status === "paid") {
         await createSubscription(customerId, tierId, subscription.id);
         console.log("[purchase]: invoice paid");
-      } else if (invoice.payment_intent) {
-        throw new Error(
-          "Subscription attempt returned a payment intent, which should never happen."
-        );
+      } else if (invoice.status === "open") {
+        // For subscriptions with trials, "open" status is expected and acceptable
+        if (tier.trialDays && tier.trialDays > 0) {
+          await createSubscription(customerId, tierId, subscription.id);
+          console.log("[purchase]: subscription with trial created, invoice is open");
+        } else {
+          // No trial but invoice not paid - likely needs customer action
+          throw new Error(`Subscription requires payment. Please check payment details.`);
+        }
+      } else if (
+        invoice.status === "draft" ||
+        invoice.status === "void" ||
+        invoice.status === "uncollectible"
+      ) {
+        // Clear error for problematic invoice statuses that shouldn't occur in normal flow
+        throw new Error(`Invoice has unexpected status: ${invoice.status}`);
       } else {
-        throw new Error(`Unknown error occurred: subscription status was ${subscription.status}`);
+        // Fallback for any other unexpected states
+        throw new Error(
+          `Unknown error occurred: invoice status was ${invoice.status}, subscription status was ${subscription.status}`
+        );
       }
     }
   }

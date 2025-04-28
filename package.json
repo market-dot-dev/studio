@@ -57,7 +57,7 @@
     "input-otp": "1.2.4",
     "js-yaml": "^4.1.0",
     "jsdom": "^23.2.0",
-    "lucide-react": "^0.436.0",
+    "lucide-react": "^0.503.0",
     "nanoid": "^5.1.2",
     "next": "15.3.0",
     "next-auth": "^4.24.11",
@@ -71,7 +71,7 @@
     "recharts": "^2.15.3",
     "sharp": "^0.33.5",
     "sonner": "^2.0.3",
-    "stripe": "^16.12.0",
+    "stripe": "^18.0.0",
     "tailwind-merge": "^2.6.0"
   },
   "devDependencies": {
