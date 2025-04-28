@@ -1,6 +1,6 @@
 "use client";
 
-import { disconnectStripeAccount } from "@/app/services/StripeService";
+import { disconnectStripeAccount } from "@/app/services/stripe-vendor-service";
 import { Button } from "@/components/ui/button";
 import { User } from "@prisma/client";
 

@@ -17,8 +17,3 @@ export const includeVendorProfile = Prisma.validator<Prisma.UserDefaultArgs>()({
  * Vendor profile data type
  */
 export type VendorProfile = Prisma.UserGetPayload<typeof includeVendorProfile>;
-
-export type StripeCard = {
-  brand: string;
-  last4: string;
-};

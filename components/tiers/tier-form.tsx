@@ -32,13 +32,13 @@ import TierCard from "./tier-card";
 import TierDeleteButton from "./tier-delete-button";
 
 import Tier, { newTier } from "@/app/models/Tier";
-import { userHasStripeAccountIdById } from "@/app/services/StripeService";
 import { subscriberCount } from "@/app/services/SubscriptionService";
 import { createTier, TierWithCount, updateTier } from "@/app/services/tier-service";
 import { toast } from "sonner";
 
 import useCurrentSession from "@/app/hooks/use-current-session";
 
+import { userHasStripeAccountIdById } from "@/app/services/stripe-vendor-service";
 import { getVersionsByTierId } from "@/app/services/tier-version-service";
 import { Channel, Contract, TierVersion, User } from "@prisma/client";
 import DuplicateTierButton from "./duplicate-tier-button";

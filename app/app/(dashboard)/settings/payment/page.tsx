@@ -1,6 +1,11 @@
 "use server";
 
-import StripeService from "@/app/services/StripeService";
+import {
+  getErrorMessage,
+  getOAuthLink,
+  handleOAuthResponse,
+  performStripeAccountHealthCheck
+} from "@/app/services/stripe-vendor-service";
 import UserService from "@/app/services/UserService";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,7 +15,7 @@ import { redirect } from "next/navigation";
 import DisconnectStripeAccountButton from "../../maintainer/stripe-connect/disconnect-stripe-account-button";
 
 const StripeOauthButton = async ({ userId }: { userId: string }) => {
-  const oauthUrl = await StripeService.getOAuthLink(userId);
+  const oauthUrl = await getOAuthLink(userId);
 
   return (
     <Link href={oauthUrl} className={buttonVariants({ variant: "outline" })}>
@@ -60,7 +65,7 @@ export default async function PaymentSettings(props: {
     // Check for OAuth callback
     if (code && state) {
       try {
-        await StripeService.handleOAuthResponse(code, state);
+        await handleOAuthResponse(code, state);
       } catch (error) {
         console.error("Error handling Stripe OAuth callback:", error);
         // Handle error
@@ -74,8 +79,7 @@ export default async function PaymentSettings(props: {
     redirect("/login");
   }
 
-  const { canSell, messageCodes, disabledReasons } =
-    await StripeService.performStripeAccountHealthCheck();
+  const { canSell, messageCodes, disabledReasons } = await performStripeAccountHealthCheck();
 
   const stripeConnected = !!user.stripeAccountId;
 
@@ -116,7 +120,7 @@ export default async function PaymentSettings(props: {
                     <ActionRequiredBanner />
                     {messageCodes.map((message, index) => (
                       <AccountCheck key={index} status="fail">
-                        {StripeService.getErrorMessage(message)}
+                        {getErrorMessage(message)}
                       </AccountCheck>
                     ))}
 

@@ -3,7 +3,8 @@
 import { createSubscription } from "@/app/services/SubscriptionService";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { includeVendorProfile, type StripeCard, type VendorProfile } from "@/types/checkout";
+import { includeVendorProfile, type VendorProfile } from "@/types/checkout";
+import { type StripeCard } from "@/types/stripe";
 import { Contract, Tier } from "@prisma/client";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
