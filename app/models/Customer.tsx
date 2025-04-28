@@ -1,5 +1,6 @@
 import { User } from "@prisma/client";
 import Stripe from "stripe";
+import { createStripeCustomer, deleteStripeCustomer } from "../services/stripe-payment-service";
 import StripeService from "../services/StripeService";
 import UserService from "../services/UserService";
 import { SessionUser } from "./Session";
@@ -57,7 +58,11 @@ class Customer {
     if (!this.user.email) throw new Error("User does not have an email address.");
     const { email, name } = this.user;
 
-    const customer = await this.stripeService.createCustomer(email, name || undefined);
+    const customer = await createStripeCustomer(
+      this.maintainerStripeAccountId,
+      email,
+      name || undefined
+    );
 
     this.stripeCustomerIds[this.maintainerStripeAccountId] = customer.id;
 
@@ -67,7 +72,7 @@ class Customer {
   }
 
   async destroyCustomer() {
-    await this.stripeService.destroyCustomer(await this.getStripeCustomerId());
+    await deleteStripeCustomer(this.maintainerStripeAccountId, this.getStripeCustomerId());
     delete this.stripeCustomerIds[this.maintainerStripeAccountId];
 
     return await this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });

@@ -4,16 +4,7 @@ import { type StripeCard } from "@/types/stripe";
 import Stripe from "stripe";
 import { calculateApplicationFee } from "./stripe-price-service";
 
-const connStripe = async (stripeAccountId: string) => {
-  if (!stripeAccountId) {
-    throw new Error("Stripe account not connected");
-  }
-
-  return new Stripe(process.env.STRIPE_SECRET_KEY || "", {
-    stripeAccount: stripeAccountId
-  });
-};
-
+/** @DEPRECATED: Use appropiate server functions instead. */
 class StripeService {
   stripe: any;
   stripeAccountId: string;
@@ -23,27 +14,6 @@ class StripeService {
       stripeAccount: accountId
     });
     this.stripeAccountId = accountId;
-  }
-
-  async createCustomer(
-    email: string,
-    name?: string,
-    paymentMethodId?: string
-  ): Promise<Stripe.Customer> {
-    const payload = {
-      email: email,
-      ...(name ? { name } : {}),
-      ...(paymentMethodId
-        ? {
-            payment_method: paymentMethodId,
-            invoice_settings: {
-              default_payment_method: paymentMethodId
-            }
-          }
-        : {})
-    };
-
-    return await this.stripe.customers.create(payload);
   }
 
   /** @DEPRECATED: Use checkout-service instead. */
@@ -80,10 +50,6 @@ class StripeService {
         default_payment_method: undefined
       }
     });
-  }
-
-  async destroyCustomer(customerId: string) {
-    await this.stripe.customers.del(customerId);
   }
 
   async createCharge(
