@@ -2,11 +2,10 @@
 
 import { type StripeCard } from "@/types/stripe";
 import Stripe from "stripe";
-import { calculateApplicationFee } from "./stripe-price-service";
 
 /** @DEPRECATED: Use appropiate server functions instead. */
 class StripeService {
-  stripe: any;
+  stripe: Stripe;
   stripeAccountId: string;
 
   constructor(accountId: string) {
@@ -50,49 +49,6 @@ class StripeService {
         default_payment_method: undefined
       }
     });
-  }
-
-  async createCharge(
-    stripeCustomerId: string,
-    stripePriceId: string,
-    price: number,
-    stripePaymentMethodId: string,
-    applicationFeePercent?: number,
-    applicationFeePrice?: number
-  ) {
-    const timestampMod10 = (Date.now() % 10000).toString().padStart(4, "0"); // Convert to string and pad with leading zeros if necessary
-
-    const invoice = await this.stripe.invoices.create({
-      customer: stripeCustomerId,
-      auto_advance: true,
-      currency: "usd",
-      collection_method: "charge_automatically",
-      application_fee_amount: await calculateApplicationFee(
-        price,
-        applicationFeePercent,
-        applicationFeePrice
-      )
-    });
-
-    await this.stripe.invoiceItems.create({
-      customer: stripeCustomerId,
-      invoice: invoice.id,
-      price: stripePriceId
-    });
-
-    const finalInvoice = await this.stripe.invoices.finalizeInvoice(invoice.id);
-
-    const confirmedPaymentIntent = await this.stripe.paymentIntents.confirm(
-      finalInvoice.payment_intent,
-      {
-        payment_method: stripePaymentMethodId
-      },
-      {
-        idempotencyKey: `${stripeCustomerId}-${stripePriceId}-${timestampMod10}`
-      }
-    );
-
-    return confirmedPaymentIntent;
   }
 }
 

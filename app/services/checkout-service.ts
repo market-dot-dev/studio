@@ -9,8 +9,8 @@ import { Contract, Tier } from "@prisma/client";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";
+import { createStripeCharge } from "./stripe-payment-service";
 import { createStripeSubscription, isSubscribedToStripeTier } from "./stripe-subscription-service";
-import StripeService from "./StripeService";
 import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
@@ -230,8 +230,6 @@ export const processPayment = async (customerId: string, tierId: string, annual:
   const customer = new Customer(customerUser, vendor.id, vendor.stripeAccountId);
 
   const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
-  const stripeService = new StripeService(vendor.stripeAccountId);
-
   const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
 
   if (!stripePriceId) {
@@ -241,8 +239,8 @@ export const processPayment = async (customerId: string, tierId: string, annual:
   console.log("[purchase]: vendor, product check");
 
   if (tier.cadence === "once") {
-    // @TODO: Update
-    const charge = await stripeService.createCharge(
+    const charge = await createStripeCharge(
+      vendor.stripeAccountId,
       stripeCustomerId,
       stripePriceId,
       tier.price!,
