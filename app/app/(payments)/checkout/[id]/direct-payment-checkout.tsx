@@ -1,7 +1,7 @@
 "use client";
 
 import { CHECKOUT_CURRENCY } from "@/app/config/checkout";
-import { onClickSubscribe } from "@/app/services/StripeService";
+import { processPayment } from "@/app/services/checkout-service";
 import { SimplePaymentElement } from "@/components/checkout/stripe-payment-element";
 import { ContractLink } from "@/components/contracts/contract-link";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
@@ -57,7 +57,7 @@ export function DirectPaymentCheckout({
     setPaymentState({ status: "processing" });
 
     try {
-      await onClickSubscribe(userId!, tierId, annual);
+      await processPayment(userId!, tierId, annual);
       setPaymentState({ status: "success" });
       router.replace("/success");
     } catch (err: any) {
