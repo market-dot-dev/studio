@@ -120,9 +120,12 @@ export async function createUserSetupIntent(
     });
 
     return { clientSecret: setupIntent.client_secret, error: null };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error creating setup intent:", error);
-    return { clientSecret: null, error: error.message };
+    return {
+      clientSecret: null,
+      error: error instanceof Error ? error.message : "An unknown error occurred"
+    };
   }
 }
 
@@ -136,11 +139,11 @@ export async function addUserPaymentMethod(
     const customer = await getCustomerForUser(vendorUserId, vendorStripeAccountId);
     await customer.attachPaymentMethod(paymentMethodId);
     return { success: true, error: null };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error attaching payment method:", error);
     return {
       success: false,
-      error: error.message || "Failed to add payment method"
+      error: error instanceof Error ? error.message : "Failed to add payment method"
     };
   }
 }
@@ -154,11 +157,11 @@ export async function removeUserPaymentMethod(
     const customer = await getCustomerForUser(vendorUserId, vendorStripeAccountId);
     await customer.detachPaymentMethod();
     return { success: true, error: null };
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("Error detaching payment method:", error);
     return {
       success: false,
-      error: error.message || "Failed to remove payment method"
+      error: error instanceof Error ? error.message : "Failed to remove payment method"
     };
   }
 }
