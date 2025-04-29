@@ -1,12 +1,10 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { generateId } from "@/lib/utils";
 import { Media } from "@prisma/client";
 import { del, put } from "@vercel/blob";
-import { customAlphabet } from "nanoid";
 import { getCurrentSite } from "./site-crud-service";
-
-const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 7);
 
 /**
  * Validates the current site and returns its ID
@@ -45,7 +43,7 @@ export async function uploadMedia(formData: FormData): Promise<Partial<Media> | 
 
     const file = fileObj as File;
     const fileType = file.type.split("/")[1] || "unknown";
-    const filename = `${nanoid()}.${fileType}`;
+    const filename = `${generateId()}.${fileType}`;
 
     const { url } = await put(filename, file, {
       access: "public"
