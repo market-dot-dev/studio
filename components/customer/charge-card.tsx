@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Charge } from "@prisma/client";
 import { Store } from "lucide-react";
-import ContractLink from "./contract-link";
+import { ContractLink } from "../contracts/contract-link";
 
 const ChargeCard = async ({
   charge,

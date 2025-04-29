@@ -4,7 +4,6 @@ import type { Contract } from "@prisma/client";
 export const ContractLink = ({ contract }: { contract?: Contract }) => {
   const baseUrl = getRootUrl("app", "/c/contracts");
   const url = contract ? `${baseUrl}/${contract.id}` : `${baseUrl}/standard-msa`;
-
   const contractName = contract?.name || "Standard MSA";
 
   return (

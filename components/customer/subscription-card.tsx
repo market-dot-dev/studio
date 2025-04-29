@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Store } from "lucide-react";
-import ContractLink from "./contract-link";
+import { ContractLink } from "../contracts/contract-link";
 
 const SubscriptionCard = async ({
   subscription,
