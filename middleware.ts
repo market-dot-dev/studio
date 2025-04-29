@@ -2,7 +2,12 @@ import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { SessionUser } from "./app/models/Session";
-import DomainService from "./app/services/domain-service";
+import {
+  getGhUsernameFromRequest,
+  getReservedSubdomainFromRequest,
+  getSubdomainFromRequest,
+  isVercelPreview
+} from "./app/services/domain-request-service";
 import RoleService, { Role } from "./app/services/role-service";
 import { getRootUrl } from "./lib/domain";
 
@@ -32,8 +37,8 @@ export default withAuth(
 
         // Allow access if this is a site subdomain (GitHub username or custom subdomain)
         // Check for this before the path check
-        const subdomain = DomainService.getSubdomainFromRequest(req);
-        const isReservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);
+        const subdomain = await getSubdomainFromRequest(req);
+        const isReservedSubdomain = await getReservedSubdomainFromRequest(req);
 
         // If this is a subdomain that isn't reserved, it's a site subdomain that should be publicly accessible
         if (subdomain && !isReservedSubdomain) {
@@ -54,8 +59,8 @@ async function customMiddleware(req: NextRequest) {
   const url = req.nextUrl;
   const rootUrl = getRootUrl();
 
-  const ghUsername = DomainService.getGhUsernameFromRequest(req);
-  const reservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);
+  const ghUsername = await getGhUsernameFromRequest(req);
+  const reservedSubdomain = await getReservedSubdomainFromRequest(req);
   const bareDomain = !ghUsername && !reservedSubdomain;
   const session = (await getToken({ req })) as any;
   const roleId = session?.user?.roleId;
@@ -114,7 +119,7 @@ async function customMiddleware(req: NextRequest) {
   }
 
   // app.market.dev
-  if (reservedSubdomain === "app" || DomainService.isVercelPreview(req)) {
+  if (reservedSubdomain === "app" || (await isVercelPreview(req))) {
     // if customer, then lock to /app/c/
     if (roleId === "customer") {
       if (url.pathname.startsWith("/checkout") || url.pathname.startsWith("/success")) {
