@@ -12,9 +12,10 @@ export const config = {
      * Match all request paths except for the ones starting with:
      * - _next/static (static files)
      * - _next/image (image optimization files)
+     * - public contract pages (c/contracts/)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    "/((?!_next/static|_next/image|[\\w-]+\\.\\w+).*)"
+    "/((?!_next/static|_next/image|c/contracts/|[\\w-]+\\.\\w+).*)"
   ]
 };
 
