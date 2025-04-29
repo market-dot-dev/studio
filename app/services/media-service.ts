@@ -9,11 +9,10 @@ import { getCurrentSite } from "./SiteService";
 const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 7);
 
 /**
- * Uploads a file to storage and creates a media record in the database
- * @param formData - Form data containing the file to upload
- * @returns The created media record or null if upload fails
+ * Validates the current site and returns its ID
+ * @returns The site ID or null if not found
  */
-export async function uploadMedia(formData: any): Promise<Partial<Media> | null> {
+async function validateSiteContext(): Promise<string | null> {
   const currentSite = await getCurrentSite();
   const siteId = currentSite?.id;
 
@@ -22,17 +21,32 @@ export async function uploadMedia(formData: any): Promise<Partial<Media> | null>
     return null;
   }
 
+  return siteId;
+}
+
+/**
+ * Uploads a file to storage and creates a media record in the database
+ * @param formData - Form data containing the file to upload
+ * @returns The created media record or null if upload fails
+ */
+export async function uploadMedia(formData: FormData): Promise<Partial<Media> | null> {
+  const siteId = await validateSiteContext();
+  if (!siteId) return null;
+
   try {
     // Extract file from formData
-    const file = formData.get("file");
+    const fileObj = formData.get("file");
 
-    // Validate file and siteId presence
-    if (!file || !siteId) {
-      console.error("File or siteId missing in the formData.");
+    // Validate file is present and is a File object
+    if (!fileObj || !(fileObj instanceof File)) {
+      console.error("File missing or invalid in the formData.");
       return null;
     }
 
-    const filename = `${nanoid()}.${file.type.split("/")[1]}`;
+    const file = fileObj as File;
+    const fileType = file.type.split("/")[1] || "unknown";
+    const filename = `${nanoid()}.${fileType}`;
+
     const { url } = await put(filename, file, {
       access: "public"
     });
@@ -58,13 +72,8 @@ export async function uploadMedia(formData: any): Promise<Partial<Media> | null>
  * @returns The media record or null if not found
  */
 export async function getMedia(mediaId: string): Promise<Media | null> {
-  const currentSite = await getCurrentSite();
-  const siteId = currentSite?.id;
-
-  if (!siteId) {
-    console.error("No site found.");
-    return null;
-  }
+  const siteId = await validateSiteContext();
+  if (!siteId) return null;
 
   try {
     const media = await prisma.media.findFirst({
@@ -112,13 +121,8 @@ export async function deleteMedia(mediaId: string): Promise<boolean> {
  * @returns Array of media records
  */
 export async function listMedia(): Promise<Media[]> {
-  const currentSite = await getCurrentSite();
-  const siteId = currentSite?.id;
-
-  if (!siteId) {
-    console.error("No site found.");
-    return [];
-  }
+  const siteId = await validateSiteContext();
+  if (!siteId) return [];
 
   try {
     const mediaItems = await prisma.media.findMany({
