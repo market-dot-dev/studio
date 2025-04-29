@@ -26,7 +26,7 @@ export const RESERVED_SUBDOMAINS = [
 /**
  * Protocol to use for URLs (http in development, https in production)
  */
-export const PROTOCOL = process.env.NEXT_PUBLIC_VERCEL_ENV === "development" ? "http" : "https";
+const PROTOCOL = process.env.NEXT_PUBLIC_VERCEL_ENV === "development" ? "http" : "https";
 
 /**
  * Constructs a root URL with optional subdomain and path
