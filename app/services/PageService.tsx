@@ -5,7 +5,7 @@ import { newPageTemplate } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { Page } from "@prisma/client";
 import SessionService from "./session-service";
-import SiteService from "./SiteService";
+import { getCurrentSite } from "./site-crud-service";
 
 class PageService {
   static getSubdomain(domain: string) {
@@ -224,7 +224,7 @@ class PageService {
     }
 
     // First, retrieve the site
-    const site = await SiteService.getCurrentSite();
+    const site = await getCurrentSite();
 
     if (!site) {
       throw new Error("Site not found.");

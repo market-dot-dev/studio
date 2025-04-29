@@ -1,6 +1,6 @@
 "use client";
 
-import { getSiteAndPages, updateCurrentSite } from "@/app/services/SiteService";
+import { getSiteAndPages, updateCurrentSite } from "@/app/services/site-crud-service";
 import PageHeader from "@/components/common/page-header";
 import CreatePageButton from "@/components/create-page-button";
 import Uploader from "@/components/form/uploader";

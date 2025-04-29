@@ -4,7 +4,7 @@ import {
   defaultOnboardingState,
   OnboardingState
 } from "@/app/services/onboarding/onboarding-steps";
-import { getOnlySiteFromUserId } from "@/app/services/SiteService";
+import { getOnlySiteFromUserId } from "@/app/services/site-crud-service";
 import UserService from "@/app/services/UserService";
 import SessionRefresher from "@/components/common/session-refresher";
 import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";

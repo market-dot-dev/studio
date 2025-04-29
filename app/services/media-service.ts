@@ -4,7 +4,7 @@ import prisma from "@/lib/prisma";
 import { Media } from "@prisma/client";
 import { del, put } from "@vercel/blob";
 import { customAlphabet } from "nanoid";
-import { getCurrentSite } from "./SiteService";
+import { getCurrentSite } from "./site-crud-service";
 
 const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 7);
 
