@@ -1,4 +1,4 @@
-import { getSiteNav } from "@/app/services/SiteService";
+import { getSiteNav } from "@/app/services/site-nav-service";
 import { getSession } from "@/lib/auth";
 
 // @TODO: Feels like this shouldn't be an endpoint, but rather a fn to be used in components.
