@@ -35,8 +35,20 @@ export const columns: ColumnDef<TeamMember>[] = [
     header: "Name",
     cell: ({ row }) => {
       const name = row.getValue("name") as string | null;
-      const email = row.original.email;
-      return name || <span className="italic text-stone-500">Invited ({email})</span>;
+      const email = row.getValue("email") as string;
+      const isPending = row.original.invitePending;
+      return (
+        <div className="flex items-center gap-2 font-semibold text-stone-800">
+          {name || !isPending ? (
+            name
+          ) : (
+            <>
+              <span>{email}</span>
+              <Badge variant="outline">Pending Invite</Badge>
+            </>
+          )}
+        </div>
+      );
     }
   },
   {
@@ -53,22 +65,14 @@ export const columns: ColumnDef<TeamMember>[] = [
       );
     },
     cell: ({ row }) => {
-      const name = row.getValue("name") as string | null;
-      return name ? <div>{row.getValue("email")}</div> : null;
+      return <div>{row.getValue("email")}</div>;
     }
   },
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => {
-      const status = row.getValue("status") as string;
-      const isPending = row.original.invitePending;
-      return (
-        <div className="flex items-center gap-2">
-          <span>{status}</span>
-          {isPending && <Badge variant="outline">Pending Invite</Badge>}
-        </div>
-      );
+      return <Badge variant="secondary">{row.getValue("status")}</Badge>;
     }
   },
   {

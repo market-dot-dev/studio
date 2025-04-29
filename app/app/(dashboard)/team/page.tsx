@@ -3,9 +3,10 @@
 import { columns, TeamMember } from "@/app/app/(dashboard)/team/columns"; // Use aliased path
 import { EditStatusModal } from "@/app/components/team/edit-status-modal"; // Import EditStatusModal
 import { InviteModal } from "@/app/components/team/invite-modal"; // Import InviteModal
+import PageHeader from "@/components/common/page-header"; // Import PageHeader
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import { Plus } from "lucide-react";
+import { Send } from "lucide-react";
 import { useState } from "react"; // Import useState
 
 // Placeholder data - replace with actual data fetching later
@@ -67,16 +68,16 @@ export default function TeamPage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Team</h1>
-        <Button onClick={() => setIsInviteModalOpen(true)}>
-          {" "}
-          {/* Open modal */}
-          <Plus className="mr-2 size-4" />
-          Invite Team Member
-        </Button>
-      </div>
+    <div className="space-y-8">
+      <PageHeader
+        title="Team"
+        actions={[
+          <Button key="invite" onClick={() => setIsInviteModalOpen(true)}>
+            <Send />
+            Invite Teammates
+          </Button>
+        ]}
+      />
       <DataTable
         columns={columns} // Pass handlers via meta
         data={teamMembersData}

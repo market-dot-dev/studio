@@ -54,13 +54,19 @@ export function OrganizationSwitcher() {
               {organizationName}
             </span>
           </div>
-          <DropdownMenuItem className="p-1" asChild>
+          <DropdownMenuItem
+            className="hover:shadow-border focus-visible:ring-swamp p-1 transition-[background-color,box-shadow] hover:bg-white focus:bg-white focus-visible:ring-2"
+            asChild
+          >
             <Link href="/team" className="flex items-center gap-2">
               <Building className="!h-4.5 !w-4.5 shrink-0" />
               Team
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild className="p-1">
+          <DropdownMenuItem
+            asChild
+            className="hover:shadow-border focus-visible:ring-swamp p-1 transition-[background-color,box-shadow] hover:bg-white focus:bg-white focus-visible:ring-2"
+          >
             <Link href="/settings/project" className="flex items-center gap-2">
               <Settings className="!h-4.5 !w-4.5 shrink-0" />
               Settings
@@ -68,13 +74,19 @@ export function OrganizationSwitcher() {
           </DropdownMenuItem>
         </div>
         <div className="flex flex-col p-2">
-          <DropdownMenuItem className="p-1" onSelect={() => alert("Open Switch Org Modal")}>
+          <DropdownMenuItem
+            className="hover:shadow-border focus-visible:ring-swamp p-1 transition-[background-color,box-shadow] hover:bg-white focus:bg-white focus-visible:ring-2"
+            onSelect={() => alert("Open Switch Org Modal")}
+          >
             <div className="flex items-center gap-2">
               <ArrowLeftRight className="h-4.5 w-4.5 shrink-0" />
               Switch Organization
             </div>
           </DropdownMenuItem>
-          <DropdownMenuItem className="p-1" onSelect={() => alert("Navigate to Create New Org")}>
+          <DropdownMenuItem
+            className="hover:shadow-border focus-visible:ring-swamp p-1 transition-[background-color,box-shadow] hover:bg-white focus:bg-white focus-visible:ring-2"
+            onSelect={() => alert("Navigate to Create New Org")}
+          >
             <div className="flex items-center gap-2">
               <SquarePlus className="h-4.5 w-4.5 shrink-0" />
               Create an Organization
