@@ -7,7 +7,7 @@ import { Channel } from "@prisma/client";
 import { updateServicesForSale } from "./market-service";
 import SessionService from "./session-service";
 import { createStripePrice, type SubscriptionCadence } from "./stripe-price-service";
-import { createStripeProduct } from "./stripe-product-service";
+import { createStripeProduct, updateStripeProduct } from "./stripe-product-service";
 import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
 import { getCurrentUser } from "./UserService";
 
@@ -193,9 +193,17 @@ export async function updateTier(id: string, tierData: Partial<Tier>) {
       // Use the extracted version service for handling version creation
       await handleVersioning(id, tier, attrs, context);
     } else {
-      // Use the extracted version service for handling price updates
-      if (context.stripeConnected) {
-        await handlePriceUpdates(tier, attrs, user.stripeAccountId!, context);
+      // Use the extracted version service for handling price updates & stripe product
+      if (context.stripeConnected && user.stripeAccountId && tier.stripeProductId) {
+        if (attrs.name && attrs.description) {
+          await updateStripeProduct(
+            user.stripeAccountId,
+            tier.stripeProductId,
+            attrs.name,
+            attrs.description
+          );
+        }
+        await handlePriceUpdates(tier, attrs, user.stripeAccountId, context);
       }
     }
 
