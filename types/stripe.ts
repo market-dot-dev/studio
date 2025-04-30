@@ -8,7 +8,8 @@ export enum ErrorMessageCode {
   StripeChargeNotEnabled = "err_stripe_charge_enabled_false",
   StripePayoutNotEnabled = "err_stripe_payout_enabled_false",
   StripeAccountInfoFetchError = "err_stripe_account_info_fetch_fail",
-  StripeAccountDisabled = "err_stripe_account_disabled"
+  StripeAccountDisabled = "err_stripe_account_disabled",
+  StripeAccountDisconnected = "stripe_account_disconnected"
 }
 
 /**
@@ -32,7 +33,9 @@ export const errorMessageMapping: Record<ErrorMessageCode, string> = {
   [ErrorMessageCode.StripePayoutNotEnabled]:
     "Stripe account cannot currently perform payouts. Check your Stripe dashboard for more details.",
   [ErrorMessageCode.StripeAccountInfoFetchError]: "Error fetching stripe account info.",
-  [ErrorMessageCode.StripeAccountDisabled]: "Your Stripe account is disabled."
+  [ErrorMessageCode.StripeAccountDisabled]: "Your Stripe account is disabled.",
+  [ErrorMessageCode.StripeAccountDisconnected]:
+    "Your Stripe account has been disconnected from our platform."
 };
 
 export type StripeCard = {

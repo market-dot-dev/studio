@@ -28,7 +28,7 @@ export async function getVendorStripeAccountInfo() {
   if (user.stripeAccountId) {
     try {
       const stripe = await createStripeClient();
-      const account = (await stripe.accounts.retrieve(user.stripeAccountId)) as any;
+      const account = await stripe.accounts.retrieve(user.stripeAccountId);
 
       // Extracting only relevant information
       accountInfo = {
@@ -37,8 +37,8 @@ export async function getVendorStripeAccountInfo() {
         country: account.country,
         defaultCurrency: account.default_currency,
         requirements: {
-          currentlyDue: account.requirements.currently_due,
-          disabledReason: account.requirements.disabled_reason
+          currentlyDue: account.requirements?.currently_due,
+          disabledReason: account.requirements?.disabled_reason
         }
       };
     } catch (error) {
@@ -51,20 +51,22 @@ export async function getVendorStripeAccountInfo() {
 }
 
 /**
- * Check the health of the current user's Stripe account
+ * Check the health of a specific user's Stripe account
  * Optionally update the user record with the results
  *
+ * @param userId - The ID of the user to check
  * @param updateUserRecord - Whether to update the user record with the results
  * @returns The health check results
  */
-export async function checkVendorStripeStatus(
+export async function checkVendorStripeStatusById(
+  userId: string,
   updateUserRecord: boolean = false
 ): Promise<HealthCheckResult> {
   const messageCodes: ErrorMessageCode[] = [];
   let canSell = true;
   let disabledReasons: string[] = [];
 
-  const user = await UserService.getCurrentUser();
+  const user = await UserService.findUser(userId);
 
   if (!user) {
     throw new Error(ErrorMessageCode.UserNotFound);
@@ -76,22 +78,23 @@ export async function checkVendorStripeStatus(
   }
 
   try {
-    const { accountInfo } = await getVendorStripeAccountInfo();
+    if (user.stripeAccountId) {
+      const stripe = await createStripeClient();
+      const account = await stripe.accounts.retrieve(user.stripeAccountId);
 
-    if (accountInfo) {
-      if (!accountInfo.chargesEnabled) {
+      if (!account.charges_enabled) {
         messageCodes.push(ErrorMessageCode.StripeChargeNotEnabled);
         canSell = false;
       }
 
-      if (!accountInfo.payoutsEnabled) {
+      if (!account.payouts_enabled) {
         messageCodes.push(ErrorMessageCode.StripePayoutNotEnabled);
         canSell = false;
       }
 
-      if (accountInfo.requirements.disabledReason) {
+      if (account.requirements?.disabled_reason) {
         messageCodes.push(ErrorMessageCode.StripeAccountDisabled);
-        disabledReasons = Array(accountInfo.requirements.disabledReason);
+        disabledReasons = Array(account.requirements.disabled_reason);
         canSell = false;
       }
     }
@@ -104,13 +107,32 @@ export async function checkVendorStripeStatus(
   if (updateUserRecord) {
     const reasons = JSON.stringify(messageCodes.map((code) => getVendorStripeErrorMessage(code)));
 
-    await UserService.updateCurrentUser({
+    await UserService.updateUser(userId, {
       stripeAccountDisabled: !canSell,
       stripeAccountDisabledReason: reasons
     });
   }
 
   return { canSell, messageCodes, disabledReasons };
+}
+
+/**
+ * Check the health of the current user's Stripe account
+ * Optionally update the user record with the results
+ *
+ * @param updateUserRecord - Whether to update the user record with the results
+ * @returns The health check results
+ */
+export async function checkVendorStripeStatus(
+  updateUserRecord: boolean = false
+): Promise<HealthCheckResult> {
+  const user = await UserService.getCurrentUser();
+
+  if (!user) {
+    throw new Error(ErrorMessageCode.UserNotFound);
+  }
+
+  return checkVendorStripeStatusById(user.id, updateUserRecord);
 }
 
 /**
