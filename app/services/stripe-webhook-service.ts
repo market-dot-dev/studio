@@ -5,32 +5,29 @@ import { ErrorMessageCode } from "@/types/stripe";
 import Stripe from "stripe";
 import { checkVendorStripeStatusById } from "./stripe-vendor-service";
 
+
 /**
- * Unified handler for Stripe account events
- * @param eventType - The type of Stripe event
- * @param account - The Stripe account object from the event
+ * Handles Stripe account events
+ * @param event - The Stripe event object
  */
-export async function handleAccountEvent(eventType: string, account: Stripe.Account) {
+export async function handleAccountEvent(event: Stripe.Event) {
+  const account = event.data.object as Stripe.Account;
+  // Get account ID either from the object or the event
+  const accountId = account.id || event.account;
+
   const user = await prisma.user.findUnique({
-    where: { stripeAccountId: account.id }
+    where: { stripeAccountId: accountId }
   });
 
   if (!user) {
-    console.error(`No user found with Stripe account ID: ${account.id}`);
+    console.error(`No user found with Stripe account ID: ${accountId}`);
     return;
   }
 
-  if (eventType === "account.updated") {
-    // Only run status check if charges_enabled or payouts_enabled have changed
-    // This avoids unnecessary updates for non-critical account changes
-    if (user.stripeAccountDisabled !== !account.charges_enabled) {
-      // Use the existing helper function to check account status
+  if (event.type === "account.updated") {
       await checkVendorStripeStatusById(user.id, true);
-
-      console.log(`Updated account status for user ${user.id}, stripeAccountId: ${account.id}`);
-    }
-  } else if (eventType === "account.application.deauthorized") {
-    // Disconnect the Stripe account
+    console.log(`Updated account status for user ${user.id}`);
+  } else if (event.type === "account.application.deauthorized") {
     await prisma.user.update({
       where: { id: user.id },
       data: {
@@ -39,7 +36,6 @@ export async function handleAccountEvent(eventType: string, account: Stripe.Acco
         stripeAccountDisabledReason: JSON.stringify([ErrorMessageCode.StripeAccountDisconnected])
       }
     });
-
     console.log(`Disconnected Stripe account for user ${user.id}`);
   }
 }
