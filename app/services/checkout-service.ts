@@ -10,7 +10,10 @@ import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";
 import { createStripeCharge } from "./stripe-payment-service";
-import { createStripeSubscription, isSubscribedToStripeTier } from "./stripe-subscription-service";
+import {
+  createStripeSubscriptionForCustomer,
+  isSubscribedToStripeTier
+} from "./stripe-subscription-service";
 import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
@@ -201,8 +204,6 @@ export async function canUserMakePayment(
 }
 
 export const processPayment = async (customerId: string, tierId: string, annual: boolean) => {
-  let subscription = null;
-
   const tier = await getTierById(tierId);
   if (!tier) {
     throw new Error("Tier not found.");
@@ -238,12 +239,13 @@ export const processPayment = async (customerId: string, tierId: string, annual:
 
   console.log("[purchase]: vendor, product check");
 
-  if (tier.cadence === "once") {
+  // ## Charges
+  if (tier.cadence === "once" && tier.price) {
     const charge = await createStripeCharge(
       vendor.stripeAccountId,
       stripeCustomerId,
       stripePriceId,
-      tier.price!,
+      tier.price,
       await customer.getStripePaymentMethodId(),
       tier.applicationFeePercent || 0,
       tier.applicationFeePrice || 0
@@ -255,14 +257,23 @@ export const processPayment = async (customerId: string, tierId: string, annual:
       console.log("[purchase]: FAIL charge failed", charge);
       throw new Error("Error creating charge on stripe: " + charge.status);
     }
-  } else {
-    if (await isSubscribedToStripeTier(vendor.stripeAccountId, stripeCustomerId, tier)) {
+  }
+  // ## Subscriptions
+  else {
+    let stripeSubscription: Stripe.Subscription | null = null;
+
+    const isSubscribed = await isSubscribedToStripeTier(
+      vendor.stripeAccountId,
+      stripeCustomerId,
+      tier
+    );
+    if (isSubscribed) {
       console.log("[purchase]: FAIL already subscribed");
       throw new Error(
         "You are already subscribed to this product. If you dont see it in your dashboard, please contact support."
       );
     } else {
-      subscription = await createStripeSubscription(
+      stripeSubscription = await createStripeSubscriptionForCustomer(
         vendor.stripeAccountId,
         stripeCustomerId,
         stripePriceId,
@@ -270,20 +281,23 @@ export const processPayment = async (customerId: string, tierId: string, annual:
       );
     }
 
-    if (!subscription) {
+    // Fail if no stripe subscription found
+    if (!stripeSubscription) {
       console.log("[purchase]: FAIL could not create stripe subscription");
       throw new Error("Error creating subscription on stripe");
-    } else {
+    }
+    // Otherwise, proceed checking out
+    else {
       console.log("[purchase]: stripe subscription created");
-      const invoice = subscription.latest_invoice as Stripe.Invoice;
+      const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
 
       if (invoice.status === "paid") {
-        await createSubscription(customerId, tierId, subscription.id);
+        await createSubscription(customerId, tierId, stripeSubscription.id);
         console.log("[purchase]: invoice paid");
       } else if (invoice.status === "open") {
         // For subscriptions with trials, "open" status is expected and acceptable
         if (tier.trialDays && tier.trialDays > 0) {
-          await createSubscription(customerId, tierId, subscription.id);
+          await createSubscription(customerId, tierId, stripeSubscription.id);
           console.log("[purchase]: subscription with trial created, invoice is open");
         } else {
           // No trial but invoice not paid - likely needs customer action
@@ -299,7 +313,7 @@ export const processPayment = async (customerId: string, tierId: string, annual:
       } else {
         // Fallback for any other unexpected states
         throw new Error(
-          `Unknown error occurred: invoice status was ${invoice.status}, subscription status was ${subscription.status}`
+          `Unknown error occurred: invoice status was ${invoice.status}, subscription status was ${stripeSubscription.status}`
         );
       }
     }

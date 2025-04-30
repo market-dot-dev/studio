@@ -13,7 +13,7 @@ import { createStripeClient } from "./create-stripe-client";
  * @param trialDays - Optional number of trial days
  * @returns The created subscription
  */
-export async function createStripeSubscription(
+export async function createStripeSubscriptionForCustomer(
   stripeAccountId: string,
   stripeCustomerId: string,
   stripePriceId: string,
@@ -26,7 +26,6 @@ export async function createStripeSubscription(
       customer: stripeCustomerId,
       items: [{ price: stripePriceId }],
       payment_behavior: "error_if_incomplete",
-      expand: ["latest_invoice.payment_intent"],
       trial_period_days: trialDays
     },
     {
@@ -38,21 +37,20 @@ export async function createStripeSubscription(
 /**
  * Update an existing subscription
  *
- * @param stripeAccountId - The vendor's Stripe account ID
+ * @param vendorAccountId - The vendor's Stripe account ID
  * @param subscriptionId - The subscription ID to update
  * @param priceId - The new price ID
  * @returns The updated subscription
  */
 export async function updateSubscription(
-  stripeAccountId: string,
+  vendorAccountId: string,
   subscriptionId: string,
   priceId: string
 ): Promise<Stripe.Subscription> {
-  const stripe = await createStripeClient(stripeAccountId);
+  const stripe = await createStripeClient(vendorAccountId);
 
   const subscription = await stripe.subscriptions.update(subscriptionId, {
-    items: [{ price: priceId }],
-    expand: ["latest_invoice.payment_intent"]
+    items: [{ price: priceId }]
   });
 
   return subscription;
