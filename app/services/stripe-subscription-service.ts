@@ -1,5 +1,6 @@
 "use server";
 
+import { generateId } from "@/lib/utils";
 import { Tier } from "@prisma/client";
 import Stripe from "stripe";
 import { createStripeClient } from "./create-stripe-client";
@@ -21,15 +22,19 @@ export async function createStripeSubscriptionForCustomer(
 ): Promise<Stripe.Subscription> {
   const stripe = await createStripeClient(stripeAccountId);
 
+  // Generate a unique identifier for idempotency
+  const idempotencyKey = `${stripeCustomerId}-${stripePriceId}-${generateId()}`;
+
   return await stripe.subscriptions.create(
     {
       customer: stripeCustomerId,
       items: [{ price: stripePriceId }],
       payment_behavior: "error_if_incomplete",
-      trial_period_days: trialDays
+      trial_period_days: trialDays,
+      expand: ["latest_invoice"]
     },
     {
-      idempotencyKey: `${stripeCustomerId}-${stripePriceId}`
+      idempotencyKey: idempotencyKey
     }
   );
 }
@@ -50,7 +55,8 @@ export async function updateSubscription(
   const stripe = await createStripeClient(vendorAccountId);
 
   const subscription = await stripe.subscriptions.update(subscriptionId, {
-    items: [{ price: priceId }]
+    items: [{ price: priceId }],
+    expand: ["latest_invoice"]
   });
 
   return subscription;

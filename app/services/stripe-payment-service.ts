@@ -1,5 +1,6 @@
 "use server";
 
+import { generateId } from "@/lib/utils";
 import Stripe from "stripe";
 import { createStripeClient } from "./create-stripe-client";
 import { calculateApplicationFee } from "./stripe-price-service";
@@ -78,8 +79,7 @@ export async function createStripeCharge(
   const stripe = await createStripeClient(stripeAccountId);
 
   // Generate a unique identifier for idempotency
-  const timestampMod10 = (Date.now() % 10000).toString().padStart(4, "0");
-  const idempotencyKey = `${stripeCustomerId}-${stripePriceId}-${timestampMod10}`;
+  const idempotencyKey = `${stripeCustomerId}-${stripePriceId}-${generateId()}`;
 
   // Create a payment intent directly
   const paymentIntent = await stripe.paymentIntents.create(
