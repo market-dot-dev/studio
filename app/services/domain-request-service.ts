@@ -46,9 +46,6 @@ export async function isVercelPreview(req: NextRequest) {
 export async function getSubdomainFromRequest(req: NextRequest) {
   const host = await getHostnameFromRequest(req);
   const parts = host.split(".");
-  console.log("Host", req.headers);
-  console.log("Parts", parts);
-
   if (parts.length < 3) {
     return null;
   } else {
@@ -67,7 +64,6 @@ export async function getReservedSubdomainFromRequest(req: NextRequest) {
   }
 
   const subdomain = await getSubdomainFromRequest(req);
-  console.log("Subdomain received", subdomain);
 
   if (!!subdomain && !RESERVED_SUBDOMAINS.includes(subdomain)) {
     return null;
