@@ -147,7 +147,7 @@ export function DirectPaymentCheckout({
           disabled={isDisabled}
           data-cy="checkout-button"
           onClick={handleSubmit}
-          className={cn("w-full disabled:cursor-not-allowed", isDisabled && "disabled:opacity-60")}
+          className="w-full"
         >
           {tier.cadence === "once"
             ? `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`
