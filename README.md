@@ -124,6 +124,21 @@ sudo nginx -s reload
 pnpm dev
 ```
 
+## Testing Stripe Webhooks
+
+To test Stripe webhook functionality locally:
+
+1. Install the [Stripe CLI](https://stripe.com/docs/stripe-cli) (and login)
+2. Forward webhook events to your local server:
+   ```
+   stripe listen --forward-to localhost:3000/api/webhook/stripe
+   ```
+3. Set up two Stripe sandbox accounts for testing:
+   - Main account: For platform-level operations
+   - Vendor account: For testing Stripe Connect functionality & webhook events
+
+This setup allows you to simulate the complete payment flow including Connect account events, subscription updates, and payment processing.
+
 ## Migrations
 
 to run:
