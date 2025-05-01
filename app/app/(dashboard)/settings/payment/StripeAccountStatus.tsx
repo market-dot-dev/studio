@@ -2,20 +2,25 @@ import { getVendorStripeErrorMessage } from "@/app/services/stripe-vendor-servic
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ErrorMessageCode } from "@/types/stripe";
-import { AlertTriangle, CheckCircle, ExternalLink } from "lucide-react";
+import { AlertTriangle, CheckCircle, ExternalLink, RefreshCw } from "lucide-react";
 import Link from "next/link";
 
 interface StripeAccountStatusProps {
   canSell: boolean;
   messageCodes: string[];
   disabledReasons?: string[];
+  isAccountDeauthorized?: boolean;
+  reconnectUrl?: string;
 }
 
-export async function StripeAccountStatus({
+export function StripeAccountStatus({
   canSell,
   messageCodes,
-  disabledReasons
+  disabledReasons,
+  isAccountDeauthorized = false,
+  reconnectUrl
 }: StripeAccountStatusProps) {
+  // Successful state
   if (canSell) {
     return (
       <Alert variant="success">
@@ -26,6 +31,35 @@ export async function StripeAccountStatus({
     );
   }
 
+  // Check if account has been disconnected from Stripe's side
+  const hasDisconnectError = messageCodes.includes(ErrorMessageCode.StripeAccountDisconnected);
+
+  // If account is deauthorized or has disconnect error
+  if (isAccountDeauthorized || hasDisconnectError) {
+    return (
+      <Alert variant="destructive">
+        <AlertTriangle className="size-4" />
+        <AlertTitle>Account Disconnected</AlertTitle>
+        <AlertDescription className="space-y-4">
+          <p>
+            Your Stripe account has been disconnected from our platform. You will need to reconnect
+            to continue receiving payments.
+          </p>
+
+          {reconnectUrl && (
+            <Button asChild variant="outline">
+              <Link href={reconnectUrl} className="flex items-center gap-2">
+                Reconnect Stripe Account
+                <RefreshCw className="size-4" />
+              </Link>
+            </Button>
+          )}
+        </AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Regular error state with link to Stripe dashboard
   return (
     <Alert variant="destructive">
       <AlertTriangle className="size-4" />

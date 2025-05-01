@@ -39,14 +39,16 @@ export default async function PaymentSettings(props: {
   }
 
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
-  const stripeConnected = !!user.stripeAccountId;
-  const oauthUrl = !stripeConnected ? await getVendorStripeConnectURL(user.id) : "";
+
+  // Check if account has been connected at some point but might be disconnected now
+  const hasStripeHistory = !!user.stripeAccountId || user.stripeAccountDisabled;
+  const oauthUrl = !hasStripeHistory ? await getVendorStripeConnectURL(user.id) : "";
 
   return (
     <div className="flex max-w-screen-md flex-col space-y-10">
       <div className="flex flex-col space-y-6">
         <div className="flex flex-col items-start gap-4">
-          {!stripeConnected && (
+          {!hasStripeHistory && (
             <>
               <h2 className="text-xl font-semibold">Connect Stripe Account</h2>
               <p className="text-sm text-muted-foreground">
@@ -57,18 +59,42 @@ export default async function PaymentSettings(props: {
             </>
           )}
 
-          {stripeConnected && user.stripeAccountId && (
+          {hasStripeHistory && (
             <>
               <h2 className="text-xl font-semibold">Stripe Account</h2>
               <StripeAccountStatus
                 canSell={canSell}
                 messageCodes={messageCodes}
                 disabledReasons={disabledReasons}
+                isAccountDeauthorized={user.stripeAccountDisabled && !user.stripeAccountId}
+                reconnectUrl={
+                  user.stripeAccountDisabled ? await getVendorStripeConnectURL(user.id) : undefined
+                }
               />
-              <div className="text-sm text-muted-foreground">
-                Your account ID is: <Badge>{user.stripeAccountId}</Badge>.
-              </div>
-              <DisconnectStripeBtn userId={user.id} stripeAccountId={user.stripeAccountId} />
+
+              {user.stripeAccountId && (
+                <div className="text-sm text-muted-foreground">
+                  Your account ID is: <Badge>{user.stripeAccountId}</Badge>
+                </div>
+              )}
+
+              {user.stripeAccountDisabled && !user.stripeAccountId && (
+                <div className="text-sm text-muted-foreground">
+                  Your Stripe account has been disconnected. Please reconnect to continue receiving
+                  payments.
+                </div>
+              )}
+
+              {user.stripeAccountDisabled && !user.stripeAccountId && (
+                <ConnectStripeBtn oauthUrl={await getVendorStripeConnectURL(user.id)} />
+              )}
+
+              {user.stripeAccountId && (
+                <>
+                  <h2 className="mt-8 text-xl font-semibold">Danger Zone</h2>
+                  <DisconnectStripeBtn userId={user.id} stripeAccountId={user.stripeAccountId} />
+                </>
+              )}
             </>
           )}
         </div>
