@@ -6,11 +6,12 @@ import { buttonVariants } from "./button";
 import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
-  "[&>svg]:text-foreground relative w-full rounded border p-4 text-sm [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg~*]:pl-[30px]",
+  "relative w-full rounded border p-4 text-sm [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg]:text-foreground [&>svg~*]:pl-[30px]",
   {
     variants: {
       variant: {
         default: "bg-background text-foreground",
+        success: "border-green-600 bg-green-600 text-white [&>svg]:text-white", // @TODO: Use success color variable?
         warning: "border-none bg-orange-600 text-white [&>svg]:text-white",
         destructive:
           "border-rose-600 bg-rose-600 text-white dark:border-rose-600 [&>svg]:text-white"
