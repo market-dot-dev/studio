@@ -1,7 +1,7 @@
 import { getCheckoutData } from "@/app/services/checkout-service";
 import { TierNotAvailable } from "@/components/tiers/tier-not-available";
 import { notFound } from "next/navigation";
-import BrandBadge from "./brand-badge";
+import { BrandBadge } from "./brand-badge";
 import { CheckoutWrapper } from "./checkout-wrapper";
 import { ProductInfo } from "./product-info";
 

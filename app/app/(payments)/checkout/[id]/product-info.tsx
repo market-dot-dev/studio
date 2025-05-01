@@ -6,7 +6,7 @@ import { parseTierDescription } from "@/lib/utils";
 import { type VendorProfile } from "@/types/checkout";
 import { Tier } from "@prisma/client";
 import { Store } from "lucide-react";
-import BrandBadge from "./brand-badge";
+import { BrandBadge } from "./brand-badge";
 
 interface ProductInfoProps {
   tier: Tier;
