@@ -10,6 +10,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
+import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, CreditCard } from "lucide-react";
 import { useEffect, useState } from "react";
 
@@ -29,6 +30,27 @@ export function SimplePaymentElement({
   const [card, setCard] = useState<{ brand: string; last4: string } | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.2,
+        ease: "easeOut"
+      }
+    },
+    exit: {
+      opacity: 0,
+      y: -10,
+      transition: {
+        duration: 0.15,
+        ease: "easeIn"
+      }
+    }
+  };
 
   // Initialize by checking for existing payment method
   useEffect(() => {
@@ -136,11 +158,6 @@ export function SimplePaymentElement({
     }
   };
 
-  // Render based on current status
-  if (status === "loading" || isProcessing) {
-    return <div className="h-12 w-full animate-pulse rounded-md bg-stone-100"></div>;
-  }
-
   // Show system error as banner but still allow user to continue if possible
   const errorBanner = systemError ? (
     <Alert variant="destructive" className="mb-4">
@@ -154,78 +171,112 @@ export function SimplePaymentElement({
     </Alert>
   ) : null;
 
-  if (status === "card" && card) {
-    return (
-      <div>
-        {errorBanner}
-        <div className="flex flex-row items-center justify-between">
-          <div className="flex items-center gap-3">
-            <CreditCard className="text-stone-500" />
-            <p className="text-sm font-semibold">
-              {card.brand.toUpperCase()} ••••{card.last4}
-            </p>
+  return (
+    <AnimatePresence mode="popLayout">
+      {status === "loading" || isProcessing ? (
+        <motion.div
+          key="loading"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={containerVariants}
+        >
+          <div className="h-12 w-full animate-pulse rounded-md bg-stone-100"></div>
+        </motion.div>
+      ) : status === "card" && card ? (
+        <motion.div
+          key="card"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={containerVariants}
+        >
+          <div>
+            {errorBanner}
+            <div className="flex flex-row items-center justify-between">
+              <div className="flex items-center gap-3">
+                <CreditCard size={20} className="text-stone-500" />
+                <p className="text-sm font-semibold">
+                  {card.brand.toUpperCase()} ••••{card.last4}
+                </p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                onClick={handleRemoveCard}
+                disabled={isProcessing}
+              >
+                Use another card
+              </Button>
+            </div>
           </div>
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            onClick={handleRemoveCard}
-            disabled={isProcessing}
-          >
-            Use another card
-          </Button>
-        </div>
-      </div>
-    );
-  }
-
-  if (status === "form" && clientSecret) {
-    return (
-      <div>
-        {errorBanner}
-        <CardSetupForm
-          clientSecret={clientSecret}
-          vendorStripeAccountId={vendorStripeAccountId}
-          userId={userId}
-          onSuccess={(newCard) => {
-            setSystemError(null);
-            setCard(newCard);
-            setStatus("card");
-            setPaymentReady(true);
-          }}
-          onError={(errorMessage) => {
-            // Just set the system error but keep the form visible
-            setSystemError(errorMessage);
-          }}
-        />
-      </div>
-    );
-  }
-
-  // Fallback error state with retry option
-  if (systemError) {
-    return (
-      <div>
-        <Alert variant="destructive" className="mb-4">
-          <AlertTriangle className="mr-2 size-4" />
-          <AlertDescription className="flex items-center justify-between">
-            <span>{systemError}</span>
-            <Button size="sm" variant="outline" onClick={handleRetry} className="ml-2">
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      </div>
-    );
-  }
-
-  return null;
+        </motion.div>
+      ) : status === "form" && clientSecret ? (
+        <motion.div
+          key="form"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={containerVariants}
+        >
+          <div>
+            {errorBanner}
+            {/* 
+                Negative margin is applied to offset the padding from the Link checkout button. 
+                Stripe applies padding to it using a private class (`p-classname`), so we can't 
+                target it through the Elements API's `options.appearance` value.
+              */}
+            <div className="-mt-5 transition-[margin]">
+              <CardSetupForm
+                clientSecret={clientSecret}
+                vendorStripeAccountId={vendorStripeAccountId}
+                userId={userId}
+                status={status}
+                onSuccess={(newCard) => {
+                  setSystemError(null);
+                  setCard(newCard);
+                  setStatus("card");
+                  setPaymentReady(true);
+                }}
+                onError={(errorMessage) => {
+                  // Just set the system error but keep the form visible
+                  setSystemError(errorMessage);
+                }}
+              />
+            </div>
+          </div>
+        </motion.div>
+      ) : systemError ? (
+        <motion.div
+          key="error"
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+          variants={containerVariants}
+        >
+          <div>
+            <Alert variant="destructive" className="mb-4">
+              <AlertTriangle className="mr-2 size-4" />
+              <AlertDescription className="flex items-center justify-between">
+                <span>{systemError}</span>
+                <Button size="sm" variant="outline" onClick={handleRetry} className="ml-2">
+                  Retry
+                </Button>
+              </AlertDescription>
+            </Alert>
+          </div>
+        </motion.div>
+      ) : null}
+    </AnimatePresence>
+  );
 }
 
 interface CardSetupFormProps {
   clientSecret: string;
   vendorStripeAccountId: string;
   userId: string;
+  status: "loading" | "card" | "form";
   onSuccess: (card: { brand: string; last4: string }) => void;
   onError: (errorMessage: string) => void;
 }
@@ -234,6 +285,7 @@ function CardSetupForm({
   clientSecret,
   vendorStripeAccountId,
   userId,
+  status,
   onSuccess,
   onError
 }: CardSetupFormProps) {
@@ -382,14 +434,27 @@ function CardSetupFormContent({
           layout: { type: "tabs" }
         }}
       />
-      {formError && (
-        <div className="flex items-center rounded border border-red-200 bg-red-50 p-2 text-sm text-red-600">
-          <AlertTriangle className="mr-2 size-4" />
-          {formError}
-        </div>
-      )}
-      <Button type="submit" disabled={!stripe || !elements || isSubmitting} className="w-full">
-        {isSubmitting ? "Processing..." : "Save card"}
+      <AnimatePresence>
+        {formError && (
+          <motion.div
+            initial={{ opacity: 0, height: 0, marginTop: 0 }}
+            animate={{ opacity: 1, height: "auto", marginTop: 16 }}
+            exit={{ opacity: 0, height: 0, marginTop: 0 }}
+            transition={{ duration: 0.2, ease: "easeInOut" }}
+            className="flex items-center overflow-hidden rounded border border-rose-200 bg-red-50 px-2.5 py-2 text-sm text-rose-600"
+          >
+            <AlertTriangle className="mr-3 size-4 -translate-y-px" />
+            {formError}
+          </motion.div>
+        )}
+      </AnimatePresence>
+      <Button
+        type="submit"
+        disabled={!stripe || !elements}
+        loading={isSubmitting}
+        className="w-full"
+      >
+        Save card
       </Button>
     </form>
   );
