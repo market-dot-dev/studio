@@ -7,11 +7,13 @@ import { ContractLink } from "@/components/contracts/contract-link";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
+import { cn } from "@/lib/utils";
 import { type VendorProfile } from "@/types/checkout";
 import { Contract, Tier } from "@prisma/client";
+import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { StepNumber } from "./step-number";
 
 interface DirectPaymentCheckoutProps {
   tier: Tier;
@@ -79,41 +81,73 @@ export function DirectPaymentCheckout({
   const errorMessage = paymentState.status === "error" ? paymentState.message : null;
 
   return (
-    <div className="mx-auto flex w-full flex-col gap-9 lg:max-w-lg">
-      <section>
-        <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">Account</h2>
-        <CustomerLoginComponent signup={true} />
+    <div className="mx-auto flex w-full flex-col gap-12 md:max-w-xl lg:max-w-md xl:max-w-lg">
+      <section className="relative ">
+        <div className="absolute -bottom-10 left-0 top-0 hidden flex-col items-center gap-2 md:left-[-60px] md:flex">
+          <StepNumber number={1} />
+          <span className="h-full border-l" />
+        </div>
+        <div className="w-full">
+          <h2 className="mb-6 flex items-center gap-4 text-2xl/6 font-bold tracking-tightish text-stone-800">
+            <StepNumber number={1} className="md:hidden" />
+            Account
+          </h2>
+          <CustomerLoginComponent signup={true} />
+        </div>
       </section>
 
-      <Separator />
-
-      <section>
-        <h2 className="mb-6 text-2xl/6 font-bold tracking-tightish text-stone-800">Payment</h2>
-        <Card className="min-h-[60px] p-5">
-          {vendor.stripeAccountId && userId && (
-            <SimplePaymentElement
-              userId={tier.userId}
-              vendorStripeAccountId={vendor.stripeAccountId}
-              setPaymentReady={setPaymentReady}
-            />
-          )}
-          {errorMessage && <div className="mt-4 text-red-600">{errorMessage}</div>}
-        </Card>
+      <section className="relative">
+        <div className="absolute -bottom-10 left-0 top-0 hidden flex-col items-center gap-2 md:left-[-60px] md:flex">
+          <StepNumber number={2} disabled={!userId} />
+          <span
+            className={cn(
+              "h-full w-px bg-gradient-to-b from-stone-200 from-80% via-stone-200 via-80% to-transparent to-100% transition-opacity",
+              !userId && "opacity-0"
+            )}
+          />
+        </div>
+        <div>
+          <h2 className="mb-6 flex items-center gap-4 text-2xl/6 font-bold tracking-tightish text-stone-800 transition-opacity duration-500 ease-in-out">
+            <StepNumber number={2} disabled={!userId} className="md:hidden" />
+            <span className={cn(!userId && "opacity-40")}>Payment</span>
+          </h2>
+          <AnimatePresence>
+            {userId && vendor?.stripeAccountId && (
+              <motion.div
+                key="payment-card"
+                initial={{ opacity: 0, height: 0, overflow: "hidden" }}
+                animate={{ opacity: 1, height: "auto", overflow: "visible" }}
+                exit={{ opacity: 0, height: 0, overflow: "hidden" }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
+              >
+                <Card className="min-h-[60px] p-5">
+                  <SimplePaymentElement
+                    userId={tier.userId}
+                    vendorStripeAccountId={vendor.stripeAccountId!}
+                    setPaymentReady={setPaymentReady}
+                  />
+                  {errorMessage && <div className="mt-4 text-red-600">{errorMessage}</div>}
+                </Card>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </section>
 
       <section>
         {contract && (
-          <div className="mb-4 text-center text-xs font-medium tracking-tightish text-stone-500">
+          <div className="mb-6 text-center text-xs text-stone-500">
             <ContractLink contract={contract} />
           </div>
         )}
         <Button
+          size="lg"
+          variant={isDisabled ? "secondary" : "default"}
           loading={isProcessing}
           disabled={isDisabled}
           data-cy="checkout-button"
-          className="w-full"
-          size="lg"
           onClick={handleSubmit}
+          className="w-full"
         >
           {tier.cadence === "once"
             ? `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`
@@ -122,11 +156,14 @@ export function DirectPaymentCheckout({
               : `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`}
         </Button>
         {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 ? (
-          <p className="mt-6 text-pretty text-center text-xs font-medium tracking-tightish text-stone-500">
+          <p className="mt-4 text-pretty text-center text-xs text-stone-500">
             You won&apos;t be charged now. After your{" "}
-            <strong className="text-stone-800">{tier.trialDays} day trial</strong>, your card will
-            be charged{" "}
-            <strong className="text-stone-800">{`${CHECKOUT_CURRENCY} $${checkoutPrice}`}</strong>.
+            <strong className="font-medium tracking-tightish text-stone-800">
+              {tier.trialDays} day trial
+            </strong>
+            , you'll be charged{" "}
+            <strong className="font-medium tracking-tightish text-stone-800">{`${CHECKOUT_CURRENCY} $${checkoutPrice}`}</strong>
+            .
           </p>
         ) : null}
       </section>

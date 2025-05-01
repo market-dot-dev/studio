@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import { UserRoundCheck } from "lucide-react";
 import { signIn, signOut } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -166,125 +167,176 @@ export function CustomerLoginComponent({
     setIsSignUp(!isSignUp);
   };
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.2,
+        ease: "easeOut"
+      }
+    },
+    exit: {
+      opacity: 0,
+      y: -10,
+      transition: {
+        duration: 0.15,
+        ease: "easeIn"
+      }
+    }
+  };
+
   return (
     <>
-      {currentUser ? (
-        <Card className="flex min-h-[60px] w-full items-center justify-between gap-4 px-5 py-4">
-          <div className="flex items-start gap-3">
-            <UserRoundCheck className="my-0.5 size-5 shrink-0 text-stone-500" />
-            <div className="text-medium flex flex-wrap items-baseline gap-x-2 self-center text-sm font-medium tracking-tightish text-stone-500">
-              <span className="text-base font-bold text-stone-800">{currentUser.name}</span>
-              <span className="truncate leading-6">{currentUser.email}</span>
-            </div>
-          </div>
-          <Button
-            size="sm"
-            variant="outline"
-            loading={isSubmitting}
-            disabled={isSubmitting}
-            onClick={handleLogout}
+      <AnimatePresence mode="wait" initial={false}>
+        {currentUser ? (
+          <motion.div
+            key="user-card"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={containerVariants}
           >
-            Logout
-          </Button>
-        </Card>
-      ) : !isSubmitted ? (
-        <div className="flex flex-col gap-6">
-          <div className="flex w-full flex-col gap-6">
-            {isSignUp && (
-              <div>
-                <Label htmlFor="name" className="mb-2">
-                  Name
-                </Label>
+            <Card className="flex min-h-[60px] w-full items-center justify-between gap-4 px-5 py-4">
+              <div className="flex items-start gap-3">
+                <UserRoundCheck className="my-0.5 size-5 shrink-0 text-stone-500" />
+                <div className="text-medium flex flex-wrap items-baseline gap-x-2 self-center text-sm  text-stone-500">
+                  <span className="text-base font-bold tracking-tightish text-stone-800">
+                    {currentUser.name}
+                  </span>
+                  <span className="truncate leading-6">{currentUser.email}</span>
+                </div>
+              </div>
+              <Button
+                size="sm"
+                variant="outline"
+                loading={isSubmitting}
+                disabled={isSubmitting}
+                onClick={handleLogout}
+              >
+                Logout
+              </Button>
+            </Card>
+          </motion.div>
+        ) : !isSubmitted ? (
+          <motion.div
+            key="login-form"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={containerVariants}
+            className="flex flex-col gap-6"
+          >
+            <div className="flex w-full flex-col gap-6">
+              {isSignUp && (
+                <div>
+                  <Label htmlFor="name" className="mb-2">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    placeholder="Enter your name"
+                    value={name}
+                    onChange={(e) => {
+                      setName(e.target.value);
+                      setError(null);
+                    }}
+                    autoFocus
+                  />
+                </div>
+              )}
+              <div className="w-full items-center">
+                {isSignUp && (
+                  <Label htmlFor="email" className="mb-2">
+                    Email
+                  </Label>
+                )}
                 <Input
-                  id="name"
-                  placeholder="Enter your name"
-                  value={name}
+                  id="email"
+                  placeholder="Email"
+                  autoFocus={!isSignUp}
+                  value={verificationEmail}
                   onChange={(e) => {
-                    setName(e.target.value);
+                    setVerificationEmail(e.target.value);
                     setError(null);
                   }}
-                  autoFocus
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      handleEmail(e);
+                    }
+                  }}
                 />
               </div>
-            )}
-            <div className="w-full items-center">
-              {isSignUp && (
-                <Label htmlFor="email" className="mb-2">
-                  Email
-                </Label>
+              <div className={cn("items-center", isSignUp && "mt-2")}>
+                <Button onClick={handleEmail} loading={isSubmitting} className="w-full">
+                  Continue
+                </Button>
+              </div>
+            </div>
+            <p className="text-center text-sm text-stone-500">
+              {isSignUp ? (
+                <>
+                  <span>Already have an account?</span>{" "}
+                  <Button variant="link" className="!h-fit p-0" onClick={toggleSignUp}>
+                    Sign in
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <span>Don&apos;t have an account?</span>{" "}
+                  <Button variant="link" className="!h-fit p-0" onClick={toggleSignUp}>
+                    Sign up
+                  </Button>
+                </>
               )}
-              <Input
-                id="email"
-                placeholder="Email"
-                autoFocus={!isSignUp}
-                value={verificationEmail}
-                onChange={(e) => {
-                  setVerificationEmail(e.target.value);
-                  setError(null);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleEmail(e);
-                  }
-                }}
-              />
-            </div>
-            <div className={cn("items-center", isSignUp && "mt-2")}>
-              <Button onClick={handleEmail} loading={isSubmitting} className="w-full">
-                Continue
-              </Button>
-            </div>
-          </div>
-          <p className="cursor-pointer text-center text-sm text-stone-500">
-            {isSignUp ? (
-              <>
-                <span>Already have an account?</span>{" "}
-                <Button variant="link" className="!h-fit p-0" onClick={toggleSignUp}>
-                  Sign in
-                </Button>
-              </>
-            ) : (
-              <>
-                <span>Don&apos;t have an account?</span>{" "}
-                <Button variant="link" className="!h-fit p-0" onClick={toggleSignUp}>
-                  Sign up
-                </Button>
-              </>
-            )}
-          </p>
-        </div>
-      ) : (
-        <div className="">
-          <p className="block text-center text-sm text-stone-500">
-            A verification code has been sent to your email. Please enter the value here.
-          </p>
-          <div className="mt-6 flex w-full flex-col items-center gap-4">
-            <div className="w-full items-center">
-              <OTPInputElement
-                verifying={isSubmitting}
-                onComplete={(code: any) => {
-                  setError(null);
-                  handleVerification(code);
-                }}
-                onInput={(e: any) => {
-                  setError(null);
-                }}
-                onPaste={(e: any) => {
-                  setTimeout(() => {
-                    handleVerification(e.target.value);
-                  }, 0);
+            </p>
+          </motion.div>
+        ) : (
+          <motion.div
+            key="otp-verification"
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            variants={containerVariants}
+          >
+            <p className="block text-center text-sm text-stone-500">
+              A verification code has been sent to your email. Please enter the value here.
+            </p>
+            <div className="mt-6 flex w-full flex-col items-center gap-4">
+              <div className="w-full items-center">
+                <OTPInputElement
+                  verifying={isSubmitting}
+                  onComplete={(code: any) => {
+                    setError(null);
+                    handleVerification(code);
+                  }}
+                  onInput={(e: any) => {
+                    setError(null);
+                  }}
+                  onPaste={(e: any) => {
+                    setTimeout(() => {
+                      handleVerification(e.target.value);
+                    }, 0);
 
-                  setError(null);
-                }}
-              />
+                    setError(null);
+                  }}
+                />
+              </div>
             </div>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
       {error && (
-        <div className="mt-6 text-center text-sm">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+          className="mt-6 text-center text-sm"
+        >
           <p className="text-rose-500">{error}</p>
-        </div>
+        </motion.div>
       )}
     </>
   );

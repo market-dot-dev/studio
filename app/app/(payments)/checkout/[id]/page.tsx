@@ -1,6 +1,7 @@
 import { getCheckoutData } from "@/app/services/checkout-service";
 import { TierNotAvailable } from "@/components/tiers/tier-not-available";
 import { notFound } from "next/navigation";
+import { BrandBadge } from "./brand-badge";
 import { CheckoutWrapper } from "./checkout-wrapper";
 import { ProductInfo } from "./product-info";
 
@@ -29,7 +30,7 @@ export default async function CheckoutPage(props: {
       <ProductInfo tier={tier} vendor={vendor} isAnnual={isAnnual} />
 
       {/* Right Column - Checkout */}
-      <div className="ml-auto flex min-h-[80vh] w-full flex-col items-center overflow-y-auto bg-stone-100 px-6 py-9 text-stone-800 sm:p-9 lg:w-3/5 lg:p-16 lg:pt-32">
+      <div className="ml-auto flex min-h-[80vh] w-full flex-col items-center gap-24 overflow-y-auto bg-stone-100 px-6 pb-5 pt-9 text-stone-800 sm:px-9 lg:w-2/3 lg:p-16 lg:pt-28 xl:pt-32 ">
         <CheckoutWrapper
           tier={tier}
           vendor={vendor}
@@ -37,6 +38,7 @@ export default async function CheckoutPage(props: {
           annual={isAnnual}
           userId={currentUser?.id}
         />
+        <BrandBadge className="lg:hidden" />
       </div>
     </div>
   );
