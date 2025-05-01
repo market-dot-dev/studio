@@ -1,26 +1,12 @@
 "use server";
 
-import { createSubscription as createLocalSubscription } from "@/app/services/SubscriptionService";
-import prisma from "@/lib/prisma";
-import { Tier, User } from "@prisma/client";
-import Stripe from "stripe";
-import Customer from "../models/Customer";
-import { createLocalCharge } from "./charge-service";
-import { getTierById } from "./tier-service";
-import UserService from "./UserService";
-
-export type StripeCard = {
-  brand: string;
-  last4: string;
-};
-
-import {
-  GLOBAL_APPLICATION_FEE_DOLLARS,
-  GLOBAL_APPLICATION_FEE_PCT
-} from "@/app/config/stripe-fees";
 import { getRootUrl } from "@/lib/domain";
-
-export type SubscriptionCadence = "month" | "year" | "quarter" | "once";
+import prisma from "@/lib/prisma";
+import { StripeCard } from "@/types/checkout";
+import { Tier } from "@prisma/client";
+import Stripe from "stripe";
+import { calculateApplicationFee } from "./stripe-price-service";
+import UserService from "./UserService";
 
 interface HealthCheckResult {
   canSell: boolean;
@@ -179,64 +165,9 @@ class StripeService {
     return true;
   }
 
-  async createPrice(
-    stripeProductId: string,
-    price: number,
-    cadence: SubscriptionCadence = "month"
-  ) {
-    const attrs: any = {
-      unit_amount: price * 100, // Stripe requires the price in cents
-      currency: "usd",
-      product: stripeProductId
-    };
-
-    if (cadence === "quarter") {
-      attrs["recurring"] = {
-        interval: "month",
-        interval_count: 3
-      };
-    } else if (cadence !== "once") {
-      attrs["recurring"] = {
-        interval: cadence
-      };
-    }
-
-    return await this.stripe.prices.create(attrs);
-  }
-
-  async destroyPrice(stripePriceId: string) {
-    await this.stripe.prices.update(stripePriceId, { active: false });
-  }
-
   static async onPaymentSuccess() {
     // Implement what should happen when payment is successful
     console.log("Payment was successful");
-  }
-
-  async createProduct(name: string, description?: string) {
-    const product = await this.stripe.products.create({
-      name,
-      description
-    });
-
-    return product;
-  }
-
-  async updateProduct(productId: string, name: string, description?: string) {
-    const product = await this.stripe.products.update(productId, {
-      name,
-      description
-    });
-
-    return product;
-  }
-
-  async destroyProduct(stripeProductId: string) {
-    const deletedProduct = await this.stripe.products.del(stripeProductId);
-  }
-
-  static async userCanSell(user: User) {
-    return !!user.stripeAccountId;
   }
 
   static async userHasStripeAccountIdById() {
@@ -268,6 +199,7 @@ class StripeService {
     return await this.stripe.customers.create(payload);
   }
 
+  /** @DEPRECATED: Use checkout-service instead. */
   async attachPaymentMethod(paymentMethodId: string, stripeCustomerId: string) {
     await this.stripe.paymentMethods.attach(paymentMethodId, {
       customer: stripeCustomerId
@@ -280,6 +212,7 @@ class StripeService {
     });
   }
 
+  /** @DEPRECATED: Use checkout-service instead. */
   async getPaymentMethod(paymentMethodId: string, maintainerId: string): Promise<StripeCard> {
     const paymentMethod = await this.stripe.paymentMethods.retrieve(paymentMethodId);
 
@@ -292,6 +225,7 @@ class StripeService {
     return { brand, last4 };
   }
 
+  /** @DEPRECATED: Use checkout-service instead. */
   async detachPaymentMethod(paymentMethodId: string, stripeCustomerId: string) {
     await this.stripe.paymentMethods.detach(paymentMethodId);
     await this.stripe.customers.update(stripeCustomerId, {
@@ -320,17 +254,6 @@ class StripeService {
     );
   }
 
-  static async calculateApplicationFee(
-    price: number,
-    applicationFeePercent: number = 0,
-    applicationFeePrice: number = 0
-  ) {
-    const totalPercent = (applicationFeePercent + (GLOBAL_APPLICATION_FEE_PCT || 0)) / 100;
-    const totalFee = applicationFeePrice + (GLOBAL_APPLICATION_FEE_DOLLARS || 0);
-
-    return Math.round(price * totalPercent) + totalFee;
-  }
-
   async createCharge(
     stripeCustomerId: string,
     stripePriceId: string,
@@ -346,7 +269,7 @@ class StripeService {
       auto_advance: true,
       currency: "usd",
       collection_method: "charge_automatically",
-      application_fee_amount: await StripeService.calculateApplicationFee(
+      application_fee_amount: await calculateApplicationFee(
         price,
         applicationFeePercent,
         applicationFeePrice
@@ -466,145 +389,7 @@ class StripeService {
   }
 }
 
-export const onClickSubscribe = async (userId: string, tierId: string, annual: boolean) => {
-  let subscription = null;
-
-  const tier = await getTierById(tierId);
-  if (!tier) {
-    throw new Error("Tier not found.");
-  }
-
-  if (!userId) {
-    throw new Error("Not logged in.");
-  }
-
-  const user = await UserService.findUser(userId);
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  const maintainer = await UserService.findUser(tier.userId);
-
-  if (!maintainer) {
-    throw new Error("Maintainer not found.");
-  }
-
-  if (!maintainer.stripeAccountId) {
-    throw new Error("Maintainer does not have a connected Stripe account.");
-  }
-
-  const customer = new Customer(user, maintainer.id, maintainer.stripeAccountId);
-
-  const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
-  const stripeService = new StripeService(maintainer.stripeAccountId);
-
-  const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
-
-  if (!stripePriceId) {
-    throw new Error("Tier does not have a Stripe Price ID.");
-  }
-
-  console.log("[purchase]: maintainer, product check");
-
-  if (tier.cadence === "once") {
-    const charge = await stripeService.createCharge(
-      stripeCustomerId,
-      stripePriceId,
-      tier.price!,
-      await customer.getStripePaymentMethodId(),
-      tier.applicationFeePercent || 0,
-      tier.applicationFeePrice || 0
-    );
-
-    if (charge.status === "succeeded") {
-      await createLocalCharge(userId, tierId, charge.id);
-    } else {
-      console.log("[purchase]: FAIL charge failed", charge);
-      throw new Error("Error creating charge on stripe: " + charge.status);
-    }
-  } else {
-    if (await stripeService.isSubscribedToTier(stripeCustomerId, tier)) {
-      console.log("[purchase]: FAIL already subscribed");
-      throw new Error(
-        "You are already subscribed to this product. If you dont see it in your dashboard, please contact support."
-      );
-    } else {
-      subscription = await stripeService.createSubscription(
-        stripeCustomerId,
-        stripePriceId,
-        tier.trialDays
-      );
-    }
-
-    if (!subscription) {
-      console.log("[purchase]: FAIL could not create stripe subscription");
-      throw new Error("Error creating subscription on stripe");
-    } else {
-      console.log("[purchase]: stripe subscription created");
-      const invoice = subscription.latest_invoice as Stripe.Invoice;
-
-      if (invoice.status === "paid") {
-        await createLocalSubscription(userId, tierId, subscription.id);
-        console.log("[purchase]: invoice paid");
-      } else if (invoice.payment_intent) {
-        throw new Error(
-          "Subscription attempt returned a payment intent, which should never happen."
-        );
-      } else {
-        throw new Error(`Unknown error occurred: subscription status was ${subscription.status}`);
-      }
-    }
-  }
-};
-
-const getCustomer = async (
-  maintainerId: string,
-  maintainerStripeAccountId: string
-): Promise<Customer> => {
-  const user = await UserService.getCurrentUser();
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  return new Customer(user, maintainerId, maintainerStripeAccountId);
-};
-
-export const attachPaymentMethod = async (
-  paymentMethodId: string,
-  maintainerUserId: string,
-  maintainerStripeAccountId: string
-) => {
-  const customer = await getCustomer(maintainerUserId, maintainerStripeAccountId);
-  const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
-  await customer.attachPaymentMethod(paymentMethodId);
-};
-
-export const detachPaymentMethod = async (
-  maintainerUserId: string,
-  maintainerStripeAccountId: string
-) => {
-  const customer = await getCustomer(maintainerUserId, maintainerStripeAccountId);
-  await customer.detachPaymentMethod();
-};
-
-export const getPaymentMethod = async (
-  maintainerUserId: string,
-  maintainerStripeAccountId: string
-): Promise<StripeCard> => {
-  const customer = await getCustomer(maintainerUserId, maintainerStripeAccountId);
-  return await customer.getStripePaymentMethod();
-};
-
-export const canBuy = async (maintainerUserId: string, maintainerStripeAccountId: string) => {
-  return (await getCustomer(maintainerUserId, maintainerStripeAccountId)).canBuy();
-};
-
-export const {
-  disconnectStripeAccount,
-  userHasStripeAccountIdById,
-  getAccountInfo,
-  calculateApplicationFee
-} = StripeService;
+export const { disconnectStripeAccount, userHasStripeAccountIdById, getAccountInfo } =
+  StripeService;
 
 export default StripeService;

@@ -1,9 +1,6 @@
 "use client";
-import {
-  GLOBAL_APPLICATION_FEE_DOLLARS,
-  GLOBAL_APPLICATION_FEE_PCT
-} from "@/app/config/stripe-fees";
-import { calculateApplicationFee } from "@/app/services/StripeService";
+import { GLOBAL_APPLICATION_FEE_DOLLARS, GLOBAL_APPLICATION_FEE_PCT } from "@/app/config/checkout";
+import { calculateApplicationFee } from "@/app/services/stripe-price-service";
 import { updateApplicationFee } from "@/app/services/tier-fee-service";
 import { TierWithCount } from "@/app/services/tier-service";
 import { Button } from "@/components/ui/button";
@@ -15,7 +12,6 @@ export default function TierForm({ tier }: { tier: TierWithCount }) {
     tier.applicationFeePercent || 0
   );
   const [applicationFeePrice, setApplicationFeePrice] = useState(tier.applicationFeePrice || 0);
-  const [error, setError] = useState<string | null>(null);
   const [examplePrice, setExamplePrice] = useState<number>(0);
 
   const handleSubmit = async (e: any) => {

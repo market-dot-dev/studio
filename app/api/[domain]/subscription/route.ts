@@ -1,7 +1,8 @@
-import { onClickSubscribe } from "@/app/services/StripeService";
+import { processPayment } from "@/app/services/checkout-service";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 
+// @TODO: Check if this route is still being used
 export async function POST(req: Request) {
   const session = await getSession();
 
@@ -25,7 +26,7 @@ export async function POST(req: Request) {
     return new Response(JSON.stringify({ error: "Tier not found" }), { status: 404 });
   }
 
-  await onClickSubscribe(session.user.id, latestTierVersion.id, false);
+  await processPayment(session.user.id, latestTierVersion.id, false);
 
   const response = { success: true };
 

@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
+export function ContactFormCheckout({ tier }: { tier: Tier }) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
@@ -26,6 +26,7 @@ export default function ProspectiveCheckout({ tier }: { tier: Tier }) {
       context: formData.get("context") as string
     };
 
+    // @TODO: We should use a transaction here, instead of manually handling loading
     try {
       await addNewProspectForPackage(newProspect, tier);
       toast.success("We've received your request. We'll be in touch soon!");
