@@ -6,8 +6,7 @@ import { parseTierDescription } from "@/lib/utils";
 import { type VendorProfile } from "@/types/checkout";
 import { Tier } from "@prisma/client";
 import { Store } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { BrandBadge } from "./brand-badge";
 
 interface ProductInfoProps {
   tier: Tier;
@@ -24,13 +23,13 @@ export function ProductInfo({ tier, vendor, isAnnual }: ProductInfoProps) {
   const parsedDescription = parseTierDescription(tier.description || "");
 
   return (
-    <div className="left-0 top-0 flex size-full flex-col justify-between gap-6 bg-stone-200/80 p-6 pb-9 pt-4 sm:gap-12 sm:px-9 sm:pt-6 lg:fixed lg:w-2/5 xl:p-16 xl:pt-12">
+    <div className="left-0 top-0 flex size-full flex-col justify-between gap-6 bg-stone-200/70 p-6 pb-9 pt-4 sm:gap-12 sm:px-9 sm:pt-6 lg:fixed lg:w-1/3 xl:p-16 xl:pt-12">
       <div className="flex flex-col gap-9 lg:gap-12">
         <div className="flex items-center gap-3">
-          <div className="flex size-7 items-center justify-center rounded-full bg-gradient-to-b from-stone-800/90 to-stone-800 text-white/85">
-            <Store size={18} className="h-[15px]" />
+          <div className="flex size-7 items-center justify-center rounded bg-white text-stone-600 shadow-border">
+            <Store size={16} />
           </div>
-          <span className="font-bold tracking-tightish">{checkoutProject}</span>
+          <span className="font-semibold tracking-tightish">{checkoutProject}</span>
         </div>
 
         <div className="flex flex-col gap-6">
@@ -44,7 +43,9 @@ export function ProductInfo({ tier, vendor, isAnnual }: ProductInfoProps) {
                 <>
                   {CHECKOUT_CURRENCY + " " + CHECKOUT_CURRENCY_SYMBOL + checkoutPrice}
                   {tier.cadence !== "once" ? (
-                    <span className="font-semibold text-stone-400">/{shortenedCadence}</span>
+                    <span className="text-3xl font-normal opacity-40 xl:text-4xl">
+                      /{shortenedCadence}
+                    </span>
                   ) : null}
                 </>
               ) : (
@@ -54,20 +55,20 @@ export function ProductInfo({ tier, vendor, isAnnual }: ProductInfoProps) {
 
             {tier.checkoutType === "gitwallet" ? (
               trialOffered && tier.cadence !== "once" ? (
-                <p className="mt-1 text-sm font-semibold tracking-tightish text-stone-500 xl:text-base">
+                <p className="mt-1 text-sm text-stone-500 xl:text-base">
                   Starts with a{" "}
-                  <strong className="font-bold text-stone-800">{trialDays} day</strong> free trial
+                  <strong className="font-medium text-stone-800">{trialDays} day</strong> free trial
                 </p>
               ) : null
             ) : (
-              <p className="mt-1 text-sm font-medium text-stone-500 xl:text-base">
+              <p className="mt-1 text-sm text-stone-500 xl:text-base">
                 Please provide your details so we can reach out.
               </p>
             )}
           </div>
 
           <div className="flex flex-col gap-6">
-            <Separator className="bg-stone-300/50" />
+            <Separator className="bg-stone-300/75" />
 
             <div className="flex flex-col gap-4">
               {parsedDescription.map((section, dex) => {
@@ -75,7 +76,10 @@ export function ProductInfo({ tier, vendor, isAnnual }: ProductInfoProps) {
                   return (
                     <div key={dex}>
                       {section.text.map((text: string, index: number) => (
-                        <p key={index} className={"text-sm"}>
+                        <p
+                          key={index}
+                          className="text-sm tracking-tightish text-stone-500 xl:text-base"
+                        >
                           {text}
                         </p>
                       ))}
@@ -98,19 +102,7 @@ export function ProductInfo({ tier, vendor, isAnnual }: ProductInfoProps) {
           </div>
         </div>
       </div>
-      <p className="absolute right-6 top-5 inline-flex gap-2 text-sm font-semibold tracking-tight text-stone-500 sm:right-9 sm:top-7 lg:static">
-        <span className="hidden sm:inline">Powered by</span>
-        <Link href="https://market.dev" target="_blank">
-          <Image
-            alt="market.dev logo"
-            width={72}
-            height={16}
-            className="inline h-5 w-auto -translate-y-px sm:h-[19px]"
-            src="/market-dot-dev-logo.svg"
-            priority
-          />
-        </Link>
-      </p>
+      <BrandBadge className="hidden lg:inline-flex" />
     </div>
   );
 }
