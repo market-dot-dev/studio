@@ -175,7 +175,7 @@ export function DirectPaymentCheckout({
               : `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`}
         </Button>
         {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 ? (
-          <p className="max- mt-4 text-pretty text-center text-xs text-stone-500">
+          <p className="mt-4 text-pretty text-center text-xs text-stone-500">
             You won&apos;t be charged now. After your{" "}
             <strong className="font-medium tracking-tightish text-stone-800">
               {tier.trialDays} day trial
