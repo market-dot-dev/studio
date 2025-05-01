@@ -43,9 +43,9 @@ function Slot(props: SlotProps & { index: number }) {
       className={cn(
         "relative h-14 w-10 bg-white text-[2rem]",
         "flex items-center justify-center",
-        "transition-[box-shadow,border-color,background-color,border-radius] duration-200",
         "border-y border-r border-stone-200 first:rounded-l-md first:border-l last:rounded-r-md",
         "group-focus-within:border-accent-foreground/20 group-hover:border-accent-foreground/20",
+        "transition-[border-color]",
         "ring-stone-800",
         {
           "ring-2 outline-accent-foreground z-[2] !border-transparent rounded": props.isActive
