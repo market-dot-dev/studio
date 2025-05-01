@@ -186,9 +186,35 @@ function CardSetupForm({
         appearance: {
           theme: "stripe",
           variables: {
-            colorPrimary: "#0570de",
-            fontFamily: "'Inter', sans-serif",
+            colorPrimary: "#929263",
+            colorText: "#292524",
+            colorTextSecondary: "#766F6B",
+            focusOutline: "2px",
+            fontFamily: "system-ui, sans-serif",
+            spacingUnit: "4px",
+            gridRowSpacing: "16px",
             borderRadius: "4px"
+          },
+          rules: {
+            ".Label": {
+              fontWeight: "600",
+              marginBottom: "8px"
+            },
+            ".Input": {
+              height: "36px",
+              paddingTop: "8px",
+              paddingBottom: "8px",
+              paddingLeft: "12px",
+              paddingRight: "12px",
+              borderColor: "#e7e5e4"
+            },
+            ".Input:focus": {
+              boxShadow: "0 0 0 1px #929263"
+            },
+            ".TermsText": {
+              fontSize: "12px",
+              lineHeight: "16px"
+            }
           }
         }
       }}
@@ -274,7 +300,7 @@ function CardSetupFormContent({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-5">
       <PaymentElement options={{ layout: { type: "tabs" } }} />
       <Button type="submit" disabled={!stripe || !elements || isSubmitting} className="w-full">
         {isSubmitting ? "Processing..." : "Save card"}
