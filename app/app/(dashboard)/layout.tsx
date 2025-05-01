@@ -47,7 +47,7 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
             showOnboardingModal={showOnboardingModal}
           />
           <div className="flex min-h-screen w-full flex-col items-center bg-stone-100 md:pl-[var(--navWidth)]">
-            {user?.stripeAccountDisabled && user?.stripeAccountId && <StripeDisabledBanner />}
+            {user?.stripeAccountDisabled && <StripeDisabledBanner />}
             <div className="flex w-full max-w-screen-xl flex-col items-center space-y-4 p-6 sm:p-10 sm:pt-8">
               {!onboarding.isDismissed && !showOnboardingModal && <OnboardingChecklist />}
               <div className="relative flex w-full flex-col gap-8">{children}</div>
