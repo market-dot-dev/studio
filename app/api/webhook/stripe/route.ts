@@ -1,5 +1,5 @@
 import { createStripeClient } from "@/app/services/create-stripe-client";
-import { handleAccountEvent } from "@/app/services/stripe-webhook-service";
+import { handleAccountEvent, handleSubscriptionEvent } from "@/app/services/stripe-webhook-service";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 
@@ -27,14 +27,12 @@ export async function POST(request: NextRequest) {
         await handleAccountEvent(event);
         break;
 
-      // @TODO: Subscription events
-      /* 
+      // Subscription events
       case "customer.subscription.created":
       case "customer.subscription.updated":
       case "customer.subscription.deleted":
-        await handleSubscriptionEvent(event.type, event.data.object as Stripe.Subscription);
+        await handleSubscriptionEvent(event);
         break;
-      */
 
       // @TODO: Payment events
       /*
