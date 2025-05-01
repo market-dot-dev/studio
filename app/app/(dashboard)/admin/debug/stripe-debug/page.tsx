@@ -2,7 +2,6 @@
 
 import { findByUserId } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
-import { UserAccountWidget } from "@/components/payments/user-account-widget";
 import { Card } from "@/components/ui/card";
 
 const StripeDebug = async () => {
@@ -34,9 +33,6 @@ const StripeDebug = async () => {
         {/*
         <h2>Product ID (for selling subscriptions)</h2>
       <UserProductWidget user={user} /> */}
-
-        <h2>Account ID (for getting paid)</h2>
-        <UserAccountWidget user={user} />
       </Card>
 
       {tiers.map((tier) => (
