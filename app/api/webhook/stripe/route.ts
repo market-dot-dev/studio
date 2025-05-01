@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
       // Account events
       case "account.updated":
       case "account.application.deauthorized":
-        await handleAccountEvent(event.type, event.data.object as Stripe.Account);
+        await handleAccountEvent(event);
         break;
 
       // @TODO: Subscription events

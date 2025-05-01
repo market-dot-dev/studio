@@ -11,9 +11,8 @@ import { checkVendorStripeStatusById } from "./stripe-vendor-service";
  * @param event - The Stripe event object
  */
 export async function handleAccountEvent(event: Stripe.Event) {
-  const account = event.data.object as Stripe.Account;
-  // Get account ID either from the object or the event
-  const accountId = account.id || event.account;
+  const accountEvent = event.data.object as Stripe.Account;
+  const accountId = event.account;
 
   const user = await prisma.user.findUnique({
     where: { stripeAccountId: accountId }
