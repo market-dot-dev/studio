@@ -13,6 +13,7 @@ import { Contract, Tier } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { StepNumber } from "./step-number";
 
 interface DirectPaymentCheckoutProps {
   tier: Tier;
@@ -28,26 +29,6 @@ type PaymentState =
   | { status: "processing" }
   | { status: "error"; message: string }
   | { status: "success" };
-
-const StepNumber = ({
-  number,
-  disabled = false,
-  className
-}: {
-  number: number;
-  disabled?: boolean;
-  className?: string;
-}) => (
-  <div
-    className={cn(
-      "flex size-6 shrink-0 items-center justify-center rounded bg-stone-300/60 text-sm font-bold text-stone-700",
-      disabled && "opacity-50",
-      className
-    )}
-  >
-    {number}
-  </div>
-);
 
 export function DirectPaymentCheckout({
   tier,
