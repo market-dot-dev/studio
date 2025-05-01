@@ -1,11 +1,13 @@
 "use server";
 
-import { SubscriptionStates } from "@/app/models/Subscription";
 import prisma from "@/lib/prisma";
 import { ErrorMessageCode } from "@/types/stripe";
 import Stripe from "stripe";
 import { checkVendorStripeStatusById } from "./stripe-vendor-service";
-import { cancelSubscription, updateSubscription } from "./SubscriptionService";
+import {
+  handleCancelledSubscriptionFromWebhook,
+  updateSubscriptionFromWebhook
+} from "./stripe-webhook-helpers";
 
 /**
  * Handles Stripe account events
@@ -51,53 +53,19 @@ export async function handleSubscriptionEvent(event: Stripe.Event) {
   console.log(
     `Processing ${event.type} for subscription ${subscription.id} from account ${accountId || "platform"}`
   );
+  const subItem = subscription.items.data[0];
+  const activeUntil = subItem.current_period_end
+    ? new Date(subItem.current_period_end * 1000)
+    : null;
 
-  // Find subscription in database
-  const localSubscription = await prisma.subscription.findUnique({
-    where: { stripeSubscriptionId: subscription.id },
-    include: { tier: true }
-  });
-
-  // For existing subscriptions
-  if (localSubscription) {
-    if (event.type === "customer.subscription.deleted" || subscription.status === "canceled") {
-      // Use cancelSubscription service which handles emails too
-      await cancelSubscription(localSubscription.id);
-      console.log(`Cancelled subscription ${localSubscription.id}`);
-    } else if (event.type === "customer.subscription.updated") {
-      // Map Stripe status to our state
-      const state = mapStripeStatusToState(subscription.status);
-      const subItem = subscription.items.data[0];
-      // Use updateSubscription service
-      await updateSubscription(localSubscription.id, {
-        state,
-        activeUntil: subItem.current_period_end ? new Date(subItem.current_period_end * 1000) : null
-      });
-
-      console.log(`Updated subscription ${localSubscription.id} to state: ${state}`);
-    }
-  }
-  // For new subscriptions created outside our platform
-  else if (event.type === "customer.subscription.created") {
-    // Track these but don't try to recreate them - simply log for now
-    // With Connect platforms, it's difficult to reliably map external subscriptions
-    // to our internal structure without custom metadata
-    console.log(
-      `New external subscription detected: ${subscription.id}. ` +
-        `Consider adding metadata to Stripe subscriptions to facilitate synchronization.`
-    );
-  }
-}
-
-/**
- * Maps Stripe subscription status to our internal state
- */
-function mapStripeStatusToState(status: string): string {
-  switch (status) {
-    case "active":
-    case "trialing":
-      return SubscriptionStates.renewing;
-    default:
-      return SubscriptionStates.cancelled;
+  if (event.type === "customer.subscription.deleted" || subscription.status === "canceled") {
+    await handleCancelledSubscriptionFromWebhook(subscription.id, activeUntil);
+  } else if (
+    event.type === "customer.subscription.updated" ||
+    event.type === "customer.subscription.created"
+  ) {
+    // For "created" events, this will only work if we already have the subscription in our database
+    // which should be the case for subscriptions created through our platform
+    await updateSubscriptionFromWebhook(subscription.id, subscription.status, activeUntil);
   }
 }
