@@ -7,7 +7,7 @@ import {
 import { getOnlySiteFromUserId } from "@/app/services/site-crud-service";
 import UserService from "@/app/services/UserService";
 import SessionRefresher from "@/components/common/session-refresher";
-import StripeDisabledBanner from "@/components/common/stripe-disabled-banner";
+import { StripeDisabledBanner } from "@/components/common/stripe-disabled-banner";
 import { DashboardProvider } from "@/components/dashboard/dashboard-context";
 import Header from "@/components/header/header";
 import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
