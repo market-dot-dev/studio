@@ -69,3 +69,31 @@ export async function handleSubscriptionEvent(event: Stripe.Event) {
     await updateSubscriptionFromWebhook(subscription.id, subscription.status, activeUntil);
   }
 }
+
+/**
+ * Handles critical Stripe charge events
+ * @param event - The Stripe event object
+ */
+export async function handleChargeEvent(event: Stripe.Event) {
+  const charge = event.data.object as Stripe.Charge;
+  const accountId = event.account;
+
+  if (event.type === "charge.refunded") {
+    // Logging the refund for awareness
+    const localCharge = await prisma.charge.findUnique({
+      where: { stripeChargeId: charge.id }
+    });
+
+    if (localCharge) {
+      console.log(
+        `REFUND ALERT: Charge ${charge.id} was refunded for $${charge.amount_refunded / 100} ` +
+          `by vendor (account ${accountId}). ` +
+          `Our internal charge ID: ${localCharge.id}`
+      );
+
+      // No database updates since there's no refund tracking in the schema
+    } else {
+      console.log(`Refund for unknown charge ${charge.id} from account ${accountId}`);
+    }
+  }
+}
