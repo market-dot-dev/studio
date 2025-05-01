@@ -65,10 +65,10 @@ export default async function PaymentSettings(props: {
                 messageCodes={messageCodes}
                 disabledReasons={disabledReasons}
               />
-              <p className="text-sm text-muted-foreground">
+              <div className="text-sm text-muted-foreground">
                 Your Stripe account is connected. Your account ID is:{" "}
                 <Badge>{user.stripeAccountId}</Badge>.
-              </p>
+              </div>
               <DisconnectStripeBtn userId={user.id} stripeAccountId={user.stripeAccountId} />
             </>
           )}
