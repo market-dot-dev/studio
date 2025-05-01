@@ -171,105 +171,130 @@ export function SimplePaymentElement({
     </Alert>
   ) : null;
 
-  return (
-    <AnimatePresence mode="popLayout">
-      {status === "loading" || isProcessing ? (
-        <motion.div
-          key="loading"
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={containerVariants}
-        >
-          <div className="h-12 w-full animate-pulse rounded-md bg-stone-100"></div>
-        </motion.div>
-      ) : status === "card" && card ? (
-        <motion.div
-          key="card"
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={containerVariants}
-        >
-          <div>
-            {errorBanner}
-            <div className="flex flex-row items-center justify-between">
-              <div className="flex items-center gap-3">
-                <CreditCard size={20} className="text-stone-500" />
-                <p className="text-sm font-semibold">
-                  {card.brand.toUpperCase()} ••••{card.last4}
-                </p>
-              </div>
-              <Button
-                type="button"
-                size="sm"
-                variant="outline"
-                onClick={handleRemoveCard}
-                disabled={isProcessing}
-              >
-                Use another card
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-      ) : status === "form" && clientSecret ? (
-        <motion.div
-          key="form"
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={containerVariants}
-        >
-          <div>
-            {errorBanner}
-            {/* 
-                Negative margin is applied to offset the padding from the Link checkout button. 
-                Stripe applies padding to it using a private class (`p-classname`), so we can't 
-                target it through the Elements API's `options.appearance` value.
-              */}
-            <div className="-mt-5 transition-[margin]">
-              <CardSetupForm
-                clientSecret={clientSecret}
-                vendorStripeAccountId={vendorStripeAccountId}
-                userId={userId}
-                status={status}
-                onSuccess={(newCard) => {
-                  setSystemError(null);
-                  setCard(newCard);
-                  setStatus("card");
-                  setPaymentReady(true);
-                }}
-                onError={(errorMessage) => {
-                  // Just set the system error but keep the form visible
-                  setSystemError(errorMessage);
-                }}
-              />
-            </div>
-          </div>
-        </motion.div>
-      ) : systemError ? (
-        <motion.div
-          key="error"
-          initial="hidden"
-          animate="visible"
-          exit="exit"
-          variants={containerVariants}
-        >
-          <div>
-            <Alert variant="destructive" className="mb-4">
-              <AlertTriangle className="mr-2 size-4" />
-              <AlertDescription className="flex items-center justify-between">
-                <span>{systemError}</span>
-                <Button size="sm" variant="outline" onClick={handleRetry} className="ml-2">
-                  Retry
-                </Button>
-              </AlertDescription>
-            </Alert>
-          </div>
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
+  // Render functions for different states
+  const loadingState = () => (
+    <motion.div
+      key="loading"
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={containerVariants}
+    >
+      <div className="h-12 w-full animate-pulse rounded-md bg-stone-100"></div>
+    </motion.div>
   );
+
+  const cardState = () => (
+    <motion.div
+      key="card"
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={containerVariants}
+    >
+      <div>
+        {errorBanner}
+        <div className="flex flex-row items-center justify-between">
+          <div className="flex items-center gap-3">
+            <CreditCard size={20} className="text-stone-500" />
+            <p className="text-sm font-semibold">
+              {card?.brand.toUpperCase()} ••••{card?.last4}
+            </p>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={handleRemoveCard}
+            disabled={isProcessing}
+          >
+            Use another card
+          </Button>
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  const formState = () => (
+    <motion.div
+      key="form"
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={containerVariants}
+    >
+      <div>
+        {errorBanner}
+        {/* 
+            Negative margin is applied to offset the padding from the Link checkout button. 
+            Stripe applies padding to it using a private class (`p-classname`), so we can't 
+            target it through the Elements API's `options.appearance` value.
+          */}
+        <div className="-mt-5 transition-[margin]">
+          <CardSetupForm
+            clientSecret={clientSecret!}
+            vendorStripeAccountId={vendorStripeAccountId}
+            userId={userId}
+            status={status}
+            onSuccess={(newCard) => {
+              setSystemError(null);
+              setCard(newCard);
+              setStatus("card");
+              setPaymentReady(true);
+            }}
+            onError={(errorMessage) => {
+              // Just set the system error but keep the form visible
+              setSystemError(errorMessage);
+            }}
+          />
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  const errorState = () => (
+    <motion.div
+      key="error"
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={containerVariants}
+    >
+      <div>
+        <Alert variant="destructive" className="mb-4">
+          <AlertTriangle className="mr-2 size-4" />
+          <AlertDescription className="flex items-center justify-between">
+            <span>{systemError}</span>
+            <Button size="sm" variant="outline" onClick={handleRetry} className="ml-2">
+              Retry
+            </Button>
+          </AlertDescription>
+        </Alert>
+      </div>
+    </motion.div>
+  );
+
+  const renderContent = () => {
+    if (status === "loading" || isProcessing) {
+      return loadingState();
+    }
+
+    if (status === "card" && card) {
+      return cardState();
+    }
+
+    if (status === "form" && clientSecret) {
+      return formState();
+    }
+
+    if (systemError) {
+      return errorState();
+    }
+
+    return null;
+  };
+
+  return <AnimatePresence mode="popLayout">{renderContent()}</AnimatePresence>;
 }
 
 interface CardSetupFormProps {
