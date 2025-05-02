@@ -354,25 +354,6 @@ function CardSetupForm({
             ".TermsText": {
               fontSize: "12px",
               lineHeight: "16px"
-            },
-            ".Tab": {
-              transition: "background-color 0.2s ease"
-            },
-            ".Tab--selected, .Tab:focus, .Tab:active": {
-              backgroundColor: "#929263",
-              color: "white"
-            },
-            ".TabIcon": {
-              transition: "color 0.2s ease"
-            },
-            ".Tab--selected .TabIcon, .Tab:focus .TabIcon, .Tab:active .TabIcon": {
-              color: "white"
-            },
-            ".TabLabel": {
-              transition: "color 0.2s ease"
-            },
-            ".Tab--selected .TabLabel, .Tab:focus .TabLabel, .Tab:active .TabLabel": {
-              color: "white"
             }
           }
         }
