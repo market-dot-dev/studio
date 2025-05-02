@@ -225,12 +225,7 @@ export function SimplePaymentElement({
     >
       <div>
         {errorBanner}
-        {/* 
-            Negative margin is applied to offset the padding from the Link checkout button. 
-            Stripe applies padding to it using a private class (`p-classname`), so we can't 
-            target it through the Elements API's `options.appearance` value.
-          */}
-        <div className="-mt-5 transition-[margin]">
+        <div className="-mt-1">
           <CardSetupForm
             clientSecret={clientSecret!}
             vendorStripeAccountId={vendorStripeAccountId}
@@ -359,6 +354,25 @@ function CardSetupForm({
             ".TermsText": {
               fontSize: "12px",
               lineHeight: "16px"
+            },
+            ".Tab": {
+              transition: "background-color 0.2s ease"
+            },
+            ".Tab--selected, .Tab:focus, .Tab:active": {
+              backgroundColor: "#929263",
+              color: "white"
+            },
+            ".TabIcon": {
+              transition: "color 0.2s ease"
+            },
+            ".Tab--selected .TabIcon, .Tab:focus .TabIcon, .Tab:active .TabIcon": {
+              color: "white"
+            },
+            ".TabLabel": {
+              transition: "color 0.2s ease"
+            },
+            ".Tab--selected .TabLabel, .Tab:focus .TabLabel, .Tab:active .TabLabel": {
+              color: "white"
             }
           }
         }
