@@ -1,5 +1,5 @@
 "use client";
-import { type CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
+import type { CustomerWithChargesAndSubscriptions } from "@/types/dashboard";
 import { LineChartCard } from "./charts/LineChartCard";
 
 const labels = {

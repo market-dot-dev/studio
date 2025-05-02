@@ -1,5 +1,5 @@
 import { DashboardCharts } from "@/components/overview-stats";
-import { CustomerWithChargesAndSubscriptions } from "../customers/customer-table";
+import type { CustomerWithChargesAndSubscriptions } from "@/types/dashboard";
 
 export default function Reports({
   customers
