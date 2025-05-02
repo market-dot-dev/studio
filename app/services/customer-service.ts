@@ -25,14 +25,14 @@ type CustomerWithChargesSubscriptionsAndProspects = User & {
 };
 
 /**
- * Get a specific customer by maintainer and customer ID, including their charges and subscriptions
+ * Get a specific customer by vendor and customer ID, including their charges and subscriptions
  *
- * @param maintainerId The ID of the maintainer
+ * @param vendorId The ID of the vendor
  * @param customerId The ID of the customer
  * @returns The customer with their charges and subscriptions, or null if not found
  */
-export async function getCustomerByMaintainer(
-  maintainerId: string,
+export async function getCustomerOfVendor(
+  vendorId: string,
   customerId: string
 ): Promise<CustomerWithChargesAndSubscriptions | null> {
   const customer = await prisma.user.findFirst({
@@ -43,7 +43,7 @@ export async function getCustomerByMaintainer(
           charges: {
             some: {
               tier: {
-                userId: maintainerId
+                userId: vendorId
               }
             }
           }
@@ -52,7 +52,7 @@ export async function getCustomerByMaintainer(
           subscriptions: {
             some: {
               tier: {
-                userId: maintainerId
+                userId: vendorId
               }
             }
           }
@@ -63,7 +63,7 @@ export async function getCustomerByMaintainer(
       charges: {
         where: {
           tier: {
-            userId: maintainerId
+            userId: vendorId
           }
         },
         include: {
@@ -73,7 +73,7 @@ export async function getCustomerByMaintainer(
       subscriptions: {
         where: {
           tier: {
-            userId: maintainerId
+            userId: vendorId
           }
         },
         include: {
@@ -87,13 +87,13 @@ export async function getCustomerByMaintainer(
 }
 
 /**
- * Get all customers by maintainer ID, including their charges and subscriptions
+ * Get all customers by vendor ID, including their charges and subscriptions
  *
- * @param maintainerId The ID of the maintainer
+ * @param vendorId The ID of the vendor
  * @returns Array of customers with their charges and subscriptions
  */
-export async function getCustomersByMaintainer(
-  maintainerId: string
+export async function getCustomersOfVendor(
+  vendorId: string
 ): Promise<CustomerWithChargesAndSubscriptions[]> {
   const customers = await prisma.user.findMany({
     where: {
@@ -102,7 +102,7 @@ export async function getCustomersByMaintainer(
           charges: {
             some: {
               tier: {
-                userId: maintainerId
+                userId: vendorId
               }
             }
           }
@@ -111,7 +111,7 @@ export async function getCustomersByMaintainer(
           subscriptions: {
             some: {
               tier: {
-                userId: maintainerId
+                userId: vendorId
               }
             }
           }
@@ -122,7 +122,7 @@ export async function getCustomersByMaintainer(
       charges: {
         where: {
           tier: {
-            userId: maintainerId
+            userId: vendorId
           }
         },
         include: {
@@ -132,7 +132,7 @@ export async function getCustomersByMaintainer(
       subscriptions: {
         where: {
           tier: {
-            userId: maintainerId
+            userId: vendorId
           }
         },
         include: {
@@ -240,19 +240,17 @@ export async function getCustomersAndProspectsByMaintainer(
 }
 
 /**
- * Get all customers for the current maintainer
+ * Get all customers for the current vendor
  *
  * @returns Array of customers with their charges and subscriptions
  * @throws Error if user is not found
  */
-export async function getCurrentMaintainerCustomers(): Promise<
-  CustomerWithChargesAndSubscriptions[]
-> {
+export async function getCurrentVendorCustomers(): Promise<CustomerWithChargesAndSubscriptions[]> {
   const sessionUser = await SessionService.getSessionUser();
   if (!sessionUser) {
     throw new Error("User not found.");
   }
-  return getCustomersByMaintainer(sessionUser.id);
+  return getCustomersOfVendor(sessionUser.id);
 }
 
 /**
