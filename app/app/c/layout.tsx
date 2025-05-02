@@ -8,7 +8,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       <Header />
       <div className="relative pt-10">
         <CustomerNav />
-        <div className="min-h-screen bg-stone-100 sm:pl-[var(--navWidth)] dark:bg-black">
+        <div className="min-h-screen bg-stone-100 dark:bg-black sm:pl-[var(--navWidth)]">
           <div className="flex w-full items-stretch">
             <div className="w-full grow">{children}</div>
           </div>

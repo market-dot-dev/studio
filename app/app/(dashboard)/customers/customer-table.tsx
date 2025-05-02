@@ -1,15 +1,9 @@
-import Tier from "@/app/models/Tier";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import { Charge, Subscription, User } from "@prisma/client";
+import type { CustomerWithChargesAndSubscriptions } from "@/types/dashboard";
 import Link from "next/link";
 import React from "react";
 import { CustomerTableItem, columns } from "./columns";
-
-export type CustomerWithChargesAndSubscriptions = User & {
-  charges: (Charge & { tier: Tier })[];
-  subscriptions: (Subscription & { tier: Tier })[];
-};
 
 export const CustomersTable: React.FC<{
   customers: CustomerWithChargesAndSubscriptions[];

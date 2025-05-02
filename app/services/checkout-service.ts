@@ -33,7 +33,6 @@ export async function getCheckoutData(
   tierId: string,
   isAnnual: boolean = false
 ): Promise<CheckoutData> {
-  // @TODO: Should we even be fetching this here?
   // Get current user directly from session - no DB lookup needed
   const session = await getSession();
   const currentUser = session?.user
