@@ -1,28 +1,14 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Charge, Prospect, Subscription, User } from "@prisma/client";
+import type {
+  CustomerWithChargesAndSubscriptions,
+  CustomerWithChargesSubscriptionsAndProspects
+} from "@/types/dashboard";
+import { User } from "@prisma/client";
 import Customer from "../models/Customer";
 import { SessionUser } from "../models/Session";
-import Tier from "../models/Tier";
 import SessionService from "./session-service";
-
-/**
- * Type for customer with their charges and subscriptions
- */
-type CustomerWithChargesAndSubscriptions = User & {
-  charges: (Charge & { tier: Tier })[];
-  subscriptions: (Subscription & { tier: Tier })[];
-};
-
-/**
- * Type for customer with charges, subscriptions, and prospects
- */
-type CustomerWithChargesSubscriptionsAndProspects = User & {
-  charges: (Charge & { tier: Tier })[];
-  subscriptions: (Subscription & { tier: Tier })[];
-  prospects: (Prospect & { tiers: Tier[] })[];
-};
 
 /**
  * Get a specific customer by vendor and customer ID, including their charges and subscriptions
