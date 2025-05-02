@@ -41,7 +41,7 @@ export default function UserDropdown({ user }: { user: any }) {
             alt={user.name ?? "User avatar"}
             className="size-7 rounded-full"
           />
-          <h3 className="tracking-tightish text-sm font-semibold">{user.name}</h3>
+          <h3 className="text-sm font-semibold tracking-tightish">{user.name}</h3>
         </div>
 
         <DropdownMenuSeparator />

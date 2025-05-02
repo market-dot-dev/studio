@@ -3,7 +3,7 @@ import Header from "@/components/home/header";
 export default function PrivacyPageLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="[&_a]: bg-marketing-background text-marketing-base text-marketing-secondary xs:pt-[56px] relative min-h-screen overflow-hidden pt-[52px] font-sans font-bold antialiased"
+      className="[&_a]: relative min-h-screen overflow-hidden bg-marketing-background pt-[52px] font-sans text-marketing-base font-bold text-marketing-secondary antialiased xs:pt-[56px]"
       style={{ textRendering: "optimizeLegibility" }}
     >
       <Header />
