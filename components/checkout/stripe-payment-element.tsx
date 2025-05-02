@@ -225,12 +225,7 @@ export function SimplePaymentElement({
     >
       <div>
         {errorBanner}
-        {/* 
-            Negative margin is applied to offset the padding from the Link checkout button. 
-            Stripe applies padding to it using a private class (`p-classname`), so we can't 
-            target it through the Elements API's `options.appearance` value.
-          */}
-        <div className="-mt-5 transition-[margin]">
+        <div className="-mt-1">
           <CardSetupForm
             clientSecret={clientSecret!}
             vendorStripeAccountId={vendorStripeAccountId}
