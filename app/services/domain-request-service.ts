@@ -45,6 +45,15 @@ export async function isVercelPreview(req: NextRequest) {
  */
 export async function getSubdomainFromRequest(req: NextRequest) {
   const host = await getHostnameFromRequest(req);
+  return getSubdomainFromString(host);
+}
+
+/**
+ * Gets the subdomain from a string
+ * @param host - The host string
+ * @returns The subdomain or null if not present
+ */
+export async function getSubdomainFromString(host: string) {
   const parts = host.split(".");
   if (parts.length < 3) {
     return null;

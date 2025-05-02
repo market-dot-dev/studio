@@ -1,5 +1,7 @@
 import { getCheckoutData } from "@/app/services/checkout-service";
+import { getSubdomainFromString } from "@/app/services/domain-request-service";
 import { TierNotAvailable } from "@/components/tiers/tier-not-available";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import { BrandBadge } from "./brand-badge";
 import { CheckoutWrapper } from "./checkout-wrapper";
@@ -18,6 +20,13 @@ export default async function CheckoutPage(props: {
 
   // Single function call to get all required data
   const { tier, contract, vendor, currentUser } = await getCheckoutData(id, isAnnual);
+
+  // If this is a vendor page, check that this tier belongs to them
+  const headersList = await headers();
+  const subdomain = await getSubdomainFromString(headersList.get("host") || "");
+  if (subdomain && ![vendor?.gh_username, "app"].includes(subdomain)) {
+    return notFound();
+  }
 
   // Handle tier not found (and vendor)
   if (!tier || (tier.id && !tier.published) || !vendor) {
