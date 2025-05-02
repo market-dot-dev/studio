@@ -1,7 +1,6 @@
 import { getSiteInfo } from "@/app/services/site-crud-service";
 import { Site } from "@prisma/client";
 import { ImageResponse } from "@vercel/og";
-import Image from "next/image";
 
 // @TODO: This type should just be returned from getSiteInfo already?
 type SiteInfo = Partial<Site> & {
@@ -33,7 +32,8 @@ export async function GET(_req: Request, props: { params: Promise<{ siteid: stri
         }}
       >
         {site.logo ? (
-          <Image alt="Logo" width={65} src={site.logo ?? ""} />
+          // eslint-disable-next-line @next/next/no-img-element
+          <img alt={`${site.user.projectName} logo`} width={65} src={site.logo ?? ""} />
         ) : (
           <svg
             width="65"
