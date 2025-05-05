@@ -1,6 +1,6 @@
 "use client";
 
-import { cancelSubscription } from "@/app/services/SubscriptionService";
+import { cancelSubscription } from "@/app/services/subscription-service";
 import {
   AlertDialog,
   AlertDialogAction,

@@ -1,4 +1,4 @@
-import { subscriberCount } from "@/app/services/SubscriptionService";
+import { subscriberCount } from "@/app/services/subscription-service";
 import { TableCell, TableRow } from "@/components/ui/table";
 import { TierVersion } from "@prisma/client";
 import React, { useEffect, useState } from "react";

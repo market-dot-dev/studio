@@ -1,6 +1,6 @@
 "use server";
 
-import { createSubscription } from "@/app/services/SubscriptionService";
+import { createSubscription } from "@/app/services/subscription-service";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { includeVendorProfile, type VendorProfile } from "@/types/checkout";

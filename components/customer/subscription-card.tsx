@@ -1,11 +1,12 @@
 import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button";
-import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
 import ContractService from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { isCancelled, isRenewing, SubscriptionStates } from "@/types/subscription";
+import { Subscription } from "@prisma/client";
 import { Store } from "lucide-react";
 import { ContractLink } from "../contracts/contract-link";
 
@@ -31,9 +32,10 @@ const SubscriptionCard = async ({
     actualCadence === "month" ? "mo" : actualCadence === "year" ? "yr" : actualCadence;
 
   let status = "";
-  if (subscription.state === SubscriptionStates.renewing) {
+  if (isRenewing(subscription)) {
     status = "Subscribed";
-  } else if (subscription.state === SubscriptionStates.cancelled) {
+  } else if (isCancelled(subscription)) {
+    // @TODO: Refactor this logic
     if (subscription.activeUntil && subscription.activeUntil <= new Date()) {
       status = "Cancelled";
     } else if (subscription.activeUntil) {

@@ -1,7 +1,7 @@
 "use server";
 
-import { SubscriptionStates } from "@/app/models/Subscription";
 import prisma from "@/lib/prisma";
+import { SubscriptionStates } from "@/types/subscription";
 import {
   confirmCustomerSubscriptionCancellation,
   notifyOwnerOfSubscriptionCancellation

@@ -1,16 +1,17 @@
 import ChargeService from "@/app/services/charge-service";
-import SubscriptionService from "@/app/services/SubscriptionService";
+import { findSubscriptions } from "@/app/services/subscription-service";
 import PageHeader from "@/components/common/page-header";
 import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { isActive } from "@/types/subscription";
 
 export default async function SubscriptionsAndChargesList() {
   const charges = (await ChargeService.findCharges()) || [];
-  const subscriptions = (await SubscriptionService.findSubscriptions()) || [];
+  const subscriptions = (await findSubscriptions()) || [];
 
-  const activeSubscriptions = subscriptions.filter((sub) => sub.isActive());
-  const pastSubscriptions = subscriptions.filter((sub) => !sub.isActive());
+  const activeSubscriptions = subscriptions.filter((sub) => isActive(sub));
+  const pastSubscriptions = subscriptions.filter((sub) => !isActive(sub));
 
   const anyCharges = charges.length > 0;
   const anyActive = activeSubscriptions.length > 0;
@@ -33,8 +34,8 @@ export default async function SubscriptionsAndChargesList() {
 
           <TabsContent value="active">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {activeSubscriptions.map((element) => (
-                <SubscriptionCard subscription={element} key={element.id} />
+              {activeSubscriptions.map((sub) => (
+                <SubscriptionCard subscription={sub} key={sub.id} />
               ))}
             </div>
             {!anyActive && (
@@ -46,8 +47,8 @@ export default async function SubscriptionsAndChargesList() {
 
           <TabsContent value="onetime">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {charges.map((element) => (
-                <ChargeCard charge={element} key={element.id} />
+              {charges.map((charge) => (
+                <ChargeCard charge={charge} key={charge.id} />
               ))}
             </div>
             {!anyCharges && (
@@ -59,8 +60,8 @@ export default async function SubscriptionsAndChargesList() {
 
           <TabsContent value="past">
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-              {pastSubscriptions.map((element) => (
-                <SubscriptionCard subscription={element} key={element.id} />
+              {pastSubscriptions.map((sub) => (
+                <SubscriptionCard subscription={sub} key={sub.id} />
               ))}
             </div>
             {!anyPast && (

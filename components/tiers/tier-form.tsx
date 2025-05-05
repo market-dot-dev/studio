@@ -32,7 +32,7 @@ import TierCard from "./tier-card";
 import TierDeleteButton from "./tier-delete-button";
 
 import Tier, { newTier } from "@/app/models/Tier";
-import { subscriberCount } from "@/app/services/SubscriptionService";
+import { subscriberCount } from "@/app/services/subscription-service";
 import { createTier, TierWithCount, updateTier } from "@/app/services/tier-service";
 import { toast } from "sonner";
 

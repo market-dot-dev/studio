@@ -1,4 +1,4 @@
-import { isSubscribedByTierId } from "@/app/services/SubscriptionService";
+import { isSubscribedByTierId } from "@/app/services/subscription-service";
 import { type VendorProfile } from "@/types/checkout";
 import { Contract, Tier } from "@prisma/client";
 import { ContactFormCheckout } from "./contact-form-checkout";
