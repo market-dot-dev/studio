@@ -5,6 +5,7 @@ import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
 import clsx from "clsx";
 import { AnimatePresence, motion } from "framer-motion";
 import {
@@ -25,7 +26,6 @@ import {
 import Link from "next/link";
 import { usePathname, useSelectedLayoutSegments } from "next/navigation";
 import { ReactNode, useEffect, useMemo, useState } from "react";
-import { FaDiscord, FaGithubAlt } from "react-icons/fa";
 
 interface BaseNavItem {
   name: string;
@@ -257,14 +257,14 @@ export default function Nav({
         name: "Github",
         href: "https://www.github.com/market-dot-dev/",
         target: "_blank",
-        icon: <FaGithubAlt width={18} className="text-stone-700" />
+        icon: <SiGithub width={18} className="text-stone-700" />
       },
       {
         type: "link",
         name: "Join Discord",
         href: "https://discord.gg/ZdSpS4BuGd",
         target: "_blank",
-        icon: <FaDiscord width={18} className="text-stone-700" />
+        icon: <SiDiscord width={18} className="text-stone-700" />
       }
     ];
   }, []);

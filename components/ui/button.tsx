@@ -7,17 +7,17 @@ import { cn } from "@/lib/utils";
 import Spinner from "./spinner";
 
 const buttonVariants = cva(
-  "focus-visible:ring-swamp inline-flex items-center justify-center gap-2 whitespace-nowrap rounded border-none text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded border-none text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
     variants: {
       variant: {
         default:
-          "from-primary/90 to-primary text-primary-foreground shadow-border hover:bg-primary/90 active:shadow-border-sm bg-gradient-to-b",
+          "bg-gradient-to-b from-primary/90 to-primary text-primary-foreground shadow-border hover:bg-primary/90 active:shadow-border-sm",
         destructive:
-          "from-destructive/90 to-destructive text-destructive-foreground shadow-border hover:bg-destructive/90 active:shadow-border-sm bg-gradient-to-b",
-        outline: "text-foreground shadow-border active:shadow-border-sm bg-white hover:bg-stone-50",
+          "bg-gradient-to-b from-destructive/90 to-destructive text-destructive-foreground shadow-border hover:bg-destructive/90 active:shadow-border-sm",
+        outline: "bg-white text-foreground shadow-border hover:bg-stone-50 active:shadow-border-sm",
         secondary: "bg-stone-200/80 text-stone-600 hover:bg-stone-200",
-        ghost: "hover:text-accent-foreground hover:bg-stone-200",
+        ghost: "hover:bg-stone-200 hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline"
       },
       size: {

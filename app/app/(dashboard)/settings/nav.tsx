@@ -22,8 +22,8 @@ export default function SettingsNav() {
     },
     {
       name: "Business Info",
-      href: `/settings/project`,
-      isActive: activeSegment === "project"
+      href: `/settings/business`,
+      isActive: activeSegment === "business"
     },
     {
       name: "Payout Info",

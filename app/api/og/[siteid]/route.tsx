@@ -1,7 +1,8 @@
-import SiteService from "@/app/services/SiteService";
+import { getSiteInfo } from "@/app/services/site-crud-service";
 import { Site } from "@prisma/client";
 import { ImageResponse } from "@vercel/og";
 
+// @TODO: This type should just be returned from getSiteInfo already?
 type SiteInfo = Partial<Site> & {
   user: {
     projectName: string;
@@ -12,7 +13,7 @@ type SiteInfo = Partial<Site> & {
 // Get nav items for the site of the current admin
 export async function GET(_req: Request, props: { params: Promise<{ siteid: string }> }) {
   const params = await props.params;
-  const site = (await SiteService.getSiteInfo(params.siteid)) as SiteInfo;
+  const site = (await getSiteInfo(params.siteid)) as SiteInfo;
 
   return new ImageResponse(
     (

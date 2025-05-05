@@ -1,4 +1,5 @@
 import { type ClassValue, clsx } from "clsx";
+import { customAlphabet } from "nanoid";
 import { extendTailwindMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -81,3 +82,21 @@ export const parseTierDescription = (description: string): ContentSection[] => {
 
   return result;
 };
+
+/**
+ * Standard ID generator for the application
+ * Uses alphanumeric characters (0-9, A-Z, a-z) with 7 character length
+ */
+export const generateId = customAlphabet(
+  "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
+  7
+);
+
+/**
+ * Generates a unique filename with the given extension
+ * @param extension File extension (without the dot)
+ * @returns A unique filename with extension
+ */
+export function generateUniqueFilename(extension: string): string {
+  return `${generateId()}.${extension || "unknown"}`;
+}

@@ -1,6 +1,6 @@
 import Nav from "@/app/components/nav";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import { getOnlySiteFromUserId } from "@/app/services/SiteService";
+import { getOnlySiteFromUserId } from "@/app/services/site-crud-service";
 import UserDropdown from "@/components/header/user-dropdown";
 import Logo from "@/components/home/logo";
 import { getSession } from "@/lib/auth";

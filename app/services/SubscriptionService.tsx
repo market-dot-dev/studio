@@ -11,7 +11,7 @@ import {
   notifyOwnerOfSubscriptionCancellation
 } from "./email-service";
 import SessionService from "./session-service";
-import StripeService from "./StripeService";
+import { cancelStripeSubscription } from "./stripe-subscription-service";
 import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
@@ -153,12 +153,11 @@ class SubscriptionService {
     if (!tier) throw new Error("Tier not found");
     if (!tier.stripePriceId) throw new Error("Stripe price ID not found for tier");
 
-    const maintainer = await UserService.findUser(tier.userId);
-    if (!maintainer) throw new Error("Maintainer not found");
-    if (!maintainer.stripeAccountId)
-      throw new Error("Maintainer's account not connected to Stripe");
+    const vendor = await UserService.findUser(tier.userId);
+    if (!vendor) throw new Error("Vendor not found");
+    if (!vendor.stripeAccountId) throw new Error("Vendor's account not connected to Stripe");
 
-    const stripeCustomerId = await getStripeCustomerId(user, maintainer.stripeAccountId);
+    const stripeCustomerId = await getStripeCustomerId(user, vendor.stripeAccountId);
     if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
     const existingSubscription = await SubscriptionService.findSubscriptionByTierId({ tierId });
@@ -237,16 +236,16 @@ class SubscriptionService {
       throw new Error("Not authorized to cancel subscription or stripe account not connected");
     }
 
-    const stripeSubscription = await StripeService.cancelSubscription(
-      subscription.stripeSubscriptionId,
-      maintainer.stripeAccountId
+    const stripeSubscription = await cancelStripeSubscription(
+      maintainer.stripeAccountId,
+      subscription.stripeSubscriptionId
     );
 
     await prisma.subscription.update({
       data: {
         state: SubscriptionStates.cancelled,
         cancelledAt: new Date(),
-        activeUntil: new Date(stripeSubscription.current_period_end * 1000)
+        activeUntil: new Date(stripeSubscription.items.data[0].current_period_end * 1000)
       },
       where: {
         id: subscriptionId

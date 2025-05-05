@@ -90,6 +90,7 @@ export function PackageEmbeddings({
             <DashedCard>
               {useSVG ? (
                 <a href={finalRootUrl} target="_blank">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={`/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`}
                     alt={site?.id}

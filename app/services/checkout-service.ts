@@ -3,12 +3,17 @@
 import { createSubscription } from "@/app/services/SubscriptionService";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { includeVendorProfile, type StripeCard, type VendorProfile } from "@/types/checkout";
+import { includeVendorProfile, type VendorProfile } from "@/types/checkout";
+import { type StripeCard } from "@/types/stripe";
 import { Contract, Tier } from "@prisma/client";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";
-import StripeService from "./StripeService";
+import { createStripeCharge } from "./stripe-payment-service";
+import {
+  createStripeSubscriptionForCustomer,
+  isSubscribedToStripeTier
+} from "./stripe-subscription-service";
 import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
@@ -28,7 +33,6 @@ export async function getCheckoutData(
   tierId: string,
   isAnnual: boolean = false
 ): Promise<CheckoutData> {
-  // @TODO: Should we even be fetching this here?
   // Get current user directly from session - no DB lookup needed
   const session = await getSession();
   const currentUser = session?.user
@@ -199,8 +203,6 @@ export async function canUserMakePayment(
 }
 
 export const processPayment = async (customerId: string, tierId: string, annual: boolean) => {
-  let subscription = null;
-
   const tier = await getTierById(tierId);
   if (!tier) {
     throw new Error("Tier not found.");
@@ -228,8 +230,6 @@ export const processPayment = async (customerId: string, tierId: string, annual:
   const customer = new Customer(customerUser, vendor.id, vendor.stripeAccountId);
 
   const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
-  const stripeService = new StripeService(vendor.stripeAccountId);
-
   const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
 
   if (!stripePriceId) {
@@ -238,11 +238,13 @@ export const processPayment = async (customerId: string, tierId: string, annual:
 
   console.log("[purchase]: vendor, product check");
 
-  if (tier.cadence === "once") {
-    const charge = await stripeService.createCharge(
+  // ## Charges
+  if (tier.cadence === "once" && tier.price) {
+    const charge = await createStripeCharge(
+      vendor.stripeAccountId,
       stripeCustomerId,
       stripePriceId,
-      tier.price!,
+      tier.price,
       await customer.getStripePaymentMethodId(),
       tier.applicationFeePercent || 0,
       tier.applicationFeePrice || 0
@@ -254,36 +256,64 @@ export const processPayment = async (customerId: string, tierId: string, annual:
       console.log("[purchase]: FAIL charge failed", charge);
       throw new Error("Error creating charge on stripe: " + charge.status);
     }
-  } else {
-    if (await stripeService.isSubscribedToTier(stripeCustomerId, tier)) {
+  }
+  // ## Subscriptions
+  else {
+    let stripeSubscription: Stripe.Subscription | null = null;
+
+    const isSubscribed = await isSubscribedToStripeTier(
+      vendor.stripeAccountId,
+      stripeCustomerId,
+      tier
+    );
+    if (isSubscribed) {
       console.log("[purchase]: FAIL already subscribed");
       throw new Error(
         "You are already subscribed to this product. If you dont see it in your dashboard, please contact support."
       );
     } else {
-      subscription = await stripeService.createSubscription(
+      stripeSubscription = await createStripeSubscriptionForCustomer(
+        vendor.stripeAccountId,
         stripeCustomerId,
         stripePriceId,
         tier.trialDays
       );
     }
 
-    if (!subscription) {
+    // Fail if no stripe subscription found
+    if (!stripeSubscription) {
       console.log("[purchase]: FAIL could not create stripe subscription");
       throw new Error("Error creating subscription on stripe");
-    } else {
+    }
+    // Otherwise, proceed checking out
+    else {
       console.log("[purchase]: stripe subscription created");
-      const invoice = subscription.latest_invoice as Stripe.Invoice;
+      const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
 
       if (invoice.status === "paid") {
-        await createSubscription(customerId, tierId, subscription.id);
+        await createSubscription(customerId, tierId, stripeSubscription.id);
         console.log("[purchase]: invoice paid");
-      } else if (invoice.payment_intent) {
-        throw new Error(
-          "Subscription attempt returned a payment intent, which should never happen."
-        );
+      } else if (invoice.status === "open") {
+        // For subscriptions with trials, "open" status is expected and acceptable
+        if (tier.trialDays && tier.trialDays > 0) {
+          await createSubscription(customerId, tierId, stripeSubscription.id);
+          console.log("[purchase]: subscription with trial created, invoice is open");
+        } else {
+          // No trial but invoice not paid - likely needs customer action
+          throw new Error(`Subscription requires payment. Please check payment details.`);
+        }
+      } else if (
+        invoice.status === "draft" ||
+        invoice.status === "void" ||
+        invoice.status === "uncollectible"
+      ) {
+        // Clear error for problematic invoice statuses that shouldn't occur in normal flow
+        throw new Error(`Invoice has unexpected status: ${invoice.status}`);
       } else {
-        throw new Error(`Unknown error occurred: subscription status was ${subscription.status}`);
+        // Fallback for any other unexpected states
+        throw new Error(
+          `Unknown error occurred: invoice status was ${invoice.status}, subscription status was ${stripeSubscription.status}`
+        );
       }
     }
   }

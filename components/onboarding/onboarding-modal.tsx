@@ -1,10 +1,10 @@
 "use client";
 
-import { updateCurrentSite } from "@/app/services/SiteService";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { createSite } from "@/app/services/registration-service";
+import { updateCurrentSite } from "@/app/services/site-crud-service";
 import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";

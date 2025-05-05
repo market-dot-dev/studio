@@ -9,28 +9,42 @@ import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
+// Type for the business-related fields we can update
+type EditableBusinessFields = {
+  projectName: string | null;
+  projectDescription: string | null;
+};
+
 export default function BusinessSettings({ user }: { user: Partial<User> }) {
   const [isSaving, setIsSaving] = useState(false);
-  const [userData, setUserData] = useState<Partial<User>>(user);
+
+  // Extract only the business fields we want to edit
+  const [businessData, setBusinessData] = useState<EditableBusinessFields>({
+    projectName: user.projectName ?? null,
+    projectDescription: user.projectDescription ?? null
+  });
 
   const saveChanges = useCallback(async () => {
     setIsSaving(true);
     try {
-      await updateCurrentUser(userData);
+      await updateCurrentUser({
+        projectName: businessData.projectName,
+        projectDescription: businessData.projectDescription
+      });
 
       // Use Object.prototype.hasOwnProperty.call instead of direct method access
       if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
         (window as any).refreshOnboarding();
       }
 
-      toast.success("Project updated");
+      toast.success("Business information updated");
     } catch (error) {
-      console.log(error);
+      console.error("Error updating business information:", error);
       toast.error("An unknown error occurred");
     } finally {
       setIsSaving(false);
     }
-  }, [userData]);
+  }, [businessData]);
 
   return (
     <>
@@ -46,12 +60,15 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
               </p>
             </div>
             <Input
-              placeholder=""
+              placeholder="Enter your business name"
               name="project-name"
               id="project-name"
-              value={userData.projectName ?? ""}
+              value={businessData.projectName ?? ""}
               onChange={(e) => {
-                setUserData({ ...userData, projectName: e.target.value });
+                setBusinessData({
+                  ...businessData,
+                  projectName: e.target.value || null
+                });
               }}
             />
           </div>
@@ -68,20 +85,25 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
             </div>
             <Textarea
               className="h-52"
-              placeholder=""
+              placeholder="Describe your business"
               name="project-description"
               id="project-description"
-              value={userData.projectDescription ?? ""}
+              value={businessData.projectDescription ?? ""}
               onChange={(e) => {
-                setUserData({
-                  ...userData,
-                  projectDescription: e.target.value
+                setBusinessData({
+                  ...businessData,
+                  projectDescription: e.target.value || null
                 });
               }}
             />
           </div>
 
-          <Button loading={isSaving} loadingText="Saving Changes" onClick={saveChanges}>
+          <Button
+            loading={isSaving}
+            loadingText="Saving Changes"
+            disabled={isSaving}
+            onClick={saveChanges}
+          >
             Save
           </Button>
         </div>

@@ -17,7 +17,6 @@ export async function createStripeProduct(
   description?: string
 ): Promise<Stripe.Product> {
   const stripe = await createStripeClient(stripeAccountId);
-
   return await stripe.products.create({
     name,
     description
@@ -40,7 +39,6 @@ export async function updateStripeProduct(
   description?: string
 ): Promise<Stripe.Product> {
   const stripe = await createStripeClient(stripeAccountId);
-
   return await stripe.products.update(productId, {
     name,
     description

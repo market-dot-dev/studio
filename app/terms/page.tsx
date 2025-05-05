@@ -3,11 +3,11 @@ import Link from "next/link";
 export default function TermsOfService() {
   return (
     <div className="mx-auto max-w-5xl px-6 py-16">
-      <h1 className="text-marketing-base text-marketing-primary text-pretty font-bold tracking-tight">
+      <h1 className="text-pretty text-marketing-base font-bold tracking-tight text-marketing-primary">
         Terms of Service
       </h1>
 
-      <div className="text-marketing-secondary mt-6 space-y-6">
+      <div className="mt-6 space-y-6 text-marketing-secondary">
         {/* Intro Section */}
         <p>
           Please carefully read and understand the following Terms of Service (
@@ -26,7 +26,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Acceptance of Terms */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Acceptance of Terms</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Acceptance of Terms</h2>
         <p>
           By using our Services, you agree to comply with and be bound by these Terms. These Terms
           may be updated from time to time, and it is your responsibility to review them
@@ -35,7 +35,7 @@ export default function TermsOfService() {
         </p>
 
         {/* User Accounts */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">User Accounts</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">User Accounts</h2>
         <p>
           To access and use the market.dev Platform, you must register for a market.dev account. You
           agree to provide accurate, current, and complete information during the registration
@@ -64,7 +64,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Services Provided */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Services Provided</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Services Provided</h2>
         <p>
           Through the market.dev Platform, we provide tools for open-source software maintainers to
           market their services and manage relationships with clients. This includes, but is not
@@ -92,7 +92,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Intellectual Property and User Content */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">
           Intellectual Property and User Content
         </h2>
         <p>
@@ -139,7 +139,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Payments and Fees */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Payments and Fees</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Payments and Fees</h2>
         <p>
           Through the market.dev Platform you will be able to purchase various Services by making
           service selections or otherwise updating your account information. You agree to pay any
@@ -155,7 +155,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Code of Conduct */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Code of Conduct</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Code of Conduct</h2>
         <p>
           Users agree not to engage in any conduct that violates these Terms, applicable laws, or
           the rights of others.&nbsp; You agree not to reproduce, duplicate, copy, sell, resell or
@@ -177,7 +177,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Confidentiality */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Confidentiality</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Confidentiality</h2>
         <p>
           For the purposes of these Terms, <strong>“Confidential Information”</strong> refers to any
           non-public, proprietary, or sensitive information disclosed by one party (the{" "}
@@ -208,7 +208,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Termination */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Termination</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Termination</h2>
         <p>
           You may cancel your subscription to the Services at any time by contacting market.dev
           Support using the information contained in the Support section of these Terms.
@@ -220,7 +220,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Privacy Policy */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Privacy Policy</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Privacy Policy</h2>
         <p>
           By using our market.dev Platform, you agree to our Privacy Policy, which can be
           found&nbsp;
@@ -231,7 +231,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Indemnity and Limitation of Liability */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">
           Indemnity and Limitation of Liability
         </h2>
         <p>
@@ -264,7 +264,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Governing Law */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Governing Law</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Governing Law</h2>
         <p>
           These Terms shall be governed by and construed in accordance with the laws of Ontario,
           Canada and to the fullest extent permitted by applicable law, you agree to irrevocably and
@@ -274,7 +274,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Additional Terms */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Additional Terms</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Additional Terms</h2>
         <p>
           The failure of market.dev to exercise or enforce any right or provision of these Terms
           shall not constitute a waiver of such right or provision. If any provision of these Terms
@@ -288,7 +288,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Support */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Support</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Support</h2>
         <p>
           Technical support in respect of the Services, including questions about these Terms, is
           available to market.dev Platform users by contacting market.dev support through the
@@ -296,7 +296,7 @@ export default function TermsOfService() {
         </p>
 
         {/* Contact Information */}
-        <h2 className="text-marketing-primary font-bold tracking-[-0.03em]">Contact Information</h2>
+        <h2 className="font-bold tracking-[-0.03em] text-marketing-primary">Contact Information</h2>
         <p>
           Lab 0324 Inc.
           <br />

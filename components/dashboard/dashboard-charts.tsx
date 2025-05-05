@@ -1,8 +1,8 @@
-import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import type { CustomerWithChargesAndSubscriptions } from "@/types/dashboard";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CustomerBarChart } from "./customer-bar-chart";
