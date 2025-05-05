@@ -1,7 +1,7 @@
 "use server";
 
 import UserService from "@/app/services/UserService";
-import BusinessSettings from "@/components/user/project-settings";
+import BusinessSettings from "@/components/user/business-settings";
 import { getSession } from "@/lib/auth";
 import { redirect } from "next/navigation";
 

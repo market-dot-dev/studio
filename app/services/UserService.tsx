@@ -2,19 +2,11 @@
 
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { User } from "@prisma/client";
+import { Prisma, User } from "@prisma/client";
 import { createSessionUser } from "../models/Session";
 import SessionService from "./session-service";
 
 class UserService {
-  static filterUserAttributes(user: User | Partial<User>) {
-    const attrs: Partial<User> = { ...user };
-
-    delete attrs.roleId;
-
-    return attrs;
-  }
-
   static async getCurrentUser() {
     const session = await getSession();
     const userId = session?.user.id;
@@ -65,17 +57,15 @@ class UserService {
     });
   }
 
-  static async updateCurrentUser(userData: Partial<User>) {
+  static async updateCurrentUser(userData: Prisma.UserUpdateInput) {
     const userId = await SessionService.getCurrentUserId();
     if (!userId) return null;
 
-    const attrs = UserService.filterUserAttributes(userData);
-
-    const result = await UserService.updateUser(userId, attrs);
+    const result = await UserService.updateUser(userId, userData);
     return result;
   }
 
-  static async updateUser(id: string, userData: any) {
+  static async updateUser(id: string, userData: Prisma.UserUpdateInput) {
     return prisma?.user.update({
       where: { id },
       data: userData
