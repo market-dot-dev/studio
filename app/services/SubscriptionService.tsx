@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { Subscription as SubscriptionSql } from "@prisma/client";
-import Subscription, { SubscriptionStates, SubscriptionWithUser } from "../models/Subscription";
+import Subscription, { SubscriptionStates } from "../models/Subscription";
 import { getStripeCustomerId } from "./customer-service";
 import {
   confirmCustomerSubscription,
@@ -28,32 +28,6 @@ class SubscriptionService {
     });
 
     return subscription ? new Subscription(subscription) : null;
-  }
-
-  static async findActiveSubscription(
-    subscriptionId: string
-  ): Promise<SubscriptionWithUser | null> {
-    const currentDate = new Date();
-    return prisma.subscription.findUnique({
-      where: {
-        id: subscriptionId,
-        OR: [
-          {
-            state: SubscriptionStates.renewing
-          },
-          {
-            state: SubscriptionStates.cancelled,
-            activeUntil: {
-              gt: currentDate
-            }
-          }
-        ]
-      },
-      include: {
-        user: true,
-        tier: true
-      }
-    });
   }
 
   static async subscriberCount(tierId: string, revision?: number): Promise<number> {
@@ -108,35 +82,6 @@ class SubscriptionService {
     });
 
     return subscriptions.map((subscription) => new Subscription(subscription));
-  }
-
-  static async subscribedToUser(userId: string): Promise<SubscriptionWithUser[]> {
-    const currentDate = new Date();
-    return prisma.subscription.findMany({
-      where: {
-        OR: [
-          {
-            state: SubscriptionStates.renewing,
-            tier: {
-              userId: userId
-            }
-          },
-          {
-            state: SubscriptionStates.cancelled,
-            activeUntil: {
-              gt: currentDate
-            },
-            tier: {
-              userId: userId
-            }
-          }
-        ]
-      },
-      include: {
-        user: true,
-        tier: true
-      }
-    });
   }
 
   // Create a subscription for a user
@@ -299,11 +244,6 @@ class SubscriptionService {
 
     return subscription ? new Subscription(subscription).isRenewing() : false;
   }
-
-  // Check if a user can subscribe to a tier (e.g., not already subscribed)
-  static async canSubscribe(userId: string, tierId: string): Promise<boolean> {
-    return !(await SubscriptionService.isSubscribedByTierId(userId, tierId));
-  }
 }
 
 export const {
@@ -313,7 +253,6 @@ export const {
   findSubscription,
   findSubscriptions,
   updateSubscription,
-  canSubscribe,
   isSubscribedByTierId,
   hasSubscribers,
   subscriberCount
