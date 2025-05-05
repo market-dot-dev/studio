@@ -99,7 +99,7 @@
     "eslint-plugin-tailwindcss": "^3.18.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^16.0.0",
-    "knip": "^5.50.4",
+    "knip": "^5.53.0",
     "postcss": "^8.5.0",
     "prettier-plugin-organize-imports": "^4.1.0",
     "prisma": "^6.3.1",
