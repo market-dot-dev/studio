@@ -6,7 +6,23 @@ export const SubscriptionStates = {
   cancelled: "cancelled"
 } as const;
 
-export type SubscriptionState = (typeof SubscriptionStates)[keyof typeof SubscriptionStates];
+/**
+ * Subscription status types representing the different states a subscription can be in
+ */
+export type SubscriptionStatusType =
+  | "not_subscribed" // No subscription exists
+  | "active_renewing" // Subscription is active and will renew
+  | "cancelled_active" // Subscription is cancelled but still active until end date
+  | "expired"; // Subscription has ended
+
+/**
+ * Detailed subscription status information
+ */
+export interface SubscriptionStatus {
+  statusType: SubscriptionStatusType;
+  subscription: Subscription | null;
+  expiryDate: Date | null;
+}
 
 /**
  * Check if a subscription is in its finishing month (still active but not renewing)

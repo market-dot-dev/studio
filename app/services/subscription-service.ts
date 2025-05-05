@@ -5,6 +5,7 @@ import {
   includeTierAndUser,
   isRenewing,
   SubscriptionStates,
+  SubscriptionStatus,
   type SubscriptionWithTierAndUser
 } from "@/types/subscription";
 import { Subscription } from "@prisma/client";
@@ -295,4 +296,77 @@ export async function updateSubscription(
     },
     data: attributes
   });
+}
+
+/**
+ * Get detailed subscription status for a user and tier
+ *
+ * @param userId - The user ID to check
+ * @param tierId - The tier ID to check
+ * @returns Detailed subscription status information
+ */
+export async function getSubscriptionStatus(
+  userId: string,
+  tierId: string
+): Promise<SubscriptionStatus> {
+  if (!userId) {
+    return {
+      statusType: "not_subscribed",
+      subscription: null,
+      expiryDate: null
+    };
+  }
+
+  // Get the subscription if it exists
+  const subscription = await prisma.subscription.findUnique({
+    where: {
+      userId_tierId: {
+        userId,
+        tierId
+      }
+    },
+    include: {
+      tier: true
+    }
+  });
+
+  // If no subscription exists
+  if (!subscription) {
+    return {
+      statusType: "not_subscribed",
+      subscription: null,
+      expiryDate: null
+    };
+  }
+
+  const now = new Date();
+
+  // Active subscription that will renew
+  if (subscription.state === SubscriptionStates.renewing) {
+    return {
+      statusType: "active_renewing",
+      subscription,
+      expiryDate: null
+    };
+  }
+
+  // Cancelled subscription that's still active
+  if (
+    subscription.state === SubscriptionStates.cancelled &&
+    subscription.activeUntil &&
+    subscription.activeUntil > now
+  ) {
+    return {
+      statusType: "cancelled_active",
+      subscription,
+      expiryDate: subscription.activeUntil
+    };
+  }
+
+  // Subscription has expired
+  return {
+    statusType: "expired",
+    subscription,
+    expiryDate: subscription.activeUntil
+  };
 }
