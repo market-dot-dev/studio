@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { Tier, TierVersion } from "@prisma/client";
 import { deactivateStripePrice, type SubscriptionCadence } from "./stripe-price-service";
-import { hasSubscribers } from "./subscription-service";
+import { checkTierHasSubscribers } from "./subscription-service";
 
 // Define the version context type
 export interface VersionContext {
@@ -44,7 +44,7 @@ export async function buildVersionContext(
   tier: Tier,
   attrs: Partial<Tier>
 ): Promise<VersionContext> {
-  const hasSubs = await hasSubscribers(tier.id, tier.revision);
+  const hasSubs = await checkTierHasSubscribers(tier.id, tier.revision);
   const cadenceChanged = attrs.cadence !== tier.cadence;
   const priceChanged = attrs.price !== tier.price || cadenceChanged;
   const annualPriceChanged = attrs.priceAnnual !== tier.priceAnnual;

@@ -21,12 +21,12 @@ import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
 /**
- * Find a subscription by its ID with related user and tier data
+ * Get a subscription by its ID with related user and tier data
  *
- * @param subscriptionId - The ID of the subscription to find
+ * @param subscriptionId - The ID of the subscription to get
  * @returns The subscription data or null if not found
  */
-export async function findSubscription(
+export async function getSubscriptionById(
   subscriptionId: string
 ): Promise<SubscriptionWithTierAndUser | null> {
   return await prisma.subscription.findUnique({
@@ -44,7 +44,7 @@ export async function findSubscription(
  * @param revision - Optional tier revision to filter by
  * @returns The count of subscribers
  */
-export async function subscriberCount(tierId: string, revision?: number): Promise<number> {
+export async function getSubscriberCount(tierId: string, revision?: number): Promise<number> {
   return prisma.subscription.count({
     where: {
       tierId,
@@ -60,18 +60,18 @@ export async function subscriberCount(tierId: string, revision?: number): Promis
  * @param revision - Optional tier revision to filter by
  * @returns True if the tier has subscribers
  */
-export async function hasSubscribers(tierId: string, revision?: number): Promise<boolean> {
-  const count = await subscriberCount(tierId, revision);
+export async function checkTierHasSubscribers(tierId: string, revision?: number): Promise<boolean> {
+  const count = await getSubscriberCount(tierId, revision);
   return count > 0;
 }
 
 /**
- * Find a subscription for the current user by tier ID
+ * Get a subscription for the current user by tier ID
  *
  * @param params - Object containing tierId
  * @returns The subscription or null if not found
  */
-export async function findSubscriptionByTierId({
+export async function getUserSubscriptionByTier({
   tierId
 }: {
   tierId: string;
@@ -90,11 +90,11 @@ export async function findSubscriptionByTierId({
 }
 
 /**
- * Find all subscriptions for the current user
+ * Get all subscriptions for the current user
  *
  * @returns Array of subscriptions
  */
-export async function findSubscriptions(): Promise<Subscription[]> {
+export async function getUserSubscriptions() {
   const userId = await SessionService.getCurrentUserId();
   if (!userId) return [];
 
@@ -103,6 +103,36 @@ export async function findSubscriptions(): Promise<Subscription[]> {
       userId
     }
   });
+}
+
+/**
+ * Check if a user is subscribed to a specific tier
+ *
+ * @param userId - The user ID to check
+ * @param tierId - The tier ID to check
+ * @returns True if the user is subscribed
+ */
+export async function checkUserSubscribedToTier(userId: string, tierId: string): Promise<boolean> {
+  const currentDate = new Date();
+  const subscription = await prisma.subscription.findFirst({
+    where: {
+      userId,
+      tierId,
+      OR: [
+        {
+          state: SubscriptionStates.renewing
+        },
+        {
+          state: SubscriptionStates.cancelled,
+          activeUntil: {
+            gt: currentDate
+          }
+        }
+      ]
+    }
+  });
+
+  return subscription ? isRenewing(subscription) : false;
 }
 
 /**
@@ -134,7 +164,7 @@ export async function createSubscription(
   const stripeCustomerId = await getStripeCustomerId(user, vendor.stripeAccountId);
   if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
-  const existingSubscription = await findSubscriptionByTierId({ tierId });
+  const existingSubscription = await getUserSubscriptionByTier({ tierId });
 
   const attributes = {
     state: SubscriptionStates.renewing,
@@ -265,34 +295,4 @@ export async function updateSubscription(
     },
     data: attributes
   });
-}
-
-/**
- * Check if a user is subscribed to a specific tier
- *
- * @param userId - The user ID to check
- * @param tierId - The tier ID to check
- * @returns True if the user is subscribed
- */
-export async function isSubscribedByTierId(userId: string, tierId: string): Promise<boolean> {
-  const currentDate = new Date();
-  const subscription = await prisma.subscription.findFirst({
-    where: {
-      userId,
-      tierId,
-      OR: [
-        {
-          state: SubscriptionStates.renewing
-        },
-        {
-          state: SubscriptionStates.cancelled,
-          activeUntil: {
-            gt: currentDate
-          }
-        }
-      ]
-    }
-  });
-
-  return subscription ? isRenewing(subscription) : false;
 }

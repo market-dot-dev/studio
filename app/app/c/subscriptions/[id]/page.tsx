@@ -1,4 +1,4 @@
-import { findSubscription } from "@/app/services/subscription-service";
+import { getSubscriptionById } from "@/app/services/subscription-service";
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import CancelSubscriptionButton from "../cancel-subscription-button";
 
 export default async function SubscriptionPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const subscription = await findSubscription(params.id);
+  const subscription = await getSubscriptionById(params.id);
   if (!subscription) return null;
   const tier = subscription.tier!;
   const maintainer = await UserService.findUser(tier.userId);

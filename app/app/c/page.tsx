@@ -1,5 +1,5 @@
 import ChargeService from "@/app/services/charge-service";
-import { findSubscriptions } from "@/app/services/subscription-service";
+import { getUserSubscriptions } from "@/app/services/subscription-service";
 import PageHeader from "@/components/common/page-header";
 import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
@@ -8,7 +8,7 @@ import { isActive } from "@/types/subscription";
 
 export default async function SubscriptionsAndChargesList() {
   const charges = (await ChargeService.findCharges()) || [];
-  const subscriptions = (await findSubscriptions()) || [];
+  const subscriptions = (await getUserSubscriptions()) || [];
 
   const activeSubscriptions = subscriptions.filter((sub) => isActive(sub));
   const pastSubscriptions = subscriptions.filter((sub) => !isActive(sub));
