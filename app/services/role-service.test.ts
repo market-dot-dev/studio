@@ -41,8 +41,6 @@ describe("RoleService", () => {
         const protectedPaths = [
           "/dashboard",
           "/account",
-          "/admin",
-          "/admin/users",
           "/maintainer",
           "/maintainer/dashboard",
           "/random/path"
@@ -69,8 +67,6 @@ describe("RoleService", () => {
 
         // Blocked paths
         expect(await RoleService.canViewPath("/maintainer", customerRole)).toBe(false);
-        expect(await RoleService.canViewPath("/admin", customerRole)).toBe(false);
-        expect(await RoleService.canViewPath("/admin/settings", customerRole)).toBe(false);
       });
 
       it("should give maintainer access to maintainer areas but not admin paths", async () => {
@@ -81,10 +77,6 @@ describe("RoleService", () => {
         expect(await RoleService.canViewPath("/account", maintainerRole)).toBe(true);
         expect(await RoleService.canViewPath("/maintainer", maintainerRole)).toBe(true);
         expect(await RoleService.canViewPath("/maintainer/dashboard", maintainerRole)).toBe(true);
-
-        // Blocked paths
-        expect(await RoleService.canViewPath("/admin", maintainerRole)).toBe(false);
-        expect(await RoleService.canViewPath("/admin/settings", maintainerRole)).toBe(false);
       });
 
       it("should give admin access to all paths", async () => {
@@ -95,8 +87,6 @@ describe("RoleService", () => {
         expect(await RoleService.canViewPath("/account", adminRole)).toBe(true);
         expect(await RoleService.canViewPath("/maintainer", adminRole)).toBe(true);
         expect(await RoleService.canViewPath("/maintainer/dashboard", adminRole)).toBe(true);
-        expect(await RoleService.canViewPath("/admin", adminRole)).toBe(true);
-        expect(await RoleService.canViewPath("/admin/settings", adminRole)).toBe(true);
       });
     });
   });

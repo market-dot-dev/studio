@@ -416,6 +416,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                 {!newRecord && (
                   <div className="mt-6 flex flex-col items-center gap-4 rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">
                     <strong className="text-stone-800">Admin Options</strong>
+                    {/* @TODO (is this admin view?) */}
                     <div className="flex flex-col gap-2">
                       <div className="flex justify-center gap-2">
                         <DuplicateTierButton tierId={tier.id} />
