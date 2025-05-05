@@ -20,6 +20,7 @@ class RoleService {
     /^\/customer-login$/,
     /^\/login\/local-auth$/,
     /\/checkout\/[A-Za-z0-9]+/,
+    /\/c\/contracts\/[A-Za-z0-9]+/, // Contracts
 
     // These allowed paths redirect to explore.market.dev
     /^\/ecosystems(\/|$)/,
