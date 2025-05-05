@@ -1,7 +1,7 @@
 "use server";
 
 import Subscription from "@/app/models/Subscription";
-import { getCustomerByMaintainer } from "@/app/services/customer-service";
+import { getCustomerOfVendor } from "@/app/services/customer-service";
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
 import ChargeCard from "@/components/customer/charge-card";
@@ -20,7 +20,7 @@ const CustomerDetailPage = async (props: { params: Promise<{ id: string }> }) =>
     return <div>Customer not found</div>;
   }
 
-  const customer = await getCustomerByMaintainer(maintainerUserId, userId);
+  const customer = await getCustomerOfVendor(maintainerUserId, userId);
 
   if (!customer) {
     return <div>Customer not found</div>;

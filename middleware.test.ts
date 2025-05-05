@@ -2,7 +2,12 @@ import { getToken } from "next-auth/jwt";
 import { NextRequestWithAuth } from "next-auth/middleware";
 import { NextFetchEvent, NextResponse } from "next/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import DomainService from "./app/services/domain-service";
+import {
+  getGhUsernameFromRequest,
+  getReservedSubdomainFromRequest,
+  getSubdomainFromRequest,
+  isVercelPreview
+} from "./app/services/domain-request-service";
 import RoleService from "./app/services/role-service";
 import { getRootUrl } from "./lib/domain";
 import middleware, { config } from "./middleware";
@@ -16,13 +21,11 @@ vi.mock("next-auth/middleware", () => ({
   withAuth: (handler: any) => handler
 }));
 
-vi.mock("./app/services/domain-service", () => ({
-  default: {
-    getSubdomainFromRequest: vi.fn(),
-    getReservedSubdomainFromRequest: vi.fn(),
-    getGhUsernameFromRequest: vi.fn(),
-    isVercelPreview: vi.fn()
-  }
+vi.mock("./app/services/domain-request-service", () => ({
+  getSubdomainFromRequest: vi.fn(),
+  getReservedSubdomainFromRequest: vi.fn(),
+  getGhUsernameFromRequest: vi.fn(),
+  isVercelPreview: vi.fn()
 }));
 
 vi.mock("./app/services/role-service", () => ({
@@ -86,11 +89,11 @@ function createMockEvent() {
 describe("Middleware", () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    // Default mocks
-    vi.mocked(DomainService.getSubdomainFromRequest).mockReturnValue(null);
-    vi.mocked(DomainService.getReservedSubdomainFromRequest).mockReturnValue(null);
-    vi.mocked(DomainService.getGhUsernameFromRequest).mockReturnValue(null);
-    vi.mocked(DomainService.isVercelPreview).mockReturnValue(false);
+    // Default mocks - now async
+    vi.mocked(getSubdomainFromRequest).mockResolvedValue(null);
+    vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue(null);
+    vi.mocked(getGhUsernameFromRequest).mockResolvedValue(null);
+    vi.mocked(isVercelPreview).mockResolvedValue(false);
     vi.mocked(RoleService.canViewPath).mockResolvedValue(true);
     vi.mocked(getToken).mockResolvedValue(null);
     vi.mocked(getRootUrl).mockReturnValue("https://market.dev");
@@ -142,9 +145,9 @@ describe("Middleware", () => {
   describe("Bare domain handling", () => {
     beforeEach(() => {
       // Ensure this is a bare domain request - no subdomain
-      vi.mocked(DomainService.getSubdomainFromRequest).mockReturnValue(null);
-      vi.mocked(DomainService.getReservedSubdomainFromRequest).mockReturnValue(null);
-      vi.mocked(DomainService.getGhUsernameFromRequest).mockReturnValue(null);
+      vi.mocked(getSubdomainFromRequest).mockResolvedValue(null);
+      vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue(null);
+      vi.mocked(getGhUsernameFromRequest).mockResolvedValue(null);
     });
 
     it("should allow direct access to terms and privacy pages", async () => {
@@ -242,9 +245,9 @@ describe("Middleware", () => {
 
   describe("GitHub username subdomain handling", () => {
     beforeEach(() => {
-      vi.mocked(DomainService.getGhUsernameFromRequest).mockReturnValue("testuser");
-      vi.mocked(DomainService.getSubdomainFromRequest).mockReturnValue("testuser");
-      vi.mocked(DomainService.getReservedSubdomainFromRequest).mockReturnValue(null);
+      vi.mocked(getGhUsernameFromRequest).mockResolvedValue("testuser");
+      vi.mocked(getSubdomainFromRequest).mockResolvedValue("testuser");
+      vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue(null);
     });
 
     it("should pass through API requests on GitHub subdomains", async () => {
@@ -278,7 +281,7 @@ describe("Middleware", () => {
         nextauth: { token: null }
       } as NextRequestWithAuth;
 
-      vi.mocked(DomainService.getGhUsernameFromRequest).mockReturnValue("testuser");
+      vi.mocked(getGhUsernameFromRequest).mockResolvedValue("testuser");
       const event = createMockEvent();
 
       await middleware(req, event);
@@ -295,8 +298,8 @@ describe("Middleware", () => {
   // @TODO: The subdomain testing/handling requires a bit of love
   describe("App subdomain handling", () => {
     beforeEach(() => {
-      vi.mocked(DomainService.getReservedSubdomainFromRequest).mockReturnValue("app");
-      vi.mocked(DomainService.getSubdomainFromRequest).mockReturnValue("app");
+      vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue("app");
+      vi.mocked(getSubdomainFromRequest).mockResolvedValue("app");
     });
 
     it("should rewrite paths to /app/ for regular users", async () => {
@@ -364,7 +367,7 @@ describe("Middleware", () => {
 
   describe("Login redirects", () => {
     it("should redirect signed-in users away from login pages", async () => {
-      vi.mocked(DomainService.getReservedSubdomainFromRequest).mockReturnValue("app");
+      vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue("app");
       const req = createMockRequest("/login", "app.market.dev", "user");
       const event = createMockEvent();
       await middleware(req, event);
@@ -381,8 +384,8 @@ describe("Middleware", () => {
   describe("Authorization handling", () => {
     it("should bypass role checks for site subdomains", async () => {
       // Setup a site subdomain
-      vi.mocked(DomainService.getSubdomainFromRequest).mockReturnValue("testuser");
-      vi.mocked(DomainService.getReservedSubdomainFromRequest).mockReturnValue(null);
+      vi.mocked(getSubdomainFromRequest).mockResolvedValue("testuser");
+      vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue(null);
 
       // This middleware test verifies that role checks are bypassed for site subdomains
       const req = createMockRequest("/some-path", "testuser.market.dev");

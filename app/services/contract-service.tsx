@@ -1,12 +1,10 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { generateId } from "@/lib/utils";
 import { Contract, Prisma } from "@prisma/client";
 import { put } from "@vercel/blob";
-import { customAlphabet } from "nanoid";
 import { getCurrentUser } from "./UserService";
-
-const nanoid = customAlphabet("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 7);
 
 export type ContractWithUploadData = Contract & { uploadData?: File };
 
@@ -52,7 +50,7 @@ class ContractService {
       );
     }
 
-    const filename = `${nanoid()}.${file.type.split("/")[1]}`;
+    const filename = `${generateId()}.${file.type.split("/")[1]}`;
     const { url } = await put(filename, file, {
       access: "public"
     });

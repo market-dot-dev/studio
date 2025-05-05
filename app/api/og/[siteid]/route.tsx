@@ -1,10 +1,11 @@
-import SiteService from "@/app/services/SiteService";
+import { getSiteInfo } from "@/app/services/site-crud-service";
 import { Site } from "@prisma/client";
 import { ImageResponse } from "@vercel/og";
 import { Buffer } from "buffer";
 import fs from "fs/promises";
 import path from "path";
 
+// @TODO: This type should just be returned from getSiteInfo already?
 type SiteInfo = Partial<Site> & {
   user: {
     projectName: string;
@@ -26,8 +27,7 @@ async function loadAndEncodeSvg(filePath: string): Promise<string> {
 // Get nav items for the site of the current admin
 export async function GET(_req: Request, props: { params: Promise<{ siteid: string }> }) {
   const params = await props.params;
-  const site = (await SiteService.getSiteInfo(params.siteid)) as SiteInfo;
-  console.log(site);
+  const site = (await getSiteInfo(params.siteid)) as SiteInfo;
 
   const projectName = site.user?.projectName ?? "";
   const subdomainText = site.subdomain ? `${site.subdomain}.market.dev` : "";

@@ -5,19 +5,19 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "focus:ring-swamp inline-flex items-center border border-black/10 font-semibold tracking-[-0.0075em] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2",
+  "inline-flex items-center border border-black/10 font-semibold tracking-[-0.0075em] transition-colors focus:outline-none focus:ring-2 focus:ring-swamp focus:ring-offset-2",
   {
     variants: {
       variant: {
-        default: "bg-primary !text-primary-foreground border-transparent shadow",
+        default: "border-transparent bg-primary !text-primary-foreground shadow",
         secondary: "border-transparent bg-stone-200 !text-stone-600",
-        success: "bg-swamp !text-primary-foreground border-transparent shadow",
-        destructive: "bg-destructive !text-destructive-foreground border-transparent shadow",
+        success: "border-transparent bg-swamp !text-primary-foreground shadow",
+        destructive: "border-transparent bg-destructive !text-destructive-foreground shadow",
         outline: "!text-stone-600"
       },
       size: {
         default: "rounded-sm px-1.5 py-0.5 text-xs",
-        sm: "text-xxs rounded-[3px] px-1 py-0.5 tracking-[-0.02em]"
+        sm: "rounded-[3px] px-1 py-0.5 text-xxs tracking-[-0.02em]"
       }
     },
     defaultVariants: {

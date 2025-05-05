@@ -1,7 +1,7 @@
 "use client";
 
-import { deleteSite, getCurrentSite } from "@/app/services/SiteService";
 import { resetState } from "@/app/services/onboarding/OnboardingService";
+import { deleteSite, getCurrentSite } from "@/app/services/site-crud-service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

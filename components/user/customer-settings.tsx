@@ -28,7 +28,7 @@ export default function CustomerSettings() {
   const saveChanges = useCallback(async () => {
     setIsSaving(true);
     try {
-      await updateCurrentUser(userData as Partial<User>);
+      await updateCurrentUser(userData);
       await refreshSession();
     } catch (error) {
       console.log(error);
