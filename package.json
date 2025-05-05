@@ -51,7 +51,7 @@
     "@vercel/speed-insights": "^1.2.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
-    "date-fns": "^2.30.0",
+    "date-fns": "^4.1.0",
     "dotenv-cli": "^8.0.0",
     "framer-motion": "^12.9.4",
     "import-in-the-middle": "^1.13.1",
