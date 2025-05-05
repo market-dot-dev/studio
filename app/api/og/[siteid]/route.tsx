@@ -1,17 +1,15 @@
 import { getSiteInfo } from "@/app/services/site-crud-service";
-import { Site } from "@prisma/client";
 import { ImageResponse } from "@vercel/og";
 import { Buffer } from "buffer";
 import fs from "fs/promises";
 import path from "path";
 
-// @TODO: This type should just be returned from getSiteInfo already?
-type SiteInfo = Partial<Site> & {
-  user: {
-    projectName: string;
-    projectDescription: string;
-  };
-};
+const PLACEHOLDER_TITLE = "market.dev";
+const PLACEHOLDER_SUBTITLE = "All-in-one business tools, built for developers.";
+
+const FONT_DIR = path.join(process.cwd(), "public", "fonts", "inter");
+const interMediumPath = path.join(FONT_DIR, "Inter-Medium.ttf");
+const interBoldPath = path.join(FONT_DIR, "Inter-Bold.ttf");
 
 async function loadAndEncodeSvg(filePath: string): Promise<string> {
   try {
@@ -27,13 +25,16 @@ async function loadAndEncodeSvg(filePath: string): Promise<string> {
 // Get nav items for the site of the current admin
 export async function GET(_req: Request, props: { params: Promise<{ siteid: string }> }) {
   const params = await props.params;
-  const site = (await getSiteInfo(params.siteid)) as SiteInfo;
+  const site = await getSiteInfo(params.siteid);
+  const projectName = site?.user?.projectName;
 
-  const projectName = site.user?.projectName ?? "";
-  const subdomainText = site.subdomain ? `${site.subdomain}.market.dev` : "";
+  const title = projectName ?? PLACEHOLDER_TITLE;
+  const subtitle = site?.subdomain
+    ? `${site.subdomain}.market.dev`
+    : projectName
+      ? null
+      : PLACEHOLDER_SUBTITLE;
 
-  const interMediumPath = path.join(process.cwd(), "public", "fonts", "inter", "Inter-Medium.ttf");
-  const interBoldPath = path.join(process.cwd(), "public", "fonts", "inter", "Inter-Bold.ttf");
   const interMediumData = await fs.readFile(interMediumPath);
   const interBoldData = await fs.readFile(interBoldPath);
 
@@ -90,12 +91,12 @@ export async function GET(_req: Request, props: { params: Promise<{ siteid: stri
             zIndex: 1
           }}
         >
-          {site.logo ? (
+          {site?.logo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              alt={`${site.user.projectName} logo`}
+              alt={site?.user?.projectName ? `${site.user.projectName} logo` : "logo"}
               height={100}
-              src={site.logo ?? ""}
+              src={site?.logo ?? ""}
               style={{
                 borderRadius: "12px"
               }}
@@ -132,7 +133,7 @@ export async function GET(_req: Request, props: { params: Promise<{ siteid: stri
                 fontFamily: "'Inter'"
               }}
             >
-              {projectName}
+              {title}
             </span>
             <span
               style={{
@@ -144,7 +145,7 @@ export async function GET(_req: Request, props: { params: Promise<{ siteid: stri
                 fontFamily: "'Inter'"
               }}
             >
-              {subdomainText}
+              {subtitle}
             </span>
           </div>
         </div>
