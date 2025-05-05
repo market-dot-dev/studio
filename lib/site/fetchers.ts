@@ -3,7 +3,7 @@ import prisma from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 import { includeSiteMeta, type SiteMeta } from "./types";
 
-// gets site from admin session
+// gets site from session
 export async function getSiteMeta(): Promise<SiteMeta | null> {
   const session = await getSession();
 

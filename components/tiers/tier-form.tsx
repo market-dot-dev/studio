@@ -36,8 +36,6 @@ import { subscriberCount } from "@/app/services/SubscriptionService";
 import { createTier, TierWithCount, updateTier } from "@/app/services/tier-service";
 import { toast } from "sonner";
 
-import useCurrentSession from "@/app/hooks/use-current-session";
-
 import { hasVendorStripeAccount } from "@/app/services/stripe-vendor-service";
 import { getVersionsByTierId } from "@/app/services/tier-version-service";
 import { Channel, Contract, TierVersion, User } from "@prisma/client";
@@ -76,8 +74,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
 
   const [errors, setErrors] = useState<any>({});
   const [isSaving, setIsSaving] = useState(false);
-
-  const { isAdmin } = useCurrentSession();
 
   const handleInputChange = (name: string, value: number | string | null) => {
     const updatedTier = { ...tier, [name]: value } as Tier;
@@ -440,10 +436,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                         </p>
                       )}
                     </div>
-                    <Separator />
-                    <Button variant="outline" className="w-full" asChild>
-                      <Link href={`/admin/tiers/${tier.id}`}>Go to Admin Panel</Link>
-                    </Button>
                   </div>
                 )}
               </div>
@@ -681,10 +673,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                   </p>
                 )}
               </div>
-              <Separator />
-              <Button variant="outline" className="w-full" asChild>
-                <Link href={`/admin/tiers/${tier.id}`}>Go to Admin Panel</Link>
-              </Button>
             </div>
           )}
         </div>

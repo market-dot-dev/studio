@@ -232,22 +232,7 @@ export default function Nav({
       }
     ] as const;
 
-    const debugItems: NavItem[] = ["admin"].includes(roleId || "")
-      ? [
-          {
-            type: "title",
-            name: "⚠️ DEBUG MENU ⚠️"
-          },
-          {
-            type: "link",
-            name: "Debug",
-            href: `/admin/debug`,
-            icon: <Settings width={18} />
-          }
-        ]
-      : [];
-
-    return [...mainItems, ...debugItems] as NavItem[];
+    return mainItems;
   }, [urlSegments, siteId, roleId, isMarketExpert]);
 
   const serviceItems: NavItem[] = useMemo(() => {
