@@ -1,6 +1,6 @@
 import { User } from "@prisma/client";
 import Stripe from "stripe";
-import { createStripeCustomer, deleteStripeCustomer } from "../services/stripe-payment-service";
+import { createStripeCustomer } from "../services/stripe-payment-service";
 import StripeService from "../services/StripeService";
 import UserService from "../services/UserService";
 import { SessionUser } from "./Session";
@@ -69,13 +69,6 @@ class Customer {
     await this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });
 
     return customer;
-  }
-
-  async destroyCustomer() {
-    await deleteStripeCustomer(this.maintainerStripeAccountId, this.getStripeCustomerId());
-    delete this.stripeCustomerIds[this.maintainerStripeAccountId];
-
-    return await this.updateUser({ stripeCustomerIds: this.stripeCustomerIds });
   }
 
   // payment method

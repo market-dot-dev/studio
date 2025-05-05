@@ -77,7 +77,7 @@ export function DirectPaymentCheckout({
   }
 
   const isProcessing = paymentState.status === "processing";
-  const isDisabled = isProcessing || !userId || !paymentReady || paymentState.status == "success";
+  const isDisabled = isProcessing || !userId || !paymentReady || paymentState.status === "success";
   const errorMessage = paymentState.status === "error" ? paymentState.message : null;
 
   return (
