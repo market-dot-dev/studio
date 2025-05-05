@@ -29,6 +29,8 @@ export default async function PaymentSettings(props: {
         console.error("Error handling Stripe OAuth callback:", error);
         // Handle error
       }
+      // Clear params
+      redirect(`/settings/payment`);
     }
   }
 
@@ -42,7 +44,7 @@ export default async function PaymentSettings(props: {
 
   // Check if account has been connected at some point but might be disconnected now
   const hasStripeHistory = !!user.stripeAccountId || user.stripeAccountDisabled;
-  const oauthUrl = !hasStripeHistory ? await getVendorStripeConnectURL(user.id) : "";
+  const oauthUrl = await getVendorStripeConnectURL(user.id);
 
   return (
     <div className="flex max-w-screen-md flex-col space-y-10">
@@ -67,9 +69,7 @@ export default async function PaymentSettings(props: {
                 messageCodes={messageCodes}
                 disabledReasons={disabledReasons}
                 isAccountDeauthorized={user.stripeAccountDisabled && !user.stripeAccountId}
-                reconnectUrl={
-                  user.stripeAccountDisabled ? await getVendorStripeConnectURL(user.id) : undefined
-                }
+                reconnectUrl={user.stripeAccountDisabled ? oauthUrl : undefined}
               />
 
               {user.stripeAccountId && (
@@ -86,7 +86,7 @@ export default async function PaymentSettings(props: {
               )}
 
               {user.stripeAccountDisabled && !user.stripeAccountId && (
-                <ConnectStripeBtn oauthUrl={await getVendorStripeConnectURL(user.id)} />
+                <ConnectStripeBtn oauthUrl={oauthUrl} />
               )}
 
               {user.stripeAccountId && (

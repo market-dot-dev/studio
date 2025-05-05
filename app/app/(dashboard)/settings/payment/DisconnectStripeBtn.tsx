@@ -14,7 +14,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Link2Off } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 interface DisconnectStripeBtnProps {
@@ -23,8 +22,6 @@ interface DisconnectStripeBtnProps {
 }
 
 export function DisconnectStripeBtn({ userId, stripeAccountId }: DisconnectStripeBtnProps) {
-  const router = useRouter();
-
   // This is to refresh the onboarding guide if it exists
   useEffect(() => {
     // Call the refreshOnboarding function if it exists
@@ -36,7 +33,7 @@ export function DisconnectStripeBtn({ userId, stripeAccountId }: DisconnectStrip
   const handleDisconnect = async () => {
     try {
       await disconnectVendorStripeAccount(userId);
-      router.refresh();
+      location.reload();
     } catch (error) {
       console.error("Failed to disconnect Stripe account:", error);
     }
