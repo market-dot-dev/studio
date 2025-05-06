@@ -2,8 +2,9 @@ import { getVendorStripeErrorMessage } from "@/app/services/stripe-vendor-servic
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ErrorMessageCode } from "@/types/stripe";
-import { AlertTriangle, CheckCircle, ExternalLink, RefreshCw } from "lucide-react";
+import { AlertTriangle, CircleCheck, ExternalLink } from "lucide-react";
 import Link from "next/link";
+import { ConnectStripeBtn } from "./ConnectStripeBtn";
 
 interface StripeAccountStatusProps {
   canSell: boolean;
@@ -24,8 +25,8 @@ export function StripeAccountStatus({
   if (canSell) {
     return (
       <Alert variant="success">
-        <CheckCircle className="size-4" />
-        <AlertTitle>Your Stripe account is in good standing</AlertTitle>
+        <CircleCheck />
+        <AlertTitle>Your Stripe account is connected and in good standing</AlertTitle>
         <AlertDescription>You can sell your services and receive payments.</AlertDescription>
       </Alert>
     );
@@ -38,7 +39,7 @@ export function StripeAccountStatus({
   if (isAccountDeauthorized || hasDisconnectError) {
     return (
       <Alert variant="destructive">
-        <AlertTriangle className="size-4" />
+        <AlertTriangle />
         <AlertTitle>Account Disconnected</AlertTitle>
         <AlertDescription className="space-y-4">
           <p>
@@ -46,14 +47,7 @@ export function StripeAccountStatus({
             to continue receiving payments.
           </p>
 
-          {reconnectUrl && (
-            <Button asChild variant="outline">
-              <Link href={reconnectUrl} className="flex items-center gap-2">
-                Reconnect Stripe Account
-                <RefreshCw className="size-4" />
-              </Link>
-            </Button>
-          )}
+          {reconnectUrl && <ConnectStripeBtn oauthUrl={reconnectUrl} />}
         </AlertDescription>
       </Alert>
     );
@@ -62,41 +56,43 @@ export function StripeAccountStatus({
   // Regular error state with link to Stripe dashboard
   return (
     <Alert variant="destructive">
-      <AlertTriangle className="size-4" />
-      <AlertTitle>Action Required!</AlertTitle>
+      <AlertTriangle />
+      <AlertTitle>Something's up with your account</AlertTitle>
       <AlertDescription className="space-y-4">
-        <p>
-          It looks like there are some issues with your Stripe account settings. Please visit your{" "}
-          <Link
-            href="https://dashboard.stripe.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium underline underline-offset-4"
-          >
-            Stripe Dashboard
-          </Link>{" "}
-          to resolve these issues and ensure your account is fully operational.
-        </p>
-
         <div>
-          <ul className="list-disc space-y-2 pl-5">
+          <p>
+            It looks like there are some issues with your Stripe account settings. Please visit your{" "}
+            <Link
+              href="https://dashboard.stripe.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium underline underline-offset-4"
+            >
+              Stripe Dashboard
+            </Link>{" "}
+            to resolve these issues and ensure your account is fully operational.
+          </p>
+
+          <ul className="my-2 list-disc space-y-1 pl-5">
             {messageCodes.map(async (message, index) => (
               <li key={index}>{await getVendorStripeErrorMessage(message as ErrorMessageCode)}</li>
             ))}
           </ul>
 
           {disabledReasons && disabledReasons.length > 0 && (
-            <>
-              <p className="mt-2 text-sm font-medium">
-                Stripe Error Codes (These specific codes provide a hint about what may be wrong with
-                the account).
-              </p>
-              <ul className="list-disc space-y-2 pl-5">
+            <div className="mt-4">
+              <h6 className="text-sm font-semibold text-foreground">Stripe Error Codes</h6>
+              <p className="italic">These codes might hint at what's wrong with your account.</p>
+              <ul className="my-2 list-disc space-y-1 pl-5">
                 {disabledReasons.map((message, index) => (
-                  <li key={index}>{message}</li>
+                  <li key={index} className="marker:text-[14px]">
+                    <span className="inline-block w-fit rounded-sm border bg-stone-150 px-1 font-mono text-xs/[18px] font-medium">
+                      {message}
+                    </span>
+                  </li>
                 ))}
               </ul>
-            </>
+            </div>
           )}
         </div>
 
@@ -107,7 +103,7 @@ export function StripeAccountStatus({
             className="flex items-center gap-2"
           >
             Go to Stripe Dashboard
-            <ExternalLink className="size-4" />
+            <ExternalLink />
           </Link>
         </Button>
       </AlertDescription>
