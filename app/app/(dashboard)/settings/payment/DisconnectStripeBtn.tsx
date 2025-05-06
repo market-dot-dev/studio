@@ -13,7 +13,6 @@ import {
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Link2Off } from "lucide-react";
 import { useEffect } from "react";
 
 interface DisconnectStripeBtnProps {
@@ -40,29 +39,25 @@ export function DisconnectStripeBtn({ userId, stripeAccountId }: DisconnectStrip
   };
 
   return (
-    <div className="mt-2">
-      <AlertDialog>
-        <AlertDialogTrigger asChild>
-          <Button variant="destructive" disabled={!stripeAccountId}>
-            Disconnect Stripe Account <Link2Off />
-          </Button>
-        </AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will disconnect your Stripe account. You will not be able to receive payments
-              until you reconnect.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction variant="destructive" onClick={handleDisconnect}>
-              Disconnect
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant="destructive" disabled={!stripeAccountId}>
+          Disconnect Stripe Account
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+          <AlertDialogDescription>
+            This will disconnect your Stripe account. You will not be able to receive payments until
+            you reconnect.
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction onClick={handleDisconnect}>Disconnect</AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

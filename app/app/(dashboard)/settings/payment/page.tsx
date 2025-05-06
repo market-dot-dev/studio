@@ -7,6 +7,7 @@ import {
 } from "@/app/services/stripe-vendor-service";
 import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { redirect } from "next/navigation";
 import { ConnectStripeBtn } from "./ConnectStripeBtn";
 import { DisconnectStripeBtn } from "./DisconnectStripeBtn";
@@ -48,57 +49,62 @@ export default async function PaymentSettings(props: {
 
   return (
     <div className="flex max-w-screen-md flex-col space-y-10">
-      <div className="flex flex-col space-y-6">
-        <div className="flex flex-col items-start gap-4">
-          {!hasStripeHistory && (
-            <>
-              <h2 className="text-xl font-semibold">Connect Stripe Account</h2>
-              <p className="text-sm text-muted-foreground">
-                Connect your Stripe account to manage and receive payments. If you have made changes
-                recently, try refreshing this page to see the latest status.
-              </p>
-              <ConnectStripeBtn oauthUrl={oauthUrl} />
-            </>
-          )}
-
-          {hasStripeHistory && (
-            <>
-              <h2 className="text-xl font-semibold">Stripe Account</h2>
-              <StripeAccountStatus
-                canSell={canSell}
-                messageCodes={messageCodes}
-                disabledReasons={disabledReasons}
-                isAccountDeauthorized={user.stripeAccountDisabled && !user.stripeAccountId}
-                reconnectUrl={user.stripeAccountDisabled ? oauthUrl : undefined}
-              />
+      {hasStripeHistory ? (
+        <>
+          <div className="flex flex-col gap-4">
+            <div className="flex w-full flex-wrap justify-between gap-x-6 gap-y-2">
+              <div className="inline-flex w-fit items-center gap-2">
+                <h2 className="text-xl font-bold">Stripe Account</h2>
+                {user.stripeAccountId && (
+                  <Badge
+                    variant="secondary"
+                    size="sm"
+                    tooltip="Your Stripe account ID"
+                    className="translate-y-px font-mono"
+                  >
+                    {user.stripeAccountId}
+                  </Badge>
+                )}
+              </div>
 
               {user.stripeAccountId && (
-                <div className="text-sm text-muted-foreground">
-                  Your account ID is: <Badge>{user.stripeAccountId}</Badge>
+                <div className="inline-flex items-center gap-2 text-sm font-medium text-success">
+                  <span className="size-1.5 rounded-full bg-success" />
+                  Connected
                 </div>
               )}
+            </div>
 
-              {user.stripeAccountDisabled && !user.stripeAccountId && (
-                <div className="text-sm text-muted-foreground">
-                  Your Stripe account has been disconnected. Please reconnect to continue receiving
-                  payments.
-                </div>
-              )}
+            <StripeAccountStatus
+              canSell={canSell}
+              messageCodes={messageCodes}
+              disabledReasons={disabledReasons}
+              isAccountDeauthorized={user.stripeAccountDisabled && !user.stripeAccountId}
+              reconnectUrl={user.stripeAccountDisabled ? oauthUrl : undefined}
+            />
+          </div>
 
-              {user.stripeAccountDisabled && !user.stripeAccountId && (
-                <ConnectStripeBtn oauthUrl={oauthUrl} />
-              )}
+          {user.stripeAccountId && (
+            <>
+              <Separator className="my-6" />
 
-              {user.stripeAccountId && (
-                <>
-                  <h2 className="mt-8 text-xl font-semibold">Danger Zone</h2>
-                  <DisconnectStripeBtn userId={user.id} stripeAccountId={user.stripeAccountId} />
-                </>
-              )}
+              <div className="flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-4 ">
+                <h2 className="text-xl font-bold">Danger Zone</h2>
+                <DisconnectStripeBtn userId={user.id} stripeAccountId={user.stripeAccountId} />
+              </div>
             </>
           )}
+        </>
+      ) : (
+        <div className="flex flex-col gap-4">
+          <h2 className="text-xl font-bold">Connect Stripe Account</h2>
+          <p className="text-sm text-muted-foreground">
+            Connect your Stripe account to manage and receive payments. If you have made changes
+            recently, try refreshing this page to see the latest status.
+          </p>
+          <ConnectStripeBtn oauthUrl={oauthUrl} />
         </div>
-      </div>
+      )}
     </div>
   );
 }
