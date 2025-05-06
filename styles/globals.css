@@ -180,6 +180,10 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --muted-foreground: 25 5.3% 44.7%;
     --accent: 60 4.8% 95.9%;
     --accent-foreground: 24 9.8% 10%;
+    --success: 105 58% 30%;
+    --success-foreground: 0 0% 100%;
+    --warning: 27 90% 55%;
+    --warning-foreground: 0 0% 100%;
     --destructive: 345 82% 50%;
     --destructive-foreground: 60 9.1% 97.8%;
     --border: 20 5.9% 90%;
@@ -190,10 +194,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --success: 105 58% 30%; /* lime-700 */
-    --success-foreground: 0 0% 100%; /* white */
-    --warning: 27 90% 55%; /* orange-600 */
-    --warning-foreground: 0 0% 100%; /* white */
   }
   .dark {
     --background: 20 14.3% 4.1%;
@@ -210,6 +210,10 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --muted-foreground: 24 5.4% 63.9%;
     --accent: 12 6.5% 15.1%;
     --accent-foreground: 60 9.1% 97.8%;
+    --success: 82 70% 45%;
+    --success-foreground: 0 0% 100%;
+    --warning: 27 85% 60%;
+    --warning-foreground: 24 9.8% 10%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 60 9.1% 97.8%;
     --border: 12 6.5% 15.1%;
@@ -220,10 +224,6 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --success: 82 70% 45%; /* lime-500 for dark mode */
-    --success-foreground: 0 0% 100%; /* white */
-    --warning: 27 85% 60%; /* lighter orange for dark mode */
-    --warning-foreground: 24 9.8% 10%; /* dark foreground for dark mode warning */
   }
 }
 
