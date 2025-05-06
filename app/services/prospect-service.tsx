@@ -15,7 +15,8 @@ class ProspectService {
 
     const response = await prisma.prospect.findMany({
       where: { userId },
-      include: { tiers: true }
+      include: { tiers: true },
+      orderBy: { createdAt: "desc" }
     });
 
     return response.map((prospect) => ({
