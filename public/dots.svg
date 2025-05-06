@@ -1,0 +1,20 @@
+<svg width="1193" height="793" viewBox="0 0 1193 793" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- Pattern for the 'even' rows -->
+    <pattern id="dot-pattern-base" patternUnits="userSpaceOnUse" width="10" height="10">
+      <!-- Centered within the 10x10 tile -->
+      <circle cx="5" cy="5" r="1.565" fill="black" fill-opacity="0.25" />
+    </pattern>
+    <!-- Pattern for the 'odd' (offset) rows -->
+    <!-- Offset this pattern by half width (5) and half height (5) -->
+     <pattern id="dot-pattern-offset" patternUnits="userSpaceOnUse" width="10" height="10" x="5" y="5">
+       <use href="#dot-pattern-base" /> <!-- Reuse the base pattern definition -->
+     </pattern>
+  </defs>
+
+  <!-- Apply the base pattern -->
+  <rect width="100%" height="100%" fill="url(#dot-pattern-base)" />
+  <!-- Apply the offset pattern on top -->
+   <rect width="100%" height="100%" fill="url(#dot-pattern-offset)" />
+
+</svg>
