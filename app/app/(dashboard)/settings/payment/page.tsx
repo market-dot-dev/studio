@@ -49,7 +49,7 @@ export default async function PaymentSettings(props: {
 
   return (
     <div className="flex max-w-screen-md flex-col space-y-10">
-      {hasStripeHistory ? (
+      {!hasStripeHistory ? (
         <>
           <div className="flex flex-col gap-4">
             <div className="flex w-full flex-wrap justify-between gap-x-6 gap-y-2">
@@ -96,13 +96,13 @@ export default async function PaymentSettings(props: {
           )}
         </>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
           <h2 className="text-xl font-bold">Connect Stripe Account</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="mb-2 text-sm text-muted-foreground">
             Connect your Stripe account to manage and receive payments. If you have made changes
             recently, try refreshing this page to see the latest status.
           </p>
-          <ConnectStripeBtn oauthUrl={oauthUrl} />
+          <ConnectStripeBtn oauthUrl={oauthUrl} className="w-fit" />
         </div>
       )}
     </div>
