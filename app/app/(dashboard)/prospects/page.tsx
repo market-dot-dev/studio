@@ -5,7 +5,7 @@ import { DataTable } from "@/components/ui/data-table";
 import { getSession } from "@/lib/auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { columns } from "./columns";
+import { columns, renderProspectContextSubRowComponent } from "./columns";
 
 export default async function ProspectsPage() {
   const session = await getSession();
@@ -28,7 +28,11 @@ export default async function ProspectsPage() {
         description="View all prospects who have submitted an interest on one of your packages."
       />
 
-      <DataTable columns={columns} data={prospects} />
+      <DataTable
+        columns={columns}
+        data={prospects}
+        renderSubRowComponent={renderProspectContextSubRowComponent}
+      />
 
       {!showAll && maxInitialRows && prospects.length > maxInitialRows && (
         <div className="mt-4 grid justify-items-end">
