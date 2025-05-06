@@ -47,67 +47,58 @@ export default function BusinessSettings({ user }: { user: Partial<User> }) {
   }, [businessData]);
 
   return (
-    <>
-      <div className="flex w-full items-start justify-between gap-12">
-        <div className="flex w-1/2 flex-col items-start space-y-6">
-          <div className="flex flex-col gap-2">
-            <div>
-              <Label htmlFor="project-name" className="mb-0.5">
-                Business Name
-              </Label>
-              <p className="text-xs text-stone-500">
-                Provide a name for your business, if you have one.
-              </p>
-            </div>
-            <Input
-              placeholder="Enter your business name"
-              name="project-name"
-              id="project-name"
-              value={businessData.projectName ?? ""}
-              onChange={(e) => {
-                setBusinessData({
-                  ...businessData,
-                  projectName: e.target.value || null
-                });
-              }}
-            />
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <div>
-              <Label htmlFor="project-description" className="mb-0.5">
-                Business Description
-              </Label>
-              <p className="text-xs text-stone-500">
-                Your business description is used in your store homepage (and other pages where you
-                embed the {`<SiteDescription>`} component).
-              </p>
-            </div>
-            <Textarea
-              className="h-52"
-              placeholder="Describe your business"
-              name="project-description"
-              id="project-description"
-              value={businessData.projectDescription ?? ""}
-              onChange={(e) => {
-                setBusinessData({
-                  ...businessData,
-                  projectDescription: e.target.value || null
-                });
-              }}
-            />
-          </div>
-
-          <Button
-            loading={isSaving}
-            loadingText="Saving Changes"
-            disabled={isSaving}
-            onClick={saveChanges}
-          >
-            Save
-          </Button>
+    <div className="flex w-full items-start justify-between gap-12 lg:max-w-xl">
+      <div className="flex flex-col items-start space-y-6">
+        <div className="flex w-full flex-col gap-2">
+          <Label htmlFor="project-name">Business Name</Label>
+          <Input
+            placeholder="Enter your business name"
+            name="project-name"
+            id="project-name"
+            value={businessData.projectName ?? ""}
+            onChange={(e) => {
+              setBusinessData({
+                ...businessData,
+                projectName: e.target.value || null
+              });
+            }}
+          />
         </div>
+
+        <div className="flex flex-col gap-2">
+          <div>
+            <Label htmlFor="project-description" className="mb-1">
+              Business Description
+            </Label>
+            <p className="text-xs text-stone-500">
+              Your business description is used in your store homepage (and other pages where you
+              embed the {`<SiteDescription>`} component).
+            </p>
+          </div>
+          <Textarea
+            className="min-h-40"
+            placeholder="Describe your business"
+            name="project-description"
+            id="project-description"
+            value={businessData.projectDescription ?? ""}
+            onChange={(e) => {
+              setBusinessData({
+                ...businessData,
+                projectDescription: e.target.value || null
+              });
+            }}
+          />
+        </div>
+
+        <Button
+          loading={isSaving}
+          loadingText="Saving Changes"
+          disabled={isSaving}
+          onClick={saveChanges}
+        >
+          Save
+        </Button>
       </div>
-    </>
+    </div>
   );
 }

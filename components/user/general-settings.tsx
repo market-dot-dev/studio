@@ -40,44 +40,42 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
   }, [userData]);
 
   return (
-    <>
-      <div className="flex w-full flex-col items-start space-y-6">
-        <div className="flex w-1/2 flex-col items-start gap-1.5">
-          <Label htmlFor="name">Name</Label>
-          <Input
-            placeholder="Enter your name"
-            name="name"
-            id="name"
-            value={userData.name ?? ""}
-            onChange={(e) => {
-              setUserData({ ...userData, name: e.target.value || null });
-            }}
-          />
-        </div>
-
-        <div className="flex w-1/2 flex-col items-start gap-1.5">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            placeholder="Enter your email"
-            type="email"
-            name="email"
-            id="email"
-            value={userData.email ?? ""}
-            onChange={(e) => {
-              setUserData({ ...userData, email: e.target.value || null });
-            }}
-          />
-        </div>
-
-        <Button
-          loading={isSaving}
-          loadingText="Saving Changes"
-          disabled={isSaving}
-          onClick={saveChanges}
-        >
-          Save
-        </Button>
+    <div className="flex w-full flex-col items-start space-y-6 lg:max-w-xl">
+      <div className="flex w-full flex-col items-start gap-1.5">
+        <Label htmlFor="name">Name</Label>
+        <Input
+          placeholder="Enter your name"
+          name="name"
+          id="name"
+          value={userData.name ?? ""}
+          onChange={(e) => {
+            setUserData({ ...userData, name: e.target.value || null });
+          }}
+        />
       </div>
-    </>
+
+      <div className="flex w-full flex-col items-start gap-1.5">
+        <Label htmlFor="email">Email</Label>
+        <Input
+          placeholder="Enter your email"
+          type="email"
+          name="email"
+          id="email"
+          value={userData.email ?? ""}
+          onChange={(e) => {
+            setUserData({ ...userData, email: e.target.value || null });
+          }}
+        />
+      </div>
+
+      <Button
+        loading={isSaving}
+        loadingText="Saving Changes"
+        disabled={isSaving}
+        onClick={saveChanges}
+      >
+        Save
+      </Button>
+    </div>
   );
 }
