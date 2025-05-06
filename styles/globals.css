@@ -190,6 +190,10 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --success: 105 58% 30%; /* lime-700 */
+    --success-foreground: 0 0% 100%; /* white */
+    --warning: 27 90% 55%; /* orange-600 */
+    --warning-foreground: 0 0% 100%; /* white */
   }
   .dark {
     --background: 20 14.3% 4.1%;
@@ -216,6 +220,10 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --success: 82 70% 45%; /* lime-500 for dark mode */
+    --success-foreground: 0 0% 100%; /* white */
+    --warning: 27 85% 60%; /* lighter orange for dark mode */
+    --warning-foreground: 24 9.8% 10%; /* dark foreground for dark mode warning */
   }
 }
 
