@@ -3,6 +3,7 @@ import { getUserSubscriptions } from "@/app/services/subscription-service";
 import PageHeader from "@/components/common/page-header";
 import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
+import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { isActive } from "@/types/subscription";
 
@@ -27,9 +28,18 @@ export default async function SubscriptionsAndChargesList() {
 
         <Tabs defaultValue="active">
           <TabsList>
-            <TabsTrigger value="active">Active Subscriptions</TabsTrigger>
-            <TabsTrigger value="onetime">One Time Purchases</TabsTrigger>
-            <TabsTrigger value="past">Past Subscriptions</TabsTrigger>
+            <TabsTrigger value="active" className="gap-1">
+              Active Subscriptions
+              {anyActive && <Badge>{activeSubscriptions.length}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="onetime" className="gap-1">
+              One Time Purchases
+              {anyCharges && <Badge>{charges.length}</Badge>}
+            </TabsTrigger>
+            <TabsTrigger value="past" className="gap-1">
+              Past Subscriptions
+              {anyPast && <Badge>{pastSubscriptions.length}</Badge>}
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="active">

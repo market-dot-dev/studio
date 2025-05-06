@@ -47,7 +47,7 @@ export async function createStripeSubscriptionForCustomer(
  * @param priceId - The new price ID
  * @returns The updated subscription
  */
-export async function updateSubscription(
+export async function updateSubscriptionPrice(
   vendorAccountId: string,
   subscriptionId: string,
   priceId: string
