@@ -49,7 +49,7 @@ export default async function PaymentSettings(props: {
 
   return (
     <div className="flex max-w-screen-md flex-col space-y-10">
-      {!hasStripeHistory ? (
+      {hasStripeHistory ? (
         <>
           <div className="flex flex-col gap-4">
             <div className="flex w-full flex-wrap justify-between gap-x-6 gap-y-2">
