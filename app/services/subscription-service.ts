@@ -302,7 +302,7 @@ export async function getSubscriptionStatus(
   // Get the subscription if it exists
   const subscription = await prisma.subscription.findFirst({
     where: {
-        userId,
+      userId,
       tierId,
       active: true
     },
@@ -353,6 +353,50 @@ export async function getSubscriptionStatus(
     subscription,
     expiryDate: subscription.activeUntil
   };
+}
+
+/**
+ * Deactivate expired subscriptions
+ * This could be called by a cron job or webhook handler
+ */
+export async function deactivateExpiredSubscriptions(): Promise<number> {
+  const now = new Date();
+
+  const result = await prisma.subscription.updateMany({
+    where: {
+      state: SubscriptionStates.cancelled,
+      activeUntil: {
+        lt: now
+      },
+      active: true
+    },
+    data: {
+      active: false
+    }
+  });
+
+  return result.count;
+}
+
+/**
+ * Get subscription history for the current user and a specific tier
+ *
+ * @param tierId - The tier ID to get history for
+ * @returns Array of subscriptions ordered by creation date (newest first)
+ */
+export async function getSubscriptionHistory(tierId: string) {
+  const userId = await getCurrentUserId();
+  if (!userId) return [];
+
+  return await prisma.subscription.findMany({
+    where: {
+      userId,
+      tierId
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
 }
 
 /**
