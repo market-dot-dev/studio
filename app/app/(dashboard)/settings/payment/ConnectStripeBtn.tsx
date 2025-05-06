@@ -4,11 +4,12 @@ import Link from "next/link";
 
 interface Props {
   oauthUrl: string;
+  className?: string;
 }
 
-export function ConnectStripeBtn({ oauthUrl }: Props) {
+export function ConnectStripeBtn({ oauthUrl, className }: Props) {
   return (
-    <Button asChild variant="outline">
+    <Button asChild variant="outline" className={className}>
       <Link href={oauthUrl}>
         <Image
           src="/stripe-icon-square.svg"
