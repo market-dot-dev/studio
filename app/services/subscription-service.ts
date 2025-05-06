@@ -17,7 +17,10 @@ import {
   notifyOwnerOfSubscriptionCancellation
 } from "./email-service";
 import SessionService from "./session-service";
-import { cancelStripeSubscription } from "./stripe-subscription-service";
+import {
+  cancelStripeSubscription,
+  reactivateStripeSubscription
+} from "./stripe-subscription-service";
 import { getTierById } from "./tier-service";
 import UserService from "./UserService";
 
@@ -369,4 +372,80 @@ export async function getSubscriptionStatus(
     subscription,
     expiryDate: subscription.activeUntil
   };
+}
+
+/**
+ * Reactivate a cancelled subscription
+ *
+ * This function reactivates a subscription that has been cancelled but is still
+ * within its active period. It removes the cancellation schedule in Stripe and
+ * updates the local subscription record to reflect the renewed status.
+ *
+ * @param subscriptionId - The ID of the subscription to reactivate
+ * @returns The updated subscription
+ */
+export async function reactivateSubscription(subscriptionId: string): Promise<Subscription> {
+  const user = await SessionService.getSessionUser();
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  // Get the subscription with related data
+  const subscription = await prisma.subscription.findUnique({
+    where: { id: subscriptionId },
+    include: {
+      user: true, // customer
+      tier: {
+        select: {
+          name: true,
+          user: true // tier owner
+        }
+      }
+    }
+  });
+
+  if (!subscription) {
+    throw new Error("Subscription not found");
+  }
+
+  // Verify the current user is the subscription owner
+  if (subscription.userId !== user.id) {
+    throw new Error("Not authorized to modify this subscription");
+  }
+
+  // Verify the subscription is in a cancelled state
+  if (subscription.state !== SubscriptionStates.cancelled) {
+    throw new Error("Subscription is not in a cancelled state");
+  }
+
+  // Verify the subscription is still active (hasn't expired)
+  if (!subscription.activeUntil || subscription.activeUntil <= new Date()) {
+    throw new Error("Subscription has already expired");
+  }
+
+  // Get the vendor's Stripe account ID
+  const vendor = subscription.tier.user;
+  if (!vendor.stripeAccountId) {
+    throw new Error("Vendor's Stripe account not found");
+  }
+
+  // Reactivate the subscription in Stripe
+  await reactivateStripeSubscription(vendor.stripeAccountId, subscription.stripeSubscriptionId);
+
+  // Update the local subscription record
+  const updatedSubscription = await prisma.subscription.update({
+    where: { id: subscriptionId },
+    data: {
+      state: SubscriptionStates.renewing,
+      cancelledAt: null
+    }
+  });
+
+  // Optional: Send notification emails to customer and vendor
+  await Promise.all([
+    confirmCustomerSubscription(subscription.user, subscription.tier.name),
+    notifyOwnerOfNewSubscription(vendor.id, subscription.user, subscription.tier.name)
+  ]);
+
+  return updatedSubscription;
 }

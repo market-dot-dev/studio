@@ -1,6 +1,6 @@
 "use client";
 
-import { cancelSubscription } from "@/app/services/subscription-service";
+import { reactivateSubscription } from "@/app/services/subscription-service";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,7 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
-const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }) => {
+export const ReactivateSubscriptionBtn = ({ subscriptionId }: { subscriptionId: string }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -22,44 +22,45 @@ const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }
     <>
       <Button
         size="sm"
-        variant="destructive"
+        variant="default"
         loading={loading}
-        loadingText="Cancelling Subscription"
+        loadingText="Reactivating Subscription"
         disabled={loading}
         className="w-min"
         onClick={() => setDialogOpen(true)}
       >
-        Cancel Subscription
+        Reactivate Subscription
       </Button>
 
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Cancel Subscription</AlertDialogTitle>
+            <AlertDialogTitle>Reactivate Subscription</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-stone-500">
-              Are you sure you want to cancel your subscription?
+              Would you like to reactivate your subscription? Your subscription will continue after
+              the current period ends, and you'll be billed according to your plan.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setDialogOpen(false)}>
-              No, keep subscription
+              No, keep it cancelled
             </AlertDialogCancel>
             <AlertDialogAction asChild>
               <Button
                 size="sm"
-                variant="destructive"
+                variant="default"
                 loading={loading}
-                loadingText="Cancelling Subscription"
+                loadingText="Reactivating Subscription"
                 disabled={loading}
                 onClick={() => {
                   setLoading(true);
-                  cancelSubscription(subscriptionId).finally(() => {
+                  reactivateSubscription(subscriptionId).finally(() => {
                     setLoading(false);
                     window.location.reload();
                   });
                 }}
               >
-                Cancel subscription
+                Reactivate subscription
               </Button>
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -68,5 +69,3 @@ const CancelSubscriptionButton = ({ subscriptionId }: { subscriptionId: string }
     </>
   );
 };
-
-export default CancelSubscriptionButton;
