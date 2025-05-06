@@ -67,9 +67,8 @@ const ContractDeleteButton = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setOpen(false)}>No, keep contract</AlertDialogCancel>
-            <AlertDialogAction asChild>
+            <AlertDialogAction variant="destructive" asChild>
               <Button
-                variant="destructive"
                 loading={loading}
                 loadingText="Deleting contract"
                 className="w-min"

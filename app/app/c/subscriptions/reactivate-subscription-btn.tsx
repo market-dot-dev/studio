@@ -45,10 +45,9 @@ export const ReactivateSubscriptionBtn = ({ subscriptionId }: { subscriptionId: 
             <AlertDialogCancel onClick={() => setDialogOpen(false)}>
               No, keep it cancelled
             </AlertDialogCancel>
-            <AlertDialogAction asChild>
+            <AlertDialogAction variant="default" asChild>
               <Button
                 size="sm"
-                variant="default"
                 loading={loading}
                 loadingText="Reactivating Subscription"
                 disabled={loading}

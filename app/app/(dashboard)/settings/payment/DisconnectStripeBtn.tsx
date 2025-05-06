@@ -57,7 +57,9 @@ export function DisconnectStripeBtn({ userId, stripeAccountId }: DisconnectStrip
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDisconnect}>Disconnect</AlertDialogAction>
+            <AlertDialogAction variant="destructive" onClick={handleDisconnect}>
+              Disconnect
+            </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

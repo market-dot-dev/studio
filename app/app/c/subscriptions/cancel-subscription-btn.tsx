@@ -44,10 +44,9 @@ export const CancelSubscriptionBtn = ({ subscriptionId }: { subscriptionId: stri
             <AlertDialogCancel onClick={() => setDialogOpen(false)}>
               No, keep subscription
             </AlertDialogCancel>
-            <AlertDialogAction asChild>
+            <AlertDialogAction variant="destructive" asChild>
               <Button
                 size="sm"
-                variant="destructive"
                 loading={loading}
                 loadingText="Cancelling Subscription"
                 disabled={loading}
