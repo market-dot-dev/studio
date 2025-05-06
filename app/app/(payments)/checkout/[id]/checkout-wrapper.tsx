@@ -38,51 +38,19 @@ export async function CheckoutWrapper({
   }
 
   // Get detailed subscription status
-  const subscriptionStatus = await getSubscriptionStatus(userId, tier.id);
+  const subStatus = await getSubscriptionStatus(userId, tier.id);
 
   // For actively renewing subscriptions, just show the status view
-  if (subscriptionStatus.statusType === "active_renewing") {
+  if (subStatus.statusType === "active_renewing" || subStatus.statusType === "cancelled_active") {
     return (
       <SubscriptionStatus
-        subscriptionId={subscriptionStatus.subscription!.id}
+        subscriptionId={subStatus.subscription!.id}
         tierName={tier.name}
         isActive={true}
         expiryDate={null}
       />
     );
   }
-
-  // For cancelled-but-active subscriptions, show both status and checkout
-  if (subscriptionStatus.statusType === "cancelled_active") {
-    return (
-      <div className="space-y-8">
-        <SubscriptionStatus
-          subscriptionId={subscriptionStatus.subscription!.id}
-          tierName={tier.name}
-          isActive={false}
-          expiryDate={subscriptionStatus.expiryDate}
-        />
-
-        <div className="border-t border-stone-200 pt-8">
-          <h3 className="mb-6 text-center text-lg font-medium text-stone-800">
-            Renew your subscription
-          </h3>
-          <DirectPaymentCheckout
-            tier={tier}
-            vendor={vendor}
-            contract={contract}
-            annual={annual}
-            userId={userId}
-            isRenewal={true}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  // For both non-subscribers and expired subscriptions, show the checkout
-  // with isRenewal=true for expired subscriptions
-  const isRenewal = subscriptionStatus.statusType === "expired";
 
   return (
     <DirectPaymentCheckout
@@ -91,7 +59,6 @@ export async function CheckoutWrapper({
       contract={contract}
       annual={annual}
       userId={userId}
-      isRenewal={isRenewal}
     />
   );
 }

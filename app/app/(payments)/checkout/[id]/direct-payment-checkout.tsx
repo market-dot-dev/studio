@@ -21,7 +21,6 @@ interface DirectPaymentCheckoutProps {
   contract?: Contract | null;
   annual?: boolean;
   userId?: string;
-  isRenewal?: boolean;
 }
 
 type PaymentState =
@@ -35,8 +34,7 @@ export function DirectPaymentCheckout({
   vendor,
   contract,
   annual = false,
-  userId,
-  isRenewal = false
+  userId
 }: DirectPaymentCheckoutProps) {
   const router = useRouter();
   const tierId = tier.id;
@@ -73,18 +71,6 @@ export function DirectPaymentCheckout({
   const isProcessing = paymentState.status === "processing";
   const isDisabled = isProcessing || !userId || !paymentReady || paymentState.status === "success";
   const errorMessage = paymentState.status === "error" ? paymentState.message : null;
-
-  // Determine button text based on subscription type and status
-  let buttonText = "";
-  if (tier.cadence === "once") {
-    buttonText = `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`;
-  } else if (tier.trialDays && tier.trialDays !== 0) {
-    buttonText = isRenewal ? "Restart your subscription" : "Start your free trial";
-  } else {
-    buttonText = isRenewal
-      ? `Renew for $${checkoutPrice} ${CHECKOUT_CURRENCY}`
-      : `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`;
-  }
 
   return (
     <div className="mx-auto flex w-full flex-col gap-12 md:max-w-xl lg:max-w-md xl:max-w-lg">
@@ -155,9 +141,13 @@ export function DirectPaymentCheckout({
           onClick={handleSubmit}
           className="w-full"
         >
-          {buttonText}
+          {tier.cadence === "once"
+            ? `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`
+            : tier.trialDays && tier.trialDays !== 0
+              ? "Start your free trial"
+              : `Pay $${checkoutPrice} ${CHECKOUT_CURRENCY}`}
         </Button>
-        {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 && !isRenewal ? (
+        {tier.cadence !== "once" && tier.trialDays && tier.trialDays !== 0 ? (
           <p className="mt-4 text-pretty text-center text-xs text-stone-500">
             You won&apos;t be charged now. After your{" "}
             <strong className="font-medium tracking-tightish text-stone-800">
@@ -168,12 +158,6 @@ export function DirectPaymentCheckout({
             .
           </p>
         ) : null}
-
-        {isRenewal && (
-          <p className="mt-4 text-pretty text-center text-xs text-stone-500">
-            You're renewing a previously expired subscription.
-          </p>
-        )}
       </section>
     </div>
   );
