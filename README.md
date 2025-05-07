@@ -47,6 +47,7 @@ market.dev is the open-source platform with everything developers need to sell, 
 Want to contribute?
 
 [Read our guidelines](CONTRIBUTING.md) for submitting issues, making requests, and opening Pull Requests.
+
 [Read the setup guide](#setup) to get started.
 
 ## Why a monorepo?
