@@ -1,5 +1,5 @@
 <p align="center" dir="auto">
-    <img src="public/market-dot-dev-logo-white-cover.png" alt="market.dev logo" style="max-width: 420px; border-radius: 8px;">
+    <img src="public/thumbnail.png" alt="market.dev logo" style="border-radius: 8px;">
 </p>
 
 <h3 align="center" dir="auto">market.dev</h3>
