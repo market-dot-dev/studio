@@ -1,7 +1,4 @@
-<p align="center">
-  <img src="public/market-dot-dev-logo-white-cover.png" alt="market.dev logo" style="border-radius: 8px;" />
-</p>
-<h3 align="center" dir="auto">market.dev</h3>
+<h1 align="center" dir="auto" style="border-bottom: 0; padding-bottom: 0;">market.dev</h1>
 <p align="center" dir="auto">
     The all-in-one open-source business toolkit for developers.
     <br>
@@ -9,11 +6,11 @@
     <br>
     <br>
     <a href="#features">Features</a> ·
-    <a href="#self-hosting">Self-Hosting</a> ·
-    <a href="#hosted">Hosted</a> ·
-    <a href="#contributing">Contribute</a> ·
     <a href="#roadmap">Roadmap</a> ·
-    <a href="#setup">Setup Guide</a>
+    <a href="#hosted-service">Hosted Service</a> ·
+    <a href="#contributing">Contribute</a> ·
+    <a href="#why-a-monorepo">Why a monorepo?</a> ·
+    <a href="#setup">Setup</a>
 </p>
 
 ## Introduction
@@ -33,21 +30,20 @@ market.dev is the open-source platform with everything developers need to sell, 
 - **Developer-Focused Lead Research**: Discover potential customers by analyzing open-source project dependency data.
 - **Easily sell on explore.market.dev**: Optionally list and sell your services on the explore.market.dev marketplace.
 
-## Self-Hosting
+## Roadmap
 
-Self-host market.dev to own your data and make it your own. [Read the setup guide](#setup) to get started.
+[See what's coming up](https://github.com/orgs/market-dot-dev/projects/1).
 
-## Hosted
+## Hosted Service
 
 [Use our hosted service](https://market.dev/) to get a custom `market.dev` domain and use our tools without the maintenance.
 
 ## Contributing
 
-Want to contribute? [Read our guidelines](CONTRIBUTING.md) for submitting issues, making requests, and opening Pull Requests.
+Want to contribute?
 
-## Roadmap
-
-[See what's coming up](https://github.com/orgs/market-dot-dev/projects/1).
+[Read our guidelines](CONTRIBUTING.md) for submitting issues, making requests, and opening PRs.
+[Read the setup guide](#setup) to get started.
 
 ## Why a monorepo?
 
