@@ -1,7 +1,7 @@
 <p align="center">
   <img src="public/market-dot-dev-logo-white-cover.png" alt="market.dev logo" style="border-radius: 8px;" />
 </p>
-<h1 align="center" dir="auto">market.dev</h1>
+<h3 align="center" dir="auto">market.dev</h3>
 <p align="center" dir="auto">
     The all-in-one open-source business toolkit for developers.
     <br>
