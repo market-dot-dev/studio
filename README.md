@@ -1,4 +1,8 @@
-<h1 align="center" dir="auto" style="border-bottom: 0; padding-bottom: 0;">market.dev</h1>
+<p align="center" dir="auto">
+    <img src="public/market-dot-dev-logo-white-cover.png" alt="market.dev logo" style="max-width: 420px; border-radius: 8px;">
+</p>
+
+<h3 align="center" dir="auto">market.dev</h3>
 <p align="center" dir="auto">
     The all-in-one open-source business toolkit for developers.
     <br>
@@ -42,7 +46,7 @@ market.dev is the open-source platform with everything developers need to sell, 
 
 Want to contribute?
 
-[Read our guidelines](CONTRIBUTING.md) for submitting issues, making requests, and opening PRs.
+[Read our guidelines](CONTRIBUTING.md) for submitting issues, making requests, and opening Pull Requests.
 [Read the setup guide](#setup) to get started.
 
 ## Why a monorepo?
