@@ -1,7 +1,7 @@
 <p align="center">
-  <img src="/market-dot-dev-logo-white-cover.png" alt="market.dev logo" />
+  <img src="public/market-dot-dev-logo-white-cover.png" alt="market.dev logo" style="border-radius: 8px;" />
 </p>
-<h3 align="center" dir="auto">market.dev</h3>
+<h1 align="center" dir="auto">market.dev</h1>
 <p align="center" dir="auto">
     The all-in-one open-source business toolkit for developers.
     <br>
@@ -41,23 +41,19 @@ Self-host market.dev to own your data and make it your own. [Read the setup guid
 
 [Use our hosted service](https://market.dev/) to get a custom `market.dev` domain and use our tools without the maintenance.
 
-## Community
-
-### Contributing
+## Contributing
 
 Want to contribute? [Read our guidelines](CONTRIBUTING.md) for submitting issues, making requests, and opening Pull Requests.
 
-### Roadmap
+## Roadmap
 
 [See what's coming up](https://github.com/orgs/market-dot-dev/projects/1).
-
----
 
 ## Why a monorepo?
 
 ---
 
-## Setup
+# Setup
 
 ### Getting Started
 
