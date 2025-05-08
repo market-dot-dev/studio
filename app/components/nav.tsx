@@ -2,7 +2,6 @@
 
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { useMarketExpert } from "@/components/dashboard/dashboard-context";
-import OnboardingChecklist from "@/components/onboarding/onboarding-checklist";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
@@ -340,7 +339,7 @@ export default function Nav({
           </div>
         </div>
         <div className="flex flex-col">
-          <AnimatePresence mode="wait">
+          {/* <AnimatePresence mode="wait">
             {(isMobile || !isHomepage) &&
               onboarding?.isDismissed !== undefined &&
               !onboarding.isDismissed &&
@@ -361,7 +360,7 @@ export default function Nav({
                   <OnboardingChecklist variant="mini" />
                 </motion.span>
               )}
-          </AnimatePresence>
+          </AnimatePresence> */}
           {serviceItems.map((item, index) => (
             <Item key={item.name + index} item={item} />
           ))}
