@@ -1,11 +1,13 @@
-import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button";
-import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
+import { CancelSubscriptionBtn } from "@/app/app/c/subscriptions/cancel-subscription-btn";
+import { ReactivateSubscriptionBtn } from "@/app/app/c/subscriptions/reactivate-subscription-btn";
 import ContractService from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { isActive, isCancelled, isFinishingMonth, isRenewing } from "@/types/subscription";
+import { Subscription } from "@prisma/client";
 import { Store } from "lucide-react";
 import { ContractLink } from "../contracts/contract-link";
 
@@ -22,7 +24,6 @@ const SubscriptionCard = async ({
   if (!tier) return null;
 
   const maintainer = await UserService.findUser(tier.userId);
-
   if (!maintainer) return null;
 
   const actualCadence = subscription.priceAnnual ? "year" : tier.cadence;
@@ -30,23 +31,32 @@ const SubscriptionCard = async ({
   const shortenedCadence =
     actualCadence === "month" ? "mo" : actualCadence === "year" ? "yr" : actualCadence;
 
+  // Determine subscription status using our helper functions
   let status = "";
-  if (subscription.state === SubscriptionStates.renewing) {
-    status = "Subscribed";
-  } else if (subscription.state === SubscriptionStates.cancelled) {
-    if (subscription.activeUntil && subscription.activeUntil <= new Date()) {
-      status = "Cancelled";
-    } else if (subscription.activeUntil) {
+  let badgeVariant: "success" | "secondary" | "destructive" = "secondary";
+
+  if (isRenewing(subscription)) {
+    status = "Active";
+    badgeVariant = "success";
+  } else if (isCancelled(subscription)) {
+    if (isFinishingMonth(subscription)) {
+      // Cancelled but still active
       const daysRemaining = Math.ceil(
-        (subscription.activeUntil.getTime() - new Date().getTime()) / (1000 * 3600 * 24)
+        (subscription.activeUntil!.getTime() - new Date().getTime()) / (1000 * 3600 * 24)
       );
-      status = `Cancelled, usable for ${daysRemaining} more day${daysRemaining !== 1 ? "s" : ""}`;
+      status = `Ending in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`;
+      badgeVariant = "secondary";
     } else {
-      status = "Cancelled";
+      // Fully expired
+      status = "Expired";
+      badgeVariant = "destructive";
     }
   }
 
   const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
+
+  // Check if this is a cancelled but still active subscription that can be reactivated
+  const canReactivate = isCancelled(subscription) && isFinishingMonth(subscription);
 
   return (
     <Card className="text-sm">
@@ -58,11 +68,8 @@ const SubscriptionCard = async ({
             </h3>
             {tier.tagline && <p className="line-clamp-2 text-sm text-stone-500">{tier.tagline}</p>}
           </div>
-          <Badge
-            variant={subscription.state === SubscriptionStates.renewing ? "success" : "secondary"}
-            className="size-fit"
-          >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+          <Badge variant={badgeVariant} className="size-fit">
+            {status}
           </Badge>
         </div>
         <p className="mb-1 text-xl font-semibold text-stone-800">
@@ -100,12 +107,12 @@ const SubscriptionCard = async ({
 
       <div
         className={cn("flex flex-row gap-2 rounded-b-md border-t bg-stone-50 px-5 py-3", {
-          "justify-between": subscription.state !== SubscriptionStates.cancelled
+          "justify-between": isActive(subscription)
         })}
       >
-        {subscription.state !== SubscriptionStates.cancelled && (
-          <CancelSubscriptionButton subscriptionId={subscription.id} />
-        )}
+        {isRenewing(subscription) && <CancelSubscriptionBtn subscriptionId={subscription.id} />}
+
+        {canReactivate && <ReactivateSubscriptionBtn subscriptionId={subscription.id} />}
       </div>
     </Card>
   );

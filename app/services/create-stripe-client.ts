@@ -12,7 +12,9 @@ export async function createStripeClient(stripeAccountId?: string): Promise<Stri
     throw new Error("STRIPE_SECRET_KEY environment variable is not set");
   }
 
-  const options: Stripe.StripeConfig = {};
+  const options: Stripe.StripeConfig = {
+    apiVersion: "2025-04-30.basil"
+  };
 
   if (stripeAccountId) {
     options.stripeAccount = stripeAccountId;

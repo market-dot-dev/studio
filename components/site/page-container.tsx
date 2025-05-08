@@ -380,13 +380,8 @@ export default function PageContainer({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setDeleteDialogOpen(false)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction asChild>
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-                loading={isDeleting}
-                loadingText="Deleting"
-              >
+            <AlertDialogAction variant="destructive" asChild>
+              <Button onClick={handleDelete} loading={isDeleting} loadingText="Deleting">
                 Delete Page
               </Button>
             </AlertDialogAction>

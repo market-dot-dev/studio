@@ -2,8 +2,7 @@
 
 import {
   checkVendorStripeStatus,
-  getVendorStripeConnectURL,
-  processVendorStripeConnectCallback
+  getVendorStripeConnectURL
 } from "@/app/services/stripe-vendor-service";
 import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
@@ -13,28 +12,7 @@ import { ConnectStripeBtn } from "./ConnectStripeBtn";
 import { DisconnectStripeBtn } from "./DisconnectStripeBtn";
 import { StripeAccountStatus } from "./StripeAccountStatus";
 
-export default async function PaymentSettings(props: {
-  params: Promise<{ slug: string }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const searchParams = await props.searchParams;
-  if (searchParams) {
-    const code = searchParams["code"] as string;
-    const state = searchParams["state"] as string;
-
-    // Check for OAuth callback
-    if (code && state) {
-      try {
-        await processVendorStripeConnectCallback(code, state);
-      } catch (error) {
-        console.error("Error handling Stripe OAuth callback:", error);
-        // Handle error
-      }
-      // Clear params
-      redirect(`/settings/payment`);
-    }
-  }
-
+export default async function PaymentSettings() {
   const user = await UserService.getCurrentUser();
 
   if (!user) {

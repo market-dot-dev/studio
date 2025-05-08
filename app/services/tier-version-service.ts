@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import { Tier, TierVersion } from "@prisma/client";
 import { deactivateStripePrice, type SubscriptionCadence } from "./stripe-price-service";
-import SubscriptionService from "./SubscriptionService";
+import { checkTierHasSubscribers } from "./subscription-service";
 
 // Define the version context type
 export interface VersionContext {
@@ -44,18 +44,17 @@ export async function buildVersionContext(
   tier: Tier,
   attrs: Partial<Tier>
 ): Promise<VersionContext> {
-  const hasSubscribers = await SubscriptionService.hasSubscribers(tier.id, tier.revision);
+  const hasSubs = await checkTierHasSubscribers(tier.id, tier.revision);
   const cadenceChanged = attrs.cadence !== tier.cadence;
   const priceChanged = attrs.price !== tier.price || cadenceChanged;
   const annualPriceChanged = attrs.priceAnnual !== tier.priceAnnual;
 
   return {
-    hasSubscribers,
+    hasSubscribers: hasSubs,
     priceChanged,
     annualPriceChanged,
     materialChange: priceChanged || annualPriceChanged,
-    createNewVersion:
-      hasSubscribers && (attrs.published ?? false) && (priceChanged || annualPriceChanged)
+    createNewVersion: hasSubs && (attrs.published ?? false) && (priceChanged || annualPriceChanged)
   };
 }
 
@@ -180,30 +179,6 @@ export async function handlePriceUpdates(
 }
 
 /**
- * Check if a tier needs version management when updating pricing
- *
- * @param tier - The current tier
- * @param updatedTier - The updated tier attributes
- * @returns True if a new version should be created
- */
-export async function shouldCreateNewVersion(
-  tier: Tier,
-  updatedTier: Partial<Tier>
-): Promise<boolean> {
-  // If no subscribers, no need for versioning
-  const hasSubscribers = await SubscriptionService.hasSubscribers(tier.id, tier.revision);
-  if (!hasSubscribers || !updatedTier.published) {
-    return false;
-  }
-
-  // Check if pricing attributes changed
-  const priceChanged = updatedTier.price !== tier.price || updatedTier.cadence !== tier.cadence;
-  const annualPriceChanged = updatedTier.priceAnnual !== tier.priceAnnual;
-
-  return priceChanged || annualPriceChanged;
-}
-
-/**
  * Get the current active version of a tier
  *
  * @param tierId - The ID of the tier
@@ -223,26 +198,4 @@ export async function getCurrentTierVersion(tierId: string): Promise<TierVersion
       revision: tier.revision
     }
   });
-}
-
-/**
- * Get version history statistics for a tier
- *
- * @param tierId - The ID of the tier
- * @returns Stats about each version including subscriber count
- */
-export async function getTierVersionStats(tierId: string): Promise<any[]> {
-  const versions = await getVersionsByTierId(tierId);
-
-  const stats = await Promise.all(
-    versions.map(async (version) => {
-      const subscriberCount = await SubscriptionService.subscriberCount(tierId, version.revision);
-      return {
-        ...version,
-        subscriberCount
-      };
-    })
-  );
-
-  return stats;
 }

@@ -32,7 +32,7 @@ import TierCard from "./tier-card";
 import TierDeleteButton from "./tier-delete-button";
 
 import Tier, { newTier } from "@/app/models/Tier";
-import { subscriberCount } from "@/app/services/SubscriptionService";
+import { getSubscriberCount } from "@/app/services/subscription-service";
 import { createTier, TierWithCount, updateTier } from "@/app/services/tier-service";
 import { toast } from "sonner";
 
@@ -140,9 +140,9 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
   useEffect(() => {
     if (tier.id) {
       getVersionsByTierId(tier.id).then(setVersions);
-      subscriberCount(tier.id).then(setTierSubscriberCount);
+      getSubscriberCount(tier.id).then(setTierSubscriberCount);
 
-      subscriberCount(tier.id, tier.revision).then(setCurrentRevisionSubscriberCount);
+      getSubscriberCount(tier.id, tier.revision).then(setCurrentRevisionSubscriberCount);
     }
   }, [tier.id, tier.revision]);
 

@@ -213,12 +213,13 @@ model Subscription {
   createdAt            DateTime  @default(now())
   state                String    @default("renewing")
   priceAnnual          Boolean   @default(false)
+  active               Boolean   @default(true)
 
   user        User         @relation(fields: [userId], references: [id])
   tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
   tier        Tier         @relation(fields: [tierId], references: [id])
 
-  @@unique([userId, tierId])
+  @@index([userId, tierId, active])
 }
 
 model Media {

@@ -47,7 +47,7 @@ export async function createStripeSubscriptionForCustomer(
  * @param priceId - The new price ID
  * @returns The updated subscription
  */
-export async function updateSubscription(
+export async function updateSubscriptionPrice(
   vendorAccountId: string,
   subscriptionId: string,
   priceId: string
@@ -63,18 +63,30 @@ export async function updateSubscription(
 }
 
 /**
- * Cancel a subscription
+ * Schedule a subscription to not renew at the end of the current billing period
  *
  * @param stripeAccountId - The vendor's Stripe account ID
  * @param subscriptionId - The subscription ID to cancel
- * @returns The canceled subscription
+ * @param immediateCancel - Whether to cancel immediately (defaults to false)
+ * @returns The updated subscription
  */
 export async function cancelStripeSubscription(
   stripeAccountId: string,
-  subscriptionId: string
+  subscriptionId: string,
+  immediateCancel: boolean = false
 ): Promise<Stripe.Subscription> {
   const stripe = await createStripeClient(stripeAccountId);
-  return await stripe.subscriptions.cancel(subscriptionId);
+
+  if (immediateCancel) {
+    // Immediately cancel the subscription
+    return await stripe.subscriptions.cancel(subscriptionId);
+  } else {
+    // Set the subscription to cancel at the end of the current period
+    return await stripe.subscriptions.update(subscriptionId, {
+      cancel_at_period_end: true,
+      expand: ["latest_invoice"]
+    });
+  }
 }
 
 /**
@@ -122,4 +134,28 @@ export async function isSubscribedToPrice(
   });
 
   return subscriptions.data.length > 0;
+}
+
+/**
+ * Reactivate a cancelled Stripe subscription
+ *
+ * This function is used when a user wants to reactivate a subscription that has been
+ * cancelled but is still within its active period. It removes the cancellation
+ * schedule, effectively making the subscription renew again at the period end.
+ *
+ * @param stripeAccountId - The vendor's Stripe account ID
+ * @param subscriptionId - The ID of the cancelled subscription to reactivate
+ * @returns The updated subscription with cancellation removed
+ */
+export async function reactivateStripeSubscription(
+  stripeAccountId: string,
+  subscriptionId: string
+): Promise<Stripe.Subscription> {
+  const stripe = await createStripeClient(stripeAccountId);
+
+  const subscription = await stripe.subscriptions.update(subscriptionId, {
+    cancel_at_period_end: false
+  });
+
+  return subscription;
 }
