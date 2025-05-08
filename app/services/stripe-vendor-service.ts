@@ -169,7 +169,7 @@ export async function getVendorStripeConnectURL(userId: string): Promise<string>
     await UserService.updateUser(userId, { stripeCSRF: state });
   }
 
-  const redirectUri = getRootUrl("app", "/settings/payment");
+  const redirectUri = getRootUrl("app", "/settings/payment/callback");
   const oauthLink = `https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.STRIPE_CLIENT_ID}&scope=read_write&state=${state}&redirect_uri=${redirectUri}`;
 
   return oauthLink;
@@ -178,10 +178,7 @@ export async function getVendorStripeConnectURL(userId: string): Promise<string>
 /**
  * Handle OAuth response from Stripe Connect
  */
-export async function processVendorStripeConnectCallback(
-  code: string,
-  state: string
-): Promise<string> {
+export async function processVendorStripeConnectCallback(code: string, state: string) {
   // Verify the state parameter to prevent CSRF attacks
   const user = await prisma.user.findUnique({ where: { stripeCSRF: state } });
 
@@ -201,7 +198,7 @@ export async function processVendorStripeConnectCallback(
     stripeCSRF: null
   });
 
-  return connectedAccountId as string;
+  return connectedAccountId;
 }
 
 /**
