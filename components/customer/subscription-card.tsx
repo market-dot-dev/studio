@@ -3,13 +3,19 @@ import { ReactivateSubscriptionBtn } from "@/app/app/c/subscriptions/reactivate-
 import ContractService from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
+import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
-import { isActive, isCancelled, isFinishingMonth, isRenewing } from "@/types/subscription";
+import { formatDate } from "@/lib/utils";
+import { isCancelled, isFinishingMonth, isRenewing } from "@/types/subscription";
 import { Subscription } from "@prisma/client";
-import { Store } from "lucide-react";
-import { ContractLink } from "../contracts/contract-link";
+import { Calendar, RefreshCw, Store } from "lucide-react";
+import Link from "next/link";
+
+interface SubscriptionStatus {
+  type: "active" | "ending" | "expired";
+  text: string;
+}
 
 const SubscriptionCard = async ({
   subscription,
@@ -24,6 +30,7 @@ const SubscriptionCard = async ({
   if (!tier) return null;
 
   const maintainer = await UserService.findUser(tier.userId);
+
   if (!maintainer) return null;
 
   const actualCadence = subscription.priceAnnual ? "year" : tier.cadence;
@@ -32,25 +39,32 @@ const SubscriptionCard = async ({
     actualCadence === "month" ? "mo" : actualCadence === "year" ? "yr" : actualCadence;
 
   // Determine subscription status using our helper functions
-  let status = "";
+  let status: SubscriptionStatus;
   let badgeVariant: "success" | "secondary" | "destructive" = "secondary";
 
   if (isRenewing(subscription)) {
-    status = "Active";
+    status = { type: "active", text: "Active" };
     badgeVariant = "success";
   } else if (isCancelled(subscription)) {
     if (isFinishingMonth(subscription)) {
       // Cancelled but still active
       const daysRemaining = Math.ceil(
-        (subscription.activeUntil!.getTime() - new Date().getTime()) / (1000 * 3600 * 24)
+        (subscription.activeUntil.getTime() - new Date().getTime()) / (1000 * 3600 * 24)
       );
-      status = `Ending in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`;
+      status = {
+        type: "ending",
+        text: `Ending in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`
+      };
       badgeVariant = "secondary";
     } else {
       // Fully expired
-      status = "Expired";
-      badgeVariant = "destructive";
+      status = { type: "expired", text: "Expired" };
+      badgeVariant = "secondary";
     }
+  } else {
+    // Fallback for any other unforeseen cases, though ideally all states are covered
+    status = { type: "expired", text: "Unknown" };
+    badgeVariant = "secondary";
   }
 
   const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
@@ -58,32 +72,37 @@ const SubscriptionCard = async ({
   // Check if this is a cancelled but still active subscription that can be reactivated
   const canReactivate = isCancelled(subscription) && isFinishingMonth(subscription);
 
+  const contractUrl = contract ? `/c/contracts/${contract.id}` : "/c/contracts/standard-msa";
+  const contractName = contract?.name || "Standard MSA";
+
   return (
-    <Card className="text-sm">
-      <div className="flex flex-col gap-4 p-5 pr-4 pt-4">
+    <Card className="flex flex-col text-sm">
+      <div className="flex grow flex-col gap-4 p-5 pr-4 pt-4">
         <div className="flex flex-wrap justify-between gap-2">
-          <div>
+          <div className="flex items-center gap-0.5">
             <h3 className="text-base font-semibold">
               {tier.name} {subscription.priceAnnual ? "(annual)" : ""}
             </h3>
-            {tier.tagline && <p className="line-clamp-2 text-sm text-stone-500">{tier.tagline}</p>}
+            <TierDetailsModal tier={tier} />
           </div>
-          <Badge variant={badgeVariant} className="size-fit">
-            {status}
+          <Badge variant={badgeVariant} className="inline-flex size-fit gap-1.5">
+            {status.type === "active" && <RefreshCw />}
+            {status.type === "ending" && <Calendar />}
+            {status.text}
           </Badge>
         </div>
-        <p className="mb-1 text-xl font-semibold text-stone-800">
+        <p className="text-xl font-semibold text-stone-800">
           USD ${actualPrice}
-          <span className="font-medium text-stone-500">/{shortenedCadence}</span>
+          <span className="text-lg/5 font-medium text-stone-500">/{shortenedCadence}</span>
         </p>
         <div className="flex flex-row flex-wrap gap-x-10 gap-y-4">
           {isCustomerView && (
             <div className="flex flex-col gap-1">
               <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
-                Purchased from
+                Seller
               </span>
               <div className="flex items-center gap-1.5">
-                <Store size={16} />
+                <Store size={14} strokeWidth={2.25} />
                 <span className="font-medium">{maintainer.projectName}</span>
               </div>
             </div>
@@ -91,29 +110,30 @@ const SubscriptionCard = async ({
 
           <div className="flex flex-col gap-1">
             <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
-              Purchased On
+              Subscribed On
             </span>
-            <span className="font-medium">{subscription.createdAt.toLocaleDateString()}</span>
+            <span className="font-medium">
+              {formatDate(subscription.createdAt.toLocaleDateString())}
+            </span>
           </div>
 
           <div className="flex flex-col gap-1">
             <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
               Contract
             </span>
-            <ContractLink contract={contract} />
+            <Link href={contractUrl} className="inline font-medium underline" target="_blank">
+              {contractName}
+            </Link>
           </div>
         </div>
       </div>
 
-      <div
-        className={cn("flex flex-row gap-2 rounded-b-md border-t bg-stone-50 px-5 py-3", {
-          "justify-between": isActive(subscription)
-        })}
-      >
-        {isRenewing(subscription) && <CancelSubscriptionBtn subscriptionId={subscription.id} />}
-
-        {canReactivate && <ReactivateSubscriptionBtn subscriptionId={subscription.id} />}
-      </div>
+      {(isRenewing(subscription) || canReactivate) && (
+        <div className="flex justify-end gap-2 rounded-b-md border-t px-5 py-2.5">
+          {isRenewing(subscription) && <CancelSubscriptionBtn subscriptionId={subscription.id} />}
+          {canReactivate && <ReactivateSubscriptionBtn subscriptionId={subscription.id} />}
+        </div>
+      )}
     </Card>
   );
 };
