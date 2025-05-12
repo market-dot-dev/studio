@@ -5,11 +5,12 @@ import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { isActive, SubscriptionWithTierAndUser } from "@/types/subscription";
+import { isActive } from "@/types/subscription";
+import { Charge, Subscription } from "@prisma/client";
 
 export default async function SubscriptionsAndChargesList() {
-  const charges = (await ChargeService.findCharges()) || [];
-  const subscriptions: SubscriptionWithTierAndUser[] = (await getUserSubscriptions()) || [];
+  const charges: Charge[] = (await ChargeService.findCharges()) || [];
+  const subscriptions: Subscription[] = (await getUserSubscriptions()) || [];
 
   const activeSubscriptions = subscriptions.filter((sub) => isActive(sub));
   const pastSubscriptions = subscriptions.filter((sub) => !isActive(sub));
