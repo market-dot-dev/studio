@@ -1,11 +1,6 @@
 "use client";
-import {
-  type FiltersState,
-  getDependentOwners,
-  getFacets,
-  getShortlistedLeadsKeysList,
-  lookup
-} from "@/app/services/LeadsService";
+import { getDependentOwners, getFacets, lookup } from "@/app/services/radar-api-service";
+import { type FiltersState, getShortlistedLeadsKeysList } from "@/app/services/research-service";
 import { extractGitHubRepoInfo } from "@/lib/github";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";

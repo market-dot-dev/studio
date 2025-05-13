@@ -2,15 +2,14 @@
 
 import Tier from "@/app/models/Tier";
 import { formatDate } from "@/lib/utils";
-import { Prospect } from "@prisma/client";
+import { Lead } from "@prisma/client";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Package } from "lucide-react";
 import Link from "next/link";
 
-// Define the shape of our data
-export type ProspectWithTier = Prospect & { tier: Tier };
+export type LeadWithTier = Lead & { tier: Tier };
 
-export const columns: ColumnDef<ProspectWithTier>[] = [
+export const columns: ColumnDef<LeadWithTier>[] = [
   {
     accessorKey: "name",
     header: "Name",
@@ -65,7 +64,7 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
   }
 ];
 
-export const renderProspectContextSubRowComponent = (row: Row<ProspectWithTier>) => {
+export const renderProspectContextSubRowComponent = (row: Row<LeadWithTier>) => {
   const { context } = row.original;
   if (!context) {
     return null;

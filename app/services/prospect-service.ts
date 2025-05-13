@@ -1,29 +1,36 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Prospect } from "@prisma/client";
-import Tier from "../models/Tier";
-import UserService from "./UserService";
+import { Lead, LeadSource, Tier } from "@prisma/client";
 import { notifyOwnerOfNewProspect } from "./email-service";
+import UserService from "./UserService";
 
-export async function getProspectsWithTier(userId: string): Promise<(Prospect & { tier: Tier })[]> {
+export type ProspectWithTier = Lead & { tier: Tier };
+export type ProspectWithTiers = Lead & { tiers: Tier[] };
+
+// Get prospects
+export async function getProspectsWithTier(userId: string): Promise<ProspectWithTier[]> {
   if (!userId) {
     console.warn("getProspects called without valid userId");
     return [];
   }
 
-  const response = await prisma.prospect.findMany({
-    where: { userId },
+  const prospects = await prisma.lead.findMany({
+    where: {
+      userId,
+      source: LeadSource.CONTACT_FORM
+    },
     include: { tiers: true },
     orderBy: { createdAt: "desc" }
   });
 
-  return response.map((prospect) => ({
+  return prospects.map((prospect) => ({
     ...prospect,
     tier: prospect.tiers[0]
   }));
 }
 
+// Add a new prospect from contact form
 export async function addNewProspectForTier(
   prospect: {
     email: string;
@@ -32,13 +39,13 @@ export async function addNewProspectForTier(
     context: string;
   },
   tier: Tier
-): Promise<Prospect> {
+): Promise<Lead> {
   const user = await UserService.findUser(tier.userId);
   if (!user) {
     throw new Error("User not found");
   }
 
-  const newProspect = await prisma.prospect.upsert({
+  const newProspect = await prisma.lead.upsert({
     where: {
       email_userId: {
         email: prospect.email,
@@ -47,6 +54,7 @@ export async function addNewProspectForTier(
     },
     create: {
       ...prospect,
+      source: LeadSource.CONTACT_FORM,
       userId: tier.userId,
       tiers: { connect: [{ id: tier.id }] }
     },

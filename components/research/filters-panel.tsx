@@ -1,6 +1,6 @@
 "use client";
 
-import { type FiltersState } from "@/app/services/LeadsService";
+import { type FiltersState } from "@/app/services/research-service";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import countryCodes from "@/lib/constants/country-codes";

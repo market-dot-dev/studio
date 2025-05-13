@@ -1,5 +1,5 @@
 import Tier from "@/app/models/Tier";
-import { Charge, Prospect, Subscription, User } from "@prisma/client";
+import { Charge, Lead, Subscription, User } from "@prisma/client";
 
 /**
  * Type for customer with charges, subscriptions, and prospects
@@ -7,7 +7,7 @@ import { Charge, Prospect, Subscription, User } from "@prisma/client";
 export type CustomerWithChargesSubscriptionsAndProspects = User & {
   charges: (Charge & { tier: Tier })[];
   subscriptions: (Subscription & { tier: Tier })[];
-  prospects: (Prospect & { tiers: Tier[] })[];
+  prospects: (Lead & { tiers: Tier[] })[];
 };
 
 /**

@@ -3,7 +3,7 @@
 import Tier from "@/app/models/Tier";
 import { Badge } from "@/components/ui/badge";
 import { capitalize, formatDate } from "@/lib/utils";
-import { Charge, Prospect, Subscription, User } from "@prisma/client";
+import { Charge, Lead, Subscription, User } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import PurchaseStatusBadge from "../purchase-state";
 import SubscriptionStatusBadge from "../subscription-state";
@@ -11,7 +11,7 @@ import SubscriptionStatusBadge from "../subscription-state";
 export type Sale = {
   id: string;
   type: "subscription" | "charge" | "prospect";
-  user: User | Prospect;
+  user: User | Lead;
   tierName?: string;
   tierNames?: string[];
   createdAt: Date;

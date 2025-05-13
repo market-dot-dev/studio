@@ -1,5 +1,5 @@
 "use client";
-import { type FiltersState } from "@/app/services/LeadsService";
+import { type FiltersState } from "@/app/services/research-service";
 import { Badge } from "@/components/ui/badge";
 import { XCircle } from "lucide-react";
 

@@ -1,8 +1,8 @@
-import LeadsService from "@/app/services/LeadsService";
+import { getResearchLeads } from "@/app/services/research-service";
 import { ShortlistedResearch } from "@/components/research/shortlisted-research";
 
 export default async function ShortlistedResearchPage() {
-  const shortlistedResearch = await LeadsService.getShortlistedLeads();
+  const leads = await getResearchLeads();
 
-  return <ShortlistedResearch research={shortlistedResearch} />;
+  return <ShortlistedResearch research={leads} />;
 }

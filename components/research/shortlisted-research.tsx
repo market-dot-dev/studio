@@ -1,6 +1,6 @@
 "use client";
 
-import { removeLeadFromShortlist } from "@/app/services/LeadsService";
+import { removeLeadFromShortlist } from "@/app/services/research-service";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Lead } from "@prisma/client";
@@ -12,7 +12,7 @@ export function ShortlistedResearch({ research: loadedResearch }: { research: Le
   const [researchItems, setResearchItems] = useState<Lead[]>(loadedResearch);
 
   const removeResearchItem = useCallback(
-    (itemId: number) => {
+    (itemId: string) => {
       setIsRemoving(true);
       removeLeadFromShortlist(itemId)
         .then(() => {

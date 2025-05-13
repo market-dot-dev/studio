@@ -1,5 +1,5 @@
 "use client";
-import { type FiltersState } from "@/app/services/LeadsService";
+import { type FiltersState } from "@/app/services/research-service";
 import FilterBadges from "./filter-badges";
 import Pagination from "./pagination";
 import ResultsPerPage from "./results-per-page";
