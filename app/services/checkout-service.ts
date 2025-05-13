@@ -1,6 +1,6 @@
 "use server";
 
-import { createSubscription } from "@/app/services/SubscriptionService";
+import { createSubscription } from "@/app/services/subscription-service";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { includeVendorProfile, type VendorProfile } from "@/types/checkout";
@@ -202,119 +202,192 @@ export async function canUserMakePayment(
   }
 }
 
-export const processPayment = async (customerId: string, tierId: string, annual: boolean) => {
+/**
+ * Process a payment for a tier, handling both one-time charges and subscriptions
+ *
+ * @param customerId - The ID of the customer making the payment
+ * @param tierId - The ID of the tier being purchased
+ * @param annual - Whether to use annual pricing
+ * @returns An object containing the success status and relevant IDs
+ */
+export async function processPayment(
+  customerId: string,
+  tierId: string,
+  annual: boolean
+): Promise<{
+  success: boolean;
+  stripeId: string;
+  type: "charge" | "subscription";
+}> {
+  // Validate inputs
+  if (!customerId) {
+    throw new Error("Not logged in.");
+  }
+
+  // Get and validate tier
   const tier = await getTierById(tierId);
   if (!tier) {
     throw new Error("Tier not found.");
   }
 
-  if (!customerId) {
-    throw new Error("Not logged in.");
-  }
-
+  // Get and validate customer
   const customerUser = await UserService.findUser(customerId);
   if (!customerUser) {
     throw new Error("User not found");
   }
 
+  // Get and validate vendor
   const vendor = await UserService.findUser(tier.userId);
-
   if (!vendor) {
     throw new Error("Vendor not found.");
   }
-
   if (!vendor.stripeAccountId) {
     throw new Error("Vendor does not have a connected Stripe account.");
   }
 
+  // Get Stripe IDs
   const customer = new Customer(customerUser, vendor.id, vendor.stripeAccountId);
-
   const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
-  const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
 
+  const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
   if (!stripePriceId) {
     throw new Error("Tier does not have a Stripe Price ID.");
   }
 
-  console.log("[purchase]: vendor, product check");
-
-  // ## Charges
+  // Handle one-time charges
   if (tier.cadence === "once" && tier.price) {
-    const charge = await createStripeCharge(
+    return await processOneTimeCharge(
       vendor.stripeAccountId,
       stripeCustomerId,
       stripePriceId,
+      customerId,
+      tierId,
       tier.price,
-      await customer.getStripePaymentMethodId(),
+      customer,
       tier.applicationFeePercent || 0,
       tier.applicationFeePrice || 0
     );
-
-    if (charge.status === "succeeded") {
-      await createLocalCharge(customerId, tierId, charge.id);
-    } else {
-      console.log("[purchase]: FAIL charge failed", charge);
-      throw new Error("Error creating charge on stripe: " + charge.status);
-    }
   }
-  // ## Subscriptions
-  else {
-    let stripeSubscription: Stripe.Subscription | null = null;
 
-    const isSubscribed = await isSubscribedToStripeTier(
-      vendor.stripeAccountId,
-      stripeCustomerId,
-      tier
+  // Handle subscriptions
+  return await processSubscription(
+    vendor.stripeAccountId,
+    stripeCustomerId,
+    stripePriceId,
+    customerId,
+    tierId,
+    tier
+  );
+}
+
+/**
+ * Process a one-time charge payment
+ * @private
+ */
+async function processOneTimeCharge(
+  vendorStripeAccountId: string,
+  stripeCustomerId: string,
+  stripePriceId: string,
+  customerId: string,
+  tierId: string,
+  price: number,
+  customer: Customer,
+  feePercent: number,
+  feeAmount: number
+): Promise<{ success: boolean; stripeId: string; type: "charge" }> {
+  const paymentMethodId = await customer.getStripePaymentMethodId();
+
+  const charge = await createStripeCharge(
+    vendorStripeAccountId,
+    stripeCustomerId,
+    stripePriceId,
+    price,
+    paymentMethodId,
+    feePercent,
+    feeAmount
+  );
+
+  if (charge.status !== "succeeded") {
+    throw new Error(`Error creating charge on Stripe: ${charge.status}`);
+  }
+
+  await createLocalCharge(customerId, tierId, charge.id);
+
+  return {
+    success: true,
+    stripeId: charge.id,
+    type: "charge"
+  };
+}
+
+/**
+ * Process a subscription payment
+ * @private
+ */
+async function processSubscription(
+  vendorStripeAccountId: string,
+  stripeCustomerId: string,
+  stripePriceId: string,
+  customerId: string,
+  tierId: string,
+  tier: any
+): Promise<{ success: boolean; stripeId: string; type: "subscription" }> {
+  // Check if already subscribed
+  const isSubscribed = await isSubscribedToStripeTier(
+    vendorStripeAccountId,
+    stripeCustomerId,
+    tier
+  );
+
+  if (isSubscribed) {
+    throw new Error(
+      "You are already subscribed to this product. If you don't see it in your dashboard, please contact support."
     );
-    if (isSubscribed) {
-      console.log("[purchase]: FAIL already subscribed");
-      throw new Error(
-        "You are already subscribed to this product. If you dont see it in your dashboard, please contact support."
-      );
-    } else {
-      stripeSubscription = await createStripeSubscriptionForCustomer(
-        vendor.stripeAccountId,
-        stripeCustomerId,
-        stripePriceId,
-        tier.trialDays
-      );
-    }
-
-    // Fail if no stripe subscription found
-    if (!stripeSubscription) {
-      console.log("[purchase]: FAIL could not create stripe subscription");
-      throw new Error("Error creating subscription on stripe");
-    }
-    // Otherwise, proceed checking out
-    else {
-      console.log("[purchase]: stripe subscription created");
-      const invoice = stripeSubscription.latest_invoice as Stripe.Invoice;
-
-      if (invoice.status === "paid") {
-        await createSubscription(customerId, tierId, stripeSubscription.id);
-        console.log("[purchase]: invoice paid");
-      } else if (invoice.status === "open") {
-        // For subscriptions with trials, "open" status is expected and acceptable
-        if (tier.trialDays && tier.trialDays > 0) {
-          await createSubscription(customerId, tierId, stripeSubscription.id);
-          console.log("[purchase]: subscription with trial created, invoice is open");
-        } else {
-          // No trial but invoice not paid - likely needs customer action
-          throw new Error(`Subscription requires payment. Please check payment details.`);
-        }
-      } else if (
-        invoice.status === "draft" ||
-        invoice.status === "void" ||
-        invoice.status === "uncollectible"
-      ) {
-        // Clear error for problematic invoice statuses that shouldn't occur in normal flow
-        throw new Error(`Invoice has unexpected status: ${invoice.status}`);
-      } else {
-        // Fallback for any other unexpected states
-        throw new Error(
-          `Unknown error occurred: invoice status was ${invoice.status}, subscription status was ${stripeSubscription.status}`
-        );
-      }
-    }
   }
-};
+
+  // Create subscription in Stripe
+  const stripeSubscription = await createStripeSubscriptionForCustomer(
+    vendorStripeAccountId,
+    stripeCustomerId,
+    stripePriceId,
+    tier.trialDays
+  );
+
+  if (!stripeSubscription) {
+    throw new Error("Failed to create subscription on Stripe");
+  }
+
+  // Handle invoice status
+  const invoice = stripeSubscription.latest_invoice as any;
+
+  switch (invoice.status) {
+    case "paid":
+      await createSubscription(customerId, tierId, stripeSubscription.id);
+      break;
+
+    case "open":
+      // For subscriptions with trials, "open" status is expected
+      if (tier.trialDays && tier.trialDays > 0) {
+        await createSubscription(customerId, tierId, stripeSubscription.id);
+      } else {
+        throw new Error("Subscription requires payment. Please check payment details.");
+      }
+      break;
+
+    case "draft":
+    case "void":
+    case "uncollectible":
+      throw new Error(`Invoice has unexpected status: ${invoice.status}`);
+
+    default:
+      throw new Error(
+        `Unknown error occurred: invoice status was ${invoice.status}, subscription status was ${stripeSubscription.status}`
+      );
+  }
+
+  return {
+    success: true,
+    stripeId: stripeSubscription.id,
+    type: "subscription"
+  };
+}

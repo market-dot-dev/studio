@@ -60,9 +60,8 @@ const ContractDeleteButton = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setOpen(false)}>No, keep package</AlertDialogCancel>
-            <AlertDialogAction asChild>
+            <AlertDialogAction variant="destructive" asChild>
               <Button
-                variant="destructive"
                 onClick={handleDelete}
                 loading={loading}
                 loadingText="Deleting package"

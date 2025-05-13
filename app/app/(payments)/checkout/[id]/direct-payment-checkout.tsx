@@ -21,7 +21,6 @@ interface DirectPaymentCheckoutProps {
   contract?: Contract | null;
   annual?: boolean;
   userId?: string;
-  isAlreadySubscribed?: boolean;
 }
 
 type PaymentState =
@@ -35,8 +34,7 @@ export function DirectPaymentCheckout({
   vendor,
   contract,
   annual = false,
-  userId,
-  isAlreadySubscribed = false
+  userId
 }: DirectPaymentCheckoutProps) {
   const router = useRouter();
   const tierId = tier.id;
@@ -69,12 +67,6 @@ export function DirectPaymentCheckout({
       });
     }
   };
-
-  if (isAlreadySubscribed) {
-    return (
-      <p className="text-sm text-stone-500">You&apos;re already subscribed to this product.</p>
-    );
-  }
 
   const isProcessing = paymentState.status === "processing";
   const isDisabled = isProcessing || !userId || !paymentReady || paymentState.status === "success";

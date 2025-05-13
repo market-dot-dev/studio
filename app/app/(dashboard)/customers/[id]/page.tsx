@@ -1,6 +1,5 @@
 "use server";
 
-import Subscription from "@/app/models/Subscription";
 import { getCustomerOfVendor } from "@/app/services/customer-service";
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
@@ -25,9 +24,6 @@ const CustomerDetailPage = async (props: { params: Promise<{ id: string }> }) =>
   if (!customer) {
     return <div>Customer not found</div>;
   }
-
-  // Convert raw subscription data to Subscription instances
-  const subscriptions = customer.subscriptions.map((sub) => new Subscription(sub));
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-9">
@@ -94,14 +90,16 @@ const CustomerDetailPage = async (props: { params: Promise<{ id: string }> }) =>
       <div className="grid grid-cols-1 gap-10 xl:grid-cols-2">
         <div className="flex w-full flex-col gap-4">
           <h2 className="text-xl font-bold">Subscriptions</h2>
-          {subscriptions.map((subscription) => (
+          {customer.subscriptions.map((subscription) => (
             <SubscriptionCard
               key={subscription.id}
               subscription={subscription}
               isCustomerView={false}
             />
           ))}
-          {subscriptions.length === 0 && <p className="text-stone-500">No subscriptions found.</p>}
+          {customer.subscriptions.length === 0 && (
+            <p className="text-stone-500">No subscriptions found.</p>
+          )}
         </div>
 
         <div className="flex w-full flex-col gap-4">

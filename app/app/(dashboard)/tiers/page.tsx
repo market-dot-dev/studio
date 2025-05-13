@@ -41,13 +41,13 @@ export default async function Tiers() {
                     <span
                       className={cn(
                         "h-[7px] w-[7px] rounded-full",
-                        tier.published ? "bg-lime-700" : "bg-stone-400"
+                        tier.published ? "bg-success" : "bg-muted-foreground/75"
                       )}
                     ></span>
                     <p
                       className={cn(
                         "text-sm font-medium",
-                        tier.published ? "text-lime-700" : "text-stone-500"
+                        tier.published ? "text-success" : "text-muted-foreground"
                       )}
                     >
                       {tier.published ? "Published" : "Draft"}

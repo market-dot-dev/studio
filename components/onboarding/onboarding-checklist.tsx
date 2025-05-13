@@ -100,7 +100,7 @@ function TodoItem({
       >
         <div className="flex items-center gap-[7px]">
           <DonutProgress percentage={completionPercentage ?? 0} />
-          <span>Next: {stepTitle}</span>
+          <span className="text-left">Next: {stepTitle}</span>
         </div>
         <ChevronRight
           size={14}
@@ -122,24 +122,23 @@ function TodoItem({
             <div className="box-border size-4 shrink-0 rounded-full border border-dashed border-stone-400 ring-4 ring-white"></div>
           )}
         </div>
-        <div className="flex w-full flex-col items-start justify-between gap-x-8 gap-y-1 lg:flex-row lg:items-center">
+        <div className="flex w-full flex-col items-start justify-between gap-x-8 lg:flex-row lg:items-center">
           <div className="flex flex-col items-start">
-            <strong
+            <h5
               className={clsx(
-                "new-bold-tag w-fit cursor-pointer text-sm",
+                "w-fit text-sm font-bold tracking-tightish",
                 completed ? "text-stone-500" : "text-stone-800 hover:text-stone-700"
               )}
-              onClick={navigateToStep}
             >
               {stepTitle}
-            </strong>
+            </h5>
             {!completed && <p className="text-pretty text-sm text-stone-500">{stepDescription}</p>}
           </div>
           {!completed && (
             <Button
               size="sm"
               variant="outline"
-              className="group w-fit gap-[3px] pr-1"
+              className="group my-1.5 w-fit gap-[3px] pr-1"
               onClick={navigateToStep}
             >
               <span>{stepTitle}</span>
@@ -151,7 +150,7 @@ function TodoItem({
           )}
         </div>
       </div>
-      <hr className="w-full border-stone-200 last:hidden" />
+      <hr className="w-full border-stone-200/75 last:hidden" />
     </>
   );
 }
@@ -222,11 +221,13 @@ export default function OnboardingChecklist({
   if (!isHomepage) return <></>;
 
   return (
-    <div className="mb-6 flex w-full flex-col items-start rounded-lg bg-white shadow-border">
-      <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-stone-200 bg-stone-50 py-2.5 pl-4 pr-2.5">
+    <div className="mb-6 flex w-full flex-col items-start rounded-md bg-white shadow-border-sm">
+      <div className="flex w-full items-center justify-between gap-4 rounded-t-lg border-b border-stone-200/75 bg-stone-50 py-2 pl-4 pr-2.5">
         <div className="flex items-center gap-4">
           <Goal size={16} className="text-stone-500" />
-          <h3 className="text-xs font-bold uppercase tracking-wider text-stone-500">Get started</h3>
+          <h3 className="text-xxs font-semibold uppercase tracking-wide text-stone-500">
+            Get started
+          </h3>
         </div>
 
         <div className="m-0 flex justify-end">

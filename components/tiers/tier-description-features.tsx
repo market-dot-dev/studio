@@ -21,7 +21,7 @@ export const TierDescriptionFeatures = ({
     <ul className="flex flex-col gap-1 text-left">
       {features.map((feature) => (
         <li key={feature.id} className="flex gap-2 text-sm">
-          <Check className={cn("size-5 min-w-6", darkMode ? "text-lime-400" : "text-lime-600")} />
+          <Check className={cn("size-5 min-w-6", darkMode ? "text-lime-400" : "text-success")} />
           <p className={cn("text-sm", textClasses)}>{feature.name}</p>
         </li>
       ))}

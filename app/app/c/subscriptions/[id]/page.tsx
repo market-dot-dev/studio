@@ -1,18 +1,21 @@
-import SubscriptionService from "@/app/services/SubscriptionService";
+import { getSubscriptionById } from "@/app/services/subscription-service";
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { getRootUrl } from "@/lib/domain";
+import { isCancelled } from "@/types/subscription";
 import Link from "next/link";
-import CancelSubscriptionButton from "../cancel-subscription-button";
+import { CancelSubscriptionBtn } from "../cancel-subscription-btn";
+
+// @TODO: This page needs work.
 
 export default async function SubscriptionPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const subscription = await SubscriptionService.findSubscription(params.id);
+  const subscription = await getSubscriptionById(params.id);
   if (!subscription) return null;
   const tier = subscription.tier!;
   const maintainer = await UserService.findUser(tier.userId);
-  const cancelled = subscription.isCancelled();
+  const cancelled = isCancelled(subscription);
   const resubUrl = getRootUrl(maintainer?.gh_username || "", `/checkout/${tier.id}`);
 
   return (
@@ -38,7 +41,7 @@ export default async function SubscriptionPage(props: { params: Promise<{ id: st
           <>
             <div className="flex flex-col space-y-2">
               <strong>Manage your Subscription</strong>
-              <CancelSubscriptionButton subscriptionId={subscription.id} />
+              <CancelSubscriptionBtn subscriptionId={subscription.id} />
             </div>
           </>
         )}
