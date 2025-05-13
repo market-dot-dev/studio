@@ -18,7 +18,7 @@ export async function Header() {
       </Link>
       <div className="flex items-center gap-3">
         <UserDropdown user={user} />
-        <SidebarTrigger className="md:hidden" />
+        <SidebarTrigger className="-mx-2.5 md:hidden" />
       </div>
     </header>
   );
