@@ -10,7 +10,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
-import type { LucideIcon } from "lucide-react";
 import Link from "next/link";
 import type { ReactElement } from "react";
 import { Badge } from "../ui/badge";
@@ -18,7 +17,7 @@ import { Badge } from "../ui/badge";
 export interface SidebarItem {
   title: string;
   url: string;
-  icon: LucideIcon | ReactElement;
+  icon: ReactElement;
   isBeta?: boolean;
   isActive?: boolean;
 }
@@ -45,7 +44,7 @@ export function AppSidebar({ mainItems, headerItems, footerItems }: AppSidebarPr
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild isActive={item.isActive}>
                   <Link href={item.url}>
-                    {typeof item.icon === "function" ? <item.icon /> : item.icon}
+                    {item.icon}
                     {item.title}
                     {item.isBeta && (
                       <Badge size="sm" variant="secondary">

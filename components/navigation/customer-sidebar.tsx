@@ -14,13 +14,13 @@ export function CustomerSidebar() {
         {
           title: "Purchases",
           url: "/",
-          icon: Banknote,
+          icon: <Banknote />,
           isActive: urlSegments.length === 0
         },
         {
           title: "Settings",
           url: "/settings",
-          icon: Settings,
+          icon: <Settings />,
           isActive: urlSegments[0] === "settings"
         }
       ]
