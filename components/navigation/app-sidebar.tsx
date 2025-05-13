@@ -10,37 +10,24 @@ import {
   SidebarMenuButton,
   SidebarMenuItem
 } from "@/components/ui/sidebar";
+import type { SidebarItem, SidebarItemGroup } from "@/types/sidebar";
 import Link from "next/link";
-import type { ReactElement } from "react";
 import { Badge } from "../ui/badge";
 
-export interface SidebarItem {
-  title: string;
-  url: string;
-  icon: ReactElement;
-  isBeta?: boolean;
-  isActive?: boolean;
-}
-
-export interface SidebarGroup {
-  label?: string;
-  items: SidebarItem[];
-}
-
 interface AppSidebarProps {
-  mainItems: SidebarGroup[];
-  headerItems?: SidebarGroup[];
-  footerItems?: SidebarGroup[];
+  mainItems: SidebarItemGroup[];
+  headerItems?: SidebarItemGroup[];
+  footerItems?: SidebarItemGroup[];
 }
 
 export function AppSidebar({ mainItems, headerItems, footerItems }: AppSidebarProps) {
-  const renderSidebarSection = (groups: SidebarGroup[]) => {
+  const renderSidebarSection = (groups: SidebarItemGroup[]) => {
     return groups.map((group, groupIndex) => (
       <SidebarGroup key={group.label || groupIndex}>
         {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
         <SidebarGroupContent>
           <SidebarMenu>
-            {group.items.map((item) => (
+            {group.items.map((item: SidebarItem) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild isActive={item.isActive}>
                   <Link href={item.url}>

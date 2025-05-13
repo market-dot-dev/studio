@@ -1,7 +1,7 @@
 "use client";
 
-import type { SidebarGroup } from "@/components/navigation/app-sidebar";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
+import type { SidebarItemGroup } from "@/types/sidebar";
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
 import type { Site, User } from "@prisma/client";
 import {
@@ -28,7 +28,7 @@ interface DashboardSidebarProps {
 export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSidebarProps) {
   const urlSegments = useSelectedLayoutSegments();
 
-  const mainItems: SidebarGroup[] = [
+  const mainItems: SidebarItemGroup[] = [
     {
       items: [
         {
@@ -130,7 +130,7 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
     }
   ];
 
-  const footerItems: SidebarGroup[] = [
+  const footerItems: SidebarItemGroup[] = [
     {
       items: [
         {

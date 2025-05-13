@@ -1,14 +1,14 @@
 "use client";
 
-import type { SidebarGroup } from "@/components/navigation/app-sidebar";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
+import type { SidebarItemGroup } from "@/types/sidebar";
 import { Banknote, Settings } from "lucide-react";
 import { useSelectedLayoutSegments } from "next/navigation";
 
 export function CustomerSidebar() {
   const urlSegments = useSelectedLayoutSegments();
 
-  const mainItems: SidebarGroup[] = [
+  const mainItems: SidebarItemGroup[] = [
     {
       items: [
         {
