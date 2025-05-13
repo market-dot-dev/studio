@@ -34,7 +34,7 @@ export default function UserDropdown({ user }: { user: any }) {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="z-40 w-[250px]" sideOffset={5} align="end" alignOffset={0}>
-        <div className="flex items-center gap-2 p-2">
+        <div className="flex items-center gap-3 p-2">
           <Image
             src={user.image ?? `https://avatar.vercel.sh/${user.id}`}
             width={28}
