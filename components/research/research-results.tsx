@@ -1,10 +1,6 @@
 "use client";
-import SearchResult from "./search-result";
-
-type ResearchKey = {
-  host: string;
-  uuid: string;
-};
+import type { ResearchKey } from "@/types/research";
+import { SearchResult } from "./search-result";
 
 interface ResearchResultsProps {
   results: any[];

@@ -2,6 +2,7 @@
 import { getDependentOwners, getFacets, lookup } from "@/app/services/radar-api-service";
 import { type FiltersState, getShortlistedLeadsKeysList } from "@/app/services/research-service";
 import { extractGitHubRepoInfo } from "@/lib/github";
+import type { ResearchKey } from "@/types/research";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import LoadingSpinner from "../form/loading-spinner";
@@ -14,11 +15,6 @@ const errorMessages = {
   NO_DEPENDENT_OWNERS: "No dependent owners found for the provided URL.",
   FAILED_GET_OWNERS_COUNT: "Failed to fetch updated dependent owners count.",
   FAILED_GET_OWNERS: "Failed to get dependent owners."
-};
-
-type ResearchKey = {
-  host: string;
-  uuid: string;
 };
 
 const MAX_HISTORY_SIZE = 6;
@@ -260,7 +256,7 @@ export default function ResearchExplorer() {
 
     lookupRepo(true);
 
-    getShortlistedLeadsKeysList().then((leads: ResearchKey[]) => {
+    getShortlistedLeadsKeysList().then((leads) => {
       setShortListedResearch(leads);
     });
   }, [repoUrl, lookupRepo]);

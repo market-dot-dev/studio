@@ -4,10 +4,10 @@ import { Charge, Lead, Subscription, User } from "@prisma/client";
 /**
  * Type for customer with charges, subscriptions, and prospects
  */
-export type CustomerWithChargesSubscriptionsAndProspects = User & {
+export type CustomerWithChargesSubscriptionsAndLeads = User & {
   charges: (Charge & { tier: Tier })[];
   subscriptions: (Subscription & { tier: Tier })[];
-  prospects: (Lead & { tiers: Tier[] })[];
+  leads: (Lead & { tiers: Tier[] })[];
 };
 
 /**

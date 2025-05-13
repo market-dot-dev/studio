@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import type { CustomerWithChargesSubscriptionsAndProspects } from "@/types/dashboard";
+import type { CustomerWithChargesSubscriptionsAndLeads } from "@/types/dashboard";
 import { ChevronRight, Receipt, ScanSearch } from "lucide-react";
 import Link from "next/link";
 import { Sale, columns } from "./columns";
@@ -17,7 +17,7 @@ const SalesTable = ({
   customersAndProspects,
   maxInitialRows
 }: {
-  customersAndProspects: CustomerWithChargesSubscriptionsAndProspects[];
+  customersAndProspects: CustomerWithChargesSubscriptionsAndLeads[];
   maxInitialRows?: number;
 }) => {
   const showAll = false;
@@ -42,7 +42,7 @@ const SalesTable = ({
       userId: customer.id,
       charge: charge
     })),
-    ...customer.prospects.map((prospect, index) => ({
+    ...customer.leads.map((prospect, index) => ({
       id: `prospect-${customer.id}-${index}`,
       type: "prospect" as const,
       user: prospect,

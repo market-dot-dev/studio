@@ -3,13 +3,9 @@ import { addLeadToShortlist } from "@/app/services/research-service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import type { ResearchKey } from "@/types/research";
 import { useCallback, useState } from "react";
 import ResearchItem from "./research-item";
-
-type ResearchKey = {
-  host: string;
-  uuid: string;
-};
 
 interface SearchResultProps {
   research: any;
@@ -17,7 +13,7 @@ interface SearchResultProps {
   setShortListedResearch: React.Dispatch<React.SetStateAction<ResearchKey[]>>;
 }
 
-export default function SearchResult({
+export function SearchResult({
   research,
   isShortlisted,
   setShortListedResearch

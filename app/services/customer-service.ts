@@ -3,7 +3,7 @@
 import prisma from "@/lib/prisma";
 import type {
   CustomerWithChargesAndSubscriptions,
-  CustomerWithChargesSubscriptionsAndProspects
+  CustomerWithChargesSubscriptionsAndLeads
 } from "@/types/dashboard";
 import { User } from "@prisma/client";
 import Customer from "../models/Customer";
@@ -139,7 +139,7 @@ export async function getCustomersOfVendor(
  */
 export async function getCustomersAndProspectsByMaintainer(
   maintainerId: string
-): Promise<CustomerWithChargesSubscriptionsAndProspects[]> {
+): Promise<CustomerWithChargesSubscriptionsAndLeads[]> {
   const customers = await prisma.user.findMany({
     where: {
       OR: [
@@ -162,7 +162,7 @@ export async function getCustomersAndProspectsByMaintainer(
           }
         },
         {
-          prospects: {
+          leads: {
             some: {
               tiers: {
                 some: {
@@ -203,7 +203,7 @@ export async function getCustomersAndProspectsByMaintainer(
         },
         take: 5
       },
-      prospects: {
+      leads: {
         where: {
           tiers: {
             some: {
@@ -222,7 +222,7 @@ export async function getCustomersAndProspectsByMaintainer(
     }
   });
 
-  return customers as CustomerWithChargesSubscriptionsAndProspects[];
+  return customers as CustomerWithChargesSubscriptionsAndLeads[];
 }
 
 /**

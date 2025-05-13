@@ -1,10 +1,9 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Lead, LeadSource, Tier } from "@prisma/client";
+import type { ResearchKey, ResearchLeadWithTiers } from "@/types/research";
+import { LeadSource } from "@prisma/client";
 import SessionService from "./session-service";
-
-export type ResearchLeadWithTiers = Lead & { tiers: Tier[] };
 
 export type FiltersState = {
   country_code: string;
@@ -100,14 +99,21 @@ export async function removeLeadFromShortlist(leadId: string) {
 
 export async function getShortlistedLeadsKeysList() {
   const userId = await SessionService.getCurrentUserId();
-  return prisma.lead.findMany({
+  const leads = await prisma.lead.findMany({
     where: {
       userId,
-      source: LeadSource.RADAR_API
+      source: LeadSource.RADAR_API,
+      host: {
+        not: null
+      },
+      uuid: {
+        not: null
+      }
     },
     select: {
       host: true,
       uuid: true
     }
   });
+  return leads as ResearchKey[];
 }

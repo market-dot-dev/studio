@@ -2,7 +2,7 @@
 
 import * as EmailTemplates from "@/app/components/email/templates";
 import { domainCopy, getRootUrl } from "@/lib/domain";
-import { Prospect, User } from "@prisma/client";
+import { Lead, User } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import { findUser } from "./UserService";
 
@@ -14,8 +14,8 @@ type RequiredUserProps = {
 } & Partial<User>;
 
 type RequiredProspectProps = {
-  name: Prospect["name"];
-  email: Prospect["email"];
+  name: Lead["name"];
+  email: Lead["email"];
 };
 
 const rootURL = domainCopy();
@@ -217,7 +217,11 @@ export async function notifyOwnerOfNewProspect(
   tierName: string
 ): Promise<void> {
   const subject = `A new prospect is interested in ${tierName}!`;
-  const html = EmailTemplates.createNewProspectEmail(prospect.name || "", prospect.email, tierName);
+  const html = EmailTemplates.createNewProspectEmail(
+    prospect.name || "",
+    prospect.email!,
+    tierName
+  );
   const text = `Congratulations! ${prospect.name} has expressed interest in your ${tierName} tier.`;
 
   try {

@@ -22,7 +22,7 @@ export default function ResearchItem({ research }: { research: Lead }) {
     ? (research.maintainers as [])
     : (research.maintainers as []).slice(0, 10);
   const dependencyPercentage = Math.round(
-    (research.dependent_repos_count / research.repositories_count) * 100
+    (research.dependent_repos_count! / research.repositories_count!) * 100
   );
 
   const formattedWebsite = research.website
@@ -48,7 +48,7 @@ export default function ResearchItem({ research }: { research: Lead }) {
           <strong>{research.name}</strong>
           <p className="text-sm text-stone-500">{research.description}</p>
           <p className="text-sm text-stone-500">
-            <a href={research.html_url} target="_blank" className="underline">
+            <a href={research.html_url!} target="_blank" className="underline">
               {research.html_url}
             </a>
           </p>
@@ -91,7 +91,7 @@ export default function ResearchItem({ research }: { research: Lead }) {
               <div className="mb-3 flex items-center gap-2">
                 <strong>Dependency:</strong>
                 <Badge variant="secondary">
-                  {getDependencyScoreBadge(research.dependent_repos_count)}
+                  {getDependencyScoreBadge(research.dependent_repos_count!)}
                 </Badge>
               </div>
 
