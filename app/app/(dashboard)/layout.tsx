@@ -36,14 +36,12 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
       <DashboardProvider siteId={site?.id ?? null} initialExpertStatus={isMarketExpert}>
         <SessionRefresher />
         <OnboardingModal user={user} currentSite={site ?? undefined} onboardingState={onboarding} />
-        <div className="w-full pt-10">
-          <main className="flex min-h-screen w-full flex-col items-center bg-stone-100 ">
-            {user?.stripeAccountDisabled && <StripeDisabledBanner />}
-            <div className="flex w-full max-w-screen-xl flex-col items-center space-y-4 p-6 sm:p-10 sm:pt-8">
-              <div className="relative flex w-full flex-col gap-8">{children}</div>
-            </div>
-          </main>
-        </div>
+        <main className="flex min-h-screen w-full flex-col items-center bg-stone-100 pt-10">
+          {user?.stripeAccountDisabled && <StripeDisabledBanner />}
+          <div className="flex w-full max-w-screen-xl flex-col items-center space-y-4 p-6 sm:p-10 sm:pt-8">
+            <div className="relative flex w-full flex-col gap-8">{children}</div>
+          </div>
+        </main>
       </DashboardProvider>
     </SidebarProvider>
   );
