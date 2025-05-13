@@ -26,7 +26,7 @@ interface DashboardSidebarProps {
 }
 
 export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSidebarProps) {
-  const segments = useSelectedLayoutSegments();
+  const urlSegments = useSelectedLayoutSegments();
 
   const mainItems: SidebarGroup[] = [
     {
@@ -35,13 +35,13 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
           title: "Home",
           url: "/",
           icon: <Home />,
-          isActive: segments.length === 0
+          isActive: urlSegments.length === 0
         },
         {
           title: "Settings",
           url: "/settings",
           icon: <Settings />,
-          isActive: segments[0] === "settings"
+          isActive: urlSegments[0] === "settings"
         }
       ]
     },
@@ -52,13 +52,13 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
           title: "Packages",
           url: "/tiers",
           icon: <Package />,
-          isActive: segments[0] === "tiers"
+          isActive: urlSegments[0] === "tiers"
         },
         {
           title: "Contracts",
           url: "/contracts",
           icon: <Scroll />,
-          isActive: segments[0] === "contracts"
+          isActive: urlSegments[0] === "contracts"
         }
       ]
     },
@@ -69,20 +69,20 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
           title: "Customers",
           url: "/customers",
           icon: <UsersRound />,
-          isActive: segments[0] === "customers"
+          isActive: urlSegments[0] === "customers"
         },
         {
           title: "Prospects",
           url: "/prospects",
           icon: <UserRoundSearch />,
-          isActive: segments[0] === "prospects"
+          isActive: urlSegments[0] === "prospects"
         },
         {
           title: "Research",
           url: "/research",
           icon: <ScanSearch />,
           isBeta: true,
-          isActive: segments[0] === "research"
+          isActive: urlSegments[0] === "research"
         }
       ]
     },
@@ -95,7 +95,7 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
                 title: "Landing Page",
                 url: `/site/${site.id}`,
                 icon: <AppWindowMac />,
-                isActive: segments[0] === "site" || segments[0] === "page"
+                isActive: urlSegments[0] === "site" || urlSegments[0] === "page"
               }
             ]
           : []),
@@ -105,7 +105,7 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
                 title: "Marketplace",
                 url: "/channels/market",
                 icon: <ShoppingBag />,
-                isActive: segments[1] === "market"
+                isActive: urlSegments[1] === "market"
               }
             ]
           : []),
@@ -113,7 +113,7 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
           title: "Embeds",
           url: "/channels/embeds",
           icon: <Code2 />,
-          isActive: segments[1] === "embeds"
+          isActive: urlSegments[1] === "embeds"
         }
       ]
     },
@@ -124,7 +124,7 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
           title: "Reports",
           url: "/reports",
           icon: <Chart />,
-          isActive: segments[0] === "reports"
+          isActive: urlSegments[0] === "reports"
         }
       ]
     }
@@ -149,7 +149,7 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
                 title: "Admin Debug",
                 url: `/admin/debug`,
                 icon: <Settings />,
-                isActive: segments[0] === "admin"
+                isActive: urlSegments[0] === "admin"
               }
             ]
           : [])
