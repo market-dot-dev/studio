@@ -15,7 +15,7 @@ import Link from "next/link";
 import type { ReactElement } from "react";
 import { Badge } from "../ui/badge";
 
-export interface NavItem {
+export interface SidebarItem {
   title: string;
   url: string;
   icon: LucideIcon | ReactElement;
@@ -23,19 +23,19 @@ export interface NavItem {
   isActive?: boolean;
 }
 
-export interface NavGroup {
+export interface SidebarGroup {
   label?: string;
-  items: NavItem[];
+  items: SidebarItem[];
 }
 
-interface AppNavProps {
-  mainItems: NavGroup[];
-  headerItems?: NavGroup[];
-  footerItems?: NavGroup[];
+interface AppSidebarProps {
+  mainItems: SidebarGroup[];
+  headerItems?: SidebarGroup[];
+  footerItems?: SidebarGroup[];
 }
 
-export function AppNav({ mainItems, headerItems, footerItems }: AppNavProps) {
-  const renderNavSection = (groups: NavGroup[]) => {
+export function AppSidebar({ mainItems, headerItems, footerItems }: AppSidebarProps) {
+  const renderSidebarSection = (groups: SidebarGroup[]) => {
     return groups.map((group, groupIndex) => (
       <SidebarGroup key={group.label || groupIndex}>
         {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
@@ -65,11 +65,11 @@ export function AppNav({ mainItems, headerItems, footerItems }: AppNavProps) {
   return (
     <Sidebar>
       {headerItems && headerItems.length > 0 && (
-        <SidebarHeader>{renderNavSection(headerItems)}</SidebarHeader>
+        <SidebarHeader>{renderSidebarSection(headerItems)}</SidebarHeader>
       )}
-      <SidebarContent>{renderNavSection(mainItems)}</SidebarContent>
+      <SidebarContent>{renderSidebarSection(mainItems)}</SidebarContent>
       {footerItems && footerItems.length > 0 && (
-        <SidebarFooter>{renderNavSection(footerItems)}</SidebarFooter>
+        <SidebarFooter>{renderSidebarSection(footerItems)}</SidebarFooter>
       )}
     </Sidebar>
   );

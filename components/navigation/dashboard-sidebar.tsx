@@ -1,7 +1,7 @@
 "use client";
 
-import type { NavGroup } from "@/components/navigation/app-nav";
-import { AppNav } from "@/components/navigation/app-nav";
+import type { SidebarGroup } from "@/components/navigation/app-sidebar";
+import { AppSidebar } from "@/components/navigation/app-sidebar";
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
 import type { Site, User } from "@prisma/client";
 import {
@@ -19,16 +19,16 @@ import {
 } from "lucide-react";
 import { useSelectedLayoutSegments } from "next/navigation";
 
-interface DashboardNavProps {
+interface DashboardSidebarProps {
   user: User;
   isMarketExpert: boolean;
   site: Site | null;
 }
 
-export function DashboardNav({ user, isMarketExpert, site }: DashboardNavProps) {
+export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSidebarProps) {
   const segments = useSelectedLayoutSegments();
 
-  const mainItems: NavGroup[] = [
+  const mainItems: SidebarGroup[] = [
     {
       items: [
         {
@@ -130,7 +130,7 @@ export function DashboardNav({ user, isMarketExpert, site }: DashboardNavProps) 
     }
   ];
 
-  const footerItems: NavGroup[] = [
+  const footerItems: SidebarGroup[] = [
     {
       items: [
         {
@@ -157,5 +157,5 @@ export function DashboardNav({ user, isMarketExpert, site }: DashboardNavProps) 
     }
   ];
 
-  return <AppNav mainItems={mainItems} footerItems={footerItems} />;
+  return <AppSidebar mainItems={mainItems} footerItems={footerItems} />;
 }

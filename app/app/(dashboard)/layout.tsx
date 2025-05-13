@@ -9,7 +9,7 @@ import SessionRefresher from "@/components/common/session-refresher";
 import { StripeDisabledBanner } from "@/components/common/stripe-disabled-banner";
 import { DashboardProvider } from "@/components/dashboard/dashboard-context";
 import { Header } from "@/components/header/header";
-import { DashboardNav } from "@/components/navigation/dashboard-nav";
+import { DashboardSidebar } from "@/components/navigation/dashboard-sidebar";
 import OnboardingModal from "@/components/onboarding/onboarding-modal";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { redirect } from "next/navigation";
@@ -32,7 +32,7 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
   return (
     <SidebarProvider>
       <Header />
-      <DashboardNav user={user} isMarketExpert={isMarketExpert} site={site} />
+      <DashboardSidebar user={user} isMarketExpert={isMarketExpert} site={site} />
       <DashboardProvider siteId={site?.id ?? null} initialExpertStatus={isMarketExpert}>
         <SessionRefresher />
         <OnboardingModal user={user} currentSite={site ?? undefined} onboardingState={onboarding} />

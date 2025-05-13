@@ -1,12 +1,12 @@
 "use client";
 
-import type { NavGroup } from "@/components/navigation/app-nav";
-import { AppNav } from "@/components/navigation/app-nav";
+import type { SidebarGroup } from "@/components/navigation/app-sidebar";
+import { AppSidebar } from "@/components/navigation/app-sidebar";
 import { Banknote, Menu, Settings } from "lucide-react";
 import { useParams, usePathname, useSelectedLayoutSegments } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-export function CustomerNav() {
+export function CustomerSidebar() {
   const urlSegments = useSelectedLayoutSegments();
   const { id } = useParams() as { id?: string };
   const [showSidebar, setShowSidebar] = useState(false);
@@ -16,7 +16,7 @@ export function CustomerNav() {
     setShowSidebar(false);
   }, [pathname]);
 
-  const mainItems: NavGroup[] = useMemo(
+  const mainItems: SidebarGroup[] = useMemo(
     () => [
       {
         items: [
@@ -55,7 +55,7 @@ export function CustomerNav() {
           showSidebar ? "w-full translate-x-0" : "-translate-x-full"
         } fixed z-10 h-full transition-all sm:w-[var(--sidebar-width)] sm:translate-x-0`}
       >
-        <AppNav mainItems={mainItems} />
+        <AppSidebar mainItems={mainItems} />
       </div>
     </>
   );
