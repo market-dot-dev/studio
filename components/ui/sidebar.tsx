@@ -176,7 +176,7 @@ const Sidebar = React.forwardRef<
       return (
         <div
           className={cn(
-            "flex h-full w-[var(--sidebar-width)] flex-col border-r border-stone-200 bg-stone-150 p-3 text-sidebar-foreground transition-all duration-300 dark:border-stone-700 dark:bg-stone-900",
+            "flex h-full w-[var(--sidebar-width)] flex-col border-r border-sidebar-border bg-sidebar p-3 text-sidebar-foreground transition-all duration-300",
             className
           )}
           ref={ref}
@@ -193,7 +193,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[var(--sidebar-width)] border-r border-stone-200 bg-stone-150 p-3 text-sidebar-foreground transition-all duration-300 dark:border-stone-700 dark:bg-stone-900 [&>button]:hidden"
+            className="w-[var(--sidebar-width)] border-r border-sidebar-border bg-sidebar p-3 text-sidebar-foreground transition-all duration-300 [&>button]:hidden"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE
@@ -232,7 +232,7 @@ const Sidebar = React.forwardRef<
         />
         <div
           className={cn(
-            "fixed bottom-0 md:top-[var(--header-height)] z-20 hidden w-[var(--sidebar-width)] border-r border-stone-200 bg-stone-150 p-3 transition-all duration-300 dark:border-stone-700 dark:bg-stone-900 md:flex",
+            "fixed bottom-0 md:top-[var(--header-height)] z-20 hidden w-[var(--sidebar-width)] border-r border-sidebar-border bg-sidebar p-3 transition-all duration-300 md:flex",
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -266,7 +266,8 @@ const SidebarTrigger = React.forwardRef<
       variant="ghost"
       size="icon"
       className={cn(
-        "-m-2 text-stone-300 hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white",
+        "text-sidebar-accent hover:bg-sidebar-primary-foreground/10 hover:text-sidebar-primary-foreground focus:bg-sidebar-primary-foreground/10 focus:text-sidebar-primary-foreground",
+        "after:absolute after:-inset-2 after:md:hidden",
         className
       )}
       onClick={(event) => {
@@ -430,7 +431,7 @@ const SidebarGroupLabel = React.forwardRef<
       ref={ref}
       data-sidebar="group-label"
       className={cn(
-        "font-small mb-1 ml-1 text-xxs/4 font-semibold uppercase tracking-wide text-stone-500",
+        "font-small mb-1 ml-1 text-xxs/4 font-semibold uppercase tracking-wide text-muted-foreground",
         "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
         className
       )}
@@ -505,16 +506,14 @@ const sidebarMenuButtonVariants = cva(
     variants: {
       variant: {
         default: [
-          "hover:bg-white hover:text-stone-800 hover:shadow-border-sm",
-          "focus-visible:bg-white focus-visible:text-stone-800 focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp",
-          "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800",
-          "data-[active=true]:bg-white data-[active=true]:text-stone-800 data-[active=true]:shadow-border-sm dark:data-[active=true]:bg-stone-700"
+          "hover:bg-white hover:text-sidebar-accent-foreground hover:shadow-border-sm",
+          "focus-visible:bg-white focus-visible:text-sidebar-accent-foreground focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp",
+          "data-[active=true]:bg-white data-[active=true]:text-sidebar-accent-foreground data-[active=true]:shadow-border-sm"
         ],
         outline: [
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))]",
           "hover:bg-white hover:shadow-border-sm",
-          "focus-visible:bg-white focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp",
-          "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800"
+          "focus-visible:bg-white focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp"
         ]
       }
     },
@@ -696,8 +695,7 @@ const SidebarMenuSubButton = React.forwardRef<
         "flex items-center space-x-3 rounded px-1 text-sm transition-all duration-150 ease-in-out",
         "hover:bg-white hover:shadow-border-sm",
         "focus-visible:bg-white focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp",
-        "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800",
-        "data-[active=true]:bg-white data-[active=true]:text-black data-[active=true]:shadow-border-sm dark:data-[active=true]:bg-stone-700",
+        "data-[active=true]:bg-white data-[active=true]:text-sidebar-accent-foreground data-[active=true]:shadow-border-sm",
         "group-data-[collapsible=icon]:hidden",
         className
       )}
