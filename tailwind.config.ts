@@ -15,20 +15,20 @@ export default {
     extend: {
       colors: {
         stone: {
-          150: "#F3F2F2",
-          500: "#766F6B"
+          "150": "#F3F2F2",
+          "500": "#766F6B"
         },
         swamp: {
-          DEFAULT: "#929263",
-          50: "#CDCEB6",
-          100: "#C5C5AA",
-          200: "#B4B592",
-          300: "#A4A47A",
-          400: "#929263",
-          500: "#70704D",
-          600: "#4F4F36",
-          700: "#2E2D1F",
-          800: "#0C0C08"
+          "50": "#CDCEB6",
+          "100": "#C5C5AA",
+          "200": "#B4B592",
+          "300": "#A4A47A",
+          "400": "#929263",
+          "500": "#70704D",
+          "600": "#4F4F36",
+          "700": "#2E2D1F",
+          "800": "#0C0C08",
+          DEFAULT: "#929263"
         },
         marketing: {
           primary: "#222214",
@@ -43,22 +43,22 @@ export default {
             accent: "#878E6B"
           },
           swamp: {
-            10: "rgba(239, 239, 236, 1)",
+            "10": "rgba(239, 239, 236, 1)",
             DEFAULT: "rgba(143, 143, 112, 1)",
             "10%": "rgba(143, 143, 112, 0.1)"
           },
           green: {
-            10: "rgba(233, 234, 229, 1)",
+            "10": "rgba(233, 234, 229, 1)",
             DEFAULT: "rgba(125, 136, 97, 1)",
             "10%": "rgba(125, 136, 97, 0.1)"
           },
           purple: {
-            10: "#E8E8EB",
+            "10": "#E8E8EB",
             DEFAULT: "rgba(118, 120, 158, 1)",
             "10%": "rgba(118, 120, 158, 0.1)"
           },
           orange: {
-            10: "rgba(238, 234, 225, 1)",
+            "10": "rgba(238, 234, 225, 1)",
             DEFAULT: "rgba(178, 134, 52, 1)",
             "10%": "rgba(178, 134, 52, 0.1)"
           }
@@ -105,11 +105,21 @@ export default {
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         chart: {
-          1: "hsl(var(--chart-1))",
-          2: "hsl(var(--chart-2))",
-          3: "hsl(var(--chart-3))",
-          4: "hsl(var(--chart-4))",
-          5: "hsl(var(--chart-5))"
+          "1": "hsl(var(--chart-1))",
+          "2": "hsl(var(--chart-2))",
+          "3": "hsl(var(--chart-3))",
+          "4": "hsl(var(--chart-4))",
+          "5": "hsl(var(--chart-5))"
+        },
+        sidebar: {
+          DEFAULT: "hsl(var(--sidebar-background))",
+          foreground: "hsl(var(--sidebar-foreground))",
+          primary: "hsl(var(--sidebar-primary))",
+          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
+          accent: "hsl(var(--sidebar-accent))",
+          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          border: "hsl(var(--sidebar-border))",
+          ring: "hsl(var(--sidebar-ring))"
         }
       },
       boxShadow: {
@@ -212,7 +222,7 @@ export default {
       },
       fontFamily: {
         sans: [...fontFamily.sans],
-        mono: ["Consolas", ...fontFamily.mono] // @TODO: Check if "Consolas" is actually a default font
+        mono: ["Consolas", ...fontFamily.mono]
       },
       typography: {
         DEFAULT: {
