@@ -6,8 +6,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 
 export async function Header() {
-  const session = await getSession();
-  if (!session?.user) {
+  const { user } = (await getSession()) || {};
+  if (!user) {
     redirect("/login");
   }
 
@@ -17,7 +17,7 @@ export async function Header() {
         <Logo color="white" className="h-[22px] w-auto" />
       </Link>
       <div className="flex items-center gap-3">
-        <UserDropdown user={session.user} />
+        <UserDropdown user={user} />
         <SidebarTrigger className="md:hidden" />
       </div>
     </header>
