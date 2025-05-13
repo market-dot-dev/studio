@@ -24,10 +24,11 @@ export default function UserDropdown({ user }: { user: any }) {
         >
           <Image
             src={user.image ?? `https://avatar.vercel.sh/${user.id}`}
-            width={32}
-            height={32}
+            width={24}
+            height={24}
             alt={user.name ?? "User avatar"}
-            className="size-7 rounded-full"
+            className="size-6 rounded-full"
+            priority
           />
         </Button>
       </DropdownMenuTrigger>
@@ -39,7 +40,8 @@ export default function UserDropdown({ user }: { user: any }) {
             width={28}
             height={28}
             alt={user.name ?? "User avatar"}
-            className="size-7 rounded-full"
+            className="size-6 rounded-full"
+            priority
           />
           <h3 className="text-sm font-semibold tracking-tightish">{user.name}</h3>
         </div>
