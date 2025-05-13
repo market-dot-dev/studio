@@ -8,7 +8,7 @@ export default async function CustomerLayout({ children }: { children: ReactNode
     <SidebarProvider>
       <Header />
       <CustomerSidebar />
-      <main className="flex min-h-screen w-full flex-col items-center bg-stone-100 pt-10">
+      <main className="flex min-h-screen w-screen flex-col items-center bg-stone-100 pt-10 md:w-[calc(100vw-var(--sidebar-width))]">
         <div className="flex w-full flex-col">{children}</div>
       </main>
     </SidebarProvider>
