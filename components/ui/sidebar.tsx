@@ -505,10 +505,10 @@ const sidebarMenuButtonVariants = cva(
     variants: {
       variant: {
         default: [
-          "hover:bg-white hover:shadow-border-sm",
-          "focus-visible:bg-white focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp",
+          "hover:bg-white hover:text-stone-800 hover:shadow-border-sm",
+          "focus-visible:bg-white focus-visible:text-stone-800 focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp",
           "dark:text-white dark:hover:bg-stone-700 dark:active:bg-stone-800",
-          "data-[active=true]:bg-white data-[active=true]:shadow-border-sm dark:data-[active=true]:bg-stone-700"
+          "data-[active=true]:bg-white data-[active=true]:text-stone-800 data-[active=true]:shadow-border-sm dark:data-[active=true]:bg-stone-700"
         ],
         outline: [
           "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))]",
