@@ -291,7 +291,7 @@ export default function PageEditor({
             className={cn(
               "mt-0",
               !fullscreen &&
-                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]"
+                "h-[calc(100vh-48px-var(--header-height))] overflow-y-auto md:h-[calc(100vh-80px-var(--header-height))]"
             )}
           >
             {preview}
@@ -301,7 +301,7 @@ export default function PageEditor({
             className={cn(
               "mt-0",
               !fullscreen &&
-                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]"
+                "h-[calc(100vh-48px-var(--header-height))] overflow-y-auto md:h-[calc(100vh-80px-var(--header-height))]"
             )}
           >
             {codeview(true)}
@@ -311,7 +311,7 @@ export default function PageEditor({
             className={cn(
               "mt-0",
               !fullscreen &&
-                "h-[calc(100vh-48px-var(--headerHeight))] overflow-y-auto md:h-[calc(100vh-80px-var(--headerHeight))]"
+                "h-[calc(100vh-48px-var(--header-height))] overflow-y-auto md:h-[calc(100vh-80px-var(--header-height))]"
             )}
           >
             <div className="grid grid-cols-2 gap-4">
