@@ -1,4 +1,4 @@
-import ProspectService from "@/app/services/prospect-service";
+import { getProspectsWithTier } from "@/app/services/prospect-service";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
@@ -14,7 +14,7 @@ export default async function ProspectsPage() {
     redirect("/login");
   }
 
-  const prospects = await ProspectService.getProspects(session.user.id);
+  const prospects = await getProspectsWithTier(session.user.id);
 
   // This is the full prospects page, so we don't need to limit the rows
   // but we're preserving the logic from the original component

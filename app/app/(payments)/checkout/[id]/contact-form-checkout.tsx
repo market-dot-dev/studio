@@ -1,6 +1,6 @@
 "use client";
 
-import { addNewProspectForPackage } from "@/app/services/prospect-service";
+import { addNewProspectForTier } from "@/app/services/prospect-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -28,7 +28,7 @@ export function ContactFormCheckout({ tier }: { tier: Tier }) {
 
     // @TODO: We should use a transaction here, instead of manually handling loading
     try {
-      await addNewProspectForPackage(newProspect, tier);
+      await addNewProspectForTier(newProspect, tier);
       toast.success("We've received your request. We'll be in touch soon!");
       router.push("/");
     } catch (error) {
