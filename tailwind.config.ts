@@ -222,7 +222,7 @@ export default {
       },
       fontFamily: {
         sans: [...fontFamily.sans],
-        mono: ["Consolas", ...fontFamily.mono]
+        mono: ["Consolas", ...fontFamily.mono] // @TODO: Check if "Consolas" is actually a default font
       },
       typography: {
         DEFAULT: {
