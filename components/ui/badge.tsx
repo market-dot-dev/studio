@@ -49,33 +49,32 @@ const StyledTooltip: React.FC<StyledTooltipProps> = ({ className, children }) =>
   );
 };
 
-function Badge({
-  className,
-  variant,
-  size,
-  tooltip,
-  tooltipSide = "top",
-  tooltipAlign = "center",
-  ...props
-}: BadgeProps) {
-  const badgeClasses = cn(badgeVariants({ variant, size }), className);
+const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
+  (
+    { className, variant, size, tooltip, tooltipSide = "top", tooltipAlign = "center", ...props },
+    ref
+  ) => {
+    const badgeClasses = cn(badgeVariants({ variant, size }), className);
 
-  if (tooltip) {
-    return (
-      <TooltipProvider>
-        <StyledTooltip className={badgeClasses}>
-          <TooltipTrigger asChild>
-            <div className="inline-flex items-center" {...props} />
-          </TooltipTrigger>
-          <TooltipContent side={tooltipSide} align={tooltipAlign}>
-            {tooltip}
-          </TooltipContent>
-        </StyledTooltip>
-      </TooltipProvider>
-    );
+    if (tooltip) {
+      return (
+        <TooltipProvider>
+          <StyledTooltip className={badgeClasses}>
+            <TooltipTrigger asChild>
+              <div ref={ref} className="inline-flex items-center" {...props} />
+            </TooltipTrigger>
+            <TooltipContent side={tooltipSide} align={tooltipAlign}>
+              {tooltip}
+            </TooltipContent>
+          </StyledTooltip>
+        </TooltipProvider>
+      );
+    }
+
+    return <div ref={ref} className={badgeClasses} {...props} />;
   }
+);
 
-  return <div className={badgeClasses} {...props} />;
-}
+Badge.displayName = "Badge";
 
 export { Badge, badgeVariants };

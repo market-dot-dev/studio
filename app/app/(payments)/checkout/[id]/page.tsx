@@ -24,7 +24,9 @@ export default async function CheckoutPage(props: {
   // If this is a vendor page, check that this tier belongs to them
   const headersList = await headers();
   const subdomain = await getSubdomainFromString(headersList.get("host") || "");
-  if (subdomain && ![vendor?.gh_username?.toLowerCase(), "app"].includes(subdomain)) {
+  const sites: string[] =
+    vendor?.sites.flatMap((s) => (s.subdomain != null ? [s.subdomain] : [])) ?? [];
+  if (subdomain && ![...sites, "app"].includes(subdomain)) {
     return notFound();
   }
 
