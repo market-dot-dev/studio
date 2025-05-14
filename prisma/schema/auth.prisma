@@ -33,6 +33,12 @@ model User {
   contracts                   Contract[]
   prospects                   Prospect[]
   marketExpertId              String?
+
+  // Organization relationships
+  organizations         OrganizationMember[]
+  ownedOrganizations    Organization[]       @relation("OwnedOrganizations")
+  currentOrganizationId String?
+  currentOrganization   Organization?        @relation("CurrentOrganization", fields: [currentOrganizationId], references: [id], onDelete: SetNull)
 }
 
 model Account {
