@@ -63,22 +63,6 @@ const nextConfig: NextConfig = {
   }
 };
 
-// Define Sentry configuration types
-type SentryPluginOptions = {
-  silent: boolean;
-  org: string;
-  project: string;
-};
-
-type SentryWebpackPluginOptions = {
-  widenClientFileUpload: boolean;
-  transpileClientSDK: boolean;
-  tunnelRoute: string;
-  hideSourceMaps: boolean;
-  disableLogger: boolean;
-  automaticVercelMonitors: boolean;
-};
-
 // Apply Sentry configuration conditionally based on environment
 const config =
   process.env.NODE_ENV !== "development"
