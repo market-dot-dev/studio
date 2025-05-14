@@ -1,21 +1,16 @@
+import { SubscriptionStatusBadge } from "@/app/app/(dashboard)/customers/subscription-state";
 import { CancelSubscriptionBtn } from "@/app/app/c/subscriptions/cancel-subscription-btn";
 import { ReactivateSubscriptionBtn } from "@/app/app/c/subscriptions/reactivate-subscription-btn";
 import ContractService from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
-import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
 import { isCancelled, isFinishingMonth, isRenewing } from "@/types/subscription";
 import { Subscription } from "@prisma/client";
-import { Calendar, RefreshCw, Store } from "lucide-react";
+import { Store } from "lucide-react";
 import Link from "next/link";
-
-interface SubscriptionStatus {
-  type: "active" | "ending" | "expired";
-  text: string;
-}
 
 const SubscriptionCard = async ({
   subscription,
@@ -38,35 +33,6 @@ const SubscriptionCard = async ({
   const shortenedCadence =
     actualCadence === "month" ? "mo" : actualCadence === "year" ? "yr" : actualCadence;
 
-  // Determine subscription status using our helper functions
-  let status: SubscriptionStatus;
-  let badgeVariant: "success" | "secondary" | "destructive" = "secondary";
-
-  if (isRenewing(subscription)) {
-    status = { type: "active", text: "Active" };
-    badgeVariant = "success";
-  } else if (isCancelled(subscription)) {
-    if (isFinishingMonth(subscription) && subscription.activeUntil) {
-      // Cancelled but still active
-      const daysRemaining = Math.ceil(
-        (subscription.activeUntil.getTime() - new Date().getTime()) / (1000 * 3600 * 24)
-      );
-      status = {
-        type: "ending",
-        text: `Ending in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`
-      };
-      badgeVariant = "secondary";
-    } else {
-      // Fully expired
-      status = { type: "expired", text: "Expired" };
-      badgeVariant = "secondary";
-    }
-  } else {
-    // Fallback for any other unforeseen cases, though ideally all states are covered
-    status = { type: "expired", text: "Unknown" };
-    badgeVariant = "secondary";
-  }
-
   const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
 
   // Check if this is a cancelled but still active subscription that can be reactivated
@@ -85,11 +51,7 @@ const SubscriptionCard = async ({
             </h3>
             <TierDetailsModal tier={tier} />
           </div>
-          <Badge variant={badgeVariant} className="inline-flex size-fit gap-1.5">
-            {status.type === "active" && <RefreshCw />}
-            {status.type === "ending" && <Calendar />}
-            {status.text}
-          </Badge>
+          <SubscriptionStatusBadge subscription={subscription} />
         </div>
         <p className="text-xl font-semibold text-stone-800">
           USD ${actualPrice}
