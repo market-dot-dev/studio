@@ -1,0 +1,75 @@
+enum Channel {
+  site
+  market
+}
+
+model Tier {
+  id              String  @id @default(cuid())
+  userId          String
+  checkoutType    String  @default("gitwallet")
+  stripeProductId String? @unique
+
+  name        String
+  description String?
+  tagline     String?
+
+  published Boolean   @default(true)
+  channels  Channel[] @default([site])
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  price                 Int?
+  applicationFeePercent Int?
+  applicationFeePrice   Int?
+  stripePriceId         String?
+  trialDays             Int     @default(0)
+  cadence               String  @default("month")
+  priceAnnual           Int?
+  stripePriceIdAnnual   String?
+
+  revision      Int
+  versions      TierVersion[]
+  subscriptions Subscription[]
+
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  Charge     Charge[]
+  contractId String?
+  contract   Contract?  @relation(fields: [contractId], references: [id])
+  Prospects  Prospect[]
+
+  @@index([userId, stripePriceId])
+}
+
+model TierVersion {
+  id                  String  @id @default(cuid())
+  tierId              String
+  revision            Int
+  price               Int?
+  trialDays           Int     @default(0)
+  stripePriceId       String?
+  cadence             String  @default("month")
+  priceAnnual         Int?
+  stripePriceIdAnnual String?
+
+  tier          Tier           @relation(fields: [tierId], references: [id])
+  subscriptions Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Charge    Charge[]
+
+  @@index([tierId])
+}
+
+model Contract {
+  id             String  @id @default(cuid())
+  name           String
+  description    String?
+  maintainerId   String?
+  maintainer     User?   @relation(fields: [maintainerId], references: [id])
+  url            String?
+  storage        String
+  attachmentUrl  String?
+  attachmentType String?
+  Tier           Tier[]
+}

@@ -1,0 +1,44 @@
+model Lead {
+  id                    Int      @id @default(autoincrement())
+  host                  String
+  login                 String
+  name                  String
+  uuid                  String
+  kind                  String
+  description           String?
+  email                 String?
+  website               String?
+  location              String?
+  twitter               String?
+  company               String?
+  icon_url              String?
+  repositories_count    Int
+  last_synced_at        DateTime
+  html_url              String
+  total_stars           Int?
+  dependent_repos_count Int
+  followers             Int?
+  following             Int?
+  maintainers           Json
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  userId                String
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([host, uuid], name: "host_uuid_unique")
+}
+
+model Prospect {
+  id           String   @id @default(cuid())
+  userId       String
+  name         String
+  email        String
+  organization String?
+  context      String?
+  tiers        Tier[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([email, userId])
+}
