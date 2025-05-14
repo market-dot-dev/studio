@@ -1,3 +1,4 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
@@ -114,4 +115,6 @@ const config =
       })
     : nextConfig;
 
-export default config;
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true"
+})(config);
