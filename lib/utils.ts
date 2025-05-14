@@ -121,11 +121,15 @@ export const getSubscriptionExpiryDateText = (expiryDate: Date | null): string =
     const averageDaysInMonth = 365.25 / 12;
     const calculatedMonths = Math.round(daysRemaining / averageDaysInMonth);
     return `Ends in ${calculatedMonths} month${calculatedMonths !== 1 ? "s" : ""}`;
-  } else if (daysRemaining > 0) {
-    return `Ends in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`;
-  } else if (daysRemaining === 0) {
-    return "Ends Today";
-  } else {
-    return "Ending";
   }
+
+  if (daysRemaining > 0) {
+    return `Ends in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`;
+  }
+
+  if (daysRemaining === 0) {
+    return "Ends Today";
+  }
+
+  return "Ending";
 };
