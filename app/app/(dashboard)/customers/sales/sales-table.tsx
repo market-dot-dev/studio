@@ -60,7 +60,7 @@ const SalesTable = ({
   return (
     <div className="space-y-4">
       <div className="flex w-full items-end justify-between">
-        <h3 className="text-xl font-bold tracking-tightish">Sales & Prospects</h3>
+        <h3 className="text-xl font-bold">Sales & Prospects</h3>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm" className="group gap-0.5 pr-1">

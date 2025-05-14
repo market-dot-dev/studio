@@ -238,7 +238,7 @@ export default function DashboardCharts({
     <div className="space-y-4">
       <div className="flex items-end justify-between">
         <div className="flex items-end gap-2">
-          <div className="text-xl font-bold tracking-tightish">Reports</div>
+          <h3 className="text-xl font-bold">Reports</h3>
           {isUsingDummyData && (
             <Badge variant="secondary" size="sm" className="mb-1">
               Sample Data
