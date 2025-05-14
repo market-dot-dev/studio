@@ -46,7 +46,7 @@ const SubscriptionCard = async ({
     status = { type: "active", text: "Active" };
     badgeVariant = "success";
   } else if (isCancelled(subscription)) {
-    if (isFinishingMonth(subscription)) {
+    if (isFinishingMonth(subscription) && subscription.activeUntil) {
       // Cancelled but still active
       const daysRemaining = Math.ceil(
         (subscription.activeUntil.getTime() - new Date().getTime()) / (1000 * 3600 * 24)
