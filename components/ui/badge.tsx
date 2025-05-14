@@ -12,7 +12,8 @@ const badgeVariants = cva(
         default: "border-transparent bg-primary !text-primary-foreground shadow",
         secondary: "border-transparent bg-stone-200 !text-stone-600",
         success: "border-transparent bg-swamp !text-primary-foreground shadow",
-        destructive: "border-transparent bg-destructive !text-destructive-foreground shadow",
+        warning: "border-transparent bg-warning !text-primary-foreground shadow",
+        destructive: "border-transparent bg-destructive !text-primary-foreground shadow",
         outline: "!text-stone-600"
       },
       size: {
