@@ -120,7 +120,7 @@ export const getSubscriptionExpiryDateText = (expiryDate: Date | null): string =
   if (daysRemaining > 60) {
     const averageDaysInMonth = 365.25 / 12;
     const calculatedMonths = Math.round(daysRemaining / averageDaysInMonth);
-    return `Ends in ${calculatedMonths} month${calculatedMonths !== 1 ? "s" : ""}`;
+    return `Ends in ${calculatedMonths} months`;
   }
 
   if (daysRemaining > 0) {
