@@ -17,9 +17,7 @@ export function SubscriptionStatusCard({ subscriptionId, tierName, expiryDate }:
   const subUrl = getRootUrl("app", "/c/");
   const isExpiring = !!expiryDate;
 
-  const daysRemainingText = isExpiring ? getSubscriptionExpiryDateText(expiryDate) : "";
-
-  const eyebrowText = isExpiring ? daysRemainingText : "Subscribed";
+  const eyebrowText = isExpiring ? getSubscriptionExpiryDateText(expiryDate) : "Subscribed";
   const eyebrowColor = isExpiring ? "text-warning" : "text-success";
   const eyebrowIconFill = isExpiring ? "fill-warning" : "fill-success";
   const EyebrowIconComponent = isExpiring ? Clock : CircleCheck;
