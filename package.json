@@ -64,7 +64,7 @@
     "next": "15.3.1",
     "next-auth": "^4.24.11",
     "node-html-parser": "^7.0.1",
-    "nodemailer": "^6.10.1",
+    "nodemailer": "^7.0.3",
     "pretty": "^2.0.0",
     "prism-react-renderer": "^2.4.1",
     "react": "19.1.0",
