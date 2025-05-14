@@ -5,6 +5,7 @@ import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { pluralize } from "@/lib/utils";
 import { isActive } from "@/types/subscription";
 import { Charge, Subscription } from "@prisma/client";
 
@@ -43,9 +44,7 @@ export default async function SubscriptionsAndChargesList() {
                       {activeSubscriptions.length}
                     </Badge>
                   )}
-                  {activeSubscriptions.length === 1
-                    ? "Active Subscription"
-                    : "Active Subscriptions"}
+                  {pluralize("Active Subscription", activeSubscriptions.length)}
                 </>
               }
             />
@@ -60,7 +59,7 @@ export default async function SubscriptionsAndChargesList() {
                     {charges.length}
                   </Badge>
                 )}
-                {charges.length === 1 ? "One-Time Purchase" : "One-Time Purchases"}
+                {pluralize("One-Time Purchase", charges.length)}
               </>
             </TabsTrigger>
             <TabsTrigger value="past" className="group gap-2">
@@ -74,7 +73,7 @@ export default async function SubscriptionsAndChargesList() {
                     {pastSubscriptions.length}
                   </Badge>
                 )}
-                {pastSubscriptions.length === 1 ? "Past Subscription" : "Past Subscriptions"}
+                {pluralize("Past Subscription", pastSubscriptions.length)}
               </>
             </TabsTrigger>
           </TabsList>

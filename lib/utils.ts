@@ -102,6 +102,21 @@ export function generateUniqueFilename(extension: string): string {
 }
 
 /**
+ * Pluralizes a string based on a count.
+ * @param str The string to pluralize.
+ * @param count The count to determine if the string should be plural.
+ * @param pluralSuffix The suffix to add for pluralization (defaults to "s").
+ * @returns The pluralized string.
+ */
+export const pluralize = (str: string, count: number, pluralSuffix: string = "s"): string => {
+  if (count === 1) {
+    return str;
+  }
+  // A simple approach for now, could be expanded with more complex pluralization rules
+  return str + pluralSuffix;
+};
+
+/**
  * Formats a subscription's expiry date into a human-readable text
  * @param expiryDate The date when the subscription will expire
  * @returns A string describing when the subscription will expire (e.g. "Expires in 2 months", "Expires Today")
@@ -124,7 +139,7 @@ export const getSubscriptionExpiryDateText = (expiryDate: Date | null): string =
   }
 
   if (daysRemaining > 0) {
-    return `Ends in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`;
+    return `Ends in ${daysRemaining} ${pluralize("day", daysRemaining)}`;
   }
 
   if (daysRemaining === 0) {
