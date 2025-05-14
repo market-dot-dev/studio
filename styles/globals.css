@@ -181,7 +181,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --accent-foreground: 24 9.8% 10%;
     --success: 105 58% 30%;
     --success-foreground: 0 0% 100%;
-    --warning: 27 90% 55%;
+    --warning: 27 90% 48%;
     --warning-foreground: 0 0% 100%;
     --destructive: 345 82% 50%;
     --destructive-foreground: 60 9.1% 97.8%;
