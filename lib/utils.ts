@@ -100,3 +100,32 @@ export const generateId = customAlphabet(
 export function generateUniqueFilename(extension: string): string {
   return `${generateId()}.${extension || "unknown"}`;
 }
+
+/**
+ * Formats a subscription's expiry date into a human-readable text
+ * @param expiryDate The date when the subscription will expire
+ * @returns A string describing when the subscription will expire (e.g. "Expires in 2 months", "Expires Today")
+ */
+export const getSubscriptionExpiryDateText = (expiryDate: Date | null): string => {
+  if (!expiryDate) {
+    return "Ending";
+  }
+
+  const currentTime = new Date().getTime();
+  const expiryTime = new Date(expiryDate).getTime();
+
+  const timeDiffMs = expiryTime - currentTime;
+  const daysRemaining = Math.ceil(timeDiffMs / (1000 * 3600 * 24));
+
+  if (daysRemaining > 60) {
+    const averageDaysInMonth = 365.25 / 12;
+    const calculatedMonths = Math.round(daysRemaining / averageDaysInMonth);
+    return `Ends in ${calculatedMonths} month${calculatedMonths !== 1 ? "s" : ""}`;
+  } else if (daysRemaining > 0) {
+    return `Ends in ${daysRemaining} day${daysRemaining !== 1 ? "s" : ""}`;
+  } else if (daysRemaining === 0) {
+    return "Ends Today";
+  } else {
+    return "Ending";
+  }
+};
