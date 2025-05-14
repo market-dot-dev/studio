@@ -72,7 +72,7 @@ export const renderProspectContextSubRowComponent = (row: Row<ProspectWithTier>)
   }
   return (
     <div className="ml-px px-5 pb-4">
-      <p className="max-w-[calc(100vw-88px)] whitespace-pre-wrap border-l py-1 pl-2 text-xs font-medium italic tracking-tightish text-stone-500 sm:max-w-[calc(100vw-120px)] md:sm:max-w-[calc(100vw-120px-var(--navWidth))]">
+      <p className="max-w-[calc(100vw-88px)] whitespace-pre-wrap border-l py-1 pl-2 text-xs font-medium italic tracking-tightish text-stone-500 sm:max-w-[calc(100vw-120px)] md:sm:max-w-[calc(100vw-120px-var(--sidebar-width))]">
         <span className="mr-0.5 font-serif">{"\u201C"}</span>
         {context}
         <span className="font-serif">{"\u201D"}</span>

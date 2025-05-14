@@ -1,19 +1,16 @@
-import CustomerNav from "@/components/customer-nav";
-import Header from "@/components/header/header";
+import { Header } from "@/components/header/header";
+import { CustomerSidebar } from "@/components/navigation/customer-sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { ReactNode } from "react";
 
-export default async function DashboardLayout({ children }: { children: ReactNode }) {
+export default async function CustomerLayout({ children }: { children: ReactNode }) {
   return (
-    <div>
+    <SidebarProvider>
       <Header />
-      <div className="relative pt-10">
-        <CustomerNav />
-        <div className="min-h-screen bg-stone-100 dark:bg-black sm:pl-[var(--navWidth)]">
-          <div className="flex w-full items-stretch">
-            <div className="w-full grow">{children}</div>
-          </div>
-        </div>
-      </div>
-    </div>
+      <CustomerSidebar />
+      <main className="flex min-h-screen w-screen flex-col items-center bg-stone-100 pt-10 md:w-[calc(100vw-var(--sidebar-width))]">
+        <div className="flex w-full flex-col">{children}</div>
+      </main>
+    </SidebarProvider>
   );
 }

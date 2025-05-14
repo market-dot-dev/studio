@@ -10,7 +10,12 @@ export const includeVendorProfile = Prisma.validator<Prisma.UserDefaultArgs>()({
     projectName: true,
     company: true,
     stripeAccountId: true,
-    gh_username: true
+    gh_username: true,
+    sites: {
+      select: {
+        subdomain: true
+      }
+    }
   }
 });
 
