@@ -1,6 +1,6 @@
 import PageService from "@/app/services/PageService";
 import renderElement from "@/components/site/page-renderer";
-import { JSDOM } from "jsdom";
+import { parseHTML } from "@/utils/dom-adapter";
 import { notFound } from "next/navigation";
 
 export default async function SitePage(props: {
@@ -21,10 +21,8 @@ export default async function SitePage(props: {
     notFound();
   }
 
-  // Create DOM from HTML content
-  const dom = new JSDOM(body);
-  const rootElement = dom.window.document.body;
-  const elements: Element[] = Array.from(rootElement.children);
+  // Parse HTML and get DOM-compatible elements
+  const elements = parseHTML(body);
 
   // Render the page using the strongly typed data
   const reactElement = renderElement(elements, 0, data, page, false);
