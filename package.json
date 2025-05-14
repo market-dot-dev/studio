@@ -1,5 +1,8 @@
 {
   "private": true,
+  "prisma": {
+    "schema": "./prisma/schema"
+  },
   "scripts": {
     "generate-routes": "tsx scripts/generate-routes.ts",
     "dev": "prisma generate && next dev -H market.local",
