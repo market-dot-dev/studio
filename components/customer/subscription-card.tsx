@@ -6,6 +6,7 @@ import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
 import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/lib/utils";
 import { isCancelled, isFinishingMonth, isRenewing } from "@/types/subscription";
 import { Subscription } from "@prisma/client";
@@ -90,11 +91,23 @@ const SubscriptionCard = async ({
         </div>
       </div>
 
-      {(isRenewing(subscription) || canReactivate) && (
-        <div className="flex justify-end gap-2 rounded-b-md border-t px-5 py-2.5">
-          {isRenewing(subscription) && <CancelSubscriptionBtn subscriptionId={subscription.id} />}
-          {canReactivate && <ReactivateSubscriptionBtn subscriptionId={subscription.id} />}
-        </div>
+      <Separator />
+
+      {isRenewing(subscription) && (
+        <CancelSubscriptionBtn
+          subscriptionId={subscription.id}
+          size="lg"
+          variant="outline"
+          className="w-full rounded-b-md rounded-t-none shadow-none"
+        />
+      )}
+      {canReactivate && (
+        <ReactivateSubscriptionBtn
+          subscriptionId={subscription.id}
+          size="lg"
+          variant="outline"
+          className="w-full rounded-b-md rounded-t-none shadow-none"
+        />
       )}
     </Card>
   );

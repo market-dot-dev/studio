@@ -11,10 +11,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { useState } from "react";
 
-export const CancelSubscriptionBtn = ({ subscriptionId }: { subscriptionId: string }) => {
+export const CancelSubscriptionBtn = ({
+  subscriptionId,
+  ...props
+}: { subscriptionId: string } & ButtonProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -28,6 +31,7 @@ export const CancelSubscriptionBtn = ({ subscriptionId }: { subscriptionId: stri
         disabled={loading}
         className="w-min"
         onClick={() => setDialogOpen(true)}
+        {...props}
       >
         Cancel Subscription
       </Button>
