@@ -1,7 +1,7 @@
 "use server";
 
+import { Site } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
-import { Site } from "@prisma/client";
 import { revalidateTag } from "next/cache";
 import { getCurrentUserId } from "./session-service";
 import { uploadLogoFile } from "./site-media-service";

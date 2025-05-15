@@ -1,7 +1,7 @@
 "use server";
 
+import { Channel } from "@/app/generated/prisma";
 import { getRootUrl } from "@/lib/domain";
-import { Channel } from "@prisma/client";
 import { getCurrentSite } from "./site-crud-service";
 import { getPublishedTiersForUser } from "./tier-service";
 import UserService, { getCurrentUser } from "./UserService";

@@ -1,6 +1,7 @@
 "use client";
 
 import { CHECKOUT_CURRENCY } from "@/app/config/checkout";
+import { Contract, Tier } from "@/app/generated/prisma";
 import { processPayment } from "@/app/services/checkout-service";
 import { SimplePaymentElement } from "@/components/checkout/stripe-payment-element";
 import { ContractLink } from "@/components/contracts/contract-link";
@@ -9,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { type VendorProfile } from "@/types/checkout";
-import { Contract, Tier } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";

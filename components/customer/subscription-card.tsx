@@ -1,5 +1,6 @@
 import { CancelSubscriptionBtn } from "@/app/app/c/subscriptions/cancel-subscription-btn";
 import { ReactivateSubscriptionBtn } from "@/app/app/c/subscriptions/reactivate-subscription-btn";
+import { Subscription } from "@/app/generated/prisma";
 import ContractService from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
@@ -7,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { isActive, isCancelled, isFinishingMonth, isRenewing } from "@/types/subscription";
-import { Subscription } from "@prisma/client";
 import { Store } from "lucide-react";
 import { ContractLink } from "../contracts/contract-link";
 

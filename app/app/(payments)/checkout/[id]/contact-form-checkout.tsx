@@ -1,11 +1,11 @@
 "use client";
 
+import { Tier } from "@/app/generated/prisma";
 import { addNewProspectForPackage } from "@/app/services/prospect-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Tier } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";

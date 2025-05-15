@@ -1,5 +1,5 @@
+import type { Contract } from "@/app/generated/prisma";
 import { getRootUrl } from "@/lib/domain";
-import type { Contract } from "@prisma/client";
 
 export const ContractLink = ({ contract }: { contract?: Contract }) => {
   const baseUrl = getRootUrl("app", "/c/contracts");

@@ -1,3 +1,4 @@
+import { Site, User } from "@/app/generated/prisma";
 import { uploadLogo } from "@/app/services/site-media-service";
 import { validateSubdomain } from "@/app/services/site-subdomain-service";
 import { Button } from "@/components/ui/button";
@@ -5,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getRootUrl } from "@/lib/domain";
 import { isGitWalletError } from "@/lib/errors";
-import { Site, User } from "@prisma/client";
 import * as Sentry from "@sentry/nextjs";
 import clsx from "clsx";
 import { ImageIcon } from "lucide-react";

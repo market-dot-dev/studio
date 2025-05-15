@@ -1,9 +1,9 @@
 "use client";
 
+import { Tier, User } from "@/app/generated/prisma";
 import PageHeader from "@/components/common/page-header";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tier, User } from "@prisma/client";
 import { Check } from "lucide-react";
 import { useState } from "react";
 

@@ -1,9 +1,9 @@
 "use client";
 
+import { Charge, Prospect, Subscription, User } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
 import { Badge } from "@/components/ui/badge";
 import { capitalize, formatDate } from "@/lib/utils";
-import { Charge, Prospect, Subscription, User } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import PurchaseStatusBadge from "../purchase-state";
 import SubscriptionStatusBadge from "../subscription-state";

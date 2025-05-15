@@ -1,9 +1,9 @@
 "use client";
 
+import { User } from "@/app/generated/prisma";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { User } from "@prisma/client";
 import { useState } from "react";
 import EmailCompositionStep from "./components/email-composition";
 import EmailPreviewStep from "./components/email-preview";

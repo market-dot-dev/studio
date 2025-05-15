@@ -1,8 +1,8 @@
 "use server";
 
+import { Contract, Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateId } from "@/lib/utils";
-import { Contract, Prisma } from "@prisma/client";
 import { put } from "@vercel/blob";
 import { getCurrentUser } from "./UserService";
 

@@ -1,8 +1,8 @@
 "use server";
 
+import { Prisma, User } from "@/app/generated/prisma";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { Prisma, User } from "@prisma/client";
 import { createSessionUser } from "../models/Session";
 import SessionService from "./session-service";
 

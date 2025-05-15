@@ -1,9 +1,9 @@
 "use client";
 
+import type { Site, User } from "@/app/generated/prisma";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
 import type { SidebarItemGroup } from "@/types/sidebar";
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
-import type { Site, User } from "@prisma/client";
 import {
   AppWindowMac,
   ChartNoAxesColumnIncreasing as Chart,

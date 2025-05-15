@@ -1,5 +1,6 @@
 "use client";
 
+import { User } from "@/app/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -12,7 +13,6 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { User } from "@prisma/client";
 import { ColumnDef, flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useEffect, useMemo, useState } from "react";
 

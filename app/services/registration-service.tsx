@@ -1,5 +1,6 @@
 "use server";
 
+import { User } from "@/app/generated/prisma";
 import {
   homepageTemplate,
   homepageTitle,
@@ -7,7 +8,6 @@ import {
   siteName
 } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
-import { User } from "@prisma/client";
 import { signIn } from "next-auth/react";
 import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 

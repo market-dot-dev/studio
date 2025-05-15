@@ -1,8 +1,8 @@
 "use client";
 
+import { Subscription } from "@/app/generated/prisma";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
-import { Subscription } from "@prisma/client";
 
 const SubscriptionStatusBadge = ({ subscription }: { subscription: Subscription }) => {
   return (

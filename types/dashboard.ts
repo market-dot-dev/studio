@@ -1,5 +1,5 @@
+import { Charge, Prospect, Subscription, User } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
-import { Charge, Prospect, Subscription, User } from "@prisma/client";
 
 /**
  * Type for customer with charges, subscriptions, and prospects

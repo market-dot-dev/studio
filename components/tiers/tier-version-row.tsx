@@ -1,6 +1,6 @@
+import { TierVersion } from "@/app/generated/prisma";
 import { getSubscriberCount } from "@/app/services/subscription-service";
 import { TableCell, TableRow } from "@/components/ui/table";
-import { TierVersion } from "@prisma/client";
 import React, { useEffect, useState } from "react";
 
 interface TierVersionRowProps {

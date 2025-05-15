@@ -1,7 +1,7 @@
 "use server";
 
+import { Charge } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
-import { Charge } from "@prisma/client";
 import { getStripeCustomerId } from "./customer-service";
 import { confirmCustomerPurchase, notifyOwnerOfNewPurchase } from "./email-service";
 import SessionService from "./session-service";

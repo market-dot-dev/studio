@@ -1,5 +1,6 @@
 "use server";
 
+import { Subscription } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import {
   includeTierAndUser,
@@ -7,7 +8,6 @@ import {
   SubscriptionStatus,
   type SubscriptionWithTierAndUser
 } from "@/types/subscription";
-import { Subscription } from "@prisma/client";
 import { getStripeCustomerId } from "./customer-service";
 import {
   confirmCustomerSubscription,

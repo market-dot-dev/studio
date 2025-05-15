@@ -1,12 +1,12 @@
 "use client";
 
+import { User } from "@/app/generated/prisma";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent
 } from "@/components/ui/chart";
-import { User } from "@prisma/client";
 import { format } from "date-fns";
 import { useSearchParams } from "next/navigation";
 import { useMemo } from "react";

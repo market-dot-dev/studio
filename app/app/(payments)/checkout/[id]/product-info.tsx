@@ -1,10 +1,10 @@
 import { CHECKOUT_CURRENCY, CHECKOUT_CURRENCY_SYMBOL } from "@/app/config/checkout";
+import { Tier } from "@/app/generated/prisma";
 import { getShortenedCadence } from "@/app/services/checkout-service";
 import { TierDescriptionFeatures } from "@/components/tiers/tier-description-features";
 import { Separator } from "@/components/ui/separator";
 import { parseTierDescription } from "@/lib/utils";
 import { type VendorProfile } from "@/types/checkout";
-import { Tier } from "@prisma/client";
 import { Store } from "lucide-react";
 import { BrandBadge } from "./brand-badge";
 

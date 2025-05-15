@@ -1,8 +1,8 @@
 "use server";
 
 import * as EmailTemplates from "@/app/components/email/templates";
+import { Prospect, User } from "@/app/generated/prisma";
 import { domainCopy, getRootUrl } from "@/lib/domain";
-import { Prospect, User } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import { findUser } from "./UserService";
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "@prisma/client";
+import { User } from "@/app/generated/prisma";
 import {
   Book,
   BookLock,

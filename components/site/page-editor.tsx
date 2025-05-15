@@ -14,11 +14,11 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import renderElement from "./page-renderer";
 
+import { Page, Site } from "@/app/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
-import { Page, Site } from "@prisma/client";
 import Link from "next/link";
 import { useFullscreen } from "../dashboard/dashboard-context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";

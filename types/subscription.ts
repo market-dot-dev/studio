@@ -1,4 +1,4 @@
-import { Prisma, Subscription } from "@prisma/client";
+import { Prisma, Subscription } from "@/app/generated/prisma";
 
 // Subscription states used throughout the application
 export const SubscriptionStates = {

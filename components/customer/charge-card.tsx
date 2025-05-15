@@ -1,9 +1,9 @@
+import { Charge } from "@/app/generated/prisma";
 import ContractService from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import { Charge } from "@prisma/client";
 import { Store } from "lucide-react";
 import { ContractLink } from "../contracts/contract-link";
 

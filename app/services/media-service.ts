@@ -1,8 +1,8 @@
 "use server";
 
+import { Media } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateId } from "@/lib/utils";
-import { Media } from "@prisma/client";
 import { del, put } from "@vercel/blob";
 import { getCurrentSite } from "./site-crud-service";
 

@@ -38,9 +38,9 @@ import { toast } from "sonner";
 
 import useCurrentSession from "@/app/hooks/use-current-session";
 
+import { Channel, Contract, TierVersion, User } from "@/app/generated/prisma";
 import { hasVendorStripeAccount } from "@/app/services/stripe-vendor-service";
 import { getVersionsByTierId } from "@/app/services/tier-version-service";
-import { Channel, Contract, TierVersion, User } from "@prisma/client";
 import DuplicateTierButton from "./duplicate-tier-button";
 import StandardCheckoutForm from "./standard-checkout-form";
 import TierLinkCopier from "./tier-link-copier";

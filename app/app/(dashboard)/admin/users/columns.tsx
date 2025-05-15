@@ -1,7 +1,7 @@
 "use client";
 
+import { User } from "@/app/generated/prisma";
 import { Button } from "@/components/ui/button";
-import { User } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ArrowRight } from "lucide-react";

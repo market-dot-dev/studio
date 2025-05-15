@@ -1,9 +1,9 @@
 "use client";
 
+import { Charge, Subscription } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
-import { Charge, Subscription } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
 import PurchaseStatusBadge from "./purchase-state";

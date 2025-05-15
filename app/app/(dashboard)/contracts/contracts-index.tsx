@@ -1,8 +1,8 @@
 "use client";
 
+import { Contract } from "@/app/generated/prisma";
 import { SessionUser } from "@/app/models/Session";
 import { DataTable } from "@/components/ui/data-table";
-import { Contract } from "@prisma/client";
 import { createColumns } from "./columns";
 
 interface Props {

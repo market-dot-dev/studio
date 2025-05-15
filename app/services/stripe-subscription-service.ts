@@ -1,7 +1,7 @@
 "use server";
 
+import { Tier } from "@/app/generated/prisma";
 import { generateId } from "@/lib/utils";
-import { Tier } from "@prisma/client";
 import Stripe from "stripe";
 import { createStripeClient } from "./create-stripe-client";
 
