@@ -1,4 +1,4 @@
-import { Contract, PrismaClient } from "@prisma/client";
+import { Contract, PrismaClient } from "@/app/generated/prisma";
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
