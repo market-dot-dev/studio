@@ -1,5 +1,6 @@
 "use client";
 
+import { SessionUser } from "@/app/models/Session";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +13,7 @@ import {
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 
-export default function UserDropdown({ user }: { user: any }) {
+export default function UserDropdown({ user }: { user: SessionUser }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -47,6 +48,7 @@ export default function UserDropdown({ user }: { user: any }) {
         </div>
 
         <DropdownMenuSeparator />
+
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={() =>
