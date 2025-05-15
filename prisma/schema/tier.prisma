@@ -4,18 +4,19 @@ enum Channel {
 }
 
 model Tier {
-  id              String  @id @default(cuid())
-  userId          String
-  checkoutType    String  @default("gitwallet")
-  stripeProductId String? @unique
+  id              String    @id @default(cuid())
+  checkoutType    String    @default("gitwallet")
+  stripeProductId String?   @unique
+  name            String
+  description     String?
+  tagline         String?
+  published       Boolean   @default(true)
+  channels        Channel[] @default([site])
 
-  name        String
-  description String?
-  tagline     String?
-
-  published Boolean   @default(true)
-  channels  Channel[] @default([site])
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String /// @DEPRECATED. Should be converted to Organization.
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade) /// @DEPRECATED. Should be converted to Organization.
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
 
   price                 Int?
   applicationFeePercent Int?
@@ -38,6 +39,7 @@ model Tier {
   Prospects  Prospect[]
 
   @@index([userId, stripePriceId])
+  @@index([organizationId, stripePriceId])
 }
 
 model TierVersion {
@@ -62,14 +64,16 @@ model TierVersion {
 }
 
 model Contract {
-  id             String  @id @default(cuid())
+  id             String        @id @default(cuid())
   name           String
   description    String?
-  maintainerId   String?
-  maintainer     User?   @relation(fields: [maintainerId], references: [id])
   url            String?
   storage        String
   attachmentUrl  String?
   attachmentType String?
+  maintainerId   String? /// @DEPRECATED. Should be converted to Organization.
+  maintainer     User?         @relation(fields: [maintainerId], references: [id]) /// @DEPRECATED. Should be converted to Organization.
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
   Tier           Tier[]
 }

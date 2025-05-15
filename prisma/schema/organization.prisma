@@ -19,8 +19,10 @@ model Organization {
 
   // Current users tracking - for UI context
   currentUsers User[] @relation("CurrentOrganization")
-
+  
   // Entity relationships
+  tiers         Tier[]
+  contracts     Contract[]
   charges       Charge[]
   subscriptions Subscription[]
   leads         Lead[]
