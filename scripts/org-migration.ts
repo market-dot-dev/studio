@@ -120,7 +120,7 @@ async function processUser(user: User & { ownedOrganizations: any[] }) {
         name: user.name || user.username || user.email || `Organization ${user.id}`,
         type: orgType,
 
-        // Migrate business fields from TODO list - assumes these fields exist in Organization model
+        // Migrate business fields
         businessLocation: user.businessLocation,
         businessType: user.businessType,
         company: user.company,
@@ -130,7 +130,7 @@ async function processUser(user: User & { ownedOrganizations: any[] }) {
         gh_id: user.gh_id,
         gh_username: user.gh_username,
 
-        // Migrate Stripe fields - properly handling JSON types
+        // Migrate Stripe fields
         stripeCustomerIds: user.stripeCustomerIds, // Already a JSON field in both models
         stripePaymentMethodIds: user.stripePaymentMethodIds, // Already a JSON field in both models
         stripeAccountId: user.stripeAccountId,
