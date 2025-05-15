@@ -35,4 +35,5 @@ model Subscription {
   tier                 Tier          @relation(fields: [tierId], references: [id])
 
   @@index([userId, tierId, active])
+  @@index([organizationId, tierId, active])
 }

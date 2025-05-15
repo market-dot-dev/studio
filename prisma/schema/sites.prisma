@@ -19,6 +19,7 @@ model Site {
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
   @@index([userId])
+  @@index([organizationId])
 }
 
 model Page {
@@ -39,6 +40,7 @@ model Page {
   @@unique([slug, siteId])
   @@index([siteId])
   @@index([userId])
+  @@index([organizationId])
 }
 
 model Media {
