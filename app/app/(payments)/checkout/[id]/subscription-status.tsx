@@ -37,10 +37,7 @@ export function SubscriptionStatusCard({ subscriptionId, tierName, expiryDate }:
             <>
               Your subscription to <span className="font-semibold text-foreground">{tierName}</span>{" "}
               will be active until{" "}
-              <span className="font-semibold text-foreground">
-                {formatDate(expiryDate?.toLocaleDateString())}
-              </span>
-              .
+              <span className="font-semibold text-foreground">{formatDate(expiryDate)}</span>.
             </>
           ) : (
             <>
