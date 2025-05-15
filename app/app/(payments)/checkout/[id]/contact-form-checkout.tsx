@@ -22,7 +22,7 @@ export function ContactFormCheckout({ tier }: { tier: Tier }) {
     const newProspect = {
       email: formData.get("email") as string,
       name: formData.get("name") as string,
-      organization: formData.get("organization") as string,
+      companyName: formData.get("companyname") as string,
       context: formData.get("context") as string
     };
 
@@ -51,10 +51,10 @@ export function ContactFormCheckout({ tier }: { tier: Tier }) {
           <Input id="email" name="email" type="email" placeholder="Enter your email" required />
         </div>
         <div className="flex w-full flex-col gap-2">
-          <Label htmlFor="organization">Company</Label>
+          <Label htmlFor="companyname">Company</Label>
           <Input
-            id="organization"
-            name="organization"
+            id="companyname"
+            name="companyname"
             placeholder="Enter your company name"
             required
           />

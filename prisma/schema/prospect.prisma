@@ -1,5 +1,5 @@
 model Lead {
-  id                    Int      @id @default(autoincrement())
+  id                    Int           @id @default(autoincrement())
   host                  String
   login                 String
   name                  String
@@ -20,25 +20,30 @@ model Lead {
   followers             Int?
   following             Int?
   maintainers           Json
-  createdAt             DateTime @default(now())
-  updatedAt             DateTime @updatedAt
+  createdAt             DateTime      @default(now())
+  updatedAt             DateTime      @updatedAt
   userId                String
-  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId        String?
+  organization          Organization? @relation(fields: [organizationId], references: [id])
 
   @@unique([host, uuid], name: "host_uuid_unique")
 }
 
 model Prospect {
-  id           String   @id @default(cuid())
-  userId       String
-  name         String
-  email        String
-  organization String?
-  context      String?
-  tiers        Tier[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id String @id @default(cuid())
+
+  name           String
+  email          String
+  companyName    String?
+  context        String?
+  tiers          Tier[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  userId         String
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String?
+  organization   Organization? @relation(name: "prospects", fields: [organizationId], references: [id])
 
   @@unique([email, userId])
 }
