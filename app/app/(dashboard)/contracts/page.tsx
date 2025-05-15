@@ -1,6 +1,6 @@
 "use server";
 
-import ContractService from "@/app/services/contract-service";
+import { getContractsByCurrentMaintainer } from "@/app/services/contract-service";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { getSession } from "@/lib/auth";
@@ -15,7 +15,7 @@ export default async function ContractSettingsPage() {
     redirect("/login");
   }
 
-  const contracts = await ContractService.getContractsByCurrentMaintainer();
+  const contracts = await getContractsByCurrentMaintainer();
 
   return (
     <div className="max-w flex max-w-screen-xl flex-col space-y-10">

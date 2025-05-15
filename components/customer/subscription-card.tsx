@@ -1,7 +1,7 @@
 import { CancelSubscriptionBtn } from "@/app/app/c/subscriptions/cancel-subscription-btn";
 import { ReactivateSubscriptionBtn } from "@/app/app/c/subscriptions/reactivate-subscription-btn";
 import { Subscription } from "@/app/generated/prisma";
-import ContractService from "@/app/services/contract-service";
+import { getContractById } from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
@@ -53,7 +53,7 @@ const SubscriptionCard = async ({
     }
   }
 
-  const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
+  const contract = (await getContractById(tier.contractId || "")) || undefined;
 
   // Check if this is a cancelled but still active subscription that can be reactivated
   const canReactivate = isCancelled(subscription) && isFinishingMonth(subscription);

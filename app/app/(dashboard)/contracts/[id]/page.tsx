@@ -5,21 +5,17 @@ import { getSession } from "@/lib/auth";
 import { notFound, redirect } from "next/navigation";
 import ContractEdit from "../../../../../components/contracts/contract-edit";
 
-export default async function ContractEditPage(props: { params?: Promise<{ id: string }> }) {
-  const params = await props.params;
+export default async function ContractEditPage(props: { params: Promise<{ slug: string }> }) {
+  const { slug } = await props.params;
   const session = await getSession();
 
   if (!session) {
     redirect("/login");
   }
 
-  let contract = null;
-  if (params?.id) {
-    contract = await getContractById(params.id);
-    console.log(contract);
-    if (!contract || contract.maintainerId !== session.user.id) {
-      notFound();
-    }
+  const contract = await getContractById(slug);
+  if (!contract || contract.maintainerId !== session.user.id) {
+    notFound();
   }
 
   return (

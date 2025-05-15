@@ -124,8 +124,6 @@ class ContractService {
   }
 }
 
-export default ContractService;
-
 export const getContractById = async (id: string) => {
   return ContractService.getContractById(id);
 };

@@ -1,5 +1,5 @@
 import { Charge } from "@/app/generated/prisma";
-import ContractService from "@/app/services/contract-service";
+import { getContractById } from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { Badge } from "@/components/ui/badge";
@@ -25,7 +25,7 @@ const ChargeCard = async ({
 
   const status = "paid";
 
-  const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
+  const contract = (await getContractById(tier.contractId || "")) || undefined;
 
   return (
     <Card className="text-sm">
