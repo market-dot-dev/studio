@@ -18,10 +18,9 @@ import { useState } from "react";
 
 interface TierDetailsModalProps {
   tier: Tier | null;
-  triggerClassName?: string;
 }
 
-export function TierDetailsModal({ tier, triggerClassName }: TierDetailsModalProps) {
+export function TierDetailsModal({ tier }: TierDetailsModalProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   if (!tier) {
@@ -36,7 +35,6 @@ export function TierDetailsModal({ tier, triggerClassName }: TierDetailsModalPro
         <Button
           variant="ghost"
           size="icon-sm"
-          className={triggerClassName}
           aria-label="See package details"
           tooltip="See package details"
         >
