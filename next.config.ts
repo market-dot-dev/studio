@@ -1,3 +1,4 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
@@ -62,22 +63,6 @@ const nextConfig: NextConfig = {
   }
 };
 
-// Define Sentry configuration types
-type SentryPluginOptions = {
-  silent: boolean;
-  org: string;
-  project: string;
-};
-
-type SentryWebpackPluginOptions = {
-  widenClientFileUpload: boolean;
-  transpileClientSDK: boolean;
-  tunnelRoute: string;
-  hideSourceMaps: boolean;
-  disableLogger: boolean;
-  automaticVercelMonitors: boolean;
-};
-
 // Apply Sentry configuration conditionally based on environment
 const config =
   process.env.NODE_ENV !== "development"
@@ -114,4 +99,6 @@ const config =
       })
     : nextConfig;
 
-export default config;
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true"
+})(config);
