@@ -31,7 +31,7 @@ export default async function ContractSettingsPage() {
       />
 
       <div className="flex flex-col space-y-6">
-        <ContractSettings contracts={contracts} />
+        <ContractSettings contracts={contracts} currentUser={session.user} />
       </div>
     </div>
   );
