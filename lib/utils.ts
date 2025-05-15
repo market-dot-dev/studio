@@ -112,7 +112,6 @@ export const pluralize = (str: string, count: number, pluralSuffix: string = "s"
   if (count === 1) {
     return str;
   }
-  // A simple approach for now, could be expanded with more complex pluralization rules
   return str + pluralSuffix;
 };
 
