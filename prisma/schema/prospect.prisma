@@ -22,8 +22,8 @@ model Lead {
   maintainers           Json
   createdAt             DateTime      @default(now())
   updatedAt             DateTime      @updatedAt
-  userId                String
-  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId                String /// @DEPRECATED. Should be converted to Organization.
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade) /// @DEPRECATED. Should be converted to Organization.
   organizationId        String?
   organization          Organization? @relation(fields: [organizationId], references: [id])
 
@@ -40,8 +40,8 @@ model Prospect {
   tiers          Tier[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @updatedAt
-  userId         String
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String /// @DEPRECATED. Should be converted to Organization.
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade) /// @DEPRECATED. Should be converted to Organization.
   organizationId String?
   organization   Organization? @relation(name: "prospects", fields: [organizationId], references: [id])
 

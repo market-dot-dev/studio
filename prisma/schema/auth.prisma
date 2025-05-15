@@ -2,37 +2,37 @@ model User {
   id                          String         @id @default(cuid())
   name                        String?
   username                    String?
-  gh_id                       Int?
-  gh_username                 String?        @unique
+  gh_id                       Int? // @TODO: Migrate this somehow.
+  gh_username                 String?        @unique // @TODO: Migrate this somehow.
   email                       String?        @unique
-  businessLocation            String?
-  businessType                String?
-  stripeCustomerIds           Json           @default("{}")
-  stripePaymentMethodIds      Json           @default("{}")
-  stripeAccountId             String?        @unique
-  stripeCSRF                  String?        @unique
-  stripeAccountDisabled       Boolean        @default(false)
-  stripeAccountDisabledReason String?
-  projectName                 String?
-  projectDescription          String?
+  businessLocation            String? // @TODO: Migrate this somehow.
+  businessType                String? // @TODO: Migrate this somehow.
+  stripeCustomerIds           Json           @default("{}") // @TODO: Migrate this somehow.
+  stripePaymentMethodIds      Json           @default("{}") // @TODO: Migrate this somehow.
+  stripeAccountId             String?        @unique // @TODO: Migrate this somehow.
+  stripeCSRF                  String?        @unique // @TODO: Migrate this somehow.
+  stripeAccountDisabled       Boolean        @default(false) // @TODO: Migrate this somehow.
+  stripeAccountDisabledReason String? // @TODO: Migrate this somehow.
+  projectName                 String? // @TODO: Migrate this somehow.
+  projectDescription          String? // @TODO: Migrate this somehow.
   emailVerified               DateTime?
   image                       String?
-  roleId                      String         @default("customer")
+  roleId                      String         @default("customer") // @TODO: Migrate this somehow.
   createdAt                   DateTime       @default(now())
   updatedAt                   DateTime       @updatedAt
   accounts                    Account[]
-  pages                       Page[]
+  pages                       Page[] /// @DEPRECATED. Should be fetched from Organization.
   sessions                    Session[]
-  sites                       Site[]
-  tiers                       Tier[]
-  subscriptions               Subscription[]
-  leads                       Lead[]
+  sites                       Site[] /// @DEPRECATED. Should be fetched from Organization.
+  tiers                       Tier[] /// @DEPRECATED. Should be fetched from Organization.
+  subscriptions               Subscription[] /// @DEPRECATED. Should be fetched from Organization.
+  leads                       Lead[] /// @DEPRECATED. Should be fetched from Organization.
   onboarding                  String?
-  company                     String?
-  charges                     Charge[]
-  contracts                   Contract[]
-  prospects                   Prospect[]
-  marketExpertId              String?
+  company                     String? // @TODO: Migrate this somehow.
+  charges                     Charge[] /// @DEPRECATED. Should be fetched from Organization.
+  contracts                   Contract[] /// @DEPRECATED. Should be fetched from Organization.
+  prospects                   Prospect[] /// @DEPRECATED. Should be fetched from Organization.
+  marketExpertId              String? // @TODO: Migrate this somehow.
 
   // Organization relationships
   organizations         OrganizationMember[]

@@ -4,8 +4,8 @@ model Charge {
   tierRevision   Int?
   stripeChargeId String        @unique
   createdAt      DateTime      @default(now())
-  userId         String
-  user           User          @relation(fields: [userId], references: [id])
+  userId         String /// @DEPRECATED. Should be converted to Organization.
+  user           User          @relation(fields: [userId], references: [id]) /// @DEPRECATED. Should be converted to Organization.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
   tierVersionId  String?
@@ -25,8 +25,8 @@ model Subscription {
   state                String        @default("renewing")
   priceAnnual          Boolean       @default(false)
   active               Boolean       @default(true)
-  userId               String
-  user                 User          @relation(fields: [userId], references: [id])
+  userId               String /// @DEPRECATED. Should be converted to Organization.
+  user                 User          @relation(fields: [userId], references: [id]) /// @DEPRECATED. Should be converted to Organization.
   organizationId       String?
   organization         Organization? @relation(fields: [organizationId], references: [id])
   tierVersionId        String?

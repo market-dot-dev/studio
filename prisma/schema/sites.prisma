@@ -13,8 +13,8 @@ model Site {
   homepageId     String?
   pages          Page[]
   media          Media[]
-  userId         String
-  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String /// @DEPRECATED. Should be converted to Organization.
+  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade) /// @DEPRECATED. Should be converted to Organization.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
@@ -32,8 +32,8 @@ model Page {
   slug           String?
   draft          Boolean       @default(true)
   site           Site          @relation(fields: [siteId], references: [id], onDelete: Cascade)
-  userId         String?
-  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId         String? /// @DEPRECATED. Should be converted to Organization.
+  user           User?         @relation(fields: [userId], references: [id], onDelete: Cascade) /// @DEPRECATED. Should be converted to Organization.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
 
