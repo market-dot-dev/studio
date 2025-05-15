@@ -21,6 +21,8 @@ model Organization {
   currentUsers User[] @relation("CurrentOrganization")
 
   // Entity relationships
+  charges       Charge[]
+  subscriptions Subscription[]
   leads         Lead[]
   prospects     Prospect[]  @relation(name: "prospects")
   sites         Site[]

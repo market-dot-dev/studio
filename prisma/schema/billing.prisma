@@ -1,34 +1,38 @@
 model Charge {
-  id             String   @id @default(cuid())
-  userId         String
-  tierId         String
-  tierVersionId  String?
-  tierRevision   Int?
-  stripeChargeId String   @unique
-  createdAt      DateTime @default(now())
+  id String @id @default(cuid())
 
-  user        User         @relation(fields: [userId], references: [id])
-  tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
-  tier        Tier         @relation(fields: [tierId], references: [id])
+  tierRevision   Int?
+  stripeChargeId String        @unique
+  createdAt      DateTime      @default(now())
+  userId         String
+  user           User          @relation(fields: [userId], references: [id])
+  organizationId String?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
+  tierVersionId  String?
+  tierVersion    TierVersion?  @relation(fields: [tierVersionId], references: [id])
+  tierId         String
+  tier           Tier          @relation(fields: [tierId], references: [id])
 }
 
 model Subscription {
-  id                   String    @id @default(cuid())
-  userId               String
-  tierId               String
-  stripeSubscriptionId String    @unique
-  tierVersionId        String?
+  id                   String        @id @default(cuid())
+  stripeSubscriptionId String        @unique
   tierRevision         Int?
   activeUntil          DateTime?
   cancelledAt          DateTime?
-  createdAt            DateTime  @default(now())
-  state                String    @default("renewing")
-  priceAnnual          Boolean   @default(false)
-  active               Boolean   @default(true)
-
-  user        User         @relation(fields: [userId], references: [id])
-  tierVersion TierVersion? @relation(fields: [tierVersionId], references: [id])
-  tier        Tier         @relation(fields: [tierId], references: [id])
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  state                String        @default("renewing")
+  priceAnnual          Boolean       @default(false)
+  active               Boolean       @default(true)
+  userId               String
+  user                 User          @relation(fields: [userId], references: [id])
+  organizationId       String?
+  organization         Organization? @relation(fields: [organizationId], references: [id])
+  tierVersionId        String?
+  tierVersion          TierVersion?  @relation(fields: [tierVersionId], references: [id])
+  tierId               String
+  tier                 Tier          @relation(fields: [tierId], references: [id])
 
   @@index([userId, tierId, active])
 }
