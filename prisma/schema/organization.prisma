@@ -21,7 +21,11 @@ model Organization {
   currentUsers User[] @relation("CurrentOrganization")
 
   // Entity relationships
+  leads         Lead[]
   prospects     Prospect[]  @relation(name: "prospects")
+  sites         Site[]
+  pages         Page[]
+
   @@index([ownerId])
 }
 
