@@ -1,8 +1,14 @@
+enum OrganizationType {
+  VENDOR // Can sell products AND make purchases
+  BILLING // Can only make purchases
+}
+
 model Organization {
-  id        String   @id @default(cuid())
+  id        String           @id @default(cuid())
   name      String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  type      OrganizationType @default(BILLING)
 
   // Owner relationship - essential to establish ownership
   ownerId String
