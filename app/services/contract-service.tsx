@@ -61,8 +61,6 @@ class ContractService {
   private static async uploadAttachment(
     contract: ContractWithUploadData
   ): Promise<Prisma.ContractCreateInput> {
-    const data: Partial<Prisma.ContractCreateInput> = {};
-
     console.log("~~~~~~~~~~~~~~ uploading");
     if (contract.uploadData) {
       const file = contract.uploadData as any as File;
@@ -107,7 +105,6 @@ class ContractService {
 
   static async createContract(contractAttributes: ContractWithUploadData): Promise<Contract> {
     const maintainerId = (await getCurrentUser())?.id;
-
     if (!maintainerId) {
       throw new Error("Unauthorized");
     }
@@ -117,8 +114,11 @@ class ContractService {
     return await prisma.contract.create({
       data: {
         ...contract,
-        maintainer: undefined,
-        maintainerId
+        maintainer: {
+          connect: {
+            id: maintainerId
+          }
+        }
       }
     });
   }
