@@ -48,7 +48,7 @@ const getSubscriptionStatusDisplay = (subscription: Subscription): SubscriptionS
     };
   }
 
-  // Fallback for any other unforeseen cases or if state is explicitly 'expired' or some other value
+  // Fallback
   return {
     type: "expired",
     text: "Unknown",
