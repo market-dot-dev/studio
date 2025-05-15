@@ -3,7 +3,6 @@
 import { Slot } from "@radix-ui/react-slot";
 import { VariantProps, cva } from "class-variance-authority";
 import { Menu } from "lucide-react";
-import { usePathname } from "next/navigation";
 import * as React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -71,7 +70,6 @@ const SidebarProvider = React.forwardRef<
   ) => {
     const isMobile = useIsMobile();
     const [openMobile, setOpenMobile] = React.useState(false);
-    const pathname = usePathname();
 
     // This is the internal state of the sidebar.
     // We use openProp and setOpenProp for control from outside the component.
@@ -91,13 +89,6 @@ const SidebarProvider = React.forwardRef<
       },
       [setOpenProp, open]
     );
-
-    // Effect to close mobile sidebar on route change
-    React.useEffect(() => {
-      if (isMobile) {
-        setOpenMobile(false);
-      }
-    }, [pathname, isMobile, setOpenMobile]);
 
     // Helper to toggle the sidebar.
     const toggleSidebar = React.useCallback(() => {
