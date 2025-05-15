@@ -40,18 +40,9 @@ const getSubscriptionStatusDisplay = (subscription: Subscription): SubscriptionS
     };
   }
 
-  if (isCancelled(subscription) && !isFinishingMonth(subscription)) {
-    return {
-      type: "expired",
-      text: "Expired",
-      badgeVariant: "secondary"
-    };
-  }
-
-  // Fallback
   return {
     type: "expired",
-    text: "Unknown",
+    text: "Expired",
     badgeVariant: "secondary"
   };
 };
