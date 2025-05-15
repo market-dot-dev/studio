@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { getRootUrl } from "@/lib/domain";
-import { cn, formatDate, getSubscriptionExpiryDateText } from "@/lib/utils";
+import { cn, formatDate, formatSubscriptionExpiryDate } from "@/lib/utils";
 import { CircleCheck, Clock } from "lucide-react";
 import Link from "next/link";
 
@@ -17,7 +17,7 @@ export function SubscriptionStatusCard({ subscriptionId, tierName, expiryDate }:
   const subUrl = getRootUrl("app", "/c/");
   const isExpiring = !!expiryDate;
 
-  const eyebrowText = isExpiring ? getSubscriptionExpiryDateText(expiryDate) : "Subscribed";
+  const eyebrowText = isExpiring ? formatSubscriptionExpiryDate(expiryDate) : "Subscribed";
   const eyebrowColor = isExpiring ? "text-warning" : "text-success";
   const eyebrowIconFill = isExpiring ? "fill-warning" : "fill-success";
   const EyebrowIconComponent = isExpiring ? Clock : CircleCheck;

@@ -1,7 +1,7 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import { getSubscriptionExpiryDateText } from "@/lib/utils";
+import { formatSubscriptionExpiryDate } from "@/lib/utils";
 import {
   isCancelled,
   isFinishingMonth,
@@ -34,7 +34,7 @@ const getSubscriptionStatusDisplay = (subscription: Subscription): SubscriptionS
   if (isCancelled(subscription) && isFinishingMonth(subscription)) {
     return {
       type: "cancelled_active",
-      text: getSubscriptionExpiryDateText(subscription.activeUntil),
+      text: formatSubscriptionExpiryDate(subscription.activeUntil),
       badgeVariant: "warning",
       icon: <Clock size={12} strokeWidth={2.5} />
     };

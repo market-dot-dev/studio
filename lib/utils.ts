@@ -15,9 +15,14 @@ export function cn(...inputs: ClassValue[]) {
   return customTwMerge(clsx(inputs));
 }
 
-export const capitalize = (s: string) => {
-  if (typeof s !== "string") return "";
-  return s.charAt(0).toUpperCase() + s.slice(1);
+export const capitalize = (str: string) => {
+  if (typeof str !== "string") return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+};
+
+export const pluralize = (str: string, count: number, pluralSuffix: string = "s"): string => {
+  if (count === 1) return str;
+  return str + pluralSuffix;
 };
 
 export const truncate = (str: string, num: number) => {
@@ -41,6 +46,39 @@ export const formatDate = (date: Date | string): string => {
 
   // Use 'en-US' for a consistent locale
   return parsedDate.toLocaleDateString("en-US", options);
+};
+
+/**
+ * Formats a subscription's expiry date into a human-readable text
+ * @param expiryDate The date when the subscription will expire
+ * @returns A string describing when the subscription will end (e.g. "Ends in 2 months", "Ends in 20 days", "Ends Today")
+ */
+export const formatSubscriptionExpiryDate = (expiryDate: Date | null): string => {
+  if (!expiryDate) {
+    return "Ending";
+  }
+
+  const currentTime = new Date().getTime();
+  const expiryTime = new Date(expiryDate).getTime();
+  const daysRemaining = Math.ceil(expiryTime - currentTime / (1000 * 3600 * 24));
+
+  if (daysRemaining > 30) {
+    return `Ends on ${formatDate(expiryDate)}`;
+  }
+
+  if (daysRemaining > 1) {
+    return `Ends in ${daysRemaining} days`;
+  }
+
+  if (daysRemaining === 1) {
+    return `Ends Tomorrow`;
+  }
+
+  if (daysRemaining === 0) {
+    return "Ends Today";
+  }
+
+  return "Ending";
 };
 
 interface TextSection {
@@ -100,50 +138,3 @@ export const generateId = customAlphabet(
 export function generateUniqueFilename(extension: string): string {
   return `${generateId()}.${extension || "unknown"}`;
 }
-
-/**
- * Pluralizes a string based on a count.
- * @param str The string to pluralize.
- * @param count The count to determine if the string should be plural.
- * @param pluralSuffix The suffix to add for pluralization (defaults to "s").
- * @returns The pluralized string.
- */
-export const pluralize = (str: string, count: number, pluralSuffix: string = "s"): string => {
-  if (count === 1) {
-    return str;
-  }
-  return str + pluralSuffix;
-};
-
-/**
- * Formats a subscription's expiry date into a human-readable text
- * @param expiryDate The date when the subscription will expire
- * @returns A string describing when the subscription will expire (e.g. "Expires in 2 months", "Expires Today")
- */
-export const getSubscriptionExpiryDateText = (expiryDate: Date | null): string => {
-  if (!expiryDate) {
-    return "Ending";
-  }
-
-  const currentTime = new Date().getTime();
-  const expiryTime = new Date(expiryDate).getTime();
-
-  const timeDiffMs = expiryTime - currentTime;
-  const daysRemaining = Math.ceil(timeDiffMs / (1000 * 3600 * 24));
-
-  if (daysRemaining > 60) {
-    const averageDaysInMonth = 365.25 / 12;
-    const calculatedMonths = Math.round(daysRemaining / averageDaysInMonth);
-    return `Ends in ${calculatedMonths} months`;
-  }
-
-  if (daysRemaining > 0) {
-    return `Ends in ${daysRemaining} ${pluralize("day", daysRemaining)}`;
-  }
-
-  if (daysRemaining === 0) {
-    return "Ends Today";
-  }
-
-  return "Ending";
-};
