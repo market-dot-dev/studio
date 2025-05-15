@@ -10,23 +10,39 @@ model Organization {
   updatedAt DateTime         @updatedAt
   type      OrganizationType @default(BILLING)
 
-  // Owner relationship - essential to establish ownership
+  // Owner relationship
   ownerId String
   owner   User   @relation("OwnedOrganizations", fields: [ownerId], references: [id])
 
-  // Members relationship - essential for multi-user access
-  members OrganizationMember[]
+  // Members relationship
+  members      OrganizationMember[]
+  currentUsers User[]               @relation("CurrentOrganization")
 
-  // Current users tracking - for UI context
-  currentUsers User[] @relation("CurrentOrganization")
-  
+  // Business fields
+  businessLocation   String?
+  businessType       String?
+  company            String?
+  projectName        String?
+  projectDescription String?
+  marketExpertId     String?
+  gh_id              Int?
+  gh_username        String?
+
+  // Stripe fields
+  stripePaymentMethodIds      Json    @default("{}")
+  stripeCustomerIds           Json    @default("{}")
+  stripeAccountId             String? @unique
+  stripeCSRF                  String? @unique
+  stripeAccountDisabled       Boolean @default(false)
+  stripeAccountDisabledReason String?
+
   // Entity relationships
   tiers         Tier[]
   contracts     Contract[]
   charges       Charge[]
   subscriptions Subscription[]
   leads         Lead[]
-  prospects     Prospect[]  @relation(name: "prospects")
+  prospects     Prospect[]     @relation(name: "prospects")
   sites         Site[]
   pages         Page[]
 
