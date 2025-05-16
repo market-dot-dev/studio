@@ -1,5 +1,5 @@
+import { generateId } from "@/lib/utils";
 import { put } from "@vercel/blob";
-import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 
 export const runtime = "edge";
@@ -16,7 +16,7 @@ export async function POST(req: Request) {
 
   const file = req.body || "";
   const contentType = req.headers.get("content-type") || "text/plain";
-  const filename = `${nanoid()}.${contentType.split("/")[1]}`;
+  const filename = `${generateId()}.${contentType.split("/")[1]}`; // @TODO: random ids might not be necessary with @vercel/blob v1 anymore
   const blob = await put(filename, file, {
     contentType,
     access: "public"

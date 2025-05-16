@@ -50,7 +50,7 @@ class ContractService {
       );
     }
 
-    const filename = `${generateId()}.${file.type.split("/")[1]}`;
+    const filename = `${generateId()}.${file.type.split("/")[1]}`; // @TODO: random ids might not be necessary with @vercel/blob v1 anymore
     const { url } = await put(filename, file, {
       access: "public"
     });
