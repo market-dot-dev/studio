@@ -1,6 +1,6 @@
 "use client";
 
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Info, MoreVertical, ShieldBan } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,20 +29,23 @@ import PageHeader from "../common/page-header";
 import ChannelsSelectionInput from "./channels-selection-input";
 import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
 import TierCard from "./tier-card";
-import TierDeleteButton from "./tier-delete-button";
 
 import Tier, { newTier } from "@/app/models/Tier";
 import { getSubscriberCount } from "@/app/services/subscription-service";
 import { createTier, TierWithCount, updateTier } from "@/app/services/tier-service";
 import { toast } from "sonner";
 
-import useCurrentSession from "@/app/hooks/use-current-session";
-
 import { hasVendorStripeAccount } from "@/app/services/stripe-vendor-service";
 import { getVersionsByTierId } from "@/app/services/tier-version-service";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { Channel, Contract, TierVersion, User } from "@prisma/client";
-import DuplicateTierButton from "./duplicate-tier-button";
 import StandardCheckoutForm from "./standard-checkout-form";
+import { TierDeleteMenuItem } from "./tier-delete-menu-item";
+import { TierDuplicateMenuItem } from "./tier-duplicate-menu-item";
 import TierLinkCopier from "./tier-link-copier";
 import TierVersionNotice from "./tier-version-notice";
 import TierVersionRow from "./tier-version-row";
@@ -57,7 +60,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
   const router = useRouter();
   const [tier, setTier] = useState<TierWithCount>((tierObj ? tierObj : newTier()) as Tier);
 
-  // Add savedPublishedState to track the persisted published status
   const [savedPublishedState, setSavedPublishedState] = useState<boolean>(
     tierObj?.published || false
   );
@@ -67,17 +69,14 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
   const [currentRevisionSubscriberCount, setCurrentRevisionSubscriberCount] = useState(0);
   const [versions, setVersions] = useState<TierVersion[]>([]);
 
-  const [isDeleting, setIsDeleting] = useState(false);
   const newRecord = !tier?.id;
-  const tierHasSubscribers = currentRevisionSubscriberCount > 0;
 
   const formTitle = newRecord ? "Create New Package" : tier.name;
-  const buttonLabel = newRecord ? "Create Package" : "Update Package";
+  const buttonLabel = newRecord ? "Create Package" : "Save Changes";
 
   const [errors, setErrors] = useState<any>({});
   const [isSaving, setIsSaving] = useState(false);
-
-  const { isAdmin } = useCurrentSession();
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleInputChange = (name: string, value: number | string | null) => {
     const updatedTier = { ...tier, [name]: value } as Tier;
@@ -103,7 +102,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
       } else {
         savedTier = await updateTier(tier.id as string, tier);
       }
-      // Update the saved published state when the tier is successfully saved
       setSavedPublishedState(savedTier.published);
       toast.success("Package updated successfully");
       router.push(`/tiers/${savedTier.id}`);
@@ -120,7 +118,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
 
   useEffect(() => {
     if (tierObj) {
-      // call the refreshOnboarding function if it exists
       if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
         (window as any).refreshOnboarding();
       }
@@ -135,13 +132,12 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
       setCanPublish(true);
       setCanPublishLoading(false);
     }
-  }, [tier.checkoutType]);
+  }, [tier.checkoutType, tierObj]);
 
   useEffect(() => {
     if (tier.id) {
       getVersionsByTierId(tier.id).then(setVersions);
       getSubscriberCount(tier.id).then(setTierSubscriberCount);
-
       getSubscriberCount(tier.id, tier.revision).then(setCurrentRevisionSubscriberCount);
     }
   }, [tier.id, tier.revision]);
@@ -158,34 +154,72 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
     tier.checkoutType === "gitwallet" ? !canPublish || canPublishLoading : false;
 
   return (
-    <>
-      <div className="flex flex-col gap-6 md:col-span-2">
-        <div className="flex w-full justify-between">
-          <PageHeader
-            title={formTitle}
-            backLink={{
-              href: "/tiers",
-              title: "Packages"
-            }}
-            status={{
-              title: tier.id && savedPublishedState ? "Published" : "Draft",
-              variant: tier.id && savedPublishedState ? "success" : "secondary"
-            }}
-            actions={[
-              <TierLinkCopier
-                key="copy-tier-link"
-                tier={tier}
-                savedPublishedState={savedPublishedState}
-              />
-            ]}
-          />
-        </div>
-      </div>
+    <div className="flex flex-col gap-6 md:col-span-2">
+      <PageHeader
+        title={formTitle}
+        backLink={{
+          href: "/tiers",
+          title: "Packages"
+        }}
+        status={{
+          title: tier.id && savedPublishedState ? "Published" : "Draft",
+          variant: tier.id && savedPublishedState ? "success" : "secondary"
+        }}
+        actions={[
+          <TierLinkCopier
+            key="copy-tier-link"
+            tier={tier}
+            savedPublishedState={savedPublishedState}
+          />,
+          !newRecord && (
+            <DropdownMenu key="tier-actions-dropdown">
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="icon" data-cy="tier-actions-dropdown-trigger">
+                  <MoreVertical />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-60">
+                <TierDuplicateMenuItem tierId={tier.id as string} />
+                <TierDeleteMenuItem
+                  tierId={tier.id as string}
+                  canDelete={
+                    (tier._count?.Charge || 0) === 0 && (tier._count?.subscriptions || 0) === 0
+                  }
+                  onConfirm={() => setIsDeleting(true)}
+                  onSuccess={() => {
+                    setIsDeleting(false);
+                    toast.success(`"${tier.name}" deleted`);
+                    router.push("/tiers");
+                  }}
+                  onError={(error: Error) => {
+                    setIsDeleting(false);
+                    toast.error(`Failed to delete package: ${error.message}`);
+                    console.error("Error deleting tier:", error);
+                  }}
+                />
+                <div className="-mx-2 -mb-2 mt-1 flex items-start gap-2.5 bg-stone-50 py-3 pl-[17px] pr-4 text-xs text-muted-foreground">
+                  {(tier._count?.Charge || 0) === 0 && (tier._count?.subscriptions || 0) === 0 ? (
+                    <>
+                      <Info size={14} strokeWidth={2.25} className="my-px shrink-0" />
+                      Once this package has customers, you won't be able to delete it.
+                    </>
+                  ) : (
+                    <>
+                      <ShieldBan size={14} strokeWidth={2.25} className="my-px shrink-0" />
+                      This package already has customers, so it can't be deleted.
+                    </>
+                  )}
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        ].filter(Boolean)}
+      />
 
-      <Separator className="mb-2 mt-6 hidden lg:block" />
+      <Separator className="hidden lg:block" />
 
       {!canPublish && !canPublishLoading && (
-        <Alert variant="warning" className="my-4">
+        <Alert variant="destructive">
           <AlertTriangle size={18} className="mr-2.5" />
           <div className="flex flex-col gap-4 md:flex-row md:items-center">
             <div>
@@ -201,7 +235,8 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
           </div>
         </Alert>
       )}
-      <div className="mt-6 flex flex-col gap-10 pb-20 lg:flex-row">
+
+      <div className="flex flex-col gap-10 pb-20 lg:mt-2 lg:flex-row ">
         {/* Mobile Tabs - Only visible on screens smaller than lg breakpoint */}
         <div className="mb-6 w-full lg:hidden">
           <Tabs defaultValue="details">
@@ -215,7 +250,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
             </TabsList>
 
             {/* Details Tab Content - Form Fields */}
-            <TabsContent value="details" className="mt-8">
+            <TabsContent value="details" className="mt-7 lg:mt-8">
               <div className="flex w-full flex-col gap-6">
                 <div className="space-y-2">
                   <div className="flex flex-wrap gap-x-4 gap-y-3">
@@ -255,7 +290,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
 
                 <div>
                   <TierVersionNotice
-                    tierHasSubscribers={tierHasSubscribers}
+                    tierHasSubscribers={currentRevisionSubscriberCount > 0}
                     versionedAttributesChanged={versionedAttributesChanged}
                   />
                   <Label htmlFor="mobile-tierName" className="mb-2">
@@ -412,39 +447,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                 <Button disabled={isSaving || isDeleting} loading={isSaving} onClick={onSubmit}>
                   {buttonLabel}
                 </Button>
-
-                {!newRecord && (
-                  <div className="mt-6 flex flex-col items-center gap-4 rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">
-                    <strong className="text-stone-800">Admin Options</strong>
-                    <div className="flex flex-col gap-2">
-                      <div className="flex justify-center gap-2">
-                        <DuplicateTierButton tierId={tier.id} />
-                        {!tier._count?.Charge && !tier._count?.subscriptions && (
-                          <TierDeleteButton
-                            tierId={tier.id}
-                            onConfirm={() => setIsDeleting(true)}
-                            onSuccess={() => {
-                              setIsDeleting(false);
-                              window.location.href = "/tiers";
-                            }}
-                            onError={(error: any) => {
-                              setIsDeleting(false);
-                            }}
-                          />
-                        )}
-                      </div>
-                      {!tier._count?.Charge && !tier._count?.subscriptions && (
-                        <p className="text-sm text-stone-500">
-                          This package can be deleted as it has no active customers.
-                        </p>
-                      )}
-                    </div>
-                    <Separator />
-                    <Button variant="outline" className="w-full" asChild>
-                      <Link href={`/admin/tiers/${tier.id}`}>Go to Admin Panel</Link>
-                    </Button>
-                  </div>
-                )}
               </div>
             </TabsContent>
 
@@ -462,7 +464,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
           <div className="space-y-2">
             <div className="flex flex-wrap gap-x-4 gap-y-3">
               <Switch
-                id="mobile-published"
+                id="desktop-published"
                 checked={tier.published}
                 disabled={canPublishLoading || !canPublish || canPublishDisabled}
                 data-cy="available-for-sale"
@@ -497,7 +499,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
 
           <div>
             <TierVersionNotice
-              tierHasSubscribers={tierHasSubscribers}
+              tierHasSubscribers={currentRevisionSubscriberCount > 0}
               versionedAttributesChanged={versionedAttributesChanged}
             />
             <Label htmlFor="tierName" className="mb-2">
@@ -626,6 +628,19 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                         </TableRow>
                       </TableHeader>
                       <TableBody>
+                        <TableRow>
+                          <TableCell>
+                            {tier.createdAt ? new Date(tier.createdAt).toDateString() : "Current"}
+                            <Badge variant="success" size="sm" className="ml-1">
+                              Current
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            ${tier.price}
+                            {tier.cadence ? `/${tier.cadence}` : ""}
+                          </TableCell>
+                          <TableCell>{currentRevisionSubscriberCount}</TableCell>
+                        </TableRow>
                         {versions.map((version) => (
                           <TierVersionRow tierVersion={version} key={version.id} />
                         ))}
@@ -638,6 +653,8 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                     to a package where you have existing customers. Customers will be charged what
                     they originally purchased.
                   </p>
+
+                  <Separator className="my-2" />
                 </>
               )}
             </div>
@@ -654,40 +671,8 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
             buttonDisabled={newRecord}
             className="w-[300px] shadow-border"
           />
-          {!newRecord && (
-            <div className="mt-4 flex flex-col items-center gap-4 rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">
-              <strong className="text-stone-800">Admin Options</strong>
-              <div className="flex flex-col gap-2">
-                <div className="flex justify-center gap-2">
-                  <DuplicateTierButton tierId={tier.id} />
-                  {!tier._count?.Charge && !tier._count?.subscriptions && (
-                    <TierDeleteButton
-                      tierId={tier.id}
-                      onConfirm={() => setIsDeleting(true)}
-                      onSuccess={() => {
-                        setIsDeleting(false);
-                        window.location.href = "/tiers";
-                      }}
-                      onError={(error: any) => {
-                        setIsDeleting(false);
-                      }}
-                    />
-                  )}
-                </div>
-                {!tier._count?.Charge && !tier._count?.subscriptions && (
-                  <p className="text-sm text-stone-500">
-                    This package can be deleted as it has no active customers.
-                  </p>
-                )}
-              </div>
-              <Separator />
-              <Button variant="outline" className="w-full" asChild>
-                <Link href={`/admin/tiers/${tier.id}`}>Go to Admin Panel</Link>
-              </Button>
-            </div>
-          )}
         </div>
       </div>
-    </>
+    </div>
   );
 }
