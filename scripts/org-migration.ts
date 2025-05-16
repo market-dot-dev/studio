@@ -96,8 +96,8 @@ async function main() {
       console.log(`- User ${err.userId}: ${err.error}`);
     });
   }
-
-  console.log("Migration complete.");
+  console.log(" ");
+  console.log("Migration complete. ✅");
 }
 
 async function processUser(user: User & { ownedOrganizations: any[] }) {
@@ -117,7 +117,7 @@ async function processUser(user: User & { ownedOrganizations: any[] }) {
     // Create organization for user with business/payment fields migrated from user
     const organization = await prisma.organization.create({
       data: {
-        name: user.name || user.username || user.email || `Organization ${user.id}`,
+        name: "Organization: " + user.name || user.username || user.email || user.id,
         type: orgType,
 
         // Migrate business fields
@@ -131,8 +131,8 @@ async function processUser(user: User & { ownedOrganizations: any[] }) {
         gh_username: user.gh_username,
 
         // Migrate Stripe fields
-        stripeCustomerIds: user.stripeCustomerIds, // Already a JSON field in both models
-        stripePaymentMethodIds: user.stripePaymentMethodIds, // Already a JSON field in both models
+        stripeCustomerIds: user.stripeCustomerIds ?? undefined, // Already a JSON field in both models
+        stripePaymentMethodIds: user.stripePaymentMethodIds ?? undefined, // Already a JSON field in both models
         stripeAccountId: user.stripeAccountId,
         stripeCSRF: user.stripeCSRF,
         stripeAccountDisabled: user.stripeAccountDisabled,
