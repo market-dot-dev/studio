@@ -6,11 +6,11 @@ import { getCurrentUser } from "@/app/services/UserService";
 import TierForm from "@/components/tiers/tier-form";
 import { notFound } from "next/navigation";
 
-export default async function EditTierPage(props: { params: Promise<{ slug: string }> }) {
+export default async function EditTierPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
 
   const [tier, contracts] = await Promise.all([
-    getTierById(params.slug),
+    getTierById(params.id),
     getContractsByCurrentMaintainer()
   ]);
 
