@@ -81,7 +81,7 @@ const TierLinkCopier: React.FC<TierLinkCopierProps> = ({
     <Button
       variant="outline"
       onClick={handleCopy}
-      tooltip={`${truncate(link.split("://")[1] || link, 30)}`}
+      tooltip={`${truncate(link.split("://")[1] || link, 30)}`}    // removes "http(s)://" from the start of the link if present
     >
       <AnimatePresence mode="wait" initial={false}>
         {isCopied ? (
