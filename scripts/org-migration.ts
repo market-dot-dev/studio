@@ -67,9 +67,13 @@ async function main() {
         if (usersProcessed % 10 === 0) {
           console.log(`Processed ${usersProcessed} of ${totalUsers} users`);
         }
-      } catch (error) {
-        console.error(`Error processing user ${user.id}:`, error);
-        stats.errors.push({ userId: user.id, error: error.toString() });
+      } catch (error: unknown) {
+        const errMsg = `Error processing user ${user.id}:`;
+        console.error(errMsg, error);
+        stats.errors.push({
+          userId: user.id,
+          error: error instanceof Error ? error.message : errMsg
+        });
       }
     }
 
@@ -167,8 +171,13 @@ async function processUser(user: User & { ownedOrganizations: any[] }) {
     // Update all related entities to include organization reference
     await migrateUserEntities(user.id, organization.id);
   } catch (error) {
-    console.error(`Error creating organization for user ${user.id}:`, error);
-    stats.errors.push({ userId: user.id, error: error.toString() });
+    const errMsg = `Error creating organization for user ${user.id}:`;
+    console.error(errMsg, error);
+    stats.errors.push({
+      userId: user.id,
+      error: error instanceof Error ? error.message : errMsg
+    });
+
     throw error; // Re-throw to be caught by the main error handler
   }
 }
@@ -269,8 +278,13 @@ async function migrateUserEntities(userId: string, organizationId: string) {
     console.log(`- Updated ${results.sites} sites`);
     console.log(`- Updated ${results.pages} pages`);
   } catch (error) {
-    console.error(`Transaction failed for user ${userId}:`, error);
-    stats.errors.push({ userId, error: `Transaction failed: ${error.toString()}` });
+    const errMsg = `Transaction failed for user ${userId}:`;
+    console.error(errMsg, error);
+    stats.errors.push({
+      userId: userId,
+      error: error instanceof Error ? error.message : errMsg
+    });
+
     throw error;
   }
 }

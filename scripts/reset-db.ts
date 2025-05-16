@@ -1,6 +1,5 @@
 #!/usr/bin/env tsx
 import { execSync } from "child_process";
-import { execSync } from "child_process";
 
 /**
  * Reset database script
@@ -23,8 +22,6 @@ function resetDatabase(): void {
   // Check if running in Vercel production
   if (process.env.VERCEL_ENV === "production") {
     console.error("This script cannot be run on a Vercel production instance.");
-  if (process.env.VERCEL_ENV === "production") {
-    console.error("This script cannot be run on a Vercel production instance.");
     process.exit(1);
   }
 
@@ -44,4 +41,3 @@ function resetDatabase(): void {
 
 // Run the script
 resetDatabase();
-
