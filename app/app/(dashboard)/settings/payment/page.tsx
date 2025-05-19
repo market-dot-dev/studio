@@ -4,20 +4,15 @@ import {
   checkVendorStripeStatus,
   getVendorStripeConnectURL
 } from "@/app/services/stripe-vendor-service";
-import UserService from "@/app/services/UserService";
+import { requireUser } from "@/app/services/user-context-service";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { redirect } from "next/navigation";
 import { ConnectStripeBtn } from "./ConnectStripeBtn";
 import { DisconnectStripeBtn } from "./DisconnectStripeBtn";
 import { StripeAccountStatus } from "./StripeAccountStatus";
 
 export default async function PaymentSettings() {
-  const user = await UserService.getCurrentUser();
-
-  if (!user) {
-    redirect("/login");
-  }
+  const user = await requireUser();
 
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
 

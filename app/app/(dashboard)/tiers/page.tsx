@@ -1,5 +1,5 @@
-import SessionService from "@/app/services/session-service";
 import { listTiersByUserIdWithCounts } from "@/app/services/tier-service";
+import { requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import CopyCheckoutLinkButton from "@/components/tiers/copy-checkout-link-button";
 import NewTierModal from "@/components/tiers/new-tier-modal";
@@ -10,10 +10,8 @@ import Link from "next/link";
 import TiersEmptyState from "./empty-state";
 
 export default async function Tiers() {
-  const currentUserId = await SessionService.getCurrentUserId();
-  if (!currentUserId) return <>You must log in</>;
-
-  const tiers = await listTiersByUserIdWithCounts(currentUserId);
+  const user = await requireUserSession();
+  const tiers = await listTiersByUserIdWithCounts(user.id);
 
   return (
     <div className="max-w flex max-w-screen-xl flex-col space-y-10">

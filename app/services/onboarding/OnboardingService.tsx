@@ -3,9 +3,7 @@
 import { businessDescription, businessName } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { includeOrganizationOnboarding } from "@/types/onboarding";
-import { getCurrentOrganizationId } from "../organization-service";
-import { getCurrentUserId } from "../session-service";
-import { getCurrentUser } from "../UserService";
+import { requireUser, requireUserSession } from "../user-context-service";
 import { defaultOnboardingState, OnboardingState } from "./onboarding-steps";
 
 class OnboardingService {
@@ -13,11 +11,9 @@ class OnboardingService {
    * Saves the onboarding state to the user record
    */
   static async saveState(state: OnboardingState) {
-    const userId = await getCurrentUserId();
-    if (!userId) throw new Error("User not found");
-
+    const user = await requireUserSession();
     await prisma.user.update({
-      where: { id: userId },
+      where: { id: user.id },
       data: {
         onboarding: JSON.stringify(state)
       }
@@ -29,28 +25,25 @@ class OnboardingService {
    * checking various organization fields to determine completion status
    */
   static async refreshAndGetState(preferredServices?: string[]) {
-    const userId = await getCurrentUserId();
-    if (!userId) return null;
-
-    const organizationId = await getCurrentOrganizationId();
-    if (!organizationId) return null;
+    const user = await requireUserSession();
 
     // @TODO: This may be of better use in the Organization model
     // Get user for the onboarding JSON
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
+    const updated = await prisma.user.findUnique({
+      where: { id: user.id },
       select: {
+        currentOrganizationId: true,
         onboarding: true
       }
     });
 
-    if (!user) {
+    if (!updated || !updated.currentOrganizationId) {
       throw new Error("User not found");
     }
 
     // Get organization data for determining step completion
     const organization = await prisma.organization.findUnique({
-      where: { id: organizationId },
+      where: { id: updated.currentOrganizationId },
       ...includeOrganizationOnboarding
     });
 
@@ -60,8 +53,8 @@ class OnboardingService {
 
     let onboardingState = defaultOnboardingState;
     try {
-      if (user.onboarding) {
-        onboardingState = JSON.parse(user.onboarding);
+      if (updated.onboarding) {
+        onboardingState = JSON.parse(updated.onboarding);
       }
     } catch (error) {
       console.error("Failed to parse onboarding JSON:", error);
@@ -124,9 +117,7 @@ class OnboardingService {
    * Gets the current onboarding state from the user record
    */
   static async getCurrentState() {
-    const user = await getCurrentUser();
-    if (!user) throw new Error("User not found");
-
+    const user = await requireUser();
     if (user.onboarding) {
       try {
         return JSON.parse(user.onboarding);

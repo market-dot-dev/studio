@@ -3,9 +3,9 @@
 import { Site } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { revalidateTag } from "next/cache";
-import { getCurrentUserId } from "./session-service";
 import { uploadLogoFile } from "./site-media-service";
 import { validateSubdomain } from "./site-subdomain-service";
+import { requireUserSession } from "./user-context-service";
 
 /**
  * Retrieves the current site for the logged-in user
@@ -13,13 +13,8 @@ import { validateSubdomain } from "./site-subdomain-service";
  * @throws Error if no user is logged in
  */
 export async function getCurrentSite(): Promise<Site | null> {
-  const userId = await getCurrentUserId();
-
-  if (!userId) {
-    throw new Error("No user found.");
-  }
-
-  return getOnlySiteFromUserId(userId);
+  const user = await requireUserSession();
+  return getOnlySiteFromUserId(user.id);
 }
 
 /**
@@ -53,11 +48,11 @@ export async function getSiteInfo(siteId: string) {
  * @returns Site with pages included
  */
 export async function getSiteAndPages(id: string) {
-  const userId = await getCurrentUserId();
+  const user = await requireUserSession();
   const site = await prisma.site.findUnique({
     where: {
       id: decodeURIComponent(id),
-      userId
+      userId: user.id
     },
     include: {
       pages: true

@@ -1,15 +1,11 @@
+import { requireUserSession } from "@/app/services/user-context-service";
 import UserDropdown from "@/components/header/user-dropdown";
 import Logo from "@/components/home/logo";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { getSession } from "@/lib/auth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
 export async function Header() {
-  const { user } = (await getSession()) || {};
-  if (!user) {
-    redirect("/login");
-  }
+  const user = await requireUserSession();
 
   return (
     <header className="fixed inset-x-0 top-0 z-30 flex h-[var(--header-height)] items-center justify-between bg-black px-4 shadow-border-b">

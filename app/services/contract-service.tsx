@@ -4,7 +4,7 @@ import { Contract, Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateId } from "@/lib/utils";
 import { put } from "@vercel/blob";
-import { getCurrentUser } from "./UserService";
+import { requireUser, requireUserSession } from "./user-context-service";
 
 export type ContractWithUploadData = Contract & { uploadData?: File };
 
@@ -14,10 +14,8 @@ class ContractService {
   }
 
   static async getContractsByCurrentMaintainer(): Promise<Contract[]> {
-    const currentUser = await getCurrentUser();
-
-    if (!currentUser) return [];
-    return ContractService.getContractsByMaintainerId(currentUser.id);
+    const user = await requireUserSession();
+    return ContractService.getContractsByMaintainerId(user.id);
   }
 
   static async getContractsByMaintainerId(maintainerId: string | null): Promise<Contract[]> {
@@ -29,14 +27,14 @@ class ContractService {
   }
 
   static async destroyContract(id: string): Promise<Contract> {
-    const currentUser = await getCurrentUser();
+    const currentUser = await requireUser();
     const contract = await prisma.contract.findUnique({ where: { id } });
 
     if (!contract) {
       throw new Error("Contract not found");
     }
 
-    if (contract.maintainerId !== currentUser?.id && currentUser?.roleId !== "admin") {
+    if (contract.maintainerId !== currentUser.id && currentUser.roleId !== "admin") {
       throw new Error("Unauthorized");
     }
 
@@ -85,7 +83,7 @@ class ContractService {
     id: string,
     contractAttributes: ContractWithUploadData
   ): Promise<Contract> {
-    const currentUser = await getCurrentUser();
+    const currentUser = await requireUser();
     const existingContract = await prisma.contract.findUnique({
       where: { id }
     });
@@ -94,7 +92,7 @@ class ContractService {
       throw new Error("Contract not found");
     }
 
-    if (existingContract.maintainerId !== currentUser?.id && currentUser?.roleId !== "admin") {
+    if (existingContract.maintainerId !== currentUser.id && currentUser.roleId !== "admin") {
       throw new Error("Unauthorized");
     }
 
@@ -104,11 +102,7 @@ class ContractService {
   }
 
   static async createContract(contractAttributes: ContractWithUploadData): Promise<Contract> {
-    const maintainerId = (await getCurrentUser())?.id;
-    if (!maintainerId) {
-      throw new Error("Unauthorized");
-    }
-
+    const user = await requireUser();
     const contract = await this.uploadAttachment(contractAttributes);
 
     return await prisma.contract.create({
@@ -116,7 +110,7 @@ class ContractService {
         ...contract,
         maintainer: {
           connect: {
-            id: maintainerId
+            id: user.id
           }
         }
       }

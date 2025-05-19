@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import SessionService from "./session-service";
+import { requireUserSession } from "./user-context-service";
 
 export type FiltersState = {
   country_code: string;
@@ -34,7 +34,7 @@ class LeadsService {
   };
 
   static async addLeadToShortlist(leadData: any) {
-    const userId = await SessionService.getCurrentUserId();
+    const user = await requireUserSession();
 
     const sanitizedLeads = {
       host: leadData.host,
@@ -71,7 +71,7 @@ class LeadsService {
         ...sanitizedLeads,
         user: {
           connect: {
-            id: userId
+            id: user.id
           }
         }
       }
@@ -79,29 +79,29 @@ class LeadsService {
   }
 
   static async removeLeadFromShortlist(leadId: number) {
-    const userId = await SessionService.getCurrentUserId();
+    const user = await requireUserSession();
     return await prisma.lead.delete({
       where: {
         id: leadId,
-        userId
+        userId: user.id
       }
     });
   }
 
   static async getShortlistedLeads() {
-    const userId = await SessionService.getCurrentUserId();
+    const user = await requireUserSession();
     return await prisma.lead.findMany({
       where: {
-        userId
+        userId: user.id
       }
     });
   }
 
   static async getShortlistedLeadsKeysList() {
-    const userId = await SessionService.getCurrentUserId();
+    const user = await requireUserSession();
     return prisma.lead.findMany({
       where: {
-        userId
+        userId: user.id
       },
       select: {
         host: true,

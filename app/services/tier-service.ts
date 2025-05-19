@@ -5,11 +5,10 @@ import Tier, { newTier } from "@/app/models/Tier";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import prisma from "@/lib/prisma";
 import { updateServicesForSale } from "./market-service";
-import SessionService from "./session-service";
 import { createStripePrice, type SubscriptionCadence } from "./stripe-price-service";
 import { createStripeProduct, updateStripeProduct } from "./stripe-product-service";
 import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
-import { getCurrentUser } from "./UserService";
+import { requireUser, requireUserSession } from "./user-context-service";
 
 export type TierWithCount = Tier & {
   _count?: { Charge: number; subscriptions: number };
@@ -82,12 +81,7 @@ async function toTierRow(tier: TierWithCount | Tier | Partial<Tier>) {
  */
 export async function createTier(tierData: Partial<Tier>) {
   // Ensure the current user is the owner of the tier or has permissions to create it
-  const user = await getCurrentUser();
-  const userId = user?.id;
-
-  if (!user) {
-    throw new Error("User not authenticated");
-  }
+  const user = await requireUser();
 
   if (!tierData.name) {
     throw new Error("Tier name is required.");
@@ -105,7 +99,7 @@ export async function createTier(tierData: Partial<Tier>) {
 
   const attrs = newTier({
     ...tierData,
-    userId
+    userId: user.id
   }) as Partial<Tier>;
 
   if (user.stripeAccountId) {
@@ -139,10 +133,7 @@ export async function createTier(tierData: Partial<Tier>) {
  * Delete a tier by ID
  */
 export async function deleteTier(id: string) {
-  const user = await getCurrentUser();
-
-  if (!user) throw new Error("User not authenticated");
-
+  const user = await requireUser();
   const tier = await prisma.tier.findUnique({
     where: { id },
     select: {
@@ -175,7 +166,7 @@ export async function deleteTier(id: string) {
  * Update an existing tier
  */
 export async function updateTier(id: string, tierData: Partial<Tier>) {
-  const user = await validateUserAndGetTier(id);
+  const user = await requireUser();
   const tier = await findAndValidateTier(id, user.id);
   const attrs = prepareAttributes(tier, tierData);
 
@@ -222,16 +213,6 @@ export async function updateTier(id: string, tierData: Partial<Tier>) {
     await updateServicesForSale();
   }
   return updatedTier;
-}
-
-/**
- * Helper function to validate the user and get tier data
- * @private
- */
-async function validateUserAndGetTier(id: string) {
-  const user = await getCurrentUser();
-  if (!user) throw new Error("User not authenticated");
-  return user;
 }
 
 /**
@@ -369,24 +350,15 @@ export async function getPublishedTiersForUser(
  * Get published tiers for the current user
  */
 export async function getPublishedTiers(tierIds: string[] = [], channel?: Channel) {
-  const userId = await SessionService.getCurrentUserId();
-
-  if (!userId) {
-    throw new Error("User not authenticated");
-  }
-
-  return getPublishedTiersForUser(userId, tierIds, channel);
+  const user = await requireUserSession();
+  return getPublishedTiersForUser(user.id, tierIds, channel);
 }
 
 /**
  * Create a duplicate of an existing tier
  */
 export async function duplicateTier(tierId: string) {
-  const user = await getCurrentUser();
-
-  if (!user) {
-    throw new Error("User not authenticated");
-  }
+  const user = await requireUserSession();
 
   const originalTier = await prisma.tier.findUnique({
     where: { id: tierId }

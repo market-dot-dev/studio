@@ -4,6 +4,7 @@ import { getRootUrl } from "@/lib/domain";
 import prisma from "@/lib/prisma";
 import { ErrorMessageCode, errorMessageMapping, HealthCheckResult } from "@/types/stripe";
 import { createStripeClient } from "./create-stripe-client";
+import { requireUser } from "./user-context-service";
 import UserService from "./UserService";
 
 /**
@@ -17,12 +18,7 @@ export async function getVendorStripeErrorMessage(code: ErrorMessageCode): Promi
  * Get account information for a Stripe vendor
  */
 export async function getVendorStripeAccountInfo() {
-  const user = await UserService.getCurrentUser();
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
+  const user = await requireUser();
   let accountInfo = null;
 
   if (user.stripeAccountId) {
@@ -126,12 +122,7 @@ export async function checkVendorStripeStatusById(
 export async function checkVendorStripeStatus(
   updateUserRecord: boolean = false
 ): Promise<HealthCheckResult> {
-  const user = await UserService.getCurrentUser();
-
-  if (!user) {
-    throw new Error(ErrorMessageCode.UserNotFound);
-  }
-
+  const user = await requireUser();
   return checkVendorStripeStatusById(user.id, updateUserRecord);
 }
 
@@ -139,10 +130,7 @@ export async function checkVendorStripeStatus(
  * Check if a user has a connected Stripe account
  */
 export async function hasVendorStripeAccount(): Promise<boolean> {
-  const user = await UserService.getCurrentUser();
-  if (!user) {
-    throw new Error("User not found");
-  }
+  const user = await requireUser();
   return !!user.stripeAccountId;
 }
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { getCustomerOfVendor } from "@/app/services/customer-service";
-import UserService from "@/app/services/UserService";
+import { requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
@@ -13,13 +13,13 @@ import Link from "next/link";
 const CustomerDetailPage = async (props: { params: Promise<{ id: string }> }) => {
   const params = await props.params;
   const userId = params.id;
-  const maintainerUserId = (await UserService.getCurrentSessionUser())?.id; // @TODO: Can we just use regular session here?
+  const vendor = await requireUserSession();
 
-  if (!maintainerUserId || !userId) {
+  if (!vendor.id || !userId) {
     return <div>Customer not found</div>;
   }
 
-  const customer = await getCustomerOfVendor(maintainerUserId, userId);
+  const customer = await getCustomerOfVendor(vendor.id, userId);
 
   if (!customer) {
     return <div>Customer not found</div>;

@@ -15,6 +15,7 @@ import {
   isSubscribedToStripeTier
 } from "./stripe-subscription-service";
 import { getTierById } from "./tier-service";
+import { getCurrentUserSession } from "./user-context-service";
 import UserService from "./UserService";
 
 interface CheckoutData {
@@ -103,7 +104,7 @@ export async function createUserSetupIntent(
   vendorStripeAccountId: string
 ): Promise<{ clientSecret: string | null; error: string | null }> {
   try {
-    const user = await UserService.getCurrentUser();
+    const user = await getCurrentUserSession();
     if (!user) {
       return { clientSecret: null, error: "Not authenticated" };
     }

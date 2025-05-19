@@ -1,20 +1,16 @@
 "use server";
 
 import { getContractById } from "@/app/services/contract-service";
-import { getSession } from "@/lib/auth";
-import { notFound, redirect } from "next/navigation";
+import { requireUserSession } from "@/app/services/user-context-service";
+import { notFound } from "next/navigation";
 import ContractEdit from "../../../../../components/contracts/contract-edit";
 
 export default async function ContractEditPage(props: { params: Promise<{ id: string }> }) {
   const { id: slug } = await props.params;
-  const session = await getSession();
-
-  if (!session) {
-    redirect("/login");
-  }
+  const user = await requireUserSession();
 
   const contract = await getContractById(slug);
-  if (!contract || contract.maintainerId !== session.user.id) {
+  if (!contract || contract.maintainerId !== user.id) {
     notFound();
   }
 

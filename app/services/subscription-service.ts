@@ -15,12 +15,12 @@ import {
   notifyOwnerOfNewSubscription,
   notifyOwnerOfSubscriptionCancellation
 } from "./email-service";
-import { getCurrentUserId, getSessionUser } from "./session-service";
 import {
   cancelStripeSubscription,
   reactivateStripeSubscription
 } from "./stripe-subscription-service";
 import { getTierById } from "./tier-service";
+import { getCurrentUserSession, requireUserSession } from "./user-context-service";
 import UserService from "./UserService";
 
 /**
@@ -91,12 +91,11 @@ export async function checkTierHasSubscribers(
  * @returns Array of subscriptions
  */
 export async function getUserSubscriptions() {
-  const userId = await getCurrentUserId();
-  if (!userId) return [];
+  const user = await requireUserSession();
 
   return await prisma.subscription.findMany({
     where: {
-      userId
+      userId: user.id
     },
     orderBy: {
       createdAt: "desc"
@@ -207,11 +206,7 @@ export async function createSubscription(
  * @returns The updated subscription
  */
 export async function cancelSubscription(subscriptionId: string): Promise<Subscription> {
-  const user = await getSessionUser();
-  if (!user) {
-    throw new Error("User not found");
-  }
-
+  const user = await requireUserSession();
   const subscription = await prisma.subscription.findUnique({
     where: { id: subscriptionId },
     include: {
@@ -385,12 +380,10 @@ export async function deactivateExpiredSubscriptions(): Promise<number> {
  * @returns Array of subscriptions ordered by creation date (newest first)
  */
 export async function getSubscriptionHistory(tierId: string) {
-  const userId = await getCurrentUserId();
-  if (!userId) return [];
-
+  const user = await requireUserSession();
   return await prisma.subscription.findMany({
     where: {
-      userId,
+      userId: user.id,
       tierId
     },
     orderBy: {
@@ -419,7 +412,7 @@ export async function reactivateSubscription(
   if (userId) {
     user = await UserService.findUser(userId);
   } else {
-    user = await getSessionUser();
+    user = await getCurrentUserSession();
   }
 
   if (!user) {
@@ -445,7 +438,7 @@ export async function reactivateSubscription(
   }
 
   // Verify the user is authorized (either explicitly provided userId or current user)
-  if (!userId && subscription.userId !== user.id) {
+  if (subscription.userId !== user.id) {
     throw new Error("Not authorized to modify this subscription");
   }
 

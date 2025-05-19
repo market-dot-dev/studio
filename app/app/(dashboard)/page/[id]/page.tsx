@@ -1,17 +1,14 @@
-import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
+import { requireUserSession } from "@/app/services/user-context-service";
 import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
 import PageContainer from "@/components/site/page-container";
 import { getRootUrl } from "@/lib/domain";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const session = await getSession();
-  if (!session) {
-    redirect("/login");
-  }
+  const user = await requireUserSession();
 
   const data = await prisma.page.findUnique({
     where: {
@@ -38,7 +35,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
   });
 
-  if (!data || data.userId !== session.user.id) {
+  if (!data || data.userId !== user.id) {
     notFound();
   }
 

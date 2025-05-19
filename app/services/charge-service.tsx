@@ -4,8 +4,8 @@ import { Charge } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { getStripeCustomerId } from "./customer-service";
 import { confirmCustomerPurchase, notifyOwnerOfNewPurchase } from "./email-service";
-import SessionService from "./session-service";
 import { getTierById } from "./tier-service";
+import { requireUserSession } from "./user-context-service";
 import UserService from "./UserService";
 
 class ChargeService {
@@ -46,25 +46,20 @@ class ChargeService {
   }
 
   static async findChargesByTierId(tierId: string): Promise<Charge[] | null> {
-    const userId = await SessionService.getCurrentUserId();
-
-    if (!userId) return null;
-
+    const user = await requireUserSession();
     return prisma.charge.findMany({
       where: {
         tierId,
-        userId: userId
+        userId: user.id
       }
     });
   }
 
   static async findCharges(): Promise<Charge[]> {
-    const userId = await SessionService.getCurrentUserId();
-    if (!userId) return [];
-
+    const user = await requireUserSession();
     return prisma.charge.findMany({
       where: {
-        userId: userId
+        userId: user.id
       }
     });
   }

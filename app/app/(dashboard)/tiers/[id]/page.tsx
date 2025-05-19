@@ -2,7 +2,7 @@
 
 import { getContractsByCurrentMaintainer } from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
-import { getCurrentUser } from "@/app/services/UserService";
+import { requireUser } from "@/app/services/user-context-service";
 import TierForm from "@/components/tiers/tier-form";
 import { notFound } from "next/navigation";
 
@@ -16,11 +16,11 @@ export default async function EditTierPage(props: { params: Promise<{ id: string
 
   if (!tier || !tier.id) notFound();
 
-  const user = await getCurrentUser();
+  const user = await requireUser();
 
   return (
     <div className="flex max-w-screen-xl flex-col">
-      <TierForm tier={tier} contracts={contracts} user={user!} />
+      <TierForm tier={tier} contracts={contracts} user={user} />
     </div>
   );
 }

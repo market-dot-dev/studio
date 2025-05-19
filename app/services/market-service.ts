@@ -4,7 +4,8 @@ import { Channel } from "@/app/generated/prisma";
 import { getRootUrl } from "@/lib/domain";
 import { getCurrentSite } from "./site-crud-service";
 import { getPublishedTiersForUser } from "./tier-service";
-import UserService, { getCurrentUser } from "./UserService";
+import { getCurrentUser, requireUser } from "./user-context-service";
+import UserService from "./UserService";
 
 const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;
 const API_KEY = process.env.MARKET_DEV_API_KEY;
@@ -80,10 +81,7 @@ export async function validateMarketExpert(): Promise<boolean> {
  * @returns A boolean indicating if the user is a market expert
  */
 export async function userIsMarketExpert(): Promise<boolean> {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("User not found");
-  }
+  const user = await requireUser();
   return !!user.marketExpertId;
 }
 
@@ -92,10 +90,7 @@ export async function userIsMarketExpert(): Promise<boolean> {
  * This is an internal function used by validateMarketExpert
  */
 export async function validateAccount() {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("User not found");
-  }
+  const user = await requireUser();
 
   if (!user.gh_id) {
     throw new Error("User GitHub ID doesn't exist");
@@ -120,10 +115,7 @@ export async function validateAccount() {
  * Update services for sale on market.dev
  */
 export async function updateServicesForSale() {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("User not found");
-  }
+  const user = await requireUser();
 
   if (!user.marketExpertId) {
     throw new Error("User is not an expert on Market.dev");

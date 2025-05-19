@@ -4,8 +4,8 @@ import { Page } from "@/app/generated/prisma";
 import { getSession } from "@/lib/auth";
 import { newPageTemplate } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
-import SessionService from "./session-service";
 import { getCurrentSite } from "./site-crud-service";
+import { getCurrentUserSession, requireUserSession } from "./user-context-service";
 
 class PageService {
   static getSubdomain(domain: string) {
@@ -98,8 +98,7 @@ class PageService {
   }
 
   static async findPage(subdomain: string, slug: string) {
-    const currentUserId = await SessionService.getCurrentUserId();
-
+    const user = await getCurrentUserSession();
     const site = await prisma.site.findUnique({
       where: {
         subdomain
@@ -112,7 +111,7 @@ class PageService {
             OR: [
               {
                 site: {
-                  userId: currentUserId
+                  userId: user?.id
                 }
               },
               { draft: false }
@@ -127,11 +126,11 @@ class PageService {
   }
 
   static async setHomepage(siteId: string, id: string) {
-    const userId = await SessionService.getCurrentUserId();
+    const user = await requireUserSession();
     return await prisma.site.update({
       where: {
         id: siteId,
-        userId
+        userId: user.id
       },
       data: {
         homepageId: id
@@ -140,14 +139,14 @@ class PageService {
   }
 
   static async deletePage(id: string) {
-    const userId = await SessionService.getCurrentUserId();
+    const user = await requireUserSession();
 
     // First, retrieve the page along with the related site's homepageId
     const page = await prisma.page.findUnique({
       where: {
         id,
         site: {
-          userId
+          userId: user.id
         }
       },
       include: {
@@ -161,7 +160,7 @@ class PageService {
       throw new Error("Page not found.");
     }
 
-    if (page.site.userId !== userId) {
+    if (page.site.userId !== user.id) {
       throw new Error("You don't own that page.");
     }
 

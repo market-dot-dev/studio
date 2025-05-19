@@ -1,25 +1,10 @@
 "use server";
 
 import { Prisma, User } from "@/app/generated/prisma";
-import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { createSessionUser } from "../models/Session";
-import SessionService from "./session-service";
+import { requireUserSession } from "./user-context-service";
 
 class UserService {
-  static async getCurrentUser() {
-    const session = await getSession();
-    const userId = session?.user.id;
-    if (!userId) return null;
-
-    return UserService.findUser(userId);
-  }
-
-  static async getCurrentSessionUser() {
-    const currentUser = await getCurrentUser();
-    return currentUser ? createSessionUser(currentUser) : null;
-  }
-
   static async findUser(id: string): Promise<User | undefined | null> {
     return prisma?.user.findUnique({
       where: {
@@ -29,10 +14,8 @@ class UserService {
   }
 
   static async updateCurrentUser(userData: Prisma.UserUpdateInput) {
-    const userId = await SessionService.getCurrentUserId();
-    if (!userId) return null;
-
-    const result = await UserService.updateUser(userId, userData);
+    const user = await requireUserSession();
+    const result = await UserService.updateUser(user.id, userData);
     return result;
   }
 
@@ -45,4 +28,4 @@ class UserService {
 }
 
 export default UserService;
-export const { getCurrentUser, findUser, updateCurrentUser, getCurrentSessionUser } = UserService;
+export const { findUser, updateCurrentUser } = UserService;
