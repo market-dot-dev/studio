@@ -2,8 +2,8 @@ model User {
   id                          String         @id @default(cuid())
   name                        String?
   username                    String?
-  gh_id                       Int? // @TODO: Migrate this somehow.
-  gh_username                 String?        @unique // @TODO: Migrate this somehow.
+  gh_id                       Int?
+  gh_username                 String?        @unique
   email                       String?        @unique
   businessLocation            String? /// @DEPRECATED. Should be fetched from Organization.
   businessType                String? /// @DEPRECATED. Should be fetched from Organization.
