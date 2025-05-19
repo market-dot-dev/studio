@@ -1,6 +1,6 @@
 "use client";
 
-import { createPage } from "@/app/services/PageService";
+import { createPage } from "@/app/services/page-service";
 import { Button } from "@/components/ui/button";
 import va from "@vercel/analytics";
 import { useRouter } from "next/navigation";

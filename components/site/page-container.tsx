@@ -1,7 +1,7 @@
 "use client";
 
 import { Page, Site } from "@/app/generated/prisma";
-import { deletePage, setHomepage, updatePage } from "@/app/services/PageService";
+import { deletePage, setHomepage, updatePage } from "@/app/services/page-service";
 import PageHeader from "@/components/common/page-header";
 import PageEditor from "@/components/site/page-editor";
 import {
@@ -142,23 +142,7 @@ export default function PageContainer({
     setInProgress(true);
 
     try {
-      console.log("Save initiated with page data:", {
-        id: pageData.id,
-        title: pageData.title,
-        slug: pageData.slug,
-        contentLength: pageData.content?.length || 0,
-        isDraft
-      });
-
       const { title, slug, content } = pageData;
-
-      console.log("Calling updatePage with:", {
-        id: pageData.id,
-        title,
-        slug,
-        contentLength: content?.length || 0,
-        draft: isDraft
-      });
 
       const result = await updatePage(pageData.id, {
         title,
@@ -196,13 +180,9 @@ export default function PageContainer({
     setIsDeleting(true);
 
     try {
-      const result = (await deletePage(pageData.id)) as any;
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        toast.success("The page was successfully deleted");
-        router.push(`/site/${site.id}`);
-      }
+      await deletePage(pageData.id);
+      toast.success("The page was successfully deleted");
+      router.push(`/site/${site.id}`);
     } catch (error) {
       console.error(error);
       toast.error("An error occurred while deleting the page");
@@ -216,13 +196,9 @@ export default function PageContainer({
     setIsMakingHomepage(true);
 
     try {
-      const result = (await setHomepage(pageData.siteId, pageData.id)) as any;
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        toast.success("This is your new homepage");
-        router.refresh();
-      }
+      await setHomepage(pageData.siteId, pageData.id);
+      toast.success("This is your new homepage");
+      router.refresh();
     } catch (error) {
       console.error(error);
       toast.error("An error occurred while promoting the page");
