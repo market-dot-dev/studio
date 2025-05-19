@@ -1,115 +1,100 @@
 "use server";
-// also write a little guide for the user to follow in order to create new steps
-// like writing to db schema etc
 
 import { businessDescription, businessName } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
+import { includeOrganizationOnboarding } from "@/types/onboarding";
+import { getCurrentOrganizationId } from "../organization-service";
 import { getCurrentUserId } from "../session-service";
 import { getCurrentUser } from "../UserService";
 import { defaultOnboardingState, OnboardingState } from "./onboarding-steps";
 
 class OnboardingService {
+  /**
+   * Saves the onboarding state to the user record
+   */
   static async saveState(state: OnboardingState) {
-    const id = await getCurrentUserId();
-    if (!id) throw new Error("User not found");
+    const userId = await getCurrentUserId();
+    if (!userId) throw new Error("User not found");
 
-    await prisma?.user.update({
-      where: {
-        id
-      },
+    await prisma.user.update({
+      where: { id: userId },
       data: {
         onboarding: JSON.stringify(state)
       }
     });
   }
 
+  /**
+   * Refreshes and returns the current onboarding state,
+   * checking various organization fields to determine completion status
+   */
   static async refreshAndGetState(preferredServices?: string[]) {
-    const id = await getCurrentUserId();
-    if (!id) return null;
+    const userId = await getCurrentUserId();
+    if (!userId) return null;
 
-    const result = await prisma?.user.findUnique({
-      where: {
-        id
-      },
+    const organizationId = await getCurrentOrganizationId();
+    if (!organizationId) return null;
+
+    // @TODO: This may be of better use in the Organization model
+    // Get user for the onboarding JSON
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
       select: {
-        onboarding: true,
-        projectName: true,
-        projectDescription: true,
-        businessLocation: true,
-        businessType: true,
-        stripeAccountId: true,
-        createdAt: true,
-        marketExpertId: true,
-        // select first site
-        sites: {
-          select: {
-            id: true,
-            pages: {
-              select: {
-                id: true,
-                createdAt: true,
-                updatedAt: true
-              },
-              orderBy: {
-                createdAt: "asc"
-              },
-              take: 2
-            }
-          },
-          orderBy: {
-            createdAt: "asc"
-          },
-          take: 1
-        },
-        tiers: {
-          select: {
-            id: true
-          },
-          orderBy: {
-            createdAt: "asc"
-          },
-          take: 1
-        }
+        onboarding: true
       }
     });
 
-    if (!result) {
+    if (!user) {
       throw new Error("User not found");
+    }
+
+    // Get organization data for determining step completion
+    const organization = await prisma.organization.findUnique({
+      where: { id: organizationId },
+      ...includeOrganizationOnboarding
+    });
+
+    if (!organization) {
+      throw new Error("Organization not found");
     }
 
     let onboardingState = defaultOnboardingState;
     try {
-      if (result.onboarding) {
-        onboardingState = JSON.parse(result.onboarding);
+      if (user.onboarding) {
+        onboardingState = JSON.parse(user.onboarding);
       }
     } catch (error) {
       console.error("Failed to parse onboarding JSON:", error);
     }
 
-    // Check if the project setup step is done
-    if (result.businessLocation && result.businessType) {
+    // Check if the business setup step is done
+    if (organization.businessLocation && organization.businessType) {
       onboardingState.setupBusiness = true;
     }
 
-    if (result.projectName !== businessName && result.projectDescription !== businessDescription) {
+    // Check if the project setup step is done
+    if (
+      organization.projectName !== businessName &&
+      organization.projectDescription !== businessDescription
+    ) {
       onboardingState.setupProject = true;
     }
 
     // Check if the payment setup step is done
-    if (result.stripeAccountId) {
+    if (organization.stripeAccountId) {
       onboardingState.setupPayment = true;
     }
 
     // Check if at least one tier exists
-    if (result.tiers && result.tiers.length > 0) {
+    if (organization.tiers && organization.tiers.length > 0) {
       onboardingState.setupTiers = true;
     }
 
     // Check if the site setup step is done
     // The site setup is considered done if there is at least one site with more than one page,
     // or if the only page has its updatedAt date greater than createdAt date
-    if (result.sites && result.sites.length > 0) {
-      const site = result.sites[0];
+    if (organization.sites && organization.sites.length > 0) {
+      const site = organization.sites[0];
       if (site.pages.length > 1) {
         onboardingState.setupSite = true;
       } else if (
@@ -128,10 +113,16 @@ class OnboardingService {
     return onboardingState;
   }
 
+  /**
+   * Resets the onboarding state to default
+   */
   static async resetState() {
     await OnboardingService.saveState(defaultOnboardingState);
   }
 
+  /**
+   * Gets the current onboarding state from the user record
+   */
   static async getCurrentState() {
     const user = await getCurrentUser();
     if (!user) throw new Error("User not found");
@@ -147,6 +138,9 @@ class OnboardingService {
     return defaultOnboardingState;
   }
 
+  /**
+   * Dismisses the onboarding
+   */
   static async dismissOnboarding() {
     const currentOnboarding = await OnboardingService.getCurrentState();
 
