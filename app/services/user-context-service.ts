@@ -8,13 +8,21 @@ import { redirect } from "next/navigation";
 import { cache } from "react";
 import { SessionUser } from "../models/Session";
 
-// Data access functions - return nullable results
+// Session-only functions (no DB queries)
 
+/**
+ * Gets the current user session without database queries
+ * @returns The session user or null if not authenticated
+ */
 export const getCurrentUserSession = cache(async (): Promise<SessionUser | null> => {
   const session = await getSession();
   return session?.user || null;
 });
 
+/**
+ * Requires a valid user session, redirects if not present
+ * @returns The session user
+ */
 export const requireUserSession = cache(async (): Promise<SessionUser> => {
   const session = await getSession();
   if (!session?.user?.id) {
@@ -23,21 +31,48 @@ export const requireUserSession = cache(async (): Promise<SessionUser> => {
   return session.user;
 });
 
+/**
+ * Gets the current user's ID from session
+ * @returns User ID or null if not authenticated
+ */
+export const getCurrentUserId = cache(async (): Promise<string | null> => {
+  const session = await getCurrentUserSession();
+  return session?.id || null;
+});
+
+/**
+ * Requires a valid user ID, redirects if not present
+ * @returns User ID
+ */
+export const requireUserId = cache(async (): Promise<string> => {
+  const session = await requireUserSession();
+  return session.id;
+});
+
 // Full user functions (with DB queries)
 
+/**
+ * Gets the current user with database query
+ * @returns The complete user object or null if not authenticated
+ */
 export const getCurrentUser = cache(async (): Promise<User | null> => {
-  const session = await getCurrentUserSession();
-  if (!session?.id) return null;
+  const userId = await getCurrentUserId();
+  if (!userId) return null;
 
   return prisma.user.findUnique({
-    where: { id: session.id }
+    where: { id: userId }
   });
 });
 
+/**
+ * Requires a valid user with database query, redirects if not present
+ * @returns The complete user object
+ */
 export const requireUser = cache(async (): Promise<User> => {
-  const session = await requireUserSession();
+  const userId = await requireUserId();
+
   const user = await prisma.user.findUnique({
-    where: { id: session.id }
+    where: { id: userId }
   });
 
   if (!user) {
@@ -50,15 +85,32 @@ export const requireUser = cache(async (): Promise<User> => {
 
 // Organization functions
 
-export const getCurrentOrganization = cache(async (): Promise<Organization | null> => {
+/**
+ * Gets the current organization ID
+ * @returns Organization ID or null if not available
+ */
+export const getCurrentOrganizationId = cache(async (): Promise<string | null> => {
   const user = await getCurrentUser();
-  if (!user?.currentOrganizationId) return null;
+  return user?.currentOrganizationId || null;
+});
+
+/**
+ * Gets the current organization
+ * @returns The complete organization object or null if not available
+ */
+export const getCurrentOrganization = cache(async (): Promise<Organization | null> => {
+  const organizationId = await getCurrentOrganizationId();
+  if (!organizationId) return null;
 
   return prisma.organization.findUnique({
-    where: { id: user.currentOrganizationId }
+    where: { id: organizationId }
   });
 });
 
+/**
+ * Requires a valid organization, redirects if not present
+ * @returns The complete organization object
+ */
 export const requireOrganization = cache(async (): Promise<Organization> => {
   const user = await requireUser(); // Ensure user is authenticated first
 

@@ -8,7 +8,7 @@ import type {
 } from "@/types/dashboard";
 import Customer from "../models/Customer";
 import { SessionUser } from "../models/Session";
-import { requireUserSession } from "./user-context-service";
+import { requireUserId } from "./user-context-service";
 
 /**
  * Get a specific customer by vendor and customer ID, including their charges and subscriptions
@@ -229,11 +229,10 @@ export async function getCustomersAndProspectsByMaintainer(
  * Get all customers for the current vendor
  *
  * @returns Array of customers with their charges and subscriptions
- * @throws Error if user is not found
  */
 export async function getCurrentVendorCustomers(): Promise<CustomerWithChargesAndSubscriptions[]> {
-  const user = await requireUserSession();
-  return getCustomersOfVendor(user.id);
+  const userId = await requireUserId();
+  return getCustomersOfVendor(userId);
 }
 
 /**
