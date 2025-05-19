@@ -112,7 +112,7 @@ async function processUser(user: User & { ownedOrganizations: any[] }) {
   }
 
   // Determine organization type based on user's role
-  let orgType: OrganizationType = OrganizationType.BILLING;
+  let orgType: OrganizationType = OrganizationType.CUSTOMER;
   if (user.roleId !== "customer") {
     orgType = OrganizationType.VENDOR;
   }
@@ -131,8 +131,6 @@ async function processUser(user: User & { ownedOrganizations: any[] }) {
         projectName: user.projectName,
         projectDescription: user.projectDescription,
         marketExpertId: user.marketExpertId,
-        gh_id: user.gh_id,
-        gh_username: user.gh_username,
 
         // Migrate Stripe fields
         stripeCustomerIds: user.stripeCustomerIds ?? undefined, // Already a JSON field in both models
