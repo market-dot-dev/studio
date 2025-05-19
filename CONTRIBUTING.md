@@ -21,4 +21,4 @@ We use ESLint and Prettier for linting/formatting. Make sure both are running be
 
 ## Code of Conduct
 
-Don't be an asshole.
+We welcome contributions, opinions and feedback from everyone. That said, any behaviour which can be reasonably considered harassment will not be tolerated.

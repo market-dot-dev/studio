@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Sidebar,
   SidebarContent,
@@ -8,7 +10,8 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem
+  SidebarMenuItem,
+  useSidebar
 } from "@/components/ui/sidebar";
 import type { SidebarItem, SidebarItemGroup } from "@/types/sidebar";
 import Link from "next/link";
@@ -21,6 +24,8 @@ interface AppSidebarProps {
 }
 
 export function AppSidebar({ mainItems, headerItems, footerItems }: AppSidebarProps) {
+  const { setOpenMobile } = useSidebar();
+
   const renderSidebarSection = (groups: SidebarItemGroup[]) => {
     return groups.map((group, groupIndex) => (
       <SidebarGroup key={group.label || groupIndex}>
@@ -30,7 +35,7 @@ export function AppSidebar({ mainItems, headerItems, footerItems }: AppSidebarPr
             {group.items.map((item: SidebarItem) => (
               <SidebarMenuItem key={item.title}>
                 <SidebarMenuButton asChild isActive={item.isActive}>
-                  <Link href={item.url}>
+                  <Link href={item.url} onClick={() => setOpenMobile(false)}>
                     {item.icon}
                     {item.title}
                     {item.isBeta && (
