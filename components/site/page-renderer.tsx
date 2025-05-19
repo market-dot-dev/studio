@@ -1,5 +1,6 @@
 import allComponents, { deprecatedComponents } from "@/components/site/insertables";
 import { ComponentType } from "@/lib/site/types";
+import type { PageContent, SiteDetails } from "@/types/site";
 import type { JSX, ReactNode } from "react";
 
 // Explicitly type the components map
@@ -76,28 +77,6 @@ const DynamicComponent: React.FC<DynamicComponentProps> = ({
   );
 };
 
-// Simple type definitions for site and page - compatible with what's passed from components
-interface Site {
-  id?: string;
-  userId?: string;
-  user?: {
-    name?: string | null;
-    image?: string | null;
-    projectName?: string | null;
-    projectDescription?: string | null;
-    [key: string]: any;
-  } | null;
-  [key: string]: any;
-}
-
-interface Page {
-  id?: string;
-  title?: string | null;
-  content?: string | null;
-  slug?: string | null;
-  [key: string]: any;
-}
-
 /**
  * Renders DOM elements as React components
  *
@@ -111,8 +90,8 @@ interface Page {
 const renderElement = (
   element: Element | Element[],
   index: number,
-  site: Site | null = null,
-  page: Page | null = null,
+  site: SiteDetails | null = null,
+  page: PageContent | null = null,
   isPreview: boolean = false
 ): JSX.Element => {
   // In case there are multiple root elements, wrap them in a fragment

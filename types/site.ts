@@ -34,7 +34,8 @@ export const includePageContent = Prisma.validator<Prisma.PageDefaultArgs>()({
     content: true,
     draft: true,
     createdAt: true,
-    updatedAt: true
+    updatedAt: true,
+    siteId: true
   }
 });
 

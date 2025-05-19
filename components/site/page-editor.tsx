@@ -14,11 +14,11 @@ import { useCallback, useEffect, useState } from "react";
 
 import renderElement from "./page-renderer";
 
-import { Page, Site } from "@/app/generated/prisma";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import type { PageContent, SiteDetails } from "@/types/site";
 import Link from "next/link";
 import { useFullscreen } from "../dashboard/dashboard-context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
@@ -26,18 +26,12 @@ import PageEditorSidebar from "./page-editor-sidebar";
 import { PreviewFrame } from "./preview-frame";
 
 interface PageEditorProps {
-  site: Partial<Site>;
-  page: Partial<Page> & {
-    content?: string | null;
-    slug?: string | null;
-    title?: string | null;
-  };
-  homepageId: string | null;
+  site: SiteDetails;
+  page: PageContent;
   siteUrl: string | null;
   isDraft: boolean;
   titleError: string | null;
   slugError: string | null;
-  slugVirgin: boolean;
   onTitleChange: (title: string) => void;
   onSlugChange: (slug: string) => void;
   onContentChange: (content: string) => void;
@@ -48,19 +42,17 @@ interface PageEditorProps {
 export default function PageEditor({
   site,
   page,
-  homepageId,
   siteUrl,
   isDraft,
   titleError,
   slugError,
-  slugVirgin,
   onTitleChange,
   onSlugChange,
   onContentChange,
   onSave,
   inProgress
 }: PageEditorProps) {
-  const isHome = page.id === homepageId;
+  const isHome = page.id === site.homepageId;
 
   const [editorRef, setEditorRef] = useState<any>(null);
   const [monacoRef, setMonacoRef] = useState<any>(null);

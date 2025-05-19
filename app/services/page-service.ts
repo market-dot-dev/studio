@@ -68,6 +68,46 @@ export async function getHomepage(subdomain: string): Promise<{
 }
 
 /**
+ * Get a page by ID with its site details
+ * Used for the dashboard editing page
+ */
+export async function getPageWithSiteById(id: string): Promise<{
+  page: PageContent | null;
+  site: SiteDetails | null;
+}> {
+  const userId = await requireUserId();
+
+  const page = await prisma.page.findUnique({
+    where: {
+      id: decodeURIComponent(id),
+      site: {
+        organization: {
+          members: {
+            some: {
+              userId
+            }
+          }
+        }
+      }
+    },
+    ...includePageContent
+  });
+
+  if (!page) {
+    return { page: null, site: null };
+  }
+
+  const site = await prisma.site.findUnique({
+    where: {
+      id: page.siteId
+    },
+    ...includeSiteDetails
+  });
+
+  return { page, site };
+}
+
+/**
  * Find a page by subdomain and slug
  * Includes permissions check for draft pages
  */

@@ -1,6 +1,5 @@
 "use client";
 
-import { Page, Site } from "@/app/generated/prisma";
 import { deletePage, setHomepage, updatePage } from "@/app/services/page-service";
 import PageHeader from "@/components/common/page-header";
 import PageEditor from "@/components/site/page-editor";
@@ -21,6 +20,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import type { PageContent, SiteDetails } from "@/types/site";
 import { ArrowUpCircle, EyeOff, Home, MoreVertical, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
@@ -31,21 +31,19 @@ export default function PageContainer({
   site,
   page,
   siteUrl,
-  homepageId,
   lastUpdateDate
 }: {
-  site: Partial<Site>;
-  page: Partial<Page>;
+  site: SiteDetails;
+  page: PageContent;
   siteUrl: string | null;
-  homepageId: string | null;
   lastUpdateDate: string;
 }) {
   const router = useRouter();
-  const isHome = page.id === homepageId;
+  const isHome = page.id === site.homepageId;
   const { fullscreen } = useFullscreen();
 
   // Shared state that will be passed to the PageEditor
-  const [pageData, setPageData] = useState<Partial<Page>>(page);
+  const [pageData, setPageData] = useState<PageContent>(page);
   const [slugVirgin, setSlugVirgin] = useState<boolean>(!page.slug);
 
   // UI state
@@ -192,11 +190,11 @@ export default function PageContainer({
   };
 
   const handleMakeHomepage = async () => {
-    if (inProgress || isPublishingInProgress || !pageData?.siteId || !pageData?.id) return;
+    if (inProgress || isPublishingInProgress || !site.id || !pageData?.id) return;
     setIsMakingHomepage(true);
 
     try {
-      await setHomepage(pageData.siteId, pageData.id);
+      await setHomepage(site.id, pageData.id);
       toast.success("This is your new homepage");
       router.refresh();
     } catch (error) {
@@ -308,8 +306,6 @@ export default function PageContainer({
     </Button>
   ].filter(Boolean);
 
-  const linkWithSlug = (siteUrl || "") + (isHome ? "" : pageData.slug || "");
-
   return (
     <>
       {/* Only show PageHeader in normal mode or if in fullscreen mode */}
@@ -334,11 +330,9 @@ export default function PageContainer({
         site={site}
         page={pageData}
         siteUrl={siteUrl}
-        homepageId={homepageId}
         isDraft={isDraft}
         titleError={titleError}
         slugError={slugError}
-        slugVirgin={slugVirgin}
         onTitleChange={handleTitleChange}
         onSlugChange={handleSlugChange}
         onContentChange={handleContentChange}
