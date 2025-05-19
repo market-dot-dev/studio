@@ -19,7 +19,6 @@
     "db:seed": "tsx scripts/reset-db.ts && prisma generate && tsx prisma/seed.ts",
     "db:restore-prod": "tsx scripts/restore-prod-db.ts",
     "db:reset:preview": "if [ \"$VERCEL_ENV\" = \"preview\" ]; then npm run db:reset && tsx prisma/seed.ts; fi",
-    "db:migrate": "tsx scripts/org-migration.ts",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "vercel-build": "prisma generate && next build && npm run db:reset:preview && prisma migrate deploy && tsx prisma/sync.ts",
