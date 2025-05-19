@@ -64,6 +64,7 @@ export async function validateMarketExpert(): Promise<boolean> {
       return false;
     }
 
+    // @TODO: Send to Org instead of User
     // Update user with expert ID
     await UserService.updateUser(user.id, {
       marketExpertId: expert.id.toString()
