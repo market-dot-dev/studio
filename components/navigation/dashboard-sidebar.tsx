@@ -142,17 +142,7 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
           title: "Join Discord",
           url: "https://discord.gg/ZdSpS4BuGd",
           icon: <SiDiscord />
-        },
-        ...(user.roleId === "admin"
-          ? [
-              {
-                title: "Admin Debug",
-                url: `/admin/debug`,
-                icon: <Settings />,
-                isActive: urlSegments[0] === "admin"
-              }
-            ]
-          : [])
+        }
       ]
     }
   ];

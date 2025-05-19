@@ -34,14 +34,13 @@ class RoleService {
     /^\/maintainer-site\//
   ];
 
-  static adminOnlyPaths = [/^\/admin(\/|$)/];
-
-  static maintainerOnlyPaths = [/^\/maintainer(\/|$)/, ...RoleService.adminOnlyPaths];
+  // @TODO: These should be consolidated better
+  static maintainerOnlyPaths = [/^\/maintainer(\/|$)/];
 
   static prohibitedPathSpecs: Record<Role, RegExp[]> = {
     anonymous: [],
     customer: RoleService.maintainerOnlyPaths,
-    maintainer: RoleService.adminOnlyPaths,
+    maintainer: [],
     admin: []
   };
 

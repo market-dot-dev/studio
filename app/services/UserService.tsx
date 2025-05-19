@@ -28,35 +28,6 @@ class UserService {
     });
   }
 
-  static async getCustomersMaintainers(): Promise<Partial<User>[]> {
-    // if current user is admin
-    const session = await getSession();
-    if (session?.user.roleId !== "admin") {
-      return [];
-    }
-
-    // find users where roleId is either customer or maintainer
-    return prisma?.user.findMany({
-      where: {
-        roleId: {
-          in: ["customer", "maintainer", "admin"]
-        }
-      },
-      select: {
-        id: true,
-        gh_username: true,
-        email: true,
-        name: true,
-        roleId: true,
-        createdAt: true,
-        updatedAt: true,
-        company: true,
-        businessType: true,
-        businessLocation: true
-      }
-    });
-  }
-
   static async updateCurrentUser(userData: Prisma.UserUpdateInput) {
     const userId = await SessionService.getCurrentUserId();
     if (!userId) return null;

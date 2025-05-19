@@ -31,7 +31,7 @@ const appURLWithProtocol = getRootUrl("app");
  * @param text - Plain text content
  * @param html - HTML content
  */
-export async function sendEmail(email: string | null, subject: string, text: string, html: string) {
+async function sendEmail(email: string | null, subject: string, text: string, html: string) {
   // console.log('sending email', email, subject, html);
   if (!email) {
     console.error("Invalid email address");
