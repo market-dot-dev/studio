@@ -21,9 +21,7 @@ model User {
   createdAt                   DateTime       @default(now())
   updatedAt                   DateTime       @updatedAt
   accounts                    Account[]
-  pages                       Page[] /// @DEPRECATED. Should be fetched from Organization.
   sessions                    Session[]
-  sites                       Site[] /// @DEPRECATED. Should be fetched from Organization.
   tiers                       Tier[] /// @DEPRECATED. Should be fetched from Organization.
   subscriptions               Subscription[] /// @DEPRECATED. Should be fetched from Organization.
   leads                       Lead[] /// @DEPRECATED. Should be fetched from Organization.
