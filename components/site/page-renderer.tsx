@@ -1,6 +1,6 @@
 import allComponents, { deprecatedComponents } from "@/components/site/insertables";
-import { ComponentType } from "@/lib/site/types";
 import type { PageContent, SiteDetails } from "@/types/site";
+import { ComponentType } from "@/types/site";
 import type { JSX, ReactNode } from "react";
 
 // Explicitly type the components map

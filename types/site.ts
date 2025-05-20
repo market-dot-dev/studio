@@ -56,3 +56,12 @@ export const includeSiteWithPages = Prisma.validator<Prisma.SiteDefaultArgs>()({
 });
 
 export type SiteWithPages = Prisma.SiteGetPayload<typeof includeSiteWithPages>;
+
+/**
+ * Component type definitions for the page renderer
+ */
+export interface ComponentType {
+  element: React.ComponentType<any>;
+  preview?: React.ComponentType<any>;
+  ui?: boolean;
+}
