@@ -19,7 +19,7 @@ export default async function SubscriptionPage(props: { params: Promise<{ id: st
   const resubUrl = getRootUrl(maintainer?.gh_username || "", `/checkout/${tier.id}`);
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-10 p-10">
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-6 sm:p-10">
       <PageHeader
         title={`${maintainer!.name}: ${tier?.name}`}
         description={tier?.description || undefined}

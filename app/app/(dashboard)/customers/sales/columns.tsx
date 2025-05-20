@@ -5,8 +5,8 @@ import Tier from "@/app/models/Tier";
 import { Badge } from "@/components/ui/badge";
 import { capitalize, formatDate } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
-import PurchaseStatusBadge from "../purchase-state";
-import SubscriptionStatusBadge from "../subscription-state";
+import { PurchaseStatusBadge } from "../purchase-status-badge";
+import { SubscriptionStatusBadge } from "../subscription-state";
 
 export type Sale = {
   id: string;
@@ -59,9 +59,12 @@ export const columns: ColumnDef<Sale>[] = [
     cell: ({ row }) => {
       if (row.original.type === "subscription" && row.original.subscription) {
         return <SubscriptionStatusBadge subscription={row.original.subscription} />;
-      } else if (row.original.type === "charge" && row.original.charge) {
+      }
+
+      if (row.original.type === "charge" && row.original.charge) {
         return <PurchaseStatusBadge charge={row.original.charge} />;
       }
+
       return "-";
     }
   },

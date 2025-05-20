@@ -187,8 +187,8 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
       {!canPublish && !canPublishLoading && (
         <Alert variant="warning" className="my-4">
           <AlertTriangle size={18} className="mr-2.5" />
-          <div className="flex flex-col gap-4 md:flex-row md:items-center">
-            <div>
+          <div className="flex w-full flex-col gap-4 md:flex-row md:items-center">
+            <div className="w-full">
               <AlertTitle>Payment Setup Required</AlertTitle>
               <AlertDescription>
                 You need to connect your Stripe account to publish a package. Once connected,

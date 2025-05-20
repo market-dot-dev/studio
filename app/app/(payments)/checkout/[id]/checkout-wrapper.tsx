@@ -3,7 +3,7 @@ import { getSubscriptionStatus } from "@/app/services/subscription-service";
 import { type VendorProfile } from "@/types/checkout";
 import { ContactFormCheckout } from "./contact-form-checkout";
 import { DirectPaymentCheckout } from "./direct-payment-checkout";
-import { SubscriptionStatus } from "./subscription-status";
+import { SubscriptionStatusCard } from "./subscription-status";
 
 interface CheckoutWrapperProps {
   tier: Tier;
@@ -43,11 +43,10 @@ export async function CheckoutWrapper({
   // For actively renewing subscriptions, just show the status view
   if (subStatus.statusType === "active_renewing" || subStatus.statusType === "cancelled_active") {
     return (
-      <SubscriptionStatus
+      <SubscriptionStatusCard
         subscriptionId={subStatus.subscription!.id}
         tierName={tier.name}
-        isActive={true}
-        expiryDate={null}
+        expiryDate={subStatus.expiryDate}
       />
     );
   }
