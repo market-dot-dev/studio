@@ -1,5 +1,5 @@
+import { getHomepage } from "@/app/services/page-service";
 import embedables from "@/components/site/embedables";
-import { getSiteData } from "@/lib/fetchers";
 import { notFound } from "next/navigation";
 
 export default async function EmbedServe(props: {
@@ -12,7 +12,7 @@ export default async function EmbedServe(props: {
     notFound();
   }
 
-  const site = await getSiteData(decodeURIComponent(params.domain));
+  const site = await getHomepage(decodeURIComponent(params.domain));
 
   const Component = embedables[params.embed].element;
 

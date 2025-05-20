@@ -40,29 +40,52 @@ export async function getSiteWithPage(
 }
 
 /**
- * Get the homepage for a site by subdomain
- * Used for frontend site rendering
+ * Get site data and homepage by domain or subdomain
+ * @param domain - Can be either a subdomain or custom domain
  */
-export async function getHomepage(subdomain: string): Promise<{
+export async function getHomepage(domain: string): Promise<{
   site: SiteDetails | null;
   page: PageContent | null;
 }> {
+  const isDomain = domain.match(/\./);
+
+  // Find site by either custom domain or subdomain
   const site = await prisma.site.findUnique({
-    where: { subdomain },
+    where:
+      isDomain && domain !== "app.example.com"
+        ? { customDomain: domain }
+        : { subdomain: isDomain ? domain.split(".")[0] : domain },
     ...includeSiteDetails
   });
 
-  if (!site?.homepageId) {
-    return { site, page: null };
+  if (!site) {
+    return { site: null, page: null };
   }
 
-  const page = await prisma.page.findUnique({
-    where: {
-      id: site.homepageId,
-      draft: false
-    },
-    ...includePageContent
-  });
+  // Get homepage
+  let page = null;
+
+  if (site.homepageId) {
+    page = await prisma.page.findUnique({
+      where: {
+        id: site.homepageId,
+        draft: false
+      },
+      ...includePageContent
+    });
+  }
+
+  // Fallback to first page if no homepage set
+  if (!page) {
+    page = await prisma.page.findFirst({
+      where: {
+        siteId: site.id,
+        draft: false
+      },
+      orderBy: { createdAt: "asc" },
+      ...includePageContent
+    });
+  }
 
   return { site, page };
 }

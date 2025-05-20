@@ -1,4 +1,4 @@
-import { getSiteData } from "@/lib/fetchers";
+import { getHomepage } from "@/app/services/page-service";
 import { headers } from "next/headers";
 import Image from "next/image";
 
@@ -7,11 +7,11 @@ export default async function NotFound() {
   const domain = headersList
     .get("host")
     ?.replace(".localhost:3000", `.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`);
-  const data = await getSiteData(domain as string);
+  const { site } = await getHomepage(domain as string);
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1 className="text-4xl">{data ? `${data.name}: ` : ""}404</h1>
+      <h1 className="text-4xl">{`${site?.name + " "} ?? ""`}404</h1>
       <Image
         alt="missing store"
         src="https://illustrations.popsy.co/gray/timed-out-error.svg"
@@ -19,7 +19,7 @@ export default async function NotFound() {
         height={400}
       />
       <p className="text-lg text-stone-500">
-        {data ? data.message404 : "Blimey! You've found a page that doesn't exist."}
+        {site ? site.message404 : "Blimey! You've found a page that doesn't exist."}
       </p>
     </div>
   );

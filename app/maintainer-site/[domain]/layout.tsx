@@ -1,5 +1,5 @@
+import { getHomepage } from "@/app/services/page-service";
 import { getRootUrl } from "@/lib/domain";
-import { getSiteData } from "@/lib/fetchers";
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ReactNode } from "react";
@@ -9,25 +9,19 @@ export async function generateMetadata(props: {
 }): Promise<Metadata | null> {
   const params = await props.params;
   const domain = decodeURIComponent(params.domain);
-  const data = await getSiteData(domain);
-  if (!data) {
+  const { site, page } = await getHomepage(domain);
+
+  if (!site) {
     return null;
   }
-  const image = getRootUrl(data?.subdomain ?? "app", `/api/og/${data.id}`);
 
-  const { logo, user } = data as {
-    image: string;
-    logo: string;
-    user: {
-      projectName: string;
-      projectDescription: string;
-    };
-  };
+  const image = getRootUrl(site.subdomain ?? "app", `/api/og/${site.id}`);
 
-  const { projectName: title, projectDescription: description } = user as {
-    projectName: string;
-    projectDescription: string;
-  };
+  const { logo } = site;
+  const { name, projectName, projectDescription } = site.organization || {};
+
+  const title = projectName || name || "Site";
+  const description = projectDescription || "";
 
   return {
     title,
@@ -35,7 +29,6 @@ export async function generateMetadata(props: {
     openGraph: {
       title,
       description,
-
       images: [image]
     },
     twitter: {
@@ -45,13 +38,13 @@ export async function generateMetadata(props: {
       images: [image],
       creator: "@vercel"
     },
-    icons: [logo],
+    ...[logo ? { icons: [logo] } : {}],
     metadataBase: new URL(`https://${domain}`)
     // Optional: Set canonical URL to custom domain if it exists
     // ...(params.domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
-    //   data.customDomain && {
+    //   site.customDomain && {
     //     alternates: {
-    //       canonical: `https://${data.customDomain}`,
+    //       canonical: `https://${site.customDomain}`,
     //     },
     //   }),
   };
@@ -62,23 +55,22 @@ export default async function SiteLayout(props: {
   children: ReactNode;
 }) {
   const params = await props.params;
-
   const { children } = props;
 
   const domain = decodeURIComponent(params.domain);
-  const data = await getSiteData(domain);
+  const { site, page } = await getHomepage(domain);
 
-  if (!data) {
+  if (!site) {
     notFound();
   }
 
   // Optional: Redirect to custom domain if it exists
   if (
     domain.endsWith(`.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`) &&
-    data.customDomain &&
+    site.customDomain &&
     process.env.REDIRECT_TO_CUSTOM_DOMAIN_IF_EXISTS === "true"
   ) {
-    return redirect(`https://${data.customDomain}`);
+    return redirect(`https://${site.customDomain}`);
   }
 
   return <>{children}</>;

@@ -8,7 +8,9 @@ export const includeSiteDetails = Prisma.validator<Prisma.SiteDefaultArgs>()({
     id: true,
     name: true,
     subdomain: true,
+    customDomain: true,
     logo: true,
+    message404: true,
     organization: {
       select: {
         id: true,
