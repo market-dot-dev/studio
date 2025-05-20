@@ -5,19 +5,19 @@ import prisma from "@/lib/prisma";
 /**
  * Retrieves site navigation items (pages) for a site
  * @param siteId - Optional site ID to get navigation for
- * @param userId - Optional user ID to get navigation for
+ * @param orgId - Optional organization ID to get navigation for
  * @returns Array of navigation items or error
  */
-export async function getSiteNav(siteId?: string | null, userId?: string) {
-  if (!siteId && !userId) {
+export async function getSiteNav(siteId?: string | null, orgId?: string) {
+  if (!siteId && !orgId) {
     return {
-      error: "No siteId or userId provided"
+      error: "No siteId or orgId provided"
     };
   }
 
   return prisma.page.findMany({
     where: {
-      ...(siteId ? { siteId } : { userId }),
+      ...(siteId ? { siteId } : { organizationId: orgId }),
       draft: false
     },
     select: {

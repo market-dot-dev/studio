@@ -1,4 +1,4 @@
-import { Site, User } from "@/app/generated/prisma";
+import { User } from "@/app/generated/prisma";
 import { uploadLogo } from "@/app/services/site-media-service";
 import { validateSubdomain } from "@/app/services/site-subdomain-service";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { getRootUrl } from "@/lib/domain";
 import { isGitWalletError } from "@/lib/errors";
+import type { SiteDetails } from "@/types/site";
 import * as Sentry from "@sentry/nextjs";
 import clsx from "clsx";
 import { ImageIcon } from "lucide-react";
@@ -26,7 +27,7 @@ interface ProfileData {
 interface ProfileFormProps {
   user: User;
   onSubmit: (data: ProfileData) => void;
-  currentSite?: Site;
+  currentSite?: SiteDetails;
 }
 
 export default function ProfileForm({ user, onSubmit, currentSite }: ProfileFormProps) {

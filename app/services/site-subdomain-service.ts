@@ -1,9 +1,9 @@
 "use server";
 
-import { Site } from "@/app/generated/prisma";
 import { RESERVED_SUBDOMAINS } from "@/lib/domain";
 import { GitWalletError } from "@/lib/errors";
 import prisma from "@/lib/prisma";
+import type { SiteDetails } from "@/types/site";
 
 /**
  * Validates a subdomain for format, length, reserved status, and uniqueness
@@ -11,7 +11,10 @@ import prisma from "@/lib/prisma";
  * @param currentSite - Optional current site (for update scenarios)
  * @throws GitWalletError if validation fails
  */
-export async function validateSubdomain(subdomain: string, currentSite?: Site): Promise<void> {
+export async function validateSubdomain(
+  subdomain: string,
+  currentSite?: SiteDetails
+): Promise<void> {
   // Validate subdomain format
   const subdomainRegex = /^[a-zA-Z0-9][a-zA-Z0-9-]*[a-zA-Z0-9]$/;
   if (!subdomainRegex.test(subdomain)) {

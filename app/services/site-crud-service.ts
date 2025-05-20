@@ -2,42 +2,32 @@
 
 import { Site } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
+import { includeSiteDetails, type SiteDetails } from "@/types/site";
 import { revalidateTag } from "next/cache";
 import { uploadLogoFile } from "./site-media-service";
 import { validateSubdomain } from "./site-subdomain-service";
-import { requireUserSession } from "./user-context-service";
+import { requireOrganization, requireUserId } from "./user-context-service";
 
 /**
- * Retrieves the current site for the logged-in user
+ * Retrieves the current site for the active Organization
  * @returns The current site or null if not found
- * @throws Error if no user is logged in
  */
-export async function getCurrentSite(): Promise<Site | null> {
-  const user = await requireUserSession();
-  return getOnlySiteFromUserId(user.id);
+export async function getCurrentSite() {
+  const org = await requireOrganization();
+  return getSiteByOrgId(org.id);
 }
 
 /**
  * Retrieves site information by site ID
  * @param siteId - ID of the site to retrieve
- * @returns Site information including user details
+ * @returns SiteDetails information including organization details
  */
-export async function getSiteInfo(siteId: string) {
+export async function getSiteInfo(siteId: string): Promise<SiteDetails | null> {
   const site = await prisma.site.findUnique({
     where: {
       id: siteId
     },
-    select: {
-      userId: true,
-      logo: true,
-      subdomain: true,
-      user: {
-        select: {
-          projectName: true,
-          projectDescription: true
-        }
-      }
-    }
+    ...includeSiteDetails
   });
   return site;
 }
@@ -48,11 +38,18 @@ export async function getSiteInfo(siteId: string) {
  * @returns Site with pages included
  */
 export async function getSiteAndPages(id: string) {
-  const user = await requireUserSession();
+  const userId = await requireUserId();
+
   const site = await prisma.site.findUnique({
     where: {
       id: decodeURIComponent(id),
-      userId: user.id
+      organization: {
+        members: {
+          some: {
+            userId
+          }
+        }
+      }
     },
     include: {
       pages: true
@@ -62,18 +59,19 @@ export async function getSiteAndPages(id: string) {
 }
 
 /**
- * Retrieves the first site for a user
- * @param userId - User ID to find site for
+ * Retrieves the site of an organization
+ * @param organizationId - Org ID to find site for
  * @returns The first site or null if not found
  */
-export async function getOnlySiteFromUserId(userId: string): Promise<Site | null> {
+export async function getSiteByOrgId(organizationId: string): Promise<SiteDetails | null> {
   const site = await prisma.site.findFirst({
     where: {
-      userId
+      organizationId
     },
     orderBy: {
       createdAt: "asc"
-    }
+    },
+    ...includeSiteDetails
   });
   return site;
 }
@@ -85,7 +83,10 @@ export async function getOnlySiteFromUserId(userId: string): Promise<Site | null
  * @throws Error if update fails
  */
 export async function updateCurrentSite(formData: FormData) {
-  const site = (await getCurrentSite()) as Site;
+  const site = await getCurrentSite();
+  if (!site) {
+    throw new Error("Site not found");
+  }
   try {
     const updateData: Partial<Site> = {};
     let hasSubdomainUpdate = false;
@@ -139,15 +140,4 @@ export async function updateCurrentSite(formData: FormData) {
     console.error("Error updating site: ", error);
     throw error;
   }
-}
-
-/**
- * Deletes a site by ID
- * @param siteId - ID of the site to delete
- * @returns The deleted site
- */
-export async function deleteSite(siteId: string) {
-  return prisma.site.delete({
-    where: { id: siteId }
-  });
 }

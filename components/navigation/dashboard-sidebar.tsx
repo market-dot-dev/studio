@@ -1,8 +1,9 @@
 "use client";
 
-import type { Site, User } from "@/app/generated/prisma";
+import type { User } from "@/app/generated/prisma";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
 import type { SidebarItemGroup } from "@/types/sidebar";
+import type { SiteDetails } from "@/types/site";
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
 import {
   AppWindowMac,
@@ -22,7 +23,7 @@ import { useSelectedLayoutSegments } from "next/navigation";
 interface DashboardSidebarProps {
   user: User;
   isMarketExpert: boolean;
-  site: Site | null;
+  site: SiteDetails | null;
 }
 
 export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSidebarProps) {

@@ -26,7 +26,7 @@ async function loadAndEncodeSvg(filePath: string): Promise<string> {
 export async function GET(_req: Request, props: { params: Promise<{ siteid: string }> }) {
   const params = await props.params;
   const site = await getSiteInfo(params.siteid);
-  const projectName = site?.user?.projectName;
+  const projectName = site?.organization?.projectName;
 
   const title = projectName ?? PLACEHOLDER_TITLE;
   const subtitle = site?.subdomain
@@ -94,7 +94,7 @@ export async function GET(_req: Request, props: { params: Promise<{ siteid: stri
           {site?.logo ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              alt={site?.user?.projectName ? `${site.user.projectName} logo` : "logo"}
+              alt={projectName ? `${projectName} logo` : "logo"}
               height={100}
               src={site?.logo ?? ""}
               style={{
