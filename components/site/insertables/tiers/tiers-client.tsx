@@ -3,18 +3,15 @@ import { Channel, Tier } from "@/app/generated/prisma";
 import { getPublishedTiers } from "@/app/services/tier-service";
 import placeholderTiers from "@/lib/constants/placeholder/tiers";
 import { useEffect, useState } from "react";
+import type { InsertableComponentProps } from "..";
 import Tiers from "./tiers";
 
-// This component will be used to prepare data for the preview mode
-export default function TiersClient({
-  site,
-  page,
-  tiers
-}: {
-  site: any;
-  page: any;
+type Props = InsertableComponentProps & {
   tiers?: string;
-}) {
+};
+
+// This component will be used to prepare data for the preview mode
+export default function TiersClient({ site, page, tiers }: Props) {
   // getting the tiers by means of API routes
   const [tierItems, setTierItems] = useState<Partial<Tier>[]>([]);
   const tierIds = tiers ? tiers?.split(",").map((id: string) => id.trim()) : [];

@@ -1,4 +1,4 @@
-import { getPublishedTiersForUser } from "@/app/services/tier-service";
+import { getPublishedTiersForOrganization } from "@/app/services/tier-service";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest, props: { params: Promise<{ userid: string }> }) {
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, props: { params: Promise<{ userid: s
     enforceHeight = 0;
   }
 
-  const tiersForUser = await getPublishedTiersForUser(params.userid);
+  const tiersForUser = await getPublishedTiersForOrganization(params.userid);
 
   const tiers = tiersForUser.filter((tier) => {
     return onlyTiers.includes(tier.id);

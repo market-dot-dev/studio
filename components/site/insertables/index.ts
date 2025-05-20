@@ -1,4 +1,5 @@
 import { Card } from "@/components/ui/card";
+import type { PageContent, SiteDetails } from "@/types/site";
 import {
   Blockquote,
   Box,
@@ -23,7 +24,11 @@ import Section from "./section/section";
 import ImageInsert from "./image/image-insert";
 import MenuClient from "./menu/menu-client";
 import MenuServer from "./menu/menu-server";
-import SiteOwner from "./site-owner/site-owner";
+
+export type InsertableComponentProps = {
+  site: SiteDetails;
+  page: PageContent;
+};
 
 export type Insertable = {
   name: string;
@@ -210,17 +215,13 @@ export const textComponents = {
   } as Insertable
 } as any;
 
+// @TODO: Could this be removed entirely?
 export const deprecatedComponents = {
   menu: {
     name: "Menu",
     tag: "Menu",
     element: MenuServer,
     preview: MenuClient
-  } as Insertable,
-  siteowner: {
-    name: "Site Owner",
-    tag: "SiteOwner",
-    element: SiteOwner
   } as Insertable,
   ...textComponents,
   ...layoutComponents

@@ -1,7 +1,13 @@
 "use client";
 
 import { getRootUrl } from "@/lib/domain";
-export default function Menu({ site, page, nav }: { site: any; page: any; nav: any[] }) {
+import type { InsertableComponentProps } from "..";
+
+type Props = InsertableComponentProps & {
+  nav: any; // @TODO: Better typing
+};
+
+export default function Menu({ site, page, nav }: Props) {
   const url = getRootUrl(
     site.subdomain ?? "app",
     page.id === site.homepageId ? "" : `/${page.slug}`

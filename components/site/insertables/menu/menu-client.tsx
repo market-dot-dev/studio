@@ -1,13 +1,14 @@
 "use client";
+
 import { useEffect, useState } from "react";
+import type { InsertableComponentProps } from "..";
 import Menu from "./menu";
 
-// @TODO: Just use a server-action? See note in corresponding endpoint.
-
-export default function MenuClient({ site, page }: { site: any; page: any }) {
+export default function MenuClient({ site, page }: InsertableComponentProps) {
   // getting the tiers by means of API routes
   const [nav, setNav] = useState([]);
 
+  // @TODO: Just use a server-action? See note in corresponding endpoint.
   useEffect(() => {
     const getNav = async () => {
       const response = await fetch("/api/preview/nav");

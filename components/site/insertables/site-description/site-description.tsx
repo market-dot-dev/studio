@@ -1,5 +1,7 @@
-export default function SiteDescription({ site, page }: { site: any; page: any }) {
-  const lines = (site?.user?.projectDescription || "").split("\n") ?? [];
+import type { InsertableComponentProps } from "..";
+
+export default function SiteDescription({ site, page }: InsertableComponentProps) {
+  const lines = (site.organization.projectDescription || "").split("\n") ?? [];
   const html = lines.join("<br />");
 
   return (

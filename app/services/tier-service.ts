@@ -306,17 +306,18 @@ export async function listTiersByUserIdWithCounts(userId: string): Promise<TierW
 }
 
 /**
- * Get published tiers for a specific user
+ * Get published tiers for a specific organization
  * Used to display tiers on the front end site for customers to subscribe to
  */
-export async function getPublishedTiersForUser(
-  userId: string,
+export async function getPublishedTiersForOrganization(
+  orgId: string,
   tierIds: string[] = [],
   channel?: Channel
 ) {
+  // @TODO: Returned data here does not match the expected type in "TierCard", should match
   return prisma.tier.findMany({
     where: {
-      userId,
+      organizationId: orgId,
       published: true,
       ...(tierIds.length > 0 && { id: { in: tierIds } }),
       ...(channel && { channels: { has: channel } })
@@ -351,7 +352,7 @@ export async function getPublishedTiersForUser(
  */
 export async function getPublishedTiers(tierIds: string[] = [], channel?: Channel) {
   const user = await requireUserSession();
-  return getPublishedTiersForUser(user.id, tierIds, channel);
+  return getPublishedTiersForOrganization(user.id, tierIds, channel);
 }
 
 /**
