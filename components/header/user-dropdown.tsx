@@ -48,6 +48,7 @@ export default function UserDropdown({ user }: { user: SessionUser }) {
         </div>
 
         <DropdownMenuSeparator />
+
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={() =>

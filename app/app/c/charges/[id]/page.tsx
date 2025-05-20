@@ -12,7 +12,7 @@ export default async function ChargeDetail(props: { params: Promise<{ id: string
   const maintainer = await UserService.findUser(tier.userId);
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-10 p-10">
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-6 sm:p-10">
       <PageHeader title={`${maintainer!.name}: ${tier?.name}`} />
       <div className="flex flex-col space-y-6">
         <div>{tier?.description}</div>
