@@ -1,9 +1,8 @@
-import type { TierWithCount } from "@/app/services/tier-service";
 import TierCard from "@/components/tiers/tier-card";
 import SkeletonTiers from "../../skeleton-tiers";
 
 // This renders the actual component for both server and client sides.
-export default function Tiers({ tiers }: { tiers: TierWithCount[] }) {
+export default function Tiers({ tiers }: { tiers: any[] }) {
   return (
     <div className="mx-auto flex justify-center">
       {tiers.length ? (

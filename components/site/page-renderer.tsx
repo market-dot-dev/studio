@@ -1,12 +1,11 @@
-import allComponents, { deprecatedComponents } from "@/components/site/insertables";
+import allComponents from "@/components/site/insertables";
 import type { PageContent, SiteDetails } from "@/types/site";
 import { ComponentType } from "@/types/site";
 import type { JSX, ReactNode } from "react";
 
 // Explicitly type the components map
 const componentsMap: Record<string, ComponentType> = {
-  ...allComponents,
-  ...deprecatedComponents
+  ...allComponents
 };
 
 type DynamicComponentProps = {

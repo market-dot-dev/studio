@@ -38,12 +38,12 @@ export function PackageEmbeddings({
   useEffect(() => {
     // image prefetching ... although this does not explicitly set the image src, it does prefetch the image so subsequent requests are cached and network calls arent made
     const img = new Image();
-    img.src = `/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`;
+    img.src = `/api/tiers/${site?.organization.id}${queryParams ? "?" + queryParams : ""}`;
   }, [queryParams]);
 
   const svgCode = `<a href="${finalRootUrl}" target="_blank">
                       <img
-                        src="/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}"
+                        src="/api/tiers/${site?.organization.id}${queryParams ? "?" + queryParams : ""}"
                       />
                     </a>`;
 
@@ -92,7 +92,7 @@ export function PackageEmbeddings({
                 <a href={finalRootUrl} target="_blank">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`}
+                    src={`/api/tiers/${site?.organization.id}${queryParams ? "?" + queryParams : ""}`}
                     alt={site?.id}
                   />
                 </a>

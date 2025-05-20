@@ -54,9 +54,9 @@ export async function getCheckoutData(
   }
 
   // Fetch vendor with minimal data
-  const vendor = tier.userId
-    ? await prisma.user.findUnique({
-        where: { id: tier.userId },
+  const vendor = tier.organizationId
+    ? await prisma.organization.findUnique({
+        where: { id: tier.organizationId },
         ...includeVendorProfile
       })
     : null;
