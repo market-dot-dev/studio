@@ -1,6 +1,12 @@
 "use server";
 
 import { Site } from "@/app/generated/prisma";
+import {
+  homepageTemplate,
+  homepageTitle,
+  siteDescription,
+  siteName
+} from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { includeSiteDetails, type SiteDetails } from "@/types/site";
 import { revalidateTag } from "next/cache";
@@ -140,4 +146,56 @@ export async function updateCurrentSite(formData: FormData) {
     console.error("Error updating site: ", error);
     throw error;
   }
+}
+
+/**
+ * Creates a new site for an organization with initial homepage
+ * @param organizationId - ID of the organization to create the site for
+ * @param subdomain - Optional subdomain for the site
+ * @param logo - Optional logo URL for the site
+ * @returns The created site with its pages
+ */
+export async function createSite(organizationId: string, subdomain?: string, logo?: string) {
+  // Create site and homepage in a single transaction
+  const site = await prisma.site.create({
+    data: {
+      name: siteName,
+      description: siteDescription,
+      subdomain,
+      logo,
+      organization: {
+        connect: {
+          id: organizationId
+        }
+      },
+      pages: {
+        create: [
+          {
+            title: homepageTitle,
+            slug: "index",
+            content: homepageTemplate,
+            draft: false,
+            organization: {
+              connect: {
+                id: organizationId
+              }
+            }
+          }
+        ]
+      }
+    },
+    include: {
+      pages: true
+    }
+  });
+
+  // Set the first page as homepage
+  if (site.pages.length > 0) {
+    await prisma.site.update({
+      where: { id: site.id },
+      data: { homepageId: site.pages[0].id }
+    });
+  }
+
+  return site;
 }

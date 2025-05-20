@@ -1,5 +1,4 @@
 import { Contract, PrismaClient, Tier, User } from "@/app/generated/prisma";
-import RegistrationService from "@/app/services/registration-service";
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
@@ -24,7 +23,8 @@ async function main() {
   console.log("[seed] * users");
   const users = await loadUsers();
   console.log("[seed] * sites");
-  users.forEach((user) => RegistrationService.createSite(user));
+  // @TODO: Should be seeded from the Organizations
+  // users.forEach((user) => RegistrationService.createSite(user));
   console.log("[seed] * tiers");
   await loadTiers(users);
   console.log("[seed] * contracts");

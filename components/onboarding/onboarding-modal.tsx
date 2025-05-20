@@ -4,8 +4,7 @@ import { User } from "@/app/generated/prisma";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import { createSite } from "@/app/services/registration-service";
-import { updateCurrentSite } from "@/app/services/site-crud-service";
+import { createSite, updateCurrentSite } from "@/app/services/site-crud-service";
 import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -180,8 +179,10 @@ export default function OnboardingModal({
           formData.append("logoURL", profileData.logo);
         }
         await updateCurrentSite(formData);
-      } else {
-        await createSite(user, profileData.subdomain, profileData.logo);
+      }
+      // @TODO: This should use a qualified organization directly
+      else if (user.currentOrganizationId) {
+        await createSite(user.currentOrganizationId, profileData.subdomain, profileData.logo);
       }
 
       await refreshAndGetState(offeringsData.offerings);
