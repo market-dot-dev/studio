@@ -2,6 +2,7 @@ import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { unstable_cache } from "next/cache";
 
+// @TODO: This file may be deprecated
 // get subscriptions of the logged in customer from a specific user/site
 export async function getSubscriptions(sellerId: string) {
   const session = await getSession();
