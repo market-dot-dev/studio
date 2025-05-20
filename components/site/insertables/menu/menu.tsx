@@ -9,8 +9,8 @@ type Props = InsertableComponentProps & {
 
 export default function Menu({ site, page, nav }: Props) {
   const url = getRootUrl(
-    site.subdomain ?? "app",
-    page.id === site.homepageId ? "" : `/${page.slug}`
+    site?.subdomain ?? "app",
+    page?.id === site?.homepageId ? "" : `/${page?.slug}`
   );
 
   return (

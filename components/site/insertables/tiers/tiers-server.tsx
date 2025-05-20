@@ -11,7 +11,7 @@ type Props = InsertableComponentProps & {
 export default async function TiersServer({ site, page, tiers }: Props) {
   const tierIds = tiers ? tiers?.split(",").map((id: string) => id.trim()) : [];
   // getting the tiers by means of server functions
-  const tierItems = site.organization
+  const tierItems = site?.organization
     ? await getPublishedTiersForOrganization(site.organization.id, tierIds, Channel.site)
     : [];
   return <Tiers tiers={tierItems ?? []} />;

@@ -26,8 +26,8 @@ import MenuClient from "./menu/menu-client";
 import MenuServer from "./menu/menu-server";
 
 export type InsertableComponentProps = {
-  site: SiteDetails;
-  page: PageContent;
+  site?: SiteDetails;
+  page?: PageContent;
 };
 
 export type Insertable = {
