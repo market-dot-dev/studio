@@ -104,6 +104,7 @@ export const getCurrentOrganization = cache(async (): Promise<Organization | nul
 
   return prisma.organization.findUnique({
     where: { id: organizationId }
+    // @TODO: Select smaller object here
   });
 });
 
@@ -120,6 +121,7 @@ export const requireOrganization = cache(async (): Promise<Organization> => {
 
   const organization = await prisma.organization.findUnique({
     where: { id: user.currentOrganizationId }
+    // @TODO: Select smaller object here
   });
 
   if (!organization) {
