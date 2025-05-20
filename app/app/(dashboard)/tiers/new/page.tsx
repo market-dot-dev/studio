@@ -1,12 +1,12 @@
 "use server";
 
 import { newTier } from "@/app/models/Tier";
-import { getContractsByCurrentOrganization } from "@/app/services/contract-service";
+import { getContractsForCurrentOrganization } from "@/app/services/contract-service";
 import { requireUser } from "@/app/services/user-context-service";
 import TierForm from "@/components/tiers/tier-form";
 
 export default async function NewTierPage() {
-  const contracts = await getContractsByCurrentOrganization();
+  const contracts = await getContractsForCurrentOrganization();
   const user = await requireUser();
   const attrs = newTier();
 

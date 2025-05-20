@@ -4,21 +4,21 @@ import { Contract, Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateId } from "@/lib/utils";
 import { put } from "@vercel/blob";
-import { requireOrganization, requireUser } from "./user-context-service";
+import { requireOrganization } from "./user-context-service";
 
 export type ContractWithUploadData = Contract & { uploadData?: File };
 
 class ContractService {
-  static async getContractById(id: string): Promise<Contract | null> {
+  static async getById(id: string): Promise<Contract | null> {
     return prisma.contract.findUnique({ where: { id } });
   }
 
-  static async getContractsByCurrentOrganization(): Promise<Contract[]> {
+  static async getForCurrentOrganization(): Promise<Contract[]> {
     const organization = await requireOrganization();
-    return this.getContractsByOrganizationId(organization.id);
+    return this.getForOrganization(organization.id);
   }
 
-  static async getContractsByOrganizationId(organizationId: string): Promise<Contract[]> {
+  static async getForOrganization(organizationId: string): Promise<Contract[]> {
     return prisma.contract.findMany({
       where: {
         organizationId: organizationId
@@ -26,8 +26,7 @@ class ContractService {
     });
   }
 
-  static async destroyContract(id: string): Promise<Contract> {
-    const user = await requireUser();
+  static async delete(id: string): Promise<Contract> {
     const organization = await requireOrganization();
     const contract = await prisma.contract.findUnique({
       where: { id }
@@ -81,10 +80,7 @@ class ContractService {
     return contract as Prisma.ContractCreateInput;
   }
 
-  static async updateContract(
-    id: string,
-    contractAttributes: ContractWithUploadData
-  ): Promise<Contract> {
+  static async update(id: string, contractAttributes: ContractWithUploadData): Promise<Contract> {
     const organization = await requireOrganization();
     const existingContract = await prisma.contract.findUnique({
       where: { id }
@@ -104,7 +100,7 @@ class ContractService {
     return prisma.contract.update({ where: { id }, data: contractAttributes });
   }
 
-  static async createContract(contractAttributes: ContractWithUploadData): Promise<Contract> {
+  static async create(contractAttributes: ContractWithUploadData): Promise<Contract> {
     const organization = await requireOrganization();
     const contract = await this.uploadAttachment(contractAttributes);
 
@@ -121,22 +117,22 @@ class ContractService {
   }
 }
 
-export const getContractById = async (id: string) => {
-  return ContractService.getContractById(id);
+export const getContract = async (id: string) => {
+  return ContractService.getById(id);
 };
 
 export const updateContract = async (id: string, contract: ContractWithUploadData) => {
-  return ContractService.updateContract(id, contract);
+  return ContractService.update(id, contract);
 };
 
-export const getContractsByCurrentOrganization = async () => {
-  return ContractService.getContractsByCurrentOrganization();
+export const getContractsForCurrentOrganization = async () => {
+  return ContractService.getForCurrentOrganization();
 };
 
-export const destroyContract = async (id: string) => {
-  return ContractService.destroyContract(id);
+export const deleteContract = async (id: string) => {
+  return ContractService.delete(id);
 };
 
 export const createContract = async (contract: ContractWithUploadData) => {
-  return ContractService.createContract(contract);
+  return ContractService.create(contract);
 };

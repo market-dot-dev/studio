@@ -1,6 +1,6 @@
 "use server";
 
-import { getContractsByCurrentOrganization } from "@/app/services/contract-service";
+import { getContractsForCurrentOrganization } from "@/app/services/contract-service";
 import { requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import ContractSettings from "./contracts-index";
 
 export default async function ContractSettingsPage() {
   const user = await requireUserSession();
-  const contracts = await getContractsByCurrentOrganization();
+  const contracts = await getContractsForCurrentOrganization();
 
   return (
     <div className="max-w flex max-w-screen-xl flex-col space-y-10">
