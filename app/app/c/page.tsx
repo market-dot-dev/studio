@@ -5,11 +5,13 @@ import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { pluralize } from "@/lib/utils";
 import { isActive } from "@/types/subscription";
+import { Charge, Subscription } from "@prisma/client";
 
 export default async function SubscriptionsAndChargesList() {
-  const charges = (await ChargeService.findCharges()) || [];
-  const subscriptions = (await getUserSubscriptions()) || [];
+  const charges: Charge[] = (await ChargeService.findCharges()) || [];
+  const subscriptions: Subscription[] = (await getUserSubscriptions()) || [];
 
   const activeSubscriptions = subscriptions.filter((sub) => isActive(sub));
   const pastSubscriptions = subscriptions.filter((sub) => !isActive(sub));
@@ -19,26 +21,60 @@ export default async function SubscriptionsAndChargesList() {
   const anyPast = pastSubscriptions.length > 0;
 
   return (
-    <div className="flex max-w-screen-xl flex-col space-y-10 p-10">
+    <div className="flex max-w-screen-xl flex-col space-y-10 p-6 sm:p-10">
       <div className="flex flex-col space-y-6">
         <PageHeader
           title="Purchases"
-          description="All your subscriptions and one time purchases from market.dev will appear here."
+          description="All your subscriptions and one-time purchases from market.dev will appear here."
         />
 
         <Tabs defaultValue="active">
           <TabsList>
-            <TabsTrigger value="active" className="gap-1">
-              Active Subscriptions
-              {anyActive && <Badge>{activeSubscriptions.length}</Badge>}
+            <TabsTrigger
+              value="active"
+              className="gap-2"
+              children={
+                <>
+                  {anyActive && (
+                    <Badge
+                      size="sm"
+                      variant="secondary"
+                      className="inline-flex min-w-[18px] items-center justify-center group-hover:text-foreground group-focus:text-foreground"
+                    >
+                      {activeSubscriptions.length}
+                    </Badge>
+                  )}
+                  {pluralize("Active Subscription", activeSubscriptions.length)}
+                </>
+              }
+            />
+            <TabsTrigger value="onetime" className="gap-2">
+              <>
+                {anyCharges && (
+                  <Badge
+                    size="sm"
+                    variant="secondary"
+                    className="inline-flex min-w-[18px] items-center justify-center group-hover:text-foreground group-focus:text-foreground"
+                  >
+                    {charges.length}
+                  </Badge>
+                )}
+                {pluralize("One-Time Purchase", charges.length)}
+              </>
             </TabsTrigger>
-            <TabsTrigger value="onetime" className="gap-1">
-              One Time Purchases
-              {anyCharges && <Badge>{charges.length}</Badge>}
-            </TabsTrigger>
-            <TabsTrigger value="past" className="gap-1">
-              Past Subscriptions
-              {anyPast && <Badge>{pastSubscriptions.length}</Badge>}
+            <TabsTrigger value="past" className="group gap-2">
+              <>
+                {anyPast && (
+                  <Badge
+                    size="sm"
+                    variant="secondary"
+                    className="inline-flex min-w-[18px] items-center justify-center group-hover:text-foreground group-focus:text-foreground"
+                  >
+                    {pastSubscriptions.length}
+                  </Badge>
+                )}
+                {pluralize("Past Subscription", pastSubscriptions.length)}
+              </>
             </TabsTrigger>
           </TabsList>
 

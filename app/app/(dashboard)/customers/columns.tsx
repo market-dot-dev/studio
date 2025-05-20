@@ -6,8 +6,8 @@ import { formatDate } from "@/lib/utils";
 import { Charge, Subscription } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
 import Link from "next/link";
-import PurchaseStatusBadge from "./purchase-state";
-import SubscriptionStatusBadge from "./subscription-state";
+import { PurchaseStatusBadge } from "./purchase-status-badge";
+import { SubscriptionStatusBadge } from "./subscription-state";
 
 export type CustomerTableItem = {
   id: string;
@@ -93,9 +93,12 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
     cell: ({ row }) => {
       if (row.original.statusType === "subscription" && row.original.subscription) {
         return <SubscriptionStatusBadge subscription={row.original.subscription} />;
-      } else if (row.original.charge) {
+      }
+
+      if (row.original.charge) {
         return <PurchaseStatusBadge charge={row.original.charge} />;
       }
+
       return null;
     }
   },

@@ -11,10 +11,13 @@ import {
   AlertDialogHeader,
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { useState } from "react";
 
-export const CancelSubscriptionBtn = ({ subscriptionId }: { subscriptionId: string }) => {
+export const CancelSubscriptionBtn = ({
+  subscriptionId,
+  ...props
+}: { subscriptionId: string } & ButtonProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -22,18 +25,19 @@ export const CancelSubscriptionBtn = ({ subscriptionId }: { subscriptionId: stri
     <>
       <Button
         size="sm"
-        variant="destructive"
+        variant="outline"
         loading={loading}
         loadingText="Cancelling Subscription"
         disabled={loading}
         className="w-min"
         onClick={() => setDialogOpen(true)}
+        {...props}
       >
         Cancel Subscription
       </Button>
 
       <AlertDialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="max-h-[calc(100vh-32px)] max-w-[calc(100vw-32px)] rounded-lg sm:max-w-md">
           <AlertDialogHeader>
             <AlertDialogTitle>Cancel Subscription</AlertDialogTitle>
             <AlertDialogDescription className="text-sm text-stone-500">
@@ -42,7 +46,7 @@ export const CancelSubscriptionBtn = ({ subscriptionId }: { subscriptionId: stri
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setDialogOpen(false)}>
-              No, keep subscription
+              Stay subscribed
             </AlertDialogCancel>
             <AlertDialogAction variant="destructive" asChild>
               <Button
