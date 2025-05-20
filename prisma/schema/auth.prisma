@@ -28,7 +28,6 @@ model User {
   onboarding                  String?
   company                     String? /// @DEPRECATED. Should be fetched from Organization.
   charges                     Charge[] /// @DEPRECATED. Should be fetched from Organization.
-  contracts                   Contract[] /// @DEPRECATED. Should be fetched from Organization.
   prospects                   Prospect[] /// @DEPRECATED. Should be fetched from Organization.
   marketExpertId              String? /// @DEPRECATED. Should be fetched from Organization.
 

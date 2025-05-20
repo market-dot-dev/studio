@@ -10,9 +10,6 @@ const syncContracts = async () => {
   const fileContents = fs.readFileSync(yamlFile, "utf8");
   const data = yaml.load(fileContents) as { contracts: Array<Contract> };
 
-  // Retrieve all current contracts in the database.
-  const existingContracts = await prisma.contract.findMany();
-
   // Synchronize each contract from the YAML to the database.
   for (const contract of data.contracts) {
     await prisma.contract.upsert({

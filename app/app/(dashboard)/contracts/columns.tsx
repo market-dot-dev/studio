@@ -33,7 +33,7 @@ const NameCell = ({
     );
   }
 
-  const ownsContract = contract.maintainerId === currentUser.id;
+  const ownsContract = contract.organizationId === currentUser.currentOrgId;
 
   return (
     <div className="flex items-center gap-2">
@@ -72,7 +72,7 @@ const ActionsCell = ({
     return <div className="flex justify-end"></div>;
   }
 
-  const ownsContract = contract.maintainerId === currentUser.id;
+  const ownsContract = contract.organizationId === currentUser.currentOrgId;
 
   if (!ownsContract) {
     return (

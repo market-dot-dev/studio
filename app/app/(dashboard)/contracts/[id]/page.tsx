@@ -10,7 +10,7 @@ export default async function ContractEditPage(props: { params: Promise<{ id: st
   const user = await requireUserSession();
 
   const contract = await getContractById(slug);
-  if (!contract || contract.maintainerId !== user.id) {
+  if (!contract || contract.organizationId !== user.currentOrgId) {
     notFound();
   }
 

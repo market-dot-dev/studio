@@ -4,7 +4,7 @@ import { Contract, Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateId } from "@/lib/utils";
 import { put } from "@vercel/blob";
-import { requireUser, requireUserSession } from "./user-context-service";
+import { requireOrganization, requireUser } from "./user-context-service";
 
 export type ContractWithUploadData = Contract & { uploadData?: File };
 
@@ -13,28 +13,32 @@ class ContractService {
     return prisma.contract.findUnique({ where: { id } });
   }
 
-  static async getContractsByCurrentMaintainer(): Promise<Contract[]> {
-    const user = await requireUserSession();
-    return ContractService.getContractsByMaintainerId(user.id);
+  static async getContractsByCurrentOrganization(): Promise<Contract[]> {
+    const organization = await requireOrganization();
+    return this.getContractsByOrganizationId(organization.id);
   }
 
-  static async getContractsByMaintainerId(maintainerId: string | null): Promise<Contract[]> {
+  static async getContractsByOrganizationId(organizationId: string): Promise<Contract[]> {
     return prisma.contract.findMany({
       where: {
-        OR: [{ maintainerId: null }, { maintainerId: maintainerId }]
+        organizationId: organizationId
       }
     });
   }
 
   static async destroyContract(id: string): Promise<Contract> {
-    const currentUser = await requireUser();
-    const contract = await prisma.contract.findUnique({ where: { id } });
+    const user = await requireUser();
+    const organization = await requireOrganization();
+    const contract = await prisma.contract.findUnique({
+      where: { id }
+    });
 
     if (!contract) {
       throw new Error("Contract not found");
     }
 
-    if (contract.maintainerId !== currentUser.id && currentUser.roleId !== "admin") {
+    // Check if contract belongs to the current organization
+    if (contract.organizationId !== organization.id) {
       throw new Error("Unauthorized");
     }
 
@@ -59,11 +63,9 @@ class ContractService {
   private static async uploadAttachment(
     contract: ContractWithUploadData
   ): Promise<Prisma.ContractCreateInput> {
-    console.log("~~~~~~~~~~~~~~ uploading");
     if (contract.uploadData) {
       const file = contract.uploadData as any as File;
       const { url, type } = await this.uploadFile(file);
-      console.log("~~~~~~~~~~~~~~ uploading: ", { url, type });
 
       contract.attachmentUrl = url;
       contract.attachmentType = type;
@@ -83,7 +85,7 @@ class ContractService {
     id: string,
     contractAttributes: ContractWithUploadData
   ): Promise<Contract> {
-    const currentUser = await requireUser();
+    const organization = await requireOrganization();
     const existingContract = await prisma.contract.findUnique({
       where: { id }
     });
@@ -92,7 +94,8 @@ class ContractService {
       throw new Error("Contract not found");
     }
 
-    if (existingContract.maintainerId !== currentUser.id && currentUser.roleId !== "admin") {
+    // Check if contract belongs to the current organization
+    if (existingContract.organizationId !== organization.id) {
       throw new Error("Unauthorized");
     }
 
@@ -102,15 +105,15 @@ class ContractService {
   }
 
   static async createContract(contractAttributes: ContractWithUploadData): Promise<Contract> {
-    const user = await requireUser();
+    const organization = await requireOrganization();
     const contract = await this.uploadAttachment(contractAttributes);
 
     return await prisma.contract.create({
       data: {
         ...contract,
-        maintainer: {
+        organization: {
           connect: {
-            id: user.id
+            id: organization.id
           }
         }
       }
@@ -126,8 +129,8 @@ export const updateContract = async (id: string, contract: ContractWithUploadDat
   return ContractService.updateContract(id, contract);
 };
 
-export const getContractsByCurrentMaintainer = async () => {
-  return ContractService.getContractsByCurrentMaintainer();
+export const getContractsByCurrentOrganization = async () => {
+  return ContractService.getContractsByCurrentOrganization();
 };
 
 export const destroyContract = async (id: string) => {

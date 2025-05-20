@@ -71,8 +71,6 @@ model Contract {
   storage        String
   attachmentUrl  String?
   attachmentType String?
-  maintainerId   String? /// @DEPRECATED. Should be converted to Organization.
-  maintainer     User?         @relation(fields: [maintainerId], references: [id]) /// @DEPRECATED. Should be converted to Organization.
   organizationId String?
   organization   Organization? @relation(fields: [organizationId], references: [id])
   Tier           Tier[]
