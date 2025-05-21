@@ -2,7 +2,7 @@
 
 import { User } from "@/app/generated/prisma";
 import { updateCurrentUser } from "@/app/services/UserService";
-import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
+import { refreshAndGetState } from "@/app/services/onboarding/onboarding-service";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { createSite, updateCurrentSite } from "@/app/services/site/site-crud-service";
 import { useMarketExpert } from "@/components/dashboard/dashboard-context";
