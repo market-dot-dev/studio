@@ -1,7 +1,6 @@
 import { Charge } from "@/app/generated/prisma";
 import ChargeService from "@/app/services/charge-service";
-import { getTierById } from "@/app/services/tier/tier-service";
-import UserService from "@/app/services/UserService";
+import { getTierByIdWithOrg } from "@/app/services/tier/tier-service";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,11 +9,8 @@ import Link from "next/link";
 const ChargeCard = async ({ charge }: { charge: Charge }) => {
   if (!charge || !charge.tierId) return null;
 
-  const tier = await getTierById(charge.tierId!);
+  const tier = await getTierByIdWithOrg(charge.tierId);
   if (!tier) return null;
-
-  const maintainer = await UserService.findUser(tier.userId);
-  if (!maintainer) return null;
 
   const status = "paid";
 
@@ -23,7 +19,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
       <div className="flex flex-col space-y-2">
         <div className="flex flex-row justify-between">
           <div className="flex flex-row items-center space-x-2">
-            <strong>{maintainer.projectName}</strong>
+            <strong>{tier.organization.projectName}</strong>
           </div>
         </div>
 

@@ -4,10 +4,11 @@ import { Channel } from "@/app/generated/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import prisma from "@/lib/prisma";
+import { includeMinimalOrg } from "@/types/organization";
 import { updateServicesForSale } from "../market-service";
 import { createStripePrice, type SubscriptionCadence } from "../stripe/stripe-price-service";
 import { createStripeProduct, updateStripeProduct } from "../stripe/stripe-product-service";
-import { requireUser, requireUserSession } from "../user-context-service";
+import { requireOrganization } from "../user-context-service";
 import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
 
 export type TierWithCount = Tier & {
@@ -24,6 +25,28 @@ export async function getTierById(id: string): Promise<Tier | null> {
       id
     },
     include: {
+      _count: {
+        select: {
+          Charge: true,
+          subscriptions: true
+        }
+      }
+    }
+  });
+}
+
+/**
+ * Find tier by ID with associated counts and Organization
+ */
+export async function getTierByIdWithOrg(id: string) {
+  return prisma.tier.findUnique({
+    where: {
+      id
+    },
+    include: {
+      organization: {
+        ...includeMinimalOrg
+      },
       _count: {
         select: {
           Charge: true,
@@ -70,7 +93,7 @@ async function toTierRow(tier: TierWithCount | Tier | Partial<Tier>) {
   delete result.id;
   delete result.versions;
   delete result._count;
-  delete result.userId;
+  delete result.organizationId;
   delete result.createdAt;
   delete result.updatedAt;
   return result as Tier;
@@ -80,8 +103,8 @@ async function toTierRow(tier: TierWithCount | Tier | Partial<Tier>) {
  * Create a new tier
  */
 export async function createTier(tierData: Partial<Tier>) {
-  // Ensure the current user is the owner of the tier or has permissions to create it
-  const user = await requireUser();
+  // Ensure the current organization has permissions to create it
+  const organization = await requireOrganization();
 
   if (!tierData.name) {
     throw new Error("Tier name is required.");
@@ -91,25 +114,25 @@ export async function createTier(tierData: Partial<Tier>) {
     throw new Error("Price is required.");
   }
 
-  if (tierData.published && !user.stripeAccountId) {
+  if (tierData.published && !organization.stripeAccountId) {
     throw new Error(
-      "Tried to publish an existing tier, but the user has no connected stripe account."
+      "Tried to publish an existing tier, but the organization has no connected stripe account."
     );
   }
 
   const attrs = newTier({
     ...tierData,
-    userId: user.id
+    organizationId: organization.id
   }) as Partial<Tier>;
 
-  if (user.stripeAccountId) {
+  if (organization.stripeAccountId) {
     const product = await createStripeProduct(
-      user.stripeAccountId,
+      organization.stripeAccountId,
       tierData.name,
       attrs.description || undefined
     );
     const price = await createStripePrice(
-      user.stripeAccountId,
+      organization.stripeAccountId,
       product.id,
       attrs.price!,
       attrs.cadence as SubscriptionCadence
@@ -123,7 +146,7 @@ export async function createTier(tierData: Partial<Tier>) {
     data: attrs as Tier
   });
 
-  if (user.marketExpertId) {
+  if (organization.marketExpertId) {
     await updateServicesForSale();
   }
   return createdTier;
@@ -133,7 +156,7 @@ export async function createTier(tierData: Partial<Tier>) {
  * Delete a tier by ID
  */
 export async function deleteTier(id: string) {
-  const user = await requireUser();
+  const organization = await requireOrganization();
   const tier = await prisma.tier.findUnique({
     where: { id },
     select: {
@@ -156,7 +179,7 @@ export async function deleteTier(id: string) {
     where: { id }
   });
 
-  if (user.marketExpertId) {
+  if (organization.marketExpertId) {
     await updateServicesForSale();
   }
   return response;
@@ -166,8 +189,8 @@ export async function deleteTier(id: string) {
  * Update an existing tier
  */
 export async function updateTier(id: string, tierData: Partial<Tier>) {
-  const user = await requireUser();
-  const tier = await findAndValidateTier(id, user.id);
+  const organization = await requireOrganization();
+  const tier = await findAndValidateTier(id, organization.id);
   const attrs = prepareAttributes(tier, tierData);
 
   // Use the extracted version service to handle versioning context
@@ -176,7 +199,7 @@ export async function updateTier(id: string, tierData: Partial<Tier>) {
   // Create a complete context with additional properties needed for tier updates
   const context = {
     ...versionContext,
-    stripeConnected: !!user.stripeAccountId
+    stripeConnected: !!organization.stripeAccountId
   };
 
   if (tierData.checkoutType === "gitwallet") {
@@ -185,21 +208,21 @@ export async function updateTier(id: string, tierData: Partial<Tier>) {
       await handleVersioning(id, tier, attrs, context);
     } else {
       // Use the extracted version service for handling price updates & stripe product
-      if (context.stripeConnected && user.stripeAccountId && tier.stripeProductId) {
+      if (context.stripeConnected && organization.stripeAccountId && tier.stripeProductId) {
         if (attrs.name && attrs.description) {
           await updateStripeProduct(
-            user.stripeAccountId,
+            organization.stripeAccountId,
             tier.stripeProductId,
             attrs.name,
             attrs.description
           );
         }
-        await handlePriceUpdates(tier, attrs, user.stripeAccountId, context);
+        await handlePriceUpdates(tier, attrs, organization.stripeAccountId, context);
       }
     }
 
     if (context.stripeConnected && attrs.published) {
-      await handleStripeProducts(attrs, user.stripeAccountId!);
+      await handleStripeProducts(attrs, organization.stripeAccountId!);
     }
   }
 
@@ -209,7 +232,7 @@ export async function updateTier(id: string, tierData: Partial<Tier>) {
     data: row
   });
 
-  if (user.marketExpertId) {
+  if (organization.marketExpertId) {
     await updateServicesForSale();
   }
   return updatedTier;
@@ -219,9 +242,9 @@ export async function updateTier(id: string, tierData: Partial<Tier>) {
  * Helper function to find and validate a tier
  * @private
  */
-async function findAndValidateTier(id: string, userId: string) {
+async function findAndValidateTier(id: string, organizationId: string) {
   const tier = await prisma.tier.findUnique({
-    where: { id, userId },
+    where: { id, organizationId },
     include: { versions: true }
   });
   if (!tier) throw new Error(`Tier with ID ${id} not found`);
@@ -276,12 +299,12 @@ async function handleStripeProducts(attrs: Partial<Tier>, stripeAccountId: strin
 }
 
 /**
- * Find all tiers belonging to a specific user
+ * Find all tiers belonging to a specific organization
  */
-export async function findByUserId(userId: string) {
+export async function findByOrganizationId(organizationId: string) {
   return prisma.tier.findMany({
     where: {
-      userId
+      organizationId
     },
     orderBy: [
       {
@@ -292,11 +315,13 @@ export async function findByUserId(userId: string) {
 }
 
 /**
- * Find all tiers belonging to a specific user with counts
+ * Find all tiers belonging to a specific organization with counts
  */
-export async function listTiersByUserIdWithCounts(userId: string): Promise<TierWithCount[]> {
+export async function listTiersByOrganizationIdWithCounts(
+  organizationId: string
+): Promise<TierWithCount[]> {
   return prisma.tier.findMany({
-    where: { userId },
+    where: { organizationId },
     orderBy: [
       {
         published: "desc"
@@ -317,7 +342,7 @@ export async function getPublishedTiersForOrganization(
   // @TODO: Returned data here does not match the expected type in "TierCard", should match
   return prisma.tier.findMany({
     where: {
-      organizationId: orgId,
+      organizationId: orgId, // No change needed here
       published: true,
       ...(tierIds.length > 0 && { id: { in: tierIds } }),
       ...(channel && { channels: { has: channel } })
@@ -348,18 +373,18 @@ export async function getPublishedTiersForOrganization(
 }
 
 /**
- * Get published tiers for the current user
+ * Get published tiers for the current organization
  */
 export async function getPublishedTiers(tierIds: string[] = [], channel?: Channel) {
-  const user = await requireUserSession();
-  return getPublishedTiersForOrganization(user.id, tierIds, channel);
+  const organization = await requireOrganization();
+  return getPublishedTiersForOrganization(organization.id, tierIds, channel);
 }
 
 /**
  * Create a duplicate of an existing tier
  */
 export async function duplicateTier(tierId: string) {
-  const user = await requireUserSession();
+  const organization = await requireOrganization();
 
   const originalTier = await prisma.tier.findUnique({
     where: { id: tierId }
@@ -376,7 +401,7 @@ export async function duplicateTier(tierId: string) {
     price: originalTier.price,
     revision: 0,
     cadence: originalTier.cadence,
-    userId: user.id,
+    organizationId: organization.id,
     stripeProductId: null,
     description: originalTier.description,
     tagline: originalTier.tagline,

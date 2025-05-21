@@ -22,7 +22,6 @@ model User {
   updatedAt                   DateTime       @updatedAt
   accounts                    Account[]
   sessions                    Session[]
-  tiers                       Tier[] /// @DEPRECATED. Should be fetched from Organization.
   subscriptions               Subscription[] /// @DEPRECATED. Should be fetched from Organization.
   onboarding                  String?
   company                     String? /// @DEPRECATED. Should be fetched from Organization.

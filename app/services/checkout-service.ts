@@ -2,31 +2,28 @@
 
 import { Contract, Tier } from "@/app/generated/prisma";
 import { createSubscription } from "@/app/services/subscription-service";
-import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { includeVendorProfile, type VendorProfile } from "@/types/checkout";
 import { type StripeCard } from "@/types/stripe";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
+import type { SessionUser } from "../models/Session";
 import { createLocalCharge } from "./charge-service";
+import { getOrganizationById } from "./organization-service";
 import { createStripeCharge } from "./stripe/stripe-payment-service";
 import {
   createStripeSubscriptionForCustomer,
   isSubscribedToStripeTier
 } from "./stripe/stripe-subscription-service";
 import { getTierById } from "./tier/tier-service";
-import { getCurrentUserSession } from "./user-context-service";
+import { getCurrentUserSession, requireUser } from "./user-context-service";
 import UserService from "./UserService";
 
 interface CheckoutData {
   tier: Tier | null;
   contract: Contract | null;
   vendor: VendorProfile | null;
-  currentUser: {
-    id: string;
-    name?: string | null;
-    email?: string | null;
-  } | null;
+  customer: SessionUser | null; // @TODO: Should be an Org
   isAnnual: boolean;
 }
 
@@ -34,15 +31,7 @@ export async function getCheckoutData(
   tierId: string,
   isAnnual: boolean = false
 ): Promise<CheckoutData> {
-  // Get current user directly from session - no DB lookup needed
-  const session = await getSession();
-  const currentUser = session?.user
-    ? {
-        id: session.user.id,
-        name: session.user.name || null,
-        email: session.user.email || null
-      }
-    : null;
+  const customer = await getCurrentUserSession(); // @TODO: Should be an Org
 
   // Fetch tier data
   const tier = await prisma.tier.findUnique({
@@ -50,7 +39,7 @@ export async function getCheckoutData(
   });
 
   if (!tier) {
-    return { tier: null, contract: null, vendor: null, currentUser, isAnnual };
+    return { tier: null, contract: null, vendor: null, customer, isAnnual };
   }
 
   // Fetch vendor with minimal data
@@ -70,7 +59,7 @@ export async function getCheckoutData(
     tier,
     contract,
     vendor,
-    currentUser,
+    customer,
     isAnnual
   };
 }
@@ -176,16 +165,7 @@ async function getCustomerForUser(
   vendorUserId: string,
   vendorStripeAccountId: string
 ): Promise<Customer> {
-  const session = await getSession();
-  if (!session?.user) {
-    throw new Error("User not authenticated");
-  }
-
-  const user = await UserService.findUser(session.user.id);
-  if (!user) {
-    throw new Error("User not found");
-  }
-
+  const user = await requireUser();
   return new Customer(user, vendorUserId, vendorStripeAccountId);
 }
 
@@ -220,11 +200,6 @@ export async function processPayment(
   stripeId: string;
   type: "charge" | "subscription";
 }> {
-  // Validate inputs
-  if (!customerId) {
-    throw new Error("Not logged in.");
-  }
-
   // Get and validate tier
   const tier = await getTierById(tierId);
   if (!tier) {
@@ -232,18 +207,19 @@ export async function processPayment(
   }
 
   // Get and validate customer
-  const customerUser = await UserService.findUser(customerId);
+  if (!customerId) {
+    throw new Error("Not logged in.");
+  }
+
+  const customerUser = await UserService.findUser(customerId); // @TODO: Organization instead
   if (!customerUser) {
     throw new Error("User not found");
   }
 
   // Get and validate vendor
-  const vendor = await UserService.findUser(tier.userId);
-  if (!vendor) {
-    throw new Error("Vendor not found.");
-  }
-  if (!vendor.stripeAccountId) {
-    throw new Error("Vendor does not have a connected Stripe account.");
+  const vendor = await getOrganizationById(tier.organizationId);
+  if (!vendor || !vendor.stripeAccountId) {
+    throw new Error("Vendor not valid.");
   }
 
   // Get Stripe IDs

@@ -4,7 +4,7 @@ import { Charge } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { confirmCustomerPurchase, notifyOwnerOfNewPurchase } from "./email-service";
 import { getStripeCustomerId } from "./organization-customer-service";
-import { getTierById } from "./tier/tier-service";
+import { getTierByIdWithOrg } from "./tier/tier-service";
 import { requireUserSession } from "./user-context-service";
 import UserService from "./UserService";
 
@@ -15,7 +15,7 @@ class ChargeService {
         id: chargeId
       },
       include: {
-        user: true,
+        user: true, // @TODO: Should be an Org
         tier: true
       }
     });
@@ -46,7 +46,7 @@ class ChargeService {
   }
 
   static async findChargesByTierId(tierId: string): Promise<Charge[] | null> {
-    const user = await requireUserSession();
+    const user = await requireUserSession(); // @TODO: Should be an Org
     return prisma.charge.findMany({
       where: {
         tierId,
@@ -56,7 +56,7 @@ class ChargeService {
   }
 
   static async findCharges(): Promise<Charge[]> {
-    const user = await requireUserSession();
+    const user = await requireUserSession(); // @TODO: Should be an Org
     return prisma.charge.findMany({
       where: {
         userId: user.id
@@ -64,6 +64,7 @@ class ChargeService {
     });
   }
 
+  // @TODO: Should be an Org
   static async chargedByUser(userId: string): Promise<Charge[]> {
     return prisma.charge.findMany({
       where: {
@@ -77,25 +78,22 @@ class ChargeService {
   }
 
   static async createLocalCharge(
-    userId: string,
+    customerId: string,
     tierId: string,
     paymentIntentId: string,
     tierVersionId?: string
   ): Promise<Charge> {
-    const user = await UserService.findUser(userId);
-    if (!user) throw new Error("User not found");
+    const customer = await UserService.findUser(customerId); // @TODO: Should be an Org
+    if (!customer) throw new Error("User not found");
 
-    const tier = await getTierById(tierId);
-    if (!tier) throw new Error("Tier not found");
+    const tier = await getTierByIdWithOrg(tierId);
+    if (!tier || !tier.organization || !tier.organization.stripeAccountId)
+      throw new Error("Tier not valid");
+
     if (tier.cadence !== "once") throw new Error("Tier is not a one-time purchase");
     if (!tier.stripePriceId) throw new Error("Stripe price ID not found for tier");
 
-    const maintainer = await UserService.findUser(tier.userId);
-    if (!maintainer) throw new Error("Maintainer not found");
-    if (!maintainer.stripeAccountId)
-      throw new Error("Maintainer's account not connected to Stripe");
-
-    const stripeCustomerId = await getStripeCustomerId(user, maintainer.stripeAccountId); // @TODO
+    const stripeCustomerId = await getStripeCustomerId(customer, tier.organization.stripeAccountId); // @TODO: Should be an Org
     if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
     /*
@@ -106,7 +104,7 @@ class ChargeService {
 
     const res = await prisma.charge.create({
       data: {
-        userId: userId,
+        userId: customerId,
         tierId: tierId,
         tierVersionId: tierVersionId,
         stripeChargeId: paymentIntentId,
@@ -117,9 +115,9 @@ class ChargeService {
     await Promise.all([
       // FIXME -- implement charge emails
       // send email to the tier owner
-      notifyOwnerOfNewPurchase(tier.userId, user, tier.name),
+      notifyOwnerOfNewPurchase(tier.organization.ownerId, customer, tier.name),
       // send email to the customer
-      confirmCustomerPurchase(user, tier.name)
+      confirmCustomerPurchase(customer, tier.name)
     ]);
 
     return res;

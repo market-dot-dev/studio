@@ -5,7 +5,6 @@ import prisma from "@/lib/prisma";
 import { deactivateStripePrice, type SubscriptionCadence } from "../stripe/stripe-price-service";
 import { checkTierHasSubscribers } from "../subscription-service";
 
-// Define the version context type
 export interface VersionContext {
   hasSubscribers: boolean;
   priceChanged: boolean;

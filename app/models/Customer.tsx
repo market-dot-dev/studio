@@ -5,6 +5,7 @@ import StripeService from "../services/stripe/StripeService";
 import UserService from "../services/UserService";
 import { SessionUser } from "./Session";
 
+// @TODO: Organization instead
 class Customer {
   user: User | SessionUser;
   maintainerUserId: string;

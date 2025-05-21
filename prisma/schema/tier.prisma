@@ -13,10 +13,8 @@ model Tier {
   published       Boolean   @default(true)
   channels        Channel[] @default([site])
 
-  userId         String /// @DEPRECATED. Should be converted to Organization.
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade) /// @DEPRECATED. Should be converted to Organization.
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   price                 Int?
   applicationFeePercent Int?
@@ -38,7 +36,6 @@ model Tier {
   contract   Contract?  @relation(fields: [contractId], references: [id])
   Prospects  Prospect[]
 
-  @@index([userId, stripePriceId])
   @@index([organizationId, stripePriceId])
 }
 

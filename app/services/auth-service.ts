@@ -10,6 +10,7 @@ import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 import { SessionUser, createSessionUser } from "../models/Session";
 import { sendWelcomeEmailToCustomer, sendWelcomeEmailToMaintainer } from "./email-service";
 import { defaultOnboardingState } from "./onboarding/onboarding-steps";
+import { requireUser } from "./user-context-service";
 import UserService from "./UserService";
 
 type JwtCallbackParams = {
@@ -166,6 +167,34 @@ export async function userExists(email: string) {
   });
 
   return !!user;
+}
+
+/**
+ * Set an organization as the current one for a user
+ */
+export async function setCurrentOrganization(organizationId: string): Promise<void> {
+  const user = await requireUser();
+
+  // Check if user is a member of the organization
+  const membership = await prisma.organizationMember.findUnique({
+    where: {
+      organizationId_userId: {
+        organizationId,
+        userId: user.id
+      }
+    }
+  });
+
+  if (!membership) {
+    throw new Error("You are not a member of this organization");
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      currentOrganizationId: organizationId
+    }
+  });
 }
 
 export default AuthService;

@@ -6,6 +6,7 @@ import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { SessionUser } from "../models/Session";
+import { getOrganizationById } from "./organization-service";
 
 // Session-only functions (no DB queries)
 
@@ -101,10 +102,7 @@ export const getCurrentOrganization = cache(async (): Promise<Organization | nul
   const organizationId = await getCurrentOrganizationId();
   if (!organizationId) return null;
 
-  return prisma.organization.findUnique({
-    where: { id: organizationId }
-    // @TODO: Select smaller object here
-  });
+  return getOrganizationById(organizationId);
 });
 
 /**
@@ -118,10 +116,7 @@ export const requireOrganization = cache(async (): Promise<Organization> => {
     redirect("/select-organization");
   }
 
-  const organization = await prisma.organization.findUnique({
-    where: { id: user.currentOrganizationId }
-    // @TODO: Select smaller object here
-  });
+  const organization = await getOrganizationById(user.currentOrganizationId);
 
   if (!organization) {
     // This should rarely happen - only if org was deleted after being set as current

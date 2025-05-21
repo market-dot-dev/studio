@@ -3,8 +3,8 @@
 import prisma from "@/lib/prisma";
 import { Prospect } from "../generated/prisma";
 import Tier from "../models/Tier";
-import { findUser } from "./UserService";
 import { notifyOwnerOfNewProspect } from "./email-service";
+import { getOrganizationById } from "./organization-service";
 
 /**
  * Get all prospects for an Organization
@@ -39,10 +39,9 @@ export async function addNewProspectForPackage(
   },
   tier: Tier
 ): Promise<Prospect> {
-  // @TODO: This should notify the organization owner
-  const user = await findUser(tier.userId);
-  if (!user) {
-    throw new Error("User not found");
+  const org = await getOrganizationById(tier.organizationId);
+  if (!org) {
+    throw new Error("Organization not found");
   }
 
   const newProspect = await prisma.prospect.upsert({
@@ -64,11 +63,13 @@ export async function addNewProspectForPackage(
     }
   });
 
-  await notifyOwnerOfNewProspect(
-    user,
-    { email: newProspect.email, name: newProspect.name },
-    tier.name
-  );
+  if (org.owner.email && org.owner.name) {
+    await notifyOwnerOfNewProspect(
+      org.owner,
+      { email: newProspect.email, name: newProspect.name },
+      tier.name
+    );
+  }
 
   return newProspect;
 }

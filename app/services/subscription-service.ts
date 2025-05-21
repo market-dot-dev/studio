@@ -3,10 +3,10 @@
 import { Subscription } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import {
-  includeTierAndUser,
+  includeTierAndOrg,
   SubscriptionStates,
   SubscriptionStatus,
-  type SubscriptionWithTierAndUser
+  type SubscriptionWithTierAndOrg
 } from "@/types/subscription";
 import {
   confirmCustomerSubscription,
@@ -33,13 +33,13 @@ import UserService from "./UserService";
 export async function getSubscriptionById(
   subscriptionId: string,
   includeInactive: boolean = false
-): Promise<SubscriptionWithTierAndUser | null> {
+): Promise<SubscriptionWithTierAndOrg | null> {
   return await prisma.subscription.findFirst({
     where: {
       id: subscriptionId,
       ...(includeInactive ? {} : { active: true })
     },
-    ...includeTierAndUser,
+    ...includeTierAndOrg,
     orderBy: {
       createdAt: "desc" // Get the most recent one first
     }
@@ -278,15 +278,15 @@ export async function cancelSubscription(subscriptionId: string): Promise<Subscr
 /**
  * Get detailed subscription status for a user and tier
  *
- * @param userId - The user ID to check
+ * @param customerId - The user ID to check
  * @param tierId - The tier ID to check
  * @returns Detailed subscription status information
  */
 export async function getSubscriptionStatus(
-  userId: string,
+  customerId: string,
   tierId: string
 ): Promise<SubscriptionStatus> {
-  if (!userId) {
+  if (!customerId) {
     return {
       statusType: "not_subscribed",
       subscription: null,
@@ -297,7 +297,7 @@ export async function getSubscriptionStatus(
   // Get the subscription if it exists
   const subscription = await prisma.subscription.findFirst({
     where: {
-      userId,
+      userId: customerId,
       tierId,
       active: true
     },

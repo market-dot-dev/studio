@@ -101,8 +101,7 @@ const loadTiers = async (organizations: Organization[]) => {
       await prisma.tier.create({
         data: {
           ...tier,
-          userId: organization.ownerId, // @DEPRECATED - still required for now
-          organizationId: organization.id, // New connection to organization
+          organizationId: organization.id,
           createdAt: new Date(),
           updatedAt: new Date(),
           revision: 1,
