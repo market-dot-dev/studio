@@ -24,11 +24,9 @@ model User {
   sessions                    Session[]
   tiers                       Tier[] /// @DEPRECATED. Should be fetched from Organization.
   subscriptions               Subscription[] /// @DEPRECATED. Should be fetched from Organization.
-  leads                       Lead[] /// @DEPRECATED. Should be fetched from Organization.
   onboarding                  String?
   company                     String? /// @DEPRECATED. Should be fetched from Organization.
   charges                     Charge[] /// @DEPRECATED. Should be fetched from Organization.
-  prospects                   Prospect[] /// @DEPRECATED. Should be fetched from Organization.
   marketExpertId              String? /// @DEPRECATED. Should be fetched from Organization.
 
   // Organization relationships

@@ -1,5 +1,5 @@
-import ProspectService from "@/app/services/prospect-service";
-import { requireUserSession } from "@/app/services/user-context-service";
+import { getProspects } from "@/app/services/prospect-service";
+import { requireOrganization } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
@@ -7,8 +7,8 @@ import Link from "next/link";
 import { columns, renderProspectContextSubRowComponent } from "./columns";
 
 export default async function ProspectsPage() {
-  const user = await requireUserSession();
-  const prospects = await ProspectService.getProspects(user.id);
+  const org = await requireOrganization();
+  const prospects = await getProspects(org.id);
 
   // This is the full prospects page, so we don't need to limit the rows
   // but we're preserving the logic from the original component

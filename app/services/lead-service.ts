@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import type { FiltersState } from "@/types/lead";
-import { requireUserSession } from "./user-context-service";
+import { requireOrganization } from "./user-context-service";
 
 // Environment variables and constants
 const radarAPIEndpoint = process.env.RADAR_API_ENDPOINT;
@@ -26,10 +26,10 @@ function appendFiltersToUrl(url: string, filters: FiltersState) {
 }
 
 /**
- * Add a lead to the user's shortlist
+ * Add a lead to the org's shortlist
  */
 export async function addLeadToShortlist(leadData: any) {
-  const user = await requireUserSession();
+  const org = await requireOrganization();
 
   const sanitizedLeads = {
     host: leadData.host,
@@ -64,9 +64,9 @@ export async function addLeadToShortlist(leadData: any) {
     update: {},
     create: {
       ...sanitizedLeads,
-      user: {
+      organization: {
         connect: {
-          id: user.id
+          id: org.id
         }
       }
     }
@@ -74,38 +74,38 @@ export async function addLeadToShortlist(leadData: any) {
 }
 
 /**
- * Remove a lead from the user's shortlist
+ * Remove a lead from the org's shortlist
  */
 export async function removeLeadFromShortlist(leadId: number) {
-  const user = await requireUserSession();
+  const org = await requireOrganization();
   return await prisma.lead.delete({
     where: {
       id: leadId,
-      userId: user.id
+      organizationId: org.id
     }
   });
 }
 
 /**
- * Get all leads in the user's shortlist
+ * Get all leads in the shortlist
  */
 export async function getShortlistedLeads() {
-  const user = await requireUserSession();
+  const org = await requireOrganization();
   return await prisma.lead.findMany({
     where: {
-      userId: user.id
+      organizationId: org.id
     }
   });
 }
 
 /**
- * Get a list of lead identifiers from the user's shortlist
+ * Get a list of lead identifiers from the shortlist
  */
 export async function getShortlistedLeadsKeysList() {
-  const user = await requireUserSession();
+  const org = await requireOrganization();
   return prisma.lead.findMany({
     where: {
-      userId: user.id
+      organizationId: org.id
     },
     select: {
       host: true,
