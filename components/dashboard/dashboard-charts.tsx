@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { CustomerWithChargesAndSubscriptions } from "@/types/dashboard";
+import type { CustomerOrgWithChargesAndSubs } from "@/types/organization-customer";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CustomerBarChart } from "./customer-bar-chart";
@@ -11,7 +11,7 @@ import { RevenueLineChart } from "./revenue-line-chart";
 export default function DashboardCharts({
   customers
 }: {
-  customers: CustomerWithChargesAndSubscriptions[];
+  customers: CustomerOrgWithChargesAndSubs[];
 }) {
   const getLastSixMonths = () => {
     const today = new Date();
@@ -36,7 +36,7 @@ export default function DashboardCharts({
     return renewalDate;
   };
 
-  const processCustomers = (customers: CustomerWithChargesAndSubscriptions[]) => {
+  const processCustomers = (customers: CustomerOrgWithChargesAndSubs[]) => {
     const lastSixMonths = getLastSixMonths();
     const subscriptionCounts = {} as any;
 
@@ -111,7 +111,7 @@ export default function DashboardCharts({
     return Object.values(subscriptionCounts);
   };
 
-  const processRevenueData = (customers: CustomerWithChargesAndSubscriptions[]) => {
+  const processRevenueData = (customers: CustomerOrgWithChargesAndSubs[]) => {
     const lastSixMonths = getLastSixMonths();
     const revenueData = {} as any;
 

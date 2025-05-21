@@ -8,13 +8,13 @@ import {
   SubscriptionStatus,
   type SubscriptionWithTierAndUser
 } from "@/types/subscription";
-import { getStripeCustomerId } from "./customer-service";
 import {
   confirmCustomerSubscription,
   confirmCustomerSubscriptionCancellation,
   notifyOwnerOfNewSubscription,
   notifyOwnerOfSubscriptionCancellation
 } from "./email-service";
+import { getStripeCustomerId } from "./organization-customer-service";
 import {
   cancelStripeSubscription,
   reactivateStripeSubscription
@@ -129,7 +129,7 @@ export async function createSubscription(
   if (!vendor) throw new Error("Vendor not found");
   if (!vendor.stripeAccountId) throw new Error("Vendor's account not connected to Stripe");
 
-  const stripeCustomerId = await getStripeCustomerId(user, vendor.stripeAccountId);
+  const stripeCustomerId = await getStripeCustomerId(user, vendor.stripeAccountId); // @TODO
   if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
   // Check for existing active subscription

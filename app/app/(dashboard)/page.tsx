@@ -1,12 +1,13 @@
-import { getCustomersAndProspectsByMaintainer } from "@/app/services/customer-service";
-import { requireUserSession } from "@/app/services/user-context-service";
+import { getCustomersAndProspectsByOrganization } from "@/app/services/organization-customer-service";
+import { requireOrganization, requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import DashboardCharts from "@/components/dashboard/dashboard-charts";
 import SalesTable from "./customers/sales/sales-table";
 
 export default async function Overview() {
   const user = await requireUserSession();
-  const customers = await getCustomersAndProspectsByMaintainer(user.id);
+  const org = await requireOrganization();
+  const customers = await getCustomersAndProspectsByOrganization(org.id);
   const title = user.name ? `Welcome ${user.name}` : "Your Dashboard";
 
   return (

@@ -1,5 +1,5 @@
 "use client";
-import type { CustomerWithChargesAndSubscriptions } from "@/types/dashboard";
+import type { CustomerOrgWithChargesAndSubs } from "@/types/organization-customer";
 import { LineChartCard } from "./charts/LineChartCard";
 
 const labels = {
@@ -30,11 +30,7 @@ const categoryColorMap = {
   cancellations: "hsl(var(--chart-1))"
 };
 
-export function DashboardCharts({
-  customers
-}: {
-  customers: CustomerWithChargesAndSubscriptions[];
-}) {
+export function DashboardCharts({ customers }: { customers: CustomerOrgWithChargesAndSubs[] }) {
   const getLastSixMonths = () => {
     const today = new Date();
     const months = [];
@@ -58,7 +54,7 @@ export function DashboardCharts({
     return renewalDate;
   };
 
-  const processCustomers = (customers: CustomerWithChargesAndSubscriptions[]) => {
+  const processCustomers = (customers: CustomerOrgWithChargesAndSubs[]) => {
     const lastSixMonths = getLastSixMonths();
     const data = {
       newSubscriptions: [] as any[],

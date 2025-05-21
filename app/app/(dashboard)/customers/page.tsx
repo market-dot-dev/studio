@@ -1,9 +1,9 @@
-import { getCurrentVendorCustomers } from "@/app/services/customer-service";
+import { getCurrentOrganizationCustomers } from "@/app/services/organization-customer-service";
 import PageHeader from "@/components/common/page-header";
 import { CustomersTable } from "./customer-table";
 
 const CustomersPage = async () => {
-  const customers = await getCurrentVendorCustomers();
+  const customers = await getCurrentOrganizationCustomers();
   return (
     <div className="flex max-w-screen-xl flex-col space-y-10">
       <PageHeader title="Customers" description="Manage your customers and their tiers here." />

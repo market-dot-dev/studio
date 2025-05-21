@@ -2,8 +2,8 @@
 
 import { Charge } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
-import { getStripeCustomerId } from "./customer-service";
 import { confirmCustomerPurchase, notifyOwnerOfNewPurchase } from "./email-service";
+import { getStripeCustomerId } from "./organization-customer-service";
 import { getTierById } from "./tier/tier-service";
 import { requireUserSession } from "./user-context-service";
 import UserService from "./UserService";
@@ -95,7 +95,7 @@ class ChargeService {
     if (!maintainer.stripeAccountId)
       throw new Error("Maintainer's account not connected to Stripe");
 
-    const stripeCustomerId = await getStripeCustomerId(user, maintainer.stripeAccountId);
+    const stripeCustomerId = await getStripeCustomerId(user, maintainer.stripeAccountId); // @TODO
     if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
 
     /*
