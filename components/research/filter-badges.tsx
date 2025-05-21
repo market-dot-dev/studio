@@ -1,6 +1,6 @@
 "use client";
-import { type FiltersState } from "@/app/services/LeadsService";
 import { Badge } from "@/components/ui/badge";
+import type { FiltersState } from "@/types/lead";
 import { XCircle } from "lucide-react";
 
 interface FilterBadgesProps {

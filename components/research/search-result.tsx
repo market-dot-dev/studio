@@ -1,5 +1,5 @@
 "use client";
-import { addLeadToShortlist } from "@/app/services/LeadsService";
+import { addLeadToShortlist } from "@/app/services/lead-service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
