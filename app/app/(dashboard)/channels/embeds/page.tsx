@@ -1,4 +1,4 @@
-import { getCurrentSite } from "@/app/services/site-crud-service";
+import { getCurrentSite } from "@/app/services/site/site-crud-service";
 import PageHeader from "@/components/common/page-header";
 import { PackageEmbeddings } from "@/components/embedables/package-embeddings/package-embeddings";
 import { getRootUrl } from "@/lib/domain";

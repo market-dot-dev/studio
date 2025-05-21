@@ -5,7 +5,7 @@ import { SubscriptionStates } from "@/types/subscription";
 import {
   confirmCustomerSubscriptionCancellation,
   notifyOwnerOfSubscriptionCancellation
-} from "./email-service";
+} from "../email-service";
 
 /**
  * Updates a subscription's state based on a webhook event

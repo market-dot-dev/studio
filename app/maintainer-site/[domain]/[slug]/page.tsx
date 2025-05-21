@@ -1,4 +1,4 @@
-import { getSiteWithPage } from "@/app/services/page-service";
+import { getSiteWithPage } from "@/app/services/site/page-service";
 import renderElement from "@/components/site/page-renderer";
 import { parseHTML } from "@/utils/dom-adapter";
 import { notFound } from "next/navigation";

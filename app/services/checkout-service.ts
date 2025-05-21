@@ -9,12 +9,12 @@ import { type StripeCard } from "@/types/stripe";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";
-import { createStripeCharge } from "./stripe-payment-service";
+import { createStripeCharge } from "./stripe/stripe-payment-service";
 import {
   createStripeSubscriptionForCustomer,
   isSubscribedToStripeTier
-} from "./stripe-subscription-service";
-import { getTierById } from "./tier-service";
+} from "./stripe/stripe-subscription-service";
+import { getTierById } from "./tier/tier-service";
 import { getCurrentUserSession } from "./user-context-service";
 import UserService from "./UserService";
 

@@ -4,8 +4,8 @@ import { Page } from "@/app/generated/prisma";
 import { newPageTemplate } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { PageContent, SiteDetails, includePageContent, includeSiteDetails } from "@/types/site";
+import { getCurrentUserSession, requireUserId } from "../user-context-service";
 import { getCurrentSite } from "./site-crud-service";
-import { getCurrentUserSession, requireUserId } from "./user-context-service";
 
 /**
  * Get a site and page by subdomain and slug

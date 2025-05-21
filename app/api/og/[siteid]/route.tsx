@@ -1,4 +1,4 @@
-import { getSiteInfo } from "@/app/services/site-crud-service";
+import { getSiteInfo } from "@/app/services/site/site-crud-service";
 import { ImageResponse } from "@vercel/og";
 import { Buffer } from "buffer";
 import fs from "fs/promises";

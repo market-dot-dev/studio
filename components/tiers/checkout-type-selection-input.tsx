@@ -1,5 +1,5 @@
 import { User } from "@/app/generated/prisma";
-import { TierWithCount } from "@/app/services/tier-service";
+import { TierWithCount } from "@/app/services/tier/tier-service";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { CreditCard, Mail } from "lucide-react";

@@ -1,4 +1,4 @@
-import { getHomepage } from "@/app/services/page-service";
+import { getHomepage } from "@/app/services/site/page-service";
 import embedables from "@/components/site/embedables";
 import { notFound } from "next/navigation";
 

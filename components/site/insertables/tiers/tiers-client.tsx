@@ -1,6 +1,6 @@
 "use client";
 import { Channel, Tier } from "@/app/generated/prisma";
-import { getPublishedTiers } from "@/app/services/tier-service";
+import { getPublishedTiers } from "@/app/services/tier/tier-service";
 import placeholderTiers from "@/lib/constants/placeholder/tiers";
 import { useEffect, useState } from "react";
 import type { InsertableComponentProps } from "..";

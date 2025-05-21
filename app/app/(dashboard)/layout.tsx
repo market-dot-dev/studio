@@ -3,7 +3,7 @@ import {
   defaultOnboardingState,
   OnboardingState
 } from "@/app/services/onboarding/onboarding-steps";
-import { getSiteByOrgId } from "@/app/services/site-crud-service";
+import { getSiteByOrgId } from "@/app/services/site/site-crud-service";
 import { requireOrganization, requireUser } from "@/app/services/user-context-service";
 import SessionRefresher from "@/components/common/session-refresher";
 import { StripeDisabledBanner } from "@/components/common/stripe-disabled-banner";

@@ -1,4 +1,4 @@
-import { getPublishedTiersForOrganization } from "@/app/services/tier-service";
+import { getPublishedTiersForOrganization } from "@/app/services/tier/tier-service";
 import type { SiteDetails } from "@/types/site";
 import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";

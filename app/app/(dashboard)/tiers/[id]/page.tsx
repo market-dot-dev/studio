@@ -1,7 +1,7 @@
 "use server";
 
 import { getContractsForCurrentOrganization } from "@/app/services/contract-service";
-import { getTierById } from "@/app/services/tier-service";
+import { getTierById } from "@/app/services/tier/tier-service";
 import { requireUser } from "@/app/services/user-context-service";
 import TierForm from "@/components/tiers/tier-form";
 import { notFound } from "next/navigation";

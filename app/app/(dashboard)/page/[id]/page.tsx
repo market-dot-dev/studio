@@ -1,4 +1,4 @@
-import { getPageWithSiteById } from "@/app/services/page-service";
+import { getPageWithSiteById } from "@/app/services/site/page-service";
 import { requireUserSession } from "@/app/services/user-context-service";
 import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
 import PageContainer from "@/components/site/page-container";

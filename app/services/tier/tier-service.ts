@@ -4,11 +4,11 @@ import { Channel } from "@/app/generated/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import prisma from "@/lib/prisma";
-import { updateServicesForSale } from "./market-service";
-import { createStripePrice, type SubscriptionCadence } from "./stripe-price-service";
-import { createStripeProduct, updateStripeProduct } from "./stripe-product-service";
+import { updateServicesForSale } from "../market-service";
+import { createStripePrice, type SubscriptionCadence } from "../stripe/stripe-price-service";
+import { createStripeProduct, updateStripeProduct } from "../stripe/stripe-product-service";
+import { requireUser, requireUserSession } from "../user-context-service";
 import { buildVersionContext, handlePriceUpdates, handleVersioning } from "./tier-version-service";
-import { requireUser, requireUserSession } from "./user-context-service";
 
 export type TierWithCount = Tier & {
   _count?: { Charge: number; subscriptions: number };

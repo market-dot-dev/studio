@@ -3,7 +3,7 @@ import { CancelSubscriptionBtn } from "@/app/app/c/subscriptions/cancel-subscrip
 import { ReactivateSubscriptionBtn } from "@/app/app/c/subscriptions/reactivate-subscription-btn";
 import { Subscription } from "@/app/generated/prisma";
 import { getContract } from "@/app/services/contract-service";
-import { getTierById } from "@/app/services/tier-service";
+import { getTierById } from "@/app/services/tier/tier-service";
 import UserService from "@/app/services/UserService";
 import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
 import { Card } from "@/components/ui/card";

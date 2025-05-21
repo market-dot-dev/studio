@@ -18,8 +18,8 @@ import {
 import {
   cancelStripeSubscription,
   reactivateStripeSubscription
-} from "./stripe-subscription-service";
-import { getTierById } from "./tier-service";
+} from "./stripe/stripe-subscription-service";
+import { getTierById } from "./tier/tier-service";
 import { getCurrentUserSession, requireUserSession } from "./user-context-service";
 import UserService from "./UserService";
 

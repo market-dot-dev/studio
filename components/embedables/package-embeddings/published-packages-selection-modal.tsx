@@ -1,6 +1,6 @@
 "use client";
 
-import { getPublishedTiers, TierWithCount } from "@/app/services/tier-service";
+import { getPublishedTiers, TierWithCount } from "@/app/services/tier/tier-service";
 import SkeletonLoader from "@/components/common/skeleton-loader";
 import TierCard from "@/components/tiers/tier-card";
 import { useEffect, useState } from "react";

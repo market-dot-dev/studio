@@ -4,7 +4,7 @@ import { Charge } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { getStripeCustomerId } from "./customer-service";
 import { confirmCustomerPurchase, notifyOwnerOfNewPurchase } from "./email-service";
-import { getTierById } from "./tier-service";
+import { getTierById } from "./tier/tier-service";
 import { requireUserSession } from "./user-context-service";
 import UserService from "./UserService";
 

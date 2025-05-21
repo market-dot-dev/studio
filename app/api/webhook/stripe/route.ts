@@ -3,7 +3,7 @@ import {
   handleAccountEvent,
   handleChargeEvent,
   handleSubscriptionEvent
-} from "@/app/services/stripe-webhook-service";
+} from "@/app/services/stripe/stripe-webhook-service";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
 

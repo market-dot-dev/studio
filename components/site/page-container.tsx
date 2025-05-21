@@ -1,6 +1,6 @@
 "use client";
 
-import { deletePage, setHomepage, updatePage } from "@/app/services/page-service";
+import { deletePage, setHomepage, updatePage } from "@/app/services/site/page-service";
 import PageHeader from "@/components/common/page-header";
 import PageEditor from "@/components/site/page-editor";
 import {

@@ -1,6 +1,6 @@
 import { Charge } from "@/app/generated/prisma";
 import { getContract } from "@/app/services/contract-service";
-import { getTierById } from "@/app/services/tier-service";
+import { getTierById } from "@/app/services/tier/tier-service";
 import UserService from "@/app/services/UserService";
 import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
 import { Badge } from "@/components/ui/badge";

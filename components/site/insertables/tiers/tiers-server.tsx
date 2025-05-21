@@ -1,5 +1,5 @@
 import { Channel } from "@/app/generated/prisma";
-import { getPublishedTiersForOrganization } from "@/app/services/tier-service";
+import { getPublishedTiersForOrganization } from "@/app/services/tier/tier-service";
 import type { InsertableComponentProps } from "..";
 import Tiers from "./tiers";
 

@@ -3,7 +3,7 @@
 import {
   checkVendorStripeStatus,
   getVendorStripeConnectURL
-} from "@/app/services/stripe-vendor-service";
+} from "@/app/services/stripe/stripe-vendor-service";
 import { requireUser } from "@/app/services/user-context-service";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";

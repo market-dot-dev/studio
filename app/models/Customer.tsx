@@ -1,7 +1,7 @@
 import { User } from "@/app/generated/prisma";
 import Stripe from "stripe";
-import { createStripeCustomer } from "../services/stripe-payment-service";
-import StripeService from "../services/StripeService";
+import { createStripeCustomer } from "../services/stripe/stripe-payment-service";
+import StripeService from "../services/stripe/StripeService";
 import UserService from "../services/UserService";
 import { SessionUser } from "./Session";
 

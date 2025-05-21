@@ -1,6 +1,6 @@
 import { User } from "@/app/generated/prisma";
-import { uploadLogo } from "@/app/services/site-media-service";
-import { validateSubdomain } from "@/app/services/site-subdomain-service";
+import { uploadLogo } from "@/app/services/site/site-media-service";
+import { validateSubdomain } from "@/app/services/site/site-subdomain-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

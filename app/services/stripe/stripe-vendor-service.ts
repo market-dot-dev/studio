@@ -3,9 +3,9 @@
 import { getRootUrl } from "@/lib/domain";
 import prisma from "@/lib/prisma";
 import { ErrorMessageCode, errorMessageMapping, HealthCheckResult } from "@/types/stripe";
-import { createStripeClient } from "./create-stripe-client";
-import { requireUser } from "./user-context-service";
-import UserService from "./UserService";
+import { createStripeClient } from "../create-stripe-client";
+import { requireUser } from "../user-context-service";
+import UserService from "../UserService";
 
 /**
  * Get the human-readable error message for a given error code

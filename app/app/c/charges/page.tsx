@@ -1,6 +1,6 @@
 import { Charge } from "@/app/generated/prisma";
 import ChargeService from "@/app/services/charge-service";
-import { getTierById } from "@/app/services/tier-service";
+import { getTierById } from "@/app/services/tier/tier-service";
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";

@@ -1,4 +1,4 @@
-import { listTiersByUserIdWithCounts } from "@/app/services/tier-service";
+import { listTiersByUserIdWithCounts } from "@/app/services/tier/tier-service";
 import { requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import CopyCheckoutLinkButton from "@/components/tiers/copy-checkout-link-button";

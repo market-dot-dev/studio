@@ -10,9 +10,9 @@ import {
 import prisma from "@/lib/prisma";
 import { includeSiteDetails, type SiteDetails } from "@/types/site";
 import { revalidateTag } from "next/cache";
+import { requireOrganization, requireUserId } from "../user-context-service";
 import { uploadLogoFile } from "./site-media-service";
 import { validateSubdomain } from "./site-subdomain-service";
-import { requireOrganization, requireUserId } from "./user-context-service";
 
 /**
  * Retrieves the current site for the active Organization

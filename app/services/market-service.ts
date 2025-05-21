@@ -2,8 +2,8 @@
 
 import { Channel } from "@/app/generated/prisma";
 import { getRootUrl } from "@/lib/domain";
-import { getCurrentSite } from "./site-crud-service";
-import { getPublishedTiersForOrganization } from "./tier-service";
+import { getCurrentSite } from "./site/site-crud-service";
+import { getPublishedTiersForOrganization } from "./tier/tier-service";
 import { getCurrentUser, requireUser } from "./user-context-service";
 import UserService from "./UserService";
 

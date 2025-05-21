@@ -1,7 +1,7 @@
 "use client";
 
 import { Page, Site } from "@/app/generated/prisma";
-import { getSiteAndPages, updateCurrentSite } from "@/app/services/site-crud-service";
+import { getSiteAndPages, updateCurrentSite } from "@/app/services/site/site-crud-service";
 import PageHeader from "@/components/common/page-header";
 import CreatePageButton from "@/components/create-page-button";
 import Uploader from "@/components/form/uploader";

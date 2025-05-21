@@ -1,4 +1,4 @@
-import { getPublishedTiersForOrganization } from "@/app/services/tier-service";
+import { getPublishedTiersForOrganization } from "@/app/services/tier/tier-service";
 import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest, props: { params: Promise<{ userid: string }> }) {

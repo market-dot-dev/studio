@@ -27,10 +27,10 @@ import { Switch } from "../ui/switch";
 
 import { Channel, Contract, TierVersion, User } from "@/app/generated/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
-import { hasVendorStripeAccount } from "@/app/services/stripe-vendor-service";
+import { hasVendorStripeAccount } from "@/app/services/stripe/stripe-vendor-service";
 import { getSubscriberCount } from "@/app/services/subscription-service";
-import { createTier, TierWithCount, updateTier } from "@/app/services/tier-service";
-import { getVersionsByTierId } from "@/app/services/tier-version-service";
+import { createTier, TierWithCount, updateTier } from "@/app/services/tier/tier-service";
+import { getVersionsByTierId } from "@/app/services/tier/tier-version-service";
 import { toast } from "sonner";
 import PageHeader from "../common/page-header";
 import ChannelsSelectionInput from "./channels-selection-input";

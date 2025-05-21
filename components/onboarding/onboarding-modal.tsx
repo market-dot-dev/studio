@@ -4,7 +4,7 @@ import { User } from "@/app/generated/prisma";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import { createSite, updateCurrentSite } from "@/app/services/site-crud-service";
+import { createSite, updateCurrentSite } from "@/app/services/site/site-crud-service";
 import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";

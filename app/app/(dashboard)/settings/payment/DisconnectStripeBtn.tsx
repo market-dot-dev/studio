@@ -1,6 +1,6 @@
 "use client";
 
-import { disconnectVendorStripeAccount } from "@/app/services/stripe-vendor-service";
+import { disconnectVendorStripeAccount } from "@/app/services/stripe/stripe-vendor-service";
 import {
   AlertDialog,
   AlertDialogAction,

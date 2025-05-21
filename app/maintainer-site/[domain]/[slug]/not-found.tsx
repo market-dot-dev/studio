@@ -1,4 +1,4 @@
-import { getHomepage } from "@/app/services/page-service";
+import { getHomepage } from "@/app/services/site/page-service";
 import { headers } from "next/headers";
 import Image from "next/image";
 

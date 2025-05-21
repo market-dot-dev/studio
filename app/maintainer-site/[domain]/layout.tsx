@@ -1,4 +1,4 @@
-import { getHomepage } from "@/app/services/page-service";
+import { getHomepage } from "@/app/services/site/page-service";
 import { getRootUrl } from "@/lib/domain";
 import { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
