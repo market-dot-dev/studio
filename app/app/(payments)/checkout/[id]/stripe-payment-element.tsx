@@ -1,11 +1,11 @@
 "use client";
 
 import {
-  addUserPaymentMethod,
-  createUserSetupIntent,
-  getUserPaymentMethod,
-  removeUserPaymentMethod
-} from "@/app/services/checkout-service";
+  attachPaymentMethodForVendor,
+  createPaymentMethodSetupIntent,
+  detachPaymentMethodForVendor,
+  getPaymentMethodDetailsForVendor
+} from "@/app/services/customer-organization-service";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
@@ -15,13 +15,11 @@ import { AlertTriangle, CreditCard } from "lucide-react";
 import { useEffect, useState } from "react";
 
 interface SimplePaymentElementProps {
-  userId: string;
   vendorStripeAccountId: string;
   setPaymentReady: (ready: boolean) => void;
 }
 
 export function SimplePaymentElement({
-  userId,
   vendorStripeAccountId,
   setPaymentReady
 }: SimplePaymentElementProps) {
@@ -52,12 +50,32 @@ export function SimplePaymentElement({
     }
   };
 
+  // Helper function to initialize payment form
+  const initializePaymentForm = async () => {
+    try {
+      const { clientSecret, error } = await createPaymentMethodSetupIntent(vendorStripeAccountId);
+
+      if (error || !clientSecret) {
+        throw new Error(error || "Failed to initialize payment form");
+      }
+
+      setClientSecret(clientSecret);
+      setStatus("form");
+      setPaymentReady(false);
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : "Failed to initialize payment form";
+      setSystemError(errorMessage);
+      setStatus("loading");
+      setPaymentReady(false);
+    }
+  };
+
   // Initialize by checking for existing payment method
   useEffect(() => {
     async function loadPaymentMethod() {
       try {
         setSystemError(null);
-        const paymentMethod = await getUserPaymentMethod(userId, vendorStripeAccountId);
+        const paymentMethod = await getPaymentMethodDetailsForVendor(vendorStripeAccountId);
 
         if (paymentMethod) {
           setCard(paymentMethod);
@@ -76,31 +94,10 @@ export function SimplePaymentElement({
       }
     }
 
-    async function initializePaymentForm() {
-      try {
-        const { clientSecret, error } = await createUserSetupIntent(userId, vendorStripeAccountId);
-
-        if (error || !clientSecret) {
-          throw new Error(error || "Failed to initialize payment form");
-        }
-
-        setClientSecret(clientSecret);
-        setStatus("form");
-        setPaymentReady(false);
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Failed to initialize payment form";
-        setSystemError(errorMessage);
-        // We're still in a state where we can't show the form
-        setStatus("loading");
-        setPaymentReady(false);
-      }
-    }
-
-    if (userId && vendorStripeAccountId) {
+    if (vendorStripeAccountId) {
       loadPaymentMethod();
     }
-  }, [userId, vendorStripeAccountId, setPaymentReady]);
+  }, [vendorStripeAccountId, setPaymentReady]);
 
   // Handle removing a card
   const handleRemoveCard = async () => {
@@ -108,14 +105,10 @@ export function SimplePaymentElement({
     setSystemError(null);
 
     try {
-      const result = await removeUserPaymentMethod(userId, vendorStripeAccountId);
-
-      if (!result.success) {
-        throw new Error(result.error || "Failed to remove payment method");
-      }
+      await detachPaymentMethodForVendor(vendorStripeAccountId);
 
       // Prepare to show form for adding new card
-      const { clientSecret, error } = await createUserSetupIntent(userId, vendorStripeAccountId);
+      const { clientSecret, error } = await createPaymentMethodSetupIntent(vendorStripeAccountId);
 
       if (error || !clientSecret) {
         throw new Error(error || "Failed to initialize payment form");
@@ -139,16 +132,7 @@ export function SimplePaymentElement({
     setIsProcessing(true);
 
     try {
-      // Reinitialize the payment flow
-      const { clientSecret, error } = await createUserSetupIntent(userId, vendorStripeAccountId);
-
-      if (error || !clientSecret) {
-        throw new Error(error || "Failed to initialize payment form");
-      }
-
-      setClientSecret(clientSecret);
-      setStatus("form");
-      setPaymentReady(false);
+      await initializePaymentForm();
     } catch (err) {
       const errorMessage =
         err instanceof Error ? err.message : "Failed to reinitialize payment form";
@@ -158,21 +142,21 @@ export function SimplePaymentElement({
     }
   };
 
-  // Show system error as banner but still allow user to continue if possible
-  const errorBanner = systemError ? (
+  // Error banner component
+  const ErrorBanner = ({ error, onRetry }: { error: string; onRetry: () => void }) => (
     <Alert variant="destructive" className="mb-4">
       <AlertTriangle className="mr-2 size-4" />
       <AlertDescription className="flex items-center justify-between">
-        <span>{systemError}</span>
-        <Button size="sm" variant="outline" onClick={handleRetry} className="ml-2">
+        <span>{error}</span>
+        <Button size="sm" variant="outline" onClick={onRetry} className="ml-2">
           Retry
         </Button>
       </AlertDescription>
     </Alert>
-  ) : null;
+  );
 
   // Render functions for different states
-  const loadingState = () => (
+  const LoadingState = () => (
     <motion.div
       key="loading"
       initial="hidden"
@@ -184,7 +168,7 @@ export function SimplePaymentElement({
     </motion.div>
   );
 
-  const cardState = () => (
+  const CardState = () => (
     <motion.div
       key="card"
       initial="hidden"
@@ -193,7 +177,7 @@ export function SimplePaymentElement({
       variants={containerVariants}
     >
       <div>
-        {errorBanner}
+        {systemError && <ErrorBanner error={systemError} onRetry={handleRetry} />}
         <div className="flex flex-row items-center justify-between">
           <div className="flex items-center gap-3">
             <CreditCard size={20} className="text-stone-500" />
@@ -215,7 +199,7 @@ export function SimplePaymentElement({
     </motion.div>
   );
 
-  const formState = () => (
+  const FormState = () => (
     <motion.div
       key="form"
       initial="hidden"
@@ -224,13 +208,11 @@ export function SimplePaymentElement({
       variants={containerVariants}
     >
       <div>
-        {errorBanner}
+        {systemError && <ErrorBanner error={systemError} onRetry={handleRetry} />}
         <div className="-mt-1">
           <CardSetupForm
             clientSecret={clientSecret!}
             vendorStripeAccountId={vendorStripeAccountId}
-            userId={userId}
-            status={status}
             onSuccess={(newCard) => {
               setSystemError(null);
               setCard(newCard);
@@ -238,7 +220,6 @@ export function SimplePaymentElement({
               setPaymentReady(true);
             }}
             onError={(errorMessage) => {
-              // Just set the system error but keep the form visible
               setSystemError(errorMessage);
             }}
           />
@@ -247,7 +228,7 @@ export function SimplePaymentElement({
     </motion.div>
   );
 
-  const errorState = () => (
+  const ErrorState = () => (
     <motion.div
       key="error"
       initial="hidden"
@@ -255,35 +236,25 @@ export function SimplePaymentElement({
       exit="exit"
       variants={containerVariants}
     >
-      <div>
-        <Alert variant="destructive" className="mb-4">
-          <AlertTriangle className="mr-2 size-4" />
-          <AlertDescription className="flex items-center justify-between">
-            <span>{systemError}</span>
-            <Button size="sm" variant="outline" onClick={handleRetry} className="ml-2">
-              Retry
-            </Button>
-          </AlertDescription>
-        </Alert>
-      </div>
+      <ErrorBanner error={systemError!} onRetry={handleRetry} />
     </motion.div>
   );
 
   const renderContent = () => {
     if (status === "loading" || isProcessing) {
-      return loadingState();
+      return <LoadingState />;
     }
 
     if (status === "card" && card) {
-      return cardState();
+      return <CardState />;
     }
 
     if (status === "form" && clientSecret) {
-      return formState();
+      return <FormState />;
     }
 
     if (systemError) {
-      return errorState();
+      return <ErrorState />;
     }
 
     return null;
@@ -295,8 +266,6 @@ export function SimplePaymentElement({
 interface CardSetupFormProps {
   clientSecret: string;
   vendorStripeAccountId: string;
-  userId: string;
-  status: "loading" | "card" | "form";
   onSuccess: (card: { brand: string; last4: string }) => void;
   onError: (errorMessage: string) => void;
 }
@@ -304,8 +273,6 @@ interface CardSetupFormProps {
 function CardSetupForm({
   clientSecret,
   vendorStripeAccountId,
-  userId,
-  status,
   onSuccess,
   onError
 }: CardSetupFormProps) {
@@ -360,7 +327,6 @@ function CardSetupForm({
       }}
     >
       <CardSetupFormContent
-        userId={userId}
         vendorStripeAccountId={vendorStripeAccountId}
         onSuccess={onSuccess}
         onError={onError}
@@ -370,14 +336,12 @@ function CardSetupForm({
 }
 
 interface CardSetupFormContentProps {
-  userId: string;
   vendorStripeAccountId: string;
   onSuccess: (card: { brand: string; last4: string }) => void;
   onError: (errorMessage: string) => void;
 }
 
 function CardSetupFormContent({
-  userId,
   vendorStripeAccountId,
   onSuccess,
   onError
@@ -410,25 +374,19 @@ function CardSetupFormContent({
 
       if (error) {
         // This is a validation error from Stripe - handled inline by Stripe Elements
-        // Just set a simple form error message for context - Stripe displays details
         setFormError("Please check your card details and try again.");
         return;
       }
 
       if (setupIntent?.status === "succeeded" && setupIntent.payment_method) {
-        // Attach the payment method to the user
-        const result = await addUserPaymentMethod(
-          setupIntent.payment_method as string,
-          userId,
-          vendorStripeAccountId
+        // Attach the payment method to the organization
+        await attachPaymentMethodForVendor(
+          vendorStripeAccountId,
+          setupIntent.payment_method as string
         );
 
-        if (!result.success) {
-          throw new Error(result.error || "Failed to save payment method");
-        }
-
         // Get the updated card info
-        const card = await getUserPaymentMethod(userId, vendorStripeAccountId);
+        const card = await getPaymentMethodDetailsForVendor(vendorStripeAccountId);
         if (!card) {
           throw new Error("Payment method was set up but could not be retrieved");
         }

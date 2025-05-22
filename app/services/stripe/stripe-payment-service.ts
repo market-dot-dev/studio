@@ -55,6 +55,96 @@ export async function deleteStripeCustomer(
 }
 
 /**
+ * Attach a payment method to a Stripe customer and set it as default
+ *
+ * @param stripeAccountId - The vendor's Stripe account ID
+ * @param paymentMethodId - The payment method ID to attach
+ * @param stripeCustomerId - The customer ID to attach to
+ * @returns The attached payment method
+ */
+export async function attachStripePaymentMethod(
+  stripeAccountId: string,
+  paymentMethodId: string,
+  stripeCustomerId: string
+): Promise<Stripe.PaymentMethod> {
+  const stripe = await createStripeClient(stripeAccountId);
+
+  const paymentMethod = await stripe.paymentMethods.attach(paymentMethodId, {
+    customer: stripeCustomerId
+  });
+
+  await stripe.customers.update(stripeCustomerId, {
+    invoice_settings: {
+      default_payment_method: paymentMethodId
+    }
+  });
+
+  return paymentMethod;
+}
+
+/**
+ * Detach a payment method from a Stripe customer
+ *
+ * @param stripeAccountId - The vendor's Stripe account ID
+ * @param paymentMethodId - The payment method ID to detach
+ * @param stripeCustomerId - The customer ID to detach from
+ * @returns The detached payment method
+ */
+export async function detachStripePaymentMethod(
+  stripeAccountId: string,
+  paymentMethodId: string,
+  stripeCustomerId: string
+): Promise<Stripe.PaymentMethod> {
+  const stripe = await createStripeClient(stripeAccountId);
+
+  const paymentMethod = await stripe.paymentMethods.detach(paymentMethodId);
+
+  // Clear the default payment method on the customer
+  await stripe.customers.update(stripeCustomerId, {
+    invoice_settings: {
+      default_payment_method: undefined
+    }
+  });
+
+  return paymentMethod;
+}
+
+/**
+ * Retrieve a payment method from Stripe
+ *
+ * @param stripeAccountId - The vendor's Stripe account ID
+ * @param paymentMethodId - The payment method ID to retrieve
+ * @returns The payment method details
+ */
+export async function retrieveStripePaymentMethod(
+  stripeAccountId: string,
+  paymentMethodId: string
+): Promise<Stripe.PaymentMethod> {
+  const stripe = await createStripeClient(stripeAccountId);
+  return await stripe.paymentMethods.retrieve(paymentMethodId);
+}
+
+/**
+ * Create a setup intent for collecting payment method details
+ *
+ * @param stripeAccountId - The vendor's Stripe account ID
+ * @param stripeCustomerId - The customer ID to create setup intent for
+ * @returns The setup intent
+ */
+export async function createStripeSetupIntent(
+  stripeAccountId: string,
+  stripeCustomerId: string
+): Promise<Stripe.SetupIntent> {
+  const stripe = await createStripeClient(stripeAccountId);
+
+  return await stripe.setupIntents.create({
+    customer: stripeCustomerId,
+    payment_method_types: ["card"],
+    usage: "off_session"
+  });
+}
+
+/**
  * Create a charge for a one-time purchase
  * Low-level function that directly interacts with Stripe API
  *

@@ -1,7 +1,7 @@
 "use server";
 
-import { getCustomerOfOrganization } from "@/app/services/organization-customer-service";
 import { getCurrentOrganizationId } from "@/app/services/user-context-service";
+import { getCustomerOfVendor } from "@/app/services/vendor-organization-service";
 import PageHeader from "@/components/common/page-header";
 import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
@@ -21,7 +21,7 @@ export default async function CustomerDetailPage(props: { params: Promise<{ id: 
     return notFound();
   }
 
-  const customerOrg = await getCustomerOfOrganization(currentOrgId, organizationId);
+  const customerOrg = await getCustomerOfVendor(currentOrgId, organizationId);
 
   if (!customerOrg) {
     return notFound();

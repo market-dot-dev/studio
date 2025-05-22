@@ -276,9 +276,9 @@ export async function cancelSubscription(subscriptionId: string): Promise<Subscr
 }
 
 /**
- * Get detailed subscription status for a user and tier
+ * Get detailed subscription status for an organization and tier
  *
- * @param customerId - The user ID to check
+ * @param customerId - The organization ID to check
  * @param tierId - The tier ID to check
  * @returns Detailed subscription status information
  */
@@ -297,7 +297,7 @@ export async function getSubscriptionStatus(
   // Get the subscription if it exists
   const subscription = await prisma.subscription.findFirst({
     where: {
-      userId: customerId,
+      organizationId: customerId,
       tierId,
       active: true
     },

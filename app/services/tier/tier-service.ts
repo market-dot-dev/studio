@@ -4,6 +4,7 @@ import { Channel } from "@/app/generated/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import prisma from "@/lib/prisma";
+import { includeVendorProfile } from "@/types/checkout";
 import { includeMinimalOrg } from "@/types/organization";
 import { updateServicesForSale } from "../market-service";
 import { createStripePrice, type SubscriptionCadence } from "../stripe/stripe-price-service";
@@ -53,6 +54,21 @@ export async function getTierByIdWithOrg(id: string) {
           subscriptions: true
         }
       }
+    }
+  });
+}
+
+/**
+ * Find tier by ID with vendor profile data for checkout
+ */
+export async function getTierByIdForCheckout(id: string) {
+  return prisma.tier.findUnique({
+    where: { id },
+    include: {
+      organization: {
+        ...includeVendorProfile
+      },
+      contract: true
     }
   });
 }
