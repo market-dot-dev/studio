@@ -1,11 +1,11 @@
 "use client";
 
 import { User } from "@/app/generated/prisma";
-import { updateCurrentUser } from "@/app/services/UserService";
+import { organizationIsMarketExpert, validateMarketExpert } from "@/app/services/market-service";
 import { refreshAndGetState } from "@/app/services/onboarding/onboarding-service";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
+import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
 import { createSite, updateCurrentSite } from "@/app/services/site/site-crud-service";
-import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import type { SiteDetails } from "@/types/site";
@@ -108,22 +108,31 @@ const NavigationButtons = ({
   </div>
 );
 
-export default function OnboardingModal({
-  user,
-  currentSite,
-  onboardingState
-}: {
+type OnboardingModalProps = {
   user: User;
   currentSite?: SiteDetails;
   onboardingState: OnboardingState;
-}) {
+  organization: {
+    id: string;
+    marketExpertId: string | null;
+  };
+};
+
+export function OnboardingModal({
+  user,
+  currentSite,
+  onboardingState,
+  organization
+}: OnboardingModalProps) {
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(
     !onboardingState.setupBusiness ||
       !onboardingState.preferredServices ||
-      (!user.marketExpertId && searchParams.get("source") === "market.dev")
+      (!organization.marketExpertId && searchParams.get("source") === "market.dev")
   );
-  const { isMarketExpert, isLoadingMarketExpert, validateMarketExpert } = useMarketExpert();
+
+  const [isMarketExpert, setIsMarketExpert] = useState<boolean | null>(null);
+  const [isLoadingMarketExpert, setIsLoadingMarketExpert] = useState(false);
   const [validateMarketExpertError, setValidateMarketExpertError] = useState<string | null>(null);
   const [step, setStep] = useState<"profile" | "offerings">("profile");
   const [isLoading, setIsLoading] = useState(false);
@@ -135,26 +144,50 @@ export default function OnboardingModal({
   const sourceIsMarketDev = source === "market.dev";
   const mounted = useMounted();
 
+  // Check if organization is market expert on mount
+  useEffect(() => {
+    const checkMarketExpert = async () => {
+      try {
+        const isExpert = await organizationIsMarketExpert();
+        setIsMarketExpert(isExpert);
+      } catch (error) {
+        console.error("Error checking market expert status:", error);
+        setIsMarketExpert(false);
+      }
+    };
+
+    if (mounted) {
+      checkMarketExpert();
+    }
+  }, [mounted]);
+
+  // Handle market.dev connection if needed
   useEffect(() => {
     if (!mounted || !sourceIsMarketDev || isMarketExpert !== null) return;
 
     const connectMarketExpert = async () => {
+      setIsLoadingMarketExpert(true);
       try {
         const success = await validateMarketExpert();
         if (success && sourceIsMarketDev) {
           toast.success("Market.dev account connected successfully");
+          setIsMarketExpert(true);
         } else if (!success && sourceIsMarketDev) {
           setValidateMarketExpertError(
             "Failed to connect your Market.dev account. Make sure you have an account on Market.dev."
           );
+          setIsMarketExpert(false);
         }
       } catch (error) {
         setValidateMarketExpertError("Error connecting to market.dev");
+        setIsMarketExpert(false);
+      } finally {
+        setIsLoadingMarketExpert(false);
       }
     };
 
     connectMarketExpert();
-  }, [mounted, sourceIsMarketDev, isMarketExpert, validateMarketExpert]);
+  }, [mounted, sourceIsMarketDev, isMarketExpert]);
 
   const handleProfileSubmit = (data: ProfileData) => {
     setProfileData(data);
@@ -166,12 +199,14 @@ export default function OnboardingModal({
 
     setIsLoading(true);
     try {
-      await updateCurrentUser({
+      // Update organization business data
+      await updateCurrentOrganizationBusiness({
         projectName: profileData.businessName,
         businessLocation: profileData.location,
         businessType: profileData.teamType
       });
 
+      // Handle site creation/update
       if (currentSite) {
         const formData = new FormData();
         formData.append("subdomain", profileData.subdomain);
@@ -179,13 +214,14 @@ export default function OnboardingModal({
           formData.append("logoURL", profileData.logo);
         }
         await updateCurrentSite(formData);
-      }
-      // @TODO: This should use a qualified organization directly
-      else if (user.currentOrganizationId) {
-        await createSite(user.currentOrganizationId, profileData.subdomain, profileData.logo);
+      } else {
+        // Create site for the organization
+        await createSite(organization.id, profileData.subdomain, profileData.logo);
       }
 
+      // Update onboarding state
       await refreshAndGetState(offeringsData.offerings);
+
       setIsOpen(false);
       router.refresh();
     } catch (error) {

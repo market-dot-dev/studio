@@ -10,12 +10,7 @@ export type SessionUser = {
   onboarding?: string;
   currentOrgId?: string;
   // @TODO: Pending migration to Organization
-  company?: string;
   roleId: string;
-  stripeCustomerIds: Record<string, string>;
-  stripePaymentMethodIds: Record<string, string>;
-  stripeAccountId?: string;
-  stripeAccountDisabled?: boolean;
 };
 
 export type Session = {
@@ -35,12 +30,7 @@ export const createSessionUser = (user: User): SessionUser => {
     currentOrgId: user.currentOrganizationId || undefined,
 
     // @TODO: Pending migration to Organization
-    company: user.company || undefined,
-    roleId: user.roleId || "anonymous",
-    stripeCustomerIds: (user.stripeCustomerIds || {}) as Record<string, string>,
-    stripePaymentMethodIds: (user.stripePaymentMethodIds || {}) as Record<string, string>,
-    stripeAccountId: user.stripeAccountId || undefined,
-    stripeAccountDisabled: user.stripeAccountDisabled || false
+    roleId: user.roleId || "anonymous"
   };
 };
 

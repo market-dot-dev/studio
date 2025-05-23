@@ -47,8 +47,6 @@ const loadUsers = async () => {
       data: {
         ...user,
         id: user.id,
-        stripeCustomerIds: {}, // @DEPRECATED, but still required for now
-        stripePaymentMethodIds: {}, // @DEPRECATED, but still required for now
         emailVerified: new Date().toISOString(),
         roleId: "admin" // @DEPRECATED, but still required for now
       }
@@ -66,10 +64,10 @@ const createOrganizations = async (users: User[]) => {
     // Create an organization for each user
     const organization = await prisma.organization.create({
       data: {
-        name: user.company || `${user.name}'s Organization`,
+        name: `${user.name}'s Organization`,
         type: OrganizationType.VENDOR,
         ownerId: user.id,
-        company: user.company || "market.dev",
+        company: "market.dev",
         members: {
           create: {
             userId: user.id,

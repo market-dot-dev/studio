@@ -1,7 +1,6 @@
 "use client";
 
-import { User } from "@/app/generated/prisma";
-import { updateCurrentUser } from "@/app/services/UserService";
+import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,25 +8,32 @@ import { Textarea } from "@/components/ui/textarea";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
-// Type for the business-related fields we can update
+// Type for the business-related fields from organization
 type EditableBusinessFields = {
   projectName: string | null;
   projectDescription: string | null;
 };
 
-export default function BusinessSettings({ user }: { user: Partial<User> }) {
+type OrganizationBusinessProps = {
+  organization: {
+    projectName: string | null;
+    projectDescription: string | null;
+  };
+};
+
+export default function BusinessSettings({ organization }: OrganizationBusinessProps) {
   const [isSaving, setIsSaving] = useState(false);
 
-  // Extract only the business fields we want to edit
+  // Extract business fields from organization
   const [businessData, setBusinessData] = useState<EditableBusinessFields>({
-    projectName: user.projectName ?? null,
-    projectDescription: user.projectDescription ?? null
+    projectName: organization.projectName ?? null,
+    projectDescription: organization.projectDescription ?? null
   });
 
   const saveChanges = useCallback(async () => {
     setIsSaving(true);
     try {
-      await updateCurrentUser({
+      await updateCurrentOrganizationBusiness({
         projectName: businessData.projectName,
         projectDescription: businessData.projectDescription
       });

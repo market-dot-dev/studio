@@ -1,30 +1,19 @@
 model User {
-  id                          String    @id @default(cuid())
-  name                        String?
-  username                    String?
-  gh_id                       Int?
-  gh_username                 String?   @unique
-  email                       String?   @unique
-  businessLocation            String? /// @DEPRECATED. Should be fetched from Organization.
-  businessType                String? /// @DEPRECATED. Should be fetched from Organization.
-  stripeCustomerIds           Json      @default("{}") /// @DEPRECATED. Should be fetched from Organization.
-  stripePaymentMethodIds      Json      @default("{}") /// @DEPRECATED. Should be fetched from Organization.
-  stripeAccountId             String?   @unique /// @DEPRECATED. Should be fetched from Organization.
-  stripeCSRF                  String?   @unique /// @DEPRECATED. Should be fetched from Organization.
-  stripeAccountDisabled       Boolean   @default(false) /// @DEPRECATED. Should be fetched from Organization.
-  stripeAccountDisabledReason String? /// @DEPRECATED. Should be fetched from Organization.
-  projectName                 String? /// @DEPRECATED. Should be fetched from Organization.
-  projectDescription          String? /// @DEPRECATED. Should be fetched from Organization.
-  emailVerified               DateTime?
-  image                       String?
-  roleId                      String    @default("customer") // @DEPRECATED: Pending removal.
-  createdAt                   DateTime  @default(now())
-  updatedAt                   DateTime  @updatedAt
-  accounts                    Account[]
-  sessions                    Session[]
-  onboarding                  String?
-  company                     String? /// @DEPRECATED. Should be fetched from Organization.
-  marketExpertId              String? /// @DEPRECATED. Should be fetched from Organization.
+  id             String    @id @default(cuid())
+  name           String?
+  username       String?
+  gh_id          Int?
+  gh_username    String?   @unique
+  email          String?   @unique
+  emailVerified  DateTime?
+  image          String?
+  roleId         String    @default("customer") // @DEPRECATED: Pending removal.
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  accounts       Account[]
+  sessions       Session[]
+  onboarding     String?
+  marketExpertId String? /// @DEPRECATED. Should be fetched from Organization.
 
   // Organization relationships
   organizations         OrganizationMember[]

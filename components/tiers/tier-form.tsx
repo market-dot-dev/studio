@@ -25,16 +25,17 @@ import { Textarea } from "@/components/ui/textarea";
 import Spinner from "../ui/spinner";
 import { Switch } from "../ui/switch";
 
-import { Channel, Contract, TierVersion, User } from "@/app/generated/prisma";
+import { Channel, Contract, TierVersion } from "@/app/generated/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
 import { hasVendorStripeAccount } from "@/app/services/stripe/stripe-vendor-service";
 import { getSubscriberCount } from "@/app/services/subscription-service";
 import { createTier, TierWithCount, updateTier } from "@/app/services/tier/tier-service";
 import { getVersionsByTierId } from "@/app/services/tier/tier-version-service";
+import type { MinimalOrganization } from "@/types/organization";
 import { toast } from "sonner";
 import PageHeader from "../common/page-header";
 import ChannelsSelectionInput from "./channels-selection-input";
-import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
+import { CheckoutTypeSelectionInput } from "./checkout-type-selection-input";
 import DuplicateTierButton from "./duplicate-tier-button";
 import StandardCheckoutForm from "./standard-checkout-form";
 import TierCard from "./tier-card";
@@ -46,10 +47,10 @@ import TierVersionRow from "./tier-version-row";
 interface TierFormProps {
   tier?: Partial<Tier>;
   contracts: Contract[];
-  user: User;
+  org: MinimalOrganization;
 }
 
-export default function TierForm({ tier: tierObj, contracts, user }: TierFormProps) {
+export default function TierForm({ tier: tierObj, contracts, org }: TierFormProps) {
   const router = useRouter();
   const [tier, setTier] = useState<TierWithCount>((tierObj ? tierObj : newTier()) as Tier);
 
@@ -301,7 +302,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                     Checkout Type
                   </Label>
                   <CheckoutTypeSelectionInput
-                    user={user}
+                    checkoutEnabled={!!org.stripeAccountId}
                     tier={tier}
                     handleInputChange={handleInputChange}
                     idPrefix="mobile-"
@@ -323,7 +324,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                     Channels
                   </Label>
                   <ChannelsSelectionInput
-                    userIsMarketExpert={!!user.marketExpertId}
+                    userIsMarketExpert={!!org.marketExpertId}
                     selectedChannels={tier.channels}
                     idPrefix="mobile-"
                     handleInputChange={(channel) => {
@@ -538,7 +539,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
               Checkout Type
             </Label>
             <CheckoutTypeSelectionInput
-              user={user}
+              checkoutEnabled={!!org.stripeAccountId}
               tier={tier}
               handleInputChange={handleInputChange}
               idPrefix=""
@@ -559,7 +560,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
               Channels
             </Label>
             <ChannelsSelectionInput
-              userIsMarketExpert={!!user.marketExpertId}
+              userIsMarketExpert={!!org.marketExpertId}
               selectedChannels={tier.channels}
               handleInputChange={(channel) => {
                 let channels: Channel[] = tier.channels;

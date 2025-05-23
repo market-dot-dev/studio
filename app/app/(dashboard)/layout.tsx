@@ -1,4 +1,4 @@
-import { userIsMarketExpert } from "@/app/services/market-service";
+import { organizationIsMarketExpert } from "@/app/services/market-service";
 import {
   defaultOnboardingState,
   OnboardingState
@@ -10,7 +10,7 @@ import { StripeDisabledBanner } from "@/components/common/stripe-disabled-banner
 import { DashboardProvider } from "@/components/dashboard/dashboard-context";
 import { Header } from "@/components/header/header";
 import { DashboardSidebar } from "@/components/navigation/dashboard-sidebar";
-import OnboardingModal from "@/components/onboarding/onboarding-modal";
+import { OnboardingModal } from "@/components/onboarding/onboarding-modal";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { ReactNode } from "react";
 
@@ -19,7 +19,7 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
 
   const user = await requireUser();
   const org = await requireOrganization();
-  const isMarketExpert = await userIsMarketExpert();
+  const isMarketExpert = await organizationIsMarketExpert();
 
   const onboarding = user.onboarding
     ? (JSON.parse(user.onboarding) as OnboardingState)
@@ -29,12 +29,17 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
   return (
     <DashboardProvider siteId={site?.id ?? null} initialExpertStatus={isMarketExpert}>
       <SessionRefresher />
-      <OnboardingModal user={user} currentSite={site ?? undefined} onboardingState={onboarding} />
+      <OnboardingModal
+        user={user}
+        currentSite={site ?? undefined}
+        onboardingState={onboarding}
+        organization={org}
+      />
       <SidebarProvider>
         <Header />
         <DashboardSidebar user={user} isMarketExpert={isMarketExpert} site={site} />
         <main className="flex min-h-screen w-screen flex-col items-center bg-stone-100 pt-10 md:w-[calc(100vw-var(--sidebar-width))]">
-          {user.stripeAccountDisabled && <StripeDisabledBanner />}
+          {org.stripeAccountDisabled && <StripeDisabledBanner />}
           <div className="flex w-full max-w-screen-xl flex-col gap-y-8 p-6 sm:p-10 sm:pt-8">
             {children}
           </div>

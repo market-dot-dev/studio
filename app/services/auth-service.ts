@@ -1,6 +1,6 @@
 "use server";
 
-import { User } from "@/app/generated/prisma";
+import { OrganizationType, User } from "@/app/generated/prisma";
 import { businessDescription, businessName } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { Account, User as NaUser } from "next-auth";
@@ -10,6 +10,7 @@ import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 import { SessionUser, createSessionUser } from "../models/Session";
 import { sendWelcomeEmailToCustomer, sendWelcomeEmailToMaintainer } from "./email-service";
 import { defaultOnboardingState } from "./onboarding/onboarding-steps";
+import { createSite } from "./site/site-crud-service";
 import { requireUser } from "./user-context-service";
 import UserService from "./UserService";
 
@@ -45,7 +46,6 @@ class AuthService {
     return newToken;
   }
 
-  //{ session: Session; token: JWT }
   static async sessionCallback({ session, token }: any) {
     session.user = token.user;
     return session;
@@ -137,17 +137,45 @@ class AuthService {
       });
     }
 
+    // Create organization for the new user
+    const organization = await prisma.organization.create({
+      data: {
+        name: name
+          ? `${name}'s Organization`
+          : `${user.name || user.email || "User"}'s Organization`,
+        type: roleId === "maintainer" ? OrganizationType.VENDOR : OrganizationType.CUSTOMER,
+        ownerId: user.id,
+        projectName: businessName,
+        projectDescription: businessDescription,
+        company: name || user.name || null,
+        stripeCustomerIds: {},
+        stripePaymentMethodIds: {},
+        members: {
+          create: {
+            userId: user.id,
+            role: "OWNER"
+          }
+        }
+      }
+    });
+
+    // Update the user with organization reference and clean user-specific data
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: {
-        roleId,
-        projectName: businessName,
-        projectDescription: businessDescription,
+        roleId, // @DEPRECATED but still required
+        currentOrganizationId: organization.id,
         ...(name ? { name } : {})
       }
     });
 
-    if (updatedUser.roleId === "maintainer") {
+    // Create a site for vendor organizations
+    if (roleId === "maintainer") {
+      await createSite(organization.id);
+    }
+
+    // Send welcome emails
+    if (roleId === "maintainer") {
       await sendWelcomeEmailToMaintainer({ ...updatedUser });
     } else {
       await sendWelcomeEmailToCustomer({ ...updatedUser });

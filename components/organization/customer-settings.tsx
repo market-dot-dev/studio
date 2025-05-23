@@ -1,86 +1,133 @@
 "use client";
 
 import { User } from "@/app/generated/prisma";
-import useCurrentSession from "@/app/hooks/use-current-session";
+import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
+import { toast } from "sonner";
 
-export default function CustomerSettings() {
-  const { currentUser, refreshSession } = useCurrentSession();
-  type UserAttrs = Pick<User, "name" | "email" | "company">;
+type UserPersonalData = {
+  name: string | null;
+  email: string | null;
+};
 
+type OrganizationBusinessData = {
+  company: string | null;
+};
+
+type CustomerSettingsProps = {
+  user: Pick<User, "name" | "email">;
+  organization: {
+    company: string | null;
+  };
+};
+
+export default function CustomerSettings({ user, organization }: CustomerSettingsProps) {
   const [isSaving, setIsSaving] = useState(false);
-  const [userData, setUserData] = useState<UserAttrs>({} as UserAttrs);
 
-  useEffect(() => {
-    if (currentUser) {
-      setUserData({
-        name: currentUser.name || null,
-        email: currentUser.email || null,
-        company: currentUser.company || null
-      });
-    }
-  }, [currentUser]);
+  // Separate state for user personal data
+  const [userData, setUserData] = useState<UserPersonalData>({
+    name: user.name ?? null,
+    email: user.email ?? null
+  });
+
+  // Separate state for organization business data
+  const [orgData, setOrgData] = useState<OrganizationBusinessData>({
+    company: organization.company ?? null
+  });
 
   const saveChanges = useCallback(async () => {
     setIsSaving(true);
     try {
-      await updateCurrentUser(userData);
-      await refreshSession();
+      // Update user personal information
+      await updateCurrentUser({
+        name: userData.name,
+        email: userData.email
+      });
+
+      // Update organization business information
+      await updateCurrentOrganizationBusiness({
+        company: orgData.company
+      });
+
+      toast.success("Settings updated successfully");
     } catch (error) {
-      console.log(error);
+      console.error("Error updating settings:", error);
+      toast.error("Failed to update settings");
     } finally {
       setIsSaving(false);
     }
-  }, [userData, refreshSession]);
+  }, [userData, orgData]);
 
   return (
-    <div className="flex w-full flex-col items-start space-y-6">
-      <div className="flex w-1/2 flex-col items-start gap-1.5">
-        <Label htmlFor="name">Name</Label>
-        <Input
-          placeholder=""
-          name="name"
-          id="name"
-          value={userData.name ?? ""}
-          onChange={(e) => {
-            setUserData({ ...userData, name: e.target.value });
-          }}
-        />
+    <div className="flex w-full flex-col items-start space-y-8">
+      {/* Personal Information Section */}
+      <div className="w-full">
+        <h3 className="mb-4 text-lg font-medium">Personal Information</h3>
+        <div className="max-w-md space-y-6">
+          <div className="flex flex-col items-start gap-1.5">
+            <Label htmlFor="name">Full Name</Label>
+            <Input
+              placeholder="Enter your full name"
+              name="name"
+              id="name"
+              value={userData.name ?? ""}
+              onChange={(e) => {
+                setUserData({ ...userData, name: e.target.value || null });
+              }}
+            />
+          </div>
+
+          <div className="flex flex-col items-start gap-1.5">
+            <Label htmlFor="email">Email Address</Label>
+            <Input
+              placeholder="Enter your email address"
+              type="email"
+              name="email"
+              id="email"
+              value={userData.email ?? ""}
+              onChange={(e) => {
+                setUserData({ ...userData, email: e.target.value || null });
+              }}
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="flex w-1/2 flex-col items-start gap-1.5">
-        <Label htmlFor="email">Email</Label>
-        <Input
-          placeholder=""
-          type="email"
-          name="email"
-          id="email"
-          value={userData.email ?? ""}
-          onChange={(e) => {
-            setUserData({ ...userData, email: e.target.value });
-          }}
-        />
+      {/* Organization Information Section */}
+      <div className="w-full">
+        <h3 className="mb-4 text-lg font-medium">Organization Information</h3>
+        <div className="max-w-md space-y-6">
+          <div className="flex flex-col items-start gap-1.5">
+            <Label htmlFor="company">Company Name</Label>
+            <Input
+              placeholder="Enter your company name"
+              name="company"
+              id="company"
+              value={orgData.company ?? ""}
+              onChange={(e) => {
+                setOrgData({ ...orgData, company: e.target.value || null });
+              }}
+            />
+            <p className="text-xs text-stone-500">
+              This will be associated with your organization and visible to team members.
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="flex w-1/2 flex-col items-start gap-1.5">
-        <Label htmlFor="company">Company</Label>
-        <Input
-          placeholder=""
-          name="company"
-          id="company"
-          value={userData.company ?? ""}
-          onChange={(e) => {
-            setUserData({ ...userData, company: e.target.value });
-          }}
-        />
-      </div>
-
-      <Button loading={isSaving} loadingText="Saving Changes" onClick={saveChanges}>
-        Save
+      {/* Save Button */}
+      <Button
+        loading={isSaving}
+        loadingText="Saving Changes"
+        disabled={isSaving}
+        onClick={saveChanges}
+        className="w-fit"
+      >
+        Save Changes
       </Button>
     </div>
   );

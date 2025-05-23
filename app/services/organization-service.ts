@@ -7,7 +7,8 @@ import {
   includeFullOrg,
   includeMinimalOrg
 } from "@/types/organization";
-import { requireUser } from "./user-context-service";
+import { Prisma } from "../generated/prisma";
+import { requireOrganization, requireUser } from "./user-context-service";
 
 /**
  * Basic Organization CRUD operations
@@ -73,14 +74,7 @@ export async function getUserOrganizations(): Promise<
  */
 export async function updateOrganization(
   id: string,
-  data: {
-    name?: string;
-    projectName?: string;
-    projectDescription?: string;
-    businessType?: string;
-    businessLocation?: string;
-    company?: string;
-  }
+  data: Prisma.OrganizationUpdateInput
 ): Promise<MinimalOrganization> {
   const updated = await prisma.organization.update({
     where: { id },
@@ -129,4 +123,31 @@ export async function getOrganizationMembers(organizationId: string) {
       createdAt: "asc"
     }
   });
+}
+
+/**
+ * Update current organization's business information
+ */
+export async function updateCurrentOrganizationBusiness(
+  data: Prisma.OrganizationUpdateInput
+): Promise<void> {
+  const org = await requireOrganization();
+  await updateOrganization(org.id, data);
+}
+
+/**
+ * Get current organization for settings display
+ * Returns organization with business fields needed for forms
+ */
+export async function getCurrentOrganizationForSettings() {
+  const org = await requireOrganization();
+  return {
+    id: org.id,
+    name: org.name,
+    projectName: org.projectName,
+    projectDescription: org.projectDescription,
+    company: org.company,
+    businessType: org.businessType,
+    businessLocation: org.businessLocation
+  };
 }
