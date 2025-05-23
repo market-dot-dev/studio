@@ -1,5 +1,5 @@
 import PageHeader from "@/components/common/page-header";
-import CustomerSettings from "@/components/user/customer-settings";
+import CustomerSettings from "@/components/organization/customer-settings";
 
 export default async function SettingsPage() {
   return (

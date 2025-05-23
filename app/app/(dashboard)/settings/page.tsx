@@ -1,5 +1,5 @@
 import { requireUser } from "@/app/services/user-context-service";
-import GeneralSettings from "@/components/user/general-settings";
+import GeneralSettings from "@/components/organization/general-settings";
 
 export default async function GeneralSettingsPage() {
   const user = await requireUser();
