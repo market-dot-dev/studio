@@ -2,38 +2,35 @@ model Charge {
   id String @id @default(cuid())
 
   tierRevision   Int?
-  stripeChargeId String        @unique
-  createdAt      DateTime      @default(now())
-  userId         String /// @DEPRECATED. Should be converted to Organization.
-  user           User          @relation(fields: [userId], references: [id]) /// @DEPRECATED. Should be converted to Organization.
-  organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  stripeChargeId String       @unique
+  createdAt      DateTime     @default(now())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
   tierVersionId  String?
-  tierVersion    TierVersion?  @relation(fields: [tierVersionId], references: [id])
+  tierVersion    TierVersion? @relation(fields: [tierVersionId], references: [id])
   tierId         String
-  tier           Tier          @relation(fields: [tierId], references: [id])
+  tier           Tier         @relation(fields: [tierId], references: [id])
+
+  @@index([organizationId, tierId])
 }
 
 model Subscription {
-  id                   String        @id @default(cuid())
-  stripeSubscriptionId String        @unique
+  id                   String       @id @default(cuid())
+  stripeSubscriptionId String       @unique
   tierRevision         Int?
   activeUntil          DateTime?
   cancelledAt          DateTime?
-  createdAt            DateTime      @default(now())
-  updatedAt            DateTime      @updatedAt
-  state                String        @default("renewing")
-  priceAnnual          Boolean       @default(false)
-  active               Boolean       @default(true)
-  userId               String /// @DEPRECATED. Should be converted to Organization.
-  user                 User          @relation(fields: [userId], references: [id]) /// @DEPRECATED. Should be converted to Organization.
-  organizationId       String?
-  organization         Organization? @relation(fields: [organizationId], references: [id])
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  state                String       @default("renewing")
+  priceAnnual          Boolean      @default(false)
+  active               Boolean      @default(true)
+  organizationId       String
+  organization         Organization @relation(fields: [organizationId], references: [id])
   tierVersionId        String?
-  tierVersion          TierVersion?  @relation(fields: [tierVersionId], references: [id])
+  tierVersion          TierVersion? @relation(fields: [tierVersionId], references: [id])
   tierId               String
-  tier                 Tier          @relation(fields: [tierId], references: [id])
+  tier                 Tier         @relation(fields: [tierId], references: [id])
 
-  @@index([userId, tierId, active])
   @@index([organizationId, tierId, active])
 }

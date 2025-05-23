@@ -1,8 +1,9 @@
 "use server";
 
-import { Organization, User } from "@/app/generated/prisma";
+import { User } from "@/app/generated/prisma";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { MinimalOrganization } from "@/types/organization";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { SessionUser } from "../models/Session";
@@ -98,7 +99,7 @@ export const getCurrentOrganizationId = cache(async (): Promise<string | null> =
  * Gets the current organization
  * @returns The complete organization object or null if not available
  */
-export const getCurrentOrganization = cache(async (): Promise<Organization | null> => {
+export const getCurrentOrganization = cache(async (): Promise<MinimalOrganization | null> => {
   const organizationId = await getCurrentOrganizationId();
   if (!organizationId) return null;
 
@@ -109,7 +110,7 @@ export const getCurrentOrganization = cache(async (): Promise<Organization | nul
  * Requires a valid organization, redirects if not present
  * @returns The complete organization object
  */
-export const requireOrganization = cache(async (): Promise<Organization> => {
+export const requireOrganization = cache(async (): Promise<MinimalOrganization> => {
   const user = await requireUser(); // Ensure user is authenticated first
 
   if (!user.currentOrganizationId) {

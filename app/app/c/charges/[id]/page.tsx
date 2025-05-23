@@ -1,11 +1,11 @@
-import ChargeService from "@/app/services/charge-service";
+import { findCharge } from "@/app/services/charge-service";
 import { getTierByIdWithOrg } from "@/app/services/tier/tier-service";
 import PageHeader from "@/components/common/page-header";
 import { notFound } from "next/navigation";
 
 export default async function ChargeDetail(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const charge = await ChargeService.findCharge(params.id);
+  const charge = await findCharge(params.id);
   if (!charge) return notFound();
 
   const tier = await getTierByIdWithOrg(charge.tierId);

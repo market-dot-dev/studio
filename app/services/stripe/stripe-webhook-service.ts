@@ -3,47 +3,47 @@
 import prisma from "@/lib/prisma";
 import { ErrorMessageCode } from "@/types/stripe";
 import Stripe from "stripe";
-import { checkVendorStripeStatusById } from "./stripe-vendor-service";
+import { checkVendorStripeStatusByOrgId } from "./stripe-vendor-service";
 import {
   handleCancelledSubscriptionFromWebhook,
   updateSubscriptionFromWebhook
 } from "./stripe-webhook-helpers";
 
 /**
- * Handles Stripe account events
+ * Handles Stripe account events for organizations
  * @param event - The Stripe event object
  */
 export async function handleAccountEvent(event: Stripe.Event) {
   const accountEvent = event.data.object as Stripe.Account;
   const accountId = event.account;
 
-  const user = await prisma.user.findUnique({
+  const organization = await prisma.organization.findUnique({
     where: { stripeAccountId: accountId }
   });
 
-  if (!user) {
-    console.error(`No user found with Stripe account ID: ${accountId}`);
+  if (!organization) {
+    console.error(`No organization found with Stripe account ID: ${accountId}`);
     return;
   }
 
   if (event.type === "account.updated") {
-    await checkVendorStripeStatusById(user.id, true);
-    console.log(`Updated account status for user ${user.id}`);
+    await checkVendorStripeStatusByOrgId(organization.id, true);
+    console.log(`Updated account status for organization ${organization.id}`);
   } else if (event.type === "account.application.deauthorized") {
-    await prisma.user.update({
-      where: { id: user.id },
+    await prisma.organization.update({
+      where: { id: organization.id },
       data: {
         stripeAccountId: null,
         stripeAccountDisabled: true,
         stripeAccountDisabledReason: JSON.stringify([ErrorMessageCode.StripeAccountDisconnected])
       }
     });
-    console.log(`Disconnected Stripe account for user ${user.id}`);
+    console.log(`Disconnected Stripe account for organization ${organization.id}`);
   }
 }
 
 /**
- * Handles Stripe subscription events
+ * Handles Stripe subscription events for organizations
  * @param event - The Stripe event object
  */
 export async function handleSubscriptionEvent(event: Stripe.Event) {
@@ -53,6 +53,7 @@ export async function handleSubscriptionEvent(event: Stripe.Event) {
   console.log(
     `Processing ${event.type} for subscription ${subscription.id} from account ${accountId || "platform"}`
   );
+
   const subItem = subscription.items.data[0];
   const activeUntil = subItem.current_period_end
     ? new Date(subItem.current_period_end * 1000)
@@ -71,7 +72,7 @@ export async function handleSubscriptionEvent(event: Stripe.Event) {
 }
 
 /**
- * Handles critical Stripe charge events
+ * Handles critical Stripe charge events for organizations
  * @param event - The Stripe event object
  */
 export async function handleChargeEvent(event: Stripe.Event) {
@@ -81,13 +82,22 @@ export async function handleChargeEvent(event: Stripe.Event) {
   if (event.type === "charge.refunded") {
     // Logging the refund for awareness
     const localCharge = await prisma.charge.findUnique({
-      where: { stripeChargeId: charge.id }
+      where: { stripeChargeId: charge.id },
+      include: {
+        organization: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
     });
 
     if (localCharge) {
       console.log(
         `REFUND ALERT: Charge ${charge.id} was refunded for $${charge.amount_refunded / 100} ` +
           `by vendor (account ${accountId}). ` +
+          `Customer organization: ${localCharge.organization?.name} (${localCharge.organization?.id}). ` +
           `Our internal charge ID: ${localCharge.id}`
       );
 

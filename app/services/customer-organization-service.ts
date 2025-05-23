@@ -64,11 +64,11 @@ async function updateCustomerStripeData(
   const updateData: Prisma.OrganizationUpdateInput = {};
 
   if (data.stripeCustomerIds) {
-    updateData.stripeCustomerIds = data.stripeCustomerIds as Prisma.JsonValue;
+    updateData.stripeCustomerIds = data.stripeCustomerIds as Prisma.InputJsonValue;
   }
 
   if (data.stripePaymentMethodIds) {
-    updateData.stripePaymentMethodIds = data.stripePaymentMethodIds as Prisma.JsonValue;
+    updateData.stripePaymentMethodIds = data.stripePaymentMethodIds as Prisma.InputJsonValue;
   }
 
   await prisma.organization.update({
@@ -312,21 +312,6 @@ export async function canMakePaymentToVendor(
     customerOrgId
   );
   return !!stripeCustomerId && !!paymentMethodId;
-}
-
-/**
- * LEGACY COMPATIBILITY: Get Stripe customer ID for charge/subscription services
- * This maintains the old function signature but works with both User and Organization objects
- * @deprecated Use getStripeCustomerIdForVendor instead when possible
- */
-export async function getStripeCustomerId(
-  customerEntity: OrganizationForStripeOps | { stripeCustomerIds: Record<string, string> },
-  vendorStripeAccountId: string
-): Promise<string | null> {
-  if (!customerEntity || !vendorStripeAccountId) return null;
-
-  const stripeCustomerIds = (customerEntity.stripeCustomerIds as Record<string, string>) || {};
-  return stripeCustomerIds[vendorStripeAccountId] || null;
 }
 
 /**

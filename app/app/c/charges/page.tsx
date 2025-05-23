@@ -1,5 +1,5 @@
 import { Charge } from "@/app/generated/prisma";
-import ChargeService from "@/app/services/charge-service";
+import { getChargesForCurrentOrganization } from "@/app/services/charge-service";
 import { getTierByIdWithOrg } from "@/app/services/tier/tier-service";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";
@@ -45,7 +45,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
 };
 
 export default async function Charges() {
-  const charges = (await ChargeService.findCharges()) || [];
+  const charges = await getChargesForCurrentOrganization();
   const anyCharges = charges.length > 0;
 
   return (

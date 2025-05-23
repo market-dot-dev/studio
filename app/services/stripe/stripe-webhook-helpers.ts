@@ -53,10 +53,18 @@ export async function handleCancelledSubscriptionFromWebhook(
   const subscription = await prisma.subscription.findUnique({
     where: { stripeSubscriptionId },
     include: {
-      user: true,
+      organization: {
+        include: {
+          owner: true
+        }
+      },
       tier: {
         include: {
-          user: true
+          organization: {
+            include: {
+              owner: true
+            }
+          }
         }
       }
     }
@@ -85,14 +93,17 @@ export async function handleCancelledSubscriptionFromWebhook(
 
   // Send emails
   try {
-    if (subscription.tier?.user && subscription.user) {
+    if (subscription.tier?.organization?.owner && subscription.organization?.owner) {
       await notifyOwnerOfSubscriptionCancellation(
-        subscription.tier.user,
-        subscription.user,
+        subscription.tier.organization.owner,
+        subscription.organization.owner,
         subscription.tier.name
       );
 
-      await confirmCustomerSubscriptionCancellation(subscription.user, subscription.tier.name);
+      await confirmCustomerSubscriptionCancellation(
+        subscription.organization.owner,
+        subscription.tier.name
+      );
 
       console.log(`Sent cancellation notifications for subscription ${subscription.id}`);
     }

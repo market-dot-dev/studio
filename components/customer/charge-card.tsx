@@ -1,7 +1,5 @@
 import { Charge } from "@/app/generated/prisma";
-import { getContract } from "@/app/services/contract-service";
-import { getTierById } from "@/app/services/tier/tier-service";
-import UserService from "@/app/services/UserService";
+import { getTierByIdForCheckout } from "@/app/services/tier/tier-service";
 import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
@@ -18,18 +16,15 @@ const ChargeCard = async ({
 }) => {
   if (!charge || !charge.tierId) return null;
 
-  const tier = await getTierById(charge.tierId!);
-  if (!tier) return null;
-
-  const maintainer = await UserService.findUser(tier.userId);
-
-  if (!maintainer) return null;
+  const tier = await getTierByIdForCheckout(charge.tierId!);
+  if (!tier || !tier.organization) return null;
 
   const status = "paid";
 
-  const contract = (await getContract(tier.contractId || "")) || undefined;
-  const contractUrl = contract ? `/c/contracts/${contract.id}` : "/c/contracts/standard-msa";
-  const contractName = contract?.name || "Standard MSA";
+  const contractUrl = tier.contract
+    ? `/c/contracts/${tier.contract.id}`
+    : "/c/contracts/standard-msa";
+  const contractName = tier.contract?.name || "Standard MSA";
 
   return (
     <Card className="text-sm">
@@ -54,7 +49,7 @@ const ChargeCard = async ({
               </span>
               <div className="flex items-center gap-1.5">
                 <Store size={14} strokeWidth={2.25} />
-                <span className="font-medium">{maintainer.projectName}</span>
+                <span className="font-medium">{tier.organization.projectName}</span>
               </div>
             </div>
           )}

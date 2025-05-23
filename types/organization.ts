@@ -8,11 +8,18 @@ export const includeMinimalOrg = Prisma.validator<Prisma.OrganizationDefaultArgs
     id: true,
     name: true,
     type: true,
-    ownerId: true,
+    owner: {
+      select: {
+        id: true,
+        email: true,
+        name: true
+      }
+    },
     createdAt: true,
     updatedAt: true,
     projectName: true,
     projectDescription: true,
+    marketExpertId: true,
     stripeAccountId: true,
     stripeAccountDisabled: true
   }
@@ -37,6 +44,7 @@ export const includeOrgForStripeOps = Prisma.validator<Prisma.OrganizationDefaul
     },
     stripeCustomerIds: true,
     stripePaymentMethodIds: true,
+    stripeCSRF: true,
     // Include other fields if necessary, e.g., stripeAccountId for vendor orgs
     stripeAccountId: true
   }

@@ -9,7 +9,7 @@ import {
   includeCustomerOrgWithChargesAndSubs
 } from "@/types/organization-customer";
 import { ErrorMessageCode, HealthCheckResult } from "@/types/stripe";
-import { checkVendorStripeStatusById } from "./stripe/stripe-vendor-service";
+import { checkVendorStripeStatusByOrgId } from "./stripe/stripe-vendor-service";
 import { requireOrganization } from "./user-context-service";
 
 /**
@@ -83,7 +83,7 @@ export async function getVendorStripeStatus(organizationId?: string): Promise<He
 
   // Use the existing stripe vendor service, but pass the organization owner's ID
   // This maintains compatibility while we transition
-  return await checkVendorStripeStatusById(org.owner.id, true);
+  return await checkVendorStripeStatusByOrgId(org.id, true);
 }
 
 /**

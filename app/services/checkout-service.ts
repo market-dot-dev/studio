@@ -5,7 +5,6 @@ import { OrganizationForStripeOps } from "@/types/organization";
 import { createLocalCharge } from "./charge-service";
 import {
   getCurrentCustomerOrganization,
-  getCustomerOrganizationById,
   getOrCreateStripeCustomerIdForVendor,
   getStripePaymentMethodIdForVendor
 } from "./customer-organization-service";
@@ -69,7 +68,6 @@ export async function processPayment(
 }> {
   const customerOrg = await requireOrganization();
 
-  // @TODO: Simplify this to simply include the vendor from the Tier
   // Get and validate tier
   const tier = await getTierById(tierId);
   if (!tier) {
@@ -156,14 +154,8 @@ async function processOneTimeCharge(
     throw new Error(`Error creating charge on Stripe: ${charge.status}`);
   }
 
-  // @TODO: createLocalCharge will need to be updated to work with organizations
-  // For now, using the organization owner's ID as a temporary measure
-  const customerOrg = await getCustomerOrganizationById(customerOrgId);
-  if (!customerOrg) {
-    throw new Error("Customer organization not found");
-  }
-
-  await createLocalCharge(customerOrg.owner.id, tierId, charge.id);
+  // Create local charge record using organization ID
+  await createLocalCharge(customerOrgId, tierId, charge.id);
 
   return {
     success: true,
@@ -214,23 +206,14 @@ async function processSubscription(
 
   switch (invoice.status) {
     case "paid": {
-      // @TODO: createSubscription will need to be updated to work with organizations
-      // For now, using the organization owner's ID as a temporary measure
-      const customerOrg = await getCustomerOrganizationById(customerOrgId);
-      if (!customerOrg) {
-        throw new Error("Customer organization not found");
-      }
-      await createSubscription(customerOrg.owner.id, tierId, stripeSubscription.id);
+      // Create local subscription record using organization ID
+      await createSubscription(customerOrgId, tierId, stripeSubscription.id);
       break;
     }
     case "open":
       // For subscriptions with trials, "open" status is expected
       if (tier.trialDays && tier.trialDays > 0) {
-        const customerOrg = await getCustomerOrganizationById(customerOrgId);
-        if (!customerOrg) {
-          throw new Error("Customer organization not found");
-        }
-        await createSubscription(customerOrg.owner.id, tierId, stripeSubscription.id);
+        await createSubscription(customerOrgId, tierId, stripeSubscription.id);
       } else {
         throw new Error("Subscription requires payment. Please check payment details.");
       }

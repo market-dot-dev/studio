@@ -4,8 +4,12 @@ import { getRootUrl } from "@/lib/domain";
 import prisma from "@/lib/prisma";
 import { ErrorMessageCode, errorMessageMapping, HealthCheckResult } from "@/types/stripe";
 import { createStripeClient } from "../create-stripe-client";
-import { requireUser } from "../user-context-service";
-import UserService from "../UserService";
+import { requireOrganization } from "../user-context-service";
+import {
+  getCurrentVendorOrganization,
+  getVendorOrganizationById,
+  updateVendorStripeData
+} from "../vendor-organization-service";
 
 /**
  * Get the human-readable error message for a given error code
@@ -15,18 +19,17 @@ export async function getVendorStripeErrorMessage(code: ErrorMessageCode): Promi
 }
 
 /**
- * Get account information for a Stripe vendor
+ * Get account information for current vendor organization
  */
 export async function getVendorStripeAccountInfo() {
-  const user = await requireUser();
+  const organization = await getCurrentVendorOrganization();
   let accountInfo = null;
 
-  if (user.stripeAccountId) {
+  if (organization.stripeAccountId) {
     try {
       const stripe = await createStripeClient();
-      const account = await stripe.accounts.retrieve(user.stripeAccountId);
+      const account = await stripe.accounts.retrieve(organization.stripeAccountId);
 
-      // Extracting only relevant information
       accountInfo = {
         chargesEnabled: account.charges_enabled,
         payoutsEnabled: account.payouts_enabled,
@@ -43,40 +46,40 @@ export async function getVendorStripeAccountInfo() {
     }
   }
 
-  return { user, accountInfo };
+  return { organization, accountInfo };
 }
 
 /**
- * Check the health of a specific user's Stripe account
- * Optionally update the user record with the results
+ * Check the health of a specific organization's Stripe account
+ * Optionally update the organization record with the results
  *
- * @param userId - The ID of the user to check
- * @param updateUserRecord - Whether to update the user record with the results
+ * @param organizationId - The ID of the org to check
+ * @param updateOrgRecord - Whether to update the org record with the results
  * @returns The health check results
  */
-export async function checkVendorStripeStatusById(
-  userId: string,
-  updateUserRecord: boolean = false
+export async function checkVendorStripeStatusByOrgId(
+  organizationId: string,
+  updateOrgRecord: boolean = false
 ): Promise<HealthCheckResult> {
   const messageCodes: ErrorMessageCode[] = [];
   let canSell = true;
   let disabledReasons: string[] = [];
 
-  const user = await UserService.findUser(userId);
+  const organization = await getVendorOrganizationById(organizationId);
 
-  if (!user) {
+  if (!organization) {
     throw new Error(ErrorMessageCode.UserNotFound);
   }
 
-  if (!user.stripeAccountId) {
+  if (!organization.stripeAccountId) {
     messageCodes.push(ErrorMessageCode.StripeAccountNotConnected);
     canSell = false;
   }
 
   try {
-    if (user.stripeAccountId) {
+    if (organization.stripeAccountId) {
       const stripe = await createStripeClient();
-      const account = await stripe.accounts.retrieve(user.stripeAccountId);
+      const account = await stripe.accounts.retrieve(organization.stripeAccountId);
 
       if (!account.charges_enabled) {
         messageCodes.push(ErrorMessageCode.StripeChargeNotEnabled);
@@ -90,7 +93,7 @@ export async function checkVendorStripeStatusById(
 
       if (account.requirements?.disabled_reason) {
         messageCodes.push(ErrorMessageCode.StripeAccountDisabled);
-        disabledReasons = Array(account.requirements.disabled_reason);
+        disabledReasons = [account.requirements.disabled_reason];
         canSell = false;
       }
     }
@@ -100,10 +103,10 @@ export async function checkVendorStripeStatusById(
     canSell = false;
   }
 
-  if (updateUserRecord) {
+  if (updateOrgRecord) {
     const reasons = JSON.stringify(messageCodes.map((code) => getVendorStripeErrorMessage(code)));
 
-    await UserService.updateUser(userId, {
+    await updateVendorStripeData(organizationId, {
       stripeAccountDisabled: !canSell,
       stripeAccountDisabledReason: reasons
     });
@@ -113,48 +116,42 @@ export async function checkVendorStripeStatusById(
 }
 
 /**
- * Check the health of the current user's Stripe account
- * Optionally update the user record with the results
- *
- * @param updateUserRecord - Whether to update the user record with the results
- * @returns The health check results
+ * Check the health of the current organization's Stripe account
+ * Optionally update the organization record with the results
  */
 export async function checkVendorStripeStatus(
-  updateUserRecord: boolean = false
+  updateOrgRecord: boolean = false
 ): Promise<HealthCheckResult> {
-  const user = await requireUser();
-  return checkVendorStripeStatusById(user.id, updateUserRecord);
+  const organization = await requireOrganization();
+  return checkVendorStripeStatusByOrgId(organization.id, updateOrgRecord);
 }
 
 /**
- * Check if a user has a connected Stripe account
+ * Check if current organization has a connected Stripe account
  */
 export async function hasVendorStripeAccount(): Promise<boolean> {
-  const user = await requireUser();
-  return !!user.stripeAccountId;
+  const organization = await getCurrentVendorOrganization();
+  return !!organization.stripeAccountId;
 }
 
 /**
  * Generate a CSRF token to protect against CSRF attacks during Stripe OAuth
  * @private
  */
-async function generateVendorStripeOAuthToken(userId: string): Promise<string> {
-  return `${userId}-${Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}`;
+async function generateVendorStripeOAuthToken(organizationId: string): Promise<string> {
+  return `${organizationId}-${Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15)}`;
 }
 
 /**
- * Get OAuth link for Stripe Connect
+ * Get OAuth link for Stripe Connect for current organization
  */
-export async function getVendorStripeConnectURL(userId: string): Promise<string> {
-  const user = await UserService.findUser(userId);
-  if (!user) {
-    throw new Error("User not found");
-  }
+export async function getVendorStripeConnectURL(): Promise<string> {
+  const organization = await getCurrentVendorOrganization();
 
-  const state = user.stripeCSRF || (await generateVendorStripeOAuthToken(userId));
+  const state = organization.stripeCSRF || (await generateVendorStripeOAuthToken(organization.id));
 
-  if (!user.stripeCSRF) {
-    await UserService.updateUser(userId, { stripeCSRF: state });
+  if (!organization.stripeCSRF) {
+    await updateVendorStripeData(organization.id, { stripeCSRF: state });
   }
 
   const redirectUri = getRootUrl("app", "/settings/payment/callback");
@@ -168,9 +165,11 @@ export async function getVendorStripeConnectURL(userId: string): Promise<string>
  */
 export async function processVendorStripeConnectCallback(code: string, state: string) {
   // Verify the state parameter to prevent CSRF attacks
-  const user = await prisma.user.findUnique({ where: { stripeCSRF: state } });
+  const organization = await prisma.organization.findUnique({
+    where: { stripeCSRF: state }
+  });
 
-  if (!user) {
+  if (!organization) {
     throw new Error("Invalid state parameter");
   }
 
@@ -181,7 +180,8 @@ export async function processVendorStripeConnectCallback(code: string, state: st
   });
 
   const connectedAccountId = response.stripe_user_id;
-  await UserService.updateUser(user.id, {
+
+  await updateVendorStripeData(organization.id, {
     stripeAccountId: connectedAccountId,
     stripeCSRF: null
   });
@@ -190,17 +190,16 @@ export async function processVendorStripeConnectCallback(code: string, state: st
 }
 
 /**
- * Disconnect a vendor's Stripe account
+ * Disconnect current organization's Stripe account
  */
-export async function disconnectVendorStripeAccount(userId: string): Promise<void> {
-  const user = await UserService.findUser(userId);
-  if (!user) {
-    throw new Error("User not found");
+export async function disconnectVendorStripeAccount(): Promise<void> {
+  const organization = await getCurrentVendorOrganization();
+
+  if (!organization.stripeAccountId) {
+    throw new Error("Organization does not have a connected Stripe account");
   }
 
-  if (!user.stripeAccountId) {
-    throw new Error("User does not have a connected Stripe account");
-  }
-
-  await UserService.updateUser(userId, { stripeAccountId: null });
+  await updateVendorStripeData(organization.id, {
+    stripeAccountId: null
+  });
 }
