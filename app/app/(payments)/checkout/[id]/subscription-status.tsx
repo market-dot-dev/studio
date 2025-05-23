@@ -1,48 +1,62 @@
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
 import { getRootUrl } from "@/lib/domain";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { cn, formatDate, formatSubscriptionExpiryDate } from "@/lib/utils";
+import { CircleCheck, Clock } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
   subscriptionId: string;
   tierName: string;
-  isActive: boolean;
   expiryDate?: Date | null;
 }
 
-export function SubscriptionStatus({ subscriptionId, tierName, isActive, expiryDate }: Props) {
+export function SubscriptionStatusCard({ subscriptionId, tierName, expiryDate }: Props) {
   // const subUrl = getRootUrl("app", `/c/subscriptions/${subscriptionId}`); // @NOTE: This page doesn't exist yet
   const subUrl = getRootUrl("app", "/c/");
+  const isExpiring = !!expiryDate;
+
+  const eyebrowText = isExpiring ? formatSubscriptionExpiryDate(expiryDate) : "Subscribed";
+  const eyebrowColor = isExpiring ? "text-warning" : "text-success";
+  const eyebrowIconFill = isExpiring ? "fill-warning" : "fill-success";
+  const EyebrowIconComponent = isExpiring ? Clock : CircleCheck;
 
   return (
-    <Card className="mx-auto flex w-full flex-col gap-4 p-6 md:max-w-xl lg:max-w-md xl:max-w-lg">
-      <div className="flex items-start gap-4">
-        {/* @TODO: text-success and text-warning instead, once available. */}
-        {isActive ? (
-          <CheckCircle className="size-6 shrink-0 text-green-500" />
-        ) : (
-          <AlertCircle className="size-6 shrink-0 text-amber-500" />
-        )}
-        <div>
-          <h3 className="text-lg font-medium text-stone-800">
-            {isActive ? "Active Subscription" : "Subscription Ending Soon"}
-          </h3>
-          <p className="mt-1 text-sm text-stone-600">
-            {isActive
-              ? `You currently have an active subscription to ${tierName}.`
-              : `Your subscription to ${tierName} has been cancelled but remains active until ${expiryDate?.toLocaleDateString()}.`}
-          </p>
-        </div>
+    <Card className="mx-auto flex w-full flex-col md:max-w-xl lg:max-w-md xl:max-w-lg">
+      <div className="-ml-0.5 mb-4 flex items-center gap-2 px-5 pt-4">
+        <EyebrowIconComponent size={18} className={cn("shrink-0 stroke-white", eyebrowIconFill)} />
+        <p className={cn("font-bold text-sm tracking-tightish", eyebrowColor)}>{eyebrowText}</p>
       </div>
-
-      <div className="flex justify-end">
-        <Link href={subUrl} passHref>
-          <Button variant="outline" size="sm">
-            Manage Subscription
-          </Button>
-        </Link>
+      <div className="mb-6 flex flex-col gap-1 px-5">
+        <h3 className="text-lg font-bold text-foreground">
+          {isExpiring ? `You've Cancelled Your Subscription` : "You're Already Subscribed"}
+        </h3>
+        <p className="text-sm text-stone-500">
+          {isExpiring ? (
+            <>
+              Your subscription to <span className="font-semibold text-foreground">{tierName}</span>{" "}
+              will be active until{" "}
+              <span className="font-semibold text-foreground">{formatDate(expiryDate)}</span>.
+            </>
+          ) : (
+            <>
+              You currently have an active subscription to{" "}
+              <span className="font-semibold text-foreground">{tierName}</span>.
+            </>
+          )}
+        </p>
       </div>
+      <Separator />
+      <Link href={subUrl} passHref>
+        <Button
+          size="lg"
+          variant="outline"
+          className="w-full rounded-b-md rounded-t-none shadow-none"
+        >
+          Manage Subscription
+        </Button>
+      </Link>
     </Card>
   );
 }
