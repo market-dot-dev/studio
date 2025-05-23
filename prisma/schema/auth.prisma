@@ -1,19 +1,18 @@
 model User {
-  id             String    @id @default(cuid())
-  name           String?
-  username       String?
-  gh_id          Int?
-  gh_username    String?   @unique
-  email          String?   @unique
-  emailVerified  DateTime?
-  image          String?
-  roleId         String    @default("customer") // @DEPRECATED: Pending removal.
-  createdAt      DateTime  @default(now())
-  updatedAt      DateTime  @updatedAt
-  accounts       Account[]
-  sessions       Session[]
-  onboarding     String?
-  marketExpertId String? /// @DEPRECATED. Should be fetched from Organization.
+  id            String    @id @default(cuid())
+  name          String?
+  username      String?
+  gh_id         Int?
+  gh_username   String?   @unique
+  email         String?   @unique
+  emailVerified DateTime?
+  image         String?
+  roleId        String    @default("customer") // @DEPRECATED: Pending removal.
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  accounts      Account[]
+  sessions      Session[]
+  onboarding    String?
 
   // Organization relationships
   organizations         OrganizationMember[]

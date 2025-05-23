@@ -82,7 +82,7 @@ const createOrganizations = async (users: User[]) => {
         },
         stripeCustomerIds: {},
         stripePaymentMethodIds: {},
-        marketExpertId: user.marketExpertId
+        marketExpertId: "some-id-here"
       }
     });
     createdOrganizations.push(organization);

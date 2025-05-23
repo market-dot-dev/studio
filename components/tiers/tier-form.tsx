@@ -324,7 +324,7 @@ export default function TierForm({ tier: tierObj, contracts, org }: TierFormProp
                     Channels
                   </Label>
                   <ChannelsSelectionInput
-                    userIsMarketExpert={!!org.marketExpertId}
+                    orgIsMarketExpert={!!org.marketExpertId}
                     selectedChannels={tier.channels}
                     idPrefix="mobile-"
                     handleInputChange={(channel) => {
@@ -560,7 +560,7 @@ export default function TierForm({ tier: tierObj, contracts, org }: TierFormProp
               Channels
             </Label>
             <ChannelsSelectionInput
-              userIsMarketExpert={!!org.marketExpertId}
+              orgIsMarketExpert={!!org.marketExpertId}
               selectedChannels={tier.channels}
               handleInputChange={(channel) => {
                 let channels: Channel[] = tier.channels;
