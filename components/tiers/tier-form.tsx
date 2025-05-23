@@ -178,26 +178,28 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                   <MoreVertical />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-60">
-                <TierDuplicateMenuItem tierId={tier.id as string} />
-                <TierDeleteMenuItem
-                  tierId={tier.id as string}
-                  canDelete={
-                    (tier._count?.Charge || 0) === 0 && (tier._count?.subscriptions || 0) === 0
-                  }
-                  onConfirm={() => setIsDeleting(true)}
-                  onSuccess={() => {
-                    setIsDeleting(false);
-                    toast.success(`"${tier.name}" deleted`);
-                    router.push("/tiers");
-                  }}
-                  onError={(error: Error) => {
-                    setIsDeleting(false);
-                    toast.error(`Failed to delete package: ${error.message}`);
-                    console.error("Error deleting tier:", error);
-                  }}
-                />
-                <div className="-mx-2 -mb-2 mt-1 flex items-start gap-2.5 bg-stone-50 py-3 pl-[17px] pr-4 text-xs text-muted-foreground">
+              <DropdownMenuContent align="end" className="w-60 p-0">
+                <div className="p-2">
+                  <TierDuplicateMenuItem tierId={tier.id as string} />
+                  <TierDeleteMenuItem
+                    tierId={tier.id as string}
+                    canDelete={
+                      (tier._count?.Charge || 0) === 0 && (tier._count?.subscriptions || 0) === 0
+                    }
+                    onConfirm={() => setIsDeleting(true)}
+                    onSuccess={() => {
+                      setIsDeleting(false);
+                      toast.success(`"${tier.name}" deleted`);
+                      router.push("/tiers");
+                    }}
+                    onError={(error: Error) => {
+                      setIsDeleting(false);
+                      toast.error(`Failed to delete package: ${error.message}`);
+                      console.error("Error deleting tier:", error);
+                    }}
+                  />
+                </div>
+                <div className="flex items-start gap-[11px] bg-stone-50 py-3 pl-[17px] pr-4 text-xs text-muted-foreground">
                   {(tier._count?.Charge || 0) === 0 && (tier._count?.subscriptions || 0) === 0 ? (
                     <>
                       <Info size={14} strokeWidth={2.25} className="my-px shrink-0" />
