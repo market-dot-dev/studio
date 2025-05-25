@@ -174,12 +174,7 @@ export async function createSite(organizationId: string, subdomain?: string, log
             title: homepageTitle,
             slug: "index",
             content: homepageTemplate,
-            draft: false,
-            organization: {
-              connect: {
-                id: organizationId
-              }
-            }
+            draft: false
           }
         ]
       }
