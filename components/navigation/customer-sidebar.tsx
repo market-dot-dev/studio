@@ -19,7 +19,7 @@ export function CustomerSidebar() {
         },
         {
           title: "Settings",
-          url: "/settings",
+          url: "/c/settings",
           icon: <Settings />,
           isActive: urlSegments[0] === "settings"
         }
