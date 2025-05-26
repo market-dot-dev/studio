@@ -7,7 +7,9 @@ const useCurrentSession = () => {
   const currentUser = data?.user as SessionUser;
 
   const isSignedIn = () => status === "authenticated";
-  const isAdmin = () => isSignedIn() && currentUser?.currentUserRole === OrganizationRole.ADMIN;
+  const isAdmin = () =>
+    (isSignedIn() && currentUser?.currentUserRole === OrganizationRole.ADMIN) ||
+    currentUser?.currentUserRole === OrganizationRole.OWNER;
 
   const refreshSession = async () => {
     console.log("Refreshing session...");
