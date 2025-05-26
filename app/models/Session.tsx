@@ -1,4 +1,4 @@
-import { User } from "@/app/generated/prisma";
+import { OrganizationRole, OrganizationType, User } from "@/app/generated/prisma";
 
 export type SessionUser = {
   id: string;
@@ -8,9 +8,11 @@ export type SessionUser = {
   email?: string;
   image?: string;
   onboarding?: string;
+
+  // New organization context
   currentOrgId?: string;
-  // @TODO: Pending migration to Organization
-  roleId: string;
+  currentOrgType?: OrganizationType;
+  currentUserRole?: OrganizationRole;
 };
 
 export type Session = {
@@ -18,7 +20,11 @@ export type Session = {
   expires: string;
 } | null;
 
-export const createSessionUser = (user: User): SessionUser => {
+export const createSessionUser = (
+  user: User,
+  currentOrgType?: OrganizationType,
+  currentUserRole?: OrganizationRole
+): SessionUser => {
   return {
     id: user.id,
     name: user.name || undefined,
@@ -28,9 +34,8 @@ export const createSessionUser = (user: User): SessionUser => {
     onboarding: user.onboarding || undefined,
     image: user.image || undefined,
     currentOrgId: user.currentOrganizationId || undefined,
-
-    // @TODO: Pending migration to Organization
-    roleId: user.roleId || "anonymous"
+    currentOrgType: currentOrgType,
+    currentUserRole: currentUserRole
   };
 };
 

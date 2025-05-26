@@ -1,65 +1,144 @@
 "use server";
 
-export type Role = "anonymous" | "customer" | "maintainer" | "admin";
+import { OrganizationRole, OrganizationType } from "@/app/generated/prisma";
 
-class RoleService {
-  static anonymousPaths = [
-    /^\/$/,
-    /^\/alpha$/,
-    /^\/embed\//,
-    /^\/api\/og\//,
-    /^\/api\/users\/verify/,
-    /^\/api\/tiers\//,
-    /^\/terms/,
-    /^\/privacy/,
-    /^\/home$/,
-    /^\/design/,
-    /^\/alpha\/login$/,
-    /^\/login$/,
-    /^\/legal/,
-    /^\/customer-login$/,
-    /^\/login\/local-auth$/,
-    /\/checkout\/[A-Za-z0-9]+/,
-    /\/c\/contracts\/[A-Za-z0-9]+/, // Contracts
+/**
+ * Authentication context for the current user
+ */
+export type AuthContext = {
+  isAuthenticated: boolean;
+  organizationType?: OrganizationType;
+  userRole?: OrganizationRole;
+};
 
-    // These allowed paths redirect to explore.market.dev
-    /^\/ecosystems(\/|$)/,
-    /^\/experts(\/|$)/,
-    /^\/projects(\/|$)/,
-    /^\/events(\/|$)/,
-    /^\/organizations(\/|$)/,
-    /^\/trending(\/|$)/,
+/**
+ * Paths that are publicly accessible without authentication
+ */
+const publicPaths = [
+  /^\/$/,
+  /^\/alpha$/,
+  /^\/embed\//,
+  /^\/api\/og\//,
+  /^\/api\/users\/verify/,
+  /^\/api\/tiers\//,
+  /^\/terms/,
+  /^\/privacy/,
+  /^\/home$/,
+  /^\/design/,
+  /^\/alpha\/login$/,
+  /^\/login$/,
+  /^\/legal/,
+  /^\/customer-login$/,
+  /^\/login\/local-auth$/,
+  /\/checkout\/[A-Za-z0-9]+/,
+  /\/c\/contracts\/[A-Za-z0-9]+/, // Public contract views
 
-    // Allow all maintainer site pages
-    /^\/maintainer-site\//
-  ];
+  // Explore redirects
+  /^\/ecosystems(\/|$)/,
+  /^\/experts(\/|$)/,
+  /^\/projects(\/|$)/,
+  /^\/events(\/|$)/,
+  /^\/organizations(\/|$)/,
+  /^\/trending(\/|$)/,
 
-  // @TODO: These should be consolidated better
-  static maintainerOnlyPaths = [/^\/maintainer(\/|$)/];
+  // Vendor public sites
+  /^\/maintainer-site\//,
 
-  static prohibitedPathSpecs: Record<Role, RegExp[]> = {
-    anonymous: [],
-    customer: RoleService.maintainerOnlyPaths,
-    maintainer: [],
-    admin: []
-  };
+  // Auth flows
+  /^\/app\/customer-login$/,
+  /^\/app\/login$/,
+  /^\/app\/login\/error$/,
+  /^\/app\/login\/local-auth$/
+];
 
-  static isPathBlockedForRole(path: string, blockedPaths: RegExp[]): boolean {
-    return blockedPaths.some((regex) => regex.test(path));
-  }
-
-  static async canViewPath(path: string, roleId: Role = "anonymous") {
-    if (roleId === "anonymous") {
-      const result = RoleService.anonymousPaths.some((regex) => regex.test(path));
-      // console.debug("==== canViewPath anonymous", path, result ? 'allowed' : 'blocked');
-      return result;
-    } else {
-      const blockedPaths = RoleService.prohibitedPathSpecs[roleId] || [];
-      const result = !RoleService.isPathBlockedForRole(path, blockedPaths);
-      // console.debug(`==== canViewPath ${roleId}`, path, result, result ? 'allowed' : 'blocked');
-      return result;
-    }
-  }
+/**
+ * Check if path is publicly accessible
+ */
+export async function isPublicPath(path: string): Promise<boolean> {
+  return publicPaths.some((regex) => regex.test(path));
 }
 
-export default RoleService;
+/**
+ * Check if user can view a specific path
+ */
+export async function canViewPath(
+  path: string,
+  authContext: AuthContext,
+  subdomain?: string
+): Promise<boolean> {
+  // Public paths are always accessible regardless of subdomain
+  if (await isPublicPath(path)) {
+    return true;
+  }
+
+  // Must be authenticated for all other paths
+  if (!authContext.isAuthenticated) {
+    return false;
+  }
+
+  // If we're on the app subdomain, apply org-specific rules
+  if (subdomain === "app") {
+    // Customer paths (/c and /c/*) - both CUSTOMER and VENDOR orgs can access
+    if (path === "/c" || path.startsWith("/c/")) {
+      return (
+        authContext.organizationType === OrganizationType.CUSTOMER ||
+        authContext.organizationType === OrganizationType.VENDOR
+      );
+    }
+
+    // Payment flows - any authenticated user can access
+    if (path.startsWith("/checkout/") || path === "/success") {
+      return true;
+    }
+
+    // All other app subdomain paths require VENDOR org
+    return authContext.organizationType === OrganizationType.VENDOR;
+  }
+
+  // For all other subdomains, authenticated users can access
+  return true;
+}
+
+/**
+ * Helper to create AuthContext from session data
+ */
+export async function createAuthContext(
+  isAuthenticated: boolean,
+  organizationType?: OrganizationType,
+  userRole?: OrganizationRole
+): Promise<AuthContext> {
+  return {
+    isAuthenticated,
+    organizationType,
+    userRole
+  };
+}
+
+/**
+ * Check if user has vendor permissions (for UI/feature gating)
+ */
+export async function hasVendorAccess(authContext: AuthContext): Promise<boolean> {
+  return authContext.isAuthenticated && authContext.organizationType === OrganizationType.VENDOR;
+}
+
+/**
+ * Check if user has customer permissions (for UI/feature gating)
+ */
+export async function hasCustomerAccess(authContext: AuthContext): Promise<boolean> {
+  return (
+    authContext.isAuthenticated &&
+    (authContext.organizationType === OrganizationType.CUSTOMER ||
+      authContext.organizationType === OrganizationType.VENDOR)
+  );
+}
+
+/**
+ * Check if user has admin permissions within their organization
+ */
+export async function hasOrgAdminAccess(authContext: AuthContext): Promise<boolean> {
+  return (
+    authContext.isAuthenticated &&
+    (authContext.userRole === OrganizationRole.OWNER ||
+      authContext.userRole === OrganizationRole.ADMIN)
+  );
+}

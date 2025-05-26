@@ -1,6 +1,6 @@
 "use server";
 
-import { OrganizationType, User } from "@/app/generated/prisma";
+import { OrganizationRole, OrganizationType, User } from "@/app/generated/prisma";
 import { businessDescription, businessName } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { Account, User as NaUser } from "next-auth";
@@ -31,6 +31,7 @@ class AuthService {
     const newToken = { ...token };
     let userData: User | undefined | null = undefined;
 
+    // Only do DB queries on specific triggers, not every request
     if (trigger === "update") {
       if (sessionUser?.id) {
         userData = await UserService.findUser(sessionUser.id);
@@ -41,7 +42,44 @@ class AuthService {
       userData = await AuthService.onCreateUser(account, user || sessionUser);
     }
 
-    newToken.user = userData ? createSessionUser(userData) : token.user;
+    // If we have fresh user data, fetch org context
+    if (userData) {
+      let currentOrgType: OrganizationType | undefined = undefined;
+      let currentUserRole: OrganizationRole | undefined = undefined;
+
+      if (userData.currentOrganizationId) {
+        const orgMembership = await prisma.organizationMember.findUnique({
+          where: {
+            organizationId_userId: {
+              organizationId: userData.currentOrganizationId,
+              userId: userData.id
+            }
+          },
+          include: {
+            organization: {
+              select: { type: true }
+            }
+          }
+        });
+
+        if (orgMembership) {
+          currentOrgType = orgMembership.organization.type;
+          currentUserRole = orgMembership.role;
+        } else {
+          // Organization membership not found - clear the currentOrganizationId
+          await prisma.user.update({
+            where: { id: userData.id },
+            data: { currentOrganizationId: null }
+          });
+          userData.currentOrganizationId = null;
+        }
+      }
+
+      newToken.user = createSessionUser(userData, currentOrgType, currentUserRole);
+    } else {
+      // No fresh user data, keep existing token user data
+      newToken.user = token.user;
+    }
 
     return newToken;
   }
