@@ -13,7 +13,7 @@ export function CustomerSidebar() {
       items: [
         {
           title: "Purchases",
-          url: "/",
+          url: "/c",
           icon: <Banknote />,
           isActive: urlSegments.length === 0
         },

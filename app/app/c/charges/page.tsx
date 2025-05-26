@@ -35,7 +35,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
         </p>
         <p>{charge.tierVersionId}</p>
         <div className="flex flex-row space-x-2">
-          <Link href={`/charges/${charge.id}`} className={buttonVariants({ variant: "default" })}>
+          <Link href={`/c/charges/${charge.id}`} className={buttonVariants({ variant: "default" })}>
             Tier Details
           </Link>
         </div>
