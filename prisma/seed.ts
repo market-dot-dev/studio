@@ -47,8 +47,7 @@ const loadUsers = async () => {
       data: {
         ...user,
         id: user.id,
-        emailVerified: new Date().toISOString(),
-        roleId: "admin" // @DEPRECATED, but still required for now
+        emailVerified: new Date().toISOString()
       }
     });
     createdUsers.push(createdUser);

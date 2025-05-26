@@ -118,7 +118,6 @@ class AuthService {
       }
     });
 
-    // FIXME
     if (!existingAccount) return user;
 
     // update refresh/access tokens
@@ -141,10 +140,17 @@ class AuthService {
   }
 
   static async onCreateUser(account: any, user: NaUser) {
+    //@NOTE: This cookie may be deprecated
     const signupName = (cookies() as unknown as UnsafeUnwrappedCookies).get("signup_name") ?? null;
     const name = (signupName?.value ?? null) as string | null;
 
-    const roleId = account.provider === "github" ? "maintainer" : "customer";
+    // Determine organization type based on provider
+    // GitHub providers and development credentials create VENDOR organizations
+    const isDevelopmentUser = user.id.startsWith("dev-");
+    const organizationType =
+      account.provider === "github" || isDevelopmentUser
+        ? OrganizationType.VENDOR
+        : OrganizationType.CUSTOMER;
 
     if (account && user) {
       await prisma.account.upsert({
@@ -181,7 +187,7 @@ class AuthService {
         name: name
           ? `${name}'s Organization`
           : `${user.name || user.email || "User"}'s Organization`,
-        type: roleId === "maintainer" ? OrganizationType.VENDOR : OrganizationType.CUSTOMER,
+        type: organizationType,
         ownerId: user.id,
         projectName: businessName,
         projectDescription: businessDescription,
@@ -197,28 +203,28 @@ class AuthService {
       }
     });
 
-    // Update the user with organization reference and clean user-specific data
+    // Update the user with organization reference
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: {
-        roleId, // @DEPRECATED but still required
         currentOrganizationId: organization.id,
         ...(name ? { name } : {})
       }
     });
 
     // Create a site for vendor organizations
-    if (roleId === "maintainer") {
+    if (organizationType === OrganizationType.VENDOR) {
       await createSite(organization.id);
     }
 
-    // Send welcome emails
-    if (roleId === "maintainer") {
+    // Send welcome emails based on organization type
+    if (organizationType === OrganizationType.VENDOR) {
       await sendWelcomeEmailToMaintainer({ ...updatedUser });
     } else {
       await sendWelcomeEmailToCustomer({ ...updatedUser });
     }
 
+    //@NOTE: This cookie may be deprecated
     if (signupName) {
       (cookies() as unknown as UnsafeUnwrappedCookies).delete("signup_name");
     }

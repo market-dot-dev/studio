@@ -7,7 +7,6 @@ model User {
   email         String?   @unique
   emailVerified DateTime?
   image         String?
-  roleId        String    @default("customer") // @DEPRECATED: Pending removal.
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   accounts      Account[]
