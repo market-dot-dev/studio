@@ -2,9 +2,10 @@
 
 import { Channel } from "@/app/generated/prisma";
 import { getRootUrl } from "@/lib/domain";
-import { getCurrentSite } from "./site-crud-service";
-import { getPublishedTiersForUser } from "./tier-service";
-import UserService, { getCurrentUser } from "./UserService";
+import { updateOrganization } from "./organization-service";
+import { getCurrentSite } from "./site/site-crud-service";
+import { getPublishedTiersForOrganization } from "./tier/tier-service";
+import { requireOrganization, requireUser } from "./user-context-service";
 
 const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;
 const API_KEY = process.env.MARKET_DEV_API_KEY;
@@ -36,18 +37,14 @@ type ServiceForSaleOnMarketDevParams = Omit<
 >;
 
 /**
- * Validates the current user as a market expert and updates their profile if successful
+ * Validates the current organization as a market expert and updates the organization if successful
  * @returns A boolean indicating if the validation was successful
  */
 export async function validateMarketExpert(): Promise<boolean> {
   try {
-    const user = await getCurrentUser();
-    if (!user) {
-      return false;
-    }
-
-    // If user is already an expert, return true immediately
-    if (user.marketExpertId) {
+    const organization = await requireOrganization();
+    // If organization is already a market expert, return true immediately
+    if (organization.marketExpertId) {
       return true;
     }
 
@@ -63,8 +60,8 @@ export async function validateMarketExpert(): Promise<boolean> {
       return false;
     }
 
-    // Update user with expert ID
-    await UserService.updateUser(user.id, {
+    // Update organization with expert ID
+    await updateOrganization(organization.id, {
       marketExpertId: expert.id.toString()
     });
 
@@ -76,15 +73,12 @@ export async function validateMarketExpert(): Promise<boolean> {
 }
 
 /**
- * Checks if the current user is already a market expert in the db
- * @returns A boolean indicating if the user is a market expert
+ * Checks if the current organization is already a market expert
+ * @returns A boolean indicating if the organization is a market expert
  */
-export async function userIsMarketExpert(): Promise<boolean> {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("User not found");
-  }
-  return !!user.marketExpertId;
+export async function organizationIsMarketExpert(): Promise<boolean> {
+  const organization = await requireOrganization();
+  return !!organization.marketExpertId;
 }
 
 /**
@@ -92,10 +86,8 @@ export async function userIsMarketExpert(): Promise<boolean> {
  * This is an internal function used by validateMarketExpert
  */
 export async function validateAccount() {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("User not found");
-  }
+  const user = await requireUser();
+  const organization = await requireOrganization();
 
   if (!user.gh_id) {
     throw new Error("User GitHub ID doesn't exist");
@@ -108,7 +100,7 @@ export async function validateAccount() {
       Authorization: `Bearer ${API_KEY}`
     },
     body: JSON.stringify({
-      store_id: user.id,
+      store_id: organization.id, // Use organization ID instead of user ID
       github_id: user.gh_id
     })
   });
@@ -117,27 +109,25 @@ export async function validateAccount() {
 }
 
 /**
- * Update services for sale on market.dev
+ * Update services for sale on market.dev for current organization
  */
 export async function updateServicesForSale() {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("User not found");
+  const organization = await requireOrganization();
+
+  if (!organization.marketExpertId) {
+    throw new Error("Organization is not an expert on Market.dev");
   }
 
-  if (!user.marketExpertId) {
-    throw new Error("User is not an expert on Market.dev");
-  }
   const site = await getCurrentSite();
   if (!site) {
-    throw new Error("User must have a site to sync with market");
+    throw new Error("Organization must have a site to sync with market");
   }
 
   if (!site.subdomain) {
-    throw new Error("User must have a subdomain to sync with market");
+    throw new Error("Organization must have a subdomain to sync with market");
   }
 
-  const tiers = await getPublishedTiersForUser(user.id, undefined, Channel.market);
+  const tiers = await getPublishedTiersForOrganization(organization.id, undefined, Channel.market);
   const serviceForSaleOnMarketDevParams: ServiceForSaleOnMarketDevParams[] = tiers.map((tier) => {
     return {
       store_package_id: tier.id,
@@ -149,7 +139,7 @@ export async function updateServicesForSale() {
   });
 
   const response = await fetch(
-    `${API_ENDPOINT}store/experts/${user.marketExpertId}/sync_services`,
+    `${API_ENDPOINT}store/experts/${organization.marketExpertId}/sync_services`,
     {
       method: "POST",
       headers: {
@@ -157,7 +147,7 @@ export async function updateServicesForSale() {
         Authorization: `Bearer ${API_KEY}`
       },
       body: JSON.stringify({
-        gitwallet_id: user.id,
+        gitwallet_id: organization.id, // Use organization ID instead of user ID
         site_url: getRootUrl(site.subdomain!),
         services: serviceForSaleOnMarketDevParams
       })

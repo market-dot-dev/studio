@@ -25,24 +25,21 @@ import { Textarea } from "@/components/ui/textarea";
 import Spinner from "../ui/spinner";
 import { Switch } from "../ui/switch";
 
+import { Channel, Contract, TierVersion } from "@/app/generated/prisma";
+import Tier, { newTier } from "@/app/models/Tier";
+import { hasVendorStripeAccount } from "@/app/services/stripe/stripe-vendor-service";
+import { getSubscriberCount } from "@/app/services/subscription-service";
+import { createTier, TierWithCount, updateTier } from "@/app/services/tier/tier-service";
+import { getVersionsByTierId } from "@/app/services/tier/tier-version-service";
+import type { MinimalOrganization } from "@/types/organization";
+import { toast } from "sonner";
 import PageHeader from "../common/page-header";
 import ChannelsSelectionInput from "./channels-selection-input";
-import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
-import TierCard from "./tier-card";
-import TierDeleteButton from "./tier-delete-button";
-
-import Tier, { newTier } from "@/app/models/Tier";
-import { getSubscriberCount } from "@/app/services/subscription-service";
-import { createTier, TierWithCount, updateTier } from "@/app/services/tier-service";
-import { toast } from "sonner";
-
-import useCurrentSession from "@/app/hooks/use-current-session";
-
-import { Channel, Contract, TierVersion, User } from "@/app/generated/prisma";
-import { hasVendorStripeAccount } from "@/app/services/stripe-vendor-service";
-import { getVersionsByTierId } from "@/app/services/tier-version-service";
+import { CheckoutTypeSelectionInput } from "./checkout-type-selection-input";
 import DuplicateTierButton from "./duplicate-tier-button";
 import StandardCheckoutForm from "./standard-checkout-form";
+import TierCard from "./tier-card";
+import TierDeleteButton from "./tier-delete-button";
 import TierLinkCopier from "./tier-link-copier";
 import TierVersionNotice from "./tier-version-notice";
 import TierVersionRow from "./tier-version-row";
@@ -50,10 +47,10 @@ import TierVersionRow from "./tier-version-row";
 interface TierFormProps {
   tier?: Partial<Tier>;
   contracts: Contract[];
-  user: User;
+  org: MinimalOrganization;
 }
 
-export default function TierForm({ tier: tierObj, contracts, user }: TierFormProps) {
+export default function TierForm({ tier: tierObj, contracts, org }: TierFormProps) {
   const router = useRouter();
   const [tier, setTier] = useState<TierWithCount>((tierObj ? tierObj : newTier()) as Tier);
 
@@ -76,8 +73,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
 
   const [errors, setErrors] = useState<any>({});
   const [isSaving, setIsSaving] = useState(false);
-
-  const { isAdmin } = useCurrentSession();
 
   const handleInputChange = (name: string, value: number | string | null) => {
     const updatedTier = { ...tier, [name]: value } as Tier;
@@ -307,7 +302,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                     Checkout Type
                   </Label>
                   <CheckoutTypeSelectionInput
-                    user={user}
+                    checkoutEnabled={!!org.stripeAccountId}
                     tier={tier}
                     handleInputChange={handleInputChange}
                     idPrefix="mobile-"
@@ -329,7 +324,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                     Channels
                   </Label>
                   <ChannelsSelectionInput
-                    userIsMarketExpert={!!user.marketExpertId}
+                    orgIsMarketExpert={!!org.marketExpertId}
                     selectedChannels={tier.channels}
                     idPrefix="mobile-"
                     handleInputChange={(channel) => {
@@ -416,6 +411,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                 {!newRecord && (
                   <div className="mt-6 flex flex-col items-center gap-4 rounded border border-stone-200 bg-stone-100 p-4 text-stone-500">
                     <strong className="text-stone-800">Admin Options</strong>
+                    {/* @TODO (is this admin view?) */}
                     <div className="flex flex-col gap-2">
                       <div className="flex justify-center gap-2">
                         <DuplicateTierButton tierId={tier.id} />
@@ -439,10 +435,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                         </p>
                       )}
                     </div>
-                    <Separator />
-                    <Button variant="outline" className="w-full" asChild>
-                      <Link href={`/admin/tiers/${tier.id}`}>Go to Admin Panel</Link>
-                    </Button>
                   </div>
                 )}
               </div>
@@ -547,7 +539,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
               Checkout Type
             </Label>
             <CheckoutTypeSelectionInput
-              user={user}
+              checkoutEnabled={!!org.stripeAccountId}
               tier={tier}
               handleInputChange={handleInputChange}
               idPrefix=""
@@ -568,7 +560,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
               Channels
             </Label>
             <ChannelsSelectionInput
-              userIsMarketExpert={!!user.marketExpertId}
+              orgIsMarketExpert={!!org.marketExpertId}
               selectedChannels={tier.channels}
               handleInputChange={(channel) => {
                 let channels: Channel[] = tier.channels;
@@ -680,10 +672,6 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                   </p>
                 )}
               </div>
-              <Separator />
-              <Button variant="outline" className="w-full" asChild>
-                <Link href={`/admin/tiers/${tier.id}`}>Go to Admin Panel</Link>
-              </Button>
             </div>
           )}
         </div>

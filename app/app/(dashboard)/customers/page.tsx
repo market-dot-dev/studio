@@ -1,8 +1,8 @@
-import { getCurrentVendorCustomers } from "@/app/services/customer-service";
+import { getCurrentVendorCustomers } from "@/app/services/vendor-organization-service";
 import PageHeader from "@/components/common/page-header";
 import { CustomersTable } from "./customer-table";
 
-const CustomersPage = async () => {
+export default async function CustomersPage() {
   const customers = await getCurrentVendorCustomers();
   return (
     <div className="flex max-w-screen-xl flex-col space-y-10">
@@ -10,6 +10,4 @@ const CustomersPage = async () => {
       <CustomersTable customers={customers} />
     </div>
   );
-};
-
-export default CustomersPage;
+}

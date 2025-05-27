@@ -1,5 +1,5 @@
 model Lead {
-  id                    Int           @id @default(autoincrement())
+  id                    Int          @id @default(autoincrement())
   host                  String
   login                 String
   name                  String
@@ -20,12 +20,10 @@ model Lead {
   followers             Int?
   following             Int?
   maintainers           Json
-  createdAt             DateTime      @default(now())
-  updatedAt             DateTime      @updatedAt
-  userId                String /// @DEPRECATED. Should be converted to Organization.
-  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade) /// @DEPRECATED. Should be converted to Organization.
-  organizationId        String?
-  organization          Organization? @relation(fields: [organizationId], references: [id])
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  organizationId        String
+  organization          Organization @relation(fields: [organizationId], references: [id])
 
   @@unique([host, uuid], name: "host_uuid_unique")
 }
@@ -38,12 +36,10 @@ model Prospect {
   companyName    String?
   context        String?
   tiers          Tier[]
-  createdAt      DateTime      @default(now())
-  updatedAt      DateTime      @updatedAt
-  userId         String /// @DEPRECATED. Should be converted to Organization.
-  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade) /// @DEPRECATED. Should be converted to Organization.
-  organizationId String?
-  organization   Organization? @relation(name: "prospects", fields: [organizationId], references: [id])
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organizationId String
+  organization   Organization @relation(name: "prospects", fields: [organizationId], references: [id])
 
-  @@unique([email, userId])
+  @@unique([email, organizationId])
 }

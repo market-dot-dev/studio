@@ -1,7 +1,7 @@
 "use client";
 
-import type { SubscriptionCadence } from "@/app/services/stripe-price-service";
-import type { CheckoutType, TierWithCount } from "@/app/services/tier-service";
+import type { SubscriptionCadence } from "@/app/services/stripe/stripe-price-service";
+import type { CheckoutType, TierWithCount } from "@/app/services/tier/tier-service";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";

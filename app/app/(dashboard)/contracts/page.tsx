@@ -1,21 +1,15 @@
 "use server";
 
-import { getContractsByCurrentMaintainer } from "@/app/services/contract-service";
+import { getContractsForCurrentOrganization } from "@/app/services/contract-service";
+import { requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
-import { getSession } from "@/lib/auth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import ContractSettings from "./contracts-index";
 
 export default async function ContractSettingsPage() {
-  const session = await getSession();
-
-  if (!session) {
-    redirect("/login");
-  }
-
-  const contracts = await getContractsByCurrentMaintainer();
+  const user = await requireUserSession();
+  const contracts = await getContractsForCurrentOrganization();
 
   return (
     <div className="max-w flex max-w-screen-xl flex-col space-y-10">
@@ -31,7 +25,7 @@ export default async function ContractSettingsPage() {
       />
 
       <div className="flex flex-col space-y-6">
-        <ContractSettings contracts={contracts} currentUser={session.user} />
+        <ContractSettings contracts={contracts} currentUser={user} />
       </div>
     </div>
   );

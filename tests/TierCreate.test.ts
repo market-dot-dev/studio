@@ -1,5 +1,5 @@
-import * as tierService from "@/app/services/tier-service";
-import { getTierById } from "@/app/services/tier-service";
+import * as tierService from "@/app/services/tier/tier-service";
+import { getTierById } from "@/app/services/tier/tier-service";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 // Mock the prisma client
 vi.mock("@/lib/prisma", () => ({

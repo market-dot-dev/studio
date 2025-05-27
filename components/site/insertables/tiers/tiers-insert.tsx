@@ -1,6 +1,6 @@
 "use client";
 
-import { getPublishedTiers } from "@/app/services/tier-service";
+import { getPublishedTiers } from "@/app/services/tier/tier-service";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {

@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import type { CustomerWithChargesSubscriptionsAndProspects } from "@/types/dashboard";
+import type { CustomerOrgWithAll } from "@/types/organization-customer";
 import { ChevronRight, Receipt, ScanSearch } from "lucide-react";
 import Link from "next/link";
 import { Sale, columns } from "./columns";
@@ -17,38 +17,45 @@ const SalesTable = ({
   customersAndProspects,
   maxInitialRows
 }: {
-  customersAndProspects: CustomerWithChargesSubscriptionsAndProspects[];
+  customersAndProspects: CustomerOrgWithAll[];
   maxInitialRows?: number;
 }) => {
   const showAll = false;
 
   // Transform data to sales array for use with our columns definition
-  const sales: Sale[] = customersAndProspects.flatMap((customer, customerIndex) => [
-    ...customer.subscriptions.map((subscription, index) => ({
-      id: `subscription-${customer.id}-${index}`,
+  const sales: Sale[] = customersAndProspects.flatMap((organization) => [
+    ...organization.subscriptions.map((subscription, index) => ({
+      id: `subscription-${organization.id}-${index}`,
       type: "subscription" as const,
-      user: customer,
+      organization: organization,
+      ownerName: organization.owner.name || "",
+      ownerEmail: organization.owner.email || "",
       tierName: subscription.tier.name,
       createdAt: subscription.createdAt,
-      userId: customer.id,
+      organizationId: organization.id,
       subscription: subscription
     })),
-    ...customer.charges.map((charge, index) => ({
-      id: `charge-${customer.id}-${index}`,
+    ...organization.charges.map((charge, index) => ({
+      id: `charge-${organization.id}-${index}`,
       type: "charge" as const,
-      user: customer,
+      organization: organization,
+      ownerName: organization.owner.name || "",
+      ownerEmail: organization.owner.email || "",
       tierName: charge.tier.name,
       createdAt: charge.createdAt,
-      userId: customer.id,
+      organizationId: organization.id,
       charge: charge
     })),
-    ...customer.prospects.map((prospect, index) => ({
-      id: `prospect-${customer.id}-${index}`,
+    ...organization.prospects.map((prospect, index) => ({
+      id: `prospect-${organization.id}-${index}`,
       type: "prospect" as const,
-      user: prospect,
+      organization: organization,
+      ownerName: organization.owner.name || "",
+      ownerEmail: organization.owner.email || "",
       tierNames: prospect.tiers.map((tier) => tier.name),
       createdAt: prospect.updatedAt,
-      userId: customer.id
+      organizationId: organization.id,
+      prospect: prospect
     }))
   ]);
 

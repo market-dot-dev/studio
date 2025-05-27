@@ -1,6 +1,6 @@
 "use client";
 
-import { destroyContract } from "@/app/services/contract-service";
+import { deleteContract } from "@/app/services/contract-service";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -34,7 +34,7 @@ const ContractDeleteButton = ({
     onConfirm();
 
     try {
-      await destroyContract(contractId);
+      await deleteContract(contractId);
       onSuccess();
     } catch (error) {
       onError(error);

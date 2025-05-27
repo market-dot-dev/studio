@@ -1,6 +1,6 @@
 "use client";
 
-import { createTemplateTier } from "@/app/services/tier-service";
+import { createTemplateTier } from "@/app/services/tier/tier-service";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,

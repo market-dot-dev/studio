@@ -42,7 +42,6 @@ model Organization {
   leads         Lead[]
   prospects     Prospect[]     @relation(name: "prospects")
   sites         Site[]
-  pages         Page[]
 
   @@index([ownerId])
 }

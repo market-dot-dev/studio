@@ -5,12 +5,12 @@ import { ShoppingBag, Store } from "lucide-react";
 export default function ChannelsSelectionInput({
   selectedChannels,
   handleInputChange,
-  userIsMarketExpert,
+  orgIsMarketExpert,
   idPrefix = ""
 }: {
   selectedChannels: Channel[];
   handleInputChange: (channel: Channel) => void;
-  userIsMarketExpert: boolean;
+  orgIsMarketExpert: boolean;
   idPrefix?: string;
 }) {
   return (
@@ -37,7 +37,7 @@ export default function ChannelsSelectionInput({
           </p>
         </div>
       </label>
-      {userIsMarketExpert && (
+      {orgIsMarketExpert && (
         <label htmlFor={`${idPrefix}channel-market`} className="block size-full">
           <div className="flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-swamp hover:shadow-border">
             <div className="flex size-full items-center justify-between">

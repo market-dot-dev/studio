@@ -1,7 +1,7 @@
 "use client";
 
 import { Media as DBMedia } from "@/app/generated/prisma";
-import { deleteMedia, listMedia, uploadMedia } from "@/app/services/media-service";
+import { deleteMedia, listMedia, uploadMedia } from "@/app/services/site/media-service";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";

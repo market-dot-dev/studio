@@ -1,4 +1,6 @@
 "use client";
-export default function SiteName({ site, page }: { site: any; page: any }) {
-  return <>{site?.user?.projectName ?? "Lorem ipsum"}</>;
+import type { InsertableComponentProps } from "..";
+
+export default function SiteName({ site, page }: InsertableComponentProps) {
+  return <>{site?.organization.projectName ?? "Lorem ipsum"}</>;
 }

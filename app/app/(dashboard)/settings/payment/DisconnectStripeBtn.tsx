@@ -1,6 +1,6 @@
 "use client";
 
-import { disconnectVendorStripeAccount } from "@/app/services/stripe-vendor-service";
+import { disconnectVendorStripeAccount } from "@/app/services/stripe/stripe-vendor-service";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,11 +16,10 @@ import { Button } from "@/components/ui/button";
 import { useEffect } from "react";
 
 interface DisconnectStripeBtnProps {
-  userId: string;
   stripeAccountId?: string;
 }
 
-export function DisconnectStripeBtn({ userId, stripeAccountId }: DisconnectStripeBtnProps) {
+export function DisconnectStripeBtn({ stripeAccountId }: DisconnectStripeBtnProps) {
   // This is to refresh the onboarding guide if it exists
   useEffect(() => {
     // Call the refreshOnboarding function if it exists
@@ -31,7 +30,7 @@ export function DisconnectStripeBtn({ userId, stripeAccountId }: DisconnectStrip
 
   const handleDisconnect = async () => {
     try {
-      await disconnectVendorStripeAccount(userId);
+      await disconnectVendorStripeAccount();
       location.reload();
     } catch (error) {
       console.error("Failed to disconnect Stripe account:", error);

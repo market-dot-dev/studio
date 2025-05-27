@@ -1,0 +1,10 @@
+objects:
+  - name: "Tarun's Organization"
+    type: "VENDOR"
+    businessType: "Software Development"
+  - name: "Max's Organization"
+    type: "VENDOR"
+    businessType: "Software Development"
+  - name: "Andrew's Organization"
+    type: "VENDOR"
+    businessType: "Software Development"

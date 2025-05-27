@@ -1,4 +1,4 @@
-import { getVendorStripeErrorMessage } from "@/app/services/stripe-vendor-service";
+import { getVendorStripeErrorMessage } from "@/app/services/stripe/stripe-vendor-service";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { ErrorMessageCode } from "@/types/stripe";

@@ -1,48 +1,22 @@
-import { getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
-
+import { getPageWithSiteById } from "@/app/services/site/page-service";
+import { requireUserSession } from "@/app/services/user-context-service";
 import FullScreenSwitcher from "@/components/site/fullscreen-switcher";
 import PageContainer from "@/components/site/page-container";
 import { getRootUrl } from "@/lib/domain";
+import { notFound } from "next/navigation";
 
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const session = await getSession();
-  if (!session) {
-    redirect("/login");
-  }
+  await requireUserSession(); // Simply to enforce authentication
 
-  const data = await prisma.page.findUnique({
-    where: {
-      id: decodeURIComponent(params.id)
-    },
-    include: {
-      site: {
-        select: {
-          id: true,
-          name: true,
-          description: true,
-          subdomain: true,
-          homepageId: true,
-          user: {
-            select: {
-              name: true,
-              image: true,
-              projectName: true,
-              projectDescription: true
-            }
-          }
-        }
-      }
-    }
-  });
+  // Get page and site data
+  const { page, site } = await getPageWithSiteById(params.id);
 
-  if (!data || data.userId !== session.user.id) {
+  if (!page || !site) {
     notFound();
   }
 
-  const siteUrl = getRootUrl(data?.site?.subdomain ?? "app");
+  const siteUrl = getRootUrl(site.subdomain ?? "app");
 
   const getRelativeTimeString = (date: Date) => {
     const now = new Date();
@@ -89,17 +63,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     });
   };
 
-  const lastUpdateDate = getRelativeTimeString(new Date(data.updatedAt));
+  const lastUpdateDate = getRelativeTimeString(new Date(page.updatedAt));
 
   return (
     <FullScreenSwitcher>
-      <PageContainer
-        site={data.site}
-        page={data}
-        siteUrl={siteUrl}
-        homepageId={data.site?.homepageId || null}
-        lastUpdateDate={lastUpdateDate}
-      />
+      <PageContainer site={site} page={page} siteUrl={siteUrl} lastUpdateDate={lastUpdateDate} />
     </FullScreenSwitcher>
   );
 }

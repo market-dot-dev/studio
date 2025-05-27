@@ -1,10 +1,10 @@
+import { getCurrentSite } from "@/app/services/site/site-crud-service";
 import PageHeader from "@/components/common/page-header";
 import { PackageEmbeddings } from "@/components/embedables/package-embeddings/package-embeddings";
 import { getRootUrl } from "@/lib/domain";
-import { getSiteMeta } from "@/lib/site/fetchers";
 
 export default async function EmbedChannel() {
-  const site = await getSiteMeta();
+  const site = await getCurrentSite();
   const rootUrl = getRootUrl(site?.subdomain ?? "app");
 
   return (

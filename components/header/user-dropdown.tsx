@@ -1,5 +1,6 @@
 "use client";
 
+import { OrganizationType } from "@/app/generated/prisma";
 import { SessionUser } from "@/app/models/Session";
 import { Button } from "@/components/ui/button";
 import {
@@ -53,7 +54,8 @@ export default function UserDropdown({ user }: { user: SessionUser }) {
           <DropdownMenuItem
             onClick={() =>
               signOut({
-                callbackUrl: user.roleId === "maintainer" ? "/login" : "/customer-login"
+                callbackUrl:
+                  user.currentOrgType === OrganizationType.VENDOR ? "/login" : "/customer-login"
               })
             }
           >

@@ -1,24 +1,21 @@
-import { User } from "@/app/generated/prisma";
-import { TierWithCount } from "@/app/services/tier-service";
+import { TierWithCount } from "@/app/services/tier/tier-service";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { CreditCard, Mail } from "lucide-react";
 
-export default function CheckoutTypeSelectionInput({
-  user,
+export function CheckoutTypeSelectionInput({
+  checkoutEnabled,
   tier,
   handleInputChange,
   idPrefix = ""
 }: {
-  user: User;
+  checkoutEnabled: boolean;
   tier: TierWithCount;
   handleInputChange: (key: string, value: string) => void;
   idPrefix?: string;
 }) {
-  const gitwalletCheckoutEnabled = !!user.stripeAccountId;
-
   function GitWalletCheckout() {
-    const disabled = !gitwalletCheckoutEnabled;
+    const disabled = !checkoutEnabled;
 
     const InputComponent = ({ disabled = false }: { disabled?: boolean }) => (
       <label className="flex size-full transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-swamp">
@@ -39,7 +36,7 @@ export default function CheckoutTypeSelectionInput({
             </div>
             <input
               id={`${idPrefix}checkout-type-gitwallet`}
-              disabled={!gitwalletCheckoutEnabled}
+              disabled={!checkoutEnabled}
               type="radio"
               name={`${idPrefix}checkout-type`}
               value="gitwallet"

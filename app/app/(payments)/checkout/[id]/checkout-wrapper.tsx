@@ -10,7 +10,7 @@ interface CheckoutWrapperProps {
   vendor: VendorProfile;
   contract?: Contract | null;
   annual: boolean;
-  userId?: string | undefined;
+  customerOrgId?: string | undefined;
 }
 
 export async function CheckoutWrapper({
@@ -18,33 +18,36 @@ export async function CheckoutWrapper({
   vendor,
   contract,
   annual,
-  userId
+  customerOrgId
 }: CheckoutWrapperProps) {
   if (tier.checkoutType === "contact-form") {
     return <ContactFormCheckout tier={tier} />;
   }
 
-  // Skip status check if no user is logged in
-  if (!userId) {
+  // Skip status check if no customer is logged in
+  if (!customerOrgId) {
     return (
       <DirectPaymentCheckout
         tier={tier}
         vendor={vendor}
         contract={contract}
         annual={annual}
-        userId={userId}
+        customerOrgId={customerOrgId}
       />
     );
   }
 
   // Get detailed subscription status
-  const subStatus = await getSubscriptionStatus(userId, tier.id);
+  const subStatus = await getSubscriptionStatus(customerOrgId, tier.id);
 
   // For actively renewing subscriptions, just show the status view
-  if (subStatus.statusType === "active_renewing" || subStatus.statusType === "cancelled_active") {
+  if (
+    subStatus.subscription &&
+    (subStatus.statusType === "active_renewing" || subStatus.statusType === "cancelled_active")
+  ) {
     return (
       <SubscriptionStatusCard
-        subscriptionId={subStatus.subscription!.id}
+        subscriptionId={subStatus.subscription.id}
         tierName={tier.name}
         expiryDate={subStatus.expiryDate}
       />
@@ -57,7 +60,7 @@ export async function CheckoutWrapper({
       vendor={vendor}
       contract={contract}
       annual={annual}
-      userId={userId}
+      customerOrgId={customerOrgId}
     />
   );
 }

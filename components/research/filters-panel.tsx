@@ -1,9 +1,9 @@
 "use client";
 
-import { type FiltersState } from "@/app/services/LeadsService";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import countryCodes from "@/lib/constants/country-codes";
+import type { FiltersState } from "@/types/lead";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useCallback, useEffect, useState, type JSX } from "react";
 
