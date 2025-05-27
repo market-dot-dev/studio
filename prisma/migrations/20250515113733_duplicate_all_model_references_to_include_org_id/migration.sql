@@ -26,8 +26,7 @@ ADD COLUMN     "organizationId" TEXT;
 ALTER TABLE "Site" ADD COLUMN     "organizationId" TEXT;
 
 -- AlterTable
-ALTER TABLE "Subscription" ADD COLUMN     "organizationId" TEXT,
-ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL;
+ALTER TABLE "Subscription" ADD COLUMN     "organizationId" TEXT;
 
 -- AlterTable
 ALTER TABLE "Tier" ADD COLUMN     "organizationId" TEXT;

@@ -21,7 +21,7 @@ model Subscription {
   activeUntil          DateTime?
   cancelledAt          DateTime?
   createdAt            DateTime     @default(now())
-  updatedAt            DateTime     @updatedAt
+  updatedAt            DateTime     @default(now()) @updatedAt
   state                String       @default("renewing")
   priceAnnual          Boolean      @default(false)
   active               Boolean      @default(true)
