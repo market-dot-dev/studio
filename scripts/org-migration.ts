@@ -36,7 +36,7 @@ async function main() {
   console.log("Starting organization migration...");
 
   // Process users in batches to avoid memory issues with large datasets
-  const batchSize = 100;
+  const batchSize = 200;
   let skip = 0;
   let usersProcessed = 0;
   const totalUsers = await prisma.user.count();
@@ -105,79 +105,82 @@ async function main() {
 }
 
 async function processUser(user: User & { ownedOrganizations: any[] }) {
-  // Skip if user already has an organization
+  let organizationId: string;
+
   if (user.ownedOrganizations.length > 0) {
-    console.log(`User ${user.id} already has organization(s), skipping creation`);
-    return;
-  }
+    console.log(`User ${user.id} already has organization(s), using existing`);
+    organizationId = user.ownedOrganizations[0].id;
+  } else {
+    // Determine organization type based on user's role
+    let orgType: OrganizationType = OrganizationType.CUSTOMER;
+    if (user.roleId !== "customer") {
+      orgType = OrganizationType.VENDOR;
+    }
 
-  // Determine organization type based on user's role
-  let orgType: OrganizationType = OrganizationType.CUSTOMER;
-  if (user.roleId !== "customer") {
-    orgType = OrganizationType.VENDOR;
-  }
+    try {
+      // Create organization for user with business/payment fields migrated from user
+      const organization = await prisma.organization.create({
+        data: {
+          name: "Organization: " + user.name || user.username || user.email || user.id,
+          type: orgType,
 
-  try {
-    // Create organization for user with business/payment fields migrated from user
-    const organization = await prisma.organization.create({
-      data: {
-        name: "Organization: " + user.name || user.username || user.email || user.id,
-        type: orgType,
+          // Migrate business fields
+          businessLocation: user.businessLocation,
+          businessType: user.businessType,
+          company: user.company,
+          projectName: user.projectName,
+          projectDescription: user.projectDescription,
+          marketExpertId: user.marketExpertId,
 
-        // Migrate business fields
-        businessLocation: user.businessLocation,
-        businessType: user.businessType,
-        company: user.company,
-        projectName: user.projectName,
-        projectDescription: user.projectDescription,
-        marketExpertId: user.marketExpertId,
+          // Migrate Stripe fields
+          stripeCustomerIds: user.stripeCustomerIds ?? undefined, // Already a JSON field in both models
+          stripePaymentMethodIds: user.stripePaymentMethodIds ?? undefined, // Already a JSON field in both models
+          stripeAccountId: user.stripeAccountId,
+          stripeCSRF: user.stripeCSRF,
+          stripeAccountDisabled: user.stripeAccountDisabled,
+          stripeAccountDisabledReason: user.stripeAccountDisabledReason,
 
-        // Migrate Stripe fields
-        stripeCustomerIds: user.stripeCustomerIds ?? undefined, // Already a JSON field in both models
-        stripePaymentMethodIds: user.stripePaymentMethodIds ?? undefined, // Already a JSON field in both models
-        stripeAccountId: user.stripeAccountId,
-        stripeCSRF: user.stripeCSRF,
-        stripeAccountDisabled: user.stripeAccountDisabled,
-        stripeAccountDisabledReason: user.stripeAccountDisabledReason,
+          // Owner relationship
+          owner: {
+            connect: { id: user.id }
+          },
 
-        // Owner relationship
-        owner: {
-          connect: { id: user.id }
-        },
-
-        // Add user as member with OWNER role
-        members: {
-          create: {
-            userId: user.id,
-            role: OrganizationRole.OWNER
+          // Add user as member with OWNER role
+          members: {
+            create: {
+              userId: user.id,
+              role: OrganizationRole.OWNER
+            }
           }
         }
+      });
+
+      console.log(`Created organization ${organization.id} for user ${user.id}`);
+      organizationId = organization.id;
+      stats.orgsCreated++;
+
+      // Set as current organization for user only if not already set
+      if (!user.currentOrganizationId) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: {
+            currentOrganizationId: organization.id
+          }
+        });
       }
-    });
-
-    console.log(`Created organization ${organization.id} for user ${user.id}`);
-    stats.orgsCreated++;
-
-    // Set as current organization for user
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        currentOrganizationId: organization.id
-      }
-    });
-
-    // Update all related entities to include organization reference
-    await migrateUserEntities(user.id, organization.id);
-  } catch (error) {
-    const errMsg = `Error creating organization for user ${user.id}:`;
-    console.error(errMsg, error);
-    stats.errors.push({
-      userId: user.id,
-      error: error instanceof Error ? error.message : errMsg
-    });
-
-    throw error; // Re-throw to be caught by the main error handler
+    } catch (error) {
+      const errMsg = `Error creating organization for user ${user.id}:`;
+      console.error(errMsg, error);
+      stats.errors.push({
+        userId: user.id,
+        error: error instanceof Error ? error.message : errMsg
+      });
+      throw error; // Re-throw to be caught by the main error handler
+    }
   }
+
+  // Update all related entities to include organization reference
+  await migrateUserEntities(user.id, organizationId);
 }
 
 async function migrateUserEntities(userId: string, organizationId: string) {
@@ -198,56 +201,80 @@ async function migrateUserEntities(userId: string, organizationId: string) {
 
       // Migrate Tiers
       const tiersResult = await tx.tier.updateMany({
-        where: { userId },
+        where: {
+          userId,
+          organizationId: null // Only update entities without an org
+        },
         data: { organizationId }
       });
       counts.tiers = tiersResult.count;
 
       // Migrate Contracts
       const contractsResult = await tx.contract.updateMany({
-        where: { maintainerId: userId },
+        where: {
+          maintainerId: userId,
+          organizationId: null // Only update entities without an org
+        },
         data: { organizationId }
       });
       counts.contracts = contractsResult.count;
 
       // Migrate Charges
       const chargesResult = await tx.charge.updateMany({
-        where: { userId },
+        where: {
+          userId,
+          organizationId: null // Only update entities without an org
+        },
         data: { organizationId }
       });
       counts.charges = chargesResult.count;
 
       // Migrate Subscriptions
       const subscriptionsResult = await tx.subscription.updateMany({
-        where: { userId },
+        where: {
+          userId,
+          organizationId: null // Only update entities without an org
+        },
         data: { organizationId }
       });
       counts.subscriptions = subscriptionsResult.count;
 
       // Migrate Leads
       const leadsResult = await tx.lead.updateMany({
-        where: { userId },
+        where: {
+          userId,
+          organizationId: null // Only update entities without an org
+        },
         data: { organizationId }
       });
       counts.leads = leadsResult.count;
 
       // Migrate Prospects
       const prospectsResult = await tx.prospect.updateMany({
-        where: { userId },
+        where: {
+          userId,
+          organizationId: null // Only update entities without an org
+        },
         data: { organizationId }
       });
       counts.prospects = prospectsResult.count;
 
       // Migrate Sites
       const sitesResult = await tx.site.updateMany({
-        where: { userId },
+        where: {
+          userId,
+          organizationId: null // Only update entities without an org
+        },
         data: { organizationId }
       });
       counts.sites = sitesResult.count;
 
       // Migrate Pages
       const pagesResult = await tx.page.updateMany({
-        where: { userId },
+        where: {
+          userId,
+          organizationId: null // Only update entities without an org
+        },
         data: { organizationId }
       });
       counts.pages = pagesResult.count;
