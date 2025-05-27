@@ -52,13 +52,25 @@ export const formatDate = (date: Date | string): string => {
     year: "numeric",
     month: "short",
     day: "numeric",
-    timeZone: "UTC" // Ensure consistent output by using UTC
+    timeZone: "UTC"
   };
 
-  // Convert the date string to a Date object if it's not already
-  const parsedDate = typeof date === "string" ? new Date(date) : date;
+  let parsedDate: Date;
 
-  // Use 'en-US' for a consistent locale
+  if (typeof date === "string") {
+    // Handle YYYY/MM/DD format by converting to ISO UTC format
+    if (date.match(/^\d{4}\/\d{2}\/\d{2}$/)) {
+      // For example: Convert "2023/07/22" to "2023-07-22T00:00:00Z"
+      const isoDate = date.replace(/\//g, "-") + "T00:00:00Z";
+      parsedDate = new Date(isoDate);
+    } else {
+      // For other formats (like ISO strings), use as-is
+      parsedDate = new Date(date);
+    }
+  } else {
+    parsedDate = date;
+  }
+
   return parsedDate.toLocaleDateString("en-US", options);
 };
 

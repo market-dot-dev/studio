@@ -1,217 +1,64 @@
 "use server";
 
 import { createSubscription } from "@/app/services/subscription-service";
-import { getSession } from "@/lib/auth";
-import prisma from "@/lib/prisma";
-import { includeVendorProfile, type VendorProfile } from "@/types/checkout";
-import { type StripeCard } from "@/types/stripe";
-import { Contract, Tier } from "@prisma/client";
-import Stripe from "stripe";
-import Customer from "../models/Customer";
+import { OrganizationForStripeOps } from "@/types/organization";
 import { createLocalCharge } from "./charge-service";
-import { createStripeCharge } from "./stripe-payment-service";
+import {
+  getCurrentCustomerOrganization,
+  getOrCreateStripeCustomerIdForVendor,
+  getStripePaymentMethodIdForVendor
+} from "./customer-organization-service";
+import { createStripeCharge } from "./stripe/stripe-payment-service";
 import {
   createStripeSubscriptionForCustomer,
   isSubscribedToStripeTier
-} from "./stripe-subscription-service";
-import { getTierById } from "./tier-service";
-import UserService from "./UserService";
+} from "./stripe/stripe-subscription-service";
+import { getTierById, getTierByIdForCheckout } from "./tier/tier-service";
+import { getCurrentUserSession, requireOrganization } from "./user-context-service";
+import { getVendorOrganizationById } from "./vendor-organization-service";
 
 interface CheckoutData {
-  tier: Tier | null;
-  contract: Contract | null;
-  vendor: VendorProfile | null;
-  currentUser: {
-    id: string;
-    name?: string | null;
-    email?: string | null;
-  } | null;
+  tier: Awaited<ReturnType<typeof getTierByIdForCheckout>>;
+  customerOrg: OrganizationForStripeOps | null;
   isAnnual: boolean;
 }
 
+/**
+ * Get all data needed for the checkout page
+ */
 export async function getCheckoutData(
   tierId: string,
   isAnnual: boolean = false
 ): Promise<CheckoutData> {
-  // Get current user directly from session - no DB lookup needed
-  const session = await getSession();
-  const currentUser = session?.user
-    ? {
-        id: session.user.id,
-        name: session.user.name || null,
-        email: session.user.email || null
-      }
-    : null;
+  const user = await getCurrentUserSession();
 
-  // Fetch tier data
-  const tier = await prisma.tier.findUnique({
-    where: { id: tierId }
-  });
+  // Get customer organization if user is logged in
+  const customerOrg = user ? await getCurrentCustomerOrganization() : null;
 
-  if (!tier) {
-    return { tier: null, contract: null, vendor: null, currentUser, isAnnual };
-  }
-
-  // Fetch vendor with minimal data
-  const vendor = tier.userId
-    ? await prisma.user.findUnique({
-        where: { id: tier.userId },
-        ...includeVendorProfile
-      })
-    : null;
-
-  // Fetch contract if needed
-  const contract = tier.contractId
-    ? await prisma.contract.findUnique({ where: { id: tier.contractId } })
-    : null;
+  // Get tier with vendor details included
+  const tier = await getTierByIdForCheckout(tierId);
 
   return {
     tier,
-    contract,
-    vendor,
-    currentUser,
+    customerOrg,
     isAnnual
   };
 }
 
+/**
+ * Utility function for UI display
+ */
 export async function getShortenedCadence(cadence: string | undefined) {
   if (cadence === "month") return "mo";
   if (cadence === "year") return "yr";
   return cadence;
 }
 
-// Get the user's payment method for a vendor
-export async function getUserPaymentMethod(
-  vendorUserId: string,
-  vendorStripeAccountId: string
-): Promise<StripeCard | null> {
-  try {
-    const customer = await getCustomerForUser(vendorUserId, vendorStripeAccountId);
-    return await customer.getStripePaymentMethod();
-  } catch (error) {
-    console.error("Error getting payment method:", error);
-    return null;
-  }
-}
-
-/**
- * Creates a setup intent for the current user with the specified maintainer.
- * This allows securely collecting payment details with PaymentElement
- */
-export async function createUserSetupIntent(
-  vendorUserId: string,
-  vendorStripeAccountId: string
-): Promise<{ clientSecret: string | null; error: string | null }> {
-  try {
-    const user = await UserService.getCurrentUser();
-    if (!user) {
-      return { clientSecret: null, error: "Not authenticated" };
-    }
-
-    // Create a customer if needed
-    const customer = new Customer(user, vendorUserId, vendorStripeAccountId);
-    const customerId = await customer.getOrCreateStripeCustomerId();
-
-    // Create the setup intent
-    const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-      stripeAccount: vendorStripeAccountId
-    });
-
-    const setupIntent = await stripe.setupIntents.create({
-      customer: customerId,
-      payment_method_types: ["card"],
-      usage: "off_session"
-    });
-
-    return { clientSecret: setupIntent.client_secret, error: null };
-  } catch (error: unknown) {
-    console.error("Error creating setup intent:", error);
-    return {
-      clientSecret: null,
-      error: error instanceof Error ? error.message : "An unknown error occurred"
-    };
-  }
-}
-
-// Add a new payment method
-export async function addUserPaymentMethod(
-  paymentMethodId: string,
-  vendorUserId: string,
-  vendorStripeAccountId: string
-): Promise<{ success: boolean; error: string | null }> {
-  try {
-    const customer = await getCustomerForUser(vendorUserId, vendorStripeAccountId);
-    await customer.attachPaymentMethod(paymentMethodId);
-    return { success: true, error: null };
-  } catch (error: unknown) {
-    console.error("Error attaching payment method:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Failed to add payment method"
-    };
-  }
-}
-
-// Remove an existing payment method
-export async function removeUserPaymentMethod(
-  vendorUserId: string,
-  vendorStripeAccountId: string
-): Promise<{ success: boolean; error: string | null }> {
-  try {
-    const customer = await getCustomerForUser(vendorUserId, vendorStripeAccountId);
-    await customer.detachPaymentMethod();
-    return { success: true, error: null };
-  } catch (error: unknown) {
-    console.error("Error detaching payment method:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Failed to remove payment method"
-    };
-  }
-}
-
-// Get or create a customer for the current user
-async function getCustomerForUser(
-  vendorUserId: string,
-  vendorStripeAccountId: string
-): Promise<Customer> {
-  const session = await getSession();
-  if (!session?.user) {
-    throw new Error("User not authenticated");
-  }
-
-  const user = await UserService.findUser(session.user.id);
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  return new Customer(user, vendorUserId, vendorStripeAccountId);
-}
-
-// Check if the user can make a purchase (has a customer ID or can create one)
-export async function canUserMakePayment(
-  vendorUserId: string,
-  vendorStripeAccountId: string
-): Promise<boolean> {
-  try {
-    const customer = await getCustomerForUser(vendorUserId, vendorStripeAccountId);
-    return customer.canBuy();
-  } catch (error) {
-    console.error("Error checking payment capability:", error);
-    return false;
-  }
-}
-
 /**
  * Process a payment for a tier, handling both one-time charges and subscriptions
- *
- * @param customerId - The ID of the customer making the payment
- * @param tierId - The ID of the tier being purchased
- * @param annual - Whether to use annual pricing
- * @returns An object containing the success status and relevant IDs
+ * This is the core business logic of the checkout process
  */
 export async function processPayment(
-  customerId: string,
   tierId: string,
   annual: boolean
 ): Promise<{
@@ -219,10 +66,7 @@ export async function processPayment(
   stripeId: string;
   type: "charge" | "subscription";
 }> {
-  // Validate inputs
-  if (!customerId) {
-    throw new Error("Not logged in.");
-  }
+  const customerOrg = await requireOrganization();
 
   // Get and validate tier
   const tier = await getTierById(tierId);
@@ -230,24 +74,17 @@ export async function processPayment(
     throw new Error("Tier not found.");
   }
 
-  // Get and validate customer
-  const customerUser = await UserService.findUser(customerId);
-  if (!customerUser) {
-    throw new Error("User not found");
+  // Get and validate vendor using the vendor service
+  const vendor = await getVendorOrganizationById(tier.organizationId);
+  if (!vendor || !vendor.stripeAccountId) {
+    throw new Error("Vendor not valid.");
   }
 
-  // Get and validate vendor
-  const vendor = await UserService.findUser(tier.userId);
-  if (!vendor) {
-    throw new Error("Vendor not found.");
-  }
-  if (!vendor.stripeAccountId) {
-    throw new Error("Vendor does not have a connected Stripe account.");
-  }
-
-  // Get Stripe IDs
-  const customer = new Customer(customerUser, vendor.id, vendor.stripeAccountId);
-  const stripeCustomerId = await customer.getOrCreateStripeCustomerId();
+  // Get Stripe customer ID using customer service
+  const stripeCustomerId = await getOrCreateStripeCustomerIdForVendor(
+    vendor.stripeAccountId,
+    customerOrg.id
+  );
 
   const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
   if (!stripePriceId) {
@@ -260,10 +97,9 @@ export async function processPayment(
       vendor.stripeAccountId,
       stripeCustomerId,
       stripePriceId,
-      customerId,
+      customerOrg.id,
       tierId,
       tier.price,
-      customer,
       tier.applicationFeePercent || 0,
       tier.applicationFeePrice || 0
     );
@@ -274,7 +110,7 @@ export async function processPayment(
     vendor.stripeAccountId,
     stripeCustomerId,
     stripePriceId,
-    customerId,
+    customerOrg.id,
     tierId,
     tier
   );
@@ -288,14 +124,21 @@ async function processOneTimeCharge(
   vendorStripeAccountId: string,
   stripeCustomerId: string,
   stripePriceId: string,
-  customerId: string,
+  customerOrgId: string,
   tierId: string,
   price: number,
-  customer: Customer,
   feePercent: number,
   feeAmount: number
 ): Promise<{ success: boolean; stripeId: string; type: "charge" }> {
-  const paymentMethodId = await customer.getStripePaymentMethodId();
+  // Get payment method using customer service
+  const paymentMethodId = await getStripePaymentMethodIdForVendor(
+    vendorStripeAccountId,
+    customerOrgId
+  );
+
+  if (!paymentMethodId) {
+    throw new Error("No payment method found for this vendor");
+  }
 
   const charge = await createStripeCharge(
     vendorStripeAccountId,
@@ -311,7 +154,8 @@ async function processOneTimeCharge(
     throw new Error(`Error creating charge on Stripe: ${charge.status}`);
   }
 
-  await createLocalCharge(customerId, tierId, charge.id);
+  // Create local charge record using organization ID
+  await createLocalCharge(customerOrgId, tierId, charge.id);
 
   return {
     success: true,
@@ -328,7 +172,7 @@ async function processSubscription(
   vendorStripeAccountId: string,
   stripeCustomerId: string,
   stripePriceId: string,
-  customerId: string,
+  customerOrgId: string,
   tierId: string,
   tier: any
 ): Promise<{ success: boolean; stripeId: string; type: "subscription" }> {
@@ -361,14 +205,15 @@ async function processSubscription(
   const invoice = stripeSubscription.latest_invoice as any;
 
   switch (invoice.status) {
-    case "paid":
-      await createSubscription(customerId, tierId, stripeSubscription.id);
+    case "paid": {
+      // Create local subscription record using organization ID
+      await createSubscription(customerOrgId, tierId, stripeSubscription.id);
       break;
-
+    }
     case "open":
       // For subscriptions with trials, "open" status is expected
       if (tier.trialDays && tier.trialDays > 0) {
-        await createSubscription(customerId, tierId, stripeSubscription.id);
+        await createSubscription(customerOrgId, tierId, stripeSubscription.id);
       } else {
         throw new Error("Subscription requires payment. Please check payment details.");
       }

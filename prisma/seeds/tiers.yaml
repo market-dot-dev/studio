@@ -1,32 +1,32 @@
 objects:
-  - name: 'Basic'
-    description: 'Basic tier with essential features'
-    tagline: 'Get started with our basic plan'
+  - name: "Basic"
+    description: "Basic tier with essential features"
+    tagline: "Get started with our basic plan"
     price: 1000
     applicationFeePercent: 10
     trialDays: 14
-    cadence: 'month'
+    cadence: "month"
     priceAnnual: 10000
-  - name: 'Pro'
-    description: 'Professional tier with advanced features'
-    tagline: 'Unlock the full potential with our pro plan'
+  - name: "Pro"
+    description: "Professional tier with advanced features"
+    tagline: "Unlock the full potential with our pro plan"
     price: 2500
     applicationFeePercent: 15
     trialDays: 30
-    cadence: 'month'
+    cadence: "month"
     priceAnnual: 25000
-  - name: 'Enterprise'
-    description: 'Enterprise tier with premium support'
-    tagline: 'Scale your business with our enterprise plan'
+  - name: "Enterprise"
+    description: "Enterprise tier with premium support"
+    tagline: "Scale your business with our enterprise plan"
     price: 5000
     applicationFeePercent: 20
     trialDays: 60
-    cadence: 'month'
+    cadence: "month"
     priceAnnual: 50000
-  - name: 'Buy me a Coffee'
-    description: 'Great way to say thanks'
-    tagline: 'Perfect for sleepy programmers'
+  - name: "Buy me a Coffee"
+    description: "Great way to say thanks"
+    tagline: "Perfect for sleepy programmers"
     price: 4
     applicationFeePercent: 0
     trialDays: 0
-    cadence: 'once'
+    cadence: "once"

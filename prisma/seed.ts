@@ -1,5 +1,11 @@
-import RegistrationService from "@/app/services/registration-service";
-import { Contract, PrismaClient, Tier, User } from "@prisma/client";
+import {
+  Contract,
+  Organization,
+  OrganizationType,
+  PrismaClient,
+  Tier,
+  User
+} from "@/app/generated/prisma";
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
@@ -20,15 +26,15 @@ async function main() {
     process.exit(1);
   }
 
-  console.log("[seed] Loading users, sites, tiers and contracts...");
+  console.log("[seed] Loading users, organizations, sites, tiers and contracts...");
   console.log("[seed] * users");
   const users = await loadUsers();
-  console.log("[seed] * sites");
-  users.forEach((user) => RegistrationService.createSite(user));
+  console.log("[seed] * organizations");
+  const organizations = await createOrganizations(users);
   console.log("[seed] * tiers");
-  await loadTiers(users);
+  await loadTiers(organizations);
   console.log("[seed] * contracts");
-  await loadContracts(users);
+  await loadContracts(organizations);
   console.log("[seed] done");
 }
 
@@ -41,11 +47,7 @@ const loadUsers = async () => {
       data: {
         ...user,
         id: user.id,
-        stripeCustomerIds: {},
-        stripePaymentMethodIds: {},
-        emailVerified: new Date().toISOString(),
-        roleId: "admin",
-        company: user.company || "market.dev"
+        emailVerified: new Date().toISOString()
       }
     });
     createdUsers.push(createdUser);
@@ -54,15 +56,49 @@ const loadUsers = async () => {
   return createdUsers;
 };
 
-const loadTiers = async (users: User[]) => {
-  const tiers = loadYaml<Tier>("tiers");
+const createOrganizations = async (users: User[]) => {
+  const createdOrganizations: Organization[] = [];
 
   for (const user of users) {
+    // Create an organization for each user
+    const organization = await prisma.organization.create({
+      data: {
+        name: `${user.name}'s Organization`,
+        type: OrganizationType.VENDOR,
+        ownerId: user.id,
+        company: "market.dev",
+        members: {
+          create: {
+            userId: user.id,
+            role: "OWNER"
+          }
+        },
+        // Set the organization as the user's current organization
+        currentUsers: {
+          connect: {
+            id: user.id
+          }
+        },
+        stripeCustomerIds: {},
+        stripePaymentMethodIds: {},
+        marketExpertId: "some-id-here"
+      }
+    });
+    createdOrganizations.push(organization);
+  }
+
+  return createdOrganizations;
+};
+
+const loadTiers = async (organizations: Organization[]) => {
+  const tiers = loadYaml<Tier>("tiers");
+
+  for (const organization of organizations) {
     for (const tier of tiers) {
       await prisma.tier.create({
         data: {
           ...tier,
-          userId: user.id,
+          organizationId: organization.id,
           createdAt: new Date(),
           updatedAt: new Date(),
           revision: 1,
@@ -77,16 +113,16 @@ const loadTiers = async (users: User[]) => {
   }
 };
 
-const loadContracts = async (users: User[]) => {
+const loadContracts = async (organizations: Organization[]) => {
   const contracts = loadYaml<Contract>("contracts");
 
-  for (const user of users) {
+  for (const organization of organizations) {
     for (const contract of contracts) {
       await prisma.contract.create({
         data: {
           ...contract,
-          id: `${contract.id}-${user.id}`,
-          maintainerId: user.id
+          id: `${contract.id}-${organization.id}`,
+          organizationId: organization.id
         }
       });
     }

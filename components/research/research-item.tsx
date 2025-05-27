@@ -1,7 +1,7 @@
 "use client";
+import { Lead } from "@/app/generated/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Lead } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";

@@ -1,4 +1,4 @@
-import { Channel, Tier as TierTable } from "@prisma/client";
+import { Channel, Tier as TierTable } from "@/app/generated/prisma";
 
 type Tier = TierTable;
 

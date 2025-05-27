@@ -3,27 +3,22 @@
 import {
   checkVendorStripeStatus,
   getVendorStripeConnectURL
-} from "@/app/services/stripe-vendor-service";
-import UserService from "@/app/services/UserService";
+} from "@/app/services/stripe/stripe-vendor-service";
+import { requireOrganization } from "@/app/services/user-context-service";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { redirect } from "next/navigation";
 import { ConnectStripeBtn } from "./ConnectStripeBtn";
 import { DisconnectStripeBtn } from "./DisconnectStripeBtn";
 import { StripeAccountStatus } from "./StripeAccountStatus";
 
 export default async function PaymentSettings() {
-  const user = await UserService.getCurrentUser();
-
-  if (!user) {
-    redirect("/login");
-  }
+  const org = await requireOrganization();
 
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
 
   // Check if account has been connected at some point but might be disconnected now
-  const hasStripeHistory = !!user.stripeAccountId || user.stripeAccountDisabled;
-  const oauthUrl = await getVendorStripeConnectURL(user.id);
+  const hasStripeHistory = !!org.stripeAccountId || org.stripeAccountDisabled;
+  const oauthUrl = await getVendorStripeConnectURL();
 
   return (
     <div className="flex max-w-screen-md flex-col space-y-10">
@@ -33,19 +28,19 @@ export default async function PaymentSettings() {
             <div className="flex w-full flex-wrap justify-between gap-x-6 gap-y-2">
               <div className="inline-flex w-fit items-center gap-2">
                 <h2 className="text-xl font-bold">Stripe Account</h2>
-                {user.stripeAccountId && (
+                {org.stripeAccountId && (
                   <Badge
                     variant="secondary"
                     size="sm"
                     tooltip="Your Stripe account ID"
                     className="translate-y-px font-mono"
                   >
-                    {user.stripeAccountId}
+                    {org.stripeAccountId}
                   </Badge>
                 )}
               </div>
 
-              {user.stripeAccountId && (
+              {org.stripeAccountId && (
                 <div className="inline-flex items-center gap-2 text-sm font-medium text-success">
                   <span className="size-1.5 rounded-full bg-success" />
                   Connected
@@ -57,18 +52,18 @@ export default async function PaymentSettings() {
               canSell={canSell}
               messageCodes={messageCodes}
               disabledReasons={disabledReasons}
-              isAccountDeauthorized={user.stripeAccountDisabled && !user.stripeAccountId}
-              reconnectUrl={user.stripeAccountDisabled ? oauthUrl : undefined}
+              isAccountDeauthorized={org.stripeAccountDisabled && !org.stripeAccountId}
+              reconnectUrl={org.stripeAccountDisabled ? oauthUrl : undefined}
             />
           </div>
 
-          {user.stripeAccountId && (
+          {org.stripeAccountId && (
             <>
               <Separator className="my-6" />
 
               <div className="flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-4 ">
                 <h2 className="text-xl font-bold">Danger Zone</h2>
-                <DisconnectStripeBtn userId={user.id} stripeAccountId={user.stripeAccountId} />
+                <DisconnectStripeBtn stripeAccountId={org.stripeAccountId} />
               </div>
             </>
           )}

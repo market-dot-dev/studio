@@ -1,30 +1,22 @@
-import PageService from "@/app/services/PageService";
+import { getHomepage } from "@/app/services/site/page-service";
 import renderElement from "@/components/site/page-renderer";
-import { JSDOM } from "jsdom";
+import { parseHTML } from "@/utils/dom-adapter";
 import { notFound } from "next/navigation";
 
 export default async function SiteHomePage(props: { params: Promise<{ domain: string }> }) {
   const params = await props.params;
   const domain = decodeURIComponent(params.domain);
-  const data = await PageService.getHomepage(domain);
+  const { site, page } = await getHomepage(domain);
 
-  if (!data) {
+  if (!site || !page || !page.content) {
     notFound();
   }
 
-  // Ensure homepage content exists
-  if (!data.homepage?.content) {
-    notFound();
-  }
-
-  // Create DOM from HTML content
-  const dom = new JSDOM(data.homepage.content);
-  const rootElement = dom.window.document.body;
-
-  const elements: Element[] = Array.from(rootElement.children);
+  // Parse HTML and get DOM-compatible elements
+  const elements = parseHTML(page.content);
 
   // Render the page using the strongly typed data
-  const reactElement = renderElement(elements, 0, data, data.homepage, false);
+  const reactElement = renderElement(elements, 0, site, page, false);
 
   return <>{reactElement}</>;
 }

@@ -1,30 +1,30 @@
 "use server";
 
+import { Subscription } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import {
-  includeTierAndUser,
+  includeTierAndOrg,
   SubscriptionStates,
   SubscriptionStatus,
-  type SubscriptionWithTierAndUser
+  type SubscriptionWithTierAndOrg
 } from "@/types/subscription";
-import { Subscription } from "@prisma/client";
-import { getStripeCustomerId } from "./customer-service";
+import { getCustomerOrganizationById } from "./customer-organization-service";
 import {
   confirmCustomerSubscription,
   confirmCustomerSubscriptionCancellation,
   notifyOwnerOfNewSubscription,
   notifyOwnerOfSubscriptionCancellation
 } from "./email-service";
-import { getCurrentUserId, getSessionUser } from "./session-service";
 import {
   cancelStripeSubscription,
   reactivateStripeSubscription
-} from "./stripe-subscription-service";
-import { getTierById } from "./tier-service";
-import UserService from "./UserService";
+} from "./stripe/stripe-subscription-service";
+import { getTierById } from "./tier/tier-service";
+import { requireOrganization } from "./user-context-service";
+import { getVendorOrganizationById } from "./vendor-organization-service";
 
 /**
- * Get a subscription by its ID with related user and tier data
+ * Get a subscription by its ID with related organization and tier data
  *
  * @param subscriptionId - The ID of the subscription to get
  * @param includeInactive - Whether to include inactive subscriptions
@@ -33,13 +33,13 @@ import UserService from "./UserService";
 export async function getSubscriptionById(
   subscriptionId: string,
   includeInactive: boolean = false
-): Promise<SubscriptionWithTierAndUser | null> {
+): Promise<SubscriptionWithTierAndOrg | null> {
   return await prisma.subscription.findFirst({
     where: {
       id: subscriptionId,
       ...(includeInactive ? {} : { active: true })
     },
-    ...includeTierAndUser,
+    ...includeTierAndOrg,
     orderBy: {
       createdAt: "desc" // Get the most recent one first
     }
@@ -86,17 +86,16 @@ export async function checkTierHasSubscribers(
 }
 
 /**
- * Get all subscriptions for the current user
+ * Get all subscriptions for the current organization
  *
  * @returns Array of subscriptions
  */
-export async function getUserSubscriptions() {
-  const userId = await getCurrentUserId();
-  if (!userId) return [];
+export async function getSubscriptionsForCurrentOrganization() {
+  const org = await requireOrganization();
 
   return await prisma.subscription.findMany({
     where: {
-      userId
+      organizationId: org.id
     },
     orderBy: {
       createdAt: "desc"
@@ -105,38 +104,44 @@ export async function getUserSubscriptions() {
 }
 
 /**
- * Create a subscription for a user
- *
- * @param userId - The user ID to create the subscription for
- * @param tierId - The tier ID to subscribe to
- * @param stripeSubscriptionId - The Stripe subscription ID
- * @param tierVersionId - Optional tier version ID
- * @returns The created subscription
+ * Get all subscriptions for a specific organization
+ */
+export async function getOrganizationSubscriptions(organizationId: string) {
+  return await prisma.subscription.findMany({
+    where: {
+      organizationId
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
+}
+
+/**
+ * Create a subscription for an organization
  */
 export async function createSubscription(
-  userId: string,
+  customerOrgId: string,
   tierId: string,
   stripeSubscriptionId: string,
   tierVersionId?: string
 ): Promise<Subscription> {
-  const user = await UserService.findUser(userId);
-  if (!user) throw new Error("User not found");
+  const customerOrg = await getCustomerOrganizationById(customerOrgId);
+  if (!customerOrg) throw new Error("Customer organization not found");
 
   const tier = await getTierById(tierId);
   if (!tier) throw new Error("Tier not found");
   if (!tier.stripePriceId) throw new Error("Stripe price ID not found for tier");
 
-  const vendor = await UserService.findUser(tier.userId);
-  if (!vendor) throw new Error("Vendor not found");
-  if (!vendor.stripeAccountId) throw new Error("Vendor's account not connected to Stripe");
-
-  const stripeCustomerId = await getStripeCustomerId(user, vendor.stripeAccountId);
-  if (!stripeCustomerId) throw new Error("Stripe customer ID not found for user");
+  const vendorOrg = await getVendorOrganizationById(tier.organizationId);
+  if (!vendorOrg || !vendorOrg.stripeAccountId) {
+    throw new Error("Vendor organization not found or Stripe account not connected");
+  }
 
   // Check for existing active subscription
   const existingActiveSubscription = await prisma.subscription.findFirst({
     where: {
-      userId,
+      organizationId: customerOrgId,
       tierId,
       active: true
     }
@@ -150,7 +155,7 @@ export async function createSubscription(
     existingActiveSubscription.activeUntil &&
     existingActiveSubscription.activeUntil > new Date()
   ) {
-    return await reactivateSubscription(existingActiveSubscription.id, userId);
+    return await reactivateSubscription(existingActiveSubscription.id);
   }
 
   // If we have an existing active subscription that is NOT cancelled,
@@ -159,10 +164,10 @@ export async function createSubscription(
     existingActiveSubscription &&
     existingActiveSubscription.state === SubscriptionStates.renewing
   ) {
-    throw new Error("User already has an active subscription to this tier");
+    throw new Error("Organization already has an active subscription to this tier");
   }
 
-  // Deactivate any previous subscriptions for this user-tier combination
+  // Deactivate any previous subscriptions for this organization-tier combination
   if (existingActiveSubscription) {
     await prisma.subscription.update({
       where: {
@@ -178,7 +183,7 @@ export async function createSubscription(
   const newSubscription = await prisma.subscription.create({
     data: {
       state: SubscriptionStates.renewing,
-      userId,
+      organizationId: customerOrgId,
       tierId,
       tierVersionId,
       stripeSubscriptionId,
@@ -191,10 +196,8 @@ export async function createSubscription(
 
   // Send notification emails
   await Promise.all([
-    // send email to the tier owner
-    notifyOwnerOfNewSubscription(tier.userId, user, tier.name),
-    // send email to the customer
-    confirmCustomerSubscription(user, tier.name)
+    notifyOwnerOfNewSubscription(vendorOrg.owner.id, customerOrg.owner, tier.name),
+    confirmCustomerSubscription(customerOrg.owner, tier.name)
   ]);
 
   return newSubscription;
@@ -202,24 +205,24 @@ export async function createSubscription(
 
 /**
  * Cancel a subscription
- *
- * @param subscriptionId - The ID of the subscription to cancel
- * @returns The updated subscription
  */
 export async function cancelSubscription(subscriptionId: string): Promise<Subscription> {
-  const user = await getSessionUser();
-  if (!user) {
-    throw new Error("User not found");
-  }
-
+  const currentOrg = await requireOrganization();
   const subscription = await prisma.subscription.findUnique({
     where: { id: subscriptionId },
     include: {
-      user: true, // customer
+      organization: {
+        include: {
+          owner: true
+        }
+      },
       tier: {
-        select: {
-          name: true,
-          user: true // tier owner
+        include: {
+          organization: {
+            include: {
+              owner: true
+            }
+          }
         }
       }
     }
@@ -229,22 +232,22 @@ export async function cancelSubscription(subscriptionId: string): Promise<Subscr
     throw new Error("Subscription not found");
   }
 
-  const isMaintainer = subscription.tier.user.id === user.id;
-  const isSubscriber = !isMaintainer && subscription.user.id === user.id;
+  // Check authorization - either the customer organization or the vendor organization
+  const isCustomer = subscription.organizationId === currentOrg.id;
+  const isVendor = subscription.tier.organizationId === currentOrg.id;
 
-  const maintainer = isMaintainer
-    ? user
-    : isSubscriber
-      ? await UserService.findUser(subscription.tier.user.id)
-      : null;
+  if (!isCustomer && !isVendor) {
+    throw new Error("Not authorized to cancel subscription");
+  }
 
-  if (!maintainer?.stripeAccountId) {
-    throw new Error("Not authorized to cancel subscription or stripe account not connected");
+  const vendorOrg = subscription.tier.organization;
+  if (!vendorOrg.stripeAccountId) {
+    throw new Error("Vendor's Stripe account not connected");
   }
 
   // Schedule cancellation at the end of the current period
   const stripeSubscription = await cancelStripeSubscription(
-    maintainer.stripeAccountId,
+    vendorOrg.stripeAccountId,
     subscription.stripeSubscriptionId
   );
 
@@ -253,9 +256,6 @@ export async function cancelSubscription(subscriptionId: string): Promise<Subscr
       state: SubscriptionStates.cancelled,
       cancelledAt: new Date(),
       activeUntil: new Date(stripeSubscription.items.data[0].current_period_end * 1000)
-      // Note: We don't set active: false here because the subscription is still active
-      // until the end of the period. It will be deactivated when a new subscription is created
-      // or when it expires.
     },
     where: {
       id: subscriptionId
@@ -263,35 +263,28 @@ export async function cancelSubscription(subscriptionId: string): Promise<Subscr
   });
 
   await Promise.all([
-    // inform the tier owner
-    subscription?.tier?.user
-      ? notifyOwnerOfSubscriptionCancellation(
-          subscription.tier.user,
-          subscription.user,
-          subscription.tier.name
-        )
-      : null,
-    // inform the customer
-    subscription.user
-      ? confirmCustomerSubscriptionCancellation(subscription.user, subscription.tier.name ?? "")
-      : null
+    notifyOwnerOfSubscriptionCancellation(
+      vendorOrg.owner,
+      subscription.organization!.owner,
+      subscription.tier.name
+    ),
+    confirmCustomerSubscriptionCancellation(
+      subscription.organization!.owner,
+      subscription.tier.name
+    )
   ]);
 
   return updatedSubscription;
 }
 
 /**
- * Get detailed subscription status for a user and tier
- *
- * @param userId - The user ID to check
- * @param tierId - The tier ID to check
- * @returns Detailed subscription status information
+ * Get detailed subscription status for an organization and tier
  */
 export async function getSubscriptionStatus(
-  userId: string,
+  customerOrgId: string,
   tierId: string
 ): Promise<SubscriptionStatus> {
-  if (!userId) {
+  if (!customerOrgId) {
     return {
       statusType: "not_subscribed",
       subscription: null,
@@ -299,10 +292,9 @@ export async function getSubscriptionStatus(
     };
   }
 
-  // Get the subscription if it exists
   const subscription = await prisma.subscription.findFirst({
     where: {
-      userId,
+      organizationId: customerOrgId,
       tierId,
       active: true
     },
@@ -314,7 +306,6 @@ export async function getSubscriptionStatus(
     }
   });
 
-  // If no subscription exists
   if (!subscription) {
     return {
       statusType: "not_subscribed",
@@ -325,7 +316,6 @@ export async function getSubscriptionStatus(
 
   const now = new Date();
 
-  // Active subscription that will renew
   if (subscription.state === SubscriptionStates.renewing) {
     return {
       statusType: "active_renewing",
@@ -334,7 +324,6 @@ export async function getSubscriptionStatus(
     };
   }
 
-  // Cancelled subscription that's still active
   if (
     subscription.state === SubscriptionStates.cancelled &&
     subscription.activeUntil &&
@@ -347,7 +336,6 @@ export async function getSubscriptionStatus(
     };
   }
 
-  // Subscription has expired
   return {
     statusType: "expired",
     subscription,
@@ -356,8 +344,77 @@ export async function getSubscriptionStatus(
 }
 
 /**
+ * Reactivate a cancelled subscription
+ */
+export async function reactivateSubscription(subscriptionId: string): Promise<Subscription> {
+  const currentOrg = await requireOrganization();
+
+  const subscription = await prisma.subscription.findUnique({
+    where: { id: subscriptionId },
+    include: {
+      organization: {
+        include: {
+          owner: true
+        }
+      },
+      tier: {
+        include: {
+          organization: {
+            include: {
+              owner: true
+            }
+          }
+        }
+      }
+    }
+  });
+
+  if (!subscription) {
+    throw new Error("Subscription not found");
+  }
+
+  // Verify the organization is authorized
+  if (subscription.organizationId !== currentOrg.id) {
+    throw new Error("Not authorized to modify this subscription");
+  }
+
+  if (subscription.state !== SubscriptionStates.cancelled) {
+    throw new Error("Subscription is not in a cancelled state");
+  }
+
+  if (!subscription.activeUntil || subscription.activeUntil <= new Date()) {
+    throw new Error("Subscription has already expired");
+  }
+
+  const vendorOrg = subscription.tier.organization;
+  if (!vendorOrg.stripeAccountId) {
+    throw new Error("Vendor's Stripe account not found");
+  }
+
+  await reactivateStripeSubscription(vendorOrg.stripeAccountId, subscription.stripeSubscriptionId);
+
+  const updatedSubscription = await prisma.subscription.update({
+    where: { id: subscriptionId },
+    data: {
+      state: SubscriptionStates.renewing,
+      cancelledAt: null
+    }
+  });
+
+  await Promise.all([
+    confirmCustomerSubscription(subscription.organization!.owner, subscription.tier.name),
+    notifyOwnerOfNewSubscription(
+      vendorOrg.owner.id,
+      subscription.organization!.owner,
+      subscription.tier.name
+    )
+  ]);
+
+  return updatedSubscription;
+}
+
+/**
  * Deactivate expired subscriptions
- * This could be called by a cron job or webhook handler
  */
 export async function deactivateExpiredSubscriptions(): Promise<number> {
   const now = new Date();
@@ -379,109 +436,17 @@ export async function deactivateExpiredSubscriptions(): Promise<number> {
 }
 
 /**
- * Get subscription history for the current user and a specific tier
- *
- * @param tierId - The tier ID to get history for
- * @returns Array of subscriptions ordered by creation date (newest first)
+ * Get subscription history for the current organization and a specific tier
  */
 export async function getSubscriptionHistory(tierId: string) {
-  const userId = await getCurrentUserId();
-  if (!userId) return [];
-
+  const org = await requireOrganization();
   return await prisma.subscription.findMany({
     where: {
-      userId,
+      organizationId: org.id,
       tierId
     },
     orderBy: {
       createdAt: "desc"
     }
   });
-}
-
-/**
- * Reactivate a cancelled subscription
- *
- * This function reactivates a subscription that has been cancelled but is still
- * within its active period. It removes the cancellation schedule in Stripe and
- * updates the local subscription record to reflect the renewed status.
- *
- * @param subscriptionId - The ID of the subscription to reactivate
- * @param userId - Optional user ID override (mainly for internal use)
- * @returns The updated subscription
- */
-export async function reactivateSubscription(
-  subscriptionId: string,
-  userId?: string
-): Promise<Subscription> {
-  // Get the current user if userId isn't provided
-  let user;
-  if (userId) {
-    user = await UserService.findUser(userId);
-  } else {
-    user = await getSessionUser();
-  }
-
-  if (!user) {
-    throw new Error("User not found");
-  }
-
-  // Get the subscription with related data
-  const subscription = await prisma.subscription.findUnique({
-    where: { id: subscriptionId },
-    include: {
-      user: true, // customer
-      tier: {
-        select: {
-          name: true,
-          user: true // tier owner
-        }
-      }
-    }
-  });
-
-  if (!subscription) {
-    throw new Error("Subscription not found");
-  }
-
-  // Verify the user is authorized (either explicitly provided userId or current user)
-  if (!userId && subscription.userId !== user.id) {
-    throw new Error("Not authorized to modify this subscription");
-  }
-
-  // Verify the subscription is in a cancelled state
-  if (subscription.state !== SubscriptionStates.cancelled) {
-    throw new Error("Subscription is not in a cancelled state");
-  }
-
-  // Verify the subscription is still active (hasn't expired)
-  if (!subscription.activeUntil || subscription.activeUntil <= new Date()) {
-    throw new Error("Subscription has already expired");
-  }
-
-  // Get the vendor's Stripe account ID
-  const vendor = subscription.tier.user;
-  if (!vendor.stripeAccountId) {
-    throw new Error("Vendor's Stripe account not found");
-  }
-
-  // Reactivate the subscription in Stripe
-  await reactivateStripeSubscription(vendor.stripeAccountId, subscription.stripeSubscriptionId);
-
-  // Update the local subscription record
-  const updatedSubscription = await prisma.subscription.update({
-    where: { id: subscriptionId },
-    data: {
-      state: SubscriptionStates.renewing,
-      cancelledAt: null
-    }
-  });
-
-  // Send notification emails to customer and vendor
-  await Promise.all([
-    confirmCustomerSubscription(subscription.user, subscription.tier.name),
-    notifyOwnerOfNewSubscription(vendor.id, subscription.user, subscription.tier.name)
-  ]);
-
-  return updatedSubscription;
 }

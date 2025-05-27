@@ -4,11 +4,22 @@ import nextPlugin from "@next/eslint-plugin-next";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import prettier from "eslint-plugin-prettier/recommended";
 import tailwind from "eslint-plugin-tailwindcss";
+import { globalIgnores } from "eslint/config";
 import globals from "globals";
 import ts from "typescript-eslint";
 
 const config = ts.config(
   // ...compat.extends("next", "next/core-web-vitals"),
+
+  globalIgnores([
+    "**/node_modules",
+    "**/out",
+    "**/.next",
+    "app/generated/prisma/",
+    "public/embed.js",
+    "postcss.config.js",
+    "eslint.config.mjs"
+  ]),
 
   // ESlint
   js.configs.recommended,
@@ -21,7 +32,6 @@ const config = ts.config(
   // Prettier
   prettier,
   {
-    ignores: ["**/node_modules", "**/out", "**/.next"],
     plugins: {
       "@next/next": nextPlugin
     },

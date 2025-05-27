@@ -1,16 +1,16 @@
 objects:
-  - id: 'standard-contract'
-    name: 'Standard Contract'
-    description: 'Standard contract for all users'
-    url: 'https://example.com/contracts/standard'
-    storage: 'link'
-  - id: 'premium-contract'
-    name: 'Premium Contract'
-    description: 'Premium contract with additional benefits'
-    url: 'https://example.com/contracts/premium'
-    storage: 'link'
-  - id: 'enterprise-contract'
-    name: 'Enterprise Contract'
-    description: 'Enterprise-level contract with custom terms'
-    url: 'https://example.com/contracts/enterprise'
-    storage: 'link'
+  - id: "standard-contract"
+    name: "Standard Contract"
+    description: "Standard contract for all users"
+    url: "https://example.com/contracts/standard"
+    storage: "link"
+  - id: "premium-contract"
+    name: "Premium Contract"
+    description: "Premium contract with additional benefits"
+    url: "https://example.com/contracts/premium"
+    storage: "link"
+  - id: "enterprise-contract"
+    name: "Enterprise Contract"
+    description: "Enterprise-level contract with custom terms"
+    url: "https://example.com/contracts/enterprise"
+    storage: "link"

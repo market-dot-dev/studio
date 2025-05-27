@@ -9,9 +9,16 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
+import { Switch } from "@/components/ui/switch";
 import {
   Table,
   TableBody,
@@ -22,28 +29,20 @@ import {
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import Spinner from "../ui/spinner";
-import { Switch } from "../ui/switch";
 
+import { Channel, Contract, TierVersion } from "@/app/generated/prisma";
+import Tier, { newTier } from "@/app/models/Tier";
+import { hasVendorStripeAccount } from "@/app/services/stripe/stripe-vendor-service";
+import { getSubscriberCount } from "@/app/services/subscription-service";
+import { createTier, TierWithCount, updateTier } from "@/app/services/tier/tier-service";
+import { getVersionsByTierId } from "@/app/services/tier/tier-version-service";
+import type { MinimalOrganization } from "@/types/organization";
+import { toast } from "sonner";
 import PageHeader from "../common/page-header";
 import ChannelsSelectionInput from "./channels-selection-input";
-import CheckoutTypeSelectionInput from "./checkout-type-selection-input";
-import TierCard from "./tier-card";
-
-import Tier, { newTier } from "@/app/models/Tier";
-import { getSubscriberCount } from "@/app/services/subscription-service";
-import { createTier, TierWithCount, updateTier } from "@/app/services/tier-service";
-import { toast } from "sonner";
-
-import { hasVendorStripeAccount } from "@/app/services/stripe-vendor-service";
-import { getVersionsByTierId } from "@/app/services/tier-version-service";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import { Channel, Contract, TierVersion, User } from "@prisma/client";
+import { CheckoutTypeSelectionInput } from "./checkout-type-selection-input";
 import StandardCheckoutForm from "./standard-checkout-form";
+import TierCard from "./tier-card";
 import { TierDeleteMenuItem } from "./tier-delete-menu-item";
 import { TierDuplicateMenuItem } from "./tier-duplicate-menu-item";
 import TierLinkCopier from "./tier-link-copier";
@@ -53,10 +52,10 @@ import TierVersionRow from "./tier-version-row";
 interface TierFormProps {
   tier?: Partial<Tier>;
   contracts: Contract[];
-  user: User;
+  org: MinimalOrganization;
 }
 
-export default function TierForm({ tier: tierObj, contracts, user }: TierFormProps) {
+export default function TierForm({ tier: tierObj, contracts, org }: TierFormProps) {
   const router = useRouter();
   const [tier, setTier] = useState<TierWithCount>((tierObj ? tierObj : newTier()) as Tier);
 
@@ -344,7 +343,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                     Checkout Type
                   </Label>
                   <CheckoutTypeSelectionInput
-                    user={user}
+                    checkoutEnabled={!!org.stripeAccountId}
                     tier={tier}
                     handleInputChange={handleInputChange}
                     idPrefix="mobile-"
@@ -366,7 +365,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
                     Channels
                   </Label>
                   <ChannelsSelectionInput
-                    userIsMarketExpert={!!user.marketExpertId}
+                    orgIsMarketExpert={!!org.marketExpertId}
                     selectedChannels={tier.channels}
                     idPrefix="mobile-"
                     handleInputChange={(channel) => {
@@ -551,7 +550,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
               Checkout Type
             </Label>
             <CheckoutTypeSelectionInput
-              user={user}
+              checkoutEnabled={!!org.stripeAccountId}
               tier={tier}
               handleInputChange={handleInputChange}
               idPrefix=""
@@ -572,7 +571,7 @@ export default function TierForm({ tier: tierObj, contracts, user }: TierFormPro
               Channels
             </Label>
             <ChannelsSelectionInput
-              userIsMarketExpert={!!user.marketExpertId}
+              orgIsMarketExpert={!!org.marketExpertId}
               selectedChannels={tier.channels}
               handleInputChange={(channel) => {
                 let channels: Channel[] = tier.channels;

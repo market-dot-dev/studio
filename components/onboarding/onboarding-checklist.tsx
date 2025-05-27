@@ -1,12 +1,15 @@
 "use client";
 
 import {
+  dismissOnboarding,
+  refreshAndGetState
+} from "@/app/services/onboarding/onboarding-service";
+import {
   OnboardingState,
   onboardingSteps,
   onBoardingStepType,
   type OnboardingStepsType
 } from "@/app/services/onboarding/onboarding-steps";
-import { dismissOnboarding, refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { Button } from "@/components/ui/button";
 import clsx from "clsx";
 import { Check, ChevronRight, Goal, X } from "lucide-react";

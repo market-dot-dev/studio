@@ -1,0 +1,36 @@
+model Charge {
+  id String @id @default(cuid())
+
+  tierRevision   Int?
+  stripeChargeId String       @unique
+  createdAt      DateTime     @default(now())
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  tierVersionId  String?
+  tierVersion    TierVersion? @relation(fields: [tierVersionId], references: [id])
+  tierId         String
+  tier           Tier         @relation(fields: [tierId], references: [id])
+
+  @@index([organizationId, tierId])
+}
+
+model Subscription {
+  id                   String       @id @default(cuid())
+  stripeSubscriptionId String       @unique
+  tierRevision         Int?
+  activeUntil          DateTime?
+  cancelledAt          DateTime?
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+  state                String       @default("renewing")
+  priceAnnual          Boolean      @default(false)
+  active               Boolean      @default(true)
+  organizationId       String
+  organization         Organization @relation(fields: [organizationId], references: [id])
+  tierVersionId        String?
+  tierVersion          TierVersion? @relation(fields: [tierVersionId], references: [id])
+  tierId               String
+  tier                 Tier         @relation(fields: [tierId], references: [id])
+
+  @@index([organizationId, tierId, active])
+}

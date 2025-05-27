@@ -1,12 +1,12 @@
 "use client";
 
-import { deleteMedia, listMedia, uploadMedia } from "@/app/services/media-service";
+import { Media as DBMedia } from "@/app/generated/prisma";
+import { deleteMedia, listMedia, uploadMedia } from "@/app/services/site/media-service";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Spinner from "@/components/ui/spinner";
-import { Media as DBMedia } from "@prisma/client";
 import { format } from "date-fns";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";

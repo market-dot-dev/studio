@@ -1,6 +1,6 @@
 "use server";
 
-import { processVendorStripeConnectCallback } from "@/app/services/stripe-vendor-service";
+import { processVendorStripeConnectCallback } from "@/app/services/stripe/stripe-vendor-service";
 import { redirect } from "next/navigation";
 
 export default async function StripeCallbackHandler({

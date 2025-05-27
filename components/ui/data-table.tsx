@@ -1,16 +1,5 @@
 "use client";
 
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  Row,
-  TableOptions,
-  useReactTable
-} from "@tanstack/react-table";
-import * as React from "react";
-
-import { SessionUser } from "@/app/models/Session";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -22,6 +11,15 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  Row,
+  TableOptions,
+  useReactTable
+} from "@tanstack/react-table";
+import * as React from "react";
 import { ReactNode } from "react";
 
 // Extend the ColumnDef type to include an emphasized property
@@ -40,7 +38,6 @@ interface DataTableProps<TData, TValue> {
   noResults?: ReactNode;
   cardProps?: React.ComponentProps<typeof Card>;
   tableContainerClassName?: string;
-  currentUser?: SessionUser | null | undefined;
   isLoading?: boolean;
   renderSubRowComponent?: (row: Row<TData>) => ReactNode;
 }
@@ -54,7 +51,6 @@ export function DataTable<TData, TValue>({
   noResults = "No results",
   cardProps,
   tableContainerClassName,
-  currentUser,
   isLoading = false,
   renderSubRowComponent
 }: DataTableProps<TData, TValue>): React.ReactElement<any> {

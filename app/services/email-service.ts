@@ -1,8 +1,8 @@
 "use server";
 
 import * as EmailTemplates from "@/app/components/email/templates";
+import { Prospect, User } from "@/app/generated/prisma";
 import { domainCopy, getRootUrl } from "@/lib/domain";
-import { Prospect, User } from "@prisma/client";
 import sgMail from "@sendgrid/mail";
 import { findUser } from "./UserService";
 
@@ -31,7 +31,7 @@ const appURLWithProtocol = getRootUrl("app");
  * @param text - Plain text content
  * @param html - HTML content
  */
-export async function sendEmail(email: string | null, subject: string, text: string, html: string) {
+async function sendEmail(email: string | null, subject: string, text: string, html: string) {
   // console.log('sending email', email, subject, html);
   if (!email) {
     console.error("Invalid email address");

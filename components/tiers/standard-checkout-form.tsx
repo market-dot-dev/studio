@@ -1,3 +1,4 @@
+import { Contract } from "@/app/generated/prisma";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,7 +9,6 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
-import { Contract } from "@prisma/client";
 import React, { useState } from "react";
 
 interface StandardCheckoutFormProps {

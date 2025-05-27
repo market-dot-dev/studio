@@ -1,15 +1,13 @@
 import { SubscriptionStatusBadge } from "@/app/app/(dashboard)/customers/subscription-state";
 import { CancelSubscriptionBtn } from "@/app/app/c/subscriptions/cancel-subscription-btn";
 import { ReactivateSubscriptionBtn } from "@/app/app/c/subscriptions/reactivate-subscription-btn";
-import ContractService from "@/app/services/contract-service";
-import { getTierById } from "@/app/services/tier-service";
-import UserService from "@/app/services/UserService";
+import { Subscription } from "@/app/generated/prisma";
+import { getTierByIdForCheckout } from "@/app/services/tier/tier-service";
 import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/lib/utils";
 import { isCancelled, isFinishingMonth, isRenewing } from "@/types/subscription";
-import { Subscription } from "@prisma/client";
 import { Store } from "lucide-react";
 import Link from "next/link";
 
@@ -22,25 +20,21 @@ const SubscriptionCard = async ({
 }) => {
   if (!subscription || !subscription.tierId) return null;
 
-  const tier = await getTierById(subscription.tierId!);
-  if (!tier) return null;
+  const tier = await getTierByIdForCheckout(subscription.tierId);
+  if (!tier || !tier.organization) return null;
 
-  const maintainer = await UserService.findUser(tier.userId);
-
-  if (!maintainer) return null;
+  const contractUrl = tier.contract
+    ? `/c/contracts/${tier.contract.id}`
+    : "/c/contracts/standard-msa";
+  const contractName = tier.contract?.name || "Standard MSA";
 
   const actualCadence = subscription.priceAnnual ? "year" : tier.cadence;
   const actualPrice = subscription.priceAnnual ? tier.priceAnnual : tier.price;
   const shortenedCadence =
     actualCadence === "month" ? "mo" : actualCadence === "year" ? "yr" : actualCadence;
 
-  const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
-
   // Check if this is a cancelled but still active subscription that can be reactivated
   const canReactivate = isCancelled(subscription) && isFinishingMonth(subscription);
-
-  const contractUrl = contract ? `/c/contracts/${contract.id}` : "/c/contracts/standard-msa";
-  const contractName = contract?.name || "Standard MSA";
 
   return (
     <Card className="flex flex-col text-sm">
@@ -66,7 +60,7 @@ const SubscriptionCard = async ({
               </span>
               <div className="flex items-center gap-1.5">
                 <Store size={14} strokeWidth={2.25} />
-                <span className="font-medium">{maintainer.projectName}</span>
+                <span className="font-medium">{tier.organization.projectName}</span>
               </div>
             </div>
           )}

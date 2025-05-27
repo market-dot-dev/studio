@@ -1,15 +1,15 @@
 "use client";
 
+import { SimplePaymentElement } from "@/app/app/(payments)/checkout/[id]/stripe-payment-element";
 import { CHECKOUT_CURRENCY } from "@/app/config/checkout";
+import { Contract, Tier } from "@/app/generated/prisma";
 import { processPayment } from "@/app/services/checkout-service";
-import { SimplePaymentElement } from "@/components/checkout/stripe-payment-element";
 import { ContractLink } from "@/components/contracts/contract-link";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { type VendorProfile } from "@/types/checkout";
-import { Contract, Tier } from "@prisma/client";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -20,7 +20,7 @@ interface DirectPaymentCheckoutProps {
   vendor: VendorProfile;
   contract?: Contract | null;
   annual?: boolean;
-  userId?: string;
+  customerOrgId?: string;
 }
 
 type PaymentState =
@@ -34,7 +34,7 @@ export function DirectPaymentCheckout({
   vendor,
   contract,
   annual = false,
-  userId
+  customerOrgId
 }: DirectPaymentCheckoutProps) {
   const router = useRouter();
   const tierId = tier.id;
@@ -57,7 +57,7 @@ export function DirectPaymentCheckout({
     setPaymentState({ status: "processing" });
 
     try {
-      await processPayment(userId!, tierId, annual);
+      await processPayment(tierId, annual);
       setPaymentState({ status: "success" });
       router.replace("/success");
     } catch (err: any) {
@@ -69,7 +69,8 @@ export function DirectPaymentCheckout({
   };
 
   const isProcessing = paymentState.status === "processing";
-  const isDisabled = isProcessing || !userId || !paymentReady || paymentState.status === "success";
+  const isDisabled =
+    isProcessing || !customerOrgId || !paymentReady || paymentState.status === "success";
   const errorMessage = paymentState.status === "error" ? paymentState.message : null;
 
   return (
@@ -90,21 +91,21 @@ export function DirectPaymentCheckout({
 
       <section className="relative">
         <div className="absolute -bottom-10 left-0 top-0 hidden flex-col items-center gap-2 md:left-[-60px] md:flex">
-          <StepNumber number={2} disabled={!userId} />
+          <StepNumber number={2} disabled={!customerOrgId} />
           <span
             className={cn(
               "h-full w-px bg-gradient-to-b from-stone-200 from-80% via-stone-200 via-80% to-transparent to-100% transition-opacity",
-              !userId && "opacity-0"
+              !customerOrgId && "opacity-0"
             )}
           />
         </div>
         <div>
           <h2 className="mb-6 flex items-center gap-4 text-2xl/6 font-bold tracking-tightish text-stone-800 transition-opacity duration-500 ease-in-out">
-            <StepNumber number={2} disabled={!userId} className="md:hidden" />
-            <span className={cn(!userId && "opacity-40")}>Payment</span>
+            <StepNumber number={2} disabled={!customerOrgId} className="md:hidden" />
+            <span className={cn(!customerOrgId && "opacity-40")}>Payment</span>
           </h2>
           <AnimatePresence>
-            {userId && vendor?.stripeAccountId && (
+            {customerOrgId && vendor?.stripeAccountId && (
               <motion.div
                 key="payment-card"
                 initial={{ opacity: 0, height: 0, overflow: "hidden" }}
@@ -114,8 +115,7 @@ export function DirectPaymentCheckout({
               >
                 <Card className="min-h-[60px] p-5">
                   <SimplePaymentElement
-                    userId={tier.userId}
-                    vendorStripeAccountId={vendor.stripeAccountId!}
+                    vendorStripeAccountId={vendor.stripeAccountId}
                     setPaymentReady={setPaymentReady}
                   />
                   {errorMessage && <div className="mt-4 text-red-600">{errorMessage}</div>}

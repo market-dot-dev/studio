@@ -1,9 +1,9 @@
 "use client";
 
-import { removeLeadFromShortlist } from "@/app/services/LeadsService";
+import { Lead } from "@/app/generated/prisma";
+import { removeLeadFromShortlist } from "@/app/services/lead-service";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Lead } from "@prisma/client";
 import { useCallback, useState } from "react";
 import ResearchItem from "./research-item";
 

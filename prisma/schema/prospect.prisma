@@ -1,0 +1,45 @@
+model Lead {
+  id                    Int          @id @default(autoincrement())
+  host                  String
+  login                 String
+  name                  String
+  uuid                  String
+  kind                  String
+  description           String?
+  email                 String?
+  website               String?
+  location              String?
+  twitter               String?
+  company               String?
+  icon_url              String?
+  repositories_count    Int
+  last_synced_at        DateTime
+  html_url              String
+  total_stars           Int?
+  dependent_repos_count Int
+  followers             Int?
+  following             Int?
+  maintainers           Json
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  organizationId        String
+  organization          Organization @relation(fields: [organizationId], references: [id])
+
+  @@unique([host, uuid], name: "host_uuid_unique")
+}
+
+model Prospect {
+  id String @id @default(cuid())
+
+  name           String
+  email          String
+  companyName    String?
+  context        String?
+  tiers          Tier[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organizationId String
+  organization   Organization @relation(name: "prospects", fields: [organizationId], references: [id])
+
+  @@unique([email, organizationId])
+}

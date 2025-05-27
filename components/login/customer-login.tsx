@@ -1,7 +1,8 @@
 "use client";
 
 import useCurrentSession from "@/app/hooks/use-current-session";
-import { setSignUp, userExists } from "@/app/services/registration-service";
+import { userExists } from "@/app/services/auth-service";
+import { setSignUp } from "@/app/services/registration-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

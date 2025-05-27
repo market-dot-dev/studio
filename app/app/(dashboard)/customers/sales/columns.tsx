@@ -1,9 +1,10 @@
 "use client";
 
+import { Charge, Prospect, Subscription } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
 import { Badge } from "@/components/ui/badge";
 import { capitalize, formatDate } from "@/lib/utils";
-import { Charge, Prospect, Subscription, User } from "@prisma/client";
+import type { CustomerOrgWithAll } from "@/types/organization-customer";
 import { ColumnDef } from "@tanstack/react-table";
 import { PurchaseStatusBadge } from "../purchase-status-badge";
 import { SubscriptionStatusBadge } from "../subscription-state";
@@ -11,29 +12,33 @@ import { SubscriptionStatusBadge } from "../subscription-state";
 export type Sale = {
   id: string;
   type: "subscription" | "charge" | "prospect";
-  user: User | Prospect;
+  organization: CustomerOrgWithAll;
+  ownerName?: string;
+  ownerEmail?: string;
   tierName?: string;
   tierNames?: string[];
   createdAt: Date;
-  userId: string;
+  organizationId: string;
   subscription?: Subscription & { tier: Tier };
   charge?: Charge & { tier: Tier };
+  prospect?: Prospect & { tiers: Tier[] };
 };
 
 export const columns: ColumnDef<Sale>[] = [
   {
-    accessorKey: "user.name",
+    accessorKey: "ownerName",
     header: "Name",
     meta: {
       emphasized: true
     },
-    cell: ({ row }) => row.original.user.name
+    cell: ({ row }) => row.original.ownerName || row.original.organization.owner.name
   },
   {
-    accessorKey: "user.email",
+    accessorKey: "ownerEmail",
     header: "Email",
     cell: ({ row }) => {
-      return <a href={`mailto:${row.original.user.email}`}>{row.original.user.email}</a>;
+      const email = row.original.ownerEmail || row.original.organization.owner.email;
+      return email ? <a href={`mailto:${email}`}>{email}</a> : "-";
     }
   },
   {
@@ -74,5 +79,10 @@ export const columns: ColumnDef<Sale>[] = [
     cell: ({ row }) => {
       return formatDate(row.original.createdAt);
     }
+  },
+  {
+    accessorKey: "organization.name",
+    header: "Organization",
+    cell: ({ row }) => row.original.organization.name
   }
 ];

@@ -1,12 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import type { CustomerWithChargesAndSubscriptions } from "@/types/dashboard";
+import type { CustomerOrgWithChargesAndSubs } from "@/types/organization-customer";
 import Link from "next/link";
 import React from "react";
 import { CustomerTableItem, columns } from "./columns";
 
 export const CustomersTable: React.FC<{
-  customers: CustomerWithChargesAndSubscriptions[];
+  customers: CustomerOrgWithChargesAndSubs[];
   maxInitialRows?: number;
 }> = ({ customers, maxInitialRows }) => {
   const showAll = false;
@@ -19,7 +19,7 @@ export const CustomersTable: React.FC<{
         userId: customer.id,
         userName: customer.name,
         userCompany: customer.company,
-        userEmail: customer.email,
+        userEmail: customer.owner.email,
         tierName: sub.tier.name,
         statusType: "subscription" as const,
         createdAt: sub.createdAt,
@@ -30,7 +30,7 @@ export const CustomersTable: React.FC<{
         userId: customer.id,
         userName: customer.name,
         userCompany: customer.company,
-        userEmail: customer.email,
+        userEmail: customer.owner.email,
         tierName: charge.tier.name,
         statusType: "charge" as const,
         createdAt: charge.createdAt,

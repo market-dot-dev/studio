@@ -1,4 +1,4 @@
-import { getCurrentUser } from "@/app/services/UserService";
+import { requireOrganization, requireUser } from "@/app/services/user-context-service";
 import ConnectionRequired from "@/components/channels/market/connection-required";
 import MarketPreview from "@/components/channels/market/market-preview";
 import PageHeader from "@/components/common/page-header";
@@ -6,12 +6,9 @@ import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
 export default async function MarketChannel() {
-  const currentUser = await getCurrentUser();
-  if (!currentUser) {
-    return <div>Not logged in</div>;
-  }
-
-  const isConnectedToMarket = currentUser.marketExpertId != null;
+  const currentUser = await requireUser();
+  const org = await requireOrganization();
+  const isConnectedToMarket = org.marketExpertId != null;
 
   return (
     <div className="flex w-full flex-col items-start gap-6">

@@ -1,5 +1,6 @@
 "use client";
 
+import { Subscription } from "@/app/generated/prisma";
 import { Badge } from "@/components/ui/badge";
 import { formatSubscriptionExpiryDate } from "@/lib/utils";
 import {
@@ -8,7 +9,6 @@ import {
   isRenewing,
   type SubscriptionStatusType
 } from "@/types/subscription";
-import { Subscription } from "@prisma/client";
 import { type VariantProps } from "class-variance-authority";
 import { Clock, RefreshCw } from "lucide-react";
 

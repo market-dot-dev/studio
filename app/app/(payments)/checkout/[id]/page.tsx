@@ -19,7 +19,8 @@ export default async function CheckoutPage(props: {
   }
 
   // Single function call to get all required data
-  const { tier, contract, vendor, currentUser } = await getCheckoutData(id, isAnnual);
+  const { tier, customerOrg } = await getCheckoutData(id, isAnnual);
+  const vendor = tier?.organization;
 
   // If this is a vendor page, check that this tier belongs to them
   const headersList = await headers();
@@ -45,9 +46,9 @@ export default async function CheckoutPage(props: {
         <CheckoutWrapper
           tier={tier}
           vendor={vendor}
-          contract={contract}
+          contract={tier.contract}
           annual={isAnnual}
-          userId={currentUser?.id}
+          customerOrgId={customerOrg?.id}
         />
         <BrandBadge className="lg:hidden" />
       </div>
