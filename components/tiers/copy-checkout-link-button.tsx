@@ -55,7 +55,6 @@ export default function CopyCheckoutLinkButton({ tierId }: { tierId: string }) {
       onClick={() => setShouldCopy(true)}
       tooltip={isCopied ? "Copied checkout link!" : "Copy checkout link"}
       className="flex size-6 items-center justify-center gap-1.5 rounded text-sm font-medium transition-colors duration-200 ease-in-out hover:bg-stone-200 active:bg-stone-300"
-      disabled={isCopied}
     >
       <AnimatePresence mode="wait" initial={false}>
         {isCopied ? (

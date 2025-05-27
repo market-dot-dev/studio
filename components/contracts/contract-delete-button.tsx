@@ -12,7 +12,7 @@ import {
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const ContractDeleteButton = ({
@@ -53,7 +53,7 @@ const ContractDeleteButton = ({
   return (
     <>
       <Button className="w-min" variant="destructive" onClick={showWarning}>
-        <Trash />
+        <Trash2 />
         Delete
       </Button>
 

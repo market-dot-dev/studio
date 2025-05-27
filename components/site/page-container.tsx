@@ -21,7 +21,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import type { PageContent, SiteDetails } from "@/types/site";
-import { ArrowUpCircle, EyeOff, Home, MoreVertical, Trash } from "lucide-react";
+import { ArrowUpCircle, EyeOff, Home, MoreVertical, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -264,7 +264,7 @@ export default function PageContainer({
           onClick={() => setDeleteDialogOpen(true)}
           destructive
         >
-          <Trash />
+          <Trash2 />
           Delete
         </DropdownMenuItem>
       </DropdownMenuContent>

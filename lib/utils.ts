@@ -30,7 +30,21 @@ export const truncate = (str: string, num: number) => {
   if (str.length <= num) {
     return str;
   }
-  return str.slice(0, num) + "...";
+  return str.slice(0, num) + "…";
+};
+
+/**
+ * Formats a URL for display by removing the protocol and truncating if needed
+ * @param url The URL to format
+ * @param maxLength Maximum length before truncation (optional)
+ * @returns Formatted URL string suitable for display
+ */
+export const formatUrlForDisplay = (url: string, maxLength?: number): string => {
+  if (!url) return "";
+
+  const urlWithoutProtocol = url.split("://")[1] || url;
+
+  return maxLength ? truncate(urlWithoutProtocol, maxLength) : urlWithoutProtocol;
 };
 
 export const formatDate = (date: Date | string): string => {

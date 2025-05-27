@@ -1,7 +1,7 @@
 import Tier from "@/app/models/Tier";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { getRootUrl } from "@/lib/domain";
+import { formatUrlForDisplay } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, LinkIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -78,49 +78,32 @@ const TierLinkCopier: React.FC<TierLinkCopierProps> = ({
   }
 
   return (
-    <div
-      className={`flex flex-row items-center justify-center rounded shadow-border-sm ${className}`}
-    >
-      <Input
-        id="checkoutLink"
-        className="min-w-none w-fit truncate rounded-r-none shadow-none active:shadow-none"
-        readOnly
-        value={link}
-        onClick={(e) => (e.target as HTMLInputElement).select()}
-      />
-      <span className="h-full w-0 border-l border-stone-300"></span>
-      <Button
-        variant="outline"
-        onClick={handleCopy}
-        disabled={isCopied}
-        tooltip={isCopied ? "Copied!" : "Copy checkout link"}
-        className="z-1 size-9 rounded-l-none text-stone-900 shadow-none active:shadow-none md:size-8"
-      >
-        <AnimatePresence mode="wait" initial={false}>
-          {isCopied ? (
-            <motion.div
-              key="check"
-              initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
-              transition={{ duration: 0.1, type: "easeInOut" }}
-            >
-              <Check className="size-4 text-stone-900" />
-            </motion.div>
-          ) : (
-            <motion.div
-              key="link"
-              initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
-              animate={{ opacity: 1, scale: 1, rotate: 0 }}
-              exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
-              transition={{ duration: 0.1, type: "easeInOut" }}
-            >
-              <LinkIcon className="size-4 text-stone-900" />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </Button>
-    </div>
+    <Button variant="outline" onClick={handleCopy} tooltip={formatUrlForDisplay(link, 30)}>
+      <AnimatePresence mode="wait" initial={false}>
+        {isCopied ? (
+          <motion.div
+            key="check"
+            initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
+            transition={{ duration: 0.1, type: "easeInOut" }}
+          >
+            <Check />
+          </motion.div>
+        ) : (
+          <motion.div
+            key="link"
+            initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
+            animate={{ opacity: 1, scale: 1, rotate: 0 }}
+            exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
+            transition={{ duration: 0.1, type: "easeInOut" }}
+          >
+            <LinkIcon />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      Copy checkout link
+    </Button>
   );
 };
 

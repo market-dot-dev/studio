@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import Spinner from "@/components/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useCallback, useEffect, useState } from "react";
 
