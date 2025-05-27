@@ -2,7 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { OTPInput, SlotProps } from "input-otp";
-import Spinner from "../ui/spinner";
+import { Spinner } from "../ui/spinner";
 
 export default function OTPInputElement({ onComplete, onPaste, onInput, verifying }: any) {
   return (

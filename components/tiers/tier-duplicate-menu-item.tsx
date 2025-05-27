@@ -1,6 +1,6 @@
 "use client";
 
-import { duplicateTier } from "@/app/services/tier-service";
+import { duplicateTier } from "@/app/services/tier/tier-service";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
