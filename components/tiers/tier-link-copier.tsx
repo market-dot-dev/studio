@@ -1,7 +1,7 @@
 import Tier from "@/app/models/Tier";
 import { Button } from "@/components/ui/button";
 import { getRootUrl } from "@/lib/domain";
-import { truncate } from "@/lib/utils";
+import { formatUrlForDisplay } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, LinkIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
@@ -78,11 +78,7 @@ const TierLinkCopier: React.FC<TierLinkCopierProps> = ({
   }
 
   return (
-    <Button
-      variant="outline"
-      onClick={handleCopy}
-      tooltip={`${truncate(link.split("://")[1] || link, 30)}`}    // removes "http(s)://" from the start of the link if present
-    >
+    <Button variant="outline" onClick={handleCopy} tooltip={formatUrlForDisplay(link, 30)}>
       <AnimatePresence mode="wait" initial={false}>
         {isCopied ? (
           <motion.div
