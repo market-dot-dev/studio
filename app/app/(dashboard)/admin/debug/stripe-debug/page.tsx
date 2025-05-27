@@ -1,18 +1,18 @@
 "use server";
 
 import { findByUserId } from "@/app/services/tier-service";
-import UserService from "@/app/services/UserService";
 import { Card } from "@/components/ui/card";
+import { getSession } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-const StripeDebug = async () => {
-  const user = await UserService.getCurrentUser();
+export default async function StripeDebugPage() {
+  const session = await getSession();
 
-  if (!user) {
-    return <div>Not logged in</div>;
+  if (!session || !session.user) {
+    redirect("/login");
   }
 
-  const tiers = await findByUserId(user.id);
-  const tier = tiers[0];
+  const tiers = await findByUserId(session.user.id);
 
   return (
     <div className="px-3">
@@ -47,6 +47,4 @@ const StripeDebug = async () => {
       ))}
     </div>
   );
-};
-
-export default StripeDebug;
+}

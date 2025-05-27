@@ -1,5 +1,6 @@
 "use client";
 
+import { Site, User } from "@/app/generated/prisma";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
@@ -8,7 +9,6 @@ import { updateCurrentSite } from "@/app/services/site-crud-service";
 import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Site, User } from "@prisma/client";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/themes";
 import { AlertCircleIcon } from "lucide-react";

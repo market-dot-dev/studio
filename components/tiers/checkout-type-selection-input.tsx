@@ -1,7 +1,7 @@
+import { User } from "@/app/generated/prisma";
 import { TierWithCount } from "@/app/services/tier-service";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { User } from "@prisma/client";
 import { CreditCard, Mail } from "lucide-react";
 
 export default function CheckoutTypeSelectionInput({

@@ -1,3 +1,4 @@
+import { Charge, Subscription } from "@/app/generated/prisma";
 import ChargeService from "@/app/services/charge-service";
 import { getUserSubscriptions } from "@/app/services/subscription-service";
 import PageHeader from "@/components/common/page-header";
@@ -7,7 +8,6 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { pluralize } from "@/lib/utils";
 import { isActive } from "@/types/subscription";
-import { Charge, Subscription } from "@prisma/client";
 
 export default async function SubscriptionsAndChargesList() {
   const charges: Charge[] = (await ChargeService.findCharges()) || [];

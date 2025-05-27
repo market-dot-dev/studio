@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User } from "@/app/generated/prisma";
 
 export type SessionUser = {
   id: string;

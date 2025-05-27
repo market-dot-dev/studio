@@ -1,5 +1,5 @@
+import { Contract, PrismaClient, Tier, User } from "@/app/generated/prisma";
 import RegistrationService from "@/app/services/registration-service";
-import { Contract, PrismaClient, Tier, User } from "@prisma/client";
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";

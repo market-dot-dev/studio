@@ -1,9 +1,9 @@
 "use server";
 
+import { Page } from "@/app/generated/prisma";
 import { getSession } from "@/lib/auth";
 import { newPageTemplate } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
-import { Page } from "@prisma/client";
 import SessionService from "./session-service";
 import { getCurrentSite } from "./site-crud-service";
 

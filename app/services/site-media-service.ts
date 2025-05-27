@@ -31,7 +31,7 @@ export async function uploadLogoFile(file: File): Promise<string> {
   }
 
   const fileType = file.type.split("/")[1] || "unknown";
-  const filename = `${generateId()}.${fileType}`;
+  const filename = `${generateId()}.${fileType}`; // @TODO: random ids might not be necessary with @vercel/blob v1 anymore
 
   const { url } = await put(filename, file, {
     access: "public"

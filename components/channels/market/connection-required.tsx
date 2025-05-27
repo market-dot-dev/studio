@@ -1,9 +1,9 @@
 "use client";
 
+import { User } from "@/app/generated/prisma";
 import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { User } from "@prisma/client";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";

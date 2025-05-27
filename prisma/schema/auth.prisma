@@ -1,0 +1,82 @@
+model User {
+  id                          String         @id @default(cuid())
+  name                        String?
+  username                    String?
+  gh_id                       Int?
+  gh_username                 String?        @unique
+  email                       String?        @unique
+  businessLocation            String? /// @DEPRECATED. Should be fetched from Organization.
+  businessType                String? /// @DEPRECATED. Should be fetched from Organization.
+  stripeCustomerIds           Json           @default("{}") /// @DEPRECATED. Should be fetched from Organization.
+  stripePaymentMethodIds      Json           @default("{}") /// @DEPRECATED. Should be fetched from Organization.
+  stripeAccountId             String?        @unique /// @DEPRECATED. Should be fetched from Organization.
+  stripeCSRF                  String?        @unique /// @DEPRECATED. Should be fetched from Organization.
+  stripeAccountDisabled       Boolean        @default(false) /// @DEPRECATED. Should be fetched from Organization.
+  stripeAccountDisabledReason String? /// @DEPRECATED. Should be fetched from Organization.
+  projectName                 String? /// @DEPRECATED. Should be fetched from Organization.
+  projectDescription          String? /// @DEPRECATED. Should be fetched from Organization.
+  emailVerified               DateTime?
+  image                       String?
+  roleId                      String         @default("customer") // @DEPRECATED: Pending removal.
+  createdAt                   DateTime       @default(now())
+  updatedAt                   DateTime       @updatedAt
+  accounts                    Account[]
+  pages                       Page[] /// @DEPRECATED. Should be fetched from Organization.
+  sessions                    Session[]
+  sites                       Site[] /// @DEPRECATED. Should be fetched from Organization.
+  tiers                       Tier[] /// @DEPRECATED. Should be fetched from Organization.
+  subscriptions               Subscription[] /// @DEPRECATED. Should be fetched from Organization.
+  leads                       Lead[] /// @DEPRECATED. Should be fetched from Organization.
+  onboarding                  String?
+  company                     String? /// @DEPRECATED. Should be fetched from Organization.
+  charges                     Charge[] /// @DEPRECATED. Should be fetched from Organization.
+  contracts                   Contract[] /// @DEPRECATED. Should be fetched from Organization.
+  prospects                   Prospect[] /// @DEPRECATED. Should be fetched from Organization.
+  marketExpertId              String? /// @DEPRECATED. Should be fetched from Organization.
+
+  // Organization relationships
+  organizations         OrganizationMember[]
+  ownedOrganizations    Organization[]       @relation("OwnedOrganizations")
+  currentOrganizationId String?
+  currentOrganization   Organization?        @relation("CurrentOrganization", fields: [currentOrganizationId], references: [id], onDelete: SetNull)
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  userId                   String
+  type                     String
+  provider                 String
+  providerAccountId        String
+  refresh_token            String?
+  refresh_token_expires_in Int?
+  access_token             String?
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String?
+  session_state            String?
+  oauth_token_secret       String?
+  oauth_token              String?
+  user                     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}

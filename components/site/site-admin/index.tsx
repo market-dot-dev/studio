@@ -1,5 +1,6 @@
 "use client";
 
+import { Page, Site } from "@/app/generated/prisma";
 import { getSiteAndPages, updateCurrentSite } from "@/app/services/site-crud-service";
 import PageHeader from "@/components/common/page-header";
 import CreatePageButton from "@/components/create-page-button";
@@ -20,7 +21,6 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { getRootUrl } from "@/lib/domain";
 import { isGitWalletError } from "@/lib/errors";
-import { Page, Site } from "@prisma/client";
 import * as Sentry from "@sentry/nextjs";
 import { formatDistanceToNow } from "date-fns";
 import { Settings } from "lucide-react";

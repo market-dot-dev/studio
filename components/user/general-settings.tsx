@@ -1,10 +1,10 @@
 "use client";
 
+import { User } from "@/app/generated/prisma";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { User } from "@prisma/client";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { Page, Site } from "@/app/generated/prisma";
 import { deletePage, setHomepage, updatePage } from "@/app/services/PageService";
 import PageHeader from "@/components/common/page-header";
 import PageEditor from "@/components/site/page-editor";
@@ -20,7 +21,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { Page, Site } from "@prisma/client";
 import { ArrowUpCircle, EyeOff, Home, MoreVertical, Trash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";

@@ -1,19 +1,20 @@
 "use server";
 
-import ContractService from "@/app/services/contract-service";
+import { getContractsByCurrentMaintainer } from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import { getCurrentUser } from "@/app/services/UserService";
 import TierForm from "@/components/tiers/tier-form";
+import { notFound } from "next/navigation";
 
 export default async function EditTierPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
 
   const [tier, contracts] = await Promise.all([
     getTierById(params.id),
-    ContractService.getContractsByCurrentMaintainer()
+    getContractsByCurrentMaintainer()
   ]);
 
-  if (!tier || !tier.id) return null;
+  if (!tier || !tier.id) notFound();
 
   const user = await getCurrentUser();
 

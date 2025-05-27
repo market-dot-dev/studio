@@ -1,4 +1,4 @@
-import { Prisma } from "@prisma/client";
+import { Prisma } from "@/app/generated/prisma";
 
 /**
  * Prisma validator for vendor profile with minimal fields

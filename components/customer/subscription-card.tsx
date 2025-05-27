@@ -1,7 +1,8 @@
 import { SubscriptionStatusBadge } from "@/app/app/(dashboard)/customers/subscription-state";
 import { CancelSubscriptionBtn } from "@/app/app/c/subscriptions/cancel-subscription-btn";
 import { ReactivateSubscriptionBtn } from "@/app/app/c/subscriptions/reactivate-subscription-btn";
-import ContractService from "@/app/services/contract-service";
+import { Subscription } from "@/app/generated/prisma";
+import { getContractById } from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
@@ -9,7 +10,6 @@ import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { formatDate } from "@/lib/utils";
 import { isCancelled, isFinishingMonth, isRenewing } from "@/types/subscription";
-import { Subscription } from "@prisma/client";
 import { Store } from "lucide-react";
 import Link from "next/link";
 
@@ -34,7 +34,7 @@ const SubscriptionCard = async ({
   const shortenedCadence =
     actualCadence === "month" ? "mo" : actualCadence === "year" ? "yr" : actualCadence;
 
-  const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
+  const contract = (await getContractById(tier.contractId || "")) || undefined;
 
   // Check if this is a cancelled but still active subscription that can be reactivated
   const canReactivate = isCancelled(subscription) && isFinishingMonth(subscription);

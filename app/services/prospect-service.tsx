@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Prospect } from "@prisma/client";
+import { Prospect } from "../generated/prisma";
 import Tier from "../models/Tier";
 import UserService from "./UserService";
 import { notifyOwnerOfNewProspect } from "./email-service";
@@ -13,13 +13,13 @@ class ProspectService {
       return [];
     }
 
-    const response = await prisma.prospect.findMany({
+    const prospects = await prisma.prospect.findMany({
       where: { userId },
       include: { tiers: true },
       orderBy: { createdAt: "desc" }
     });
 
-    return response.map((prospect) => ({
+    return prospects.map((prospect) => ({
       ...prospect,
       tier: prospect.tiers[0]
     }));
@@ -27,10 +27,10 @@ class ProspectService {
 
   static async addNewProspectForPackage(
     prospect: {
-      email: string;
-      name: string;
-      organization: string;
-      context: string;
+      email: Prospect["email"];
+      name: Prospect["name"];
+      companyName: Prospect["companyName"];
+      context: Prospect["context"];
     },
     tier: Tier
   ): Promise<Prospect> {
@@ -58,7 +58,11 @@ class ProspectService {
       }
     });
 
-    await notifyOwnerOfNewProspect(user, newProspect, tier.name);
+    await notifyOwnerOfNewProspect(
+      user,
+      { email: newProspect.email, name: newProspect.name },
+      tier.name
+    );
     return newProspect;
   }
 }

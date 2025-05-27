@@ -1,8 +1,8 @@
 "use server";
 
+import { Media } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateId } from "@/lib/utils";
-import { Media } from "@prisma/client";
 import { del, put } from "@vercel/blob";
 import { getCurrentSite } from "./site-crud-service";
 
@@ -43,7 +43,7 @@ export async function uploadMedia(formData: FormData): Promise<Partial<Media> | 
 
     const file = fileObj as File;
     const fileType = file.type.split("/")[1] || "unknown";
-    const filename = `${generateId()}.${fileType}`;
+    const filename = `${generateId()}.${fileType}`; // @TODO: random ids might not be necessary with @vercel/blob v1 anymore
 
     const { url } = await put(filename, file, {
       access: "public"

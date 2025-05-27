@@ -1,8 +1,8 @@
+import { User } from "@/app/generated/prisma";
 import UserService from "@/app/services/UserService";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
 import { DataTable } from "@/components/ui/data-table";
-import { User } from "@prisma/client";
 import { Info } from "lucide-react";
 import { columns } from "./columns";
 import UserAnalyticsChart from "./user-analytics-chart";

@@ -1,11 +1,11 @@
 "use server";
 
+import { User } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import type {
   CustomerWithChargesAndSubscriptions,
   CustomerWithChargesSubscriptionsAndProspects
 } from "@/types/dashboard";
-import { User } from "@prisma/client";
 import Customer from "../models/Customer";
 import { SessionUser } from "../models/Session";
 import SessionService from "./session-service";

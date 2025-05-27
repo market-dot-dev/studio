@@ -1,10 +1,10 @@
+import { Charge } from "@/app/generated/prisma";
 import ChargeService from "@/app/services/charge-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Charge } from "@prisma/client";
 import Link from "next/link";
 
 const ChargeCard = async ({ charge }: { charge: Charge }) => {

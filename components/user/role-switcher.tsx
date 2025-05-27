@@ -1,5 +1,5 @@
 "use client";
-import { User } from "@prisma/client";
+import { User } from "@/app/generated/prisma";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useCallback } from "react";

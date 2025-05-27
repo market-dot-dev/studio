@@ -45,3 +45,6 @@ yarn.lock
 
 # Cursor editor prompt configuration
 .cursorrules
+
+# Prisma
+app/generated/prisma/

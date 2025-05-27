@@ -1,11 +1,11 @@
 "use server";
 
+import { Contract, Tier } from "@/app/generated/prisma";
 import { createSubscription } from "@/app/services/subscription-service";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { includeVendorProfile, type VendorProfile } from "@/types/checkout";
 import { type StripeCard } from "@/types/stripe";
-import { Contract, Tier } from "@prisma/client";
 import Stripe from "stripe";
 import Customer from "../models/Customer";
 import { createLocalCharge } from "./charge-service";

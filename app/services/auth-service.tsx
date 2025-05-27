@@ -1,8 +1,8 @@
 "use server";
 
+import { User } from "@/app/generated/prisma";
 import { businessDescription, businessName } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
-import { User } from "@prisma/client";
 import { Account, User as NaUser } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import { JWT } from "next-auth/jwt";

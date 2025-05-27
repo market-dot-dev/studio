@@ -1,11 +1,11 @@
-import ContractService from "@/app/services/contract-service";
+import { Charge } from "@/app/generated/prisma";
+import { getContractById } from "@/app/services/contract-service";
 import { getTierById } from "@/app/services/tier-service";
 import UserService from "@/app/services/UserService";
 import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { formatDate } from "@/lib/utils";
-import { Charge } from "@prisma/client";
 import { DollarSign, Store } from "lucide-react";
 import Link from "next/link";
 
@@ -27,7 +27,7 @@ const ChargeCard = async ({
 
   const status = "paid";
 
-  const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
+  const contract = (await getContractById(tier.contractId || "")) || undefined;
   const contractUrl = contract ? `/c/contracts/${contract.id}` : "/c/contracts/standard-msa";
   const contractName = contract?.name || "Standard MSA";
 

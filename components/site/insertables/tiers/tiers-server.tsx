@@ -1,5 +1,5 @@
+import { Channel } from "@/app/generated/prisma";
 import { getPublishedTiersForUser } from "@/app/services/tier-service";
-import { Channel } from "@prisma/client";
 import Tiers from "./tiers";
 
 // This is the component that will prepare data before rendering the page at the frontend

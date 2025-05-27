@@ -1,5 +1,6 @@
 "use client";
 
+import { Tier } from "@/app/generated/prisma";
 import { TierDescriptionFeatures } from "@/components/tiers/tier-description-features";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { parseTierDescription } from "@/lib/utils";
-import { Tier } from "@prisma/client";
 import { Info } from "lucide-react";
 import { useState } from "react";
 

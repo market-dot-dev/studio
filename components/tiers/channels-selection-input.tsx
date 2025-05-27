@@ -1,5 +1,5 @@
+import { Channel } from "@/app/generated/prisma";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Channel } from "@prisma/client";
 import { ShoppingBag, Store } from "lucide-react";
 
 export default function ChannelsSelectionInput({

@@ -1,9 +1,9 @@
 "use server";
 
+import { Site } from "@/app/generated/prisma";
 import { RESERVED_SUBDOMAINS } from "@/lib/domain";
 import { GitWalletError } from "@/lib/errors";
 import prisma from "@/lib/prisma";
-import { Site } from "@prisma/client";
 
 /**
  * Validates a subdomain for format, length, reserved status, and uniqueness

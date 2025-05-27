@@ -1,8 +1,8 @@
 "use client";
 
+import { Prospect } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
 import { formatDate } from "@/lib/utils";
-import { Prospect } from "@prisma/client";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Package } from "lucide-react";
 import Link from "next/link";
@@ -33,8 +33,8 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
     }
   },
   {
-    accessorKey: "organization",
-    header: "Organization"
+    accessorKey: "companyName",
+    header: "Company name"
   },
   {
     accessorKey: "tier",

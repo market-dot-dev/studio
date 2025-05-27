@@ -1,11 +1,14 @@
-import ContractService from "@/app/services/contract-service";
+"use server";
+
+import { getContractById } from "@/app/services/contract-service";
+import { notFound } from "next/navigation";
 
 export default async function ContractPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
-  const contract = await ContractService.getContractById(params.id);
+  const contract = await getContractById(params.id);
 
   if (!contract) {
-    return <div>Contract not found</div>;
+    notFound();
   }
 
   const { name, description, url, attachmentUrl, attachmentType, storage } = contract;

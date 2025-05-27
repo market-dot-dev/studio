@@ -1,7 +1,7 @@
 "use server";
 
+import { Tier, TierVersion } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
-import { Tier, TierVersion } from "@prisma/client";
 import { deactivateStripePrice, type SubscriptionCadence } from "./stripe-price-service";
 import { checkTierHasSubscribers } from "./subscription-service";
 

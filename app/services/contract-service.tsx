@@ -1,8 +1,8 @@
 "use server";
 
+import { Contract, Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateId } from "@/lib/utils";
-import { Contract, Prisma } from "@prisma/client";
 import { put } from "@vercel/blob";
 import { getCurrentUser } from "./UserService";
 
@@ -50,7 +50,7 @@ class ContractService {
       );
     }
 
-    const filename = `${generateId()}.${file.type.split("/")[1]}`;
+    const filename = `${generateId()}.${file.type.split("/")[1]}`; // @TODO: random ids might not be necessary with @vercel/blob v1 anymore
     const { url } = await put(filename, file, {
       access: "public"
     });
@@ -61,8 +61,6 @@ class ContractService {
   private static async uploadAttachment(
     contract: ContractWithUploadData
   ): Promise<Prisma.ContractCreateInput> {
-    const data: Partial<Prisma.ContractCreateInput> = {};
-
     console.log("~~~~~~~~~~~~~~ uploading");
     if (contract.uploadData) {
       const file = contract.uploadData as any as File;
@@ -107,7 +105,6 @@ class ContractService {
 
   static async createContract(contractAttributes: ContractWithUploadData): Promise<Contract> {
     const maintainerId = (await getCurrentUser())?.id;
-
     if (!maintainerId) {
       throw new Error("Unauthorized");
     }
@@ -117,14 +114,15 @@ class ContractService {
     return await prisma.contract.create({
       data: {
         ...contract,
-        maintainer: undefined,
-        maintainerId
+        maintainer: {
+          connect: {
+            id: maintainerId
+          }
+        }
       }
     });
   }
 }
-
-export default ContractService;
 
 export const getContractById = async (id: string) => {
   return ContractService.getContractById(id);

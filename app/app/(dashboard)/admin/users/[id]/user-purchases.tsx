@@ -1,5 +1,6 @@
 "use client";
 
+import { Charge, Subscription, Tier } from "@/app/generated/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,7 +11,6 @@ import {
   TableHeader,
   TableRow
 } from "@/components/ui/table";
-import { Charge, Subscription, Tier } from "@prisma/client";
 import { format } from "date-fns";
 
 interface UserPurchasesProps {
