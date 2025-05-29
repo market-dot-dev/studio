@@ -1,7 +1,7 @@
 "use client";
 
-import { OrganizationSwitcher } from "@/app/components/organization-switcher";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
+import { OrganizationSwitcher } from "@/components/organization/organization-switcher";
 import { MinimalOrganization } from "@/types/organization";
 import type { SidebarItemGroup } from "@/types/sidebar";
 import type { SiteDetails } from "@/types/site";
