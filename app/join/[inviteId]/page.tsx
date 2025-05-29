@@ -64,7 +64,7 @@ export default function JoinPage({ params }: JoinPageProps) {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col items-center gap-4">
-          <p className="text-muted-foreground text-sm">Create an account or sign in to accept.</p>
+          <p className="text-sm text-muted-foreground">Create an account or sign in to accept.</p>
           <Button
             className="w-full"
             onClick={() => alert(`Placeholder: Initiate GitHub OAuth for invite ${inviteId}`)} // Placeholder
@@ -76,7 +76,7 @@ export default function JoinPage({ params }: JoinPageProps) {
         <CardFooter className="flex justify-center text-sm">
           <p className="text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary font-medium hover:underline">
+            <Link href="/login" className="font-medium text-primary hover:underline">
               Sign In
             </Link>
           </p>
