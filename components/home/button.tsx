@@ -10,7 +10,7 @@ interface ButtonProps {
   className?: string;
 }
 
-export default function Button({
+export function MarketingButton({
   children,
   onClick,
   className,
@@ -24,7 +24,7 @@ export default function Button({
       <button
         onClick={onClick}
         className={clsx(
-          `text-marketing-primary hover:bg-marketing-accent focus-visible:ring-marketing-camo-accent active:bg-marketing-accent-active relative -m-2 rounded-[5px] p-4 transition-colors duration-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 active:scale-[98%]`,
+          `relative -m-2 rounded-[5px] p-4 text-marketing-primary transition-colors duration-100 hover:bg-marketing-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-marketing-camo-accent focus-visible:ring-offset-2 active:scale-[98%] active:bg-marketing-accent-active`,
           fullWidth ? "w-full" : "w-fit",
           className
         )}
@@ -38,9 +38,9 @@ export default function Button({
     <button
       onClick={onClick}
       className={clsx(
-        "text-marketing-sm md:text-marketing-base flex items-center justify-center gap-2.5 whitespace-nowrap rounded-lg transition-all duration-200 md:gap-3",
+        "flex items-center justify-center gap-2.5 whitespace-nowrap rounded-lg text-marketing-sm transition-all duration-200 md:gap-3 md:text-marketing-base",
         variant === "primary" &&
-          "shadow-marketing-camo/40 from-marketing-camo/75 via-marketing-camo/[92%] to-marketing-camo text-marketing-primary bg-gradient-to-b shadow-md ring-1 ring-black/[20%] active:shadow",
+          "shadow-marketing-camo/40 bg-gradient-to-b from-marketing-camo/75 via-marketing-camo/[92%] to-marketing-camo text-marketing-primary shadow-md ring-1 ring-black/[20%] active:shadow",
         variant === "secondary" &&
           "bg-marketing-accent text-marketing-primary hover:bg-marketing-accent-active",
         variant === "link"

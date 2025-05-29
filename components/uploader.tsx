@@ -200,7 +200,7 @@ export default function Uploader({
   }, [saving]);
 
   return (
-    <form className="grid w-full gap-6">
+    <div className="grid w-full gap-6">
       <div>
         <div className="mb-4 space-y-1">
           <h2 className="text-xl font-semibold">Upload a file</h2>
@@ -328,6 +328,6 @@ export default function Uploader({
           Confirm upload
         </Button>
       )}
-    </form>
+    </div>
   );
 }

@@ -1,12 +1,12 @@
 "use client";
 import {
-  type FiltersState,
   getDependentOwners,
   getFacets,
   getShortlistedLeadsKeysList,
   lookup
-} from "@/app/services/LeadsService";
+} from "@/app/services/lead-service";
 import { extractGitHubRepoInfo } from "@/lib/github";
+import type { FiltersState } from "@/types/lead";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import LoadingSpinner from "../form/loading-spinner";

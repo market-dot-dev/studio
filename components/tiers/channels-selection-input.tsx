@@ -1,23 +1,23 @@
+import { Channel } from "@/app/generated/prisma";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Channel } from "@prisma/client";
 import { ShoppingBag, Store } from "lucide-react";
 
 export default function ChannelsSelectionInput({
   selectedChannels,
   handleInputChange,
-  userIsMarketExpert,
+  orgIsMarketExpert,
   idPrefix = ""
 }: {
   selectedChannels: Channel[];
   handleInputChange: (channel: Channel) => void;
-  userIsMarketExpert: boolean;
+  orgIsMarketExpert: boolean;
   idPrefix?: string;
 }) {
   return (
     <div className="flex flex-col gap-2">
-      {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
+      {}
       <label htmlFor={`${idPrefix}channel-site`} className="block w-full">
-        <div className="shadow-border-sm focus-within:ring-swamp hover:shadow-border flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2">
+        <div className="flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-swamp hover:shadow-border">
           <div className="flex w-full items-center justify-between">
             <div className="flex items-center">
               <Store className="mr-2.5 size-[18px] text-stone-500" />
@@ -37,10 +37,9 @@ export default function ChannelsSelectionInput({
           </p>
         </div>
       </label>
-      {userIsMarketExpert && (
-        // eslint-disable-next-line jsx-a11y/label-has-associated-control
+      {orgIsMarketExpert && (
         <label htmlFor={`${idPrefix}channel-market`} className="block size-full">
-          <div className="shadow-border-sm focus-within:ring-swamp hover:shadow-border flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2">
+          <div className="flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-swamp hover:shadow-border">
             <div className="flex size-full items-center justify-between">
               <div className="flex items-center">
                 <ShoppingBag className="mr-2.5 size-[18px] text-stone-500" />

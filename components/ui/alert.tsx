@@ -6,14 +6,14 @@ import { buttonVariants } from "./button";
 import { cn } from "@/lib/utils";
 
 const alertVariants = cva(
-  "[&>svg]:text-foreground relative w-full rounded border p-4 text-sm [&>svg+div]:translate-y-[-2px] [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg~*]:pl-[30px]",
+  "relative w-full rounded bg-background p-4 text-sm text-foreground shadow-border-sm [&>svg]:absolute [&>svg]:left-4 [&>svg]:top-3.5 [&>svg]:size-4 [&>svg]:translate-y-px [&>svg]:stroke-[2] [&>svg~*]:pl-[30px]",
   {
     variants: {
       variant: {
-        default: "bg-background text-foreground",
-        warning: "border-none bg-orange-600 text-white [&>svg]:text-white",
-        destructive:
-          "border-rose-600 bg-rose-600 text-white dark:border-rose-600 [&>svg]:text-white"
+        default: "[&>svg]:text-muted-foreground",
+        success: "[&>svg]:text-success",
+        warning: "[&>svg]:text-warning",
+        destructive: "[&>svg]:text-destructive"
       }
     },
     defaultVariants: {
@@ -35,7 +35,7 @@ const AlertTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<H
     // eslint-disable-next-line jsx-a11y/heading-has-content
     <h5
       ref={ref}
-      className={cn("alert-title mb-1 font-semibold leading-none", className)}
+      className={cn("alert-title mb-1.5 font-semibold leading-none", className)}
       {...props}
     />
   )
@@ -48,7 +48,10 @@ const AlertDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("alert-description text-sm [&_p]:leading-relaxed", className)}
+    className={cn(
+      "alert-description text-sm text-muted-foreground [&_p]:leading-relaxed -translate-y-[2px] -mb-0.5",
+      className
+    )}
     {...props}
   />
 ));

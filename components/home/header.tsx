@@ -1,7 +1,7 @@
 "use client";
 
 import useCurrentSession from "@/app/hooks/use-current-session";
-import Button from "@/components/home/button";
+import { MarketingButton } from "@/components/home/button";
 import FeatureCard from "@/components/home/feature-card";
 import Link from "@/components/home/link";
 import Logo from "@/components/home/logo";
@@ -53,11 +53,11 @@ interface Product {
 }
 
 const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambugerButtonProps) => (
-  <Button
+  <MarketingButton
     variant="ghost"
     onClick={toggleMenu}
     className={clsx(
-      "text-marketing-primary -m-1.5 flex items-center justify-center !p-1.5",
+      "-m-1.5 flex items-center justify-center !p-1.5 text-marketing-primary",
       className
     )}
     aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -65,7 +65,7 @@ const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambu
     <span className="flex items-center justify-center">
       {isOpen ? <X className="size-6" /> : <Menu className="size-6" />}
     </span>
-  </Button>
+  </MarketingButton>
 );
 
 export default function Header({ className }: { className?: string }) {
@@ -240,7 +240,7 @@ export default function Header({ className }: { className?: string }) {
       <header
         ref={headerRef}
         className={clsx(
-          "bg-marketing-background text-marketing-sm md:text-marketing-base fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col tracking-tight transition-all ease-in-out",
+          "fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col bg-marketing-background text-marketing-sm tracking-tight transition-all ease-in-out md:text-marketing-base",
           isMobileMenuOpen && "duration-150",
           className
         )}
@@ -278,7 +278,7 @@ export default function Header({ className }: { className?: string }) {
               />
             </Link>
             <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
-              <Link href="/" className="!text-marketing-primary whitespace-nowrap">
+              <Link href="/" className="whitespace-nowrap !text-marketing-primary">
                 Sell
               </Link>
               <Link href="https://explore.market.dev" className="whitespace-nowrap">
@@ -296,7 +296,7 @@ export default function Header({ className }: { className?: string }) {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="bg-marketing-accent hover:bg-marketing-accent-active focus:bg-marketing-accent-active size-9 rounded-full !text-sm font-bold tracking-tight text-black transition-colors sm:px-3 md:w-auto"
+                  className="size-9 rounded-full bg-marketing-accent !text-sm font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active sm:px-3 md:w-auto"
                 >
                   <Store className="!size-5" />
                   <span className="hidden md:inline">Dashboard</span>
@@ -332,7 +332,7 @@ export default function Header({ className }: { className?: string }) {
           <motion.div
             id="desktop-dropdown"
             key="desktop-dropdown"
-            className="shadow-border-lg fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white lg:block"
+            className="fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white shadow-border-lg lg:block"
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
@@ -358,7 +358,7 @@ export default function Header({ className }: { className?: string }) {
                     description={product.description}
                     link={product.link}
                     borderRadius="rounded-lg"
-                    className="!leading-tighter text-marketing-xs h-full"
+                    className="!leading-tighter h-full text-marketing-xs"
                     size="small"
                   />
                 </div>
@@ -367,25 +367,25 @@ export default function Header({ className }: { className?: string }) {
 
             <div className="border-t border-black/10"></div>
 
-            <div className="text-marketing-sm flex min-w-[175px] flex-col py-2">
+            <div className="flex min-w-[175px] flex-col py-2 text-marketing-sm">
               <Link
                 href={blogURL}
                 variant="primary"
-                className="hover:text-marketing-secondary flex w-full items-center px-5 py-1.5 transition-colors"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Changelog
               </Link>
               <Link
                 href={discordURL}
                 variant="primary"
-                className="hover:text-marketing-secondary flex w-full items-center px-5 py-1.5 transition-colors"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Discord
               </Link>
               <Link
                 href={twitterUrl}
                 variant="primary"
-                className="hover:text-marketing-secondary flex w-full items-center px-5 py-1.5 transition-colors"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Twitter
               </Link>
@@ -397,7 +397,7 @@ export default function Header({ className }: { className?: string }) {
         {isMobileMenuOpen && (
           <motion.div
             key="mobile-menu"
-            className="shadow-t bg-marketing-background text-marketing-md fixed inset-x-0 bottom-0 z-40 overflow-y-auto text-left lg:hidden"
+            className="shadow-t fixed inset-x-0 bottom-0 z-40 overflow-y-auto bg-marketing-background text-left text-marketing-md lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -435,7 +435,7 @@ export default function Header({ className }: { className?: string }) {
                 <Link
                   href={blogURL}
                   variant="primary"
-                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Changelog
                 </Link>
@@ -443,7 +443,7 @@ export default function Header({ className }: { className?: string }) {
                 <Link
                   href={discordURL}
                   variant="primary"
-                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Discord
                 </Link>
@@ -451,7 +451,7 @@ export default function Header({ className }: { className?: string }) {
                 <Link
                   href={twitterUrl}
                   variant="primary"
-                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Twitter
                 </Link>
@@ -463,28 +463,28 @@ export default function Header({ className }: { className?: string }) {
                     </Link>
                   ))}
               </div>
-              <div className="bg-marketing-background sticky inset-x-0 bottom-0 border-t border-black/10 p-6">
+              <div className="sticky inset-x-0 bottom-0 border-t border-black/10 bg-marketing-background p-6">
                 {isLoading || !signedIn ? (
-                  <Button className="w-full">
+                  <MarketingButton className="w-full">
                     <Image
                       src="/github.svg"
                       alt="github logo"
                       height={24}
                       width={24}
-                      className="xs:h-[18px] col-span-2 col-start-1 h-[22px] w-auto md:h-6"
+                      className="col-span-2 col-start-1 h-[22px] w-auto xs:h-[18px] md:h-6"
                     />
                     Sign up with Github
-                  </Button>
+                  </MarketingButton>
                 ) : (
-                  <Button
+                  <MarketingButton
                     onClick={() => {
                       router.push(dashboardURL);
                     }}
-                    className="tracking-tightish w-full text-sm font-bold"
+                    className="w-full text-sm font-bold tracking-tightish"
                   >
                     <Store className="!size-5" />
                     Go to Dashboard
-                  </Button>
+                  </MarketingButton>
                 )}
               </div>
             </div>

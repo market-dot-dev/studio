@@ -1,6 +1,6 @@
 "use client";
 
-import { createTemplateTier } from "@/app/services/TierService";
+import { createTemplateTier } from "@/app/services/tier/tier-service";
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Dialog,
@@ -137,7 +137,7 @@ function TiersTemplatesModal({ hide, multiple }: { hide: () => void; multiple?: 
                 const determinedIndex = determineIndex(cIndex, index);
                 const isSelected = selected.indexOf(determinedIndex) !== -1;
                 return (
-                  // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+                  // eslint-disable-next-line jsx-a11y/no-static-element-interactions
                   <div
                     key={index}
                     className={

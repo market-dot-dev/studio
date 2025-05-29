@@ -1,224 +1,57 @@
-"use client";
+import { getCheckoutData } from "@/app/services/checkout-service";
+import { getSubdomainFromString } from "@/app/services/domain-request-service";
+import { TierNotAvailable } from "@/components/tiers/tier-not-available";
+import { headers } from "next/headers";
+import { notFound } from "next/navigation";
+import { BrandBadge } from "./brand-badge";
+import { CheckoutWrapper } from "./checkout-wrapper";
+import { ProductInfo } from "./product-info";
 
-import useTier from "@/app/hooks/use-tier";
-import useUser from "@/app/hooks/use-user";
-import { useSearchParams } from "next/navigation";
-import { use, useMemo } from "react";
-import RegistrationSection from "./registration-section";
+export default async function CheckoutPage(props: {
+  params: Promise<{ id: string; annual?: string }>;
+}) {
+  const params = await props.params;
+  const id = params.id;
+  const isAnnual = params.annual === "true";
 
-interface QueryParams {
-  [key: string]: string | string[] | undefined;
-}
-
-const checkoutCurrency = "USD";
-const checkoutCurrencySymbol = "$";
-
-import useContract from "@/app/hooks/use-contract";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
-import { parseTierDescription } from "@/lib/utils";
-import { Store } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
-
-const TierNotAvailable = () => {
-  return (
-    <div className="mt-20 flex flex-col items-center space-x-4">
-      <h1 className="font-cal text-4xl">404</h1>
-      <Image
-        alt="tier not active"
-        src="https://illustrations.popsy.co/gray/falling.svg"
-        width={400}
-        height={400}
-      />
-      <p className="text-lg text-stone-500">Tier not available</p>
-    </div>
-  );
-};
-
-const CheckoutPage = (props: { params: Promise<{ id: string }> }) => {
-  const params = use(props.params);
-  const { id } = params;
-
-  const searchParams = useSearchParams();
-  const queryParams: QueryParams = Object.fromEntries(searchParams.entries());
-  const isAnnual = queryParams.annual === "true";
-
-  const [tier, isTierLoading] = useTier(id);
-  const [contract, isContractLoading] = useContract(tier?.contractId || undefined);
-  const [maintainer, isMaintainerLoading] = useUser(tier?.userId);
-
-  // Derived loading states that account for dependencies
-  const isEffectiveMaintainerLoading = useMemo(
-    () => isTierLoading || (tier?.userId && isMaintainerLoading),
-    [isTierLoading, tier?.userId, isMaintainerLoading]
-  );
-
-  const isEffectiveContractLoading = useMemo(
-    () => isTierLoading || (tier?.contractId && isContractLoading),
-    [isTierLoading, tier?.contractId, isContractLoading]
-  );
-
-  const checkoutType = tier?.checkoutType;
-  const checkoutProject = maintainer?.projectName || maintainer?.name;
-  const checkoutPrice = isAnnual ? tier?.priceAnnual : tier?.price;
-  const checkoutTier = tier?.name;
-  const checkoutCadence = isAnnual ? "year" : tier?.cadence;
-  const trialDays = tier?.trialDays || 0;
-  const trialOffered = trialDays > 0;
-
-  const shortenedCadence = useMemo(() => {
-    if (checkoutCadence === "month") return "mo";
-    if (checkoutCadence === "year") return "yr";
-    return checkoutCadence;
-  }, [checkoutCadence]);
-
-  if (tier?.id && !tier?.published) {
-    return TierNotAvailable();
+  if (!id) {
+    return notFound();
   }
 
-  const parsedDescription = parseTierDescription(tier?.description || "");
+  // Single function call to get all required data
+  const { tier, customerOrg } = await getCheckoutData(id, isAnnual);
+  const vendor = tier?.organization;
+
+  // If this is a vendor page, check that this tier belongs to them
+  const headersList = await headers();
+  const subdomain = await getSubdomainFromString(headersList.get("host") || "");
+  const sites: string[] =
+    vendor?.sites.flatMap((s) => (s.subdomain != null ? [s.subdomain] : [])) ?? [];
+  if (subdomain && ![...sites, "app"].includes(subdomain)) {
+    return notFound();
+  }
+
+  // Handle tier not found (and vendor)
+  if (!tier || (tier.id && !tier.published) || !vendor) {
+    return <TierNotAvailable />;
+  }
 
   return (
     <div className="flex min-h-screen flex-col text-stone-800 lg:flex-row">
-      {/* Left Column */}
-      <div className="left-0 top-0 flex size-full flex-col justify-between gap-6 bg-stone-200/80 p-6 pb-9 pt-4 sm:gap-12 sm:px-9 sm:pt-6 lg:fixed lg:w-2/5 xl:p-16 xl:pt-12">
-        <div className="flex flex-col gap-9 lg:gap-12">
-          <div className="flex items-center gap-3">
-            <div className="flex size-7 items-center justify-center rounded-full bg-gradient-to-b from-stone-800/90 to-stone-800 text-white/85">
-              <Store size={18} className="h-[15px]" />
-            </div>
-            {isEffectiveMaintainerLoading ? (
-              <Skeleton className="h-5 w-36" />
-            ) : (
-              <span className="tracking-tightish font-bold">{checkoutProject}</span>
-            )}
-          </div>
+      {/* Left Column - Product info */}
+      <ProductInfo tier={tier} vendor={vendor} isAnnual={isAnnual} />
 
-          <div className="flex flex-col gap-6">
-            <div className="flex flex-col gap-2 xl:gap-3">
-              {isTierLoading ? (
-                <Skeleton className="mb-1 h-6 w-full max-w-48 xl:h-7" />
-              ) : (
-                <span className="text-md font-semibold text-stone-500 xl:text-xl/8">
-                  {checkoutTier} {isAnnual ? "(annual)" : ""}
-                </span>
-              )}
-
-              {isTierLoading ? (
-                <Skeleton className="h-10 w-full max-w-72 xl:h-12" />
-              ) : (
-                <h1 className="text-4xl font-semibold tracking-tight xl:text-5xl">
-                  {checkoutType === "gitwallet" ? (
-                    <>
-                      {checkoutCurrency + " " + checkoutCurrencySymbol + checkoutPrice}
-                      {checkoutCadence !== "once" ? (
-                        <span className="font-semibold text-stone-400">/{shortenedCadence}</span>
-                      ) : (
-                        ""
-                      )}
-                    </>
-                  ) : (
-                    <span className="-ml-0.5">Get in touch</span>
-                  )}
-                </h1>
-              )}
-
-              {isTierLoading ? (
-                <Skeleton className="mt-1 h-5 w-3/4 xl:h-6" />
-              ) : (
-                <>
-                  {checkoutType === "gitwallet" ? (
-                    trialOffered && tier?.cadence !== "once" ? (
-                      <p className="tracking-tightish mt-1 text-sm font-semibold text-stone-500 xl:text-base">
-                        Starts with a{" "}
-                        <strong className="font-bold text-stone-800">{trialDays} day</strong> free
-                        trial
-                      </p>
-                    ) : null
-                  ) : (
-                    <p className="mt-1 text-sm font-medium text-stone-500 xl:text-base">
-                      Please provide your details so we can reach out.
-                    </p>
-                  )}
-                </>
-              )}
-            </div>
-
-            <div className="flex flex-col gap-6 overflow-y-scroll">
-              {isTierLoading ? (
-                <div className="space-y-3">
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-5 w-5/6" />
-                  <Skeleton className="h-5 w-4/6" />
-                  <Skeleton className="h-5 w-3/4" />
-                </div>
-              ) : (
-                <>
-                  <Separator className="bg-stone-300/50" />
-
-                  {!isTierLoading &&
-                    parsedDescription.map((section, dex) => {
-                      if (section.text) {
-                        return (
-                          <div key={dex}>
-                            {section.text.map((text: string, index: number) => (
-                              <p
-                                key={index}
-                                className="max-w-prose text-pretty text-sm text-stone-500"
-                              >
-                                {text}
-                              </p>
-                            ))}
-                          </div>
-                        );
-                      }
-                    })}
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-        <p className="absolute right-6 top-5 inline-flex gap-2 text-sm font-semibold tracking-tight text-stone-500 sm:right-9 sm:top-7 lg:static">
-          <span className="hidden sm:inline">Powered by</span>
-          <Link href="https://market.dev" target="_blank">
-            <Image
-              alt="market.dev logo"
-              width={72}
-              height={16}
-              className="inline h-5 w-auto -translate-y-px sm:h-[19px]"
-              src="/market-dot-dev-logo.svg"
-            />
-          </Link>
-        </p>
-      </div>
-
-      {/* Right Column */}
-      <div className="ml-auto flex min-h-[80vh] w-full flex-col items-center overflow-y-auto bg-stone-100 px-6 py-9 text-stone-800 sm:p-9 lg:w-3/5 lg:p-16 lg:pt-32">
-        {isEffectiveMaintainerLoading || isEffectiveContractLoading ? (
-          <div className="mx-auto mt-1 flex w-full flex-col items-start gap-6 opacity-50 lg:max-w-lg">
-            <div className="w-full space-y-4">
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-              <Skeleton className="h-12 w-full" />
-            </div>
-            <Skeleton className="mt-4 h-10 w-full" />
-          </div>
-        ) : (
-          <>
-            {tier && maintainer && (
-              <RegistrationSection
-                tier={tier}
-                maintainer={maintainer}
-                contract={contract}
-                annual={isAnnual}
-              />
-            )}
-          </>
-        )}
+      {/* Right Column - Checkout */}
+      <div className="ml-auto flex min-h-[80vh] w-full flex-col items-center gap-24 overflow-y-auto bg-stone-100 px-6 pb-5 pt-9 text-stone-800 sm:px-9 lg:w-2/3 lg:p-16 lg:pt-28 xl:pt-32 ">
+        <CheckoutWrapper
+          tier={tier}
+          vendor={vendor}
+          contract={tier.contract}
+          annual={isAnnual}
+          customerOrgId={customerOrg?.id}
+        />
+        <BrandBadge className="lg:hidden" />
       </div>
     </div>
   );
-};
-
-export default CheckoutPage;
+}

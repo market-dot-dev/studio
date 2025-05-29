@@ -7,7 +7,7 @@ export default function Tiers({ tiers }: { tiers: any[] }) {
     <div className="mx-auto flex justify-center">
       {tiers.length ? (
         <div className="mx-auto flex max-w-screen-2xl flex-wrap justify-center gap-6">
-          {tiers.map((tier: any, index: number) => (
+          {tiers.map((tier, index) => (
             <div key={index} className="min-w-xxs w-full md:max-w-xs">
               <TierCard tier={tier} alignment={tiers.length === 1 ? "center" : "left"} />
             </div>

@@ -1,114 +1,266 @@
+import { OrganizationRole, OrganizationType } from "@/app/generated/prisma";
 import { describe, expect, it } from "vitest";
-import RoleService, { Role } from "./role-service";
+import {
+  canViewPath,
+  createAuthContext,
+  hasCustomerAccess,
+  hasOrgAdminAccess,
+  hasVendorAccess,
+  isPublicPath
+} from "./role-service";
 
 describe("RoleService", () => {
+  describe("isPublicPath", () => {
+    it("should identify public paths correctly", async () => {
+      const publicPaths = [
+        "/",
+        "/terms",
+        "/privacy",
+        "/home",
+        "/login",
+        "/app/login",
+        "/app/customer-login",
+        "/maintainer-site/johndoe",
+        "/maintainer-site/johndoe/about",
+        "/checkout/abc123",
+        "/c/contracts/contract-id"
+      ];
+
+      for (const path of publicPaths) {
+        expect(await isPublicPath(path)).toBe(true);
+      }
+    });
+
+    it("should identify private paths correctly", async () => {
+      const privatePaths = [
+        "/app",
+        "/app/tiers",
+        "/app/customers",
+        "/app/settings",
+        "/app/c",
+        "/app/c/charges",
+        "/app/c/settings"
+      ];
+
+      for (const path of privatePaths) {
+        expect(await isPublicPath(path)).toBe(false);
+      }
+    });
+  });
+
   describe("canViewPath", () => {
-    describe("anonymous role", () => {
+    describe("unauthenticated users", () => {
       it("should allow access to public paths", async () => {
+        const unauthenticatedContext = await createAuthContext(false);
         const publicPaths = [
-          "/",
-          "/alpha",
-          "/embed/something",
-          "/api/og/image",
-          "/api/users/verify",
-          "/api/tiers/basic",
           "/terms",
-          "/privacy",
-          "/home",
-          "/design",
-          "/alpha/login",
           "/login",
-          "/legal",
           "/customer-login",
-          "/login/local-auth",
-          "/checkout/abc123",
-          "/ecosystems",
-          "/ecosystems/blockchain",
-          "/experts",
-          "/projects",
-          "/events",
-          "/organizations",
-          "/trending",
-          "/maintainer-site/help"
+          "/maintainer-site/johndoe",
+          "/checkout/abc123"
         ];
 
         for (const path of publicPaths) {
-          expect(await RoleService.canViewPath(path, "anonymous")).toBe(true);
+          expect(await canViewPath(path, unauthenticatedContext)).toBe(true);
         }
       });
 
-      it("should deny access to protected paths", async () => {
-        const protectedPaths = [
-          "/dashboard",
-          "/account",
-          "/admin",
-          "/admin/users",
-          "/maintainer",
-          "/maintainer/dashboard",
-          "/random/path"
-        ];
+      it("should deny access to private paths", async () => {
+        const unauthenticatedContext = await createAuthContext(false);
+        const privatePaths = ["/tiers", "/c", "/c/charges", "/success"];
 
-        for (const path of protectedPaths) {
-          expect(await RoleService.canViewPath(path, "anonymous")).toBe(false);
+        for (const path of privatePaths) {
+          expect(await canViewPath(path, unauthenticatedContext, "app")).toBe(false);
         }
-      });
-
-      it("should default to anonymous role when no role is provided", async () => {
-        expect(await RoleService.canViewPath("/")).toBe(true);
-        expect(await RoleService.canViewPath("/dashboard")).toBe(false);
       });
     });
 
-    describe("authenticated roles", () => {
-      it("should give customer access to customer areas but not maintainer/admin paths", async () => {
-        const customerRole: Role = "customer";
+    describe("CUSTOMER organization on app subdomain", () => {
+      it("should allow access to public paths", async () => {
+        const customerContext = await createAuthContext(
+          true,
+          OrganizationType.CUSTOMER,
+          OrganizationRole.OWNER
+        );
 
-        // Allowed paths
-        expect(await RoleService.canViewPath("/dashboard", customerRole)).toBe(true);
-        expect(await RoleService.canViewPath("/account", customerRole)).toBe(true);
-
-        // Blocked paths
-        expect(await RoleService.canViewPath("/maintainer", customerRole)).toBe(false);
-        expect(await RoleService.canViewPath("/admin", customerRole)).toBe(false);
-        expect(await RoleService.canViewPath("/admin/settings", customerRole)).toBe(false);
+        expect(await canViewPath("/", customerContext)).toBe(true);
+        expect(await canViewPath("/terms", customerContext)).toBe(true);
       });
 
-      it("should give maintainer access to maintainer areas but not admin paths", async () => {
-        const maintainerRole: Role = "maintainer";
+      it("should allow access to customer paths", async () => {
+        const customerContext = await createAuthContext(
+          true,
+          OrganizationType.CUSTOMER,
+          OrganizationRole.OWNER
+        );
+        const customerPaths = ["/c", "/c/charges", "/c/settings"];
 
-        // Allowed paths
-        expect(await RoleService.canViewPath("/dashboard", maintainerRole)).toBe(true);
-        expect(await RoleService.canViewPath("/account", maintainerRole)).toBe(true);
-        expect(await RoleService.canViewPath("/maintainer", maintainerRole)).toBe(true);
-        expect(await RoleService.canViewPath("/maintainer/dashboard", maintainerRole)).toBe(true);
-
-        // Blocked paths
-        expect(await RoleService.canViewPath("/admin", maintainerRole)).toBe(false);
-        expect(await RoleService.canViewPath("/admin/settings", maintainerRole)).toBe(false);
+        for (const path of customerPaths) {
+          expect(await canViewPath(path, customerContext, "app")).toBe(true);
+        }
       });
 
-      it("should give admin access to all paths", async () => {
-        const adminRole: Role = "admin";
+      it("should deny access to vendor dashboard paths", async () => {
+        const customerContext = await createAuthContext(
+          true,
+          OrganizationType.CUSTOMER,
+          OrganizationRole.OWNER
+        );
+        const vendorPaths = ["/tiers", "/customers", "/settings"];
 
-        // All paths allowed
-        expect(await RoleService.canViewPath("/dashboard", adminRole)).toBe(true);
-        expect(await RoleService.canViewPath("/account", adminRole)).toBe(true);
-        expect(await RoleService.canViewPath("/maintainer", adminRole)).toBe(true);
-        expect(await RoleService.canViewPath("/maintainer/dashboard", adminRole)).toBe(true);
-        expect(await RoleService.canViewPath("/admin", adminRole)).toBe(true);
-        expect(await RoleService.canViewPath("/admin/settings", adminRole)).toBe(true);
+        for (const path of vendorPaths) {
+          expect(await canViewPath(path, customerContext, "app")).toBe(false);
+        }
+      });
+
+      it("should allow access to shared payment paths", async () => {
+        const customerContext = await createAuthContext(
+          true,
+          OrganizationType.CUSTOMER,
+          OrganizationRole.OWNER
+        );
+        // /success requires auth but both org types can access it
+        expect(await canViewPath("/success", customerContext, "app")).toBe(true);
+      });
+    });
+
+    describe("VENDOR organization on app subdomain", () => {
+      it("should allow access to public paths", async () => {
+        const vendorContext = await createAuthContext(
+          true,
+          OrganizationType.VENDOR,
+          OrganizationRole.OWNER
+        );
+
+        expect(await canViewPath("/", vendorContext)).toBe(true);
+        expect(await canViewPath("/terms", vendorContext)).toBe(true);
+      });
+
+      it("should allow access to vendor dashboard paths", async () => {
+        const vendorContext = await createAuthContext(
+          true,
+          OrganizationType.VENDOR,
+          OrganizationRole.OWNER
+        );
+        const vendorPaths = [
+          "/",
+          "/tiers",
+          "/customers",
+          "/settings",
+          "/site/site-id",
+          "/contracts"
+        ];
+
+        for (const path of vendorPaths) {
+          expect(await canViewPath(path, vendorContext, "app")).toBe(true);
+        }
+      });
+
+      it("should allow access to customer paths (vendors can also be customers)", async () => {
+        const vendorContext = await createAuthContext(
+          true,
+          OrganizationType.VENDOR,
+          OrganizationRole.OWNER
+        );
+        const customerPaths = ["/c", "/c/charges", "/c/settings"];
+
+        for (const path of customerPaths) {
+          expect(await canViewPath(path, vendorContext, "app")).toBe(true);
+        }
+      });
+
+      it("should allow access to shared payment paths", async () => {
+        const vendorContext = await createAuthContext(
+          true,
+          OrganizationType.VENDOR,
+          OrganizationRole.OWNER
+        );
+        // /success requires auth but both org types can access it
+        expect(await canViewPath("/success", vendorContext, "app")).toBe(true);
+      });
+    });
+
+    describe("on non-app subdomains", () => {
+      it("should allow authenticated users to access any path", async () => {
+        const vendorContext = await createAuthContext(
+          true,
+          OrganizationType.VENDOR,
+          OrganizationRole.OWNER
+        );
+        const customerContext = await createAuthContext(
+          true,
+          OrganizationType.CUSTOMER,
+          OrganizationRole.OWNER
+        );
+
+        const paths = ["/", "/some/path", "/any/other/path"];
+
+        for (const path of paths) {
+          expect(await canViewPath(path, vendorContext, "johndoe")).toBe(true);
+          expect(await canViewPath(path, customerContext, "johndoe")).toBe(true);
+          expect(await canViewPath(path, vendorContext, undefined)).toBe(true);
+        }
       });
     });
   });
 
-  describe("isPathBlockedForRole", () => {
-    it("should correctly determine if a path is blocked", () => {
-      const blockedPaths = [/^\/admin(\/|$)/, /^\/restricted(\/|$)/];
+  describe("helper methods", () => {
+    it("should correctly identify vendor access", async () => {
+      const vendorContext = await createAuthContext(
+        true,
+        OrganizationType.VENDOR,
+        OrganizationRole.OWNER
+      );
+      const customerContext = await createAuthContext(
+        true,
+        OrganizationType.CUSTOMER,
+        OrganizationRole.OWNER
+      );
+      const unauthenticatedContext = await createAuthContext(false);
 
-      expect(RoleService.isPathBlockedForRole("/admin", blockedPaths)).toBe(true);
-      expect(RoleService.isPathBlockedForRole("/admin/users", blockedPaths)).toBe(true);
-      expect(RoleService.isPathBlockedForRole("/restricted", blockedPaths)).toBe(true);
-      expect(RoleService.isPathBlockedForRole("/public", blockedPaths)).toBe(false);
+      expect(await hasVendorAccess(vendorContext)).toBe(true);
+      expect(await hasVendorAccess(customerContext)).toBe(false);
+      expect(await hasVendorAccess(unauthenticatedContext)).toBe(false);
+    });
+
+    it("should correctly identify customer access", async () => {
+      const vendorContext = await createAuthContext(
+        true,
+        OrganizationType.VENDOR,
+        OrganizationRole.OWNER
+      );
+      const customerContext = await createAuthContext(
+        true,
+        OrganizationType.CUSTOMER,
+        OrganizationRole.OWNER
+      );
+      const unauthenticatedContext = await createAuthContext(false);
+
+      expect(await hasCustomerAccess(vendorContext)).toBe(true); // Vendors can be customers too
+      expect(await hasCustomerAccess(customerContext)).toBe(true);
+      expect(await hasCustomerAccess(unauthenticatedContext)).toBe(false);
+    });
+
+    it("should correctly identify org admin access", async () => {
+      const ownerContext = await createAuthContext(
+        true,
+        OrganizationType.VENDOR,
+        OrganizationRole.OWNER
+      );
+      const adminContext = await createAuthContext(
+        true,
+        OrganizationType.VENDOR,
+        OrganizationRole.ADMIN
+      );
+      const memberContext = await createAuthContext(
+        true,
+        OrganizationType.VENDOR,
+        OrganizationRole.MEMBER
+      );
+
+      expect(await hasOrgAdminAccess(ownerContext)).toBe(true);
+      expect(await hasOrgAdminAccess(adminContext)).toBe(true);
+      expect(await hasOrgAdminAccess(memberContext)).toBe(false);
     });
   });
 });

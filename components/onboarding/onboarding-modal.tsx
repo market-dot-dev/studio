@@ -1,14 +1,14 @@
 "use client";
 
-import { updateCurrentSite } from "@/app/services/SiteService";
-import { updateCurrentUser } from "@/app/services/UserService";
-import { refreshAndGetState } from "@/app/services/onboarding/OnboardingService";
+import { User } from "@/app/generated/prisma";
+import { organizationIsMarketExpert, validateMarketExpert } from "@/app/services/market-service";
+import { refreshAndGetState } from "@/app/services/onboarding/onboarding-service";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import { createSite } from "@/app/services/registration-service";
-import { useMarketExpert } from "@/components/dashboard/dashboard-context";
+import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
+import { createSite, updateCurrentSite } from "@/app/services/site/site-crud-service";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";
-import { Site, User } from "@prisma/client";
+import type { SiteDetails } from "@/types/site";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/themes";
 import { AlertCircleIcon } from "lucide-react";
@@ -62,7 +62,7 @@ const FormContent = ({
 }: {
   step: "profile" | "offerings";
   user: User;
-  currentSite?: Site;
+  currentSite?: SiteDetails;
   isLoading: boolean;
   onProfileSubmit: (data: ProfileData) => void;
   onOfferingsSubmit: (data: OfferingsData) => void;
@@ -108,22 +108,31 @@ const NavigationButtons = ({
   </div>
 );
 
-export default function OnboardingModal({
+type OnboardingModalProps = {
+  user: User;
+  currentSite?: SiteDetails;
+  onboardingState: OnboardingState;
+  organization: {
+    id: string;
+    marketExpertId: string | null;
+  };
+};
+
+export function OnboardingModal({
   user,
   currentSite,
-  onboardingState
-}: {
-  user: User;
-  currentSite?: Site;
-  onboardingState: OnboardingState;
-}) {
+  onboardingState,
+  organization
+}: OnboardingModalProps) {
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(
     !onboardingState.setupBusiness ||
       !onboardingState.preferredServices ||
-      (!user.marketExpertId && searchParams.get("source") === "market.dev")
+      (!organization.marketExpertId && searchParams.get("source") === "market.dev")
   );
-  const { isMarketExpert, isLoadingMarketExpert, validateMarketExpert } = useMarketExpert();
+
+  const [isMarketExpert, setIsMarketExpert] = useState<boolean | null>(null);
+  const [isLoadingMarketExpert, setIsLoadingMarketExpert] = useState(false);
   const [validateMarketExpertError, setValidateMarketExpertError] = useState<string | null>(null);
   const [step, setStep] = useState<"profile" | "offerings">("profile");
   const [isLoading, setIsLoading] = useState(false);
@@ -135,26 +144,50 @@ export default function OnboardingModal({
   const sourceIsMarketDev = source === "market.dev";
   const mounted = useMounted();
 
+  // Check if organization is market expert on mount
+  useEffect(() => {
+    const checkMarketExpert = async () => {
+      try {
+        const isExpert = await organizationIsMarketExpert();
+        setIsMarketExpert(isExpert);
+      } catch (error) {
+        console.error("Error checking market expert status:", error);
+        setIsMarketExpert(false);
+      }
+    };
+
+    if (mounted) {
+      checkMarketExpert();
+    }
+  }, [mounted]);
+
+  // Handle market.dev connection if needed
   useEffect(() => {
     if (!mounted || !sourceIsMarketDev || isMarketExpert !== null) return;
 
     const connectMarketExpert = async () => {
+      setIsLoadingMarketExpert(true);
       try {
         const success = await validateMarketExpert();
         if (success && sourceIsMarketDev) {
           toast.success("Market.dev account connected successfully");
+          setIsMarketExpert(true);
         } else if (!success && sourceIsMarketDev) {
           setValidateMarketExpertError(
             "Failed to connect your Market.dev account. Make sure you have an account on Market.dev."
           );
+          setIsMarketExpert(false);
         }
       } catch (error) {
         setValidateMarketExpertError("Error connecting to market.dev");
+        setIsMarketExpert(false);
+      } finally {
+        setIsLoadingMarketExpert(false);
       }
     };
 
     connectMarketExpert();
-  }, [mounted, sourceIsMarketDev, isMarketExpert, validateMarketExpert]);
+  }, [mounted, sourceIsMarketDev, isMarketExpert]);
 
   const handleProfileSubmit = (data: ProfileData) => {
     setProfileData(data);
@@ -166,12 +199,14 @@ export default function OnboardingModal({
 
     setIsLoading(true);
     try {
-      await updateCurrentUser({
+      // Update organization business data
+      await updateCurrentOrganizationBusiness({
         projectName: profileData.businessName,
         businessLocation: profileData.location,
         businessType: profileData.teamType
       });
 
+      // Handle site creation/update
       if (currentSite) {
         const formData = new FormData();
         formData.append("subdomain", profileData.subdomain);
@@ -180,10 +215,13 @@ export default function OnboardingModal({
         }
         await updateCurrentSite(formData);
       } else {
-        await createSite(user, profileData.subdomain, profileData.logo);
+        // Create site for the organization
+        await createSite(organization.id, profileData.subdomain, profileData.logo);
       }
 
+      // Update onboarding state
       await refreshAndGetState(offeringsData.offerings);
+
       setIsOpen(false);
       router.refresh();
     } catch (error) {

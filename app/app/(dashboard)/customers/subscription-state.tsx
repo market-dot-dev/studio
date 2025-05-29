@@ -1,33 +1,61 @@
 "use client";
 
+import { Subscription } from "@/app/generated/prisma";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/utils";
-import { Subscription } from "@prisma/client";
+import { formatSubscriptionExpiryDate } from "@/lib/utils";
+import {
+  isCancelled,
+  isFinishingMonth,
+  isRenewing,
+  type SubscriptionStatusType
+} from "@/types/subscription";
+import { type VariantProps } from "class-variance-authority";
+import { Clock, RefreshCw } from "lucide-react";
 
-const SubscriptionStatusBadge = ({ subscription }: { subscription: Subscription }) => {
-  return (
-    <>
-      {subscription.state === "renewing" && (
-        <Badge variant="success" className="indent-0">
-          Active
-        </Badge>
-      )}
+type BadgeVariant = NonNullable<VariantProps<typeof Badge>["variant"]>;
 
-      {subscription.state === "cancelled" && subscription.activeUntil && (
-        <>
-          <Badge variant="secondary" className="indent-0">
-            Cancelled, Ends {formatDate(subscription.activeUntil)}
-          </Badge>
-        </>
-      )}
+interface SubscriptionStatusDisplay {
+  type: SubscriptionStatusType;
+  text: string;
+  badgeVariant: BadgeVariant;
+  icon?: React.ReactNode;
+}
 
-      {subscription.state === "cancelled" && !subscription.activeUntil && (
-        <Badge variant="destructive" className="indent-0">
-          Cancelled
-        </Badge>
-      )}
-    </>
-  );
+const getSubscriptionStatusDisplay = (subscription: Subscription): SubscriptionStatusDisplay => {
+  if (isRenewing(subscription)) {
+    return {
+      type: "active_renewing",
+      text: "Subscribed",
+      badgeVariant: "success",
+      icon: <RefreshCw size={12} strokeWidth={2.5} />
+    };
+  }
+
+  if (isCancelled(subscription) && isFinishingMonth(subscription)) {
+    return {
+      type: "cancelled_active",
+      text: formatSubscriptionExpiryDate(subscription.activeUntil),
+      badgeVariant: "warning",
+      icon: <Clock size={12} strokeWidth={2.5} />
+    };
+  }
+
+  return {
+    type: "expired",
+    text: "Expired",
+    badgeVariant: "secondary"
+  };
 };
 
-export default SubscriptionStatusBadge;
+export const SubscriptionStatusBadge = ({ subscription }: { subscription: Subscription }) => {
+  if (!subscription) return null;
+
+  const { icon, text, badgeVariant } = getSubscriptionStatusDisplay(subscription);
+
+  return (
+    <Badge variant={badgeVariant} className="inline-flex items-center">
+      {icon}
+      {text}
+    </Badge>
+  );
+};

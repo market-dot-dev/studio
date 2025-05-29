@@ -1,10 +1,15 @@
 import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 import { NextRequest, NextResponse } from "next/server";
+import { OrganizationType } from "./app/generated/prisma";
 import { SessionUser } from "./app/models/Session";
-import DomainService from "./app/services/domain-service";
-import RoleService, { Role } from "./app/services/role-service";
-import { getRootUrl } from "./lib/domain";
+import {
+  getGhUsernameFromRequest,
+  getReservedSubdomainFromRequest,
+  getSubdomainFromRequest,
+  isVercelPreview
+} from "./app/services/domain-request-service";
+import { canViewPath, createAuthContext } from "./app/services/role-service";
 
 export const config = {
   matcher: [
@@ -12,9 +17,11 @@ export const config = {
      * Match all request paths except for the ones starting with:
      * - _next/static (static files)
      * - _next/image (image optimization files)
+     * - error monitoring via Sentry (error-monitoring)
+     * - external webhooks (api/webhook/*)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    "/((?!_next/static|_next/image|[\\w-]+\\.\\w+).*)"
+    "/((?!_next/static|_next/image|api/webhook/|error-monitoring|[\\w-]+\\.\\w+).*)"
   ]
 };
 
@@ -26,20 +33,28 @@ export default withAuth(
     callbacks: {
       authorized: async ({ token, req }) => {
         const user = token?.user as SessionUser;
-        const roleId = (user?.roleId as Role) || "anonymous";
         const path = req.nextUrl.pathname;
 
         // Allow access if this is a site subdomain (GitHub username or custom subdomain)
-        // Check for this before the path check
-        const subdomain = DomainService.getSubdomainFromRequest(req);
-        const isReservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);
+        const subdomain = await getSubdomainFromRequest(req);
+        const isReservedSubdomain = await getReservedSubdomainFromRequest(req);
 
         // If this is a subdomain that isn't reserved, it's a site subdomain that should be publicly accessible
         if (subdomain && !isReservedSubdomain) {
           return true;
         }
 
-        return await RoleService.canViewPath(path, roleId);
+        // Create auth context from session
+        const authContext = await createAuthContext(
+          !!user?.id,
+          user?.currentOrgType,
+          user?.currentUserRole
+        );
+
+        // Get subdomain for context
+        const currentSubdomain = await getReservedSubdomainFromRequest(req);
+
+        return await canViewPath(path, authContext, currentSubdomain || undefined);
       }
     }
   }
@@ -51,24 +66,26 @@ const rewrite = (path: string, url: string) => {
 
 async function customMiddleware(req: NextRequest) {
   const url = req.nextUrl;
-  const rootUrl = getRootUrl();
 
-  const ghUsername = DomainService.getGhUsernameFromRequest(req);
-  const reservedSubdomain = DomainService.getReservedSubdomainFromRequest(req);
+  const ghUsername = await getGhUsernameFromRequest(req);
+  const reservedSubdomain = await getReservedSubdomainFromRequest(req);
   const bareDomain = !ghUsername && !reservedSubdomain;
-  const session = (await getToken({ req })) as any;
-  const roleId = session?.user?.roleId;
-  const searchParams = req.nextUrl.searchParams.toString();
 
+  // Extract session data with proper typing
+  const token = await getToken({ req });
+  const sessionUser = token?.user as SessionUser | undefined;
+  const organizationType = sessionUser?.currentOrgType;
+
+  const searchParams = req.nextUrl.searchParams.toString();
   let path = `${url.pathname}${searchParams.length > 0 ? `?${searchParams}` : ""}`;
   path = path === "/" ? "" : path;
 
-  // exempt from middleware rewrites
+  // Skip middleware for monitoring and verification
   if (url.pathname.startsWith("/monitoring") || url.pathname.startsWith("/api/users/verify")) {
     return NextResponse.next();
   }
 
-  // market.dev
+  // Handle bare domain (market.dev)
   if (bareDomain) {
     if (url.pathname === "/terms" || url.pathname === "/privacy") {
       return NextResponse.next();
@@ -77,34 +94,26 @@ async function customMiddleware(req: NextRequest) {
       return rewrite(`/home${path}`, req.url);
     }
 
-    // Redirect all other paths to explore.market.dev
-    // @TODO: This should use an env var, not hardcoded hosts.
+    // Redirect to explore.market.dev
     const targetHost =
       process.env.NODE_ENV === "development" ? "localhost:4000" : "explore.market.dev";
-
     return NextResponse.redirect(
       `http${process.env.NODE_ENV === "development" ? "" : "s"}://${targetHost}${path}`,
       { status: 301 }
     );
   }
 
-  // $GHUSERNAME.market.dev or any custom subdomain site
-  // permit API from users' subdomains
+  // Handle GitHub username subdomains (johndoe.market.dev)
   if (ghUsername) {
     if (url.pathname.startsWith("/api")) {
       return NextResponse.next();
     }
-
-    const maintainerSitePath = `/maintainer-site/${ghUsername}${path}`;
-    return rewrite(maintainerSitePath, req.url);
+    return rewrite(`/maintainer-site/${ghUsername}${path}`, req.url);
   }
 
-  // *.market.dev
+  // Handle login redirects
   const loginPaths = ["/login", "/customer-login", "/login/local-auth"];
-
-  // if you're on a login page and already signed in, kick you to /
-  if (session && loginPaths.includes(url.pathname)) {
-    const searchParams = url.searchParams.toString();
+  if (sessionUser && loginPaths.includes(url.pathname)) {
     const redirectUrl = new URL("/", req.url);
     if (searchParams) {
       redirectUrl.search = searchParams;
@@ -112,30 +121,24 @@ async function customMiddleware(req: NextRequest) {
     return NextResponse.redirect(redirectUrl);
   }
 
-  // app.market.dev
-  if (reservedSubdomain === "app" || DomainService.isVercelPreview(req)) {
-    // if customer, then lock to /app/c/
-    if (roleId === "customer") {
-      if (url.pathname.startsWith("/checkout") || url.pathname.startsWith("/success")) {
-        return rewrite(`/app${path}`, req.url);
-      } else {
-        return rewrite(`/app/c${path}`, req.url);
-      }
-    } else {
-      if (
-        url.pathname.startsWith("/charges") ||
-        url.pathname.startsWith("/subscriptions") ||
-        url.pathname.startsWith("/packages")
-      ) {
-        return NextResponse.redirect(`${rootUrl}/c${path}`);
-      }
-    }
-
+  // Handle app subdomain (app.market.dev)
+  if (reservedSubdomain === "app" || (await isVercelPreview(req))) {
+    // Always allow API routes
     if (url.pathname.startsWith("/api")) {
       return NextResponse.next();
     }
 
-    // else lock to /app/
+    // Customer organization routing
+    if (organizationType === OrganizationType.CUSTOMER) {
+      // Payment flows go to /app/
+      if (url.pathname.startsWith("/checkout") || url.pathname.startsWith("/success")) {
+        return rewrite(`/app${path}`, req.url);
+      }
+      // Everything else goes to /app/c/
+      return rewrite(`/app/c${path}`, req.url);
+    }
+
+    // All other users (vendors, unauthenticated) get /app/
     return rewrite(`/app${path}`, req.url);
   }
 }

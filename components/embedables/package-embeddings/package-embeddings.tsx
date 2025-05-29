@@ -1,12 +1,12 @@
 "use client";
 
-import { TierWithCount } from "@/app/services/TierService";
+import { TierWithCount } from "@/app/services/tier/tier-service";
 import DashedCard from "@/components/common/dashed-card";
 import CodeSnippet from "@/components/embedables/code-snippet";
 import embeddables from "@/components/site/embedables/index";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { SiteMeta } from "@/lib/site/fetchers";
+import type { SiteDetails } from "@/types/site";
 import { useEffect, useState } from "react";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 
@@ -15,7 +15,7 @@ export function PackageEmbeddings({
   rootUrl,
   searchParams
 }: {
-  site: SiteMeta | null;
+  site: SiteDetails | null;
   rootUrl?: string;
   searchParams?: any;
 }) {
@@ -38,12 +38,12 @@ export function PackageEmbeddings({
   useEffect(() => {
     // image prefetching ... although this does not explicitly set the image src, it does prefetch the image so subsequent requests are cached and network calls arent made
     const img = new Image();
-    img.src = `/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`;
+    img.src = `/api/tiers/${site?.organization.id}${queryParams ? "?" + queryParams : ""}`;
   }, [queryParams]);
 
   const svgCode = `<a href="${finalRootUrl}" target="_blank">
                       <img
-                        src="/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}"
+                        src="/api/tiers/${site?.organization.id}${queryParams ? "?" + queryParams : ""}"
                       />
                     </a>`;
 
@@ -90,8 +90,9 @@ export function PackageEmbeddings({
             <DashedCard>
               {useSVG ? (
                 <a href={finalRootUrl} target="_blank">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`/api/tiers/${site?.userId}${queryParams ? "?" + queryParams : ""}`}
+                    src={`/api/tiers/${site?.organization.id}${queryParams ? "?" + queryParams : ""}`}
                     alt={site?.id}
                   />
                 </a>

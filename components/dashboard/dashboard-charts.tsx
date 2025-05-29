@@ -1,17 +1,17 @@
-import { CustomerWithChargesAndSubscriptions } from "@/app/app/(dashboard)/customers/customer-table";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import { BarChart } from "@tremor/react";
+import type { CustomerOrgWithChargesAndSubs } from "@/types/organization-customer";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
-import RevenueLineChart from "./revenue-line-chart";
+import { CustomerBarChart } from "./customer-bar-chart";
+import { RevenueLineChart } from "./revenue-line-chart";
 
 export default function DashboardCharts({
   customers
 }: {
-  customers: CustomerWithChargesAndSubscriptions[];
+  customers: CustomerOrgWithChargesAndSubs[];
 }) {
   const getLastSixMonths = () => {
     const today = new Date();
@@ -36,7 +36,7 @@ export default function DashboardCharts({
     return renewalDate;
   };
 
-  const processCustomers = (customers: CustomerWithChargesAndSubscriptions[]) => {
+  const processCustomers = (customers: CustomerOrgWithChargesAndSubs[]) => {
     const lastSixMonths = getLastSixMonths();
     const subscriptionCounts = {} as any;
 
@@ -111,7 +111,7 @@ export default function DashboardCharts({
     return Object.values(subscriptionCounts);
   };
 
-  const processRevenueData = (customers: CustomerWithChargesAndSubscriptions[]) => {
+  const processRevenueData = (customers: CustomerOrgWithChargesAndSubs[]) => {
     const lastSixMonths = getLastSixMonths();
     const revenueData = {} as any;
 
@@ -238,7 +238,7 @@ export default function DashboardCharts({
     <div className="space-y-4">
       <div className="flex items-end justify-between">
         <div className="flex items-end gap-2">
-          <div className="tracking-tightish text-xl font-bold">Reports</div>
+          <div className="text-xl font-bold tracking-tightish">Reports</div>
           {isUsingDummyData && (
             <Badge variant="secondary" size="sm" className="mb-1">
               Sample Data
@@ -271,20 +271,9 @@ export default function DashboardCharts({
                   {totalNewCustomers}
                 </h3>
               </div>
-              <BarChart
-                className="mt-3 h-72"
-                data={customerTotals}
-                index="date"
-                categories={["New Subscriptions", "Cancellations", "Renewals", "One-time Charges"]}
-                colors={
-                  isUsingDummyData
-                    ? ["stone-300", "stone-300", "stone-300", "stone-300"]
-                    : ["stone-400", "orange-400", "swamp", "purple-400"]
-                }
-                autoMinValue={true}
-                maxValue={Math.ceil((highestCustChangesInAMonth * 120) / 100)}
-                intervalType="preserveStartEnd"
-                allowDecimals={false}
+              <CustomerBarChart
+                customerTotals={customerTotals}
+                highestCustChangesInAMonth={highestCustChangesInAMonth}
               />
             </CardContent>
           </Card>
@@ -305,7 +294,6 @@ export default function DashboardCharts({
 
               <RevenueLineChart
                 revenueData={revenueData}
-                isUsingDummyData={isUsingDummyData}
                 highestRevenueItemInMonth={highestRevenueItemInMonth}
               />
             </CardContent>

@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 
 const Tabs = TabsPrimitive.Root;
 
-const tabsListVariants = cva("text-muted-foreground inline-flex items-center", {
+const tabsListVariants = cva("inline-flex items-center text-muted-foreground", {
   variants: {
     variant: {
       default:
@@ -39,16 +39,16 @@ const TabsList = React.forwardRef<React.ElementRef<typeof TabsPrimitive.List>, T
 TabsList.displayName = TabsPrimitive.List.displayName;
 
 const tabsTriggerVariants = cva(
-  "ring-offset-background focus-visible:ring-swamp relative inline-flex items-center justify-center whitespace-nowrap rounded text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4",
+  "relative inline-flex items-center justify-center whitespace-nowrap rounded text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-4",
   {
     variants: {
       variant: {
         default:
-          "data-[state=active]:text-foreground hover:text-foreground data-[state=active]:after:bg-foreground py-2 data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-[2px] data-[state=active]:after:rounded-t-[2px] data-[state=active]:after:content-['']",
+          "py-2 hover:text-foreground data-[state=active]:text-foreground data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-[2px] data-[state=active]:after:rounded-t-[2px] data-[state=active]:after:bg-foreground data-[state=active]:after:content-['']",
         background:
-          "data-[state=active]:text-foreground data-[state=active]:shadow-border-sm hover:text-foreground focus:text-foreground px-3 py-1.5 data-[state=active]:bg-white",
+          "px-3 py-1.5 hover:text-foreground focus:text-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-border-sm",
         pills:
-          "data-[state=active]:text-foreground data-[state=active]:shadow-border hover:text-foreground rounded-full px-3 py-1.5 data-[state=active]:bg-white"
+          "rounded-full px-3 py-1.5 hover:text-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-border"
       }
     },
     defaultVariants: {
@@ -80,7 +80,7 @@ const TabsContent = React.forwardRef<
   <TabsPrimitive.Content
     ref={ref}
     className={cn(
-      "mt-10 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp focus-visible:ring-offset-2",
+      "mt-8 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp focus-visible:ring-offset-2",
       className
     )}
     {...props}

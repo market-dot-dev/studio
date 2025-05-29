@@ -1,20 +1,14 @@
-import ProspectService from "@/app/services/prospect-service";
+import { getProspects } from "@/app/services/prospect-service";
+import { requireOrganization } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import { getSession } from "@/lib/auth";
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { columns } from "./columns";
+import { columns, renderProspectContextSubRowComponent } from "./columns";
 
 export default async function ProspectsPage() {
-  const session = await getSession();
-
-  if (!session) {
-    redirect("/login");
-  }
-
-  const prospects = await ProspectService.getProspects(session.user.id);
+  const org = await requireOrganization();
+  const prospects = await getProspects(org.id);
 
   // This is the full prospects page, so we don't need to limit the rows
   // but we're preserving the logic from the original component
@@ -28,7 +22,11 @@ export default async function ProspectsPage() {
         description="View all prospects who have submitted an interest on one of your packages."
       />
 
-      <DataTable columns={columns} data={prospects} />
+      <DataTable
+        columns={columns}
+        data={prospects}
+        renderSubRowComponent={renderProspectContextSubRowComponent}
+      />
 
       {!showAll && maxInitialRows && prospects.length > maxInitialRows && (
         <div className="mt-4 grid justify-items-end">

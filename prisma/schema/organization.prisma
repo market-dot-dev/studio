@@ -1,0 +1,66 @@
+enum OrganizationType {
+  VENDOR // Can sell products AND make purchases
+  CUSTOMER // Can only make purchases
+}
+
+model Organization {
+  id        String           @id @default(cuid())
+  name      String
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  type      OrganizationType @default(CUSTOMER)
+
+  // Owner relationship
+  ownerId String
+  owner   User   @relation("OwnedOrganizations", fields: [ownerId], references: [id])
+
+  // Members relationship
+  members      OrganizationMember[]
+  currentUsers User[]               @relation("CurrentOrganization")
+
+  // Business fields
+  businessLocation   String?
+  businessType       String?
+  company            String?
+  projectName        String?
+  projectDescription String?
+  marketExpertId     String?
+
+  // Stripe fields
+  stripePaymentMethodIds      Json    @default("{}")
+  stripeCustomerIds           Json    @default("{}")
+  stripeAccountId             String? @unique
+  stripeCSRF                  String? @unique
+  stripeAccountDisabled       Boolean @default(false)
+  stripeAccountDisabledReason String?
+
+  // Entity relationships
+  tiers         Tier[]
+  contracts     Contract[]
+  charges       Charge[]
+  subscriptions Subscription[]
+  leads         Lead[]
+  prospects     Prospect[]     @relation(name: "prospects")
+  sites         Site[]
+
+  @@index([ownerId])
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model OrganizationMember {
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  userId         String
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           OrganizationRole @default(MEMBER)
+  createdAt      DateTime         @default(now())
+
+  @@id([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+}

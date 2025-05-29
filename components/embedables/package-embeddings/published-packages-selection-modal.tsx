@@ -1,6 +1,6 @@
 "use client";
 
-import { getPublishedTiers, TierWithCount } from "@/app/services/TierService";
+import { getPublishedTiers, TierWithCount } from "@/app/services/tier/tier-service";
 import SkeletonLoader from "@/components/common/skeleton-loader";
 import TierCard from "@/components/tiers/tier-card";
 import { useEffect, useState } from "react";
@@ -75,7 +75,7 @@ function PublishedPackagesSelectionModalContent({
             onClick={() => onTierSelect(tier)}
             className={`rounded-lg ${
               selectedTiers.some((t) => t.id === tier.id)
-                ? "ring-swamp ring-4 transition-shadow"
+                ? "ring-4 ring-swamp transition-shadow"
                 : ""
             }`}
           >

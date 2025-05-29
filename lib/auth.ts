@@ -1,8 +1,8 @@
 import Session from "@/app/models/Session";
 import AuthService from "@/app/services/auth-service";
-import EmailService from "@/app/services/EmailService";
+import { sendVerificationEmail } from "@/app/services/email-service";
 import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import RegistrationService from "@/app/services/registration-service";
+import { upsertUser } from "@/app/services/registration-service";
 import prisma from "@/lib/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { getServerSession, type NextAuthOptions } from "next-auth";
@@ -41,7 +41,7 @@ export const authOptions: NextAuthOptions = {
         return Math.floor(100000 + Math.random() * 900000).toString();
       },
       sendVerificationRequest: ({ identifier: email, token }) => {
-        return EmailService.sendVerificationEmail(email, token, domainCopy());
+        return sendVerificationEmail(email, token, domainCopy());
       }
     }),
     GitHubProvider({
@@ -88,11 +88,10 @@ export const authOptions: NextAuthOptions = {
               gh_username: credentials.gh_username, // GitHub username from the provided credentials
               name: "", // No default name, it will be set based on existing data or remain empty
               email: `${credentials.gh_username}@gh.${domainCopy()}`, // No default email, it will be set based on existing data or remain empty
-              image: "", // No default image, it will be set based on existing data or remain empty
-              roleId: "admin"
+              image: "" // No default image, it will be set based on existing data or remain empty
             };
 
-            const user = await RegistrationService.upsertUser(userDetails);
+            const user = await upsertUser(userDetails);
 
             return user;
           }

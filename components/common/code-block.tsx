@@ -1,10 +1,9 @@
 "use client";
 
+import { formatHtml } from "@/app/services/format-html";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Check, Copy, FileCode2 } from "lucide-react";
-import * as parserHtml from "prettier/plugins/html";
-import { format as prettierFormat } from "prettier/standalone";
 import { Highlight, themes } from "prism-react-renderer";
 import { useEffect, useState } from "react";
 
@@ -22,16 +21,9 @@ export default function CodeBlock({ code, language, fileName }: CodeBlockProps) 
     const format = async () => {
       if (language === "html") {
         try {
-          const formatted = await prettierFormat(code, {
-            parser: "html",
-            plugins: [parserHtml],
-            printWidth: 1000,
-            tabWidth: 2,
-            htmlWhitespaceSensitivity: "css",
-            bracketSameLine: true,
-            singleAttributePerLine: false
-          });
-          setFormattedCode(formatted.trim());
+          // Call server action for HTML formatting
+          const formatted = await formatHtml(code);
+          setFormattedCode(formatted);
         } catch (err) {
           console.warn("Failed to format HTML:", err);
           setFormattedCode(code.trim());

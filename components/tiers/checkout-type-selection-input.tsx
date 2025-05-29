@@ -1,27 +1,24 @@
-import { TierWithCount } from "@/app/services/TierService";
+import { TierWithCount } from "@/app/services/tier/tier-service";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { User } from "@prisma/client";
 import { CreditCard, Mail } from "lucide-react";
 
-export default function CheckoutTypeSelectionInput({
-  user,
+export function CheckoutTypeSelectionInput({
+  checkoutEnabled,
   tier,
   handleInputChange,
   idPrefix = ""
 }: {
-  user: User;
+  checkoutEnabled: boolean;
   tier: TierWithCount;
   handleInputChange: (key: string, value: string) => void;
   idPrefix?: string;
 }) {
-  const gitwalletCheckoutEnabled = !!user.stripeAccountId;
-
   function GitWalletCheckout() {
-    const disabled = !gitwalletCheckoutEnabled;
+    const disabled = !checkoutEnabled;
 
     const InputComponent = ({ disabled = false }: { disabled?: boolean }) => (
-      <label className="focus-within:ring-swamp flex size-full transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-inset">
+      <label className="flex size-full transition-[background-color,box-shadow] focus-within:outline-none focus-within:ring-2 focus-within:ring-inset focus-within:ring-swamp">
         <div
           className={cn(
             "flex h-full w-full flex-col items-start justify-start gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border transition-[background-color,box-shadow] [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp",
@@ -39,11 +36,11 @@ export default function CheckoutTypeSelectionInput({
             </div>
             <input
               id={`${idPrefix}checkout-type-gitwallet`}
-              disabled={!gitwalletCheckoutEnabled}
+              disabled={!checkoutEnabled}
               type="radio"
               name={`${idPrefix}checkout-type`}
               value="gitwallet"
-              className="checked:border-swamp checked:text-swamp border-stone-400 shadow-sm focus:outline-none focus:ring-0"
+              className="border-stone-400 shadow-sm checked:border-swamp checked:text-swamp focus:outline-none focus:ring-0"
               checked={tier.checkoutType === "gitwallet"}
               onChange={(e) =>
                 handleInputChange("checkoutType", e.target.checked ? "gitwallet" : "contact-form")
@@ -78,7 +75,7 @@ export default function CheckoutTypeSelectionInput({
     <div className="flex flex-col gap-2">
       <GitWalletCheckout />
       <label className="flex size-full rounded focus-within:outline-none">
-        <div className="shadow-border-sm hover:shadow-border [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-swamp flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 transition-[background-color,box-shadow] [&:has(input:checked)]:ring-2">
+        <div className="flex size-full cursor-pointer flex-col gap-1.5 rounded bg-white p-4 pt-3.5 shadow-border-sm transition-[background-color,box-shadow] hover:shadow-border [&:has(input:checked)]:border-swamp [&:has(input:checked)]:ring-2 [&:has(input:checked)]:ring-swamp">
           <div className="flex size-full items-center justify-between">
             <div className="flex items-center">
               <Mail className="mr-2.5 size-[18px] text-stone-500" />
@@ -89,7 +86,7 @@ export default function CheckoutTypeSelectionInput({
               type="radio"
               name={`${idPrefix}checkout-type`}
               value="contact-form"
-              className="checked:border-swamp checked:text-swamp border-stone-400 shadow-sm focus:outline-none focus:ring-0"
+              className="border-stone-400 shadow-sm checked:border-swamp checked:text-swamp focus:outline-none focus:ring-0"
               checked={tier.checkoutType === "contact-form"}
               onChange={(e) =>
                 handleInputChange("checkoutType", e.target.checked ? "contact-form" : "gitwallet")

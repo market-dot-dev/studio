@@ -1,34 +1,21 @@
 "use client";
 
-import useCurrentSession from "@/app/hooks/use-current-session";
-import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Contract } from "@/app/generated/prisma";
+import { SessionUser } from "@/app/models/Session";
 import { DataTable } from "@/components/ui/data-table";
-import { Contract } from "@prisma/client";
-import { useState } from "react";
 import { createColumns } from "./columns";
 
-export default function ContractSettings({ contracts }: { contracts: Contract[] }) {
-  const [error, setError] = useState<{ message: string } | null>(null);
-  const { currentUser } = useCurrentSession();
+interface Props {
+  contracts: Contract[];
+  currentUser: SessionUser | null | undefined;
+}
 
-  // Consider the data as loading until currentUser is available
-  const isLoading = currentUser === undefined || currentUser === null;
-
+export default function ContractSettings({ contracts, currentUser }: Props) {
   const columns = createColumns(currentUser);
 
   return (
     <div className="flex flex-col gap-4">
-      {error && (
-        <Alert variant="destructive">
-          <AlertDescription>{error.message}</AlertDescription>
-        </Alert>
-      )}
-      <DataTable
-        columns={columns}
-        data={contracts}
-        currentUser={currentUser}
-        isLoading={isLoading}
-      />
+      <DataTable columns={columns} data={contracts} isLoading={false} />
     </div>
   );
 }

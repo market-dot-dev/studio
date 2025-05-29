@@ -1,6 +1,6 @@
 "use client";
 
-import { destroyContract } from "@/app/services/contract-service";
+import { deleteContract } from "@/app/services/contract-service";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,7 +12,7 @@ import {
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 const ContractDeleteButton = ({
@@ -34,7 +34,7 @@ const ContractDeleteButton = ({
     onConfirm();
 
     try {
-      await destroyContract(contractId);
+      await deleteContract(contractId);
       onSuccess();
     } catch (error) {
       onError(error);
@@ -53,7 +53,7 @@ const ContractDeleteButton = ({
   return (
     <>
       <Button className="w-min" variant="destructive" onClick={showWarning}>
-        <Trash />
+        <Trash2 />
         Delete
       </Button>
 
@@ -67,9 +67,8 @@ const ContractDeleteButton = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setOpen(false)}>No, keep contract</AlertDialogCancel>
-            <AlertDialogAction asChild>
+            <AlertDialogAction variant="destructive" asChild>
               <Button
-                variant="destructive"
                 loading={loading}
                 loadingText="Deleting contract"
                 className="w-min"

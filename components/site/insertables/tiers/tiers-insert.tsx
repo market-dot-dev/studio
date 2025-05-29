@@ -1,6 +1,6 @@
 "use client";
 
-import { getPublishedTiers } from "@/app/services/TierService";
+import { getPublishedTiers } from "@/app/services/tier/tier-service";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog";
-import Spinner from "@/components/ui/spinner";
+import { Spinner } from "@/components/ui/spinner";
 import { DialogTrigger } from "@radix-ui/react-dialog";
 import { useCallback, useEffect, useState } from "react";
 

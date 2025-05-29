@@ -4,7 +4,6 @@ objects:
     name: "Tarun Sachdeva"
     gh_username: "tarunsachdeva"
     gh_id: 826496
-    marketExpertId: "5"
   - id: "dev-mg"
     email: "max@market.dev"
     name: "Max Georgopolous"

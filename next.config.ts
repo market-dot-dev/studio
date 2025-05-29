@@ -1,19 +1,10 @@
+import withBundleAnalyzer from "@next/bundle-analyzer";
 import { withSentryConfig } from "@sentry/nextjs";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
-      // @NOTE: Outcommented pr. 14-04-2025, as prop no longer allowed. Requires testing.
-      // allowForwardedHosts: [
-      //   "market.local:3000",
-      //   "*.market.local:3000",
-      //   "gitwallet.co",
-      //   "*.gitwallet.co",
-      //   "market.dev",
-      //   "*.market.dev",
-      //   process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" ? "*.vercel.app" : ""
-      // ].filter(Boolean),
       allowedOrigins: [
         "market.local:3000",
         "*.market.local:3000",
@@ -72,62 +63,42 @@ const nextConfig: NextConfig = {
   }
 };
 
-// Define Sentry configuration types
-type SentryPluginOptions = {
-  silent: boolean;
-  org: string;
-  project: string;
-};
-
-type SentryWebpackPluginOptions = {
-  widenClientFileUpload: boolean;
-  transpileClientSDK: boolean;
-  tunnelRoute: string;
-  hideSourceMaps: boolean;
-  disableLogger: boolean;
-  automaticVercelMonitors: boolean;
-};
-
 // Apply Sentry configuration conditionally based on environment
 const config =
   process.env.NODE_ENV !== "development"
-    ? withSentryConfig(
-        nextConfig,
-        {
-          // For all available options, see:
-          // https://github.com/getsentry/sentry-webpack-plugin#options
+    ? withSentryConfig(nextConfig, {
+        // For all available options, see:
+        // https://github.com/getsentry/sentry-webpack-plugin#options
 
-          // Suppresses source map uploading logs during build
-          silent: true,
-          org: "marketdotdev",
-          project: "storedotdev"
-        } as SentryPluginOptions,
-        {
-          // For all available options, see:
-          // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
+        org: "marketdotdev",
+        project: "storedotdev",
 
-          // Upload a larger set of source maps for prettier stack traces (increases build time)
-          widenClientFileUpload: true,
+        // Only print logs for uploading source maps in CI
+        silent: !process.env.CI,
 
-          // Transpiles SDK to be compatible with IE11 (increases bundle size)
-          transpileClientSDK: false,
+        // For all available options, see:
+        // https://docs.sentry.io/platforms/javascript/guides/nextjs/manual-setup/
 
-          // Routes browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers (increases server load)
-          tunnelRoute: "/monitoring",
+        // Upload a larger set of source maps for prettier stack traces (increases build time)
+        widenClientFileUpload: true,
 
-          // Hides source maps from generated client bundles
-          hideSourceMaps: true,
+        // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers.
+        // This can increase your server load as well as your hosting bill.
+        // Note: Check that the configured route will not match with your Next.js middleware, otherwise reporting of client-
+        // side errors will fail.
+        tunnelRoute: "/error-monitoring",
 
-          // Automatically tree-shake Sentry logger statements to reduce bundle size
-          disableLogger: true,
+        // Automatically tree-shake Sentry logger statements to reduce bundle size
+        disableLogger: true,
 
-          // Enables automatic instrumentation of Vercel Cron Monitors.
-          // See the following for more information:
-          // https://docs.sentry.io/product/crons/
-          // https://vercel.com/docs/cron-jobs
-          automaticVercelMonitors: true
-        } as SentryWebpackPluginOptions
-      )
+        // Enables automatic instrumentation of Vercel Cron Monitors.
+        // See the following for more information:
+        // https://docs.sentry.io/product/crons/
+        // https://vercel.com/docs/cron-jobs
+        automaticVercelMonitors: true
+      })
     : nextConfig;
 
-export default config;
+export default withBundleAnalyzer({
+  enabled: process.env.ANALYZE === "true"
+})(config);

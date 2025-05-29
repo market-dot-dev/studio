@@ -1,14 +1,12 @@
-/* eslint-disable jsx-a11y/no-static-element-interactions */
-/* eslint-disable jsx-a11y/click-events-have-key-events */
 "use client";
 
-import { deleteMedia, listMedia, uploadFile } from "@/app/services/MediaService";
+import { Media as DBMedia } from "@/app/generated/prisma";
+import { deleteMedia, listMedia, uploadMedia } from "@/app/services/site/media-service";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import Spinner from "@/components/ui/spinner";
-import { Media as DBMedia } from "@prisma/client";
+import { Spinner } from "@/components/ui/spinner";
 import { format } from "date-fns";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
@@ -40,7 +38,7 @@ const StyledDropzone = ({ onFileAccepted, isUploading }: any) => {
         <Spinner />
       ) : (
         <p className="text-sm text-stone-500">
-          Drop files here or <a className="text-swamp cursor-pointer font-medium">pick an image</a>
+          Drop files here or <a className="cursor-pointer font-medium text-swamp">pick an image</a>
         </p>
       )}
     </div>
@@ -97,7 +95,7 @@ function ImageInsertModal({
     formData.append("file", file);
 
     try {
-      const newMedia = await uploadFile(formData);
+      const newMedia = await uploadMedia(formData);
       if (newMedia) {
         setMediaList([...mediaList, newMedia]);
         handleSelectMedia(newMedia);
@@ -141,17 +139,19 @@ function ImageInsertModal({
           <div className="grid max-h-[25vh] grid-cols-3 gap-2 overflow-y-auto sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
             {isLoading && <Spinner />}
             {mediaList.map((media) => (
-              <div
+              <button
                 key={media.id}
                 className={`aspect-square cursor-pointer overflow-hidden rounded border ${
                   selectedMedia?.id === media.id
-                    ? "ring-swamp ring-2 ring-offset-2"
+                    ? "ring-2 ring-swamp ring-offset-2"
                     : "border-gray-200 hover:border-gray-300"
                 }`}
                 onClick={() => handleSelectMedia(media)}
               >
-                {media.url && <Image src={media.url} className="size-full object-cover" alt="" />}
-              </div>
+                {media.url && (
+                  <Image fill src={media.url} className="size-full object-cover" alt="" />
+                )}
+              </button>
             ))}
           </div>
         </div>
@@ -248,9 +248,9 @@ export default function ImageInsert({
 
   return (
     <>
-      <div className="p-2 py-4" onClick={() => setIsOpen(true)}>
+      <button className="p-2 py-4" onClick={() => setIsOpen(true)}>
         {children}
-      </div>
+      </button>
 
       <Dialog open={isOpen} onOpenChange={setIsOpen}>
         <DialogContent className="max-h-[90vh] overflow-hidden">

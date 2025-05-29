@@ -1,20 +1,8 @@
-import UserService from "@/app/services/UserService";
-import GeneralSettings from "@/components/user/general-settings";
-import { getSession } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { requireUser } from "@/app/services/user-context-service";
+import GeneralSettings from "@/components/organization/general-settings";
 
 export default async function GeneralSettingsPage() {
-  const session = await getSession();
-
-  if (!session) {
-    redirect("/login");
-  }
-
-  const user = await UserService.findUser(session.user.id!);
-
-  if (!user) {
-    redirect("/login");
-  }
+  const user = await requireUser();
 
   return (
     <div className="space-y-6">

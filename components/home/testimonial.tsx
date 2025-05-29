@@ -31,7 +31,7 @@ export default function Testimonial({ quote, quotee }: TestimonialProps) {
   return (
     <div className="mx-auto w-full max-w-[800px] px-6 lg:max-w-[var(--marketing-max-width)] lg:px-12">
       <div className="mb-12 mt-9 flex flex-col gap-4 text-pretty border-black/[15%] sm:mb-16 sm:mt-12 sm:gap-6 md:items-center md:text-center">
-        <blockquote className="text-marketing-lg lg:text-marketing-2xl text-pretty md:max-w-[40ch]">
+        <blockquote className="text-pretty text-marketing-lg md:max-w-[40ch] lg:text-marketing-2xl">
           {quote}
         </blockquote>
         <div className="flex w-fit items-center gap-3">

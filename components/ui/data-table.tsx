@@ -1,14 +1,5 @@
 "use client";
 
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  TableOptions,
-  useReactTable
-} from "@tanstack/react-table";
-
-import { SessionUser } from "@/app/models/Session";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -20,7 +11,16 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { ReactElement, ReactNode } from "react";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  Row,
+  TableOptions,
+  useReactTable
+} from "@tanstack/react-table";
+import * as React from "react";
+import { ReactNode } from "react";
 
 // Extend the ColumnDef type to include an emphasized property
 declare module "@tanstack/react-table" {
@@ -38,8 +38,8 @@ interface DataTableProps<TData, TValue> {
   noResults?: ReactNode;
   cardProps?: React.ComponentProps<typeof Card>;
   tableContainerClassName?: string;
-  currentUser?: SessionUser | null | undefined;
   isLoading?: boolean;
+  renderSubRowComponent?: (row: Row<TData>) => ReactNode;
 }
 
 export function DataTable<TData, TValue>({
@@ -51,9 +51,9 @@ export function DataTable<TData, TValue>({
   noResults = "No results",
   cardProps,
   tableContainerClassName,
-  currentUser,
-  isLoading = false
-}: DataTableProps<TData, TValue>): ReactElement<any> {
+  isLoading = false,
+  renderSubRowComponent
+}: DataTableProps<TData, TValue>): React.ReactElement<any> {
   const table = useReactTable({
     data,
     columns,
@@ -97,15 +97,33 @@ export function DataTable<TData, TValue>({
                   </TableRow>
                 ))
             ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} emphasized={cell.column.columnDef.meta?.emphasized}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                const subRowComponent = renderSubRowComponent ? renderSubRowComponent(row) : null;
+                return (
+                  <React.Fragment key={row.id}>
+                    <TableRow
+                      data-state={row.getIsSelected() && "selected"}
+                      className={cn(subRowComponent && "!border-b-0")}
+                    >
+                      {row.getVisibleCells().map((cell) => (
+                        <TableCell
+                          key={cell.id}
+                          emphasized={cell.column.columnDef.meta?.emphasized}
+                        >
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                    {subRowComponent && (
+                      <TableRow>
+                        <TableCell colSpan={columns.length} className="p-0">
+                          {subRowComponent}
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </React.Fragment>
+                );
+              })
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="min-h-24 text-center">

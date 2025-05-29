@@ -1,7 +1,7 @@
-import TierService from "@/app/services/TierService";
+import { getPublishedTiersForOrganization } from "@/app/services/tier/tier-service";
 import { NextRequest } from "next/server";
 
-export async function GET(req: NextRequest, props: { params: Promise<{ userid: string }> }) {
+export async function GET(req: NextRequest, props: { params: Promise<{ orgid: string }> }) {
   const params = await props.params;
   const searchParams = req.nextUrl.searchParams;
   const onlyTiersString = searchParams.get("tiers");
@@ -13,9 +13,9 @@ export async function GET(req: NextRequest, props: { params: Promise<{ userid: s
     enforceHeight = 0;
   }
 
-  const tiersForUser = await TierService.getTiersForUser(params.userid);
+  const tiersForOrg = await getPublishedTiersForOrganization(params.orgid);
 
-  const tiers = tiersForUser.filter((tier) => {
+  const tiers = tiersForOrg.filter((tier) => {
     return onlyTiers.includes(tier.id);
   });
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { Contract } from "@/app/generated/prisma";
 import {
   ContractWithUploadData,
   createContract,
@@ -11,8 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import Uploader, { Attachment } from "@/components/uploader";
-import { Contract } from "@prisma/client";
-import { BookOpen, Trash } from "lucide-react";
+import { BookOpen, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { startTransition, useState } from "react";
@@ -197,7 +197,7 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
                       {contract.attachmentUrl.split("/").pop()}
                     </p>
                     <Button size="icon" variant="outline" onClick={handleRemoveAttachment}>
-                      <Trash />
+                      <Trash2 />
                     </Button>
                   </div>
                 </div>

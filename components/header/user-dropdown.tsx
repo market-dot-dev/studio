@@ -1,5 +1,7 @@
 "use client";
 
+import { OrganizationType } from "@/app/generated/prisma";
+import { SessionUser } from "@/app/models/Session";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -12,7 +14,7 @@ import {
 import { signOut } from "next-auth/react";
 import Image from "next/image";
 
-export default function UserDropdown({ user }: { user: any }) {
+export default function UserDropdown({ user }: { user: SessionUser }) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -24,32 +26,36 @@ export default function UserDropdown({ user }: { user: any }) {
         >
           <Image
             src={user.image ?? `https://avatar.vercel.sh/${user.id}`}
-            width={32}
-            height={32}
+            width={24}
+            height={24}
             alt={user.name ?? "User avatar"}
-            className="size-7 rounded-full"
+            className="size-6 rounded-full"
+            priority
           />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="z-40 w-[250px]" sideOffset={5} align="end" alignOffset={0}>
-        <div className="flex items-center gap-2 p-2">
+        <div className="flex items-center gap-3 p-2">
           <Image
             src={user.image ?? `https://avatar.vercel.sh/${user.id}`}
             width={28}
             height={28}
             alt={user.name ?? "User avatar"}
-            className="size-7 rounded-full"
+            className="size-6 rounded-full"
+            priority
           />
-          <h3 className="tracking-tightish text-sm font-semibold">{user.name}</h3>
+          <h3 className="text-sm font-semibold tracking-tightish">{user.name}</h3>
         </div>
 
         <DropdownMenuSeparator />
+
         <DropdownMenuGroup>
           <DropdownMenuItem
             onClick={() =>
               signOut({
-                callbackUrl: user.roleId === "maintainer" ? "/login" : "/customer-login"
+                callbackUrl:
+                  user.currentOrgType === OrganizationType.VENDOR ? "/login" : "/customer-login"
               })
             }
           >

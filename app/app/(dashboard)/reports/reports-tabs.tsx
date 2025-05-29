@@ -1,10 +1,6 @@
-import AllCharts from "@/components/overview-stats";
-import { CustomerWithChargesAndSubscriptions } from "../customers/customer-table";
+import { DashboardCharts } from "@/components/overview-stats";
+import type { CustomerOrgWithChargesAndSubs } from "@/types/organization-customer";
 
-export default function Reports({
-  customers
-}: {
-  customers: CustomerWithChargesAndSubscriptions[];
-}) {
-  return <AllCharts customers={customers} />;
+export default function Reports({ customers }: { customers: CustomerOrgWithChargesAndSubs[] }) {
+  return <DashboardCharts customers={customers} />;
 }

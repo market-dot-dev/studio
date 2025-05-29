@@ -1,4 +1,5 @@
 import { useSession as naUseSession } from "next-auth/react";
+import { OrganizationRole } from "../generated/prisma";
 import { SessionUser } from "../models/Session";
 
 const useCurrentSession = () => {
@@ -6,11 +7,12 @@ const useCurrentSession = () => {
   const currentUser = data?.user as SessionUser;
 
   const isSignedIn = () => status === "authenticated";
-  const isAdmin = () => isSignedIn() && currentUser?.roleId === "admin";
-  const isCustomer = () => isSignedIn() && currentUser?.roleId === "customer";
+  const isAdmin = () =>
+    (isSignedIn() && currentUser?.currentUserRole === OrganizationRole.ADMIN) ||
+    currentUser?.currentUserRole === OrganizationRole.OWNER;
 
   const refreshSession = async () => {
-    console.log("Refreshing session..."); // Add this line
+    console.log("Refreshing session...");
     await update({ force: true });
   };
 

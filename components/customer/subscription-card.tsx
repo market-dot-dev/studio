@@ -1,13 +1,15 @@
-import CancelSubscriptionButton from "@/app/app/c/subscriptions/cancel-subscription-button";
-import Subscription, { SubscriptionStates } from "@/app/models/Subscription";
-import TierService from "@/app/services/TierService";
-import UserService from "@/app/services/UserService";
-import ContractService from "@/app/services/contract-service";
-import { Badge } from "@/components/ui/badge";
+import { SubscriptionStatusBadge } from "@/app/app/(dashboard)/customers/subscription-state";
+import { CancelSubscriptionBtn } from "@/app/app/c/subscriptions/cancel-subscription-btn";
+import { ReactivateSubscriptionBtn } from "@/app/app/c/subscriptions/reactivate-subscription-btn";
+import { Subscription } from "@/app/generated/prisma";
+import { getTierByIdForCheckout } from "@/app/services/tier/tier-service";
+import { TierDetailsModal } from "@/components/tiers/tier-details-modal";
 import { Card } from "@/components/ui/card";
-import { cn } from "@/lib/utils";
+import { Separator } from "@/components/ui/separator";
+import { formatDate } from "@/lib/utils";
+import { isCancelled, isFinishingMonth, isRenewing } from "@/types/subscription";
 import { Store } from "lucide-react";
-import ContractLink from "./contract-link";
+import Link from "next/link";
 
 const SubscriptionCard = async ({
   subscription,
@@ -18,95 +20,89 @@ const SubscriptionCard = async ({
 }) => {
   if (!subscription || !subscription.tierId) return null;
 
-  const tier = await TierService.findTier(subscription.tierId!);
-  if (!tier) return null;
+  const tier = await getTierByIdForCheckout(subscription.tierId);
+  if (!tier || !tier.organization) return null;
 
-  const maintainer = await UserService.findUser(tier.userId);
-
-  if (!maintainer) return null;
+  const contractUrl = tier.contract
+    ? `/c/contracts/${tier.contract.id}`
+    : "/c/contracts/standard-msa";
+  const contractName = tier.contract?.name || "Standard MSA";
 
   const actualCadence = subscription.priceAnnual ? "year" : tier.cadence;
   const actualPrice = subscription.priceAnnual ? tier.priceAnnual : tier.price;
   const shortenedCadence =
     actualCadence === "month" ? "mo" : actualCadence === "year" ? "yr" : actualCadence;
 
-  let status = "";
-  if (subscription.state === SubscriptionStates.renewing) {
-    status = "Subscribed";
-  } else if (subscription.state === SubscriptionStates.cancelled) {
-    if (subscription.activeUntil && subscription.activeUntil <= new Date()) {
-      status = "Cancelled";
-    } else if (subscription.activeUntil) {
-      const daysRemaining = Math.ceil(
-        (subscription.activeUntil.getTime() - new Date().getTime()) / (1000 * 3600 * 24)
-      );
-      status = `Cancelled, usable for ${daysRemaining} more day${daysRemaining !== 1 ? "s" : ""}`;
-    } else {
-      status = "Cancelled";
-    }
-  }
-
-  const contract = (await ContractService.getContractById(tier.contractId || "")) || undefined;
+  // Check if this is a cancelled but still active subscription that can be reactivated
+  const canReactivate = isCancelled(subscription) && isFinishingMonth(subscription);
 
   return (
-    <Card className="text-sm">
-      <div className="flex flex-col gap-4 p-5 pr-4 pt-4">
+    <Card className="flex flex-col text-sm">
+      <div className="flex grow flex-col gap-4 p-5 pr-4 pt-4">
         <div className="flex flex-wrap justify-between gap-2">
-          <div>
+          <div className="flex items-center gap-0.5">
             <h3 className="text-base font-semibold">
               {tier.name} {subscription.priceAnnual ? "(annual)" : ""}
             </h3>
-            {tier.tagline && <p className="line-clamp-2 text-sm text-stone-500">{tier.tagline}</p>}
+            <TierDetailsModal tier={tier} />
           </div>
-          <Badge
-            variant={subscription.state === SubscriptionStates.renewing ? "success" : "secondary"}
-            className="size-fit"
-          >
-            {status.charAt(0).toUpperCase() + status.slice(1)}
-          </Badge>
+          <SubscriptionStatusBadge subscription={subscription} />
         </div>
-        <p className="mb-1 text-xl font-semibold text-stone-800">
+        <p className="text-xl font-semibold text-stone-800">
           USD ${actualPrice}
-          <span className="font-medium text-stone-500">/{shortenedCadence}</span>
+          <span className="text-lg/5 font-medium text-stone-500">/{shortenedCadence}</span>
         </p>
         <div className="flex flex-row flex-wrap gap-x-10 gap-y-4">
           {isCustomerView && (
             <div className="flex flex-col gap-1">
-              <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
-                Purchased from
+              <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+                Seller
               </span>
               <div className="flex items-center gap-1.5">
-                <Store size={16} />
-                <span className="font-medium">{maintainer.projectName}</span>
+                <Store size={14} strokeWidth={2.25} />
+                <span className="font-medium">{tier.organization.projectName}</span>
               </div>
             </div>
           )}
 
           <div className="flex flex-col gap-1">
-            <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
-              Purchased On
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
+              Subscribed On
             </span>
-            <span className="font-medium">{subscription.createdAt.toLocaleDateString()}</span>
+            <span className="font-medium">
+              {formatDate(subscription.createdAt.toLocaleDateString())}
+            </span>
           </div>
 
           <div className="flex flex-col gap-1">
-            <span className="text-xxs/4 whitespace-nowrap font-medium uppercase tracking-wide text-stone-500">
+            <span className="whitespace-nowrap text-xxs/4 font-medium uppercase tracking-wide text-stone-500">
               Contract
             </span>
-            <ContractLink contract={contract} />
+            <Link href={contractUrl} className="inline font-medium underline" target="_blank">
+              {contractName}
+            </Link>
           </div>
         </div>
       </div>
 
-      <div
-        className={cn("flex flex-row gap-2 rounded-b-md border-t bg-stone-50 px-5 py-3", {
-          "justify-between": subscription.state !== SubscriptionStates.cancelled
-        })}
-      >
-        {subscription.state !== SubscriptionStates.cancelled && (
-          <CancelSubscriptionButton subscriptionId={subscription.id} />
-        )}
-      </div>
+      <Separator />
+
+      {isRenewing(subscription) && (
+        <CancelSubscriptionBtn
+          subscriptionId={subscription.id}
+          size="lg"
+          variant="outline"
+          className="w-full rounded-b-md rounded-t-none shadow-none"
+        />
+      )}
+      {canReactivate && (
+        <ReactivateSubscriptionBtn
+          subscriptionId={subscription.id}
+          size="lg"
+          variant="outline"
+          className="w-full rounded-b-md rounded-t-none shadow-none"
+        />
+      )}
     </Card>
   );
 };

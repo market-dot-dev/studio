@@ -1,6 +1,6 @@
 "use client";
 
-import type { SiteMeta } from "@/lib/site/fetchers";
+import type { SiteDetails } from "@/types/site";
 import Tiers from "./tiers";
 import { TiersEmbedSettingsProps } from "./tiers-embed-settings-props";
 
@@ -10,7 +10,7 @@ export default function TiersClient({
   settings,
   tiers
 }: {
-  site: SiteMeta | null;
+  site: SiteDetails | null;
   settings: TiersEmbedSettingsProps;
   tiers: any[];
 }) {

@@ -5,19 +5,20 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { cn } from "@/lib/utils";
 
 const badgeVariants = cva(
-  "focus:ring-swamp inline-flex items-center border border-black/10 font-semibold tracking-[-0.0075em] transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2",
+  "inline-flex items-center gap-1.5 border border-black/10 font-semibold tracking-[-0.0075em] transition-colors focus:outline-none focus:ring-2 focus:ring-swamp focus:ring-offset-2 [&_svg]:pointer-events-none [&_svg]:size-3.5 [&_svg]:shrink-0 [&_svg]:stroke-[2.25]",
   {
     variants: {
       variant: {
-        default: "bg-primary !text-primary-foreground border-transparent shadow",
+        default: "border-transparent bg-primary !text-primary-foreground shadow",
         secondary: "border-transparent bg-stone-200 !text-stone-600",
-        success: "bg-swamp !text-primary-foreground border-transparent shadow",
-        destructive: "bg-destructive !text-destructive-foreground border-transparent shadow",
+        success: "border-transparent bg-swamp !text-primary-foreground shadow",
+        warning: "border-transparent bg-warning !text-primary-foreground shadow",
+        destructive: "border-transparent bg-destructive !text-primary-foreground shadow",
         outline: "!text-stone-600"
       },
       size: {
         default: "rounded-sm px-1.5 py-0.5 text-xs",
-        sm: "text-xxs rounded-[3px] px-1 py-0.5 tracking-[-0.02em]"
+        sm: "rounded-[3px] px-1 py-0.5 text-xxs tracking-[-0.02em]"
       }
     },
     defaultVariants: {
@@ -49,33 +50,32 @@ const StyledTooltip: React.FC<StyledTooltipProps> = ({ className, children }) =>
   );
 };
 
-function Badge({
-  className,
-  variant,
-  size,
-  tooltip,
-  tooltipSide = "top",
-  tooltipAlign = "center",
-  ...props
-}: BadgeProps) {
-  const badgeClasses = cn(badgeVariants({ variant, size }), className);
+const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
+  (
+    { className, variant, size, tooltip, tooltipSide = "top", tooltipAlign = "center", ...props },
+    ref
+  ) => {
+    const badgeClasses = cn(badgeVariants({ variant, size }), className);
 
-  if (tooltip) {
-    return (
-      <TooltipProvider>
-        <StyledTooltip className={badgeClasses}>
-          <TooltipTrigger asChild>
-            <div className="inline-flex items-center" {...props} />
-          </TooltipTrigger>
-          <TooltipContent side={tooltipSide} align={tooltipAlign}>
-            {tooltip}
-          </TooltipContent>
-        </StyledTooltip>
-      </TooltipProvider>
-    );
+    if (tooltip) {
+      return (
+        <TooltipProvider>
+          <StyledTooltip className={badgeClasses}>
+            <TooltipTrigger asChild>
+              <div ref={ref} className="inline-flex items-center" {...props} />
+            </TooltipTrigger>
+            <TooltipContent side={tooltipSide} align={tooltipAlign}>
+              {tooltip}
+            </TooltipContent>
+          </StyledTooltip>
+        </TooltipProvider>
+      );
+    }
+
+    return <div ref={ref} className={badgeClasses} {...props} />;
   }
+);
 
-  return <div className={badgeClasses} {...props} />;
-}
+Badge.displayName = "Badge";
 
 export { Badge, badgeVariants };
