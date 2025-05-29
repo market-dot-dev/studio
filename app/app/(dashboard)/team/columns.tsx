@@ -1,17 +1,27 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef, RowData } from "@tanstack/react-table";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { Mail, MailMinus, MoreVertical, Pencil, UserRoundMinus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 // Placeholder type - replace with actual type later
 export type TeamMember = {
@@ -44,7 +54,10 @@ export const columns: ColumnDef<TeamMember>[] = [
           ) : (
             <>
               <span>{email}</span>
-              <Badge variant="outline">Pending Invite</Badge>
+              <Badge variant="outline">
+                <Mail />
+                Invite Pending
+              </Badge>
             </>
           )}
         </div>
@@ -53,17 +66,7 @@ export const columns: ColumnDef<TeamMember>[] = [
   },
   {
     accessorKey: "email",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Email
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
+    header: "Email",
     cell: ({ row }) => {
       return <div>{row.getValue("email")}</div>;
     }
@@ -82,30 +85,75 @@ export const columns: ColumnDef<TeamMember>[] = [
       const isPending = member.invitePending;
       const openEditModal = table.options.meta?.openEditModal;
       const removeOrUninvite = table.options.meta?.removeOrUninvite;
+      const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+
+      const handleConfirmAction = () => {
+        const memberName = member.name || member.email;
+        const action = isPending ? "uninvited" : "removed";
+
+        removeOrUninvite?.(member);
+        setShowConfirmDialog(false);
+
+        toast.success(`${memberName} was ${action}`);
+      };
 
       return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="size-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="size-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => openEditModal?.(member)} disabled={!openEditModal}>
-              Edit Status
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              className="text-rose-500 hover:!bg-rose-500 hover:!text-white focus:!bg-rose-500 focus:!text-white"
-              onClick={() => removeOrUninvite?.(member)}
-              disabled={!removeOrUninvite}
-            >
-              {isPending ? "Uninvite" : "Remove from Team"}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon-sm">
+                <span className="sr-only">Open menu</span>
+                <MoreVertical className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => openEditModal?.(member)} disabled={!openEditModal}>
+                <Pencil />
+                Change role
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => setShowConfirmDialog(true)}
+                disabled={!removeOrUninvite}
+                destructive
+              >
+                {isPending ? (
+                  <>
+                    <MailMinus />
+                    Uninvite
+                  </>
+                ) : (
+                  <>
+                    <UserRoundMinus />
+                    Remove
+                  </>
+                )}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+
+          <AlertDialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  {isPending
+                    ? `Are you sure you want to uninvite ${member.email}?`
+                    : `Are you sure you want to remove ${member.name || member.email}?`}
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {isPending
+                    ? `This will cancel the invitation for ${member.email}.`
+                    : `They'll be will removed from your team and won't be able to access your dashboard anymore.`}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Nevermind</AlertDialogCancel>
+                <AlertDialogAction onClick={handleConfirmAction} variant="destructive">
+                  Yes, {isPending ? "Uninvite" : "Remove"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
       );
     }
   }

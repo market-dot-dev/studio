@@ -1,13 +1,14 @@
 "use client"; // Team page needs client-side interaction for modals/actions
 
-import { columns, TeamMember } from "@/app/app/(dashboard)/team/columns"; // Use aliased path
-import { EditStatusModal } from "@/app/components/team/edit-status-modal"; // Import EditStatusModal
-import { InviteModal } from "@/app/components/team/invite-modal"; // Import InviteModal
-import PageHeader from "@/components/common/page-header"; // Import PageHeader
+import { columns, TeamMember } from "@/app/app/(dashboard)/team/columns";
+import { EditRoleModal } from "@/app/components/team/edit-role-modal";
+import { InviteModal } from "@/app/components/team/invite-modal";
+import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import { Send } from "lucide-react";
-import { useState } from "react"; // Import useState
+import { UserRoundPlus } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 // Placeholder data - replace with actual data fetching later
 const teamMembersData: TeamMember[] = [
@@ -52,11 +53,16 @@ export default function TeamPage() {
   };
 
   const handleSaveStatus = (memberId: string, newStatus: "Admin" | "Collaborator") => {
+    const member = teamMembersData.find((m) => m.id === memberId);
+    const memberName = member?.name || member?.email || "User";
+
     console.log(`Saving status for ${memberId}: ${newStatus}`);
     alert(`Placeholder: Saving status for ${memberId} to ${newStatus}`);
     // TODO: Implement actual status update API call
     // TODO: Update local state or refetch data
     setSelectedMember(null);
+
+    toast.success(`${memberName} is now ${newStatus === "Admin" ? "an Admin" : "a Collaborator"}`);
   };
 
   const handleRemoveOrUninvite = (member: TeamMember) => {
@@ -73,7 +79,7 @@ export default function TeamPage() {
         title="Team"
         actions={[
           <Button key="invite" onClick={() => setIsInviteModalOpen(true)}>
-            <Send />
+            <UserRoundPlus />
             Invite Teammates
           </Button>
         ]}
@@ -93,7 +99,7 @@ export default function TeamPage() {
         onOpenChange={setIsInviteModalOpen}
         onInvite={handleInvite}
       />
-      <EditStatusModal
+      <EditRoleModal
         member={selectedMember}
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
