@@ -11,16 +11,10 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { ArrowLeftRight, ChevronsUpDown, Settings, SquarePlus, UsersRound } from "lucide-react";
+import { MinimalOrganization } from "@/types/organization";
+import { ArrowLeftRight, ChevronsUpDown, Settings, UsersRound } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-
-// Placeholder data - replace with actual data fetching later
-const currentOrganization = {
-  id: "1",
-  name: "Acme Inc.",
-  imageUrl: null // Or a URL string
-};
 
 // Placeholder data for other organizations
 const otherOrganizations = [
@@ -59,10 +53,13 @@ function OrganizationDisplay({ name, imageUrl, className = "" }: OrganizationDis
   );
 }
 
-export function OrganizationSwitcher() {
-  const [selectedOrgId, setSelectedOrgId] = useState(currentOrganization.id);
-  const selectedOrg =
-    otherOrganizations.find((org) => org.id === selectedOrgId) || currentOrganization;
+interface Props {
+  currentOrg: MinimalOrganization;
+}
+
+export function OrganizationSwitcher({ currentOrg }: Props) {
+  const [selectedOrgId, setSelectedOrgId] = useState(currentOrg.id);
+  const selectedOrg = otherOrganizations.find((org) => org.id === selectedOrgId) || currentOrg;
 
   const handleOrganizationSwitch = (orgId: string) => {
     setSelectedOrgId(orgId);
@@ -125,7 +122,8 @@ export function OrganizationSwitcher() {
               </DropdownMenuSubContent>
             </DropdownMenuPortal>
           </DropdownMenuSub>
-          <DropdownMenuItem
+          {/* @TODO: Org-creation */}
+          {/* <DropdownMenuItem
             asChild
             className="gap-2 p-1 transition-[background-color,box-shadow] hover:cursor-pointer hover:bg-white hover:shadow-border hover:ring-0 focus:bg-white focus:ring-2 focus:ring-swamp"
           >
@@ -133,7 +131,7 @@ export function OrganizationSwitcher() {
               <SquarePlus className="!h-4.5 !w-4.5 shrink-0" />
               Create an Organization
             </Link>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

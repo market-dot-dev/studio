@@ -37,7 +37,7 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
       />
       <SidebarProvider>
         <Header />
-        <DashboardSidebar user={user} isMarketExpert={isMarketExpert} site={site} />
+        <DashboardSidebar currentOrg={org} isMarketExpert={isMarketExpert} site={site} />
         <main className="flex min-h-screen w-screen flex-col items-center bg-stone-100 pt-10 md:w-[calc(100vw-var(--sidebar-width))]">
           {org.stripeAccountDisabled && <StripeDisabledBanner />}
           <div className="flex w-full max-w-screen-xl flex-col gap-y-8 p-6 sm:p-10 sm:pt-8">

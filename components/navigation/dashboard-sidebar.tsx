@@ -1,8 +1,8 @@
 "use client";
 
 import { OrganizationSwitcher } from "@/app/components/organization-switcher";
-import type { User } from "@/app/generated/prisma";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
+import { MinimalOrganization } from "@/types/organization";
 import type { SidebarItemGroup } from "@/types/sidebar";
 import type { SiteDetails } from "@/types/site";
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
@@ -22,17 +22,17 @@ import {
 import { useSelectedLayoutSegments } from "next/navigation";
 
 interface DashboardSidebarProps {
-  user: User;
+  currentOrg: MinimalOrganization;
   isMarketExpert: boolean;
   site: SiteDetails | null;
 }
 
-export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSidebarProps) {
+export function DashboardSidebar({ currentOrg, isMarketExpert, site }: DashboardSidebarProps) {
   const urlSegments = useSelectedLayoutSegments();
 
   const headerItems: SidebarItemGroup[] = [
     {
-      items: [<OrganizationSwitcher key="org-switcher" />]
+      items: [<OrganizationSwitcher currentOrg={currentOrg} key="org-switcher" />]
     }
   ];
 
