@@ -9,23 +9,6 @@ import { requireOrganization } from "./user-context-service";
 export type ContractWithUploadData = Contract & { uploadData?: File };
 
 class ContractService {
-  static async getById(id: string): Promise<Contract | null> {
-    return prisma.contract.findUnique({ where: { id } });
-  }
-
-  static async getForCurrentOrganization(): Promise<Contract[]> {
-    const organization = await requireOrganization();
-    return this.getForOrganization(organization.id);
-  }
-
-  static async getForOrganization(organizationId: string): Promise<Contract[]> {
-    return prisma.contract.findMany({
-      where: {
-        organizationId: organizationId
-      }
-    });
-  }
-
   static async delete(id: string): Promise<Contract> {
     const organization = await requireOrganization();
     const contract = await prisma.contract.findUnique({
@@ -117,17 +100,36 @@ class ContractService {
   }
 }
 
-export const getContract = async (id: string) => {
-  return ContractService.getById(id);
-};
+export async function getContractById(id: string): Promise<Contract | null> {
+  return prisma.contract.findUnique({ where: { id } });
+}
 
 export const updateContract = async (id: string, contract: ContractWithUploadData) => {
   return ContractService.update(id, contract);
 };
 
-export const getContractsForCurrentOrganization = async () => {
-  return ContractService.getForCurrentOrganization();
-};
+export async function getContractsForCurrentOrganization(): Promise<Contract[]> {
+  const organization = await requireOrganization();
+  return getContractsByOrgId(organization.id);
+}
+
+export async function getContractsByOrgId(organizationId: string): Promise<Contract[]> {
+  return prisma.contract.findMany({
+    where: {
+      OR: [
+        {
+          organizationId: organizationId
+        },
+        {
+          organizationId: null
+        }
+      ]
+    },
+    orderBy: {
+      createdAt: "asc"
+    }
+  });
+}
 
 export const deleteContract = async (id: string) => {
   return ContractService.delete(id);
