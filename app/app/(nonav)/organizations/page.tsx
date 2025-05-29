@@ -1,9 +1,9 @@
-import { getUserOrganizations } from "@/app/services/organization-service";
+import { getOrganizationSwitcherContext } from "@/app/services/user-context-service";
 import Image from "next/image";
 import { OrganizationItem } from "./OrganizationItem";
 
 export default async function OrganizationsPage() {
-  const userOrganizations = await getUserOrganizations();
+  const { availableOrganizations: orgs } = await getOrganizationSwitcherContext();
 
   return (
     <div className="min-h-screen bg-stone-100 p-6">
@@ -22,18 +22,14 @@ export default async function OrganizationsPage() {
         <h1 className="text-2xl font-bold text-foreground">Your Organizations</h1>
 
         <div className="space-y-3 shadow-border-lg">
-          {userOrganizations.length === 0 ? (
+          {orgs.length === 0 ? (
             <div className="rounded-lg bg-white p-6 py-8">
               <p className="text-muted-foreground">You haven't joined any organizations yet.</p>
             </div>
           ) : (
-            userOrganizations.map(({ organization }) => (
+            orgs.map(({ organization }) => (
               <div key={organization.id} className="rounded-lg bg-white shadow-border-lg">
-                <OrganizationItem
-                  id={organization.id}
-                  name={organization.name}
-                  image={null} // @NOTE: Organizations doesn't have images yet
-                />
+                <OrganizationItem organization={organization} />
               </div>
             ))
           )}

@@ -2,7 +2,7 @@
 
 import { AppSidebar } from "@/components/navigation/app-sidebar";
 import { OrganizationSwitcher } from "@/components/organization/organization-switcher";
-import { MinimalOrganization } from "@/types/organization";
+import { OrganizationSwitcherContext } from "@/types/organization";
 import type { SidebarItemGroup } from "@/types/sidebar";
 import type { SiteDetails } from "@/types/site";
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
@@ -22,17 +22,17 @@ import {
 import { useSelectedLayoutSegments } from "next/navigation";
 
 interface DashboardSidebarProps {
-  currentOrg: MinimalOrganization;
+  orgContext: OrganizationSwitcherContext;
   isMarketExpert: boolean;
   site: SiteDetails | null;
 }
 
-export function DashboardSidebar({ currentOrg, isMarketExpert, site }: DashboardSidebarProps) {
+export function DashboardSidebar({ orgContext, isMarketExpert, site }: DashboardSidebarProps) {
   const urlSegments = useSelectedLayoutSegments();
 
   const headerItems: SidebarItemGroup[] = [
     {
-      items: [<OrganizationSwitcher currentOrg={currentOrg} key="org-switcher" />]
+      items: [<OrganizationSwitcher context={orgContext} key="org-switcher" />]
     }
   ];
 
