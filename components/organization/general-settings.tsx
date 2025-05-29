@@ -41,7 +41,7 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
 
   return (
     <div className="flex w-full flex-col items-start space-y-6 lg:max-w-xl">
-      <div className="flex w-full flex-col items-start gap-1.5">
+      <div className="flex w-full flex-col items-start gap-2">
         <Label htmlFor="name">Name</Label>
         <Input
           placeholder="Enter your name"
@@ -54,7 +54,7 @@ export default function GeneralSettings({ user }: { user: Partial<User> }) {
         />
       </div>
 
-      <div className="flex w-full flex-col items-start gap-1.5">
+      <div className="flex w-full flex-col items-start gap-2">
         <Label htmlFor="email">Email</Label>
         <Input
           placeholder="Enter your email"
