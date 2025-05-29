@@ -1,5 +1,6 @@
 "use client";
 
+import { OrganizationSwitcher } from "@/app/components/organization-switcher";
 import type { User } from "@/app/generated/prisma";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
 import type { SidebarItemGroup } from "@/types/sidebar";
@@ -28,6 +29,12 @@ interface DashboardSidebarProps {
 
 export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSidebarProps) {
   const urlSegments = useSelectedLayoutSegments();
+
+  const headerItems: SidebarItemGroup[] = [
+    {
+      items: [<OrganizationSwitcher key="org-switcher" />]
+    }
+  ];
 
   const mainItems: SidebarItemGroup[] = [
     {
@@ -148,5 +155,5 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
     }
   ];
 
-  return <AppSidebar mainItems={mainItems} footerItems={footerItems} />;
+  return <AppSidebar mainItems={mainItems} headerItems={headerItems} footerItems={footerItems} />;
 }
