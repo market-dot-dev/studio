@@ -19,7 +19,7 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { ColumnDef, RowData } from "@tanstack/react-table";
-import { Mail, MailMinus, MoreVertical, Pencil, UserRoundMinus } from "lucide-react";
+import { MailMinus, MoreVertical, Pencil, UserRoundMinus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -46,21 +46,8 @@ export const columns: ColumnDef<TeamMember>[] = [
     cell: ({ row }) => {
       const name = row.getValue("name") as string | null;
       const email = row.getValue("email") as string;
-      const isPending = row.original.invitePending;
       return (
-        <div className="flex items-center gap-2 font-semibold text-stone-800">
-          {name || !isPending ? (
-            name
-          ) : (
-            <>
-              <span>{email}</span>
-              <Badge variant="outline">
-                <Mail />
-                Invite Pending
-              </Badge>
-            </>
-          )}
-        </div>
+        <div className="flex items-center gap-2 font-semibold text-stone-800">{name || email}</div>
       );
     }
   },

@@ -7,7 +7,7 @@ import PageHeader from "@/components/common/page-header";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import { UserRoundPlus } from "lucide-react";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 // Placeholder data - replace with actual data fetching later
@@ -39,6 +39,13 @@ export default function TeamPage() {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
+
+  // Split data into teammates and invited members
+  const { teammates, invitedMembers } = useMemo(() => {
+    const teammates = teamMembersData.filter((member) => !member.invitePending);
+    const invitedMembers = teamMembersData.filter((member) => member.invitePending);
+    return { teammates, invitedMembers };
+  }, []);
 
   // Placeholder handlers - replace with actual logic later
   const handleInvite = (emails: string[]) => {
@@ -78,20 +85,36 @@ export default function TeamPage() {
       <PageHeader
         title="Team"
         actions={[
-          <Button key="invite" onClick={() => setIsInviteModalOpen(true)}>
+          <Button key="invite" variant="outline" onClick={() => setIsInviteModalOpen(true)}>
             <UserRoundPlus />
             Invite Teammates
           </Button>
         ]}
       />
-      <DataTable
-        columns={columns} // Pass handlers via meta
-        data={teamMembersData}
-        meta={{
-          openEditModal: handleOpenEditModal,
-          removeOrUninvite: handleRemoveOrUninvite
-        }}
-      />
+
+      <div className="space-y-3">
+        <h2 className="text-xl font-bold tracking-normal">Teammates</h2>
+        <DataTable
+          columns={columns} // Pass handlers via meta
+          data={teammates}
+          meta={{
+            openEditModal: handleOpenEditModal,
+            removeOrUninvite: handleRemoveOrUninvite
+          }}
+        />
+      </div>
+
+      <div className="space-y-3">
+        <h2 className="text-xl font-bold tracking-normal">Invited</h2>
+        <DataTable
+          columns={columns} // Pass handlers via meta
+          data={invitedMembers}
+          meta={{
+            openEditModal: handleOpenEditModal,
+            removeOrUninvite: handleRemoveOrUninvite
+          }}
+        />
+      </div>
 
       {/* Modals */}
       <InviteModal
