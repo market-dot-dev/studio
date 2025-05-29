@@ -172,7 +172,7 @@ const Sidebar = React.forwardRef<
       return (
         <div
           className={cn(
-            "flex h-full w-[var(--sidebar-width)] flex-col border-r border-sidebar-border bg-sidebar p-3 text-sidebar-foreground transition-all duration-300 bg-stone-150",
+            "flex h-full w-[var(--sidebar-width)] flex-col border-r border-sidebar-border bg-sidebar py-1.5 px-0 text-sidebar-foreground transition-all duration-300 bg-stone-150",
             className
           )}
           ref={ref}
@@ -189,7 +189,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="w-[var(--sidebar-width)] border-r border-sidebar-border bg-sidebar p-3 text-sidebar-foreground transition-all duration-300 [&>button]:hidden"
+            className="w-[var(--sidebar-width)] border-r border-sidebar-border bg-sidebar px-0 py-1.5 text-sidebar-foreground transition-all duration-300 [&>button]:hidden"
             style={
               {
                 "--sidebar-width": SIDEBAR_WIDTH_MOBILE
@@ -228,7 +228,7 @@ const Sidebar = React.forwardRef<
         />
         <div
           className={cn(
-            "fixed bottom-0 md:top-[var(--header-height)] z-20 hidden w-[var(--sidebar-width)] border-r border-sidebar-border bg-sidebar p-3 transition-all duration-300 md:flex",
+            "fixed bottom-0 md:top-[var(--header-height)] z-20 hidden w-[var(--sidebar-width)] border-r border-sidebar-border bg-sidebar py-1.5 transition-all duration-300 md:flex",
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
               : "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -320,7 +320,7 @@ const SidebarHeader = React.forwardRef<HTMLDivElement, React.ComponentProps<"div
       <div
         ref={ref}
         data-sidebar="header"
-        className={cn("flex flex-col gap-2", className)}
+        className={cn("flex flex-col gap-2 py-1.5 px-3", className)}
         {...props}
       />
     );
@@ -334,7 +334,7 @@ const SidebarFooter = React.forwardRef<HTMLDivElement, React.ComponentProps<"div
       <div
         ref={ref}
         data-sidebar="footer"
-        className={cn("flex flex-col gap-2", className)}
+        className={cn("flex flex-col gap-2 py-1.5 px-3", className)}
         {...props}
       />
     );
@@ -364,7 +364,7 @@ const SidebarContent = React.forwardRef<HTMLDivElement, React.ComponentProps<"di
         ref={ref}
         data-sidebar="content"
         className={cn(
-          "flex min-h-0 flex-1 flex-col gap-4  group-data-[collapsible=icon]:overflow-hidden",
+          "flex min-h-0 flex-1 flex-col gap-4  group-data-[collapsible=icon]:overflow-hidden pt-1.5 pb-3.5 px-3",
           className
         )}
         {...props}

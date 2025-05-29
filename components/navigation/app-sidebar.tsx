@@ -17,6 +17,7 @@ import type { SidebarItem, SidebarItemGroup, SidebarItemOrComponent } from "@/ty
 import Link from "next/link";
 import { ReactNode } from "react";
 import { Badge } from "../ui/badge";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface AppSidebarProps {
   mainItems: SidebarItemGroup[];
@@ -69,11 +70,13 @@ export function AppSidebar({ mainItems, headerItems, footerItems }: AppSidebarPr
   return (
     <Sidebar>
       {headerItems && headerItems.length > 0 && (
-        <SidebarHeader>{renderSidebarSection(headerItems)}</SidebarHeader>
+        <SidebarHeader className="bg-stone-150">{renderSidebarSection(headerItems)}</SidebarHeader>
       )}
-      <SidebarContent>{renderSidebarSection(mainItems)}</SidebarContent>
+      <ScrollArea className="h-full">
+        <SidebarContent>{renderSidebarSection(mainItems)}</SidebarContent>
+      </ScrollArea>
       {footerItems && footerItems.length > 0 && (
-        <SidebarFooter>{renderSidebarSection(footerItems)}</SidebarFooter>
+        <SidebarFooter className="bg-stone-150">{renderSidebarSection(footerItems)}</SidebarFooter>
       )}
     </Sidebar>
   );

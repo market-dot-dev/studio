@@ -3,14 +3,22 @@
 import { OrganizationSwitcher } from "@/app/components/organization-switcher";
 import type { User } from "@/app/generated/prisma";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import type { SidebarItemGroup } from "@/types/sidebar";
 import type { SiteDetails } from "@/types/site";
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
 import {
   AppWindowMac,
+  Building,
   ChartNoAxesColumnIncreasing as Chart,
   Code2,
   Home,
+  MessageCircle,
   Package,
   ScanSearch,
   Scroll,
@@ -19,12 +27,38 @@ import {
   UserRoundSearch,
   UsersRound
 } from "lucide-react";
+import Link from "next/link";
 import { useSelectedLayoutSegments } from "next/navigation";
 
 interface DashboardSidebarProps {
   user: User;
   isMarketExpert: boolean;
   site: SiteDetails | null;
+}
+
+function SupportDropdown() {
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger className="flex h-6 w-full items-center gap-2 rounded px-1 text-sm font-medium transition-all duration-150 ease-in-out hover:bg-white hover:text-sidebar-accent-foreground hover:shadow-border-sm focus-visible:bg-white focus-visible:text-sidebar-accent-foreground focus-visible:shadow-border-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp [&>svg]:size-[18px] [&>svg]:shrink-0">
+        <MessageCircle />
+        Feedback
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-full min-w-[200px]">
+        <DropdownMenuItem asChild>
+          <Link href="https://www.github.com/market-dot-dev/" className="flex items-center gap-2">
+            <SiGithub className="size-4" />
+            Github
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="https://discord.gg/ZdSpS4BuGd" className="flex items-center gap-2">
+            <SiDiscord className="size-4" />
+            Join Discord
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
 }
 
 export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSidebarProps) {
@@ -46,10 +80,10 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
           isActive: urlSegments.length === 0
         },
         {
-          title: "Settings",
-          url: "/settings",
-          icon: <Settings />,
-          isActive: urlSegments[0] === "settings"
+          title: "Team",
+          url: "/team",
+          icon: <Building />,
+          isActive: urlSegments[0] === "team"
         }
       ]
     },
@@ -142,15 +176,12 @@ export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSideba
     {
       items: [
         {
-          title: "Github",
-          url: "https://www.github.com/market-dot-dev/",
-          icon: <SiGithub />
+          title: "Settings",
+          url: "/settings",
+          icon: <Settings />,
+          isActive: urlSegments[0] === "settings"
         },
-        {
-          title: "Join Discord",
-          url: "https://discord.gg/ZdSpS4BuGd",
-          icon: <SiDiscord />
-        }
+        <SupportDropdown key="support-dropdown" />
       ]
     }
   ];
