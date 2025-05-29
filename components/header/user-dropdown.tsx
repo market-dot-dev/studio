@@ -11,10 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { LogOut, UserRound } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
-import Link from "next/link";
+import ProfileSettingsModal from "./profile-settings-modal";
 
 export default function UserDropdown({ user }: { user: SessionUser }) {
   return (
@@ -54,10 +54,7 @@ export default function UserDropdown({ user }: { user: SessionUser }) {
 
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href="/settings" className="flex items-center gap-2">
-              <UserRound className="!h-4.5 !w-4.5" />
-              Profile
-            </Link>
+            <ProfileSettingsModal user={user} />
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>

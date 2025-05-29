@@ -1,12 +1,14 @@
-import { requireUser } from "@/app/services/user-context-service";
-import GeneralSettings from "@/components/organization/general-settings";
+"use server";
 
-export default async function GeneralSettingsPage() {
-  const user = await requireUser();
+import { requireOrganization } from "@/app/services/user-context-service";
+import BusinessSettings from "@/components/organization/business-settings";
+
+export default async function SettingsPage() {
+  const org = await requireOrganization();
 
   return (
     <div className="space-y-6">
-      <GeneralSettings user={user} />
+      <BusinessSettings organization={org} />
     </div>
   );
 }
