@@ -1,11 +1,18 @@
 import { getPendingInvites, getTeamMembers } from "@/app/services/team-management-service";
+import { requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./columns";
 import { InviteTeamMembersBtn } from "./invite-team-members-btn";
 
 export default async function TeamPage() {
-  const [teamMembers, pendingInvites] = await Promise.all([getTeamMembers(), getPendingInvites()]);
+  const [teamMembers, pendingInvites, currentUser] = await Promise.all([
+    getTeamMembers(),
+    getPendingInvites(),
+    requireUserSession()
+  ]);
+
+  const userRole = currentUser.currentUserRole;
 
   return (
     <div className="space-y-8">
@@ -27,14 +34,14 @@ export default async function TeamPage() {
         {teamMembers.length > 0 && (
           <div className="space-y-3">
             <h3 className="text-lg font-semibold">Active Members ({teamMembers.length})</h3>
-            <DataTable columns={columns} data={teamMembers} />
+            <DataTable columns={columns} data={teamMembers} meta={{ userRole }} />
           </div>
         )}
 
         {pendingInvites.length > 0 && (
           <div className="space-y-3">
             <h3 className="text-lg font-semibold">Pending Invitations ({pendingInvites.length})</h3>
-            <DataTable columns={columns} data={pendingInvites} />
+            <DataTable columns={columns} data={pendingInvites} meta={{ userRole }} />
           </div>
         )}
 

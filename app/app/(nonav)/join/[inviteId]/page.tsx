@@ -46,7 +46,7 @@ export default async function JoinPage(props: { params: Promise<{ inviteId: stri
           </CardHeader>
           <CardFooter className="flex justify-center">
             <Button asChild>
-              <Link href="/dashboard">Go to Dashboard</Link>
+              <Link href="/">Go to Dashboard</Link>
             </Button>
           </CardFooter>
         </Card>
@@ -57,7 +57,7 @@ export default async function JoinPage(props: { params: Promise<{ inviteId: stri
   // Accept the invitation automatically
   try {
     await acceptInvitation(inviteId, user.id);
-    redirect("/dashboard?message=invitation-accepted");
+    redirect("/?message=invitation-accepted");
   } catch (error) {
     console.error("Error accepting invitation:", error);
     return (
@@ -72,7 +72,7 @@ export default async function JoinPage(props: { params: Promise<{ inviteId: stri
           </CardHeader>
           <CardFooter className="flex justify-center">
             <Button asChild>
-              <Link href="/dashboard">Go to Dashboard</Link>
+              <Link href="/">Go to Dashboard</Link>
             </Button>
           </CardFooter>
         </Card>

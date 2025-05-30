@@ -14,6 +14,7 @@ import {
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { TeamMemberDisplay } from "@/types/team";
 import { MailMinus, UserRoundMinus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -22,9 +23,10 @@ import { toast } from "sonner";
 
 interface Props {
   member: TeamMemberDisplay;
+  currentUserRole?: OrganizationRole | null;
 }
 
-export function TeamMemberRemoveBtn({ member }: Props) {
+export function TeamMemberRemoveBtn({ member, currentUserRole }: Props) {
   const [isOpen, setIsOpen] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -32,8 +34,12 @@ export function TeamMemberRemoveBtn({ member }: Props) {
   const isPendingInvite = member.invitePending;
   const isOwner = member.role === OrganizationRole.OWNER;
 
-  // Owners can't be removed
-  if (isOwner) {
+  // Permission checks - only admins and owners can remove members
+  const canRemove =
+    currentUserRole === OrganizationRole.OWNER || currentUserRole === OrganizationRole.ADMIN;
+
+  // Owners can't be removed and user must have admin/owner permissions
+  if (isOwner || !canRemove) {
     return null;
   }
 
@@ -59,56 +65,67 @@ export function TeamMemberRemoveBtn({ member }: Props) {
     });
   };
 
+  const tooltipText = isPendingInvite ? "Cancel invitation" : "Remove member";
+
   return (
-    <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
-      <AlertDialogTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-        >
-          {isPendingInvite ? (
-            <MailMinus className="size-4" />
-          ) : (
-            <UserRoundMinus className="size-4" />
-          )}
-        </Button>
-      </AlertDialogTrigger>
-      <AlertDialogContent>
-        <AlertDialogHeader>
-          <AlertDialogTitle>
-            {isPendingInvite
-              ? `Cancel invitation for ${member.email}?`
-              : `Remove ${member.name || member.email}?`}
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            {isPendingInvite
-              ? `This will cancel the pending invitation for ${member.email}.`
-              : `${member.name || member.email} will be removed from your organization and won't be able to access your dashboard anymore.`}
-          </AlertDialogDescription>
-        </AlertDialogHeader>
-        <AlertDialogFooter>
-          <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            onClick={handleConfirmAction}
-            variant="destructive"
-            disabled={isPending}
-          >
-            {isPending ? (
-              <span>{isPendingInvite ? "Canceling..." : "Removing..."}</span>
-            ) : (
-              <>
+    <TooltipProvider>
+      <Tooltip>
+        <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
+          <TooltipTrigger asChild>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              >
                 {isPendingInvite ? (
                   <MailMinus className="size-4" />
                 ) : (
                   <UserRoundMinus className="size-4" />
                 )}
-                {isPendingInvite ? "Cancel Invitation" : "Remove Member"}
-              </>
-            )}
-          </AlertDialogAction>
-        </AlertDialogFooter>
-      </AlertDialogContent>
-    </AlertDialog>
+              </Button>
+            </AlertDialogTrigger>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{tooltipText}</p>
+          </TooltipContent>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>
+                {isPendingInvite
+                  ? `Cancel invitation for ${member.email}?`
+                  : `Remove ${member.name || member.email}?`}
+              </AlertDialogTitle>
+              <AlertDialogDescription>
+                {isPendingInvite
+                  ? `This will cancel the pending invitation for ${member.email}.`
+                  : `${member.name || member.email} will be removed from your organization and won't be able to access your dashboard anymore.`}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
+              <AlertDialogAction
+                onClick={handleConfirmAction}
+                variant="destructive"
+                disabled={isPending}
+              >
+                {isPending ? (
+                  <span>{isPendingInvite ? "Canceling..." : "Removing..."}</span>
+                ) : (
+                  <>
+                    {isPendingInvite ? (
+                      <MailMinus className="size-4" />
+                    ) : (
+                      <UserRoundMinus className="size-4" />
+                    )}
+                    {isPendingInvite ? "Cancel Invitation" : "Remove Member"}
+                  </>
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </Tooltip>
+    </TooltipProvider>
   );
 }

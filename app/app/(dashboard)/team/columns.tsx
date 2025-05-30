@@ -3,9 +3,15 @@
 import { OrganizationRole } from "@/app/generated/prisma";
 import { Badge } from "@/components/ui/badge";
 import { TeamMemberDisplay } from "@/types/team";
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, RowData } from "@tanstack/react-table";
 import { Crown } from "lucide-react";
 import { TeamMemberActions } from "./team-member-actions";
+
+declare module "@tanstack/react-table" {
+  interface TableMeta<TData extends RowData> {
+    userRole?: OrganizationRole | null;
+  }
+}
 
 const getRoleBadgeVariant = (role: OrganizationRole) => {
   switch (role) {
@@ -72,8 +78,9 @@ export const columns: ColumnDef<TeamMemberDisplay>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      return <TeamMemberActions member={row.original} />;
+    cell: ({ row, table }) => {
+      const role = table.options.meta?.userRole;
+      return <TeamMemberActions member={row.original} currentUserRole={role} />;
     }
   }
 ];

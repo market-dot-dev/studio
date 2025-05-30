@@ -3,13 +3,12 @@
 import { OrganizationRole } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { generateId } from "@/lib/utils";
-import { 
-  InviteResult, 
-  TeamMemberDisplay, 
-  TeamMemberWithUser, 
+import {
+  InviteResult,
   InviteWithDetails,
-  includeTeamMember, 
-  includeInviteDetails 
+  TeamMemberDisplay,
+  includeInviteDetails,
+  includeTeamMember
 } from "@/types/team";
 import { sendTeamInvitationEmail } from "./email-service";
 import { requireOrganization, requireUser } from "./user-context-service";
@@ -31,7 +30,7 @@ export async function getTeamMembers(): Promise<TeamMemberDisplay[]> {
     orderBy: { createdAt: "asc" }
   });
 
-  return members.map(member => ({
+  return members.map((member) => ({
     id: member.user.id,
     name: member.user.name,
     email: member.user.email!,
@@ -48,14 +47,14 @@ export async function getPendingInvites(): Promise<TeamMemberDisplay[]> {
   const org = await requireOrganization();
 
   const invites = await prisma.organizationInvite.findMany({
-    where: { 
+    where: {
       organizationId: org.id,
       expiresAt: { gt: new Date() }
     },
     orderBy: { createdAt: "desc" }
   });
 
-  return invites.map(invite => ({
+  return invites.map((invite) => ({
     id: invite.id,
     name: null,
     email: invite.email,
@@ -69,7 +68,7 @@ export async function getPendingInvites(): Promise<TeamMemberDisplay[]> {
  * Invite users to the organization
  */
 export async function inviteUsersToOrganization(
-  emails: string[], 
+  emails: string[],
   role: OrganizationRole = OrganizationRole.MEMBER
 ): Promise<InviteResult> {
   const org = await requireOrganization();
@@ -153,7 +152,7 @@ export async function inviteUsersToOrganization(
  * Prevents removing the single owner
  */
 export async function changeTeamMemberRole(
-  memberId: string, 
+  memberId: string,
   newRole: OrganizationRole
 ): Promise<void> {
   const org = await requireOrganization();
@@ -296,9 +295,11 @@ export async function removeTeamMember(memberId: string): Promise<void> {
     }
   });
 
-  if (!currentUserMembership || 
-      (currentUserMembership.role !== OrganizationRole.OWNER && 
-       currentUserMembership.role !== OrganizationRole.ADMIN)) {
+  if (
+    !currentUserMembership ||
+    (currentUserMembership.role !== OrganizationRole.OWNER &&
+      currentUserMembership.role !== OrganizationRole.ADMIN)
+  ) {
     throw new Error("Only owners and admins can remove team members");
   }
 
@@ -321,8 +322,10 @@ export async function removeTeamMember(memberId: string): Promise<void> {
   }
 
   // Prevent non-owners from removing admins
-  if (member.role === OrganizationRole.ADMIN && 
-      currentUserMembership.role !== OrganizationRole.OWNER) {
+  if (
+    member.role === OrganizationRole.ADMIN &&
+    currentUserMembership.role !== OrganizationRole.OWNER
+  ) {
     throw new Error("Only owners can remove admins");
   }
 
