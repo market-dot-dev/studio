@@ -5,6 +5,7 @@ import Tier from "@/app/models/Tier";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
+import { Package } from "lucide-react";
 import Link from "next/link";
 import { PurchaseStatusBadge } from "./purchase-status-badge";
 import { SubscriptionStatusBadge } from "./subscription-state";
@@ -24,6 +25,13 @@ export type CustomerTableItem = {
 
 export const columns: ColumnDef<CustomerTableItem>[] = [
   {
+    accessorKey: "createdAt",
+    header: "Customer Since",
+    cell: ({ row }) => {
+      return <div>{formatDate(row.original.createdAt)}</div>;
+    }
+  },
+  {
     accessorKey: "userName",
     header: "Name",
     meta: {
@@ -42,12 +50,20 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
         }
       }
 
-      return row.original.userName;
+      const name = row.original.userName;
+      const email = row.original.userEmail;
+
+      return (
+        <div className="flex flex-col">
+          <span className="font-semibold text-stone-800">{name}</span>
+          {email && <span className="text-xs font-normal text-muted-foreground">{email}</span>}
+        </div>
+      );
     }
   },
   {
     accessorKey: "userCompany",
-    header: "Company",
+    header: "Organization",
     cell: ({ row, table }) => {
       // Check if this is the first row for this customer
       const currentUserId = row.original.userId;
@@ -65,27 +81,32 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
     }
   },
   {
-    accessorKey: "userEmail",
-    header: "Email",
-    cell: ({ row, table }) => {
-      // Check if this is the first row for this customer
-      const currentUserId = row.original.userId;
-      const rowIndex = table.getRowModel().rows.findIndex((r) => r.id === row.id);
-
-      // Hide email if this is not the first row for this customer
-      if (rowIndex > 0) {
-        const prevRow = table.getRowModel().rows[rowIndex - 1];
-        if (prevRow.original.userId === currentUserId) {
-          return null;
-        }
+    accessorKey: "tierName",
+    header: "Package",
+    cell: ({ row }) => {
+      // Get the tier from the subscription or charge
+      let tier: Tier | undefined;
+      if (row.original.subscription) {
+        tier = row.original.subscription.tier;
+      } else if (row.original.charge) {
+        tier = row.original.charge.tier;
       }
 
-      return <Link href={`mailto:${row.original.userEmail}`}>{row.original.userEmail}</Link>;
+      if (tier) {
+        return (
+          <Link
+            href={`/tiers/${tier.id}`}
+            target="_blank"
+            className="inline-flex items-center gap-1.5 font-medium transition-colors hover:text-foreground"
+          >
+            <Package size={14} />
+            {tier.name}
+          </Link>
+        );
+      }
+
+      return row.original.tierName || "-";
     }
-  },
-  {
-    accessorKey: "tierName",
-    header: "Package"
   },
   {
     id: "status",
@@ -100,13 +121,6 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
       }
 
       return null;
-    }
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Customer Since",
-    cell: ({ row }) => {
-      return <div>{formatDate(row.original.createdAt)}</div>;
     }
   },
   {

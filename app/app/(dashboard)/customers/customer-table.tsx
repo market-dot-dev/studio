@@ -1,3 +1,4 @@
+import { CustomersEmptyState } from "@/components/customer/empty-state";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import type { CustomerOrgWithChargesAndSubs } from "@/types/organization-customer";
@@ -17,7 +18,7 @@ export const CustomersTable: React.FC<{
       ...customer.subscriptions.map((sub) => ({
         id: sub.id,
         userId: customer.id,
-        userName: customer.name,
+        userName: customer.owner.name,
         userCompany: customer.company,
         userEmail: customer.owner.email,
         tierName: sub.tier.name,
@@ -28,7 +29,7 @@ export const CustomersTable: React.FC<{
       ...customer.charges.map((charge) => ({
         id: charge.id,
         userId: customer.id,
-        userName: customer.name,
+        userName: customer.owner.name,
         userCompany: customer.company,
         userEmail: customer.owner.email,
         tierName: charge.tier.name,
@@ -42,6 +43,10 @@ export const CustomersTable: React.FC<{
   });
 
   const visibleData = showAll ? tableData : tableData.slice(0, maxInitialRows);
+
+  if (tableData.length === 0) {
+    return <CustomersEmptyState />;
+  }
 
   return (
     <>
