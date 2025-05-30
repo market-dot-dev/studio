@@ -33,7 +33,10 @@ export default async function OrganizationsPage() {
               </div>
             ) : (
               orgs.map(({ organization }) => (
-                <div key={organization.id} className="rounded-lg bg-white shadow-border-lg">
+                <div
+                  key={organization.id}
+                  className="border-b transition-all duration-200 first:rounded-t-lg last:rounded-b-lg last:border-0 hover:bg-stone-50"
+                >
                   <OrganizationItem organization={organization} />
                 </div>
               ))

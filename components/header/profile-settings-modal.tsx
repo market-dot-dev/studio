@@ -1,9 +1,10 @@
 import { User } from "@/app/generated/prisma";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { VisuallyHidden } from "@radix-ui/themes";
 import { UserRound } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useState } from "react";
@@ -54,7 +55,10 @@ export default function ProfileSettingsModal({ user }: ProfileSettingsModalProps
           Profile
         </button>
       </DialogTrigger>
-      <DialogContent className="max-w-[320px] rounded-lg p-7 shadow-border-lg" hideCloseButton>
+      <DialogContent className="rounded-lg p-7 shadow-border-lg md:max-w-[320px]" hideCloseButton>
+        <VisuallyHidden>
+          <DialogTitle>Profile Settings</DialogTitle>
+        </VisuallyHidden>
         <div className="relative">
           <div className="absolute left-1/2 top-[-68px] -translate-x-1/2">
             <div className="size-20 overflow-hidden rounded-full border-4 border-background bg-muted">
