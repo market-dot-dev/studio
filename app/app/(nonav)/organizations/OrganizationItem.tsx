@@ -47,22 +47,24 @@ export function OrganizationItem({ organization }: OrganizationItemProps) {
     <button
       onClick={handleSwitchOrganization}
       disabled={isPending}
-      className="group flex w-full items-center justify-between p-4 transition-all duration-200 hover:bg-stone-50 disabled:opacity-50"
+      className="group flex w-full items-center justify-between p-4 disabled:opacity-50 md:p-5 "
     >
       <div className="flex items-center gap-3">
-        <div className="flex size-12 items-center justify-center rounded-lg bg-swamp text-sm font-bold text-white">
+        <div className="text-md flex size-9 shrink-0 items-center justify-center rounded bg-swamp font-bold text-white md:size-11 md:rounded-md md:text-lg">
           {getInitials(organization.name).charAt(0)}
         </div>
-        <div className="flex flex-col items-start">
-          <span className="text-lg font-bold text-foreground">{organization.name}</span>
-          <span className="text-sm text-muted-foreground">
+        <div className="flex flex-col items-start text-left">
+          <span className="text-sm font-bold tracking-tightish text-foreground md:text-base">
+            {organization.name}
+          </span>
+          <span className="text-xs text-muted-foreground md:text-sm">
             {subdomain
               ? `${subdomain}.market.dev`
               : `${organization.name.toLowerCase().replace(/\s+/g, "")}.market.dev`}
           </span>
         </div>
       </div>
-      <ChevronRight className="size-5 text-muted-foreground transition-transform duration-200 group-hover:translate-x-1" />
+      <ChevronRight className="size-4 translate-x-1 text-muted-foreground transition-transform duration-200 group-hover:translate-x-1.5" />
     </button>
   );
 }
