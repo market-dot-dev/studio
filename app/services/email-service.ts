@@ -272,3 +272,52 @@ export async function sendVerificationEmail(
 
   await sendEmail(email, subject, text, html);
 }
+
+/**
+ * Send team invitation email
+ *
+ * @param email - Recipient's email address
+ * @param organizationName - Name of the organization they're being invited to
+ * @param inviterName - Name of the person who sent the invitation
+ * @param inviteId - Invitation ID for the join link
+ */
+export async function sendTeamInvitationEmail(
+  email: string,
+  organizationName: string,
+  inviterName: string,
+  inviteId: string
+): Promise<void> {
+  const joinUrl = `${appURLWithProtocol}/join/${inviteId}`;
+  const subject = `You've been invited to join ${organizationName}`;
+  
+  const html = `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2>You've been invited to join ${organizationName}</h2>
+      <p>Hi there,</p>
+      <p>${inviterName} has invited you to join the <strong>${organizationName}</strong> organization on Market.dev.</p>
+      <p>Click the button below to accept the invitation:</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${joinUrl}" style="background-color: #000; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
+          Accept Invitation
+        </a>
+      </div>
+      <p>Or copy and paste this link into your browser:</p>
+      <p style="word-break: break-all; color: #666;">${joinUrl}</p>
+      <p style="margin-top: 30px; color: #666; font-size: 14px;">
+        This invitation will expire in 7 days. If you weren't expecting this invitation, you can safely ignore this email.
+      </p>
+    </div>
+  `;
+  
+  const text = `
+    You've been invited to join ${organizationName}
+    
+    ${inviterName} has invited you to join the ${organizationName} organization on Market.dev.
+    
+    Accept the invitation by visiting: ${joinUrl}
+    
+    This invitation will expire in 7 days.
+  `;
+
+  await sendEmail(email, subject, text, html);
+}
