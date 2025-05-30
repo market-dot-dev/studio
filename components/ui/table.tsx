@@ -53,32 +53,46 @@ const TableRow = React.forwardRef<HTMLTableRowElement, React.HTMLAttributes<HTML
 );
 TableRow.displayName = "TableRow";
 
-const TableHead = React.forwardRef<
-  HTMLTableCellElement,
-  React.ThHTMLAttributes<HTMLTableCellElement>
->(({ className, ...props }, ref) => (
-  <th
-    ref={ref}
-    className={cn(
-      "h-9 whitespace-nowrap px-5 text-left align-middle text-xxs/5 font-semibold uppercase tracking-wide text-stone-500 [&:has([role=checkbox])]:pr-0",
-      className
-    )}
-    {...props}
-  />
-));
+interface TableHeadProps extends React.ThHTMLAttributes<HTMLTableCellElement> {
+  sticky?: "left" | "right";
+  isActionsColumn?: boolean;
+}
+
+const TableHead = React.forwardRef<HTMLTableCellElement, TableHeadProps>(
+  ({ className, sticky, isActionsColumn, ...props }, ref) => (
+    <th
+      ref={ref}
+      className={cn(
+        "h-9 whitespace-nowrap px-5 text-left align-middle text-xxs/5 font-semibold uppercase tracking-wide text-stone-500 [&:has([role=checkbox])]:pr-0",
+        sticky === "right" && !isActionsColumn && "sticky right-0 z-10 bg-white rounded-tr-md",
+        sticky === "right" && isActionsColumn && "sticky right-0 z-10 bg-transparent rounded-tr-md",
+        sticky === "left" && "sticky left-0 z-10 bg-white rounded-tl-md",
+        isActionsColumn && "w-0",
+        !sticky && isActionsColumn && "bg-transparent",
+        className
+      )}
+      {...props}
+    />
+  )
+);
 TableHead.displayName = "TableHead";
 
 interface TableCellProps extends React.TdHTMLAttributes<HTMLTableCellElement> {
   emphasized?: boolean;
+  sticky?: "left" | "right";
+  isActionsColumn?: boolean;
 }
 
 const TableCell = React.forwardRef<HTMLTableCellElement, TableCellProps>(
-  ({ className, emphasized, ...props }, ref) => (
+  ({ className, emphasized, sticky, isActionsColumn, ...props }, ref) => (
     <td
       ref={ref}
       className={cn(
         "whitespace-nowrap px-5 py-3 align-middle [&:has([role=checkbox])]:pr-0",
         emphasized ? "font-semibold text-stone-800" : "text-stone-500",
+        sticky === "right" && "sticky right-0 z-10 bg-white",
+        sticky === "left" && "sticky left-0 z-10 bg-white",
+        isActionsColumn && "w-0",
         className
       )}
       {...props}
