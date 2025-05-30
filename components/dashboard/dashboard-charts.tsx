@@ -238,7 +238,7 @@ export default function DashboardCharts({
     <div className="space-y-4">
       <div className="flex items-end justify-between">
         <div className="flex items-end gap-2">
-          <div className="text-xl font-bold tracking-tightish">Reports</div>
+          <div className="text-xl font-bold">Reports</div>
           {isUsingDummyData && (
             <Badge variant="secondary" size="sm" className="mb-1">
               Sample Data
@@ -249,9 +249,10 @@ export default function DashboardCharts({
           href="/reports"
           className={cn(buttonVariants({ variant: "outline", size: "sm" }), "group gap-0.5 pr-1")}
         >
-          More Details
+          View All
           <ChevronRight
-            size={10}
+            size={8}
+            strokeWidth={1.5}
             className="inline-block transition-transform group-hover:translate-x-px"
           />
         </Link>
