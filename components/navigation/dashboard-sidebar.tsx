@@ -1,14 +1,14 @@
 "use client";
 
-import { OrganizationSwitcher } from "@/app/components/organization-switcher";
-import type { User } from "@/app/generated/prisma";
 import { AppSidebar } from "@/components/navigation/app-sidebar";
+import { OrganizationSwitcher } from "@/components/organization/organization-switcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { OrganizationSwitcherContext } from "@/types/organization";
 import type { SidebarItemGroup } from "@/types/sidebar";
 import type { SiteDetails } from "@/types/site";
 import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
@@ -31,7 +31,7 @@ import Link from "next/link";
 import { useSelectedLayoutSegments } from "next/navigation";
 
 interface DashboardSidebarProps {
-  user: User;
+  orgContext: OrganizationSwitcherContext;
   isMarketExpert: boolean;
   site: SiteDetails | null;
 }
@@ -61,12 +61,12 @@ function SupportDropdown() {
   );
 }
 
-export function DashboardSidebar({ user, isMarketExpert, site }: DashboardSidebarProps) {
+export function DashboardSidebar({ orgContext, isMarketExpert, site }: DashboardSidebarProps) {
   const urlSegments = useSelectedLayoutSegments();
 
   const headerItems: SidebarItemGroup[] = [
     {
-      items: [<OrganizationSwitcher key="org-switcher" />]
+      items: [<OrganizationSwitcher context={orgContext} key="org-switcher" />]
     }
   ];
 

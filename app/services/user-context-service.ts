@@ -3,7 +3,11 @@
 import { User } from "@/app/generated/prisma";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { MinimalOrganization } from "@/types/organization";
+import {
+  MinimalOrganization,
+  OrganizationSwitcherContext,
+  includeOrgSwitcherContext
+} from "@/types/organization";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { SessionUser } from "../models/Session";
@@ -126,3 +130,45 @@ export const requireOrganization = cache(async (): Promise<MinimalOrganization> 
 
   return organization;
 });
+
+/**
+ * Gets organization switcher context - current org + all available orgs in one efficient call
+ * @returns Current organization and all available organizations with minimal data needed for switcher
+ */
+export const getOrganizationSwitcherContext = cache(
+  async (): Promise<OrganizationSwitcherContext> => {
+    const user = await requireUser();
+
+    // Get all organization memberships with switcher data
+    const memberships = await prisma.organizationMember.findMany({
+      where: {
+        userId: user.id
+      },
+      include: {
+        organization: {
+          ...includeOrgSwitcherContext
+        }
+      },
+      orderBy: {
+        createdAt: "desc"
+      }
+    });
+
+    const availableOrganizations = memberships.map((membership) => ({
+      organization: membership.organization,
+      role: membership.role,
+      createdAt: membership.createdAt
+    }));
+
+    // Find current organization from the memberships
+    const currentOrganization = user.currentOrganizationId
+      ? availableOrganizations.find((org) => org.organization.id === user.currentOrganizationId)
+          ?.organization || null
+      : null;
+
+    return {
+      currentOrganization,
+      availableOrganizations
+    };
+  }
+);

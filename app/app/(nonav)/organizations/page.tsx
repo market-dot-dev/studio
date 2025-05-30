@@ -1,69 +1,9 @@
-import { setCurrentOrganization } from "@/app/services/auth-service";
-import { getUserOrganizations } from "@/app/services/organization-service";
-import { Button } from "@/components/ui/button";
-import { Building, ChevronRight } from "lucide-react";
+import { getOrganizationSwitcherContext } from "@/app/services/user-context-service";
 import Image from "next/image";
-import Link from "next/link";
-import { redirect } from "next/navigation";
-
-function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase();
-}
-
-interface OrganizationItemProps {
-  id: string;
-  name: string;
-  image?: string | null;
-}
-
-async function switchOrganization(organizationId: string) {
-  "use server";
-  await setCurrentOrganization(organizationId);
-  redirect("/");
-}
-
-function OrganizationItem({ id, name, image }: OrganizationItemProps) {
-  return (
-    <form
-      action={switchOrganization.bind(null, id)}
-      className="border-b transition-colors first:rounded-t-lg last:rounded-b-lg last:border-b-0 hover:bg-stone-50"
-    >
-      <button
-        type="submit"
-        className="group flex w-full items-center justify-between p-4 transition-all duration-200 md:p-5"
-      >
-        <div className="flex min-w-0 flex-1 items-center gap-4">
-          <div className="md:text-md flex size-8 shrink-0 items-center justify-center rounded bg-swamp text-base font-bold text-white md:size-10 md:rounded-md md:text-xl">
-            {image ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={image}
-                alt={name}
-                className="size-8 rounded object-cover md:size-10 md:rounded-md"
-              />
-            ) : (
-              getInitials(name).charAt(0)
-            )}
-          </div>
-          <div className="min-w-0 flex-1 text-left">
-            <h2 className="line-clamp-2 text-sm font-bold text-foreground md:text-base">{name}</h2>
-            <p className="truncate text-xs text-muted-foreground md:text-sm">
-              {name.toLowerCase().replace(/\s+/g, "")}.market.dev
-            </p>
-          </div>
-        </div>
-        <ChevronRight className="size-4 shrink-0 translate-x-0.5 text-muted-foreground transition-transform duration-200 group-hover:translate-x-1" />
-      </button>
-    </form>
-  );
-}
+import { OrganizationItem } from "./OrganizationItem";
 
 export default async function OrganizationsPage() {
-  const userOrganizations = await getUserOrganizations();
+  const { availableOrganizations: orgs } = await getOrganizationSwitcherContext();
 
   return (
     <div className="min-h-screen bg-stone-100 px-6 py-10 md:p-12">
@@ -87,24 +27,21 @@ export default async function OrganizationsPage() {
 
         <div className="relative">
           <div className="relative z-[1] rounded-lg bg-white shadow-border">
-            {userOrganizations.length === 0 ? (
-              <div className="rounded-lg bg-white p-6 py-8">
+            {orgs.length === 0 ? (
+              <div className="p-6 py-8">
                 <p className="text-muted-foreground">You haven't joined any organizations yet.</p>
               </div>
             ) : (
-              userOrganizations.map(({ organization }) => (
-                <div key={organization.id}>
-                  <OrganizationItem
-                    id={organization.id}
-                    name={organization.name}
-                    image={null} // Organizations don't seem to have images yet
-                  />
+              orgs.map(({ organization }) => (
+                <div key={organization.id} className="rounded-lg bg-white shadow-border-lg">
+                  <OrganizationItem organization={organization} />
                 </div>
               ))
             )}
           </div>
 
-          <div className="z-0 -mt-5 flex flex-col gap-4 rounded-b-lg border bg-stone-150 pt-9">
+          {/* @TODO: Org-Creation */}
+          {/* <div className="z-0 -mt-5 flex flex-col gap-4 rounded-b-lg border bg-stone-150 pt-9">
             <div className="flex items-center gap-2">
               <hr className="flex-1 border-t border-dashed border-stone-300" />
               <p className="flex-none text-center text-xs font-medium text-muted-foreground xs:whitespace-nowrap">
@@ -120,7 +57,7 @@ export default async function OrganizationsPage() {
                 </Link>
               </Button>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
