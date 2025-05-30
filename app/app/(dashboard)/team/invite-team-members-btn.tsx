@@ -129,7 +129,6 @@ export function InviteTeamMembersBtn() {
               <SelectContent>
                 <SelectItem value={OrganizationRole.MEMBER}>Member</SelectItem>
                 <SelectItem value={OrganizationRole.ADMIN}>Admin</SelectItem>
-                <SelectItem value={OrganizationRole.OWNER}>Owner</SelectItem>
               </SelectContent>
             </Select>
           </div>
