@@ -28,7 +28,7 @@ export type TeamMember = {
   id: string;
   name: string | null;
   email: string;
-  status: "Admin" | "Collaborator";
+  status: "Owner" | "Admin" | "Collaborator";
   invitePending: boolean;
 };
 
@@ -70,6 +70,7 @@ export const columns: ColumnDef<TeamMember>[] = [
     cell: ({ row, table }) => {
       const member = row.original;
       const isPending = member.invitePending;
+      const isOwner = member.status === "Owner";
       const openEditModal = table.options.meta?.openEditModal;
       const removeOrUninvite = table.options.meta?.removeOrUninvite;
       const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -83,6 +84,8 @@ export const columns: ColumnDef<TeamMember>[] = [
 
         toast.success(`${memberName} was ${action}`);
       };
+
+      if (isOwner) return;
 
       return (
         <>

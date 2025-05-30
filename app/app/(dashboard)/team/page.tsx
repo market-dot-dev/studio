@@ -10,42 +10,77 @@ import { UserRoundPlus } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-// Placeholder data - replace with actual data fetching later
-const teamMembersData: TeamMember[] = [
+const mockTeamMembersWithDates = [
   {
     id: "usr_1",
     name: "Alice Wonderland",
     email: "alice@example.com",
-    status: "Admin",
-    invitePending: false
+    role: "Owner" as const,
+    invitePending: false,
+    createdAt: new Date("2024-01-15")
   },
   {
     id: "usr_2",
     name: "Bob The Builder",
     email: "bob@example.com",
-    status: "Collaborator",
-    invitePending: false
+    role: "Admin" as const,
+    invitePending: false,
+    createdAt: new Date("2024-02-20")
   },
   {
     id: "usr_3",
+    name: "Carol Developer",
+    email: "carol@example.com",
+    role: "Collaborator" as const,
+    invitePending: false,
+    createdAt: new Date("2024-03-10")
+  },
+  {
+    id: "usr_4",
     name: null,
     email: "charlie@invited.com",
-    status: "Collaborator",
-    invitePending: true
+    role: "Collaborator" as const,
+    invitePending: true,
+    createdAt: new Date("2024-04-01")
   }
 ];
+
+/**
+ * Utility function to transform members (database already has correct OWNER role)
+ */
+function transformMembers(members: typeof mockTeamMembersWithDates): TeamMember[] {
+  return members.map((member) => ({
+    id: member.id,
+    name: member.name,
+    email: member.email,
+    status: member.role as "Owner" | "Admin" | "Collaborator",
+    invitePending: member.invitePending
+  }));
+}
 
 export default function TeamPage() {
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
 
+  // Transform mock data to include owner determination
+  const teamMembersData = useMemo(() => transformMembers(mockTeamMembersWithDates), []);
+
+  // Determine if current user is an owner (mock logic - replace with real session data)
+  const currentUserIsOwner = useMemo(() => {
+    // TODO: Replace with actual current user check from session
+    // For now, assume first owner in the list is the current user
+    const currentUserMockId = "usr_1"; // This should come from session/auth
+    const currentUser = teamMembersData.find((m) => m.id === currentUserMockId);
+    return currentUser?.status === "Owner" || false;
+  }, [teamMembersData]);
+
   // Split data into teammates and invited members
   const { teammates, invitedMembers } = useMemo(() => {
     const teammates = teamMembersData.filter((member) => !member.invitePending);
     const invitedMembers = teamMembersData.filter((member) => member.invitePending);
     return { teammates, invitedMembers };
-  }, []);
+  }, [teamMembersData]);
 
   // Placeholder handlers - replace with actual logic later
   const handleInvite = (emails: string[]) => {
@@ -59,9 +94,15 @@ export default function TeamPage() {
     setIsEditModalOpen(true);
   };
 
-  const handleSaveStatus = (memberId: string, newStatus: "Admin" | "Collaborator") => {
+  const handleSaveStatus = (memberId: string, newStatus: "Owner" | "Admin" | "Collaborator") => {
     const member = teamMembersData.find((m) => m.id === memberId);
     const memberName = member?.name || member?.email || "User";
+
+    // Prevent changing owner role
+    if (member?.status === "Owner") {
+      toast.error("Owner role cannot be changed");
+      return;
+    }
 
     console.log(`Saving status for ${memberId}: ${newStatus}`);
     alert(`Placeholder: Saving status for ${memberId} to ${newStatus}`);
@@ -127,6 +168,7 @@ export default function TeamPage() {
         isOpen={isEditModalOpen}
         onOpenChange={setIsEditModalOpen}
         onSave={handleSaveStatus}
+        currentUserIsOwner={currentUserIsOwner}
       />
     </div>
   );
