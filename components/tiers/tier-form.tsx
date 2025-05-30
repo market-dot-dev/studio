@@ -32,8 +32,8 @@ import { Textarea } from "@/components/ui/textarea";
 
 import { Channel, Contract, TierVersion } from "@/app/generated/prisma";
 import Tier, { newTier } from "@/app/models/Tier";
+import { getSubscriberCount } from "@/app/services/billing/subscription-service";
 import { hasVendorStripeAccount } from "@/app/services/stripe/stripe-vendor-service";
-import { getSubscriberCount } from "@/app/services/subscription-service";
 import { createTier, TierWithCount, updateTier } from "@/app/services/tier/tier-service";
 import { getVersionsByTierId } from "@/app/services/tier/tier-version-service";
 import type { MinimalOrganization } from "@/types/organization";

@@ -8,20 +8,20 @@ import {
   SubscriptionStatus,
   type SubscriptionWithTierAndOrg
 } from "@/types/subscription";
-import { getCustomerOrganizationById } from "./customer-organization-service";
+import { getCustomerOrganizationById } from "../customer-organization-service";
 import {
   confirmCustomerSubscription,
   confirmCustomerSubscriptionCancellation,
   notifyOwnerOfNewSubscription,
   notifyOwnerOfSubscriptionCancellation
-} from "./email-service";
+} from "../email-service";
 import {
   cancelStripeSubscription,
   reactivateStripeSubscription
-} from "./stripe/stripe-subscription-service";
-import { getTierById } from "./tier/tier-service";
-import { requireOrganization } from "./user-context-service";
-import { getVendorOrganizationById } from "./vendor-organization-service";
+} from "../stripe/stripe-subscription-service";
+import { getTierById } from "../tier/tier-service";
+import { requireOrganization } from "../user-context-service";
+import { getVendorOrganizationById } from "../vendor-organization-service";
 
 /**
  * Get a subscription by its ID with related organization and tier data
