@@ -7,17 +7,8 @@ import {
   CardHeader,
   CardTitle
 } from "@/components/ui/card";
+import { SiGithub } from "@icons-pack/react-simple-icons";
 import Link from "next/link";
-import { FaGithub } from "react-icons/fa";
-
-// This page needs access to params, so it must be a Server Component
-// or fetch params in a client component wrapper if interaction is needed.
-
-interface JoinPageProps {
-  params: {
-    inviteId: string;
-  };
-}
 
 // Placeholder data - replace with actual data fetching based on inviteId
 const invitationDetails = {
@@ -26,8 +17,8 @@ const invitationDetails = {
   isValid: true // Assume valid for prototype
 };
 
-export default function JoinPage({ params }: JoinPageProps) {
-  const { inviteId } = params;
+export default async function JoinPage(props: { params: Promise<{ inviteId: string }> }) {
+  const { inviteId } = await props.params;
   const { organizationName, inviterName, isValid } = invitationDetails; // Use placeholder
 
   // TODO: Fetch actual invitation details based on inviteId
@@ -69,7 +60,7 @@ export default function JoinPage({ params }: JoinPageProps) {
             className="w-full"
             onClick={() => alert(`Placeholder: Initiate GitHub OAuth for invite ${inviteId}`)} // Placeholder
           >
-            <FaGithub className="mr-2 size-5" />
+            <SiGithub className="mr-2 size-5" />
             Join with GitHub
           </Button>
         </CardContent>
