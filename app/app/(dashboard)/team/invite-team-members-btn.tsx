@@ -32,7 +32,7 @@ const isValidEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
-// Generate a simple unique ID for component use
+// Generate a simple unique ID for field keys inside this component
 const generateId = (): string => {
   return `invite-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
 };
