@@ -13,17 +13,6 @@ declare module "@tanstack/react-table" {
   }
 }
 
-const getRoleBadgeVariant = (role: OrganizationRole) => {
-  switch (role) {
-    case OrganizationRole.OWNER:
-      return "default";
-    case OrganizationRole.ADMIN:
-      return "secondary";
-    case OrganizationRole.MEMBER:
-      return "outline";
-  }
-};
-
 const getRoleDisplayName = (role: OrganizationRole) => {
   switch (role) {
     case OrganizationRole.OWNER:
@@ -59,20 +48,12 @@ export const columns: ColumnDef<TeamMemberDisplay>[] = [
     header: "Role",
     cell: ({ row }) => {
       const role = row.getValue("role") as OrganizationRole;
-      const isPending = row.original.invitePending;
 
       return (
-        <div className="flex items-center gap-2">
-          <Badge variant={getRoleBadgeVariant(role)}>
-            {role === OrganizationRole.OWNER && <Crown className="mr-1 size-3" />}
-            {getRoleDisplayName(role)}
-          </Badge>
-          {isPending && (
-            <Badge variant="secondary" className="text-xs">
-              Pending
-            </Badge>
-          )}
-        </div>
+        <Badge variant="secondary">
+          {role === OrganizationRole.OWNER && <Crown />}
+          {getRoleDisplayName(role)}
+        </Badge>
       );
     }
   },
