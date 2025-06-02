@@ -1,12 +1,22 @@
-import { acceptInvitation, getInvitationDetails } from "@/app/services/team-management-service";
+import { getInvitationDetails } from "@/app/services/team-management-service";
 import { requireUser } from "@/app/services/user-context-service";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { AcceptInviteBtn } from "./accept-invite-btn";
 
-export default async function JoinPage(props: { params: Promise<{ inviteId: string }> }) {
+const BackBtn = () => (
+  <Button asChild variant="outline" className="w-full">
+    <Link href="/">Go to Dashboard</Link>
+  </Button>
+);
+
+export default async function JoinPage(props: {
+  params: Promise<{ inviteId: string }>;
+  searchParams: Promise<{ error?: string }>;
+}) {
   const { inviteId } = await props.params;
+  const { error } = await props.searchParams;
   const user = await requireUser();
   const invitation = await getInvitationDetails(inviteId);
 
@@ -22,9 +32,27 @@ export default async function JoinPage(props: { params: Promise<{ inviteId: stri
             </CardDescription>
           </CardHeader>
           <CardFooter className="flex justify-center">
-            <Button asChild variant="outline">
-              <Link href="/">Go to Dashboard</Link>
-            </Button>
+            <BackBtn />
+          </CardFooter>
+        </Card>
+      </div>
+    );
+  }
+
+  // Handle acceptance error
+  if (error === "acceptance-failed") {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <Card className="w-full max-w-md">
+          <CardHeader>
+            <CardTitle>Error</CardTitle>
+            <CardDescription>
+              There was an error accepting the invitation. You may already be a member of this
+              organization.
+            </CardDescription>
+          </CardHeader>
+          <CardFooter className="flex justify-center">
+            <BackBtn />
           </CardFooter>
         </Card>
       </div>
@@ -45,38 +73,34 @@ export default async function JoinPage(props: { params: Promise<{ inviteId: stri
             </CardDescription>
           </CardHeader>
           <CardFooter className="flex justify-center">
-            <Button asChild>
-              <Link href="/">Go to Dashboard</Link>
-            </Button>
+            <BackBtn />
           </CardFooter>
         </Card>
       </div>
     );
   }
 
-  // Accept the invitation automatically
-  try {
-    await acceptInvitation(inviteId, user.id);
-    redirect("/?message=invitation-accepted");
-  } catch (error) {
-    console.error("Error accepting invitation:", error);
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>Error</CardTitle>
-            <CardDescription>
-              There was an error accepting the invitation. You may already be a member of this
-              organization.
-            </CardDescription>
-          </CardHeader>
-          <CardFooter className="flex justify-center">
-            <Button asChild>
-              <Link href="/">Go to Dashboard</Link>
-            </Button>
-          </CardFooter>
-        </Card>
-      </div>
-    );
-  }
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-accent">
+      <Card className="w-full max-w-md">
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl">Join {invitation.organization.name}</CardTitle>
+          <CardDescription>
+            You've been invited to join this organization on Market.dev.
+          </CardDescription>
+        </CardHeader>
+        <CardFooter className="flex flex-col space-y-3">
+          <p className="text-center text-sm text-muted-foreground">
+            By accepting, you'll be able to access this organization and collaborate with the team.
+          </p>
+          <AcceptInviteBtn
+            inviteId={inviteId}
+            userId={user.id}
+            organizationId={invitation.organizationId}
+          />
+          <BackBtn />
+        </CardFooter>
+      </Card>
+    </div>
+  );
 }
