@@ -206,7 +206,7 @@ export function InviteTeamMembersBtn() {
                         <SelectTrigger className="w-32 rounded-l-none border-l shadow-none focus:z-[1]">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="item-aligned">
                           <SelectItem value={OrganizationRole.MEMBER}>Member</SelectItem>
                           <SelectItem value={OrganizationRole.ADMIN}>Admin</SelectItem>
                         </SelectContent>
