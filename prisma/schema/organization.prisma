@@ -40,8 +40,9 @@ model Organization {
   charges       Charge[]
   subscriptions Subscription[]
   leads         Lead[]
-  prospects     Prospect[]     @relation(name: "prospects")
+  prospects     Prospect[]           @relation(name: "prospects")
   sites         Site[]
+  invites       OrganizationInvite[]
 
   @@index([ownerId])
 }
@@ -63,4 +64,20 @@ model OrganizationMember {
   @@id([organizationId, userId])
   @@index([organizationId])
   @@index([userId])
+}
+
+model OrganizationInvite {
+  id             String           @id @default(cuid())
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  email          String
+  role           OrganizationRole @default(MEMBER)
+  invitedBy      String?
+  inviter        User?            @relation("InvitedBy", fields: [invitedBy], references: [id], onDelete: SetNull)
+  createdAt      DateTime         @default(now())
+  expiresAt      DateTime
+
+  @@unique([organizationId, email])
+  @@index([email])
+  @@index([expiresAt])
 }
