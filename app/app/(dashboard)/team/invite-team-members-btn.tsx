@@ -13,15 +13,8 @@ import {
   DialogTrigger
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, UserRoundPlus } from "lucide-react";
+import { Send, UserRound, UserRoundPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -34,7 +27,6 @@ const isValidEmail = (email: string): boolean => {
 export function InviteTeamMembersBtn() {
   const [isOpen, setIsOpen] = useState(false);
   const [emailsInput, setEmailsInput] = useState("");
-  const [selectedRole, setSelectedRole] = useState<OrganizationRole>(OrganizationRole.MEMBER);
   const [error, setError] = useState("");
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
@@ -65,7 +57,7 @@ export function InviteTeamMembersBtn() {
 
     startTransition(async () => {
       try {
-        const result = await inviteUsersToOrganization(emails, selectedRole);
+        const result = await inviteUsersToOrganization(emails, OrganizationRole.MEMBER);
 
         if (result.success.length > 0) {
           toast.success(`Successfully invited ${result.success.length} user(s)`);
@@ -76,7 +68,6 @@ export function InviteTeamMembersBtn() {
         }
 
         setEmailsInput("");
-        setSelectedRole(OrganizationRole.MEMBER);
         setIsOpen(false);
         router.refresh(); // Refresh the page to show new invites
       } catch (error: any) {
@@ -93,7 +84,6 @@ export function InviteTeamMembersBtn() {
 
   const handleClose = () => {
     setEmailsInput("");
-    setSelectedRole(OrganizationRole.MEMBER);
     setError("");
     setIsOpen(false);
   };
@@ -112,44 +102,36 @@ export function InviteTeamMembersBtn() {
         <DialogHeader>
           <DialogTitle>Invite Teammates</DialogTitle>
           <DialogDescription>
-            Enter email addresses separated by spaces, commas, or new lines. They'll get an email
-            invite to join your organization.
+            Send invites to join your organization. Separate emails by spaces, commas, or new lines.
           </DialogDescription>
         </DialogHeader>
-        <div className="grid gap-4 pb-2">
-          <div className="space-y-2">
-            <Label htmlFor="role">Role</Label>
-            <Select
-              value={selectedRole}
-              onValueChange={(value) => setSelectedRole(value as OrganizationRole)}
-            >
-              <SelectTrigger>
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value={OrganizationRole.MEMBER}>Member</SelectItem>
-                <SelectItem value={OrganizationRole.ADMIN}>Admin</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
+        <div className="grid gap-2 py-2">
           <div>
-            <Label htmlFor="emails">Email Addresses</Label>
-            <Textarea
-              id="emails"
-              value={emailsInput}
-              onChange={(e) => handleInputChange(e.target.value)}
-              placeholder="john@example.com, jane@company.io, mike@startup.co"
-              className="w-full"
-              rows={4}
-            />
-            {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
+            <Label htmlFor="emails" className="mb-2">
+              Email Addresses
+            </Label>
+            <div>
+              <Textarea
+                id="emails"
+                value={emailsInput}
+                onChange={(e) => handleInputChange(e.target.value)}
+                placeholder="john@example.com, jane@company.io, mike@startup.co"
+                className="relative z-[1] w-full"
+                rows={4}
+              />
+              <div className="z-0 flex gap-2 rounded-b-md border border-t-0 bg-stone-100 p-3 text-xs text-muted-foreground">
+                <UserRound size={16} strokeWidth={2.25} />
+                <p>
+                  Everyone will be added as{" "}
+                  <strong className="font-semibold text-foreground">Members</strong>. You can change
+                  their roles later.
+                </p>
+              </div>
+            </div>
           </div>
+          {error && <p className="text-xs text-destructive">{error}</p>}
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={handleClose}>
-            Cancel
-          </Button>
           <Button onClick={handleInvite} disabled={isDisabled} className="w-full">
             {isPending ? (
               <span>Sending...</span>
