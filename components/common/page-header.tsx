@@ -11,7 +11,7 @@ interface PageHeaderProps {
     title: string;
   };
   description?: ReactNode | string;
-  actions?: ReactNode[];
+  actions?: ReactNode | ReactNode[];
   status?: {
     title: string;
     variant?: VariantProps<typeof badgeVariants>["variant"];
@@ -62,9 +62,7 @@ export default function PageHeader({
           )}
         </div>
 
-        {actions && actions.length > 0 && (
-          <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>
-        )}
+        {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
       </div>
     </div>
   );
