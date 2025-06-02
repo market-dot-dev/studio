@@ -12,9 +12,17 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Send, UserRound, UserRoundPlus } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { CircleMinus, CirclePlus, Send, UserRoundPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -24,52 +32,130 @@ const isValidEmail = (email: string): boolean => {
   return emailRegex.test(email);
 };
 
+// Generate a simple unique ID for component use
+const generateId = (): string => {
+  return `invite-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+};
+
+interface TeamMemberInvite {
+  id: string;
+  email: string;
+  role: OrganizationRole;
+}
+
 export function InviteTeamMembersBtn() {
   const [isOpen, setIsOpen] = useState(false);
-  const [emailsInput, setEmailsInput] = useState("");
-  const [error, setError] = useState("");
+  const [invites, setInvites] = useState<TeamMemberInvite[]>([
+    { id: generateId(), email: "", role: OrganizationRole.MEMBER }
+  ]);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const handleInvite = () => {
-    const emails = emailsInput
-      .split(/[,\s\n]+/)
-      .map((email) => email.trim())
-      .filter((email) => email.length > 0);
+  const addInvite = () => {
+    setInvites([...invites, { id: generateId(), email: "", role: OrganizationRole.MEMBER }]);
+  };
 
-    if (emails.length === 0) {
-      setError("Please enter at least one email address.");
-      return;
+  const removeInvite = (id: string) => {
+    if (invites.length > 1) {
+      setInvites(invites.filter((invite) => invite.id !== id));
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[id];
+        return newErrors;
+      });
     }
+  };
 
-    const invalidEmails = emails.filter((email) => !isValidEmail(email));
+  const updateInviteEmail = (id: string, email: string) => {
+    setInvites(invites.map((invite) => (invite.id === id ? { ...invite, email } : invite)));
 
-    if (invalidEmails.length > 0) {
-      if (invalidEmails.length === 1) {
-        setError(`Invalid email address: ${invalidEmails[0]}`);
-      } else {
-        setError(`Invalid email addresses: ${invalidEmails.join(", ")}`);
+    // Clear error for this field when user starts typing
+    if (errors[id]) {
+      setErrors((prev) => {
+        const newErrors = { ...prev };
+        delete newErrors[id];
+        return newErrors;
+      });
+    }
+  };
+
+  const updateInviteRole = (id: string, role: OrganizationRole) => {
+    setInvites(invites.map((invite) => (invite.id === id ? { ...invite, role } : invite)));
+  };
+
+  const validateInvites = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    let hasErrors = false;
+
+    invites.forEach((invite) => {
+      if (!invite.email.trim()) {
+        newErrors[invite.id] = "Email address is required";
+        hasErrors = true;
+      } else if (!isValidEmail(invite.email)) {
+        newErrors[invite.id] = "Invalid email address";
+        hasErrors = true;
       }
+    });
+
+    setErrors(newErrors);
+    return !hasErrors;
+  };
+
+  const handleInvite = () => {
+    if (!validateInvites()) {
       return;
     }
 
-    setError("");
+    const validInvites = invites.filter((invite) => invite.email.trim());
+
+    if (validInvites.length === 0) {
+      return;
+    }
 
     startTransition(async () => {
       try {
-        const result = await inviteUsersToOrganization(emails, OrganizationRole.MEMBER);
+        // Group invites by role to make separate API calls
+        const memberEmails = validInvites
+          .filter((invite) => invite.role === OrganizationRole.MEMBER)
+          .map((invite) => invite.email);
 
-        if (result.success.length > 0) {
-          toast.success(`Successfully invited ${result.success.length} user(s)`);
+        const adminEmails = validInvites
+          .filter((invite) => invite.role === OrganizationRole.ADMIN)
+          .map((invite) => invite.email);
+
+        let totalSuccess = 0;
+        const allErrors: string[] = [];
+
+        // Send member invites
+        if (memberEmails.length > 0) {
+          const memberResult = await inviteUsersToOrganization(
+            memberEmails,
+            OrganizationRole.MEMBER
+          );
+          totalSuccess += memberResult.success.length;
+          allErrors.push(...memberResult.errors);
         }
 
-        if (result.errors.length > 0) {
-          result.errors.forEach((error) => toast.error(error));
+        // Send admin invites
+        if (adminEmails.length > 0) {
+          const adminResult = await inviteUsersToOrganization(adminEmails, OrganizationRole.ADMIN);
+          totalSuccess += adminResult.success.length;
+          allErrors.push(...adminResult.errors);
         }
 
-        setEmailsInput("");
+        if (totalSuccess > 0) {
+          toast.success(`Successfully invited ${totalSuccess} user(s)`);
+        }
+
+        if (allErrors.length > 0) {
+          allErrors.forEach((error) => toast.error(error));
+        }
+
+        setInvites([{ id: generateId(), email: "", role: OrganizationRole.MEMBER }]);
+        setErrors({});
         setIsOpen(false);
-        router.refresh(); // Refresh the page to show new invites
+        router.refresh();
       } catch (error: any) {
         console.error("Error inviting users:", error);
         toast.error(error.message || "Failed to send invitations");
@@ -77,18 +163,8 @@ export function InviteTeamMembersBtn() {
     });
   };
 
-  const handleInputChange = (value: string) => {
-    setEmailsInput(value);
-    if (error) setError("");
-  };
-
-  const handleClose = () => {
-    setEmailsInput("");
-    setError("");
-    setIsOpen(false);
-  };
-
-  const isDisabled = emailsInput.trim().length === 0 || isPending;
+  const validInviteCount = invites.filter((invite) => invite.email.trim()).length;
+  const isDisabled = validInviteCount === 0 || isPending;
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -98,51 +174,84 @@ export function InviteTeamMembersBtn() {
           Invite Teammates
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Invite Teammates</DialogTitle>
-          <DialogDescription>
-            Send invites to join your organization. Separate emails by spaces, commas, or new lines.
-          </DialogDescription>
-        </DialogHeader>
-        <div className="grid gap-2 py-2">
-          <div>
-            <Label htmlFor="emails" className="mb-2">
-              Email Addresses
-            </Label>
-            <div>
-              <Textarea
-                id="emails"
-                value={emailsInput}
-                onChange={(e) => handleInputChange(e.target.value)}
-                placeholder="john@example.com, jane@company.io, mike@startup.co"
-                className="relative z-[1] w-full"
-                rows={4}
-              />
-              <div className="z-0 flex gap-2 rounded-b-md border border-t-0 bg-stone-100 p-3 text-xs text-muted-foreground">
-                <UserRound size={16} strokeWidth={2.25} />
-                <p>
-                  Everyone will be added as{" "}
-                  <strong className="font-semibold text-foreground">Members</strong>. You can change
-                  their roles later.
-                </p>
-              </div>
+      <DialogContent className="max-h-[calc(100vh-32px)] overflow-hidden p-0 sm:max-w-[425px]">
+        <ScrollArea className="max-h-[calc(100vh-32px)]">
+          <div className="flex flex-col gap-4 p-6">
+            <DialogHeader>
+              <DialogTitle>Invite Teammates</DialogTitle>
+              <DialogDescription>
+                Add team members to your organization and assign their roles.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-2">
+              {invites.map((invite, index) => (
+                <div key={invite.id} className="flex flex-col gap-1">
+                  <div className="flex items-start gap-2">
+                    <div className="flex flex-1 rounded shadow-border-sm">
+                      <Input
+                        placeholder="team@example.com"
+                        value={invite.email}
+                        onChange={(e) => updateInviteEmail(invite.id, e.target.value)}
+                        className={cn(
+                          "flex-1 shadow-none rounded-r-none",
+                          errors[invite.id] && "border-destructive"
+                        )}
+                      />
+                      <Select
+                        value={invite.role}
+                        onValueChange={(value: OrganizationRole) =>
+                          updateInviteRole(invite.id, value)
+                        }
+                      >
+                        <SelectTrigger className="w-32 rounded-l-none border-l shadow-none focus:z-[1]">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={OrganizationRole.MEMBER}>Member</SelectItem>
+                          <SelectItem value={OrganizationRole.ADMIN}>Admin</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    {invites.length > 1 && (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => removeInvite(invite.id)}
+                        className="rounded-full text-stone-400 hover:bg-transparent focus:bg-transparent"
+                      >
+                        <CircleMinus className="size-4" />
+                      </Button>
+                    )}
+                  </div>
+                  {errors[invite.id] && (
+                    <p className="my-1 text-xs text-destructive">{errors[invite.id]}</p>
+                  )}
+                </div>
+              ))}
+
+              <Button
+                variant="ghost"
+                onClick={addInvite}
+                className="w-fit p-0 text-muted-foreground hover:bg-transparent focus:bg-transparent"
+              >
+                <CirclePlus className="size-4" />
+                Add Teammate
+              </Button>
             </div>
-          </div>
-          {error && <p className="text-xs text-destructive">{error}</p>}
-        </div>
-        <DialogFooter>
-          <Button onClick={handleInvite} disabled={isDisabled} className="w-full">
-            {isPending ? (
-              <span>Sending...</span>
-            ) : (
-              <>
+            <DialogFooter className="pt-1">
+              <Button
+                onClick={handleInvite}
+                disabled={isDisabled || isPending}
+                loading={isPending}
+                loadingText="Sending Invites"
+                className="w-full"
+              >
                 <Send />
                 Send Invites
-              </>
-            )}
-          </Button>
-        </DialogFooter>
+              </Button>
+            </DialogFooter>
+          </div>
+        </ScrollArea>
       </DialogContent>
     </Dialog>
   );

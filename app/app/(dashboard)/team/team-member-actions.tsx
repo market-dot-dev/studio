@@ -40,7 +40,7 @@ export function TeamMemberActions({ member, currentUserRole }: Props) {
           <MoreHorizontal className="size-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-56">
+      <DropdownMenuContent align="end">
         <TeamMemberEditRoleBtn member={member} currentUserRole={currentUserRole} />
         <TeamMemberRemoveBtn member={member} currentUserRole={currentUserRole} />
       </DropdownMenuContent>
