@@ -123,7 +123,7 @@ export default function OfferingsForm({ user, onSubmit, isLoading }: OfferingsFo
                     <Icon className="my-px size-[18px] shrink-0 text-stone-500" />
                     <h3 className="text-sm font-semibold text-stone-900">{title}</h3>
                     {isComingSoon && (
-                      <span className="border-box absolute right-0 top-0 z-10 flex h-[18px] items-center whitespace-nowrap rounded-bl-md border-b border-l border-black/10 bg-stone-100 px-1 text-[9px] font-bold uppercase tracking-wide text-stone-500">
+                      <span className="border-box absolute right-0 top-0 z-10 flex h-4.5 items-center whitespace-nowrap rounded-bl-md border-b border-l border-black/10 bg-stone-100 px-1 text-[9px] font-bold uppercase tracking-wide text-stone-500">
                         Coming Soon
                       </span>
                     )}

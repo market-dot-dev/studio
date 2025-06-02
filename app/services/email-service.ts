@@ -2,7 +2,7 @@
 
 import * as EmailTemplates from "@/app/components/email/templates";
 import { Prospect, User } from "@/app/generated/prisma";
-import { domainCopy, getRootUrl } from "@/lib/domain";
+import { getRootUrl } from "@/lib/domain";
 import sgMail from "@sendgrid/mail";
 import { findUser } from "./UserService";
 
@@ -18,9 +18,6 @@ type RequiredProspectProps = {
   email: Prospect["email"];
 };
 
-const rootURL = domainCopy();
-const appURL = domainCopy("app");
-const rootURLWithProtocol = getRootUrl();
 const appURLWithProtocol = getRootUrl("app");
 
 /**
@@ -289,7 +286,7 @@ export async function sendTeamInvitationEmail(
 ): Promise<void> {
   const joinUrl = `${appURLWithProtocol}/join/${inviteId}`;
   const subject = `You've been invited to join ${organizationName}`;
-  
+
   const html = `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
       <h2>You've been invited to join ${organizationName}</h2>
@@ -308,7 +305,7 @@ export async function sendTeamInvitationEmail(
       </p>
     </div>
   `;
-  
+
   const text = `
     You've been invited to join ${organizationName}
     
