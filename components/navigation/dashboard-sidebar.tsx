@@ -84,6 +84,12 @@ export function DashboardSidebar({ orgContext, isMarketExpert, site }: Dashboard
           url: "/team",
           icon: <Building />,
           isActive: urlSegments[0] === "team"
+        },
+        {
+          title: "Settings",
+          url: "/settings",
+          icon: <Settings />,
+          isActive: urlSegments[0] === "settings"
         }
       ]
     },
@@ -174,15 +180,7 @@ export function DashboardSidebar({ orgContext, isMarketExpert, site }: Dashboard
 
   const footerItems: SidebarItemGroup[] = [
     {
-      items: [
-        {
-          title: "Settings",
-          url: "/settings",
-          icon: <Settings />,
-          isActive: urlSegments[0] === "settings"
-        },
-        <SupportDropdown key="support-dropdown" />
-      ]
+      items: [<SupportDropdown key="support-dropdown" />]
     }
   ];
 

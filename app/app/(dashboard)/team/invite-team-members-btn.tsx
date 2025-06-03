@@ -174,7 +174,7 @@ export function InviteTeamMembersBtn() {
           Invite Teammates
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-h-[calc(100vh-32px)] overflow-hidden p-0 sm:max-w-[425px]">
+      <DialogContent className="max-h-[calc(100vh-32px)] max-w-[425px] overflow-hidden p-0 sm:max-w-[425px]">
         <ScrollArea className="max-h-[calc(100vh-32px)]">
           <div className="flex flex-col gap-4 p-6">
             <DialogHeader>
@@ -186,7 +186,7 @@ export function InviteTeamMembersBtn() {
             <div className="grid gap-2">
               {invites.map((invite, index) => (
                 <div key={invite.id} className="flex flex-col gap-1">
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start gap-4">
                     <div className="flex flex-1 rounded shadow-border-sm">
                       <Input
                         placeholder="team@example.com"
@@ -203,7 +203,7 @@ export function InviteTeamMembersBtn() {
                           updateInviteRole(invite.id, value)
                         }
                       >
-                        <SelectTrigger className="w-32 rounded-l-none border-l shadow-none focus:z-[1]">
+                        <SelectTrigger className="h-9 w-32 rounded-l-none border-l shadow-none focus:z-[1] md:h-8">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent position="item-aligned">
@@ -217,7 +217,7 @@ export function InviteTeamMembersBtn() {
                         variant="ghost"
                         size="icon"
                         onClick={() => removeInvite(invite.id)}
-                        className="rounded-full text-stone-400 hover:bg-transparent focus:bg-transparent"
+                        className="-mx-2 h-9 rounded-full text-stone-400 hover:bg-transparent focus:bg-transparent md:h-8"
                       >
                         <CircleMinus className="size-4" />
                       </Button>
@@ -232,7 +232,7 @@ export function InviteTeamMembersBtn() {
               <Button
                 variant="ghost"
                 onClick={addInvite}
-                className="w-fit p-0 text-muted-foreground hover:bg-transparent focus:bg-transparent"
+                className="ml-1.5 w-fit p-0 text-muted-foreground hover:bg-transparent focus:bg-transparent"
               >
                 <CirclePlus className="size-4" />
                 Add Teammate
