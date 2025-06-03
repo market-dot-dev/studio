@@ -2,8 +2,8 @@
 
 import { Tier, TierVersion } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
+import { checkTierHasSubscribers } from "../billing/subscription-service";
 import { deactivateStripePrice, type SubscriptionCadence } from "../stripe/stripe-price-service";
-import { checkTierHasSubscribers } from "../subscription-service";
 
 export interface VersionContext {
   hasSubscribers: boolean;

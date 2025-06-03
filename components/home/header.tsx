@@ -471,7 +471,7 @@ export default function Header({ className }: { className?: string }) {
                       alt="github logo"
                       height={24}
                       width={24}
-                      className="col-span-2 col-start-1 h-[22px] w-auto xs:h-[18px] md:h-6"
+                      className="col-span-2 col-start-1 h-[22px] w-auto xs:h-4.5 md:h-6"
                     />
                     Sign up with Github
                   </MarketingButton>
