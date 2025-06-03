@@ -43,9 +43,9 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
         (window as any).refreshOnboarding();
       }
 
-      toast.success("Business information updated");
+      toast.success("Organization information updated");
     } catch (error) {
-      console.error("Error updating business information:", error);
+      console.error("Error updating organization information:", error);
       toast.error("An unknown error occurred");
     } finally {
       setIsSaving(false);
@@ -56,9 +56,9 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
     <div className="flex w-full items-start justify-between gap-12 lg:max-w-xl">
       <div className="flex flex-col items-start space-y-6">
         <div className="flex w-full flex-col gap-2">
-          <Label htmlFor="project-name">Business Name</Label>
+          <Label htmlFor="project-name">Organization Name</Label>
           <Input
-            placeholder="Enter your business name"
+            placeholder="Enter your organization's name"
             name="project-name"
             id="project-name"
             value={businessData.projectName ?? ""}
@@ -74,16 +74,16 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
         <div className="flex flex-col gap-2">
           <div>
             <Label htmlFor="project-description" className="mb-1">
-              Business Description
+              Organization Description
             </Label>
             <p className="text-xs text-stone-500">
-              Your business description is used in your store homepage (and other pages where you
-              embed the {`<SiteDescription>`} component).
+              Your organization description is used in your landing page's homepage (and other pages
+              where you embed the {`<SiteDescription>`} component).
             </p>
           </div>
           <Textarea
             className="min-h-40"
-            placeholder="Describe your business"
+            placeholder="Describe your organization"
             name="project-description"
             id="project-description"
             value={businessData.projectDescription ?? ""}
@@ -96,12 +96,7 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
           />
         </div>
 
-        <Button
-          loading={isSaving}
-          loadingText="Saving Changes"
-          disabled={isSaving}
-          onClick={saveChanges}
-        >
+        <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>
           Save
         </Button>
       </div>

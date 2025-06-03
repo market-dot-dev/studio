@@ -13,14 +13,22 @@ import {
   SidebarMenuItem,
   useSidebar
 } from "@/components/ui/sidebar";
-import type { SidebarItem, SidebarItemGroup } from "@/types/sidebar";
+import type { SidebarItem, SidebarItemGroup, SidebarItemOrComponent } from "@/types/sidebar";
 import Link from "next/link";
+import { ReactNode } from "react";
 import { Badge } from "../ui/badge";
+import { ScrollArea } from "../ui/scroll-area";
 
 interface AppSidebarProps {
   mainItems: SidebarItemGroup[];
   headerItems?: SidebarItemGroup[];
   footerItems?: SidebarItemGroup[];
+}
+
+function isSidebarItem(item: SidebarItemOrComponent): item is SidebarItem {
+  return (
+    typeof item === "object" && item !== null && "title" in item && "url" in item && "icon" in item
+  );
 }
 
 export function AppSidebar({ mainItems, headerItems, footerItems }: AppSidebarProps) {
@@ -32,21 +40,27 @@ export function AppSidebar({ mainItems, headerItems, footerItems }: AppSidebarPr
         {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
         <SidebarGroupContent>
           <SidebarMenu>
-            {group.items.map((item: SidebarItem) => (
-              <SidebarMenuItem key={item.title}>
-                <SidebarMenuButton asChild isActive={item.isActive}>
-                  <Link href={item.url} onClick={() => setOpenMobile(false)}>
-                    {item.icon}
-                    {item.title}
-                    {item.isBeta && (
-                      <Badge size="sm" variant="secondary">
-                        Beta
-                      </Badge>
-                    )}
-                  </Link>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            ))}
+            {group.items.map((item: SidebarItemOrComponent, itemIndex) => {
+              if (!isSidebarItem(item)) {
+                return <div key={itemIndex}>{item as ReactNode}</div>;
+              }
+
+              return (
+                <SidebarMenuItem key={item.title}>
+                  <SidebarMenuButton asChild isActive={item.isActive}>
+                    <Link href={item.url} onClick={() => setOpenMobile(false)}>
+                      {item.icon}
+                      {item.title}
+                      {item.isBeta && (
+                        <Badge size="sm" variant="secondary">
+                          Beta
+                        </Badge>
+                      )}
+                    </Link>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
@@ -56,11 +70,13 @@ export function AppSidebar({ mainItems, headerItems, footerItems }: AppSidebarPr
   return (
     <Sidebar>
       {headerItems && headerItems.length > 0 && (
-        <SidebarHeader>{renderSidebarSection(headerItems)}</SidebarHeader>
+        <SidebarHeader className="bg-stone-150">{renderSidebarSection(headerItems)}</SidebarHeader>
       )}
-      <SidebarContent>{renderSidebarSection(mainItems)}</SidebarContent>
+      <ScrollArea className="h-full">
+        <SidebarContent>{renderSidebarSection(mainItems)}</SidebarContent>
+      </ScrollArea>
       {footerItems && footerItems.length > 0 && (
-        <SidebarFooter>{renderSidebarSection(footerItems)}</SidebarFooter>
+        <SidebarFooter className="bg-stone-150">{renderSidebarSection(footerItems)}</SidebarFooter>
       )}
     </Sidebar>
   );

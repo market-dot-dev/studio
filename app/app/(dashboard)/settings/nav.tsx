@@ -16,14 +16,9 @@ export default function SettingsNav() {
 
   const navItems = [
     {
-      name: "General",
+      name: "Organization Info",
       href: `/settings`,
       isActive: activeSegment === null
-    },
-    {
-      name: "Business Info",
-      href: `/settings/business`,
-      isActive: activeSegment === "business"
     },
     {
       name: "Payout Info",

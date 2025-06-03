@@ -122,6 +122,12 @@ export default {
           ring: "hsl(var(--sidebar-ring))"
         }
       },
+      height: {
+        "4.5": "18px"
+      },
+      width: {
+        "4.5": "18px"
+      },
       boxShadow: {
         "border-sm": "0 0 0 1px rgba(0, 0, 0, 0.06), 0 1px 2px 0 rgb(0 0 0 / 0.06)",
         border:

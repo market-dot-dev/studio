@@ -1,4 +1,4 @@
-import { getCheckoutData } from "@/app/services/checkout-service";
+import { getCheckoutData } from "@/app/services/billing/checkout-service";
 import { getSubdomainFromString } from "@/app/services/domain-request-service";
 import { TierNotAvailable } from "@/components/tiers/tier-not-available";
 import { headers } from "next/headers";

@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 
 export interface SidebarItem {
   title: string;
@@ -8,7 +8,9 @@ export interface SidebarItem {
   isActive?: boolean;
 }
 
+export type SidebarItemOrComponent = SidebarItem | ReactNode;
+
 export type SidebarItemGroup = {
   label?: string;
-  items: SidebarItem[];
+  items: SidebarItemOrComponent[];
 };

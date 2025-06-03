@@ -34,7 +34,9 @@ class AuthService {
     // Only do DB queries on specific triggers, not every request
     if (trigger === "update") {
       if (sessionUser?.id) {
-        userData = await UserService.findUser(sessionUser.id);
+        userData = await prisma.user.findUnique({
+          where: { id: sessionUser.id }
+        });
       }
     } else if (trigger === "signIn") {
       userData = await AuthService.onSignIn(account, user || sessionUser);

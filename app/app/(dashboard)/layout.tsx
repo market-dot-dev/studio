@@ -4,7 +4,11 @@ import {
   OnboardingState
 } from "@/app/services/onboarding/onboarding-steps";
 import { getSiteByOrgId } from "@/app/services/site/site-crud-service";
-import { requireOrganization, requireUser } from "@/app/services/user-context-service";
+import {
+  getOrganizationSwitcherContext,
+  requireOrganization,
+  requireUser
+} from "@/app/services/user-context-service";
 import SessionRefresher from "@/components/common/session-refresher";
 import { StripeDisabledBanner } from "@/components/common/stripe-disabled-banner";
 import { DashboardProvider } from "@/components/dashboard/dashboard-context";
@@ -19,6 +23,7 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
 
   const user = await requireUser();
   const org = await requireOrganization();
+  const orgContext = await getOrganizationSwitcherContext();
   const isMarketExpert = await organizationIsMarketExpert();
 
   const onboarding = user.onboarding
@@ -37,7 +42,7 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
       />
       <SidebarProvider>
         <Header />
-        <DashboardSidebar user={user} isMarketExpert={isMarketExpert} site={site} />
+        <DashboardSidebar orgContext={orgContext} isMarketExpert={isMarketExpert} site={site} />
         <main className="flex min-h-screen w-screen flex-col items-center bg-stone-100 pt-10 md:w-[calc(100vw-var(--sidebar-width))]">
           {org.stripeAccountDisabled && <StripeDisabledBanner />}
           <div className="flex w-full max-w-screen-xl flex-col gap-y-8 p-6 sm:p-10 sm:pt-8">

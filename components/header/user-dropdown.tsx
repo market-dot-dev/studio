@@ -11,8 +11,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
+import ProfileSettingsModal from "./profile-settings-modal";
 
 export default function UserDropdown({ user }: { user: SessionUser }) {
   return (
@@ -35,8 +37,8 @@ export default function UserDropdown({ user }: { user: SessionUser }) {
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="z-40 w-[250px]" sideOffset={5} align="end" alignOffset={0}>
-        <div className="flex items-center gap-3 p-2">
+      <DropdownMenuContent className="z-40 w-[225px]" sideOffset={5} align="end" alignOffset={0}>
+        <div className="flex items-center gap-3 py-1 pl-[5px] pr-3">
           <Image
             src={user.image ?? `https://avatar.vercel.sh/${user.id}`}
             width={28}
@@ -51,6 +53,9 @@ export default function UserDropdown({ user }: { user: SessionUser }) {
         <DropdownMenuSeparator />
 
         <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <ProfileSettingsModal user={user} />
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() =>
               signOut({
@@ -59,6 +64,7 @@ export default function UserDropdown({ user }: { user: SessionUser }) {
               })
             }
           >
+            <LogOut className="!h-4.5 !w-4.5" />
             Logout
           </DropdownMenuItem>
         </DropdownMenuGroup>
