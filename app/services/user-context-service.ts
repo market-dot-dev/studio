@@ -118,14 +118,14 @@ export const requireOrganization = cache(async (): Promise<MinimalOrganization> 
   const user = await requireUser(); // Ensure user is authenticated first
 
   if (!user.currentOrganizationId) {
-    redirect("/select-organization");
+    redirect("/organizations");
   }
 
   const organization = await getOrganizationById(user.currentOrganizationId);
 
   if (!organization) {
     // This should rarely happen - only if org was deleted after being set as current
-    redirect("/select-organization");
+    redirect("/organizations");
   }
 
   return organization;

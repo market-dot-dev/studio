@@ -8,7 +8,7 @@ export const includeMinimalOrg = Prisma.validator<Prisma.OrganizationDefaultArgs
     id: true,
     name: true,
     type: true,
-    company: true,
+    description: true,
     businessLocation: true,
     businessType: true,
     owner: {
@@ -20,8 +20,6 @@ export const includeMinimalOrg = Prisma.validator<Prisma.OrganizationDefaultArgs
     },
     createdAt: true,
     updatedAt: true,
-    projectName: true,
-    projectDescription: true,
     marketExpertId: true,
     stripeAccountId: true,
     stripeAccountDisabled: true
