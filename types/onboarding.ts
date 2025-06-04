@@ -6,8 +6,8 @@ import { Prisma } from "@/app/generated/prisma";
 export const includeOrganizationOnboarding = Prisma.validator<Prisma.OrganizationDefaultArgs>()({
   select: {
     id: true,
-    projectName: true,
-    projectDescription: true,
+    name: true,
+    businessDescription: true,
     businessLocation: true,
     businessType: true,
     stripeAccountId: true,

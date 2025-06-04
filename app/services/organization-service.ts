@@ -144,9 +144,7 @@ export async function getCurrentOrganizationForSettings() {
   return {
     id: org.id,
     name: org.name,
-    projectName: org.projectName,
-    projectDescription: org.projectDescription,
-    company: org.company,
+    businessDescription: org.businessDescription,
     businessType: org.businessType,
     businessLocation: org.businessLocation
   };

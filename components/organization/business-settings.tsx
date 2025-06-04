@@ -10,14 +10,14 @@ import { toast } from "sonner";
 
 // Type for the business-related fields from organization
 type EditableBusinessFields = {
-  projectName: string | null;
-  projectDescription: string | null;
+  name: string; // Now required, not nullable
+  businessDescription: string | null;
 };
 
 type OrganizationBusinessProps = {
   organization: {
-    projectName: string | null;
-    projectDescription: string | null;
+    name: string | null;
+    businessDescription: string | null;
   };
 };
 
@@ -26,16 +26,27 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
 
   // Extract business fields from organization
   const [businessData, setBusinessData] = useState<EditableBusinessFields>({
-    projectName: organization.projectName ?? null,
-    projectDescription: organization.projectDescription ?? null
+    name: organization.name ?? "",
+    businessDescription: organization.businessDescription ?? null
   });
 
+  // Validation helper
+  const isNameValid = useCallback(() => {
+    return businessData.name.trim().length > 0;
+  }, [businessData.name]);
+
   const saveChanges = useCallback(async () => {
+    // Validate name before saving
+    if (!isNameValid()) {
+      toast.error("Organization name is required");
+      return;
+    }
+
     setIsSaving(true);
     try {
       await updateCurrentOrganizationBusiness({
-        projectName: businessData.projectName,
-        projectDescription: businessData.projectDescription
+        name: businessData.name.trim(), // Trim whitespace
+        businessDescription: businessData.businessDescription
       });
 
       // Use Object.prototype.hasOwnProperty.call instead of direct method access
@@ -50,7 +61,7 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
     } finally {
       setIsSaving(false);
     }
-  }, [businessData]);
+  }, [businessData, isNameValid]);
 
   return (
     <div className="flex w-full items-start justify-between gap-12 lg:max-w-xl">
@@ -61,14 +72,19 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
             placeholder="Enter your organization's name"
             name="project-name"
             id="project-name"
-            value={businessData.projectName ?? ""}
+            value={businessData.name}
             onChange={(e) => {
               setBusinessData({
                 ...businessData,
-                projectName: e.target.value || null
+                name: e.target.value
               });
             }}
+            required
+            className={!isNameValid() && businessData.name.length === 0 ? "border-red-500" : ""}
           />
+          {!isNameValid() && businessData.name.length === 0 && (
+            <p className="text-xs text-red-500">Organization name is required</p>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
@@ -86,17 +102,17 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
             placeholder="Describe your organization"
             name="project-description"
             id="project-description"
-            value={businessData.projectDescription ?? ""}
+            value={businessData.businessDescription ?? ""}
             onChange={(e) => {
               setBusinessData({
                 ...businessData,
-                projectDescription: e.target.value || null
+                businessDescription: e.target.value || null
               });
             }}
           />
         </div>
 
-        <Button loading={isSaving} disabled={isSaving} onClick={saveChanges}>
+        <Button loading={isSaving} disabled={isSaving || !isNameValid()} onClick={saveChanges}>
           Save
         </Button>
       </div>

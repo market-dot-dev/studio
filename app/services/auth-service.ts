@@ -1,7 +1,7 @@
 "use server";
 
 import { OrganizationRole, OrganizationType, User } from "@/app/generated/prisma";
-import { businessDescription, businessName } from "@/lib/constants/site-template";
+import { businessDescription } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { Account, User as NaUser } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
@@ -191,9 +191,7 @@ class AuthService {
           : `${user.name || user.email || "User"}'s Organization`,
         type: organizationType,
         ownerId: user.id,
-        projectName: businessName,
-        projectDescription: businessDescription,
-        company: name || user.name || null,
+        businessDescription: businessDescription,
         stripeCustomerIds: {},
         stripePaymentMethodIds: {},
         members: {

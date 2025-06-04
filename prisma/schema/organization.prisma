@@ -19,12 +19,10 @@ model Organization {
   currentUsers User[]               @relation("CurrentOrganization")
 
   // Business fields
-  businessLocation   String?
-  businessType       String?
-  company            String?
-  projectName        String?
-  projectDescription String?
-  marketExpertId     String?
+  businessLocation    String?
+  businessType        String?
+  businessDescription String?
+  marketExpertId      String?
 
   // Stripe fields
   stripePaymentMethodIds      Json    @default("{}")
