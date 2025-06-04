@@ -1,7 +1,7 @@
 import type { InsertableComponentProps } from "..";
 
 export default function SiteDescription({ site, page }: InsertableComponentProps) {
-  const lines = (site?.organization.businessDescription || "").split("\n") ?? [];
+  const lines = (site?.organization.description || "").split("\n") ?? [];
   const html = lines.join("<br />");
 
   return (

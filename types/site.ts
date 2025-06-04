@@ -15,7 +15,7 @@ export const includeSiteDetails = Prisma.validator<Prisma.SiteDefaultArgs>()({
       select: {
         id: true,
         name: true,
-        businessDescription: true
+        description: true
       }
     },
     homepageId: true

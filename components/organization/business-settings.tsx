@@ -1,5 +1,6 @@
 "use client";
 
+import { Organization } from "@/app/generated/prisma";
 import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,14 +11,14 @@ import { toast } from "sonner";
 
 // Type for the business-related fields from organization
 type EditableBusinessFields = {
-  name: string; // Now required, not nullable
-  businessDescription: string | null;
+  name: string; // Required
+  description: string | null;
 };
 
 type OrganizationBusinessProps = {
   organization: {
-    name: string | null;
-    businessDescription: string | null;
+    name: Organization["name"];
+    description: Organization["description"];
   };
 };
 
@@ -26,8 +27,8 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
 
   // Extract business fields from organization
   const [businessData, setBusinessData] = useState<EditableBusinessFields>({
-    name: organization.name ?? "",
-    businessDescription: organization.businessDescription ?? null
+    name: organization.name,
+    description: organization.description ?? null
   });
 
   // Validation helper
@@ -46,7 +47,7 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
     try {
       await updateCurrentOrganizationBusiness({
         name: businessData.name.trim(), // Trim whitespace
-        businessDescription: businessData.businessDescription
+        description: businessData.description
       });
 
       // Use Object.prototype.hasOwnProperty.call instead of direct method access
@@ -67,11 +68,11 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
     <div className="flex w-full items-start justify-between gap-12 lg:max-w-xl">
       <div className="flex flex-col items-start space-y-6">
         <div className="flex w-full flex-col gap-2">
-          <Label htmlFor="project-name">Organization Name</Label>
+          <Label htmlFor="name">Organization Name</Label>
           <Input
             placeholder="Enter your organization's name"
-            name="project-name"
-            id="project-name"
+            name="name"
+            id="name"
             value={businessData.name}
             onChange={(e) => {
               setBusinessData({
@@ -89,7 +90,7 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
 
         <div className="flex flex-col gap-2">
           <div>
-            <Label htmlFor="project-description" className="mb-1">
+            <Label htmlFor="description" className="mb-1">
               Organization Description
             </Label>
             <p className="text-xs text-stone-500">
@@ -100,13 +101,13 @@ export default function BusinessSettings({ organization }: OrganizationBusinessP
           <Textarea
             className="min-h-40"
             placeholder="Describe your organization"
-            name="project-description"
-            id="project-description"
-            value={businessData.businessDescription ?? ""}
+            name="description"
+            id="description"
+            value={businessData.description ?? ""}
             onChange={(e) => {
               setBusinessData({
                 ...businessData,
-                businessDescription: e.target.value || null
+                description: e.target.value || null
               });
             }}
           />

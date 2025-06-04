@@ -191,7 +191,7 @@ class AuthService {
           : `${user.name || user.email || "User"}'s Organization`,
         type: organizationType,
         ownerId: user.id,
-        businessDescription: businessDescription,
+        description: businessDescription,
         stripeCustomerIds: {},
         stripePaymentMethodIds: {},
         members: {

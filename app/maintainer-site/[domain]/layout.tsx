@@ -18,10 +18,10 @@ export async function generateMetadata(props: {
   const image = getRootUrl(site.subdomain ?? "app", `/api/og/${site.id}`);
 
   const { logo } = site;
-  const { name, businessDescription } = site.organization || {};
+  const { name, description: bizDescription } = site.organization || {};
 
   const title = name || "Site";
-  const description = businessDescription || "";
+  const description = bizDescription || "";
 
   return {
     title,

@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "@/app/generated/prisma";
+import { Organization, User } from "@/app/generated/prisma";
 import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { Button } from "@/components/ui/button";
@@ -15,13 +15,13 @@ type UserPersonalData = {
 };
 
 type OrganizationBusinessData = {
-  company: string | null;
+  businessName: string;
 };
 
 type CustomerSettingsProps = {
   user: Pick<User, "name" | "email">;
   organization: {
-    company: string | null;
+    name: Organization["name"];
   };
 };
 
@@ -36,7 +36,7 @@ export default function CustomerSettings({ user, organization }: CustomerSetting
 
   // Separate state for organization business data
   const [orgData, setOrgData] = useState<OrganizationBusinessData>({
-    company: organization.company ?? null
+    businessName: organization.name ?? null
   });
 
   const saveChanges = useCallback(async () => {
@@ -50,7 +50,7 @@ export default function CustomerSettings({ user, organization }: CustomerSetting
 
       // Update organization business information
       await updateCurrentOrganizationBusiness({
-        name: orgData.company ?? "My company name" // Note: Updates org name, not "company" field as that was removed
+        name: orgData.businessName ?? "My company name" // Note: Updates org name, not "company" field as that was removed
       });
 
       toast.success("Settings updated successfully");
@@ -102,15 +102,16 @@ export default function CustomerSettings({ user, organization }: CustomerSetting
         <h3 className="mb-4 text-lg font-medium">Organization Information</h3>
         <div className="max-w-md space-y-6">
           <div className="flex flex-col items-start gap-1.5">
-            <Label htmlFor="company">Company Name</Label>
+            <Label htmlFor="business-name">Business Name</Label>
             <Input
-              placeholder="Enter your company name"
-              name="company"
-              id="company"
-              value={orgData.company ?? ""}
+              placeholder="Enter your business name"
+              name="business-name"
+              id="business-name"
+              value={orgData.businessName}
               onChange={(e) => {
-                setOrgData({ ...orgData, company: e.target.value || null });
+                setOrgData({ ...orgData, businessName: e.target.value });
               }}
+              required
             />
             <p className="text-xs text-stone-500">
               This will be associated with your organization and visible to team members.

@@ -44,7 +44,7 @@ function isBusinessSetupComplete(organization: OrganizationOnboardingData): bool
  * Validates if project setup is complete
  */
 function isProjectSetupComplete(organization: OrganizationOnboardingData): boolean {
-  return organization.businessDescription !== businessDescription;
+  return organization.description !== businessDescription;
 }
 
 /**
