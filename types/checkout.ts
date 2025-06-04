@@ -7,8 +7,6 @@ export const includeVendorProfile = Prisma.validator<Prisma.OrganizationDefaultA
   select: {
     id: true,
     name: true,
-    projectName: true,
-    company: true,
     stripeAccountId: true,
     sites: {
       select: {

@@ -1,8 +1,8 @@
 "use server";
 
-import { businessDescription, businessName } from "@/lib/constants/site-template";
+import { businessDescription } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
-import { includeOrganizationOnboarding } from "@/types/onboarding";
+import { includeOrganizationOnboarding, OrganizationOnboardingData } from "@/types/onboarding";
 import { requireUser, requireUserSession } from "../user-context-service";
 import { defaultOnboardingState, OnboardingState } from "./onboarding-steps";
 
@@ -36,24 +36,21 @@ export async function saveState(state: OnboardingState): Promise<void> {
 /**
  * Validates if business setup is complete
  */
-function isBusinessSetupComplete(organization: any): boolean {
+function isBusinessSetupComplete(organization: OrganizationOnboardingData): boolean {
   return !!(organization.businessLocation && organization.businessType);
 }
 
 /**
  * Validates if project setup is complete
  */
-function isProjectSetupComplete(organization: any): boolean {
-  return (
-    organization.projectName !== businessName &&
-    organization.projectDescription !== businessDescription
-  );
+function isProjectSetupComplete(organization: OrganizationOnboardingData): boolean {
+  return organization.description !== businessDescription;
 }
 
 /**
  * Validates if site setup is complete
  */
-function isSiteSetupComplete(organization: any): boolean {
+function isSiteSetupComplete(organization: OrganizationOnboardingData): boolean {
   if (!organization.sites?.length) return false;
 
   const site = organization.sites[0];

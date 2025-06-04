@@ -201,7 +201,7 @@ export function OnboardingModal({
     try {
       // Update organization business data
       await updateCurrentOrganizationBusiness({
-        projectName: profileData.businessName,
+        name: profileData.businessName,
         businessLocation: profileData.location,
         businessType: profileData.teamType
       });

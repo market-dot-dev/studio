@@ -17,8 +17,7 @@ export const CustomersTable: React.FC<{
       ...customer.subscriptions.map((sub) => ({
         id: sub.id,
         userId: customer.id,
-        userName: customer.name,
-        userCompany: customer.company,
+        userName: customer.name, // NOTE: This is the org name
         userEmail: customer.owner.email,
         tierName: sub.tier.name,
         statusType: "subscription" as const,
@@ -28,8 +27,7 @@ export const CustomersTable: React.FC<{
       ...customer.charges.map((charge) => ({
         id: charge.id,
         userId: customer.id,
-        userName: customer.name,
-        userCompany: customer.company,
+        userName: customer.name, // NOTE: This is the org name
         userEmail: customer.owner.email,
         tierName: charge.tier.name,
         statusType: "charge" as const,

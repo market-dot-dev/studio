@@ -19,7 +19,7 @@ const ChargeCard = async ({ charge }: { charge: Charge }) => {
       <div className="flex flex-col space-y-2">
         <div className="flex flex-row justify-between">
           <div className="flex flex-row items-center space-x-2">
-            <strong>{tier.organization.projectName}</strong>
+            <strong>{tier.organization.name}</strong>
           </div>
         </div>
 
