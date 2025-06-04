@@ -99,14 +99,14 @@ export default function StripeOnboardingPage() {
   const isConnected = stripeData.canSell;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-10">
       <div className="text-center">
         <h1 className="text-2xl font-bold tracking-tight">Connect Stripe</h1>
         <p className="mt-2 text-sm text-muted-foreground">
           Set up payments to accept credit cards for your services through checkout links.
         </p>
       </div>
-      <div className="flex flex-col gap-3 pb-2">
+      <div className="flex flex-col gap-4">
         {/* Simple Stripe status without server actions in render */}
         <StripeStatus stripeData={stripeData} />
 
@@ -118,13 +118,13 @@ export default function StripeOnboardingPage() {
         )}
       </div>
 
-      {/* What you can do */}
-      <div className="space-y-4">
-        <h3 className="text-sm font-medium text-muted-foreground">
-          {isConnected ? "With Stripe connected, you can:" : "Without Stripe, you can still:"}
-        </h3>
-
+      <div className="space-y-8">
+        {/* What you can do */}
         <div className="space-y-3">
+          <h3 className="text-sm font-medium text-muted-foreground">
+            {isConnected ? "With Stripe connected, you can:" : "Without Stripe, you can still:"}
+          </h3>
+
           <div className="flex items-start space-x-3">
             <Mail className="mt-0.5 size-4 text-muted-foreground" />
             <div className="text-sm">
@@ -158,14 +158,12 @@ export default function StripeOnboardingPage() {
             </>
           )}
         </div>
-      </div>
 
-      {/* What you need Stripe for */}
-      {!isConnected && (
-        <div className="space-y-4">
-          <h3 className="text-sm font-medium text-muted-foreground">You'll need Stripe to:</h3>
-
+        {/* What you need Stripe for */}
+        {!isConnected && (
           <div className="space-y-3">
+            <h3 className="text-sm font-medium text-muted-foreground">You'll need Stripe to:</h3>
+
             <div className="flex items-start space-x-3">
               <CreditCard className="mt-0.5 size-4 text-muted-foreground" />
               <div className="text-sm">
@@ -186,26 +184,27 @@ export default function StripeOnboardingPage() {
               </div>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* Action Buttons */}
-      <div className="space-y-3 pt-6">
-        <Button onClick={handleContinue} className="w-full">
-          Continue
-        </Button>
-
-        {!isConnected && (
-          <Button variant="ghost" onClick={handleSkip} className="w-full">
-            Skip for now
-          </Button>
         )}
       </div>
 
-      <div className="text-center">
-        <p className="text-xs text-muted-foreground">
-          You can always connect Stripe later from your settings page.
-        </p>
+      <div className="space-y-6">
+        <div className="space-y-3">
+          {isConnected ? (
+            <Button onClick={handleContinue} className="w-full">
+              Continue
+            </Button>
+          ) : (
+            <Button variant="secondary" onClick={handleSkip} className="w-full">
+              Skip for now
+            </Button>
+          )}
+        </div>
+
+        <div className="text-center">
+          <p className="text-xs text-muted-foreground">
+            You can always connect Stripe later from your settings page.
+          </p>
+        </div>
       </div>
     </div>
   );
