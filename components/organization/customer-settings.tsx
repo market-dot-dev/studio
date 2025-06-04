@@ -50,7 +50,7 @@ export default function CustomerSettings({ user, organization }: CustomerSetting
 
       // Update organization business information
       await updateCurrentOrganizationBusiness({
-        company: orgData.company
+        name: orgData.company ?? "My company name" // Note: Updates org name, not "company" field as that was removed
       });
 
       toast.success("Settings updated successfully");

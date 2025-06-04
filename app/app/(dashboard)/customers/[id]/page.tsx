@@ -62,14 +62,14 @@ export default async function CustomerDetailPage(props: { params: Promise<{ id: 
             </div>
           </div>
 
-          {/* Company/Organization Name */}
+          {/* Organization Name */}
           <div className="flex flex-col gap-1">
             <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
               <Building size={12} strokeWidth={2.5} />
               Organization
             </span>
             <div className="flex items-center">
-              <span className="font-medium">{customerOrg.company || customerOrg.name || "—"}</span>
+              <span className="font-medium">{customerOrg.name || "—"}</span>
             </div>
           </div>
 
