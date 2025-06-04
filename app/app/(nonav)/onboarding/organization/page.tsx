@@ -124,61 +124,63 @@ export default async function OrganizationOnboardingPage() {
         </p>
       </div>
 
-      <form action={submitOrganizationData} className="space-y-6">
-        {/* Organization Name */}
-        <div className="space-y-2">
-          <Label htmlFor="organizationName">Organization Name</Label>
-          <Input
-            id="organizationName"
-            name="organizationName"
-            placeholder="Your Organization Name"
-            required
-          />
-        </div>
-
-        {/* Domain */}
-        <div className="space-y-2">
-          <Label htmlFor="subdomain">Domain</Label>
-          <div className="flex items-center rounded bg-white shadow-border-sm">
-            <Input
-              id="subdomain"
-              name="subdomain"
-              placeholder="your-domain"
-              className="rounded-r-none border-0 shadow-none"
-              required
-            />
-            <span className="border-l border-stone-200 px-3 py-1.5 text-sm text-stone-500">
-              .market.dev
-            </span>
-          </div>
-          <p className="text-xs text-stone-500">
-            Your dashboard, checkout links, and custom landing page will be available at this URL.
-          </p>
-        </div>
-
+      <form action={submitOrganizationData} className="flex flex-col gap-6">
         <FileUploadClient />
 
-        {/* Country */}
-        <div className="space-y-2">
-          <Label htmlFor="country">Country</Label>
-          <Select name="country" required>
-            <SelectTrigger>
-              <SelectValue placeholder="Select your country" />
-            </SelectTrigger>
-            <SelectContent>
-              {COUNTRIES.map((c) => (
-                <SelectItem key={c.code} value={c.code}>
-                  {c.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <p className="text-xs text-stone-500">Required for billing and tax purposes.</p>
-        </div>
+        <div className="space-y-6">
+          {/* Organization Name */}
+          <div className="space-y-2">
+            <Label htmlFor="organizationName">Organization Name</Label>
+            <Input
+              id="organizationName"
+              name="organizationName"
+              placeholder="Your Organization Name"
+              required
+            />
+          </div>
 
-        <Button type="submit" className="w-full">
-          Continue
-        </Button>
+          {/* Domain */}
+          <div className="space-y-2">
+            <Label htmlFor="subdomain">Domain</Label>
+            <div className="flex items-center rounded bg-white shadow-border-sm">
+              <Input
+                id="subdomain"
+                name="subdomain"
+                placeholder="your-domain"
+                className="rounded-r-none border-0 shadow-none"
+                required
+              />
+              <span className="border-l border-stone-200 px-3 py-1.5 text-sm text-stone-500">
+                .market.dev
+              </span>
+            </div>
+            <p className="text-xs text-stone-500">
+              Your dashboard, checkout links, and custom landing page will be available at this URL.
+            </p>
+          </div>
+
+          {/* Country */}
+          <div className="space-y-2">
+            <Label htmlFor="country">Country</Label>
+            <Select name="country" required>
+              <SelectTrigger>
+                <SelectValue placeholder="Select your country" />
+              </SelectTrigger>
+              <SelectContent>
+                {COUNTRIES.map((c) => (
+                  <SelectItem key={c.code} value={c.code}>
+                    {c.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-stone-500">Required for billing and tax purposes.</p>
+          </div>
+
+          <Button type="submit" className="w-full">
+            Continue
+          </Button>
+        </div>
       </form>
     </div>
   );
