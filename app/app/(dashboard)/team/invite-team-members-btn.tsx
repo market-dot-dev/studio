@@ -214,10 +214,10 @@ export function InviteTeamMembersBtn() {
                     </div>
                     {invites.length > 1 && (
                       <Button
-                        variant="ghost"
+                        variant="nude"
                         size="icon"
                         onClick={() => removeInvite(invite.id)}
-                        className="-mx-2 h-9 rounded-full text-stone-400 hover:bg-transparent focus:bg-transparent md:h-8"
+                        className="-mx-2 h-9 text-stone-400 md:h-8"
                       >
                         <CircleMinus className="size-4" />
                       </Button>
@@ -229,11 +229,7 @@ export function InviteTeamMembersBtn() {
                 </div>
               ))}
 
-              <Button
-                variant="ghost"
-                onClick={addInvite}
-                className="ml-1.5 w-fit p-0 text-muted-foreground hover:bg-transparent focus:bg-transparent"
-              >
+              <Button variant="nude" onClick={addInvite} className="ml-1.5 p-0">
                 <CirclePlus className="size-4" />
                 Add Teammate
               </Button>
