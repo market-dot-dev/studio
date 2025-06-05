@@ -41,8 +41,38 @@ model Organization {
   prospects     Prospect[]           @relation(name: "prospects")
   sites         Site[]
   invites       OrganizationInvite[]
+  billing       OrganizationBilling?
 
   @@index([ownerId])
+}
+
+enum SubscriptionStatus {
+  FREE_TRIAL /// Custom status for internal trial handling
+  ACTIVE /// The organization has an active paid subscription
+  TRIALING /// Stripe's trial period (if used directly)
+  CANCELED /// The subscription was canceled
+  INCOMPLETE /// Stripe status: incomplete
+  INCOMPLETE_EXPIRED /// Stripe status: incomplete_expired
+  PAST_DUE /// Stripe status: past_due
+  UNPAID /// Stripe status: unpaid
+  EXPIRED /// Custom status for expired trials or subscriptions
+}
+
+model OrganizationBilling {
+  id             String       @id @default(cuid())
+  organizationId String       @unique
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  stripeCustomerId     String?            @unique
+  stripeSubscriptionId String?            @unique
+  stripeProductId      String?
+  trialStartAt         DateTime?
+  trialEndAt           DateTime?
+  subscriptionStatus   SubscriptionStatus @default(FREE_TRIAL)
+  planName             String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum OrganizationRole {
