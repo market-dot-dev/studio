@@ -1,6 +1,6 @@
 "use client";
 
-import { reactivateSubscription } from "@/app/services/billing/subscription-service";
+import { reactivateSubscription } from "@/app/services/billing/connect-subscription-service";
 import {
   AlertDialog,
   AlertDialogAction,

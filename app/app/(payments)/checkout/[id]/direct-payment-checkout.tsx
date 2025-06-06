@@ -3,7 +3,7 @@
 import { SimplePaymentElement } from "@/app/app/(payments)/checkout/[id]/stripe-payment-element";
 import { CHECKOUT_CURRENCY } from "@/app/config/checkout";
 import { Contract, Tier } from "@/app/generated/prisma";
-import { processPayment } from "@/app/services/billing/checkout-service";
+import { processPayment } from "@/app/services/billing/connect-checkout-service";
 import { ContractLink } from "@/components/contracts/contract-link";
 import { CustomerLoginComponent } from "@/components/login/customer-login";
 import { Button } from "@/components/ui/button";

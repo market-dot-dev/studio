@@ -1,6 +1,6 @@
 "use server";
 
-import { createSubscription } from "@/app/services/billing/subscription-service";
+import { createSubscription } from "@/app/services/billing/connect-subscription-service";
 import {
   getCurrentCustomerOrganization,
   getOrCreateStripeCustomerIdForVendor,
@@ -15,7 +15,7 @@ import {
 import { getTierById, getTierByIdForCheckout } from "@/app/services/tier/tier-service";
 import { getCurrentUserSession, requireOrganization } from "@/app/services/user-context-service";
 import { OrganizationForStripeOps } from "@/types/organization";
-import { createLocalCharge } from "./charge-service";
+import { createLocalCharge } from "./connect-charge-service";
 
 interface CheckoutData {
   tier: Awaited<ReturnType<typeof getTierByIdForCheckout>>;
