@@ -5,7 +5,7 @@ import {
   createPaymentMethodSetupIntent,
   detachPaymentMethodForVendor,
   getPaymentMethodDetailsForVendor
-} from "@/app/services/customer-organization-service";
+} from "@/app/services/organization/customer-organization-service";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";

@@ -1,5 +1,5 @@
+import { getCustomersAndProspectsOfVendor } from "@/app/services/organization/vendor-organization-service";
 import { requireOrganization, requireUserSession } from "@/app/services/user-context-service";
-import { getCustomersAndProspectsOfVendor } from "@/app/services/vendor-organization-service";
 import PageHeader from "@/components/common/page-header";
 import DashboardCharts from "@/components/dashboard/dashboard-charts";
 import SalesTable from "./customers/sales/sales-table";

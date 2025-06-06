@@ -4,7 +4,7 @@ import { User } from "@/app/generated/prisma";
 import { organizationIsMarketExpert, validateMarketExpert } from "@/app/services/market-service";
 import { refreshAndGetState } from "@/app/services/onboarding/onboarding-service";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
+import { updateCurrentOrganizationBusiness } from "@/app/services/organization/organization-service";
 import { createSite, updateCurrentSite } from "@/app/services/site/site-crud-service";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";

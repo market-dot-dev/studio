@@ -9,8 +9,8 @@ import {
   includeCustomerOrgWithChargesAndSubs
 } from "@/types/organization-customer";
 import { ErrorMessageCode, HealthCheckResult } from "@/types/stripe";
-import { checkVendorStripeStatusByOrgId } from "./stripe/stripe-vendor-service";
-import { requireOrganization } from "./user-context-service";
+import { checkVendorStripeStatusByOrgId } from "../stripe/stripe-vendor-service";
+import { requireOrganization } from "../user-context-service";
 
 /**
  * Vendor-specific organization operations

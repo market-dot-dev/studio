@@ -1,4 +1,4 @@
-import { getCurrentVendorCustomers } from "@/app/services/vendor-organization-service";
+import { getCurrentVendorCustomers } from "@/app/services/organization/vendor-organization-service";
 import PageHeader from "@/components/common/page-header";
 import RevenueReports from "./reports-tabs";
 
