@@ -13,34 +13,36 @@ export const CustomersTable: React.FC<{
   const showAll = false;
 
   // Transform data for the table
-  const tableData: CustomerTableItem[] = customers.flatMap((customer) => {
-    const allItems = [
-      ...customer.subscriptions.map((sub) => ({
-        id: sub.id,
-        userId: customer.id,
-        userName: customer.owner.name,
-        userOrganization: customer.name,
-        userEmail: customer.owner.email,
-        tierName: sub.tier.name,
-        statusType: "subscription" as const,
-        createdAt: sub.createdAt,
-        subscription: sub
-      })),
-      ...customer.charges.map((charge) => ({
-        id: charge.id,
-        userId: customer.id,
-        userName: customer.owner.name,
-        userOrganization: customer.name,
-        userEmail: customer.owner.email,
-        tierName: charge.tier.name,
-        statusType: "charge" as const,
-        createdAt: charge.createdAt,
-        charge: charge
-      }))
-    ].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  const tableData: CustomerTableItem[] = customers
+    .flatMap((customer) => {
+      const allItems = [
+        ...customer.subscriptions.map((sub) => ({
+          id: sub.id,
+          userId: customer.id,
+          userName: customer.owner.name,
+          userOrganization: customer.name,
+          userEmail: customer.owner.email,
+          tierName: sub.tier.name,
+          statusType: "subscription" as const,
+          createdAt: sub.createdAt,
+          subscription: sub
+        })),
+        ...customer.charges.map((charge) => ({
+          id: charge.id,
+          userId: customer.id,
+          userName: customer.owner.name,
+          userOrganization: customer.name,
+          userEmail: customer.owner.email,
+          tierName: charge.tier.name,
+          statusType: "charge" as const,
+          createdAt: charge.createdAt,
+          charge: charge
+        }))
+      ];
 
-    return allItems;
-  });
+      return allItems;
+    })
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
   const visibleData = showAll ? tableData : tableData.slice(0, maxInitialRows);
 
