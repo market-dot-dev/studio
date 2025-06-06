@@ -66,7 +66,6 @@ const createOrganizations = async (users: User[]) => {
         name: `${user.name}'s Organization`,
         type: OrganizationType.VENDOR,
         ownerId: user.id,
-        company: "market.dev",
         members: {
           create: {
             userId: user.id,

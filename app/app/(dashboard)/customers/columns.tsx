@@ -14,7 +14,7 @@ export type CustomerTableItem = {
   id: string;
   userId: string;
   userName: string | null;
-  userCompany: string | null;
+  userOrganization: string | null;
   userEmail: string | null;
   tierName: string;
   statusType: "subscription" | "charge";
@@ -62,7 +62,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
     }
   },
   {
-    accessorKey: "userCompany",
+    accessorKey: "userOrganization",
     header: "Organization",
     cell: ({ row, table }) => {
       // Check if this is the first row for this customer
@@ -77,7 +77,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
         }
       }
 
-      return row.original.userCompany || "(unknown)";
+      return row.original.userOrganization || "-";
     }
   },
   {

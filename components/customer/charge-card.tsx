@@ -49,7 +49,7 @@ const ChargeCard = async ({
               </span>
               <div className="flex items-center gap-1.5">
                 <Store size={14} strokeWidth={2.25} />
-                <span className="font-medium">{tier.organization.projectName}</span>
+                <span className="font-medium">{tier.organization.name}</span>
               </div>
             </div>
           )}

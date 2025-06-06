@@ -15,7 +15,6 @@ interface ProductInfoProps {
 }
 
 export function ProductInfo({ tier, vendor, isAnnual }: ProductInfoProps) {
-  const checkoutProject = vendor?.projectName || vendor?.name;
   const checkoutPrice = isAnnual ? tier.priceAnnual : tier.price;
   const shortenedCadence = getShortenedCadence(isAnnual ? "year" : tier.cadence);
   const trialDays = tier.trialDays || 0;
@@ -29,7 +28,7 @@ export function ProductInfo({ tier, vendor, isAnnual }: ProductInfoProps) {
           <div className="flex size-7 items-center justify-center rounded bg-white text-stone-600 shadow-border">
             <Store size={16} />
           </div>
-          <span className="font-semibold tracking-tightish">{checkoutProject}</span>
+          <span className="font-semibold tracking-tightish">{vendor?.name}</span>
         </div>
 
         <div className="flex flex-col gap-6">
