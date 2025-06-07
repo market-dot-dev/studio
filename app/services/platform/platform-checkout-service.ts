@@ -1,6 +1,7 @@
 "use server";
 
 import { getRootUrl } from "@/lib/domain";
+import { redirect } from "next/navigation";
 import Stripe from "stripe";
 import { PlanPricing } from "../../../types/platform";
 import { createStripeClient } from "../stripe/create-stripe-client";
@@ -29,7 +30,7 @@ export async function getPlanPricing(): Promise<PlanPricing> {
 /**
  * Create a Stripe checkout session for platform subscription
  */
-export async function createCheckoutSession(priceId: string): Promise<{ url: string }> {
+export async function createCheckoutSession(priceId: string): Promise<void> {
   const org = await requireOrganization();
   const user = await requireUser();
   const stripe = await createStripeClient(); // Platform uses main Stripe account, not Connect
@@ -83,11 +84,7 @@ export async function createCheckoutSession(priceId: string): Promise<{ url: str
     }
   });
 
-  if (!session.url) {
-    throw new Error("Failed to create checkout session");
-  }
-
-  return { url: session.url };
+  redirect(session.url!);
 }
 
 /**
