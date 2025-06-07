@@ -1,4 +1,5 @@
 import { handleSubscriptionChange } from "@/app/services/platform";
+import { clearPricingCache } from "@/app/services/platform/platform-pricing-service";
 import { createStripeClient } from "@/app/services/stripe/create-stripe-client";
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -27,6 +28,13 @@ export async function POST(request: NextRequest) {
     case "customer.subscription.deleted": {
       const subscription: Stripe.Subscription = event.data.object;
       await handleSubscriptionChange(subscription);
+      break;
+    }
+    case "price.updated":
+    case "product.updated": {
+      // Clear pricing cache when prices or products change
+      await clearPricingCache();
+      console.log("Cleared pricing cache due to price/product update");
       break;
     }
     default:

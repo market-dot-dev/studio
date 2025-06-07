@@ -12,6 +12,20 @@ export type PlanPricing = {
   };
 };
 
+export interface CachedPrice {
+  id: string;
+  amount: number;
+  currency: string;
+  interval?: string;
+}
+
+export interface PricingData {
+  basic_monthly: CachedPrice;
+  basic_annually: CachedPrice;
+  pro_monthly: CachedPrice;
+  pro_annually: CachedPrice;
+}
+
 export interface SubscriptionInfo {
   isTrialActive: boolean;
   isTrialExpired: boolean;

@@ -1,7 +1,6 @@
 "use server";
 
-import { getCurrentBilling, getPlanPricing } from "@/app/services/platform";
-import { requireOrganization } from "@/app/services/user-context-service";
+import { getCachedPricing, getCurrentBilling, getPlanPricing } from "@/app/services/platform";
 import { getPlanDisplayName, getSubscriptionInfo } from "@/utils/subscription-utils";
 import { CheckoutStatusBanner } from "./checkout-status-banner";
 import { PlanInformation } from "./plan-information";
@@ -9,9 +8,9 @@ import { PricingTable } from "./pricing-table";
 import { StripeCustomerPortal } from "./stripe-customer-portal";
 
 export default async function BillingSettingsPage() {
-  const org = await requireOrganization();
   const billing = await getCurrentBilling();
   const planPricing = await getPlanPricing();
+  const pricingData = await getCachedPricing();
 
   const subscriptionInfo = getSubscriptionInfo(billing);
   const planDisplayName = getPlanDisplayName(subscriptionInfo.currentPlanName);
@@ -32,7 +31,7 @@ export default async function BillingSettingsPage() {
       <div id="pricing-plans">
         <h2 className="mb-2 text-2xl font-bold">Available plans</h2>
         <p className="mb-6 text-muted-foreground">Choose the plan that best fits your needs.</p>
-        <PricingTable priceIds={planPricing} />
+        <PricingTable priceIds={planPricing} pricingData={pricingData} />
       </div>
     </div>
   );

@@ -6,19 +6,22 @@ import { PlanPricing } from "../../../types/platform";
 import { createStripeClient } from "../stripe/create-stripe-client";
 import { requireOrganization, requireUser } from "../user-context-service";
 import { getOrCreateBilling, updateCurrentBilling } from "./platform-billing-service";
+import { getCachedPricing } from "./platform-pricing-service";
 
 /**
- * Get platform plan pricing configuration
+ * Get platform plan pricing configuration from Stripe
  */
 export async function getPlanPricing(): Promise<PlanPricing> {
+  const pricing = await getCachedPricing();
+
   return {
     basic: {
-      monthly: process.env.PLATFORM_STRIPE_BASIC_MONTHLY_PRICE_ID ?? "",
-      yearly: process.env.PLATFORM_STRIPE_BASIC_YEARLY_PRICE_ID ?? ""
+      monthly: pricing.basic_monthly.id,
+      yearly: pricing.basic_annually.id
     },
     pro: {
-      monthly: process.env.PLATFORM_STRIPE_PRO_MONTHLY_PRICE_ID ?? "",
-      yearly: process.env.PLATFORM_STRIPE_PRO_YEARLY_PRICE_ID ?? ""
+      monthly: pricing.pro_monthly.id,
+      yearly: pricing.pro_annually.id
     }
   };
 }

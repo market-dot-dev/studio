@@ -1,20 +1,25 @@
 "use client";
 
 import { Switch } from "@/components/ui/switch";
-import { PlanPricing } from "@/types/platform";
+import { PlanPricing, PricingData } from "@/types/platform";
 import { useState } from "react";
 import { PricingTableCard } from "./pricing-table-card";
 
 interface PricingTableProps {
   priceIds: PlanPricing;
+  pricingData: PricingData;
   className?: string;
 }
 
-export function PricingTable({ priceIds, className }: PricingTableProps) {
+export function PricingTable({ priceIds, pricingData, className }: PricingTableProps) {
   const [isAnnual, setIsAnnual] = useState(true);
 
-  const calculatePrice = (monthlyPrice: number) => {
-    return `€${monthlyPrice}`;
+  const formatPrice = (amount: number, currency: string) => {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: currency.toUpperCase(),
+      minimumFractionDigits: 0
+    }).format(amount / 100); // Convert from cents
   };
 
   return (
@@ -39,7 +44,10 @@ export function PricingTable({ priceIds, className }: PricingTableProps) {
         <PricingTableCard
           title="Basic"
           tagline="Ideal for freelancers & small teams"
-          price={calculatePrice(60)} // Monthly price, €60/month without discount
+          price={formatPrice(
+            isAnnual ? pricingData.basic_annually.amount : pricingData.basic_monthly.amount,
+            isAnnual ? pricingData.basic_annually.currency : pricingData.basic_monthly.currency
+          )}
           isAnnual={isAnnual}
           features={[
             { text: "AI-driven project setup" },
@@ -55,7 +63,10 @@ export function PricingTable({ priceIds, className }: PricingTableProps) {
         <PricingTableCard
           title="Pro"
           tagline="Perfect for growing agencies"
-          price={calculatePrice(180)} // Monthly price, €180/month without discount
+          price={formatPrice(
+            isAnnual ? pricingData.pro_annually.amount : pricingData.pro_monthly.amount,
+            isAnnual ? pricingData.pro_annually.currency : pricingData.pro_monthly.currency
+          )}
           isAnnual={isAnnual}
           features={[
             { text: "AI-driven project setup" },
