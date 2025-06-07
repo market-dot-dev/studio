@@ -1,5 +1,3 @@
-"use server";
-
 import { SubscriptionStatus } from "@/app/generated/prisma";
 import Stripe from "stripe";
 
@@ -13,6 +11,17 @@ export type PlanPricing = {
     yearly: string;
   };
 };
+
+export interface SubscriptionInfo {
+  isTrialActive: boolean;
+  isTrialExpired: boolean;
+  isSubscriptionActive: boolean;
+  daysLeft: number;
+  trialEnd: Date | null;
+  currentPlanName: string | null;
+  statusText: string;
+  statusType: "trial" | "active" | "expired" | "inactive";
+}
 
 export function mapStripeStatusToSubscriptionStatus(
   status: Stripe.Subscription.Status

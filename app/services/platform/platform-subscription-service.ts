@@ -1,5 +1,6 @@
 "use server";
 
+import Stripe from "stripe";
 import { mapStripeStatusToSubscriptionStatus } from "../../../types/platform";
 import { createStripeClient } from "../stripe/create-stripe-client";
 import { getBillingByStripeCustomerId, updateBilling } from "./platform-billing-service";
@@ -7,9 +8,7 @@ import { getBillingByStripeCustomerId, updateBilling } from "./platform-billing-
 /**
  * Handle subscription changes from Stripe webhooks
  */
-export async function handleSubscriptionChange(
-  subscription: any // Stripe.Subscription
-): Promise<void> {
+export async function handleSubscriptionChange(subscription: Stripe.Subscription): Promise<void> {
   const customerId = subscription.customer as string;
   const subscriptionId = subscription.id;
   const status = subscription.status;
@@ -27,10 +26,10 @@ export async function handleSubscriptionChange(
 
     // Fetch the product details to get the name
     let planName = "";
-    if (plan?.product) {
+    if (plan?.product && typeof plan.product === "string") {
       try {
         const stripe = await createStripeClient();
-        const product = await stripe.products.retrieve(plan.product as string);
+        const product = await stripe.products.retrieve(plan.product);
         planName = product.name; // Use the product name instead of price nickname
       } catch (error) {
         console.error("Error fetching product details:", error);
@@ -39,7 +38,7 @@ export async function handleSubscriptionChange(
 
     await updateBilling(billing.organizationId, {
       stripeSubscriptionId: subscriptionId,
-      stripeProductId: plan?.product as string,
+      stripeProductId: typeof plan?.product === "string" ? plan.product : null,
       planName: planName,
       subscriptionStatus: mappedStatus
     });

@@ -52,10 +52,14 @@ export async function GET(request: NextRequest) {
       throw new Error("No plan found for this subscription.");
     }
 
-    const productId = (plan.product as Stripe.Product).id;
-    if (!productId) {
-      throw new Error("No product ID found for this subscription.");
+    // Type guard to ensure we have a product object with id
+    if (!plan.product || typeof plan.product === "string" || !plan.product.id) {
+      throw new Error("Invalid product data for this subscription.");
     }
+
+    const product = plan.product as Stripe.Product;
+    const productId = product.id;
+    const planName = product.name;
 
     const clientReferenceId = session.client_reference_id;
     if (!clientReferenceId) {
@@ -78,7 +82,7 @@ export async function GET(request: NextRequest) {
       stripeCustomerId: customerId,
       stripeSubscriptionId: subscriptionId,
       stripeProductId: productId,
-      planName: (plan.product as Stripe.Product).name,
+      planName: planName,
       subscriptionStatus: mappedStatus
     });
 

@@ -1,6 +1,7 @@
 "use server";
 
 import { getRootUrl } from "@/lib/domain";
+import Stripe from "stripe";
 import { PlanPricing } from "../../../types/platform";
 import { createStripeClient } from "../stripe/create-stripe-client";
 import { requireOrganization, requireUser } from "../user-context-service";
@@ -9,7 +10,7 @@ import { getOrCreateBilling, updateCurrentBilling } from "./platform-billing-ser
 /**
  * Get platform plan pricing configuration
  */
-export function getPlanPricing(): PlanPricing {
+export async function getPlanPricing(): Promise<PlanPricing> {
   return {
     basic: {
       monthly: process.env.PLATFORM_STRIPE_BASIC_MONTHLY_PRICE_ID ?? "",
@@ -98,13 +99,13 @@ export async function createCustomerPortalSession(): Promise<{ url: string }> {
   }
 
   const configurations = await stripe.billingPortal.configurations.list();
-  const planPricing = getPlanPricing();
+  const planPricing = await getPlanPricing();
 
   // Get basic and pro prices objects to get their product IDs
   const basicPrice = await stripe.prices.retrieve(planPricing.basic.monthly);
   const proPrice = await stripe.prices.retrieve(planPricing.pro.monthly);
 
-  const configurationSettings: any = {
+  const configurationSettings: Stripe.BillingPortal.ConfigurationCreateParams = {
     business_profile: {
       headline: "Manage your platform subscription",
       privacy_policy_url: process.env.PRIVACY_POLICY_URL,
