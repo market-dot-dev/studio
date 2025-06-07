@@ -14,12 +14,15 @@ interface PricingTableProps {
 export function PricingTable({ priceIds, pricingData, className }: PricingTableProps) {
   const [isAnnual, setIsAnnual] = useState(true);
 
-  const formatPrice = (amount: number, currency: string) => {
+  const formatPrice = (amount: number, currency: string, isAnnualPrice: boolean = false) => {
+    // If it's an annual price, divide by 12 to show monthly equivalent
+    const displayAmount = isAnnualPrice ? amount / 12 : amount;
+
     return new Intl.NumberFormat("en-US", {
       style: "currency",
       currency: currency.toUpperCase(),
       minimumFractionDigits: 0
-    }).format(amount / 100); // Convert from cents
+    }).format(displayAmount / 100); // Convert from cents
   };
 
   return (
@@ -46,7 +49,8 @@ export function PricingTable({ priceIds, pricingData, className }: PricingTableP
           tagline="Ideal for freelancers & small teams"
           price={formatPrice(
             isAnnual ? pricingData.basic_annually.amount : pricingData.basic_monthly.amount,
-            isAnnual ? pricingData.basic_annually.currency : pricingData.basic_monthly.currency
+            isAnnual ? pricingData.basic_annually.currency : pricingData.basic_monthly.currency,
+            isAnnual // Pass true if showing annual price
           )}
           isAnnual={isAnnual}
           features={[
@@ -65,7 +69,8 @@ export function PricingTable({ priceIds, pricingData, className }: PricingTableP
           tagline="Perfect for growing agencies"
           price={formatPrice(
             isAnnual ? pricingData.pro_annually.amount : pricingData.pro_monthly.amount,
-            isAnnual ? pricingData.pro_annually.currency : pricingData.pro_monthly.currency
+            isAnnual ? pricingData.pro_annually.currency : pricingData.pro_monthly.currency,
+            isAnnual // Pass true if showing annual price
           )}
           isAnnual={isAnnual}
           features={[
