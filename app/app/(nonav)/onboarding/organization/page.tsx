@@ -6,7 +6,7 @@ import {
 } from "@/app/services/site/site-crud-service";
 import { uploadLogo } from "@/app/services/site/site-media-service";
 import { validateSubdomain } from "@/app/services/site/site-subdomain-service";
-import { requireOrganization } from "@/app/services/user-context-service";
+import { getCurrentOrganization, requireOrganization } from "@/app/services/user-context-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -82,7 +82,7 @@ async function submitOrganizationData(formData: FormData) {
 
     // Update organization business information
     await updateCurrentOrganizationBusiness({
-      projectName: organizationName,
+      name: organizationName,
       businessLocation: country,
       businessType: "individual" // Default for now
     });
@@ -110,78 +110,89 @@ async function submitOrganizationData(formData: FormData) {
     }
   }
 
-  // Navigate to next step (outside try-catch)
-  redirect("/onboarding/stripe");
+  redirect("/onboarding/team");
 }
 
 export default async function OrganizationOnboardingPage() {
+  // Fetch current organization and site data for pre-filling
+  const organization = await getCurrentOrganization();
+  const currentSite = await getCurrentSite();
+
   return (
-    <div className="space-y-6">
-      <div className="text-center">
-        <h1 className="text-2xl font-bold tracking-tight">Create your Organization</h1>
-        <p className="mt-2 text-sm text-stone-500">
-          We'll use this information to set up your store and handle billing.
-        </p>
-      </div>
+    <div className="mx-auto max-w-md">
+      <div className="space-y-10">
+        <div className="flex flex-col items-center text-center">
+          <h1 className="mb-2 text-2xl font-bold tracking-tight">Create your Organization</h1>
+          <p className="text-sm text-muted-foreground">
+            Set up your organization to start building your business on market.dev
+          </p>
+        </div>
 
-      <form action={submitOrganizationData} className="flex flex-col gap-6">
-        <FileUploadClient />
+        <form action={submitOrganizationData} className="flex flex-col gap-10">
+          <div className="space-y-6">
+            <div className="flex flex-col gap-6 sm:flex-row">
+              <FileUploadClient currentLogo={currentSite?.logo} />
 
-        <div className="space-y-6">
-          {/* Organization Name */}
-          <div className="space-y-2">
-            <Label htmlFor="organizationName">Organization Name</Label>
-            <Input
-              id="organizationName"
-              name="organizationName"
-              placeholder="Your Organization Name"
-              required
-            />
-          </div>
+              <div className="space-y-6">
+                {/* Organization Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="organizationName">Organization Name</Label>
+                  <Input
+                    id="organizationName"
+                    name="organizationName"
+                    placeholder="Your Organization Name"
+                    defaultValue={organization?.name || ""}
+                    required
+                  />
+                </div>
 
-          {/* Domain */}
-          <div className="space-y-2">
-            <Label htmlFor="subdomain">Domain</Label>
-            <div className="flex items-center rounded bg-white shadow-border-sm">
-              <Input
-                id="subdomain"
-                name="subdomain"
-                placeholder="your-domain"
-                className="rounded-r-none border-0 shadow-none"
-                required
-              />
-              <span className="border-l border-stone-200 px-3 py-1.5 text-sm text-stone-500">
-                .market.dev
-              </span>
+                {/* Domain */}
+                <div className="space-y-2">
+                  <Label htmlFor="subdomain">Domain</Label>
+                  <div className="flex items-center rounded bg-white shadow-border-sm">
+                    <Input
+                      id="subdomain"
+                      name="subdomain"
+                      placeholder="your-domain"
+                      defaultValue={currentSite?.subdomain || ""}
+                      className="rounded-r-none border-0 shadow-none"
+                      required
+                    />
+                    <span className="inline-flex h-9 items-center border-l border-stone-200 px-3 text-sm text-stone-500 md:h-8">
+                      .market.dev
+                    </span>
+                  </div>
+                  <p className="text-xs text-stone-500">
+                    Your dashboard, checkout links, and custom landing page will be available at
+                    this URL.
+                  </p>
+                </div>
+              </div>
             </div>
-            <p className="text-xs text-stone-500">
-              Your dashboard, checkout links, and custom landing page will be available at this URL.
-            </p>
-          </div>
-
-          {/* Country */}
-          <div className="space-y-2">
-            <Label htmlFor="country">Country</Label>
-            <Select name="country" required>
-              <SelectTrigger>
-                <SelectValue placeholder="Select your country" />
-              </SelectTrigger>
-              <SelectContent>
-                {COUNTRIES.map((c) => (
-                  <SelectItem key={c.code} value={c.code}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-stone-500">Required for billing and tax purposes.</p>
+            {/* Country */}
+            <div className="space-y-2">
+              <Label htmlFor="country">Country</Label>
+              <Select name="country" defaultValue={organization?.businessLocation || ""} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select your country" />
+                </SelectTrigger>
+                <SelectContent>
+                  {COUNTRIES.map((c) => (
+                    <SelectItem key={c.code} value={c.code}>
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <p className="text-xs text-stone-500">Required for billing and tax purposes.</p>
+            </div>
           </div>
 
           <Button type="submit" className="w-full">
             Continue
           </Button>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

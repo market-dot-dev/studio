@@ -5,7 +5,11 @@ import { ImageIcon } from "lucide-react";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 
-export function FileUploadClient() {
+interface FileUploadClientProps {
+  currentLogo?: string | null;
+}
+
+export function FileUploadClient({ currentLogo }: FileUploadClientProps) {
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -68,11 +72,12 @@ export function FileUploadClient() {
   return (
     <div className="space-y-2">
       <Label htmlFor="logo">
-        Logo <span className="ml-1 text-xs font-normal text-muted-foreground">Optional</span>
+        Logo
+        {/* <span className="ml-1 text-xs font-normal text-muted-foreground">Optional</span> */}
       </Label>
       <button
         type="button"
-        className={`flex h-32 w-full cursor-pointer items-center justify-center rounded border border-dashed transition-colors ${
+        className={`flex h-[120px] w-full cursor-pointer items-center justify-center rounded border border-dashed transition-colors sm:size-[120px] md:size-[110px] ${
           isDragOver
             ? "border-stone-400 bg-stone-200"
             : "border-stone-300 bg-stone-200/50 hover:border-stone-400"
@@ -86,16 +91,16 @@ export function FileUploadClient() {
           <img
             src={previewUrl}
             alt="Logo preview"
-            className="max-h-20 max-w-20 rounded object-contain"
+            className="max-h-16 max-w-16 rounded object-contain"
+          />
+        ) : currentLogo ? (
+          <img
+            src={currentLogo}
+            alt="Current logo"
+            className="max-h-16 max-w-16 rounded object-contain"
           />
         ) : (
-          <div className="text-center">
-            <ImageIcon className="mx-auto size-5 text-muted-foreground" />
-            <p className="mb-1 mt-2 text-xs font-medium text-muted-foreground">
-              Click to upload or drag & drop
-            </p>
-            <p className="text-xs text-muted-foreground">PNG, JPG up to 5MB</p>
-          </div>
+          <ImageIcon className="mx-auto size-5 text-muted-foreground" />
         )}
       </button>
       <input
