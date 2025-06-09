@@ -1,10 +1,18 @@
 import { refreshAndGetState } from "@/app/services/onboarding/onboarding-service";
 import { Button } from "@/components/ui/button";
-import { CheckCircle, Package, Rocket, Users } from "lucide-react";
-import Link from "next/link";
+import {
+  ArrowRight,
+  Code,
+  Globe,
+  Link as LinkIcon,
+  Package,
+  Settings,
+  Share2,
+  Store
+} from "lucide-react";
 import { redirect } from "next/navigation";
 
-async function createFirstTier() {
+async function finalizeTiers() {
   "use server";
 
   // Update the onboarding state to mark completion
@@ -18,23 +26,9 @@ async function createFirstTier() {
   redirect("/tiers/new");
 }
 
-async function goToDashboard() {
-  "use server";
-
-  // Update the onboarding state to mark completion
-  try {
-    await refreshAndGetState();
-  } catch (error) {
-    console.error("Error updating onboarding state:", error);
-  }
-
-  // Navigate to dashboard
-  redirect("/");
-}
-
 export default async function OnboardingCompletePage() {
   return (
-    <div className="mx-auto max-w-md">
+    <div className="mx-auto max-w-2xl">
       <div className="space-y-8">
         {/* Success Header */}
         <div className="flex flex-col items-center text-center">
@@ -42,95 +36,111 @@ export default async function OnboardingCompletePage() {
           <p className="text-sm text-muted-foreground">Your market.dev store is ready to use</p>
         </div>
 
-        {/* Next Steps */}
-        <div className="space-y-6">
-          <h2 className="text-lg font-semibold">
-            Your next step: Create your first service package
-          </h2>
-
-          <div className="rounded-lg border-2 border-dashed border-stone-300 p-6">
-            <div className="text-center">
-              <Package className="mx-auto size-12 text-stone-400" />
-              <h3 className="mt-4 text-lg font-medium">Create Your First Service Package</h3>
-              <p className="mt-2 text-sm text-stone-600">
-                Set up a service package to start sharing your expertise and getting customers. This
-                is where you'll define what you offer, set your price, and create a compelling
-                description.
+        {/* Timeline Steps */}
+        <div className="space-y-8">
+          {/* Step 1: Finalize Packages */}
+          <div className="relative flex gap-4">
+            <div className="flex flex-col items-center">
+              <div className="flex size-10 items-center justify-center rounded-full border-2 bg-white">
+                <Package className="size-5 text-blue-600" />
+              </div>
+              <div className="h-full w-0.5 bg-gray-200" />
+            </div>
+            <div className="flex-1 space-y-2 pb-8">
+              <h3 className="text-lg font-semibold">Finalize Your Packages</h3>
+              <p className="text-sm text-muted-foreground">
+                Update pricing, messaging, and settings like trials, annual plans, and checkout
+                experience (contact form or standard checkout).
               </p>
-
-              <form action={createFirstTier} className="mt-6">
-                <Button type="submit">
-                  <Package className="mr-2 size-4" />
-                  Create Service Package
-                </Button>
-              </form>
             </div>
           </div>
 
-          {/* What You Can Do */}
-          <div className="space-y-4">
-            <h3 className="font-medium text-stone-900">What you can do with service packages:</h3>
-
-            <div className="grid gap-4">
-              <div className="flex items-start space-x-3 rounded-lg border p-4">
-                <Users className="mt-1 size-5 text-blue-600" />
-                <div>
-                  <h4 className="font-medium">Attract customers</h4>
-                  <p className="text-sm text-stone-600">
-                    Share your service packages to attract potential customers who need your
-                    expertise.
-                  </p>
-                </div>
+          {/* Step 2: Set Up Channels */}
+          <div className="relative flex gap-4">
+            <div className="flex flex-col items-center">
+              <div className="flex size-10 items-center justify-center rounded-full border-2 bg-white">
+                <Share2 className="size-5 text-green-600" />
+              </div>
+              <div className="h-full w-0.5 bg-gray-200" />
+            </div>
+            <div className="flex-1 space-y-6 pb-8">
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold">Set Up Your Channels</h3>
+                <p className="text-sm text-muted-foreground">
+                  Choose how to showcase and distribute your packages across different channels.
+                </p>
               </div>
 
-              <div className="flex items-start space-x-3 rounded-lg border p-4">
-                <Rocket className="mt-1 size-5 text-green-600" />
-                <div>
-                  <h4 className="font-medium">Generate leads</h4>
-                  <p className="text-sm text-stone-600">
-                    Track inquiries and manage potential customers through your dashboard.
-                  </p>
+              {/* Channel Options */}
+              <div className="grid gap-4 pl-4">
+                <div className="flex items-start gap-3">
+                  <LinkIcon className="mt-1 size-4 text-blue-500" />
+                  <div>
+                    <h4 className="font-medium">Checkout Links</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Share direct links to your package checkout pages
+                    </p>
+                  </div>
                 </div>
-              </div>
 
-              <div className="flex items-start space-x-3 rounded-lg border p-4">
-                <CheckCircle className="mt-1 size-5 text-purple-600" />
-                <div>
-                  <h4 className="font-medium">Close deals</h4>
-                  <p className="text-sm text-stone-600">
-                    Convert interested prospects into paying customers with clear service offerings.
-                  </p>
+                <div className="flex items-start gap-3">
+                  <Globe className="mt-1 size-4 text-purple-500" />
+                  <div>
+                    <h4 className="font-medium">Landing Page</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Create a dedicated page to showcase all your packages
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Code className="mt-1 size-4 text-orange-500" />
+                  <div>
+                    <h4 className="font-medium">Embeds</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Embed your packages directly on your website or blog
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <Store className="mt-1 size-4 text-emerald-500" />
+                  <div>
+                    <h4 className="font-medium">Marketplace</h4>
+                    <p className="text-sm text-muted-foreground">
+                      List your packages in the market.dev marketplace
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Alternative Action */}
-          <div className="text-center">
-            <p className="mb-4 text-sm text-stone-500">
-              Not ready to create a service package yet?
-            </p>
-            <form action={goToDashboard}>
-              <Button type="submit" variant="outline">
-                Explore Dashboard
-              </Button>
-            </form>
+          {/* Step 3: Start Selling */}
+          <div className="relative flex gap-4">
+            <div className="flex flex-col items-center">
+              <div className="flex size-10 items-center justify-center rounded-full border-2 bg-white">
+                <Settings className="size-5 text-indigo-600" />
+              </div>
+            </div>
+            <div className="flex-1 space-y-2">
+              <h3 className="text-lg font-semibold">Share Your Packages & Start Selling</h3>
+              <p className="text-sm text-muted-foreground">
+                Distribute your packages through your preferred channels and start accepting
+                customers.
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Help Text */}
-        <div className="rounded-lg bg-stone-50 p-4 text-center">
-          <p className="text-sm text-stone-600">
-            Need help getting started? Check out our{" "}
-            <Link href="/help" className="font-medium text-stone-900 underline">
-              getting started guide
-            </Link>{" "}
-            or{" "}
-            <Link href="/support" className="font-medium text-stone-900 underline">
-              contact support
-            </Link>
-            .
-          </p>
+        {/* Next Step Button */}
+        <div className="flex justify-center pt-4">
+          <form action={finalizeTiers}>
+            <Button type="submit" size="lg">
+              Finalize My Packages
+              <ArrowRight className="ml-2 size-4" />
+            </Button>
+          </form>
         </div>
       </div>
     </div>
