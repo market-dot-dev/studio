@@ -47,7 +47,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "@radix-ui/themes": "^3.2.1",
     "@sendgrid/mail": "^8.1.5",
-    "@sentry/nextjs": "^9.26.0",
+    "@sentry/nextjs": "^9.27.0",
     "@stripe/react-stripe-js": "^3.7.0",
     "@stripe/stripe-js": "^7.3.1",
     "@tanstack/react-table": "^8.21.3",
