@@ -10,8 +10,8 @@ export function ProgressDonut({ currentStep, totalSteps, className = "" }: Progr
   const progressPercentage = (currentStep / totalSteps) * 100;
   const isCompleted = currentStep === totalSteps;
 
-  const size = 14;
-  const strokeWidth = 1.75;
+  const size = 20;
+  const strokeWidth = 2.5;
   const radius = (size - strokeWidth) / 2;
   const circumference = radius * 2 * Math.PI;
   const strokeDasharray = circumference;

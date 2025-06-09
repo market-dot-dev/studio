@@ -26,10 +26,10 @@ export default function DescriptionToTiersVisualization() {
 
       {/* Tier Cards Preview */}
       <div>
-        <div className="flex items-center justify-center">
-          <div className="-mr-6 mt-2 h-14 w-10 -rotate-6 rounded-sm bg-white shadow-border" />
-          <div className="z-[1] h-16 w-12 rounded-sm bg-white shadow-border-md" />
-          <div className="-ml-6 mt-2 h-14  w-10 rotate-6 rounded-sm bg-white shadow-border" />
+        <div className="flex -translate-y-1 items-center justify-center">
+          <div className="-mr-6 mt-2 h-14 w-10 -rotate-6 rounded-[3px] bg-white shadow-border" />
+          <div className="z-[1] h-16 w-12 rounded-[3px] bg-white shadow-border-md" />
+          <div className="-ml-6 mt-2 h-14  w-10 rotate-6 rounded-[3px] bg-white shadow-border" />
         </div>
       </div>
     </div>

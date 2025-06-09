@@ -28,7 +28,7 @@ export default function BusinessDescriptionForm({
   return (
     <form action={formAction} className="mt- flex flex-col gap-8">
       <div>
-        <h2 className="mb-3 ml-2 text-sm font-semibold tracking-tightish text-foreground">
+        <h2 className="mb-3 ml-3 text-sm font-semibold tracking-tightish text-foreground">
           Tell us about your business
         </h2>
         <Textarea
@@ -40,7 +40,7 @@ export default function BusinessDescriptionForm({
           defaultValue={state?.fields?.businessDescription || existingDescription}
         />
 
-        <div className="pl-3">
+        <div className="pl-3.5">
           {state?.error && (
             <div className="mb-4">
               <p className="text-xs text-destructive">{state.error}</p>
@@ -114,7 +114,7 @@ export default function BusinessDescriptionForm({
             </Button>
           </div>
           <Button variant="ghost" className="w-full text-muted-foreground" asChild>
-            <Link href="/onboarding/organization">Skip, I'll make them later</Link>
+            <Link href="/onboarding/organization">Skip, I'll make my own later</Link>
           </Button>
         </div>
       </div>

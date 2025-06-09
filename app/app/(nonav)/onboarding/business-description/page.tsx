@@ -18,7 +18,7 @@ export default async function BusinessDescriptionPage() {
             Welcome to market.dev
           </h1>
           <p className="max-w-sm text-sm text-muted-foreground">
-            We'll take you through a few steps to get your business set up & ready to sell.
+            You're just a few steps from getting your business set up & ready to sell.
           </p>
         </div>
 
@@ -35,9 +35,9 @@ export default async function BusinessDescriptionPage() {
             </p>
           </div>
           <DescriptionToTiersVisualization />
-          <p className="mt-2 text-xs text-muted-foreground">
-            <Pencil size="14" className="mr-1 inline-block -translate-y-px" /> You can edit & delete
-            them or make more later.
+          <p className="mt-1 text-xs text-muted-foreground">
+            <Pencil size="14" className="mr-1 inline-block -translate-y-px" /> You can edit these
+            packages or make your own later.
           </p>
         </div>
 
