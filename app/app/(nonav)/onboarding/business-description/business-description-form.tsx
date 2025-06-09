@@ -26,7 +26,7 @@ export default function BusinessDescriptionForm({
   const [state, formAction, pending] = useActionState(submitAction, initialState);
 
   return (
-    <form action={formAction} className="mt- flex flex-col gap-10">
+    <form action={formAction} className="mt- flex flex-col gap-14">
       <div>
         <h2 className="mb-3 ml-2 text-sm font-semibold tracking-tightish text-foreground">
           Tell us about your business
@@ -76,7 +76,8 @@ export default function BusinessDescriptionForm({
               <p className="text-xs font-semibold text-foreground">Custom Landing Page</p>
             </div>
             <p className="max-w-[250px] text-pretty text-xs text-muted-foreground">
-              We'll also use this description to draft up a landing page you can customize later.
+              We'll also use this description to draft your landing page. You can customize it
+              later.
             </p>
           </div>
 
@@ -115,7 +116,7 @@ export default function BusinessDescriptionForm({
                 loadingText="Generating draft packages"
               >
                 <PackagePlus />
-                Generate draft packages
+                Generate my draft packages
               </Button>
             </div>
             <Button variant="ghost" className="w-full text-muted-foreground" asChild>
