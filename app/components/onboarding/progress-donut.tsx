@@ -21,10 +21,10 @@ export function ProgressDonut({ currentStep, totalSteps, className = "" }: Progr
     <div className={`flex items-center justify-center ${className}`}>
       {isCompleted ? (
         <span
-          style={{ height: "16px", width: "16px" }}
-          className="flex -translate-x-px -translate-y-px items-center justify-center rounded-full bg-success"
+          style={{ height: size, width: size }}
+          className="flex -translate-x-px -translate-y-px items-center justify-center rounded-full bg-stone-900"
         >
-          <Check strokeWidth={3.5} size={10} className=" text-white" />
+          <Check strokeWidth={3} size={12} className=" text-white" />
         </span>
       ) : (
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
