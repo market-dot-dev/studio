@@ -124,7 +124,7 @@ export default async function OrganizationOnboardingPage() {
         <div className="flex flex-col items-center text-center">
           <h1 className="mb-2 text-2xl font-bold tracking-tight">Create your Organization</h1>
           <p className="text-sm text-muted-foreground">
-            Set up your organization to start building your business on market.dev
+            We'll use your info to brand your dashboard and checkout links.
           </p>
         </div>
 
