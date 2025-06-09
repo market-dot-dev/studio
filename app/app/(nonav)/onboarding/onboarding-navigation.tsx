@@ -32,10 +32,15 @@ const ONBOARDING_STEPS = {
     isFirst: false,
     previous: "/onboarding/team"
   },
-  "/onboarding/complete": {
+  "/onboarding/pricing": {
     step: 6,
     isFirst: false,
     previous: "/onboarding/stripe"
+  },
+  "/onboarding/complete": {
+    step: 7,
+    isFirst: false,
+    previous: "/onboarding/pricing"
   }
 } as const;
 
@@ -64,7 +69,7 @@ export function OnboardingNavigation() {
 
       <ProgressDonut
         currentStep={currentStep?.step || 1}
-        totalSteps={6}
+        totalSteps={7}
         className="absolute right-0 md:right-1"
       />
     </>
