@@ -3,7 +3,7 @@ import { requireOrganization } from "@/app/services/user-context-service";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PackageCheck } from "lucide-react";
+import { Check, PackageCheck } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -103,11 +103,12 @@ function GeneratedTierCard({ tier }: { tier: TierCardData }) {
         </div>
 
         <div className="flex flex-col gap-4">
-          <div className="text-sm text-muted-foreground">
-            {tier.description.split("\n").map((line, index) => (
-              <p key={index}>{line}</p>
-            ))}
-          </div>
+          {tier.description.split("\n").map((line, index) => (
+            <div key={index} className="flex items-start gap-2 text-sm text-muted-foreground">
+              <Check strokeWidth={2.25} className="mt-0.5 size-4 shrink-0 text-success" />
+              <p className="flex-1">{line}</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -212,7 +213,7 @@ async function TierGenerationContent() {
       <div className="mx-auto flex max-w-md flex-col items-center text-center">
         <h1 className="mb-2 text-2xl font-bold tracking-tight">Your Packages</h1>
         <p className="text-sm text-muted-foreground">
-          Here are your existing packages. You can continue with these or create new ones later.
+          Here are your generated packages. You can continue with these or make new ones later.
         </p>
       </div>
 
