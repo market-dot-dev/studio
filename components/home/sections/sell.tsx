@@ -1,17 +1,7 @@
-"use client";
-
 import FeatureCard from "@/components/home/feature-card";
 import Section from "@/components/home/section";
 import { colors } from "@/lib/home/colors";
-import {
-  BookLock,
-  Briefcase,
-  FileBox,
-  GraduationCap,
-  HandHelping,
-  ShoppingBag
-} from "lucide-react";
-import { useEffect, useRef } from "react";
+import { Briefcase, GraduationCap, HandHelping, ShoppingBag } from "lucide-react";
 
 const featureCards = [
   {
@@ -24,15 +14,6 @@ const featureCards = [
     }
   },
   {
-    icon: <BookLock />,
-    title: "Code repos",
-    description: "Host and sell access to your private code repositories securely.",
-    image: {
-      src: "/code-repo.png",
-      alt: "Private code repo illustration"
-    }
-  },
-  {
     icon: <Briefcase />,
     title: "Specialized consulting",
     description: "Share your expertise through tailored consulting packages.",
@@ -42,18 +23,9 @@ const featureCards = [
     }
   },
   {
-    icon: <FileBox />,
-    title: "File downloads",
-    description: "Upload & manage PDFs, ebooks, and other digital files for sale.",
-    image: {
-      src: "/file.png",
-      alt: "Digital files illustration"
-    }
-  },
-  {
     icon: <GraduationCap />,
-    title: "Training & courses",
-    description: "Teach others what you know with training packages & online courses.",
+    title: "Training",
+    description: "Teach others what you know with training packages.",
     image: {
       src: "/course.png",
       alt: "Course illustration"
@@ -62,26 +34,6 @@ const featureCards = [
 ];
 
 export default function Sell() {
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-
-    const setScrollDuration = () => {
-      const scrollWidth = container.scrollWidth;
-      const pxPerSecond = 50;
-      const duration = scrollWidth / pxPerSecond;
-
-      container.style.setProperty("--scroll-duration", `${duration}s`);
-    };
-
-    setScrollDuration();
-    window.addEventListener("resize", setScrollDuration);
-
-    return () => window.removeEventListener("resize", setScrollDuration);
-  }, []);
-
   return (
     <Section
       id="sell"
@@ -90,15 +42,18 @@ export default function Sell() {
         icon: <ShoppingBag />,
         title: "Sell"
       }}
-      headline="Sell Anything"
-      description="Manage your offerings in one place. Use ready-made contracts & proven pricing structures to sell whatever you want, right away."
-      className="w-screen !max-w-none md:!px-0"
+      headline={
+        <>
+          Sell Se<span className="tracking-normal">r</span>vices
+        </>
+      }
+      description="Manage your offerings in one place with ready-made contracts & proven pricing structures. Perfect for:"
       isFullBleed
     >
-      <div className="group relative w-full overflow-hidden">
-        <div className="flex flex-col gap-6 md:hidden">
+      <div className="group relative mx-auto w-full max-w-[var(--marketing-max-width)]">
+        <div className="flex flex-col gap-6 lg:flex-row">
           {featureCards.map((card, index) => (
-            <div key={index} className="w-full shrink-0">
+            <div key={index} className="w-full ">
               <FeatureCard
                 icon={card.icon}
                 title={card.title}
@@ -106,31 +61,8 @@ export default function Sell() {
                 image={card.image}
                 color={colors.green}
                 orientation="vertical"
-                imageMaxWidth="w-[89%] max-w-[400px] sm:w-auto sm:max-w-[clamp(350px,85%,480px)]"
+                imageMaxWidth="max-w-sm sm:w-auto sm:max-w-md"
                 className="mx-auto aspect-[3/4] max-h-[420px] w-full"
-              />
-            </div>
-          ))}
-        </div>
-        <div
-          ref={scrollContainerRef}
-          className="scroll-container group-hover:pause-animation group-active:pause-animation hidden animate-scroll md:flex"
-        >
-          {[
-            ...featureCards.slice(-1),
-            ...featureCards.slice(0, -1),
-            ...featureCards.slice(-1),
-            ...featureCards.slice(0, -1)
-          ].map((card, index) => (
-            <div key={index} className="max-w-[360px] shrink-0 px-3">
-              <FeatureCard
-                icon={card.icon}
-                title={card.title}
-                description={card.description}
-                image={card.image}
-                color={colors.green}
-                orientation="vertical"
-                className="mx-auto max-h-[420px] w-full"
               />
             </div>
           ))}
