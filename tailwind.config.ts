@@ -16,6 +16,7 @@ export default {
       colors: {
         stone: {
           "150": "#F3F2F2",
+          "250": "#E3E0DF",
           "500": "#786F6B"
         },
         swamp: {
@@ -286,6 +287,8 @@ export default {
   // ],
   plugins: [typographyPlugin, formsPlugin, animatePlugin],
   corePlugins: {
-    boxShadowColor: false
+    boxShadowColor: false,
+    transform: true,
+    transformOrigin: true
   }
 } satisfies Config;
