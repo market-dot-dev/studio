@@ -2,6 +2,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { ErrorMessageCode } from "@/types/stripe";
 import { AlertTriangle, CircleCheck, CreditCard } from "lucide-react";
+import Link from "next/link";
 
 interface StripeData {
   canSell: boolean;
@@ -73,47 +74,45 @@ export function StripeStatus({ stripeData }: StripeStatusProps) {
         <AlertTriangle size={16} className="-translate-y-px text-destructive" />
         Something's up with your account
       </AlertTitle>
-      <AlertDescription className="space-y-4">
-        <div>
-          <p>
-            It looks like there are some issues with your Stripe account settings. Please visit your{" "}
-            <a
-              href="https://dashboard.stripe.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-medium underline underline-offset-4"
-            >
-              Stripe Dashboard
-            </a>{" "}
-            to resolve these issues and ensure your account is fully operational.
-          </p>
+      <AlertDescription className="space-y-4 text-xs">
+        <p>
+          It looks like there are some issues with your Stripe account settings. Please visit your{" "}
+          <Link
+            href="https://dashboard.stripe.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-foreground underline decoration-stone-400 underline-offset-4"
+          >
+            Stripe Dashboard
+          </Link>{" "}
+          to resolve these issues and ensure your account is fully operational.
+        </p>
 
-          <Separator />
+        <Separator />
 
-          {stripeData.errorMessages.length > 0 && (
-            <ul className="my-2 list-disc space-y-1 pl-5 text-xs">
-              {stripeData.errorMessages.map((message, index) => (
-                <li key={index}>{message}</li>
+        {stripeData.errorMessages.length > 0 && (
+          <ul className="my-2 list-disc space-y-1 pl-5 last:mb-0">
+            {stripeData.errorMessages.map((message, index) => (
+              <li key={index}>{message}</li>
+            ))}
+          </ul>
+        )}
+
+        {stripeData.disabledReasons && stripeData.disabledReasons.length > 0 && (
+          <div className="mt-4 text-xs">
+            <h6 className=" font-semibold text-foreground">Stripe Error Codes</h6>
+            <p className="italic">These codes might hint at what's wrong with your account.</p>
+            <ul className="mt-2 list-disc space-y-1 pl-5">
+              {stripeData.disabledReasons.map((message, index) => (
+                <li key={index}>
+                  <span className="inline-block w-fit rounded-sm border bg-stone-150 px-1 font-mono text-xxs/[18px] font-medium">
+                    {message}
+                  </span>
+                </li>
               ))}
             </ul>
-          )}
-
-          {stripeData.disabledReasons && stripeData.disabledReasons.length > 0 && (
-            <div className="mt-4 text-xs">
-              <h6 className=" font-semibold text-foreground">Stripe Error Codes</h6>
-              <p className="italic">These codes might hint at what's wrong with your account.</p>
-              <ul className="my-2 list-disc space-y-1 pl-5">
-                {stripeData.disabledReasons.map((message, index) => (
-                  <li key={index} className="marker:text-[14px]">
-                    <span className="inline-block w-fit rounded-sm border bg-stone-150 px-1 font-mono text-xs/[18px] font-medium">
-                      {message}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-        </div>
+          </div>
+        )}
       </AlertDescription>
     </Alert>
   );
