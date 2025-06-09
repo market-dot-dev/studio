@@ -2,6 +2,12 @@
 
 import { OrganizationRole } from "@/app/generated/prisma";
 import { inviteUsersToOrganization } from "@/app/services/team-management-service";
+import {
+  generateId,
+  TeamMemberInviteFields,
+  validateTeamMemberInvites,
+  type TeamMemberInvite
+} from "@/components/onboarding/team-member-invite-fields";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,36 +18,11 @@ import {
   DialogTitle,
   DialogTrigger
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "@/components/ui/select";
-import { cn } from "@/lib/utils";
-import { CircleMinus, CirclePlus, Send, UserRoundPlus } from "lucide-react";
+import { Send, UserRoundPlus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
-
-// Generate a simple unique ID for field keys inside this component
-const generateId = (): string => {
-  return `invite-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
-};
-
-interface TeamMemberInvite {
-  id: string;
-  email: string;
-  role: OrganizationRole;
-}
 
 export function InviteTeamMembersBtn() {
   const [isOpen, setIsOpen] = useState(false);
@@ -52,58 +33,11 @@ export function InviteTeamMembersBtn() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
-  const addInvite = () => {
-    setInvites([...invites, { id: generateId(), email: "", role: OrganizationRole.MEMBER }]);
-  };
-
-  const removeInvite = (id: string) => {
-    if (invites.length > 1) {
-      setInvites(invites.filter((invite) => invite.id !== id));
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[id];
-        return newErrors;
-      });
-    }
-  };
-
-  const updateInviteEmail = (id: string, email: string) => {
-    setInvites(invites.map((invite) => (invite.id === id ? { ...invite, email } : invite)));
-
-    // Clear error for this field when user starts typing
-    if (errors[id]) {
-      setErrors((prev) => {
-        const newErrors = { ...prev };
-        delete newErrors[id];
-        return newErrors;
-      });
-    }
-  };
-
-  const updateInviteRole = (id: string, role: OrganizationRole) => {
-    setInvites(invites.map((invite) => (invite.id === id ? { ...invite, role } : invite)));
-  };
-
-  const validateInvites = (): boolean => {
-    const newErrors: Record<string, string> = {};
-    let hasErrors = false;
-
-    invites.forEach((invite) => {
-      if (!invite.email.trim()) {
-        newErrors[invite.id] = "Email address is required";
-        hasErrors = true;
-      } else if (!isValidEmail(invite.email)) {
-        newErrors[invite.id] = "Invalid email address";
-        hasErrors = true;
-      }
-    });
-
-    setErrors(newErrors);
-    return !hasErrors;
-  };
-
   const handleInvite = () => {
-    if (!validateInvites()) {
+    const validationErrors = validateTeamMemberInvites(invites);
+    setErrors(validationErrors);
+
+    if (Object.keys(validationErrors).length > 0) {
       return;
     }
 
@@ -183,58 +117,15 @@ export function InviteTeamMembersBtn() {
                 Add team members to your organization and assign their roles.
               </DialogDescription>
             </DialogHeader>
-            <div className="grid gap-2">
-              {invites.map((invite, index) => (
-                <div key={invite.id} className="flex flex-col gap-1">
-                  <div className="flex items-start gap-4">
-                    <div className="flex flex-1 rounded shadow-border-sm">
-                      <Input
-                        placeholder="team@example.com"
-                        value={invite.email}
-                        onChange={(e) => updateInviteEmail(invite.id, e.target.value)}
-                        className={cn(
-                          "flex-1 shadow-none rounded-r-none",
-                          errors[invite.id] && "border-destructive"
-                        )}
-                      />
-                      <Select
-                        value={invite.role}
-                        onValueChange={(value: OrganizationRole) =>
-                          updateInviteRole(invite.id, value)
-                        }
-                      >
-                        <SelectTrigger className="h-9 w-32 rounded-l-none border-l shadow-none focus:z-[1] md:h-8">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent position="item-aligned">
-                          <SelectItem value={OrganizationRole.MEMBER}>Member</SelectItem>
-                          <SelectItem value={OrganizationRole.ADMIN}>Admin</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    {invites.length > 1 && (
-                      <Button
-                        variant="nude"
-                        size="icon"
-                        onClick={() => removeInvite(invite.id)}
-                        className="-mx-2 h-9 text-stone-400 md:h-8"
-                      >
-                        <CircleMinus className="size-4" />
-                      </Button>
-                    )}
-                  </div>
-                  {errors[invite.id] && (
-                    <p className="my-1 text-xs text-destructive">{errors[invite.id]}</p>
-                  )}
-                </div>
-              ))}
 
-              <Button variant="nude" onClick={addInvite} className="ml-1.5 p-0">
-                <CirclePlus className="size-4" />
-                Add Teammate
-              </Button>
-            </div>
-            <DialogFooter className="pt-1">
+            <TeamMemberInviteFields
+              invites={invites}
+              errors={errors}
+              onInvitesChange={setInvites}
+              onErrorsChange={setErrors}
+            />
+
+            <DialogFooter className="pt-2">
               <Button
                 onClick={handleInvite}
                 disabled={isDisabled || isPending}
