@@ -105,7 +105,7 @@
     "eslint-plugin-tailwindcss": "^3.18.0",
     "eslint-plugin-unused-imports": "^4.1.4",
     "globals": "^16.2.0",
-    "knip": "^5.60.0",
+    "knip": "^5.60.2",
     "postcss": "^8.5.4",
     "prettier": "^3.5.3",
     "prettier-plugin-organize-imports": "^4.1.0",
