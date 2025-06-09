@@ -4,7 +4,7 @@ import Image from "next/image";
 
 export default function Hero() {
   return (
-    <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-7 tracking-tight sm:pt-10 md:gap-y-16 lg:max-w-[var(--marketing-max-width)] lg:px-16 ">
+    <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-8 tracking-tight md:gap-y-16 lg:max-w-[var(--marketing-max-width)] lg:px-16 ">
       <div className="flex size-full flex-col items-center">
         <GradientHeading className="mb-3 whitespace-nowrap text-center text-[clamp(24px,8vw,37px)] font-bold !leading-[0.9] tracking-[-0.0525em] text-marketing-primary xs:text-marketing-xl sm:mb-4 sm:text-marketing-2xl md:text-marketing-3xl md:tracking-[-0.045em] lg:mb-5 lg:text-marketing-4xl xl:text-marketing-5xl">
           The easiest way to sell
