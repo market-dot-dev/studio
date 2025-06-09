@@ -56,7 +56,8 @@ export default function FeatureCard({
       className={clsx(
         "relative flex size-full overflow-hidden",
         borderRadius,
-        link?.asCard && "ring-inset ring-black/25 transition duration-200 hover:ring-1",
+        link?.asCard &&
+          "ring-inset ring-black/25 drop-shadow-sm transition duration-200 hover:ring-1",
         className,
         span
       )}
