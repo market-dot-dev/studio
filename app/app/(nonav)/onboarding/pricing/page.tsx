@@ -42,8 +42,8 @@ export default async function PricingPage() {
           {/* Free Plan */}
           <div className="relative w-full max-w-[400px]">
             <label className="cursor-pointer">
-              <Card className="shadow-border transition-shadow hover:shadow-border-lg [&:has(input:checked)]:shadow-border-lg [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
-                <div className="px-6 pb-6 pt-5">
+              <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
+                <div className="px-6 pb-8 pt-5">
                   <div className="mb-1 flex items-center justify-between">
                     <h3 className="text-xl font-semibold">Free</h3>
                     <input
@@ -55,7 +55,7 @@ export default async function PricingPage() {
                     />
                   </div>
 
-                  <p className="mb-6 text-sm text-muted-foreground">
+                  <p className="mb-5 text-sm text-muted-foreground">
                     For freelancers just getting started
                   </p>
 
@@ -73,7 +73,7 @@ export default async function PricingPage() {
                     </p>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {features.map((feature, index) => (
                       <div key={index} className="flex items-start gap-2">
                         <Check className="mt-0.5 size-4 shrink-0 text-success" />
@@ -89,8 +89,8 @@ export default async function PricingPage() {
           {/* Pro Plan */}
           <div className="relative w-full max-w-[400px]">
             <label className="cursor-pointer">
-              <Card className="shadow-border transition-shadow hover:shadow-border-lg [&:has(input:checked)]:shadow-border-lg [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
-                <div className="px-6 pb-6 pt-5">
+              <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
+                <div className="px-6 pb-8 pt-5">
                   <div className="mb-1 flex items-center justify-between">
                     <h3 className="text-xl font-semibold">Pro</h3>
                     <input
@@ -101,7 +101,7 @@ export default async function PricingPage() {
                     />
                   </div>
 
-                  <p className="mb-6 text-sm text-muted-foreground">
+                  <p className="mb-5 text-sm text-muted-foreground">
                     For established freelances & dev shops
                   </p>
 
@@ -115,11 +115,11 @@ export default async function PricingPage() {
                   <div className="mb-6 flex items-start gap-2">
                     <CreditCard className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">
-                      $0.25 transaction fee, 0% commission fee
+                      $0.25 transaction fee (no commission fee)
                     </p>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {features.map((feature, index) => (
                       <div key={index} className="flex items-start gap-2">
                         <Check className="mt-0.5 size-4 shrink-0 text-success" />
