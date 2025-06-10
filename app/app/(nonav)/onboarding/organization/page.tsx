@@ -7,7 +7,6 @@ import {
 import { uploadLogo } from "@/app/services/site/site-media-service";
 import { validateSubdomain } from "@/app/services/site/site-subdomain-service";
 import { getCurrentOrganization, requireOrganization } from "@/app/services/user-context-service";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -17,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
+import { SubmitButton } from "@/components/ui/submit-button";
 import { isGitWalletError } from "@/lib/errors";
 import { redirect } from "next/navigation";
 import { FileUploadClient } from "./file-upload-client";
@@ -188,9 +188,7 @@ export default async function OrganizationOnboardingPage() {
             </div>
           </div>
 
-          <Button type="submit" className="w-full">
-            Continue
-          </Button>
+          <SubmitButton className="w-full">Continue</SubmitButton>
         </form>
       </div>
     </div>
