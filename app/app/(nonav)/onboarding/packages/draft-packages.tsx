@@ -40,11 +40,16 @@ export function DraftPackages({ organizationId, description }: DraftPackagesProp
   const [isGenerating, startGeneratingTransition] = useTransition();
   const [isSaving, startSavingTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+  const [hasInitiatedGeneration, setHasInitiatedGeneration] = useState(false);
 
-  const isLoading = !isLoaded || isGenerating;
+  const isLoading =
+    !isLoaded ||
+    (isLoaded && draftPackages.length === 0 && !hasInitiatedGeneration) ||
+    isGenerating;
 
   useEffect(() => {
-    if (isLoaded && draftPackages.length === 0) {
+    if (isLoaded && draftPackages.length === 0 && !hasInitiatedGeneration) {
+      setHasInitiatedGeneration(true);
       startGeneratingTransition(async () => {
         try {
           const packages = await generatePackagesFromDescription(description);
@@ -55,7 +60,14 @@ export function DraftPackages({ organizationId, description }: DraftPackagesProp
         }
       });
     }
-  }, [isLoaded, draftPackages.length, description, storeDraftPackages, startGeneratingTransition]);
+  }, [
+    isLoaded,
+    draftPackages.length,
+    description,
+    storeDraftPackages,
+    startGeneratingTransition,
+    hasInitiatedGeneration
+  ]);
 
   const handleSave = () => {
     startSavingTransition(async () => {
