@@ -176,7 +176,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --secondary: 60 4.8% 95.9%;
     --secondary-foreground: 24 9.8% 10%;
     --muted: 60 90% 100%;
-    --muted-foreground: 25 5.3% 44.7%;
+    --muted-foreground: 22, 5%, 43%;
     --accent: 60 4.8% 95.9%;
     --accent-foreground: 24 9.8% 10%;
     --success: 105 58% 30%;
