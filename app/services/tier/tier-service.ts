@@ -6,7 +6,6 @@ import defaultTiers from "@/lib/constants/tiers/default-tiers";
 import prisma from "@/lib/prisma";
 import { includeVendorProfile } from "@/types/checkout";
 import { includeMinimalOrg } from "@/types/organization";
-import { updateServicesForSale } from "../market-service";
 import { createStripePrice, type SubscriptionCadence } from "../stripe/stripe-price-service";
 import { createStripeProduct, updateStripeProduct } from "../stripe/stripe-product-service";
 import { requireOrganization } from "../user-context-service";
@@ -162,9 +161,10 @@ export async function createTier(tierData: Partial<Tier>) {
     data: attrs as Tier
   });
 
-  if (organization.marketExpertId) {
-    await updateServicesForSale();
-  }
+  // if (organization.marketExpertId) {
+  //   await updateServicesForSale();
+  // }
+
   return createdTier;
 }
 
@@ -195,9 +195,11 @@ export async function deleteTier(id: string) {
     where: { id }
   });
 
-  if (organization.marketExpertId) {
-    await updateServicesForSale();
-  }
+  // @TODO:
+  // if (organization.marketExpertId) {
+  //   await updateServicesForSale();
+  // }
+
   return response;
 }
 
@@ -248,9 +250,10 @@ export async function updateTier(id: string, tierData: Partial<Tier>) {
     data: row
   });
 
-  if (organization.marketExpertId) {
-    await updateServicesForSale();
-  }
+  // @TODO:
+  // if (organization.marketExpertId) {
+  //   await updateServicesForSale();
+  // }
   return updatedTier;
 }
 

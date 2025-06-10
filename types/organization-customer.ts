@@ -21,8 +21,7 @@ export const includeCustomerOrgWithChargesAndSubs =
           id: true,
           name: true,
           email: true,
-          image: true,
-          gh_username: true
+          image: true
         }
       }
     }
@@ -69,8 +68,7 @@ export const includeCustomerOrgWithAll = Prisma.validator<Prisma.OrganizationDef
         id: true,
         name: true,
         email: true,
-        image: true,
-        gh_username: true
+        image: true
       }
     }
   }

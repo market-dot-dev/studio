@@ -22,7 +22,6 @@ model Organization {
   businessLocation String?
   businessType     String?
   description      String?
-  marketExpertId   String?
 
   // Stripe fields
   stripePaymentMethodIds      Json    @default("{}")

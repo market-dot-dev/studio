@@ -11,7 +11,6 @@ export const includeOrganizationOnboarding = Prisma.validator<Prisma.Organizatio
     businessLocation: true,
     businessType: true,
     stripeAccountId: true,
-    marketExpertId: true,
     sites: {
       select: {
         id: true,

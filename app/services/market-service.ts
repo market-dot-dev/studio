@@ -2,7 +2,6 @@
 
 import { Channel } from "@/app/generated/prisma";
 import { getRootUrl } from "@/lib/domain";
-import { updateOrganization } from "./organization-service";
 import { getCurrentSite } from "./site/site-crud-service";
 import { getPublishedTiersForOrganization } from "./tier/tier-service";
 import { requireOrganization, requireUser } from "./user-context-service";
@@ -37,16 +36,19 @@ type ServiceForSaleOnMarketDevParams = Omit<
 >;
 
 /**
+ * @deprecated
  * Validates the current organization as a market expert and updates the organization if successful
  * @returns A boolean indicating if the validation was successful
  */
 export async function validateMarketExpert(): Promise<boolean> {
   try {
     const organization = await requireOrganization();
+
+    // @TODO:
     // If organization is already a market expert, return true immediately
-    if (organization.marketExpertId) {
-      return true;
-    }
+    // if (organization.marketExpertId) {
+    //   return true;
+    // }
 
     const response = await validateAccount();
     if (response.status !== 200) {
@@ -60,11 +62,6 @@ export async function validateMarketExpert(): Promise<boolean> {
       return false;
     }
 
-    // Update organization with expert ID
-    await updateOrganization(organization.id, {
-      marketExpertId: expert.id.toString()
-    });
-
     return true;
   } catch (error) {
     console.error("Error validating market expert:", error);
@@ -73,15 +70,17 @@ export async function validateMarketExpert(): Promise<boolean> {
 }
 
 /**
+ * @deprecated
  * Checks if the current organization is already a market expert
  * @returns A boolean indicating if the organization is a market expert
  */
 export async function organizationIsMarketExpert(): Promise<boolean> {
   const organization = await requireOrganization();
-  return !!organization.marketExpertId;
+  return false;
 }
 
 /**
+ * @deprecated
  * Validate account with the market.dev API
  * This is an internal function used by validateMarketExpert
  */
@@ -89,7 +88,9 @@ export async function validateAccount() {
   const user = await requireUser();
   const organization = await requireOrganization();
 
-  if (!user.gh_id) {
+  // @TODO: Must be updated to new approach
+  const githubUserId = 0;
+  if (!githubUserId) {
     throw new Error("User GitHub ID doesn't exist");
   }
 
@@ -101,7 +102,7 @@ export async function validateAccount() {
     },
     body: JSON.stringify({
       store_id: organization.id, // Use organization ID instead of user ID
-      github_id: user.gh_id
+      github_id: githubUserId
     })
   });
 
@@ -109,14 +110,16 @@ export async function validateAccount() {
 }
 
 /**
+ * @deprecated
  * Update services for sale on market.dev for current organization
  */
 export async function updateServicesForSale() {
   const organization = await requireOrganization();
 
-  if (!organization.marketExpertId) {
-    throw new Error("Organization is not an expert on Market.dev");
-  }
+  // @TODO:
+  // if (!organization.marketExpertId) {
+  //   throw new Error("Organization is not an expert on Market.dev");
+  // }
 
   const site = await getCurrentSite();
   if (!site) {
@@ -139,7 +142,7 @@ export async function updateServicesForSale() {
   });
 
   const response = await fetch(
-    `${API_ENDPOINT}store/experts/${organization.marketExpertId}/sync_services`,
+    `${API_ENDPOINT}store/experts/nokey/sync_services`, // @TODO: API is used differently: /experts/${organization.marketExpertId}/sync_services
     {
       method: "POST",
       headers: {

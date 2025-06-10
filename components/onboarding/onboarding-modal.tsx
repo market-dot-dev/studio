@@ -114,7 +114,6 @@ type OnboardingModalProps = {
   onboardingState: OnboardingState;
   organization: {
     id: string;
-    marketExpertId: string | null;
   };
 };
 
@@ -126,9 +125,8 @@ export function OnboardingModal({
 }: OnboardingModalProps) {
   const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(
-    !onboardingState.setupBusiness ||
-      !onboardingState.preferredServices ||
-      (!organization.marketExpertId && searchParams.get("source") === "market.dev")
+    !onboardingState.setupBusiness || !onboardingState.preferredServices
+    //|| (!organization.marketExpertId && searchParams.get("source") === "market.dev") // @TODO: Adjust to new github app setup
   );
 
   const [isMarketExpert, setIsMarketExpert] = useState<boolean | null>(null);
