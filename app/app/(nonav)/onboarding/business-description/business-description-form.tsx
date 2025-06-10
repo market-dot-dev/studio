@@ -28,9 +28,12 @@ export default function BusinessDescriptionForm({
   return (
     <form action={formAction} className="mt- flex flex-col gap-8">
       <div>
-        <h2 className="mb-3 ml-3 text-sm font-semibold tracking-tightish text-foreground">
-          Tell us about your business
-        </h2>
+        <p className="mb-4 max-w-prose text-center text-sm text-muted-foreground">
+          Write a short description of your business and expertise, and we'll{" "}
+          <span className="text-foreground">draft 3 service packages</span> for you. You can edit
+          these packages or make your own later.
+        </p>
+
         <Textarea
           id="businessDescription"
           name="businessDescription"
