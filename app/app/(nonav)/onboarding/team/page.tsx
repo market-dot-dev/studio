@@ -63,7 +63,7 @@ export default function TeamOnboardingPage() {
     const validInvites = invites.filter((invite) => invite.email.trim());
 
     if (validInvites.length === 0) {
-      router.push("/onboarding/stripe");
+      router.push("/onboarding/pricing");
       return;
     }
 
@@ -128,11 +128,11 @@ export default function TeamOnboardingPage() {
   };
 
   const handleContinue = () => {
-    router.push("/onboarding/stripe");
+    router.push("/onboarding/pricing");
   };
 
   const handleSkip = () => {
-    router.push("/onboarding/stripe");
+    router.push("/onboarding/pricing");
   };
 
   // Check if any invite fields have content

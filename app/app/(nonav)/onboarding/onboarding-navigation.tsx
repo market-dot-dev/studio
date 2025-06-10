@@ -1,41 +1,42 @@
 "use client";
 
 import { ProgressDonut } from "@/app/components/onboarding/progress-donut";
+import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 // Define the onboarding steps and their navigation
 const ONBOARDING_STEPS = {
-  "/onboarding/business-description": {
+  "/onboarding/organization": {
     step: 1,
     isFirst: true,
     previous: null
   },
-  "/onboarding/generate-tiers": {
+  "/onboarding/business-description": {
     step: 2,
+    isFirst: false,
+    previous: "/onboarding/organization"
+  },
+  "/onboarding/generate-tiers": {
+    step: 3,
     isFirst: false,
     previous: "/onboarding/business-description"
   },
-  "/onboarding/organization": {
-    step: 3,
+  "/onboarding/stripe": {
+    step: 4,
     isFirst: false,
     previous: "/onboarding/generate-tiers"
   },
   "/onboarding/team": {
-    step: 4,
-    isFirst: false,
-    previous: "/onboarding/organization"
-  },
-  "/onboarding/stripe": {
     step: 5,
     isFirst: false,
-    previous: "/onboarding/team"
+    previous: "/onboarding/stripe"
   },
   "/onboarding/pricing": {
     step: 6,
     isFirst: false,
-    previous: "/onboarding/stripe"
+    previous: "/onboarding/team"
   },
   "/onboarding/complete": {
     step: 7,
@@ -59,12 +60,16 @@ export function OnboardingNavigation() {
   return (
     <>
       {showBackButton && currentStep.previous && (
-        <Link
-          href={currentStep.previous}
-          className="absolute -left-2.5 flex size-7 items-center justify-center rounded-md text-stone-600 hover:bg-stone-200 hover:text-stone-700 md:left-0.5 md:top-0.5"
+        <Button
+          variant="ghost"
+          size="icon"
+          asChild
+          className="absolute -left-2.5 md:left-0.5 md:top-0.5"
         >
-          <ChevronLeft className="size-5 -translate-x-px" />
-        </Link>
+          <Link href={currentStep.previous}>
+            <ChevronLeft className="!size-5 -translate-x-px" />
+          </Link>
+        </Button>
       )}
 
       <ProgressDonut

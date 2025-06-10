@@ -52,8 +52,8 @@ async function saveTiersAsDrafts(formData: FormData) {
   // TODO: Save the generated tiers as drafts in the database
   console.log("Saving tiers as drafts...");
 
-  // Continue to organization setup
-  redirect("/onboarding/organization");
+  // Continue to stripe setup
+  redirect("/onboarding/stripe");
 }
 
 function TierLoadingCard({ delay = 0 }: { delay?: number }) {
@@ -199,7 +199,7 @@ async function TierGenerationContent() {
               </Button>
             </form>
             <Button type="submit" variant="ghost" className="w-full text-muted-foreground">
-              <Link href="/onboarding/organization">I'll add my own packages later</Link>
+              <Link href="/onboarding/stripe">I'll add my own packages later</Link>
             </Button>
           </div>
         </div>
@@ -243,8 +243,8 @@ async function TierGenerationContent() {
               <PackageCheck /> Save as drafts & Continue
             </Button>
           </form>
-          <Button variant="ghost" className="w-full text-muted-foreground" asChild>
-            <Link href="/onboarding/organization">I'll add my own packages later</Link>
+          <Button type="submit" variant="ghost" className="w-full text-muted-foreground">
+            <Link href="/onboarding/stripe">I'll add my own packages later</Link>
           </Button>
         </div>
       </div>

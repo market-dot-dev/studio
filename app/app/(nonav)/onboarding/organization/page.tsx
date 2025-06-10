@@ -110,7 +110,7 @@ async function submitOrganizationData(formData: FormData) {
     }
   }
 
-  redirect("/onboarding/team");
+  redirect("/onboarding/business-description");
 }
 
 export default async function OrganizationOnboardingPage() {
@@ -122,7 +122,7 @@ export default async function OrganizationOnboardingPage() {
     <div className="mx-auto max-w-md">
       <div className="space-y-10">
         <div className="flex flex-col items-center text-center">
-          <h1 className="mb-2 text-2xl font-bold tracking-tight">Create your Organization</h1>
+          <h1 className="mb-2 text-2xl font-bold tracking-tight">Create Your Organization</h1>
           <p className="text-sm text-muted-foreground">
             We'll use your info to brand your dashboard and checkout links.
           </p>
