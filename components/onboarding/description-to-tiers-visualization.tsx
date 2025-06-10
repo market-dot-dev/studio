@@ -1,5 +1,3 @@
-"use client";
-
 import { Building } from "lucide-react";
 
 export default function DescriptionToTiersVisualization() {
@@ -19,10 +17,7 @@ export default function DescriptionToTiersVisualization() {
         </div>
       </div>
 
-      {/* Arrow and Line */}
-      <div className="flex items-center gap-1">
-        <div className="h-px w-10 border-t border-dashed border-muted-foreground/50" />
-      </div>
+      <div className="h-px w-10 border-t border-dashed border-muted-foreground/50" />
 
       {/* Tier Cards Preview */}
       <div>
