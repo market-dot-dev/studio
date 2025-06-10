@@ -57,7 +57,7 @@ export default function BusinessDescriptionForm({
               </li>
               <li className="flex items-center gap-2 text-xs text-muted-foreground">
                 <Check strokeWidth={2.25} className="size-3.5 shrink-0 text-muted-foreground" />
-                Typical price points or tiers
+                Typical tiers & price points
               </li>
             </ul>
           </div>
