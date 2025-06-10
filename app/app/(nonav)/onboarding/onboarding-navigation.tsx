@@ -6,7 +6,6 @@ import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-// Define the onboarding steps and their navigation
 const ONBOARDING_STEPS = {
   "/onboarding/organization": {
     step: 1,
@@ -48,7 +47,6 @@ const ONBOARDING_STEPS = {
 export function OnboardingNavigation() {
   const pathname = usePathname();
 
-  // Get step info, defaulting to step 1 if not found
   const currentStep = ONBOARDING_STEPS[pathname as keyof typeof ONBOARDING_STEPS] || {
     step: 1,
     isFirst: true,
