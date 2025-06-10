@@ -18,7 +18,7 @@ const ONBOARDING_STEPS = {
     isFirst: false,
     previous: "/onboarding/organization"
   },
-  "/onboarding/generate-tiers": {
+  "/onboarding/packages": {
     step: 3,
     isFirst: false,
     previous: "/onboarding/business-description"
@@ -26,7 +26,7 @@ const ONBOARDING_STEPS = {
   "/onboarding/stripe": {
     step: 4,
     isFirst: false,
-    previous: "/onboarding/generate-tiers"
+    previous: "/onboarding/packages"
   },
   "/onboarding/team": {
     step: 5,

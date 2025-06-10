@@ -7,7 +7,6 @@ import { redirect } from "next/navigation";
 export async function submitBusinessDescription(prevState: any, formData: FormData) {
   const businessDescription = formData.get("businessDescription") as string;
 
-  // Server-side validation with friendly error messages
   if (!businessDescription?.trim()) {
     return {
       error: "Business description is required",
@@ -27,7 +26,6 @@ export async function submitBusinessDescription(prevState: any, formData: FormDa
   }
 
   try {
-    // Get the current organization and save the business description
     const organization = await requireOrganization();
     await updateOrganization(organization.id, {
       description: businessDescription.trim()
@@ -42,6 +40,5 @@ export async function submitBusinessDescription(prevState: any, formData: FormDa
     };
   }
 
-  // Redirect outside of try-catch to avoid catching the NEXT_REDIRECT error
-  redirect("/onboarding/generate-tiers");
+  redirect("/onboarding/packages");
 }
