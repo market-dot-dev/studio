@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Check, PackagePlus } from "lucide-react";
+import { Check, PackagePlus, Pencil } from "lucide-react";
 import Link from "next/link";
 import { useActionState } from "react";
 
@@ -96,26 +96,32 @@ export default function BusinessDescriptionForm({
           </div>
         </div> */}
 
-        <div className="flex flex-col gap-3">
-          <div className="group overflow-hidden">
-            <div id="package-preview" className="-mb-12 flex items-center justify-center">
-              <div className="-mr-6 mt-6 h-20 w-16 -rotate-3 rounded-sm bg-white p-1.5 shadow-border-md transition-transform duration-200 ease-in-out group-hover:-translate-y-1.5 group-hover:rotate-[-9deg] group-hover:shadow-border-xl"></div>
-              <div className="z-[1] h-20 w-16 rounded-sm bg-white shadow-border-md transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:shadow-border-xl"></div>
-              <div className="-ml-6 mt-6 h-20 w-16 rotate-3 rounded-sm bg-white shadow-border-md transition-transform duration-200 ease-in-out group-hover:-translate-y-1.5 group-hover:rotate-[9deg] group-hover:shadow-border-xl"></div>
+        <div className="flex flex-col items-center gap-6">
+          <div className="flex w-full flex-col gap-3">
+            <div className="group overflow-hidden">
+              <div id="package-preview" className="-mb-12 flex items-center justify-center">
+                <div className="-mr-6 mt-6 h-20 w-16 -rotate-3 rounded-sm bg-white p-1.5 shadow-border-md transition-transform duration-200 ease-in-out group-hover:-translate-y-1.5 group-hover:rotate-[-9deg] group-hover:shadow-border-xl"></div>
+                <div className="z-[1] h-20 w-16 rounded-sm bg-white shadow-border-md transition-transform duration-300 ease-in-out group-hover:-translate-y-2 group-hover:shadow-border-xl"></div>
+                <div className="-ml-6 mt-6 h-20 w-16 rotate-3 rounded-sm bg-white shadow-border-md transition-transform duration-200 ease-in-out group-hover:-translate-y-1.5 group-hover:rotate-[9deg] group-hover:shadow-border-xl"></div>
+              </div>
+              <Button
+                type="submit"
+                className="relative z-[3] w-full disabled:bg-muted-foreground disabled:opacity-100"
+                loading={pending}
+                loadingText="Generating draft packages"
+              >
+                <PackagePlus />
+                Generate my draft packages
+              </Button>
             </div>
-            <Button
-              type="submit"
-              className="relative z-[3] w-full disabled:bg-muted-foreground disabled:opacity-100"
-              loading={pending}
-              loadingText="Generating draft packages"
-            >
-              <PackagePlus />
-              Generate my draft packages
+            <Button variant="ghost" className="w-full text-muted-foreground" asChild>
+              <Link href="/onboarding/organization">Skip, I'll make my own later</Link>
             </Button>
           </div>
-          <Button variant="ghost" className="w-full text-muted-foreground" asChild>
-            <Link href="/onboarding/organization">Skip, I'll make my own later</Link>
-          </Button>
+          <p className="text-xs text-muted-foreground">
+            <Pencil size="14" className="mr-1 inline-block -translate-y-px" /> You can edit these
+            packages or make your own later.
+          </p>
         </div>
       </div>
     </form>
