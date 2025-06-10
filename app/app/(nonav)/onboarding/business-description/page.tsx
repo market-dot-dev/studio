@@ -26,6 +26,7 @@ export default async function BusinessDescriptionPage() {
         </div>
         <BusinessDescriptionForm
           submitAction={submitBusinessDescription}
+          organizationId={organization.id}
           existingDescription={organization.description || ""}
         />
       </div>

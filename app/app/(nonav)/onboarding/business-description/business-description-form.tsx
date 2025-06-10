@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useDraftPackages } from "@/hooks/use-draft-packages";
 import { Check, PackagePlus } from "lucide-react";
 import Link from "next/link";
 import { useActionState } from "react";
@@ -17,16 +18,26 @@ interface BusinessDescriptionFormProps {
     formData: FormData
   ) => Promise<{ error?: string; fields?: Record<string, string> }>;
   existingDescription?: string;
+  organizationId: string;
 }
 
 export default function BusinessDescriptionForm({
   submitAction,
+  organizationId,
   existingDescription = ""
 }: BusinessDescriptionFormProps) {
   const [state, formAction, pending] = useActionState(submitAction, initialState);
+  const { clearDraftPackages } = useDraftPackages(organizationId);
+
+  const actionWithLocalStorageCleanup = (formData: FormData) => {
+    if (organizationId) {
+      clearDraftPackages();
+    }
+    formAction(formData);
+  };
 
   return (
-    <form action={formAction} className="flex flex-col gap-8">
+    <form action={actionWithLocalStorageCleanup} className="flex flex-col gap-8">
       <div>
         <Textarea
           id="businessDescription"
@@ -111,7 +122,7 @@ export default function BusinessDescriptionForm({
             </Button>
           </div>
           <Button variant="ghost" className="w-full text-muted-foreground" asChild>
-            <Link href="/onboarding/organization">Skip, I'll make my own later</Link>
+            <Link href="/onboarding/stripe">Skip, I'll make my own later</Link>
           </Button>
         </div>
       </div>
