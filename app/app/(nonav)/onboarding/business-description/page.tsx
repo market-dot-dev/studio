@@ -13,7 +13,7 @@ export default async function BusinessDescriptionPage() {
       <div>
         <div className="mb-6 flex flex-col items-center text-center">
           <h1 className="mb-2 text-pretty text-2xl font-bold tracking-tight">
-            Create some starter packages
+            Create Some Starter Packages
           </h1>
         </div>
         <div className="mb-8 flex flex-col items-center gap-4">
@@ -21,7 +21,7 @@ export default async function BusinessDescriptionPage() {
           <p className="max-w-prose text-pretty text-center text-sm text-muted-foreground">
             Describe your business and{" "}
             <span className="font-medium text-foreground">we'll draft 3 service packages</span> that
-            fit your expertise (you can change these packages or make your own later).
+            fit your expertise (you can change them & make your own later).
           </p>
         </div>
         <BusinessDescriptionForm
