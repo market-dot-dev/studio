@@ -202,6 +202,47 @@ export async function deleteTier(id: string) {
 }
 
 /**
+ * Deletes multiple tiers by their IDs.
+ *
+ * @param ids - An array of tier IDs to delete.
+ * @returns A promise that resolves when the tiers have been deleted.
+ */
+export async function deleteTiers(ids: string[]) {
+  const organization = await requireOrganization();
+
+  // Validate that all tiers belong to the organization and have no subscriptions
+  const tiers = await prisma.tier.findMany({
+    where: {
+      id: { in: ids },
+      organizationId: organization.id
+    },
+    include: {
+      _count: {
+        select: {
+          subscriptions: true
+        }
+      }
+    }
+  });
+
+  if (tiers.length !== ids.length) {
+    throw new Error("One or more tiers were not found or do not belong to the organization.");
+  }
+
+  tiers.forEach((tier) => {
+    if (tier._count.subscriptions > 0) {
+      throw new Error(`Tier "${tier.name}" has active subscriptions and cannot be deleted.`);
+    }
+  });
+
+  await prisma.tier.deleteMany({
+    where: {
+      id: { in: ids }
+    }
+  });
+}
+
+/**
  * Update an existing tier
  */
 export async function updateTier(id: string, tierData: Partial<Tier>) {
