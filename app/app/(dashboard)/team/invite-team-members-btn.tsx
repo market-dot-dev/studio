@@ -176,7 +176,7 @@ export function InviteTeamMembersBtn() {
       </DialogTrigger>
       <DialogContent className="max-h-[calc(100vh-32px)] max-w-[425px] overflow-hidden p-0 sm:max-w-[425px]">
         <ScrollArea className="max-h-[calc(100vh-32px)]">
-          <div className="flex flex-col gap-4 p-6">
+          <div className="flex flex-col gap-5 p-6">
             <DialogHeader>
               <DialogTitle>Invite Teammates</DialogTitle>
               <DialogDescription>
