@@ -2,13 +2,9 @@ objects:
   - id: "dev-ts"
     email: "tarun@market.dev"
     name: "Tarun Sachdeva"
-    gh_username: "tarunsachdeva"
-    gh_id: 826496
   - id: "dev-mg"
     email: "max@market.dev"
     name: "Max Georgopolous"
-    gh_username: "maxgeor"
   - id: "dev-an"
     email: "andrew@market.dev"
     name: "Andrew Nesbitt"
-    gh_username: "andrew"

@@ -132,7 +132,7 @@ export default function ProfileForm({ user, onSubmit, currentSite }: ProfileForm
             <Input
               id="businessName"
               name="businessName"
-              defaultValue={user.gh_username ?? ""}
+              defaultValue={""}
               placeholder={"Business Name"}
               className="bg-white"
               required
@@ -145,7 +145,7 @@ export default function ProfileForm({ user, onSubmit, currentSite }: ProfileForm
               <Input
                 id="subdomain"
                 className="rounded-r-none shadow-none"
-                defaultValue={currentSite?.subdomain ?? user.gh_username ?? ""}
+                defaultValue={currentSite?.subdomain ?? ""}
                 disabled={!!currentSite?.subdomain}
                 placeholder={"Subdomain"}
                 name="subdomain"

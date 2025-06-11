@@ -4,7 +4,6 @@ export type SessionUser = {
   id: string;
   name?: string;
   username?: string;
-  gh_id?: number;
   email?: string;
   image?: string;
   onboarding?: string;
@@ -28,8 +27,7 @@ export const createSessionUser = (
   return {
     id: user.id,
     name: user.name || undefined,
-    username: user.username || user.gh_username || undefined,
-    gh_id: user.gh_id || undefined,
+    username: user.username || undefined,
     email: user.email || undefined,
     onboarding: user.onboarding || undefined,
     image: user.image || undefined,
