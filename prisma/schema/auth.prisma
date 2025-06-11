@@ -17,6 +17,7 @@ model User {
   currentOrganizationId String?
   currentOrganization   Organization?        @relation("CurrentOrganization", fields: [currentOrganizationId], references: [id], onDelete: SetNull)
   sentInvites           OrganizationInvite[] @relation("InvitedBy")
+  installedIntegrations Integration[]
 }
 
 model Account {

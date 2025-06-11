@@ -1,0 +1,26 @@
+enum IntegrationType {
+  GITHUB_APP
+}
+
+model Integration {
+  id             String          @id @default(cuid())
+  organizationId String
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  
+  // Integration details
+  type           IntegrationType
+  installationId String          // GitHub App installation ID
+  permissions    Json            // Granted permissions
+  repositories   Json?           // Accessible repos (if applicable)
+  
+  // Metadata
+  installedBy     String?        // User ID who installed (nullable)
+  installedByUser User?          @relation(fields: [installedBy], references: [id], onDelete: SetNull)
+  installedAt     DateTime       @default(now())
+  lastSyncedAt    DateTime?
+  active          Boolean        @default(true)
+  
+  @@unique([organizationId, type]) // One integration per type per org
+  @@index([organizationId])
+  @@index([type])
+}
