@@ -27,6 +27,17 @@ export interface GitHubInstallationData {
 }
 
 /**
+ * GitHub account information (with nullable fields)
+ */
+export interface GitHubAccountInfo {
+  login: string | null;
+  id: number | null;
+  type: string | null;
+  avatarUrl: string | null;
+  htmlUrl: string | null;
+}
+
+/**
  * Integration validation result
  */
 export interface IntegrationValidationResult {

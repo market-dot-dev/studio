@@ -24,6 +24,11 @@ export default function SettingsNav() {
       name: "Payout Info",
       href: `/settings/payment`,
       isActive: activeSegment === "payment"
+    },
+    {
+      name: "Integrations",
+      href: `/settings/integrations`,
+      isActive: activeSegment === "integrations"
     }
   ];
 
