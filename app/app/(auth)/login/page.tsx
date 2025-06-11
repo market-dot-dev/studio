@@ -1,4 +1,3 @@
-import LocalAuthSection from "@/components/login/local-auth-section";
 import { getSession } from "@/lib/auth";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -46,8 +45,6 @@ export default async function LoginPage(props: {
             }
           />
         </Suspense>
-
-        <LocalAuthSection />
       </div>
     </>
   );
