@@ -147,7 +147,6 @@ export async function validateGitHubIntegration(organizationId?: string): Promis
 }> {
   try {
     const integration = await getGitHubIntegration(organizationId);
-    console.log("Integration", integration);
 
     if (!integration) {
       return { isValid: false, error: "No GitHub integration found" };
