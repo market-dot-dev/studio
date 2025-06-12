@@ -1,6 +1,6 @@
 "use server";
 
-import { IntegrationType } from "@/app/generated/prisma";
+import { IntegrationType, Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { GitHubAccountInfo } from "@/types/integration";
 import { App } from "@octokit/app";
@@ -88,7 +88,8 @@ export async function getGitHubIntegration(organizationId?: string) {
 export async function addGitHubIntegration(
   installationId: string,
   permissions: Record<string, string>,
-  repositories?: any[]
+  repositories?: any[],
+  accountInfo?: GitHubAccountInfo
 ): Promise<void> {
   const org = await requireOrganization();
   const user = await requireUser();
@@ -106,6 +107,7 @@ export async function addGitHubIntegration(
       installationId,
       permissions,
       repositories: repositories || [],
+      accountInfo: serializeAccountInfo(accountInfo),
       installedBy: user.id,
       active: true
     },
@@ -113,6 +115,7 @@ export async function addGitHubIntegration(
       installationId,
       permissions,
       repositories: repositories || [],
+      accountInfo: serializeAccountInfo(accountInfo),
       lastSyncedAt: new Date(),
       active: true
     }
@@ -269,12 +272,22 @@ export async function syncGitHubIntegration(organizationId?: string): Promise<bo
       return false;
     }
 
-    // Update stored integration data
+    // Extract account info from installation
+    const accountInfo: GitHubAccountInfo = {
+      login: info.installation.account?.login || null,
+      id: info.installation.account?.id || null,
+      type: info.installation.account?.type || null,
+      avatarUrl: info.installation.account?.avatar_url || null,
+      htmlUrl: info.installation.account?.html_url || null
+    };
+
+    // Update stored integration data including account info
     await prisma.integration.update({
       where: { id: info.integration.id },
       data: {
         permissions: info.installation.permissions,
         repositories: info.repositories,
+        accountInfo: serializeAccountInfo(accountInfo),
         lastSyncedAt: new Date(),
         active: true
       }
@@ -314,6 +327,26 @@ export async function getGitHubAccountInfo(
     };
   } catch (error) {
     console.error("Error getting GitHub account info:", error);
+    return null;
+  }
+}
+
+/**
+ * Get cached GitHub account info from database
+ */
+export async function getCachedGitHubAccountInfo(
+  organizationId?: string
+): Promise<GitHubAccountInfo | null> {
+  try {
+    const integration = await getGitHubIntegration(organizationId);
+    if (!integration?.accountInfo) {
+      return null;
+    }
+
+    // Use helper function to properly deserialize
+    return deserializeAccountInfo(integration.accountInfo);
+  } catch (error) {
+    console.error("Error getting cached GitHub account info:", error);
     return null;
   }
 }
@@ -370,11 +403,21 @@ export async function processGitHubInstallationCallback(
       per_page: 100
     });
 
-    // Store the integration with full details
+    // Extract account info from installation
+    const accountInfo: GitHubAccountInfo = {
+      login: installation.account?.login || null,
+      id: installation.account?.id || null,
+      type: installation.account?.type || null,
+      avatarUrl: installation.account?.avatar_url || null,
+      htmlUrl: installation.account?.html_url || null
+    };
+
+    // Store the integration with full details including account info
     await addGitHubIntegration(
       installationId,
       installation.permissions || {},
-      repositories.repositories || []
+      repositories.repositories || [],
+      accountInfo
     );
 
     console.log(`GitHub App installation processed successfully for org ${org.id}`);
@@ -508,4 +551,47 @@ export async function getGitHubAppConfigStatus() {
     hasClientSecret: !!CLIENT_SECRET,
     isFullyConfigured: isGitHubAppConfigured()
   };
+}
+
+/**
+ * Helper function to serialize account info for Prisma JSON field
+ */
+function serializeAccountInfo(
+  accountInfo: GitHubAccountInfo | null | undefined
+): Prisma.InputJsonValue | undefined {
+  if (!accountInfo) {
+    return undefined;
+  }
+
+  // Ensure all values are properly serializable
+  return {
+    login: accountInfo.login,
+    id: accountInfo.id,
+    type: accountInfo.type,
+    avatarUrl: accountInfo.avatarUrl,
+    htmlUrl: accountInfo.htmlUrl
+  } as Prisma.InputJsonValue;
+}
+
+/**
+ * Helper function to deserialize account info from Prisma JSON field
+ */
+function deserializeAccountInfo(accountInfo: Prisma.JsonValue | null): GitHubAccountInfo | null {
+  if (!accountInfo || accountInfo === null) {
+    return null;
+  }
+
+  // Type guard and cast
+  if (typeof accountInfo === "object" && accountInfo !== null) {
+    const info = accountInfo as any;
+    return {
+      login: info.login || null,
+      id: info.id || null,
+      type: info.type || null,
+      avatarUrl: info.avatarUrl || null,
+      htmlUrl: info.htmlUrl || null
+    };
+  }
+
+  return null;
 }

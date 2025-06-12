@@ -38,6 +38,22 @@ export interface GitHubAccountInfo {
 }
 
 /**
+ * Generic account info structure for different integration types
+ */
+export interface IntegrationAccountInfo {
+  // GitHub specific
+  login?: string | null;
+  id?: number | null;
+  type?: string | null;
+  avatarUrl?: string | null;
+  htmlUrl?: string | null;
+
+  // Future: Stripe, other integrations can add their own fields
+  // stripeAccountId?: string;
+  // etc...
+}
+
+/**
  * Integration validation result
  */
 export interface IntegrationValidationResult {

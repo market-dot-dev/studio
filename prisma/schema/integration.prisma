@@ -12,6 +12,7 @@ model Integration {
   installationId String          // GitHub App installation ID
   permissions    Json            // Granted permissions
   repositories   Json?           // Accessible repos (if applicable)
+  accountInfo    Json?           // Account information (login, id, type, etc.) - flexible for different integration types
   
   // Metadata
   installedBy     String?        // User ID who installed (nullable)
