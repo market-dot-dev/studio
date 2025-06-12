@@ -13,7 +13,6 @@ import {
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
 import { useState } from "react";
 
 interface DisconnectGitHubBtnProps {
@@ -41,7 +40,6 @@ export function DisconnectGitHubBtn({ installationId }: DisconnectGitHubBtnProps
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button variant="destructive" size="sm">
-          <Trash2 className="mr-2 size-4" />
           Disconnect GitHub
         </Button>
       </AlertDialogTrigger>

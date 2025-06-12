@@ -1,5 +1,3 @@
-"use client";
-
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -100,14 +98,14 @@ export function GitHubIntegrationStatus({
               </div>
             )}
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <span className="text-muted-foreground">Repository Access:</span>
               <Badge variant="secondary" size="sm">
                 {installationData.repositorySelection === "all"
                   ? "All Repositories"
                   : "Selected Repositories"}
               </Badge>
-            </div>
+            </div> */}
 
             {integration.installedByUser && (
               <div className="flex items-center justify-between">

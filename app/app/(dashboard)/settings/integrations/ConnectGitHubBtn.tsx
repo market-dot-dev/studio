@@ -10,7 +10,7 @@ interface ConnectGitHubBtnProps {
 export function ConnectGitHubBtn({ installationUrl, className }: ConnectGitHubBtnProps) {
   return (
     <Button asChild variant="outline" className={className}>
-      <Link href={installationUrl} target="_blank" rel="noopener noreferrer">
+      <Link href={installationUrl}>
         <SiGithub className="size-4" />
         Install GitHub App
       </Link>
