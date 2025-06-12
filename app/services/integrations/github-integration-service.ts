@@ -4,6 +4,7 @@ import { IntegrationType, Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { GitHubAccountInfo } from "@/types/integration";
 import { App } from "@octokit/app";
+import { linkGithubUserToOrganization } from "../market-service";
 import { requireOrganization, requireUser } from "../user-context-service";
 
 // GitHub App configuration
@@ -420,6 +421,31 @@ export async function processGitHubInstallationCallback(
       accountInfo
     );
 
+    // Link the GitHub account to the organization via the external API
+    if (accountInfo.id && accountInfo.type) {
+      try {
+        const linkingSuccess = await linkGithubUserToOrganization(
+          accountInfo.id,
+          accountInfo.type as "User" | "Organization"
+        );
+
+        if (linkingSuccess) {
+          console.log(
+            `Successfully linked GitHub ${accountInfo.type} ${accountInfo.login} to organization ${org.id}`
+          );
+        } else {
+          console.warn(
+            `Failed to link GitHub ${accountInfo.type} ${accountInfo.login} to organization ${org.id} via external API`
+          );
+        }
+      } catch (error) {
+        console.error(`Error linking GitHub account to external API:`, error);
+        // Don't throw - the GitHub integration should still work even if external linking fails
+      }
+    } else {
+      console.warn("Missing GitHub account ID or type - skipping external API linking");
+    }
+
     console.log(`GitHub App installation processed successfully for org ${org.id}`);
   } catch (error) {
     console.error("Error processing GitHub installation callback:", error);
@@ -449,11 +475,48 @@ export async function handleGitHubWebhook(
     switch (action) {
       case "created":
         try {
+          // Extract account info if available from webhook data
+          let accountInfo: GitHubAccountInfo | undefined;
+          if (installation.account) {
+            accountInfo = {
+              login: installation.account.login || null,
+              id: installation.account.id || null,
+              type: installation.account.type || null,
+              avatarUrl: installation.account.avatar_url || null,
+              htmlUrl: installation.account.html_url || null
+            };
+          }
+
           await addGitHubIntegration(
             installation.id.toString(),
             installation.permissions || {},
-            installation.repositories || []
+            installation.repositories || [],
+            accountInfo
           );
+
+          // Link to external API if we have account info
+          if (accountInfo?.id && accountInfo?.type) {
+            try {
+              const linkingSuccess = await linkGithubUserToOrganization(
+                accountInfo.id,
+                accountInfo.type as "User" | "Organization"
+              );
+
+              if (linkingSuccess) {
+                console.log(
+                  `Successfully linked GitHub ${accountInfo.type} ${accountInfo.login} to organization ${organizationId} via webhook`
+                );
+              } else {
+                console.warn(
+                  `Failed to link GitHub ${accountInfo.type} ${accountInfo.login} to organization ${organizationId} via external API (webhook)`
+                );
+              }
+            } catch (error) {
+              console.error(`Error linking GitHub account to external API via webhook:`, error);
+              // Don't throw - the GitHub integration should still work
+            }
+          }
+
           console.log(`GitHub App installed for org ${organizationId}`);
         } catch (error) {
           console.error(`Failed to add GitHub integration for org ${organizationId}:`, error);
