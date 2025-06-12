@@ -1,6 +1,7 @@
 import { getProspects } from "@/app/services/prospect-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
+import { ProspectsEmptyState } from "@/components/prospects/empty-state";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import Link from "next/link";
@@ -22,20 +23,26 @@ export default async function ProspectsPage() {
         description="View all prospects who have submitted an interest on one of your packages."
       />
 
-      <DataTable
-        columns={columns}
-        data={prospects}
-        renderSubRowComponent={renderProspectContextSubRowComponent}
-      />
+      {prospects.length === 0 ? (
+        <ProspectsEmptyState />
+      ) : (
+        <>
+          <DataTable
+            columns={columns}
+            data={prospects}
+            renderSubRowComponent={renderProspectContextSubRowComponent}
+          />
 
-      {!showAll && maxInitialRows && prospects.length > maxInitialRows && (
-        <div className="mt-4 grid justify-items-end">
-          <Link href="/prospects">
-            <Button size="sm" variant="outline">
-              View All Prospects →
-            </Button>
-          </Link>
-        </div>
+          {!showAll && maxInitialRows && prospects.length > maxInitialRows && (
+            <div className="mt-4 grid justify-items-end">
+              <Link href="/prospects">
+                <Button size="sm" variant="outline">
+                  View All Prospects →
+                </Button>
+              </Link>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
