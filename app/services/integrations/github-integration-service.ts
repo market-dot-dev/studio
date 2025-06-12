@@ -34,7 +34,7 @@ function createGitHubApp(): App {
 /**
  * Create authenticated Octokit instance for a specific installation
  */
-async function createInstallationOctokit(installationId: string): Promise<Octokit> {
+async function createInstallationOctokit(installationId: string) {
   const app = createGitHubApp();
   return await app.getInstallationOctokit(parseInt(installationId, 10));
 }
@@ -143,6 +143,7 @@ export async function validateGitHubIntegration(organizationId?: string): Promis
 }> {
   try {
     const integration = await getGitHubIntegration(organizationId);
+    console.log("Integration", integration);
 
     if (!integration) {
       return { isValid: false, error: "No GitHub integration found" };
@@ -162,9 +163,12 @@ export async function validateGitHubIntegration(organizationId?: string): Promis
     const octokit = await createInstallationOctokit(integration.installationId);
 
     // Test the installation by getting installation info
-    const { data: installation } = await octokit.rest.apps.getInstallation({
-      installation_id: parseInt(integration.installationId, 10)
-    });
+    const { data: installation } = await octokit.request(
+      "GET /app/installations/{installation_id}",
+      {
+        installation_id: parseInt(integration.installationId, 10)
+      }
+    );
 
     // Update last synced time
     await prisma.integration.update({
@@ -220,12 +224,15 @@ export async function getGitHubInstallationInfo(organizationId?: string) {
     const octokit = await createInstallationOctokit(integration.installationId);
 
     // Get installation details
-    const { data: installation } = await octokit.rest.apps.getInstallation({
-      installation_id: parseInt(integration.installationId, 10)
-    });
+    const { data: installation } = await octokit.request(
+      "GET /app/installations/{installation_id}",
+      {
+        installation_id: parseInt(integration.installationId, 10)
+      }
+    );
 
     // Get accessible repositories
-    const { data: repositories } = await octokit.rest.apps.listReposAccessibleToInstallation({
+    const { data: repositories } = await octokit.request("GET /installation/repositories", {
       per_page: 100
     });
 
@@ -323,6 +330,66 @@ export async function getGitHubInstallationUrl(state?: string): Promise<string> 
   }
 
   return baseUrl;
+}
+
+/**
+ * Process GitHub App installation callback
+ * Called when user completes GitHub App installation and is redirected back
+ */
+export async function processGitHubInstallationCallback(
+  installationId: string,
+  state?: string
+): Promise<void> {
+  if (!installationId) {
+    throw new Error("Installation ID is required");
+  }
+
+  const org = await requireOrganization();
+  const user = await requireUser();
+
+  try {
+    // If GitHub App is not configured, we can't fetch installation details
+    // but we can still store the basic integration
+    if (!isGitHubAppConfigured()) {
+      console.warn("GitHub App not configured - storing basic integration only");
+      await addGitHubIntegration(installationId, {}, []);
+      return;
+    }
+
+    // Get installation details from GitHub API
+    const octokit = await createInstallationOctokit(installationId);
+    const { data: installation } = await octokit.request(
+      "GET /app/installations/{installation_id}",
+      {
+        installation_id: parseInt(installationId, 10)
+      }
+    );
+
+    // Get accessible repositories
+    const { data: repositories } = await octokit.request("GET /installation/repositories", {
+      per_page: 100
+    });
+
+    // Store the integration with full details
+    await addGitHubIntegration(
+      installationId,
+      installation.permissions || {},
+      repositories.repositories || []
+    );
+
+    console.log(`GitHub App installation processed successfully for org ${org.id}`);
+  } catch (error) {
+    console.error("Error processing GitHub installation callback:", error);
+
+    // Still try to store basic integration even if API calls fail
+    try {
+      await addGitHubIntegration(installationId, {}, []);
+      console.log("Stored basic GitHub integration despite API errors");
+    } catch (fallbackError) {
+      console.error("Failed to store even basic integration:", fallbackError);
+      throw new Error("Failed to process GitHub installation");
+    }
+  }
 }
 
 /**
@@ -441,21 +508,4 @@ export async function getGitHubAppConfigStatus() {
     hasClientSecret: !!CLIENT_SECRET,
     isFullyConfigured: isGitHubAppConfigured()
   };
-}
-
-/**
- * Get installation Octokit for external use (when integration is already validated)
- */
-export async function getInstallationOctokit(organizationId?: string): Promise<Octokit | null> {
-  try {
-    const integration = await getGitHubIntegration(organizationId);
-    if (!integration || !integration.active) {
-      return null;
-    }
-
-    return await createInstallationOctokit(integration.installationId);
-  } catch (error) {
-    console.error("Error creating installation Octokit:", error);
-    return null;
-  }
 }
