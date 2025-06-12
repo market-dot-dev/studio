@@ -4,7 +4,6 @@ import { IntegrationType } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { GitHubAccountInfo } from "@/types/integration";
 import { App } from "@octokit/app";
-import { Octokit } from "@octokit/rest";
 import { requireOrganization, requireUser } from "../user-context-service";
 
 // GitHub App configuration
@@ -21,9 +20,14 @@ function createGitHubApp(): App {
     throw new Error("GitHub App ID and Private Key must be configured");
   }
 
+  // Handle escaped newlines from environment variables if present
+  const formattedPrivateKey = PRIVATE_KEY.includes("\\n")
+    ? PRIVATE_KEY.replace(/\\n/g, "\n")
+    : PRIVATE_KEY;
+
   return new App({
     appId: APP_ID,
-    privateKey: PRIVATE_KEY.replace(/\\n/g, "\n") // Handle escaped newlines
+    privateKey: formattedPrivateKey
   });
 }
 
