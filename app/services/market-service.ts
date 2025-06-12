@@ -4,12 +4,14 @@ import { Channel } from "@/app/generated/prisma";
 import { getRootUrl } from "@/lib/domain";
 import { getCurrentSite } from "./site/site-crud-service";
 import { getPublishedTiersForOrganization } from "./tier/tier-service";
-import { requireOrganization, requireUser } from "./user-context-service";
+import { requireOrganization } from "./user-context-service";
 
 const API_ENDPOINT = process.env.MARKET_DEV_API_ENDPOINT;
 const API_KEY = process.env.MARKET_DEV_API_KEY;
 
-interface LinkGitWalletResponse {
+type GithubEntityType = "User" | "Organization";
+
+interface LinkExpertResponse {
   linked: boolean;
   expert?: {
     id: string;
@@ -20,6 +22,46 @@ interface LinkGitWalletResponse {
   };
 }
 
+/**
+ * Links a GitHub user or organization to the current organization via the market.dev API
+ * @param githubUserId - The GitHub user/organization ID to link to the organization
+ * @param githubEntityType - The type of GitHub entity ("User" or "Organization")
+ * @returns A boolean indicating if the linking was successful
+ */
+export async function linkGithubUserToOrganization(
+  githubUserId: number,
+  githubEntityType: GithubEntityType
+): Promise<boolean> {
+  try {
+    const organization = await requireOrganization();
+
+    const response = await fetch(`${API_ENDPOINT}store/experts/link`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`
+      },
+      body: JSON.stringify({
+        store_id: organization.id,
+        github_id: githubUserId,
+        github_type: githubEntityType
+      })
+    });
+
+    if (response.status !== 200) {
+      return false;
+    }
+
+    const responseData = (await response.json()) as LinkExpertResponse;
+    return responseData.linked === true;
+  } catch (error) {
+    console.error("Error linking GitHub user to organization:", error);
+    return false;
+  }
+}
+
+// @NOTE: TG-12/06/2025
+// Below shouldn't be necessary anymore, as we are using embeds to show products on the market. Keeping here for now to ensure.
 interface ServiceForSaleOnMarketDev {
   store_package_id: string;
   name: string;
@@ -34,80 +76,6 @@ type ServiceForSaleOnMarketDevParams = Omit<
   ServiceForSaleOnMarketDev,
   "user_id" | "created_at" | "updated_at"
 >;
-
-/**
- * @deprecated
- * Validates the current organization as a market expert and updates the organization if successful
- * @returns A boolean indicating if the validation was successful
- */
-export async function validateMarketExpert(): Promise<boolean> {
-  try {
-    const organization = await requireOrganization();
-
-    // @TODO:
-    // If organization is already a market expert, return true immediately
-    // if (organization.marketExpertId) {
-    //   return true;
-    // }
-
-    const response = await validateAccount();
-    if (response.status !== 200) {
-      return false;
-    }
-
-    const responseData = (await response.json()) as LinkGitWalletResponse;
-    const { linked, expert } = responseData;
-
-    if (!linked || !expert) {
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error("Error validating market expert:", error);
-    return false;
-  }
-}
-
-/**
- * @deprecated
- * Checks if the current organization is already a market expert
- * @returns A boolean indicating if the organization is a market expert
- */
-export async function organizationIsMarketExpert(): Promise<boolean> {
-  const organization = await requireOrganization();
-  return false;
-}
-
-/**
- * @deprecated
- * Validate account with the market.dev API
- * This is an internal function used by validateMarketExpert
- */
-export async function validateAccount() {
-  const user = await requireUser();
-  const organization = await requireOrganization();
-
-  // @TODO: Must be updated to new approach
-  const githubUserId = 0;
-  if (!githubUserId) {
-    throw new Error("User GitHub ID doesn't exist");
-  }
-
-  const response = await fetch(`${API_ENDPOINT}store/experts/link`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${API_KEY}`
-    },
-    body: JSON.stringify({
-      store_id: organization.id, // Use organization ID instead of user ID
-      github_id: githubUserId
-    })
-  });
-
-  return response;
-}
 
 /**
  * @deprecated
