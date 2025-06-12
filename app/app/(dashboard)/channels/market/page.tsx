@@ -1,4 +1,3 @@
-import { requireOrganization, requireUser } from "@/app/services/user-context-service";
 import ConnectionRequired from "@/components/channels/market/connection-required";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";
@@ -6,8 +5,6 @@ import Link from "next/link";
 
 // @TODO: Update to new github approach
 export default async function MarketChannelPage() {
-  const currentUser = await requireUser();
-  const org = await requireOrganization();
   const isConnectedToMarket = false; //org.marketExpertId != null; // @TODO
 
   return (

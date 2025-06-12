@@ -1,6 +1,5 @@
 "use client";
 
-import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
@@ -9,13 +8,12 @@ import { toast } from "sonner";
 
 // @TODO: Change functionality here to github setup
 export default function ConnectionRequired() {
-  const { validateMarketExpert, isLoadingMarketExpert } = useMarketExpert();
   const [isConnecting, setIsConnecting] = useState(false);
 
   const handleConnect = async () => {
     setIsConnecting(true);
     try {
-      const success = await validateMarketExpert();
+      const success = false; // @TODO: Change this to something that connects, or just show this page immediately (delete this component)
       if (success) {
         toast.success("Market.dev account connected successfully");
       } else {
@@ -56,7 +54,7 @@ export default function ConnectionRequired() {
 
       <div className="relative flex flex-col gap-4 sm:flex-row">
         <Button
-          loading={isConnecting || isLoadingMarketExpert}
+          loading={isConnecting}
           loadingText="Connecting to market.dev"
           onClick={() => handleConnect()}
         >

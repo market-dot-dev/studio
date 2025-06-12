@@ -1,4 +1,3 @@
-import { organizationIsMarketExpert } from "@/app/services/market-service";
 import {
   defaultOnboardingState,
   OnboardingState
@@ -24,7 +23,6 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
   const user = await requireUser();
   const org = await requireOrganization();
   const orgContext = await getOrganizationSwitcherContext();
-  const isMarketExpert = await organizationIsMarketExpert();
 
   const onboarding = user.onboarding
     ? (JSON.parse(user.onboarding) as OnboardingState)
@@ -32,7 +30,7 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
   const site = await getSiteByOrgId(org.id);
 
   return (
-    <DashboardProvider siteId={site?.id ?? null} initialExpertStatus={isMarketExpert}>
+    <DashboardProvider siteId={site?.id ?? null}>
       <SessionRefresher />
       <OnboardingModal
         user={user}
@@ -42,7 +40,7 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
       />
       <SidebarProvider>
         <Header />
-        <DashboardSidebar orgContext={orgContext} isMarketExpert={isMarketExpert} site={site} />
+        <DashboardSidebar orgContext={orgContext} site={site} />
         <main className="flex min-h-screen w-screen flex-col items-center bg-stone-100 pt-10 md:w-[calc(100vw-var(--sidebar-width))]">
           {org.stripeAccountDisabled && <StripeDisabledBanner />}
           <div className="flex w-full max-w-screen-xl flex-col gap-y-8 p-6 sm:p-10 sm:pt-8">

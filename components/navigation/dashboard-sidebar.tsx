@@ -32,7 +32,6 @@ import { useSelectedLayoutSegments } from "next/navigation";
 
 interface DashboardSidebarProps {
   orgContext: OrganizationSwitcherContext;
-  isMarketExpert: boolean;
   site: SiteDetails | null;
 }
 
@@ -61,7 +60,7 @@ function SupportDropdown() {
   );
 }
 
-export function DashboardSidebar({ orgContext, isMarketExpert, site }: DashboardSidebarProps) {
+export function DashboardSidebar({ orgContext, site }: DashboardSidebarProps) {
   const urlSegments = useSelectedLayoutSegments();
 
   const headerItems: SidebarItemGroup[] = [
@@ -147,16 +146,12 @@ export function DashboardSidebar({ orgContext, isMarketExpert, site }: Dashboard
               }
             ]
           : []),
-        ...(isMarketExpert
-          ? [
-              {
-                title: "Marketplace",
-                url: "/channels/market",
-                icon: <ShoppingBag />,
-                isActive: urlSegments[1] === "market"
-              }
-            ]
-          : []),
+        {
+          title: "Marketplace",
+          url: "/channels/market",
+          icon: <ShoppingBag />,
+          isActive: urlSegments[1] === "market"
+        },
         {
           title: "Embeds",
           url: "/channels/embeds",
