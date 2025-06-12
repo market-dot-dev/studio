@@ -1,6 +1,5 @@
 "use client";
 
-import { User } from "@/app/generated/prisma";
 import { useMarketExpert } from "@/components/dashboard/dashboard-context";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -8,7 +7,8 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 
-export default function ConnectionRequired({ user }: { user: User }) {
+// @TODO: Change functionality here to github setup
+export default function ConnectionRequired() {
   const { validateMarketExpert, isLoadingMarketExpert } = useMarketExpert();
   const [isConnecting, setIsConnecting] = useState(false);
 

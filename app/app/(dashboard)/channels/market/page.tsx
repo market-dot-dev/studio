@@ -15,7 +15,7 @@ export default async function MarketChannelPage() {
       <PageHeader title="explore.market.dev" />
 
       {!isConnectedToMarket ? (
-        <ConnectionRequired user={currentUser} />
+        <ConnectionRequired />
       ) : (
         <div className="flex w-full flex-col gap-4">
           <div className="flex w-full items-center justify-between">

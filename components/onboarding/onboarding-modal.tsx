@@ -1,7 +1,6 @@
 "use client";
 
 import { User } from "@/app/generated/prisma";
-import { organizationIsMarketExpert, validateMarketExpert } from "@/app/services/market-service";
 import { refreshAndGetState } from "@/app/services/onboarding/onboarding-service";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
@@ -11,19 +10,10 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/compon
 import type { SiteDetails } from "@/types/site";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/themes";
-import { AlertCircleIcon } from "lucide-react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import LoadingDots from "../icons/loading-dots";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import OfferingsForm from "./offerings-form";
 import ProfileForm from "./profile-form";
-
-function useMounted() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  return mounted;
-}
 
 interface ProfileData {
   businessName: string;
@@ -36,21 +26,6 @@ interface ProfileData {
 interface OfferingsData {
   offerings: string[];
 }
-
-// Internal UI components
-const LoadingState = () => (
-  <div className="flex size-10 items-center justify-center">
-    <LoadingDots />
-  </div>
-);
-
-const ErrorState = ({ error, onRetry }: { error: string; onRetry: () => void }) => (
-  <div className="flex size-full flex-col items-center justify-center gap-4">
-    <AlertCircleIcon className="size-5" />
-    <p className="text-md">{error}</p>
-    <Button onClick={onRetry}>Try again</Button>
-  </div>
-);
 
 const FormContent = ({
   step,
@@ -123,69 +98,16 @@ export function OnboardingModal({
   onboardingState,
   organization
 }: OnboardingModalProps) {
-  const searchParams = useSearchParams();
   const [isOpen, setIsOpen] = useState(
     !onboardingState.setupBusiness || !onboardingState.preferredServices
-    //|| (!organization.marketExpertId && searchParams.get("source") === "market.dev") // @TODO: Adjust to new github app setup
   );
 
-  const [isMarketExpert, setIsMarketExpert] = useState<boolean | null>(null);
-  const [isLoadingMarketExpert, setIsLoadingMarketExpert] = useState(false);
-  const [validateMarketExpertError, setValidateMarketExpertError] = useState<string | null>(null);
   const [step, setStep] = useState<"profile" | "offerings">("profile");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [profileData, setProfileData] = useState<ProfileData | null>(null);
 
   const router = useRouter();
-  const source = searchParams.get("source");
-  const sourceIsMarketDev = source === "market.dev";
-  const mounted = useMounted();
-
-  // Check if organization is market expert on mount
-  useEffect(() => {
-    const checkMarketExpert = async () => {
-      try {
-        const isExpert = await organizationIsMarketExpert();
-        setIsMarketExpert(isExpert);
-      } catch (error) {
-        console.error("Error checking market expert status:", error);
-        setIsMarketExpert(false);
-      }
-    };
-
-    if (mounted) {
-      checkMarketExpert();
-    }
-  }, [mounted]);
-
-  // Handle market.dev connection if needed
-  useEffect(() => {
-    if (!mounted || !sourceIsMarketDev || isMarketExpert !== null) return;
-
-    const connectMarketExpert = async () => {
-      setIsLoadingMarketExpert(true);
-      try {
-        const success = await validateMarketExpert();
-        if (success && sourceIsMarketDev) {
-          toast.success("Market.dev account connected successfully");
-          setIsMarketExpert(true);
-        } else if (!success && sourceIsMarketDev) {
-          setValidateMarketExpertError(
-            "Failed to connect your Market.dev account. Make sure you have an account on Market.dev."
-          );
-          setIsMarketExpert(false);
-        }
-      } catch (error) {
-        setValidateMarketExpertError("Error connecting to market.dev");
-        setIsMarketExpert(false);
-      } finally {
-        setIsLoadingMarketExpert(false);
-      }
-    };
-
-    connectMarketExpert();
-  }, [mounted, sourceIsMarketDev, isMarketExpert]);
 
   const handleProfileSubmit = (data: ProfileData) => {
     setProfileData(data);
@@ -237,9 +159,6 @@ export function OnboardingModal({
     }
   };
 
-  const handleRetry = () => window.location.reload();
-
-  // Note: unless source is market.dev where user is intentionally trying to connect their market.dev account, we shouldn't surface connection errors
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <VisuallyHidden>
@@ -251,30 +170,24 @@ export function OnboardingModal({
         hideCloseButton
         preventOutsideClose
       >
-        {isLoadingMarketExpert ? (
-          <LoadingState />
-        ) : sourceIsMarketDev && validateMarketExpertError ? (
-          <ErrorState error={validateMarketExpertError} onRetry={handleRetry} />
-        ) : (
-          <>
-            <FormContent
+        <>
+          <FormContent
+            step={step}
+            user={user}
+            currentSite={currentSite}
+            isLoading={isLoading}
+            onProfileSubmit={handleProfileSubmit}
+            onOfferingsSubmit={handleFinalSubmit}
+          />
+          <DialogFooter className="w-full border-t border-stone-200 px-6 py-4 sm:px-9">
+            <NavigationButtons
               step={step}
-              user={user}
-              currentSite={currentSite}
               isLoading={isLoading}
-              onProfileSubmit={handleProfileSubmit}
-              onOfferingsSubmit={handleFinalSubmit}
+              onBack={() => setStep("profile")}
+              onSubmit={handleSubmitClick}
             />
-            <DialogFooter className="w-full border-t border-stone-200 px-6 py-4 sm:px-9">
-              <NavigationButtons
-                step={step}
-                isLoading={isLoading}
-                onBack={() => setStep("profile")}
-                onSubmit={handleSubmitClick}
-              />
-            </DialogFooter>
-          </>
-        )}
+          </DialogFooter>
+        </>
       </DialogContent>
     </Dialog>
   );
