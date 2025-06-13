@@ -3,10 +3,11 @@
 import { Charge, Prospect, Subscription } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { capitalize, formatDate } from "@/lib/utils";
 import type { CustomerOrgWithAll } from "@/types/organization-customer";
 import { ColumnDef } from "@tanstack/react-table";
-import { Package } from "lucide-react";
+import { ChevronRight, Package } from "lucide-react";
 import Link from "next/link";
 import { PurchaseStatusBadge } from "../purchase-status-badge";
 import { SubscriptionStatusBadge } from "../subscription-state";
@@ -128,5 +129,16 @@ export const columns: ColumnDef<Sale>[] = [
 
       return "-";
     }
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => (
+      <Button variant="outline" size="sm" asChild>
+        <Link href={`/customers/${row.original.organizationId}`}>
+          View
+          <ChevronRight size={14} />
+        </Link>
+      </Button>
+    )
   }
 ];

@@ -2,6 +2,7 @@ import { CustomersEmptyState } from "@/components/customer/empty-state";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
 import type { CustomerOrgWithChargesAndSubs } from "@/types/organization-customer";
+import { isActive } from "@/types/subscription";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Sale, columns } from "./columns";
@@ -17,17 +18,19 @@ const DashboardCustomerTable = ({
 
   // Transform data to sales array for use with our columns definition
   const sales: Sale[] = customers.flatMap((organization) => [
-    ...organization.subscriptions.map((subscription, index) => ({
-      id: `subscription-${organization.id}-${index}`,
-      type: "subscription" as const,
-      organization: { ...organization, prospects: [] } as any,
-      ownerName: organization.owner.name || "",
-      ownerEmail: organization.owner.email || "",
-      tierName: subscription.tier.name,
-      createdAt: subscription.createdAt,
-      organizationId: organization.id,
-      subscription: subscription
-    })),
+    ...organization.subscriptions
+      .filter((sub) => isActive(sub))
+      .map((subscription, index) => ({
+        id: `subscription-${organization.id}-${index}`,
+        type: "subscription" as const,
+        organization: { ...organization, prospects: [] } as any,
+        ownerName: organization.owner.name || "",
+        ownerEmail: organization.owner.email || "",
+        tierName: subscription.tier.name,
+        createdAt: subscription.createdAt,
+        organizationId: organization.id,
+        subscription: subscription
+      })),
     ...organization.charges.map((charge, index) => ({
       id: `charge-${organization.id}-${index}`,
       type: "charge" as const,
@@ -49,7 +52,7 @@ const DashboardCustomerTable = ({
   return (
     <div className="space-y-4">
       <div className="flex w-full items-end justify-between">
-        <h3 className="text-xl font-bold">Customers</h3>
+        <h3 className="text-xl font-bold">Recent Customers</h3>
         <Button variant="outline" size="sm" className="group gap-0.5 pr-1" asChild>
           <Link href="/customers">
             View All
