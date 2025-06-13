@@ -36,27 +36,24 @@ export const columns: ColumnDef<Sale>[] = [
     }
   },
   {
-    accessorKey: "ownerName",
-    header: "Name",
+    accessorKey: "organization.name",
+    header: "Organization",
     meta: {
       emphasized: true
     },
     cell: ({ row }) => {
-      const name = row.original.ownerName || row.original.organization.owner.name;
-      const email = row.original.ownerEmail || row.original.organization.owner.email;
+      const orgName = row.original.organization.name;
+      const ownerName = row.original.ownerName || row.original.organization.owner.name;
 
       return (
         <div className="flex flex-col">
-          <span className="font-semibold text-stone-800">{name}</span>
-          {email && <span className="text-xs font-normal text-muted-foreground">{email}</span>}
+          <span className="font-semibold text-stone-800">{orgName}</span>
+          {ownerName && (
+            <span className="text-xs font-normal text-muted-foreground">{ownerName}</span>
+          )}
         </div>
       );
     }
-  },
-  {
-    accessorKey: "organization.name",
-    header: "Organization",
-    cell: ({ row }) => row.original.organization.name
   },
   {
     id: "package",
