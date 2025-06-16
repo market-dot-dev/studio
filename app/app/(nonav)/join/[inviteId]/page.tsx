@@ -1,4 +1,7 @@
-import { getInvitationDetails } from "@/app/services/team-management-service";
+import {
+  getInvitationDetails,
+  updateInvitationEmail
+} from "@/app/services/team-management-service";
 import { requireUser } from "@/app/services/user-context-service";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,7 +21,8 @@ export default async function JoinPage(props: {
   const { inviteId } = await props.params;
   const { error } = await props.searchParams;
   const user = await requireUser();
-  const invitation = await getInvitationDetails(inviteId);
+  let invitation = await getInvitationDetails(inviteId);
+  let linkingError: string | null = null;
 
   // Handle invalid invitation
   if (!invitation || invitation.expiresAt < new Date()) {
@@ -37,6 +41,21 @@ export default async function JoinPage(props: {
         </Card>
       </div>
     );
+  }
+
+  // Auto-link user if email doesn't match
+  if (user.email && user.email !== invitation.email) {
+    try {
+      const updatedInvitation = await updateInvitationEmail(inviteId, user.email);
+      if (updatedInvitation) {
+        invitation = updatedInvitation;
+      } else {
+        // This case should ideally not be reached if getInvitationDetails passed
+        linkingError = "Could not update invitation. It may be invalid or expired.";
+      }
+    } catch (e: any) {
+      linkingError = e.message || "An unexpected error occurred while linking your account.";
+    }
   }
 
   // Handle acceptance error
@@ -67,9 +86,15 @@ export default async function JoinPage(props: {
           <CardHeader>
             <CardTitle>Email Mismatch</CardTitle>
             <CardDescription>
-              This invitation was sent to <strong>{invitation.email}</strong>, but you're signed in
-              as <strong>{user.email}</strong>. Please contact the person who invited you to send a
-              new invitation to your current email address.
+              {linkingError ? (
+                <span className="text-destructive">{linkingError}</span>
+              ) : (
+                <>
+                  This invitation was sent to <strong>{invitation.email}</strong>, but you're signed
+                  in as <strong>{user.email || "a different user"}</strong>. Please contact the
+                  person who invited you to send a new invitation to your current email address.
+                </>
+              )}
             </CardDescription>
           </CardHeader>
           <CardFooter className="flex justify-center">

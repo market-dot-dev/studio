@@ -148,6 +148,67 @@ export async function inviteUsersToOrganization(
 }
 
 /**
+ * Updates an invitation to use a new email address.
+ * This is used when a user signs up with a different email than the one invited.
+ */
+export async function updateInvitationEmail(
+  inviteId: string,
+  newEmail: string
+): Promise<InviteWithDetails | null> {
+  const invite = await prisma.organizationInvite.findUnique({
+    where: { id: inviteId },
+    ...includeInviteDetails
+  });
+
+  if (!invite || invite.expiresAt < new Date()) {
+    throw new Error("Invalid or expired invitation");
+  }
+
+  // If the email is already correct, do nothing
+  if (invite.email === newEmail) {
+    return invite;
+  }
+
+  // Check if a user with the new email is already a member of this organization
+  const existingMember = await prisma.organizationMember.findFirst({
+    where: {
+      organizationId: invite.organizationId,
+      user: { email: newEmail }
+    }
+  });
+
+  if (existingMember) {
+    throw new Error("A user with this email is already a member of this organization.");
+  }
+
+  // Check if another pending invite exists for the new email in this organization
+  const existingInvite = await prisma.organizationInvite.findFirst({
+    where: {
+      organizationId: invite.organizationId,
+      email: newEmail,
+      id: { not: inviteId }
+    }
+  });
+
+  if (existingInvite) {
+    throw new Error("An invitation for this email address already exists.");
+  }
+
+  // Update the invitation email
+  const updatedInvite = await prisma.organizationInvite.update({
+    where: {
+      id: inviteId
+    },
+    data: {
+      email: newEmail
+    },
+    ...includeInviteDetails
+  });
+
+  return updatedInvite;
+}
+
+/**
  * Change a team member's role
  * Prevents removing the single owner
  */
@@ -391,7 +452,11 @@ export async function acceptInvitation(inviteId: string, userId: string): Promis
     where: { id: userId }
   });
 
-  if (!user || user.email !== invite.email) {
+  if (!user || !user.email) {
+    throw new Error("User not found or email is missing");
+  }
+
+  if (user.email !== invite.email) {
     throw new Error("Email does not match invitation");
   }
 
