@@ -10,6 +10,7 @@ import { StripeOnboardingActions } from "./stripe-onboarding-actions";
 export default async function StripeOnboardingPage() {
   const organization = await requireOrganization();
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
+  // TODO: Need to make the custom callback path work
   const oauthUrl = await getVendorStripeConnectURL("/onboarding/stripe/callback");
 
   const hasStripeHistory = !!organization.stripeAccountId || organization.stripeAccountDisabled;
