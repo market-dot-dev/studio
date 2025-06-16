@@ -61,7 +61,7 @@ export default function Sell() {
                 image={card.image}
                 color={colors.green}
                 orientation="vertical"
-                imageMaxWidth="max-w-sm sm:w-auto sm:max-w-md"
+                imageMaxWidth="max-w-sm w-full sm:max-w-md"
                 className="mx-auto aspect-[3/4] max-h-[420px] w-full"
               />
             </div>

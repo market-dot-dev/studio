@@ -25,7 +25,7 @@ const getSubscriptionStatusDisplay = (subscription: Subscription): SubscriptionS
   if (isRenewing(subscription)) {
     return {
       type: "active_renewing",
-      text: "Subscribed",
+      text: "Active",
       badgeVariant: "success",
       icon: <RefreshCw size={12} strokeWidth={2.5} />
     };
