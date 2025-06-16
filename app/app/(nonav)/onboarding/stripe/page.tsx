@@ -1,52 +1,18 @@
-import { ConnectStripeBtn } from "@/app/app/(dashboard)/settings/payment/ConnectStripeBtn";
+import { StripeAccountStatus } from "@/app/app/(dashboard)/settings/payment/stripe-account-status";
 import {
   checkVendorStripeStatus,
   getVendorStripeConnectURL,
-  getVendorStripeErrorMessage
 } from "@/app/services/stripe/stripe-vendor-service";
 import { requireOrganization } from "@/app/services/user-context-service";
-import { ErrorMessageCode } from "@/types/stripe";
 import { CreditCard, Mail, RefreshCw } from "lucide-react";
 import { StripeOnboardingActions } from "./stripe-onboarding-actions";
-import { StripeStatus } from "./stripe-status";
-
-interface StripeData {
-  canSell: boolean;
-  messageCodes: string[];
-  disabledReasons?: string[];
-  isAccountDeauthorized: boolean;
-  reconnectUrl?: string;
-  oauthUrl: string;
-  errorMessages: string[];
-  hasStripeHistory: boolean;
-}
 
 export default async function StripeOnboardingPage() {
-  // Fetch Stripe data on the server
   const organization = await requireOrganization();
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
-  const oauthUrl = await getVendorStripeConnectURL();
+  const oauthUrl = await getVendorStripeConnectURL("/onboarding/stripe/callback");
 
-  // Resolve error messages for each code
-  const errorMessages = await Promise.all(
-    messageCodes.map((code) => getVendorStripeErrorMessage(code as ErrorMessageCode))
-  );
-
-  // Check if account has been connected at some point but might be disconnected now
   const hasStripeHistory = !!organization.stripeAccountId || organization.stripeAccountDisabled;
-
-  const stripeData: StripeData = {
-    canSell,
-    messageCodes,
-    disabledReasons,
-    isAccountDeauthorized: organization.stripeAccountDisabled && !organization.stripeAccountId,
-    reconnectUrl: organization.stripeAccountDisabled ? oauthUrl : undefined,
-    oauthUrl,
-    errorMessages,
-    hasStripeHistory
-  };
-
-  const isConnected = stripeData.canSell;
 
   return (
     <div className="mx-auto max-w-md">
@@ -58,21 +24,19 @@ export default async function StripeOnboardingPage() {
           </p>
         </div>
 
-        <div className="flex flex-col gap-4">
-          {/* Simple Stripe status without server actions in render */}
-          <StripeStatus stripeData={stripeData} />
-
-          {/* If not connected, show the connect button */}
-          {!isConnected && (
-            <div className="space-y-4">
-              <ConnectStripeBtn oauthUrl={stripeData.oauthUrl} className="w-full" />
-            </div>
-          )}
-        </div>
+        <StripeAccountStatus
+          canSell={canSell}
+          messageCodes={messageCodes}
+          disabledReasons={disabledReasons}
+          isAccountDeauthorized={organization.stripeAccountDisabled && !organization.stripeAccountId}
+          reconnectUrl={organization.stripeAccountDisabled ? oauthUrl : undefined}
+          oauthUrl={oauthUrl}
+          hasStripeHistory={hasStripeHistory}
+        />
 
         <div className="space-y-8">
           {/* What you need Stripe for */}
-          {!isConnected && (
+          {!canSell && (
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-muted-foreground">You'll need Stripe to:</h3>
 
@@ -101,7 +65,7 @@ export default async function StripeOnboardingPage() {
           {/* What you can do */}
           <div className="space-y-3">
             <h3 className="text-sm font-medium text-muted-foreground">
-              {isConnected ? "With Stripe connected, you can:" : "Without Stripe, you can still:"}
+              {canSell ? "With Stripe connected, you can:" : "Without Stripe, you can still:"}
             </h3>
 
             <div className="flex items-start space-x-3">
@@ -114,8 +78,7 @@ export default async function StripeOnboardingPage() {
               </div>
             </div>
 
-            {/* What you can do with Stripe */}
-            {isConnected && (
+            {canSell && (
               <>
                 <div className="flex items-start space-x-3">
                   <CreditCard className="mt-0.5 size-4 text-muted-foreground" />
@@ -142,7 +105,7 @@ export default async function StripeOnboardingPage() {
         </div>
 
         <div className="space-y-6">
-          <StripeOnboardingActions isConnected={isConnected} />
+          <StripeOnboardingActions isConnected={canSell} />
           <p className="text-center text-xs text-muted-foreground">
             You can always connect Stripe later from your settings page.
           </p>

@@ -3,7 +3,7 @@
 import { processVendorStripeConnectCallback } from "@/app/services/stripe/stripe-vendor-service";
 import { redirect } from "next/navigation";
 
-export default async function StripeCallbackHandler({
+export default async function StripeOnboardingCallbackHandler({
     searchParams
 }: {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -13,7 +13,7 @@ export default async function StripeCallbackHandler({
     const state = query["state"] as string;
 
     if (!code || !state) {
-        redirect("/settings/payment?error=missing_parameters");
+        redirect("/onboarding/stripe");
     }
 
     try {
@@ -21,9 +21,9 @@ export default async function StripeCallbackHandler({
         await processVendorStripeConnectCallback(code, state);
     } catch (error) {
         console.error("Error processing Stripe callback:", error);
-        redirect("/settings/payment?error=connection_failed");
+        // Still redirect back - the existing error handling logic will show appropriate state
     }
 
-    // Only redirect outside the try/catch if successful
-    redirect("/settings/payment");
-}
+    // Always redirect back to let the existing status logic determine the state
+    redirect("/onboarding/stripe");
+} 

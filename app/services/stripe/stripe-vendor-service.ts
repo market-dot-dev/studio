@@ -144,8 +144,9 @@ async function generateVendorStripeOAuthToken(organizationId: string): Promise<s
 
 /**
  * Get OAuth link for Stripe Connect for current organization
+ * @param callbackPath - Optional callback path override (defaults to /settings/payment/callback)
  */
-export async function getVendorStripeConnectURL(): Promise<string> {
+export async function getVendorStripeConnectURL(callbackPath?: string): Promise<string> {
   const organization = await getCurrentVendorOrganization();
 
   const state = organization.stripeCSRF || (await generateVendorStripeOAuthToken(organization.id));
@@ -154,7 +155,7 @@ export async function getVendorStripeConnectURL(): Promise<string> {
     await updateVendorStripeData(organization.id, { stripeCSRF: state });
   }
 
-  const redirectUri = getRootUrl("app", "/settings/payment/callback");
+  const redirectUri = getRootUrl("app", callbackPath || "/settings/payment/callback");
   const oauthLink = `https://connect.stripe.com/oauth/authorize?response_type=code&client_id=${process.env.STRIPE_CLIENT_ID}&scope=read_write&state=${state}&redirect_uri=${redirectUri}`;
 
   return oauthLink;
