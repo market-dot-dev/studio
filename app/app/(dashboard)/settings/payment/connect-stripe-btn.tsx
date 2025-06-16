@@ -14,8 +14,8 @@ export function ConnectStripeBtn({ oauthUrl, ...buttonProps }: Props) {
         <Image
           src="/stripe-icon-square.svg"
           alt="stripe logo"
-          height={18}
-          width={18}
+          height={16}
+          width={16}
           className="rounded-[3px]"
         />
         Connect your Stripe account

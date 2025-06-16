@@ -9,8 +9,10 @@
 
   /* Hide scrollbar but maintain scroll functionality */
   .scrollbar-hide {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
   }
 
   /* Hide scrollbar for Chrome, Safari and Opera */
@@ -24,6 +26,7 @@
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -40,6 +43,7 @@
   pointer-events: none;
   height: 0;
 }
+
 .ProseMirror .is-empty::before {
   content: attr(data-placeholder);
   float: left;
@@ -66,18 +70,18 @@
 
 /* Custom TODO list checkboxes – shoutout to this awesome tutorial: https://moderncss.dev/pure-css-custom-checkbox-style/ */
 
-ul[data-type="taskList"] li > label {
+ul[data-type="taskList"] li>label {
   margin-right: 0.2rem;
   user-select: none;
 }
 
 @media screen and (max-width: 768px) {
-  ul[data-type="taskList"] li > label {
+  ul[data-type="taskList"] li>label {
     margin-right: 0.5rem;
   }
 }
 
-ul[data-type="taskList"] li > label input[type="checkbox"] {
+ul[data-type="taskList"] li>label input[type="checkbox"] {
   -webkit-appearance: none;
   appearance: none;
   background-color: #fff;
@@ -116,7 +120,7 @@ ul[data-type="taskList"] li > label input[type="checkbox"] {
   }
 }
 
-ul[data-type="taskList"] li[data-checked="true"] > div > p {
+ul[data-type="taskList"] li[data-checked="true"]>div>p {
   color: #a8a29e;
   text-decoration: line-through;
   text-decoration-thickness: 2px;
@@ -127,6 +131,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   0% {
     transform: translateX(0);
   }
+
   100% {
     transform: translateX(-50%);
   }
@@ -179,7 +184,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --muted-foreground: 22, 5%, 43%;
     --accent: 60 4.8% 95.9%;
     --accent-foreground: 24 9.8% 10%;
-    --success: 105 58% 30%;
+    --success: 74.1 100% 22.6%;
     --success-foreground: 0 0% 100%;
     --warning: 27 90% 48%;
     --warning-foreground: 0 0% 100%;
@@ -202,6 +207,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
     --sidebar-border: 20 6% 90%;
     --sidebar-ring: 60 19% 48%;
   }
+
   .dark {
     --background: 20 14.3% 4.1%;
     --foreground: 60 9.1% 97.8%;
@@ -244,6 +250,7 @@ ul[data-type="taskList"] li[data-checked="true"] > div > p {
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
     -webkit-font-smoothing: antialiased;
