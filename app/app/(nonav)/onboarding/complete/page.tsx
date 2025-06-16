@@ -3,11 +3,9 @@ import { Button } from "@/components/ui/button";
 import {
   AppWindowMac,
   Code,
-  CreditCard,
   DollarSign,
   Link as LinkIcon,
-  Mail,
-  PackageCheck,
+  Package,
   Share2,
   Store
 } from "lucide-react";
@@ -42,7 +40,9 @@ export default async function OnboardingCompletePage() {
         {/* Timeline Steps */}
         <div>
           {/* Step 1: Finalize Packages */}
-          <div className="relative flex gap-4">
+
+          {/* TODO: Replace this when we do tier genreation in onboarding */}
+          {/* <div className="relative flex gap-4">
             <div className="flex flex-col items-center">
               <PackageCheck className="size-5 shrink-0 text-muted-foreground" />
               <div className="my-2 h-full w-px border-l border-dashed border-stone-300" />
@@ -64,6 +64,19 @@ export default async function OnboardingCompletePage() {
                 .
               </p>
             </div>
+          </div> */}
+          <div className="relative flex gap-4">
+            <div className="flex flex-col items-center">
+              <Package className="size-5 shrink-0 text-muted-foreground" />
+              <div className="my-2 h-full w-px border-l border-dashed border-stone-300" />
+            </div>
+            <div className="flex-1 space-y-1 pb-8">
+              <h3 className="text-sm font-semibold">Create your service packages</h3>
+              <p className="text-sm text-muted-foreground">
+                Set up your first pacakages you want to offer. Pick your pricing, messaging &
+                checkout experience.
+              </p>
+            </div>
           </div>
 
           {/* Step 2: Set Up Channels */}
@@ -73,9 +86,9 @@ export default async function OnboardingCompletePage() {
               <div className="my-2 h-full w-px border-l border-dashed border-stone-300" />
             </div>
             <div className="flex-1 space-y-1 pb-8">
-              <h3 className="text-sm font-semibold">Set up your channels</h3>
+              <h3 className="text-sm font-semibold">Pick a channel</h3>
               <p className="text-sm text-muted-foreground">
-                Showcase your packages with{" "}
+                Showcase your packages using{" "}
                 <span className="inline-flex items-baseline font-medium text-foreground">
                   <LinkIcon className="ml-px mr-1 size-4 shrink-0 translate-y-[3px] text-muted-foreground" />
                   Checkout Links
@@ -90,7 +103,7 @@ export default async function OnboardingCompletePage() {
                   <Code className="ml-px mr-1 size-4 shrink-0 translate-y-[3px] text-muted-foreground" />
                   Embeds
                 </span>{" "}
-                and our{" "}
+                or our{" "}
                 <span className="inline-flex items-baseline font-medium text-foreground">
                   <Store className="ml-px mr-1 size-4 shrink-0 translate-y-[3px] text-muted-foreground" />
                   Developer Marketplace
@@ -105,7 +118,7 @@ export default async function OnboardingCompletePage() {
             <div className="flex-1 space-y-1">
               <h3 className="text-sm font-semibold">Start selling</h3>
               <p className="text-sm text-muted-foreground">
-                Promote your packages and start getting customers & prospects.
+                Promote your packages and see the sales roll in.
               </p>
             </div>
           </div>
