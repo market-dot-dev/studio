@@ -59,6 +59,7 @@ export function TeamMemberInviteFormClient({
         if (result.success.length > 0) {
           toast.success(`Invited ${result.success.join(", ")}`);
 
+          // Remove successful invites from the list
           const erroredInvites = invites.filter(
             (invite) => !result.newInvites.some((newInvite) => newInvite.email === invite.email)
           );
@@ -68,6 +69,7 @@ export function TeamMemberInviteFormClient({
               : [{ id: generateId(), email: "", role: OrganizationRole.MEMBER }]
           );
 
+          // Add new invites to the pending invites list
           const newPendingInvites: TeamMemberDisplay[] = result.newInvites.map((invite) => ({
             id: invite.id,
             email: invite.email,
@@ -80,6 +82,7 @@ export function TeamMemberInviteFormClient({
           router.refresh();
         }
       } catch (error) {
+        console.error(error);
         const errorMessage = "An unexpected error occurred. Please try again.";
         setErrors([errorMessage]);
       }
@@ -87,17 +90,19 @@ export function TeamMemberInviteFormClient({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-6 transition-[height]">
+    <form onSubmit={handleSubmit} className="relative flex flex-col gap-6 transition-[height]">
       <TeamMemberInviteFields invites={invites} onInvitesChange={handleInvitesChange} />
+
       {errors.length > 0 && (
-        <div className="flex flex-col gap-1 text-xs text-destructive">
+        <div className="text-xs text-destructive">
           {errors.map((error, index) => (
             <p key={index}>{error}</p>
           ))}
         </div>
       )}
+
       {pendingInvites.length > 0 && (
-        <div className="space-y-3 pb-2 pt-1">
+        <div className="space-y-3 py-1">
           <div className="space-y-1">
             <h3 className="text-sm font-medium text-muted-foreground">Pending Invites</h3>
             <Separator />
@@ -119,17 +124,20 @@ export function TeamMemberInviteFormClient({
           </div>
         </div>
       )}
-      <Button
-        type="submit"
-        variant={isDisabled ? "secondary" : "default"}
-        disabled={isDisabled}
-        loading={isPending}
-        loadingText="Sending Invites"
-        className="w-full"
-      >
-        <Send />
-        Send Invites
-      </Button>
+
+      <div className="sticky inset-x-0 bottom-6 bg-stone-150 pt-1">
+        <Button
+          type="submit"
+          variant={isDisabled ? "secondary" : "default"}
+          disabled={isDisabled}
+          loading={isPending}
+          loadingText="Sending Invites"
+          className="w-full"
+        >
+          <Send />
+          Send Invites
+        </Button>
+      </div>
     </form>
   );
 }
