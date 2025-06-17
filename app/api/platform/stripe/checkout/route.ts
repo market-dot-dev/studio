@@ -1,3 +1,4 @@
+import { PlanType } from "@/app/generated/prisma";
 import { getBillingByStripeCustomerId, updateBilling } from "@/app/services/platform";
 import { createStripeClient } from "@/app/services/stripe/create-stripe-client";
 import { getRootUrl } from "@/lib/domain";
@@ -59,7 +60,6 @@ export async function GET(request: NextRequest) {
 
     const product = plan.product as Stripe.Product;
     const productId = product.id;
-    const planName = product.name;
 
     const clientReferenceId = session.client_reference_id;
     if (!clientReferenceId) {
@@ -77,12 +77,12 @@ export async function GET(request: NextRequest) {
 
     const mappedStatus = mapStripeStatusToSubscriptionStatus(subscription.status);
 
-    // Update the platform billing information
+    // Update the platform billing information - upgrade to PRO plan
     await updateBilling(billing.organizationId, {
+      planType: PlanType.PRO,
       stripeCustomerId: customerId,
       stripeSubscriptionId: subscriptionId,
       stripeProductId: productId,
-      planName: planName,
       subscriptionStatus: mappedStatus
     });
 
