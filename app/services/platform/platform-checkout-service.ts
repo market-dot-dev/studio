@@ -16,10 +16,6 @@ export async function getPlanPricing(): Promise<PlanPricing> {
   const pricing = await getCachedPricing();
 
   return {
-    basic: {
-      monthly: pricing.basic_monthly.id,
-      yearly: pricing.basic_annually.id
-    },
     pro: {
       monthly: pricing.pro_monthly.id,
       yearly: pricing.pro_annually.id
@@ -94,15 +90,14 @@ export async function createCustomerPortalSession(): Promise<{ url: string }> {
   const billing = await getOrCreateBilling();
   const stripe = await createStripeClient();
 
-  if (!billing.stripeCustomerId || !billing.stripeProductId) {
-    throw new Error("No Stripe customer ID or product ID found for organization");
+  if (!billing.stripeCustomerId) {
+    throw new Error("No Stripe customer ID found for organization");
   }
 
   const configurations = await stripe.billingPortal.configurations.list();
   const planPricing = await getPlanPricing();
 
-  // Get basic and pro prices objects to get their product IDs
-  const basicPrice = await stripe.prices.retrieve(planPricing.basic.monthly);
+  // Get pro price object to get its product ID
   const proPrice = await stripe.prices.retrieve(planPricing.pro.monthly);
 
   const configurationSettings: Stripe.BillingPortal.ConfigurationCreateParams = {
@@ -119,10 +114,6 @@ export async function createCustomerPortalSession(): Promise<{ url: string }> {
         default_allowed_updates: ["price", "promotion_code"],
         proration_behavior: "always_invoice",
         products: [
-          {
-            product: basicPrice.product as string,
-            prices: [planPricing.basic.monthly, planPricing.basic.yearly]
-          },
           {
             product: proPrice.product as string,
             prices: [planPricing.pro.monthly, planPricing.pro.yearly]

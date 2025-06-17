@@ -17,28 +17,14 @@ async function fetchPricingFromStripe(): Promise<PricingData> {
     expand: ["data.product"]
   });
 
-  // Transform to our format, filtering by lookup keys
+  // Transform to our format, filtering by lookup keys for PRO plan only
   const pricingData: Partial<PricingData> = {};
 
   for (const price of prices.data) {
     if (!price.lookup_key || !price.unit_amount) continue;
 
-    // Type-safe lookup key checking
-    if (price.lookup_key === "basic_monthly") {
-      pricingData.basic_monthly = {
-        id: price.id,
-        amount: price.unit_amount,
-        currency: price.currency,
-        interval: price.recurring?.interval
-      };
-    } else if (price.lookup_key === "basic_annually") {
-      pricingData.basic_annually = {
-        id: price.id,
-        amount: price.unit_amount,
-        currency: price.currency,
-        interval: price.recurring?.interval
-      };
-    } else if (price.lookup_key === "pro_monthly") {
+    // Type-safe lookup key checking - only PRO plan pricing
+    if (price.lookup_key === "pro_monthly") {
       pricingData.pro_monthly = {
         id: price.id,
         amount: price.unit_amount,
@@ -55,10 +41,8 @@ async function fetchPricingFromStripe(): Promise<PricingData> {
     }
   }
 
-  // Validate we got all expected prices
+  // Validate we got all expected PRO prices
   const missing: string[] = [];
-  if (!pricingData.basic_monthly) missing.push("basic_monthly");
-  if (!pricingData.basic_annually) missing.push("basic_annually");
   if (!pricingData.pro_monthly) missing.push("pro_monthly");
   if (!pricingData.pro_annually) missing.push("pro_annually");
 

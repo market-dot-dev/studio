@@ -1,6 +1,6 @@
 "use server";
 
-import { OrganizationBilling, Prisma, SubscriptionStatus } from "@/app/generated/prisma";
+import { OrganizationBilling, PlanType, Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { requireOrganization } from "../user-context-service";
 
@@ -18,7 +18,9 @@ export async function getOrCreateBilling(): Promise<OrganizationBilling> {
     billing = await prisma.organizationBilling.create({
       data: {
         organizationId: org.id,
-        subscriptionStatus: SubscriptionStatus.FREE_TRIAL
+        planType: PlanType.FREE
+        // subscriptionStatus remains null for FREE plan
+        // Stripe fields remain null until upgrading to PRO
       }
     });
   }

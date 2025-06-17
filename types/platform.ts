@@ -2,10 +2,6 @@ import { SubscriptionStatus } from "@/app/generated/prisma";
 import Stripe from "stripe";
 
 export type PlanPricing = {
-  basic: {
-    monthly: string;
-    yearly: string;
-  };
   pro: {
     monthly: string;
     yearly: string;
@@ -20,29 +16,22 @@ export interface CachedPrice {
 }
 
 export interface PricingData {
-  basic_monthly: CachedPrice;
-  basic_annually: CachedPrice;
   pro_monthly: CachedPrice;
   pro_annually: CachedPrice;
 }
 
 export interface SubscriptionInfo {
-  isTrialActive: boolean;
-  isTrialExpired: boolean;
   isSubscriptionActive: boolean;
-  daysLeft: number;
-  trialEnd: Date | null;
+  isFree: boolean;
   currentPlanName: string | null;
   statusText: string;
-  statusType: "trial" | "active" | "expired" | "inactive";
+  statusType: "free" | "active" | "expired" | "inactive";
 }
 
 export function mapStripeStatusToSubscriptionStatus(
   status: Stripe.Subscription.Status
 ): SubscriptionStatus {
   switch (status) {
-    case "trialing":
-      return SubscriptionStatus.TRIALING;
     case "active":
       return SubscriptionStatus.ACTIVE;
     case "canceled":

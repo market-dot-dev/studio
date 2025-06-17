@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { SubscriptionInfo } from "@/types/platform";
 import { ReactNode } from "react";
-import { ActiveBanner, ExpiredBanner, TrialBanner } from "./subscription-banners";
+import { ActiveBanner, ExpiredBanner } from "./subscription-banners";
 
 interface PlanInformationProps {
   subscriptionInfo: SubscriptionInfo;
@@ -32,15 +32,7 @@ export function PlanInformation({
   planDisplayName,
   customerPortal
 }: PlanInformationProps) {
-  const {
-    isTrialActive,
-    isTrialExpired,
-    isSubscriptionActive,
-    daysLeft,
-    trialEnd,
-    statusText,
-    statusType
-  } = subscriptionInfo;
+  const { isSubscriptionActive, statusText, statusType } = subscriptionInfo;
 
   const scrollToPricing = () => scrollToElement("pricing-plans");
 
@@ -55,18 +47,9 @@ export function PlanInformation({
 
       <CardContent>
         <div className="space-y-4">
-          {isTrialActive && trialEnd && (
+          {!isSubscriptionActive && (
             <>
-              <TrialBanner daysLeft={daysLeft} trialEnd={trialEnd} />
-              <Button className="w-full" onClick={scrollToPricing}>
-                Upgrade now
-              </Button>
-            </>
-          )}
-
-          {!isTrialActive && !isSubscriptionActive && (
-            <>
-              <ExpiredBanner isTrialExpired={isTrialExpired} />
+              <ExpiredBanner />
               <Button className="w-full" onClick={scrollToPricing}>
                 Choose a plan
               </Button>

@@ -1,99 +1,81 @@
-import { OrganizationBilling } from "@/app/generated/prisma";
+import { OrganizationBilling, PlanType } from "@/app/generated/prisma";
 import { SubscriptionInfo } from "@/types/platform";
 
 export function getSubscriptionInfo(billing: OrganizationBilling | null): SubscriptionInfo {
-  const now = new Date();
-  const trialEnd = billing?.trialEndAt ? new Date(billing.trialEndAt) : null;
+  // Default to FREE plan if no billing record
+  const planType = billing?.planType || PlanType.FREE;
 
-  // Handle trial status with explicit boolean checks
-  const isTrialActive: boolean = Boolean(
-    billing?.subscriptionStatus === "FREE_TRIAL" && trialEnd && trialEnd > now
-  );
+  // Determine if subscription is active (only for PRO plans)
+  const isSubscriptionActive: boolean =
+    planType === PlanType.PRO && billing?.subscriptionStatus === "ACTIVE";
 
-  const isTrialExpired: boolean = Boolean(
-    billing?.subscriptionStatus === "FREE_TRIAL" && trialEnd && trialEnd <= now
-  );
+  // Determine if on free plan
+  const isFree: boolean = planType === PlanType.FREE;
 
-  const isSubscriptionActive: boolean = billing?.subscriptionStatus === "ACTIVE";
-
-  // Ensure daysLeft is always a number
-  const daysLeft: number = trialEnd
-    ? Math.max(0, Math.ceil((trialEnd.getTime() - now.getTime()) / (1000 * 60 * 60 * 24)))
-    : 0;
-
-  // Determine the current plan name
-  let currentPlanName: string | null = null;
-
-  if (isSubscriptionActive && billing?.planName) {
-    currentPlanName = billing.planName.toLowerCase();
-  } else if (isTrialActive) {
-    currentPlanName = "trial";
-  }
+  // Convert plan type to display name
+  const currentPlanName = getPlanDisplayName(planType);
 
   // Determine status text and type for UI
   let statusText: string;
-  let statusType: "trial" | "active" | "expired" | "inactive";
+  let statusType: "free" | "active" | "expired" | "inactive";
 
-  if (isSubscriptionActive) {
+  if (planType === PlanType.FREE) {
+    statusText = "Free";
+    statusType = "free";
+  } else if (planType === PlanType.CUSTOM) {
+    statusText = "Custom";
+    statusType = "active"; // Custom plans are considered active
+  } else if (isSubscriptionActive) {
     statusText = "Active";
     statusType = "active";
-  } else if (isTrialActive) {
-    statusText = "Trial";
-    statusType = "trial";
-  } else if (isTrialExpired) {
-    statusText = "Trial expired";
-    statusType = "expired";
   } else {
+    // PRO plan but subscription not active
     statusText = "Inactive";
     statusType = "inactive";
   }
 
   return {
-    isTrialActive,
-    isTrialExpired,
     isSubscriptionActive,
-    daysLeft,
-    trialEnd,
+    isFree,
     currentPlanName,
     statusText,
     statusType
   };
 }
 
-// Helper function to format plan names consistently
-export function formatPlanName(planName: string): string {
-  // Remove any special characters and convert to lowercase
-  const normalizedName = planName.toLowerCase().replace(/[^a-z0-9]/g, "");
-
-  // Map of possible variations to standardized names
-  const planNameMap: Record<string, string> = {
-    basic: "basic",
-    basicplan: "basic",
-    basicsubscription: "basic",
-    pro: "pro",
-    proplan: "pro",
-    prosubscription: "pro"
-  };
-
-  return planNameMap[normalizedName] || normalizedName;
+// Helper to check if a plan type is valid
+export function isValidPlanType(planType: PlanType): boolean {
+  return Object.values(PlanType).includes(planType);
 }
 
-// Helper to check if a plan exists
-export function isValidPlanName(planName: string): boolean {
-  const validPlans = ["basic", "pro"] as const;
-  return validPlans.includes(formatPlanName(planName) as (typeof validPlans)[number]);
-}
-
-// Helper to get plan display name
-export function getPlanDisplayName(planName: string | null): string {
-  if (!planName) return "No plan";
-
-  const formattedName = formatPlanName(planName);
-  const displayNames: Record<string, string> = {
-    basic: "Basic plan",
-    pro: "Pro plan",
-    trial: "Free trial"
+// Helper to get plan display name from PlanType enum
+export function getPlanDisplayName(planType: PlanType): string {
+  const displayNames: Record<PlanType, string> = {
+    [PlanType.FREE]: "free",
+    [PlanType.PRO]: "pro",
+    [PlanType.CUSTOM]: "custom"
   };
 
-  return displayNames[formattedName] || "Custom plan";
+  return displayNames[planType];
+}
+
+// Helper to get plan display label for UI
+export function getPlanDisplayLabel(planType: PlanType): string {
+  const displayLabels: Record<PlanType, string> = {
+    [PlanType.FREE]: "Free plan",
+    [PlanType.PRO]: "Pro plan",
+    [PlanType.CUSTOM]: "Custom plan"
+  };
+
+  return displayLabels[planType];
+}
+
+// Helper to check if plan has Stripe integration
+export function hasStripeIntegration(planType: PlanType): boolean {
+  return planType === PlanType.PRO;
+}
+
+// Helper to check if plan is paid
+export function isPaidPlan(planType: PlanType): boolean {
+  return planType === PlanType.PRO || planType === PlanType.CUSTOM;
 }
