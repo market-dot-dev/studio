@@ -1,15 +1,15 @@
 import { getVendorStripeErrorMessage } from "@/app/services/stripe/stripe-vendor-service";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { ErrorMessageCode } from "@/types/stripe";
 import { AlertTriangle, CircleCheck, CreditCard, ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { ConnectStripeBtn } from "./connect-stripe-btn";
-import { Separator } from "@/components/ui/separator";
 
 function StripeDashboardButton() {
   return (
-    <Button asChild variant="outline" className="shadow-none rounded-t-none w-full">
+    <Button asChild variant="outline" className="w-full rounded-t-none shadow-none">
       <Link href="https://dashboard.stripe.com" target="_blank" className="flex items-center gap-2">
         Go to Stripe Dashboard
         <ExternalLink className="size-3.5" />
@@ -22,7 +22,7 @@ interface StripeAccountStatusProps {
   canSell: boolean;
   messageCodes: string[];
   disabledReasons?: string[];
-  isAccountDeauthorized?: boolean;
+  isAccountDisconnected?: boolean;
   reconnectUrl?: string;
   oauthUrl: string;
   hasStripeHistory: boolean;
@@ -32,7 +32,7 @@ export function StripeAccountStatus({
   canSell,
   messageCodes,
   disabledReasons,
-  isAccountDeauthorized = false,
+  isAccountDisconnected = false,
   reconnectUrl,
   oauthUrl,
   hasStripeHistory
@@ -41,7 +41,7 @@ export function StripeAccountStatus({
   if (!hasStripeHistory) {
     return (
       <Alert variant="default" className="p-0">
-        <AlertTitle className="inline-flex gap-2 pt-4 px-4">
+        <AlertTitle className="inline-flex gap-2 px-4 pt-4">
           <CreditCard size={16} className="-translate-y-px text-muted-foreground" />
           No payment method connected
         </AlertTitle>
@@ -49,7 +49,7 @@ export function StripeAccountStatus({
           Connect Stripe to accept credit card payments for your services.
         </AlertDescription>
         <Separator />
-        <ConnectStripeBtn oauthUrl={oauthUrl} className="shadow-none rounded-t-none w-full" />
+        <ConnectStripeBtn oauthUrl={oauthUrl} className="w-full rounded-t-none shadow-none" />
       </Alert>
     );
   }
@@ -58,8 +58,11 @@ export function StripeAccountStatus({
   if (canSell) {
     return (
       <Alert variant="success" className="p-0">
-        <AlertTitle className="inline-flex gap-2 pt-4 px-4">
-          <CircleCheck size={18} className="-m-px fill-success stroke-white -translate-y-px text-success" />
+        <AlertTitle className="inline-flex gap-2 px-4 pt-4">
+          <CircleCheck
+            size={18}
+            className="-m-px -translate-y-px fill-success stroke-white text-success"
+          />
           Your Stripe account is connected and in good standing
         </AlertTitle>
         <AlertDescription className="px-4 pb-4">
@@ -74,11 +77,11 @@ export function StripeAccountStatus({
   // Check if account has been disconnected from Stripe's side
   const hasDisconnectError = messageCodes.includes(ErrorMessageCode.StripeAccountDisconnected);
 
-  // If account is deauthorized or has disconnect error
-  if (isAccountDeauthorized || hasDisconnectError) {
+  // If account is disconnected or has disconnect error
+  if (isAccountDisconnected || hasDisconnectError) {
     return (
       <Alert variant="destructive" className="p-0">
-        <AlertTitle className="inline-flex gap-2 pt-4 px-4">
+        <AlertTitle className="inline-flex gap-2 px-4 pt-4">
           <AlertTriangle size={16} className="-translate-y-px text-destructive" />
           Account Disconnected
         </AlertTitle>
@@ -89,7 +92,9 @@ export function StripeAccountStatus({
           </p>
         </AlertDescription>
         <Separator />
-        {reconnectUrl && <ConnectStripeBtn oauthUrl={reconnectUrl} className="shadow-none rounded-t-none w-full" />}
+        {reconnectUrl && (
+          <ConnectStripeBtn oauthUrl={reconnectUrl} className="w-full rounded-t-none shadow-none" />
+        )}
       </Alert>
     );
   }
@@ -97,7 +102,7 @@ export function StripeAccountStatus({
   // Regular error state with link to Stripe dashboard
   return (
     <Alert variant="destructive" className="p-0">
-      <AlertTitle className="inline-flex gap-2 pt-4 px-4">
+      <AlertTitle className="inline-flex gap-2 px-4 pt-4">
         <AlertTriangle size={16} className="-translate-y-px text-destructive" />
         Something's up with your account
       </AlertTitle>
@@ -139,6 +144,6 @@ export function StripeAccountStatus({
       </div>
       <Separator />
       <StripeDashboardButton />
-    </Alert >
+    </Alert>
   );
 }

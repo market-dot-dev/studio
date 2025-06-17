@@ -41,7 +41,7 @@ export default async function PaymentSettings() {
         canSell={canSell}
         messageCodes={messageCodes}
         disabledReasons={disabledReasons}
-        isAccountDeauthorized={org.stripeAccountDisabled && !org.stripeAccountId}
+        isAccountDisconnected={org.stripeAccountDisabled && !org.stripeAccountId}
         reconnectUrl={org.stripeAccountDisabled ? oauthUrl : undefined}
         oauthUrl={oauthUrl}
         hasStripeHistory={hasStripeHistory}

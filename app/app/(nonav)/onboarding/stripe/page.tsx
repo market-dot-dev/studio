@@ -29,7 +29,7 @@ export default async function StripeOnboardingPage() {
           canSell={canSell}
           messageCodes={messageCodes}
           disabledReasons={disabledReasons}
-          isAccountDeauthorized={organization.stripeAccountDisabled && !organization.stripeAccountId}
+          isAccountDisconnected={organization.stripeAccountDisabled && !organization.stripeAccountId}
           reconnectUrl={organization.stripeAccountDisabled ? oauthUrl : undefined}
           oauthUrl={oauthUrl}
           hasStripeHistory={hasStripeHistory}
