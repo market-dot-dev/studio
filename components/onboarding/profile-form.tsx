@@ -14,7 +14,7 @@ import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
 import LocationEntryInput from "./location-entry-input";
-import TeamSelectionRadioGroup, { TeamType } from "./team-selection-radio-group";
+import TeamSelectionRadioGroup, { TeamType } from "../team/team-selection-radio-group";
 
 interface ProfileData {
   businessName: string;

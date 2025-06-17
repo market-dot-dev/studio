@@ -1,6 +1,7 @@
 import { getPendingInvites, getTeamMembers } from "@/app/services/team-management-service";
 import { requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
+import { TeamMemberInviteForm } from "@/components/team/team-member-invite-form";
 import { DataTable } from "@/components/ui/data-table";
 import { columns } from "./columns";
 import { InviteTeamMembersBtn } from "./invite-team-members-btn";
@@ -16,7 +17,14 @@ export default async function TeamPage() {
 
   return (
     <div className="space-y-8">
-      <PageHeader title="Team" actions={<InviteTeamMembersBtn />} />
+      <PageHeader
+        title="Team"
+        actions={
+          <InviteTeamMembersBtn>
+            <TeamMemberInviteForm />
+          </InviteTeamMembersBtn>
+        }
+      />
 
       {teamMembers.length > 0 && (
         <div className="space-y-4">

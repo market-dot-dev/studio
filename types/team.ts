@@ -1,4 +1,4 @@
-import { OrganizationRole, Prisma } from "@/app/generated/prisma";
+import { OrganizationInvite, OrganizationRole, Prisma } from "@/app/generated/prisma";
 
 // Use Prisma types for actual team members
 export const includeTeamMember = Prisma.validator<Prisma.OrganizationMemberDefaultArgs>()({
@@ -38,6 +38,7 @@ export type InviteWithDetails = Prisma.OrganizationInviteGetPayload<typeof inclu
 export interface InviteResult {
   success: string[];
   errors: string[];
+  newInvites: OrganizationInvite[];
 }
 
 // Unified type for table display (combines real members and pending invites)
