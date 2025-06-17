@@ -21,7 +21,7 @@ export default async function CustomerDetailPage(props: { params: Promise<{ id: 
     return notFound();
   }
 
-  const customerOrg = await getCustomerOfVendor(currentOrgId, organizationId);
+  const customerOrg = await getCustomerOfVendor(organizationId, currentOrgId);
 
   if (!customerOrg) {
     return notFound();

@@ -199,11 +199,9 @@ export async function getCustomersOfVendor(
 }
 
 /**
- * Get all customers and prospects for a vendor organization
+ * Get only prospects (organizations with prospects but no purchases) for a vendor organization
  */
-export async function getCustomersAndProspectsOfVendor(
-  vendorOrgId?: string
-): Promise<CustomerOrgWithAll[]> {
+export async function getProspectsOfVendor(vendorOrgId?: string): Promise<CustomerOrgWithAll[]> {
   const vendorOrg = vendorOrgId
     ? await getVendorOrganizationById(vendorOrgId)
     : await getCurrentVendorOrganization();
@@ -214,10 +212,21 @@ export async function getCustomersAndProspectsOfVendor(
 
   return prisma.organization.findMany({
     where: {
-      OR: [
+      AND: [
+        {
+          prospects: {
+            some: {
+              tiers: {
+                some: {
+                  organizationId: vendorOrg.id
+                }
+              }
+            }
+          }
+        },
         {
           charges: {
-            some: {
+            none: {
               tier: {
                 organizationId: vendorOrg.id
               }
@@ -226,20 +235,9 @@ export async function getCustomersAndProspectsOfVendor(
         },
         {
           subscriptions: {
-            some: {
+            none: {
               tier: {
                 organizationId: vendorOrg.id
-              }
-            }
-          }
-        },
-        {
-          prospects: {
-            some: {
-              tiers: {
-                some: {
-                  organizationId: vendorOrg.id
-                }
               }
             }
           }
