@@ -41,7 +41,7 @@ function OrganizationDisplay({ organization, className = "" }: OrganizationDispl
         {organization.name ? getInitials(organization.name).charAt(0) : "?"}
       </span>
       <div className="min-w-0 flex-1">
-        <span className="block truncate text-sm font-semibold leading-none tracking-tightish text-foreground">
+        <span className="block truncate text-sm font-semibold tracking-tightish text-foreground">
           {organization.name}
         </span>
       </div>
@@ -101,7 +101,7 @@ export function OrganizationSwitcher({ context }: Props) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="flex w-full items-center gap-1 rounded bg-white p-1 text-left text-sm font-medium shadow-border-sm transition-[background-color,box-shadow] hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-swamp dark:hover:bg-stone-800"
+        className="flex h-[26px] w-full items-center gap-1 rounded bg-white px-1 text-left text-sm font-medium shadow-border-sm transition-[background-color,box-shadow] hover:bg-stone-100 focus:outline-none focus:ring-2 focus:ring-swamp dark:hover:bg-stone-800"
         disabled={isPending}
       >
         <OrganizationDisplay organization={selectedOrg} />
@@ -115,19 +115,19 @@ export function OrganizationSwitcher({ context }: Props) {
         <DropdownMenuSeparator />
 
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="gap-2 p-1 font-medium transition-[background-color,box-shadow] hover:cursor-pointer hover:bg-white hover:shadow-border hover:ring-0 focus:bg-white focus:ring-2 focus:ring-swamp">
+          <DropdownMenuSubTrigger className="gap-2 p-1 font-medium">
             <ArrowLeftRight className="!h-4.5 !w-4.5 shrink-0" />
             Switch Organization
           </DropdownMenuSubTrigger>
           <DropdownMenuPortal>
-            <DropdownMenuSubContent className="flex min-w-[200px] flex-col border">
+            <DropdownMenuSubContent className="flex min-w-[200px] flex-col">
               {availableOrganizations.map(({ organization }) => (
                 <DropdownMenuCheckboxItem
                   key={organization.id}
                   checked={selectedOrgId === organization.id}
                   onCheckedChange={() => handleOrganizationSwitch(organization.id)}
                   disabled={isPending}
-                  className="h-auto p-1 pr-9 transition-[background-color,box-shadow] hover:cursor-pointer hover:bg-white hover:shadow-border focus:bg-white focus:ring-2 focus:ring-swamp"
+                  className="h-[26px] pl-1 pr-9"
                 >
                   <OrganizationDisplay organization={organization} className="flex-1" />
                 </DropdownMenuCheckboxItem>
@@ -137,10 +137,7 @@ export function OrganizationSwitcher({ context }: Props) {
         </DropdownMenuSub>
 
         {/* @TODO: Org-creation */}
-        {/* <DropdownMenuItem
-          asChild
-          className="gap-2 p-1 transition-[background-color,box-shadow] hover:cursor-pointer hover:bg-white hover:shadow-border hover:ring-0 focus:bg-white focus:ring-2 focus:ring-swamp"
-        >
+        {/* <DropdownMenuItem asChild className="gap-2 p-1">
           <Link href="/organizations/new">
             <SquarePlus className="!h-4.5 !w-4.5 shrink-0" />
             Create an Organization

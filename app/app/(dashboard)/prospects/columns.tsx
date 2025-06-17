@@ -16,25 +16,29 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
     header: "Name",
     meta: {
       emphasized: true
-    }
-  },
-  {
-    accessorKey: "email",
-    header: "Email",
+    },
     cell: ({ row }) => {
+      const name = row.original.name;
+      const email = row.original.email;
+
       return (
-        <a
-          href={`mailto:${row.original.email}`}
-          className="transition-colors hover:text-foreground"
-        >
-          {row.original.email}
-        </a>
+        <div className="flex flex-col">
+          <span className="font-semibold text-stone-800">{name}</span>
+          {email && <span className="text-xs font-normal text-muted-foreground">{email}</span>}
+        </div>
       );
     }
   },
   {
+    accessorKey: "createdAt",
+    header: "Reached Out",
+    cell: ({ row }) => {
+      return formatDate(row.original.createdAt);
+    }
+  },
+  {
     accessorKey: "companyName",
-    header: "Company name"
+    header: "Organization"
   },
   {
     accessorKey: "tier",
@@ -54,13 +58,6 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
           {tier.name}
         </Link>
       );
-    }
-  },
-  {
-    accessorKey: "createdAt",
-    header: "Reached Out",
-    cell: ({ row }) => {
-      return formatDate(row.original.createdAt);
     }
   }
 ];
