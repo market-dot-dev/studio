@@ -31,11 +31,14 @@ export default async function BillingSettingsPage() {
         />
       </div>
 
-      <div id="pricing-plans">
-        <h2 className="mb-2 text-2xl font-bold">Available plans</h2>
-        <p className="mb-6 text-muted-foreground">Choose the plan that best fits your needs.</p>
-        <PricingTable priceIds={planPricing} pricingData={pricingData} />
-      </div>
+      {/* Only show pricing plans if not already on active PRO plan */}
+      {!(subscriptionInfo.isSubscriptionActive && !subscriptionInfo.isFree) && (
+        <div id="pricing-plans">
+          <h2 className="mb-2 text-2xl font-bold">Available plans</h2>
+          <p className="mb-6 text-muted-foreground">Choose the plan that best fits your needs.</p>
+          <PricingTable priceIds={planPricing} pricingData={pricingData} />
+        </div>
+      )}
     </div>
   );
 }
