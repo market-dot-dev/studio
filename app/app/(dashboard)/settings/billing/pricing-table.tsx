@@ -45,28 +45,24 @@ export function PricingTable({ priceIds, pricingData, className }: PricingTableP
 
       <div className="my-8 flex flex-col items-center gap-10 md:flex-row md:items-stretch">
         <PricingTableCard
-          title="Basic"
-          tagline="Ideal for freelancers & small teams"
-          price={formatPrice(
-            isAnnual ? pricingData.basic_annually.amount : pricingData.basic_monthly.amount,
-            isAnnual ? pricingData.basic_annually.currency : pricingData.basic_monthly.currency,
-            isAnnual // Pass true if showing annual price
-          )}
-          isAnnual={isAnnual}
+          title="FREE"
+          tagline="Perfect for getting started"
+          price="Free"
+          isAnnual={false}
           features={[
-            { text: "AI-driven project setup" },
-            { text: "Up to 3 projects per month" },
-            { text: "1-3 team members" },
-            { text: "Full scope customization" },
-            { text: "Email support" },
-            { text: "Team calibration", negate: true }
+            { text: "Basic project setup" },
+            { text: "Up to 1 project per month" },
+            { text: "1 team member" },
+            { text: "Community support" },
+            { text: "Advanced features", negate: true },
+            { text: "Priority support", negate: true }
           ]}
-          priceId={isAnnual ? priceIds.basic.yearly : priceIds.basic.monthly}
+          priceId={null} // FREE plan doesn't need a priceId
         />
 
         <PricingTableCard
-          title="Pro"
-          tagline="Perfect for growing agencies"
+          title="PRO"
+          tagline="Perfect for growing teams"
           price={formatPrice(
             isAnnual ? pricingData.pro_annually.amount : pricingData.pro_monthly.amount,
             isAnnual ? pricingData.pro_annually.currency : pricingData.pro_monthly.currency,
@@ -75,8 +71,8 @@ export function PricingTable({ priceIds, pricingData, className }: PricingTableP
           isAnnual={isAnnual}
           features={[
             { text: "AI-driven project setup" },
-            { text: "Up to 10 projects per month" },
-            { text: "5-10 team members" },
+            { text: "Unlimited projects" },
+            { text: "Unlimited team members" },
             { text: "Full scope customization" },
             { text: "Advanced project planning" },
             { text: "Team calibration" },

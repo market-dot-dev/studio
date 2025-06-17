@@ -10,7 +10,7 @@ interface PricingTableCardProps {
   isAnnual: boolean;
   features: { text: string | ReactNode; negate?: boolean }[];
   children?: ReactNode;
-  priceId: string;
+  priceId: string | null; // Allow null for FREE plan
 }
 
 export function PricingTableCard({
@@ -31,9 +31,13 @@ export function PricingTableCard({
         <div className="mb-8 rounded-xl bg-accent p-6 shadow-sm">
           <p className="mb-2 text-4xl font-extrabold text-foreground">
             {price}
-            <span className="text-lg font-normal">/mo</span>
+            {price !== "Free" && <span className="text-lg font-normal">/mo</span>}
           </p>
-          <p className="text-muted-foreground">Billed {isAnnual ? "annually" : "monthly"}</p>
+          <p className="text-muted-foreground">
+            {price === "Free"
+              ? "No credit card required"
+              : `Billed ${isAnnual ? "annually" : "monthly"}`}
+          </p>
         </div>
 
         {features.length > 0 && (

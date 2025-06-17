@@ -1,7 +1,7 @@
 "use server";
 
 import { getCachedPricing, getCurrentBilling, getPlanPricing } from "@/app/services/platform";
-import { getPlanDisplayName, getSubscriptionInfo } from "@/utils/subscription-utils";
+import { getPlanDisplayLabel, getSubscriptionInfo } from "@/utils/subscription-utils";
 import { CheckoutStatusBanner } from "./checkout-status-banner";
 import { PlanInformation } from "./plan-information";
 import { PricingTable } from "./pricing-table";
@@ -13,7 +13,7 @@ export default async function BillingSettingsPage() {
   const pricingData = await getCachedPricing();
 
   const subscriptionInfo = getSubscriptionInfo(billing);
-  const planDisplayName = getPlanDisplayName(subscriptionInfo.currentPlanName);
+  const planDisplayName = billing?.planType ? getPlanDisplayLabel(billing.planType) : "Free plan";
 
   return (
     <div className="space-y-6">
@@ -23,7 +23,10 @@ export default async function BillingSettingsPage() {
           subscriptionInfo={subscriptionInfo}
           planDisplayName={planDisplayName}
           customerPortal={
-            subscriptionInfo.isSubscriptionActive ? <StripeCustomerPortal /> : undefined
+            // Only show customer portal for PRO plans with active subscriptions
+            subscriptionInfo.isSubscriptionActive && !subscriptionInfo.isFree ? (
+              <StripeCustomerPortal />
+            ) : undefined
           }
         />
       </div>

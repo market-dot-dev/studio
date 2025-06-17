@@ -1,9 +1,11 @@
 "use client";
 
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { SubscriptionInfo } from "@/types/platform";
+import { CheckCircle } from "lucide-react";
 import { ReactNode } from "react";
 import { ActiveBanner, ExpiredBanner } from "./subscription-banners";
 
@@ -32,7 +34,7 @@ export function PlanInformation({
   planDisplayName,
   customerPortal
 }: PlanInformationProps) {
-  const { isSubscriptionActive, statusText, statusType } = subscriptionInfo;
+  const { isSubscriptionActive, isFree, statusText, statusType } = subscriptionInfo;
 
   const scrollToPricing = () => scrollToElement("pricing-plans");
 
@@ -47,19 +49,37 @@ export function PlanInformation({
 
       <CardContent>
         <div className="space-y-4">
-          {!isSubscriptionActive && (
+          {/* FREE plan - show upgrade option */}
+          {isFree && (
             <>
-              <ExpiredBanner />
+              <Alert variant="default">
+                <CheckCircle className="size-4" />
+                <AlertTitle>Free plan - Active</AlertTitle>
+                <AlertDescription>
+                  You're currently on the free plan. Upgrade to PRO for advanced features.
+                </AlertDescription>
+              </Alert>
               <Button className="w-full" onClick={scrollToPricing}>
-                Choose a plan
+                Upgrade to PRO
               </Button>
             </>
           )}
 
-          {isSubscriptionActive && (
+          {/* PRO plan active - show customer portal */}
+          {isSubscriptionActive && !isFree && (
             <>
               <ActiveBanner planDisplayName={planDisplayName} />
               {customerPortal}
+            </>
+          )}
+
+          {/* PRO plan but subscription inactive */}
+          {!isSubscriptionActive && !isFree && (
+            <>
+              <ExpiredBanner />
+              <Button className="w-full" onClick={scrollToPricing}>
+                Reactivate subscription
+              </Button>
             </>
           )}
         </div>
