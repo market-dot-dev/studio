@@ -4,7 +4,7 @@ import { Page, Site } from "@/app/generated/prisma";
 import { getSiteAndPages, updateCurrentSite } from "@/app/services/site/site-crud-service";
 import PageHeader from "@/components/common/page-header";
 import CreatePageButton from "@/components/create-page-button";
-import Uploader from "@/components/form/uploader";
+import { FileUploader } from "@/components/form/file-uploader";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -79,10 +79,7 @@ export default function SiteAdmin({ id }: { id: string }) {
     setIsSaving(true);
 
     const formData = new FormData(e.currentTarget);
-    // if not changed, remove the logo from the form data
-    if (!changed) {
-      formData.delete("logo");
-    }
+    // Logo is now handled by OrganizationLogoField which includes it in formData automatically
     try {
       await updateCurrentSite(formData);
       setChanged(false);
@@ -129,9 +126,9 @@ export default function SiteAdmin({ id }: { id: string }) {
                 <span className="sr-only">Settings</span>
               </Button>
             </DialogTrigger>
-            <DialogContent className="p-0">
+            <DialogContent className="bg-stone-150 p-0 md:max-w-sm">
               <DialogHeader className="px-6 pt-6">
-                <DialogTitle>Storefront Settings</DialogTitle>
+                <DialogTitle>Landing Page Settings</DialogTitle>
               </DialogHeader>
               <ScrollArea>
                 <form
@@ -140,48 +137,43 @@ export default function SiteAdmin({ id }: { id: string }) {
                   className="space-y-6 px-6 pb-3 pt-2"
                 >
                   <div className="flex w-full flex-col items-start gap-2">
-                    <div>
-                      <Label htmlFor="subdomain" className="mb-1">
-                        Subdomain
-                      </Label>
-                      <p className="text-xs text-stone-500">
-                        Your store will appear at{" "}
-                        <Link className="underline" href={siteURL}>
-                          {siteURL}.
-                        </Link>
-                      </p>
-                    </div>
-                    <Input
-                      placeholder="Your subdomain"
-                      name="subdomain"
-                      id="subdomain"
-                      defaultValue={siteData.subdomain ?? ""}
-                    />
-                  </div>
-                  <div className="flex w-full flex-col items-start gap-2">
                     <Label htmlFor="name">Name</Label>
                     <Input
                       placeholder="Your store title"
                       name="name"
                       id="name"
                       defaultValue={siteData.name ?? ""}
+                      autoFocus
+                      required
                     />
                   </div>
                   <div className="flex w-full flex-col items-start gap-2">
-                    <div>
-                      <Label htmlFor="logo" className="mb-1">
-                        Logo
-                      </Label>
-                      <p className="text-xs text-stone-500">
-                        Your store logo is used in your web storefront, for favicons and Open Graph
-                        images.
-                      </p>
-                    </div>
-                    <Uploader
-                      defaultValue={siteData.logo ?? null}
-                      name="logo"
-                      setChanged={setChanged}
+                    <Label htmlFor="subdomain">Subdomain</Label>
+                    <Input
+                      placeholder="Your subdomain"
+                      name="subdomain"
+                      id="subdomain"
+                      defaultValue={siteData.subdomain ?? ""}
+                      required
                     />
+                    <p className="text-xs text-muted-foreground">
+                      Your landing page will live at{" "}
+                      <Link
+                        className="font-medium tracking-tightish text-foreground underline-offset-2 hover:underline"
+                        href={siteURL}
+                      >
+                        {siteURL}↗
+                      </Link>
+                    </p>
+                  </div>
+                  <div className="flex w-full flex-col items-start gap-2">
+                    <div className="w-full space-y-2">
+                      <Label htmlFor="logo">Logo</Label>
+                      <FileUploader accept="image/*" name="logo" />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      We'll use your logo for favicons & Open Graph images.
+                    </p>
                   </div>
                 </form>
               </ScrollArea>
@@ -191,6 +183,7 @@ export default function SiteAdmin({ id }: { id: string }) {
                   form="site-settings-form"
                   loading={isSaving}
                   loadingText="Saving"
+                  className="w-full"
                 >
                   Save
                 </Button>
@@ -229,10 +222,10 @@ export default function SiteAdmin({ id }: { id: string }) {
                 </div>
               </div>
 
-              <p className="mt-2 text-sm text-stone-500">
+              <p className="mt-2 text-sm text-muted-foreground">
                 Title: {homepage?.title ?? "No Home Page Set"}
               </p>
-              <p className="text-sm text-stone-500">
+              <p className="text-sm text-muted-foreground">
                 Last Updated:{" "}
                 {homepage?.updatedAt
                   ? formatDistanceToNow(new Date(homepage.updatedAt), {
@@ -267,7 +260,7 @@ export default function SiteAdmin({ id }: { id: string }) {
               homepageId={siteData.homepageId ?? null}
             />
           ) : (
-            <p className="text-sm text-stone-500">
+            <p className="text-sm text-muted-foreground">
               You do not have any other pages yet. Create more pages to start building your store.
             </p>
           )}

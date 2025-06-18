@@ -1,21 +1,20 @@
 "use client";
 
-import { cn } from "@/lib/utils";
+import * as React from "react";
 import { useFormStatus } from "react-dom";
-import { Button } from "./button";
+import { Button, type ButtonProps } from "./button";
 
-interface SubmitButtonProps {
-  children: React.ReactNode;
-  className?: string;
-  loadingText?: string;
-}
+export type SubmitButtonProps = Omit<ButtonProps, "type">;
 
-export function SubmitButton({ children, className }: SubmitButtonProps) {
-  const { pending } = useFormStatus();
+export const SubmitButton = React.forwardRef<HTMLButtonElement, SubmitButtonProps>(
+  ({ children, loadingText, ...props }, ref) => {
+    const { pending } = useFormStatus();
 
-  return (
-    <Button type="submit" disabled={pending} className={cn(className)} loading={pending}>
-      {children}
-    </Button>
-  );
-}
+    return (
+      <Button ref={ref} type="submit" loading={pending} loadingText={loadingText} {...props}>
+        {children}
+      </Button>
+    );
+  }
+);
+SubmitButton.displayName = "SubmitButton";
