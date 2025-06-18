@@ -10,8 +10,8 @@ import {
   includeInviteDetails,
   includeTeamMember
 } from "@/types/team";
-import { sendTeamInvitationEmail } from "../email-service";
-import { requireOrganization, requireUser } from "../user-context-service";
+import { sendTeamInvitationEmail } from "./email-service";
+import { requireOrganization, requireUser } from "./user-context-service";
 
 /**
  * Team management operations for organizations

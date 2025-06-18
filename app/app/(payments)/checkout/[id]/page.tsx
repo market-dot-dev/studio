@@ -1,5 +1,5 @@
-import { getCheckoutData } from "@/app/services/billing/connect-checkout-service";
-import { getSubdomainFromString } from "@/app/services/site/domain-request-service";
+import { getCheckoutData } from "@/app/services/billing/checkout-service";
+import { getSubdomainFromString } from "@/app/services/domain-request-service";
 import { TierNotAvailable } from "@/components/tiers/tier-not-available";
 import { headers } from "next/headers";
 import { notFound } from "next/navigation";

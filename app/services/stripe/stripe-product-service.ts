@@ -1,7 +1,7 @@
 "use server";
 
 import Stripe from "stripe";
-import { createStripeClient } from "./create-stripe-client";
+import { createStripeClient } from "../create-stripe-client";
 
 /**
  * Creates a new product in Stripe

@@ -1,4 +1,4 @@
-import { findCharge } from "@/app/services/billing/connect-charge-service";
+import { findCharge } from "@/app/services/billing/charge-service";
 import { getTierByIdWithOrg } from "@/app/services/tier/tier-service";
 import PageHeader from "@/components/common/page-header";
 import { notFound } from "next/navigation";

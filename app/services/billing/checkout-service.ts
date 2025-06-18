@@ -1,21 +1,21 @@
 "use server";
 
-import { createSubscription } from "@/app/services/billing/connect-subscription-service";
+import { createSubscription } from "@/app/services/billing/subscription-service";
+import { OrganizationForStripeOps } from "@/types/organization";
 import {
   getCurrentCustomerOrganization,
   getOrCreateStripeCustomerIdForVendor,
   getStripePaymentMethodIdForVendor
-} from "@/app/services/organization/customer-organization-service";
-import { getVendorOrganizationById } from "@/app/services/organization/vendor-organization-service";
-import { createStripeCharge } from "@/app/services/stripe/stripe-payment-service";
+} from "../customer-organization-service";
+import { createStripeCharge } from "../stripe/stripe-payment-service";
 import {
   createStripeSubscriptionForCustomer,
   isSubscribedToStripeTier
-} from "@/app/services/stripe/stripe-subscription-service";
-import { getTierById, getTierByIdForCheckout } from "@/app/services/tier/tier-service";
-import { getCurrentUserSession, requireOrganization } from "@/app/services/user-context-service";
-import { OrganizationForStripeOps } from "@/types/organization";
-import { createLocalCharge } from "./connect-charge-service";
+} from "../stripe/stripe-subscription-service";
+import { getTierById, getTierByIdForCheckout } from "../tier/tier-service";
+import { getCurrentUserSession, requireOrganization } from "../user-context-service";
+import { getVendorOrganizationById } from "../vendor-organization-service";
+import { createLocalCharge } from "./charge-service";
 
 interface CheckoutData {
   tier: Awaited<ReturnType<typeof getTierByIdForCheckout>>;

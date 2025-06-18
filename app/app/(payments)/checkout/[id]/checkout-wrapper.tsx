@@ -1,5 +1,5 @@
 import { Contract, Tier } from "@/app/generated/prisma";
-import { getSubscriptionStatus } from "@/app/services/billing/connect-subscription-service";
+import { getSubscriptionStatus } from "@/app/services/billing/subscription-service";
 import { type VendorProfile } from "@/types/checkout";
 import { ContactFormCheckout } from "./contact-form-checkout";
 import { DirectPaymentCheckout } from "./direct-payment-checkout";

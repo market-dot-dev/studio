@@ -1,6 +1,6 @@
 "use server";
 
-import { OrganizationRole, OrganizationType, PlanType, User } from "@/app/generated/prisma";
+import { OrganizationRole, OrganizationType, User } from "@/app/generated/prisma";
 import { businessDescription } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import { Account, User as NaUser } from "next-auth";
@@ -198,12 +198,6 @@ class AuthService {
           create: {
             userId: user.id,
             role: "OWNER"
-          }
-        },
-        // Create billing record with FREE plan by default
-        billing: {
-          create: {
-            planType: PlanType.FREE
           }
         }
       }

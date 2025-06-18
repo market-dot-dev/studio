@@ -1,10 +1,7 @@
 "use client";
 
 import { OrganizationRole } from "@/app/generated/prisma";
-import {
-  changeTeamMemberRole,
-  transferOwnership
-} from "@/app/services/organization/team-management-service";
+import { changeTeamMemberRole, transferOwnership } from "@/app/services/team-management-service";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

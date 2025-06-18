@@ -10,8 +10,8 @@ import {
   createStripeSetupIntent,
   detachStripePaymentMethod,
   retrieveStripePaymentMethod
-} from "../stripe/stripe-payment-service";
-import { requireOrganization } from "../user-context-service";
+} from "./stripe/stripe-payment-service";
+import { requireOrganization } from "./user-context-service";
 
 /**
  * Customer-specific organization operations

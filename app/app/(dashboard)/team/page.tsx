@@ -1,7 +1,4 @@
-import {
-  getPendingInvites,
-  getTeamMembers
-} from "@/app/services/organization/team-management-service";
+import { getPendingInvites, getTeamMembers } from "@/app/services/team-management-service";
 import { requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import { DataTable } from "@/components/ui/data-table";

@@ -1,20 +1,6 @@
 "use server";
 
 import { Subscription } from "@/app/generated/prisma";
-import {
-  confirmCustomerSubscription,
-  confirmCustomerSubscriptionCancellation,
-  notifyOwnerOfNewSubscription,
-  notifyOwnerOfSubscriptionCancellation
-} from "@/app/services/email-service";
-import { getCustomerOrganizationById } from "@/app/services/organization/customer-organization-service";
-import { getVendorOrganizationById } from "@/app/services/organization/vendor-organization-service";
-import {
-  cancelStripeSubscription,
-  reactivateStripeSubscription
-} from "@/app/services/stripe/stripe-subscription-service";
-import { getTierById } from "@/app/services/tier/tier-service";
-import { requireOrganization } from "@/app/services/user-context-service";
 import prisma from "@/lib/prisma";
 import {
   includeTierAndOrg,
@@ -22,6 +8,20 @@ import {
   SubscriptionStatus,
   type SubscriptionWithTierAndOrg
 } from "@/types/subscription";
+import { getCustomerOrganizationById } from "../customer-organization-service";
+import {
+  confirmCustomerSubscription,
+  confirmCustomerSubscriptionCancellation,
+  notifyOwnerOfNewSubscription,
+  notifyOwnerOfSubscriptionCancellation
+} from "../email-service";
+import {
+  cancelStripeSubscription,
+  reactivateStripeSubscription
+} from "../stripe/stripe-subscription-service";
+import { getTierById } from "../tier/tier-service";
+import { requireOrganization } from "../user-context-service";
+import { getVendorOrganizationById } from "../vendor-organization-service";
 
 /**
  * Get a subscription by its ID with related organization and tier data

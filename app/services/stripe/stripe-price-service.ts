@@ -2,7 +2,7 @@
 
 import { GLOBAL_APPLICATION_FEE_DOLLARS, GLOBAL_APPLICATION_FEE_PCT } from "@/app/config/checkout";
 import Stripe from "stripe";
-import { createStripeClient } from "./create-stripe-client";
+import { createStripeClient } from "../create-stripe-client";
 
 export type SubscriptionCadence = "month" | "year" | "quarter" | "once";
 

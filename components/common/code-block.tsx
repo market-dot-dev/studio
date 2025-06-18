@@ -1,8 +1,8 @@
 "use client";
 
+import { formatHtml } from "@/app/services/format-html";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { formatHtml } from "@/utils/format-html";
 import { Check, Copy, FileCode2 } from "lucide-react";
 import { Highlight, themes } from "prism-react-renderer";
 import { useEffect, useState } from "react";

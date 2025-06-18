@@ -1,6 +1,6 @@
 "use client";
 
-import { cancelSubscription } from "@/app/services/billing/connect-subscription-service";
+import { cancelSubscription } from "@/app/services/billing/subscription-service";
 import {
   AlertDialog,
   AlertDialogAction,

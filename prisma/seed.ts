@@ -2,7 +2,6 @@ import {
   Contract,
   Organization,
   OrganizationType,
-  PlanType,
   PrismaClient,
   Tier,
   User
@@ -81,13 +80,7 @@ const createOrganizations = async (users: User[]) => {
         },
         stripeCustomerIds: {},
         stripePaymentMethodIds: {},
-        marketExpertId: "some-id-here",
-        // Create billing record with FREE plan by default
-        billing: {
-          create: {
-            planType: PlanType.FREE
-          }
-        }
+        marketExpertId: "some-id-here"
       }
     });
     createdOrganizations.push(organization);

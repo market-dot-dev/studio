@@ -1,10 +1,7 @@
 "use client";
 
 import { OrganizationRole } from "@/app/generated/prisma";
-import {
-  cancelInvitation,
-  removeTeamMember
-} from "@/app/services/organization/team-management-service";
+import { cancelInvitation, removeTeamMember } from "@/app/services/team-management-service";
 import {
   AlertDialog,
   AlertDialogAction,

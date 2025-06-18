@@ -11,7 +11,7 @@ import {
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { SessionUser } from "../models/Session";
-import { getOrganizationById } from "./organization/organization-service";
+import { getOrganizationById } from "./organization-service";
 
 // Session-only functions (no DB queries)
 

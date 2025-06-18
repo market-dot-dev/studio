@@ -24,11 +24,6 @@ export default function SettingsNav() {
       name: "Payout Info",
       href: `/settings/payment`,
       isActive: activeSegment === "payment"
-    },
-    {
-      name: "Billing & Plan",
-      href: `/settings/billing`,
-      isActive: activeSegment === "billing"
     }
   ];
 

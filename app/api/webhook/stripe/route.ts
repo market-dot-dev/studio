@@ -1,4 +1,4 @@
-import { createStripeClient } from "@/app/services/stripe/create-stripe-client";
+import { createStripeClient } from "@/app/services/create-stripe-client";
 import {
   handleAccountEvent,
   handleChargeEvent,

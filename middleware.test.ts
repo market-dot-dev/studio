@@ -3,12 +3,12 @@ import { NextRequestWithAuth } from "next-auth/middleware";
 import { NextFetchEvent, NextResponse } from "next/server";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { OrganizationRole, OrganizationType } from "./app/generated/prisma";
-import { canViewPath, createAuthContext } from "./app/services/organization/role-service";
 import {
   getGhUsernameFromRequest,
   getReservedSubdomainFromRequest,
   getSubdomainFromRequest
-} from "./app/services/site/domain-request-service";
+} from "./app/services/domain-request-service";
+import { canViewPath, createAuthContext } from "./app/services/role-service";
 
 // Mock only the dependencies
 vi.mock("next-auth/jwt", () => ({
