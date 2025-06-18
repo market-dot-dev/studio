@@ -26,6 +26,11 @@ export default function SettingsNav() {
       isActive: activeSegment === "payment"
     },
     {
+      name: "Billing & Plan",
+      href: `/settings/billing`,
+      isActive: activeSegment === "billing"
+    },
+    {
       name: "Integrations",
       href: `/settings/integrations`,
       isActive: activeSegment === "integrations"

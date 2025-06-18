@@ -10,7 +10,6 @@ import type { Color } from "@/lib/home/colors";
 import { colors } from "@/lib/home/colors";
 import { blogURL, discordURL, loginURL, twitterUrl } from "@/lib/home/social-urls";
 import clsx from "clsx";
-import { AnimatePresence, motion } from "framer-motion";
 import {
   BookOpenCheck,
   ChevronRight,
@@ -21,6 +20,7 @@ import {
   Store,
   X
 } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useSession } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";

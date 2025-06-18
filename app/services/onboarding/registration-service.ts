@@ -2,7 +2,7 @@
 
 import { User } from "@/app/generated/prisma";
 import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
-import { userExists } from "./auth-service";
+import { userExists } from "../auth-service";
 
 /**
  * Set up a user sign up by storing the name in cookies and checking if user already exists

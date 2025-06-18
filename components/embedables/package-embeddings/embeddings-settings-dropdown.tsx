@@ -17,8 +17,8 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { Switch } from "@/components/ui/switch";
-import { AnimatePresence, motion } from "framer-motion";
 import { Moon, PackagePlus, PenLine, Settings, Sun } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 import PublishedPackagesSelectionModal from "./published-packages-selection-modal";
 

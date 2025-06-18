@@ -3,7 +3,7 @@
 import { User } from "@/app/generated/prisma";
 import { refreshAndGetState } from "@/app/services/onboarding/onboarding-service";
 import { OnboardingState } from "@/app/services/onboarding/onboarding-steps";
-import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
+import { updateCurrentOrganizationBusiness } from "@/app/services/organization/organization-service";
 import { createSite, updateCurrentSite } from "@/app/services/site/site-crud-service";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogFooter } from "@/components/ui/dialog";
@@ -11,7 +11,7 @@ import type { SiteDetails } from "@/types/site";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { VisuallyHidden } from "@radix-ui/themes";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import OfferingsForm from "./offerings-form";
 import ProfileForm from "./profile-form";
 
@@ -33,7 +33,8 @@ const FormContent = ({
   currentSite,
   isLoading,
   onProfileSubmit,
-  onOfferingsSubmit
+  onOfferingsSubmit,
+  formRef
 }: {
   step: "profile" | "offerings";
   user: User;
@@ -41,13 +42,24 @@ const FormContent = ({
   isLoading: boolean;
   onProfileSubmit: (data: ProfileData) => void;
   onOfferingsSubmit: (data: OfferingsData) => void;
+  formRef: React.RefObject<HTMLFormElement | null>;
 }) => (
   <div className="w-full overflow-y-auto">
     <div className="flex w-full items-center justify-center p-6 sm:p-9">
       {step === "profile" ? (
-        <ProfileForm user={user} currentSite={currentSite} onSubmit={onProfileSubmit} />
+        <ProfileForm
+          user={user}
+          currentSite={currentSite}
+          onSubmit={onProfileSubmit}
+          formRef={formRef}
+        />
       ) : (
-        <OfferingsForm user={user} onSubmit={onOfferingsSubmit} isLoading={isLoading} />
+        <OfferingsForm
+          user={user}
+          onSubmit={onOfferingsSubmit}
+          isLoading={isLoading}
+          formRef={formRef}
+        />
       )}
     </div>
   </div>
@@ -98,6 +110,8 @@ export function OnboardingModal({
   onboardingState,
   organization
 }: OnboardingModalProps) {
+  const formRef = useRef<HTMLFormElement>(null);
+
   const [isOpen, setIsOpen] = useState(
     !onboardingState.setupBusiness || !onboardingState.preferredServices
   );
@@ -153,9 +167,8 @@ export function OnboardingModal({
   };
 
   const handleSubmitClick = () => {
-    const form = document.querySelector("form");
-    if (form) {
-      form.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+    if (formRef.current) {
+      formRef.current.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
     }
   };
 
@@ -178,6 +191,7 @@ export function OnboardingModal({
             isLoading={isLoading}
             onProfileSubmit={handleProfileSubmit}
             onOfferingsSubmit={handleFinalSubmit}
+            formRef={formRef}
           />
           <DialogFooter className="w-full border-t border-stone-200 px-6 py-4 sm:px-9">
             <NavigationButtons

@@ -5,13 +5,13 @@ import {
   createPaymentMethodSetupIntent,
   detachPaymentMethodForVendor,
   getPaymentMethodDetailsForVendor
-} from "@/app/services/customer-organization-service";
+} from "@/app/services/organization/customer-organization-service";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { AnimatePresence, motion } from "framer-motion";
 import { AlertTriangle, CreditCard } from "lucide-react";
+import { AnimatePresence, motion, Variants } from "motion/react";
 import { useEffect, useState } from "react";
 
 interface SimplePaymentElementProps {
@@ -30,7 +30,7 @@ export function SimplePaymentElement({
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Animation variants
-  const containerVariants = {
+  const containerVariants: Variants = {
     hidden: { opacity: 0, y: 10 },
     visible: {
       opacity: 1,

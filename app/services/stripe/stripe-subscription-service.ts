@@ -3,7 +3,7 @@
 import { Tier } from "@/app/generated/prisma";
 import { generateId } from "@/lib/utils";
 import Stripe from "stripe";
-import { createStripeClient } from "../create-stripe-client";
+import { createStripeClient } from "./create-stripe-client";
 
 /**
  * Create a subscription in Stripe

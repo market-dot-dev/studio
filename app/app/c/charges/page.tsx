@@ -1,5 +1,5 @@
 import { Charge } from "@/app/generated/prisma";
-import { getChargesForCurrentOrganization } from "@/app/services/billing/charge-service";
+import { getChargesForCurrentOrganization } from "@/app/services/billing/connect-charge-service";
 import { getTierByIdWithOrg } from "@/app/services/tier/tier-service";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";

@@ -1,4 +1,4 @@
-import { getProspects } from "@/app/services/prospect-service";
+import { getProspects } from "@/app/services/research/prospect-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import { ProspectsEmptyState } from "@/components/prospects/empty-state";
