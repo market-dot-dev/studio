@@ -60,10 +60,7 @@ export default async function PricingPage() {
                   </p>
 
                   <div className="mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-semibold tracking-tight">$0</span>
-                      <span className="text-base text-muted-foreground">/mo</span>
-                    </div>
+                    <span className="text-4xl font-semibold tracking-tight">$0</span>
                   </div>
 
                   <div className="mb-6 flex items-start gap-2">
@@ -106,8 +103,8 @@ export default async function PricingPage() {
                   </p>
 
                   <div className="mb-6">
-                    <div className="flex items-baseline gap-1">
-                      <span className="text-3xl font-semibold tracking-tight">$40</span>
+                    <div className="flex items-baseline gap-0.5">
+                      <span className="text-4xl font-semibold tracking-tight">$40</span>
                       <span className="text-base text-muted-foreground">/mo</span>
                     </div>
                   </div>
