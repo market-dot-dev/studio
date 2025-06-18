@@ -86,7 +86,7 @@ const TierLinkCopier: React.FC<TierLinkCopierProps> = ({
             initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
-            transition={{ duration: 0.1, type: "easeInOut" }}
+            transition={{ duration: 0.1, type: "tween" }}
           >
             <Check />
           </motion.div>
@@ -96,7 +96,7 @@ const TierLinkCopier: React.FC<TierLinkCopierProps> = ({
             initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
-            transition={{ duration: 0.1, type: "easeInOut" }}
+            transition={{ duration: 0.1, type: "tween" }}
           >
             <LinkIcon />
           </motion.div>
