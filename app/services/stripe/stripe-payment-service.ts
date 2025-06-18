@@ -2,7 +2,7 @@
 
 import { generateId } from "@/lib/utils";
 import Stripe from "stripe";
-import { createStripeClient } from "../create-stripe-client";
+import { createStripeClient } from "./create-stripe-client";
 import { calculateApplicationFee } from "./stripe-price-service";
 
 /**

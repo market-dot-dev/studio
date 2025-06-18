@@ -3,7 +3,7 @@
 import { User } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
-import { userExists } from "./auth-service";
+import { userExists } from "../auth-service";
 
 interface UserDetails {
   id: User["id"];

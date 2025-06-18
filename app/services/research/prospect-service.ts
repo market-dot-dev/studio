@@ -1,10 +1,10 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { Prospect } from "../generated/prisma";
-import Tier from "../models/Tier";
-import { notifyOwnerOfNewProspect } from "./email-service";
-import { getOrganizationById } from "./organization-service";
+import { Prospect } from "../../generated/prisma";
+import Tier from "../../models/Tier";
+import { notifyOwnerOfNewProspect } from "../email-service";
+import { getOrganizationById } from "../organization/organization-service";
 
 /**
  * Get all prospects for an Organization

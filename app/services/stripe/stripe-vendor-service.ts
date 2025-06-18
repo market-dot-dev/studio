@@ -1,15 +1,15 @@
 "use server";
 
-import { getRootUrl } from "@/lib/domain";
-import prisma from "@/lib/prisma";
-import { ErrorMessageCode, errorMessageMapping, HealthCheckResult } from "@/types/stripe";
-import { createStripeClient } from "../create-stripe-client";
-import { requireOrganization } from "../user-context-service";
 import {
   getCurrentVendorOrganization,
   getVendorOrganizationById,
   updateVendorStripeData
-} from "../vendor-organization-service";
+} from "@/app/services/organization/vendor-organization-service";
+import { getRootUrl } from "@/lib/domain";
+import prisma from "@/lib/prisma";
+import { ErrorMessageCode, errorMessageMapping, HealthCheckResult } from "@/types/stripe";
+import { requireOrganization } from "../user-context-service";
+import { createStripeClient } from "./create-stripe-client";
 
 /**
  * Get the human-readable error message for a given error code

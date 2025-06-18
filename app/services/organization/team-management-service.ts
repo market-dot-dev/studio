@@ -11,8 +11,8 @@ import {
   includeTeamMember
 } from "@/types/team";
 import { revalidatePath } from "next/cache";
-import { sendTeamInvitationEmail } from "./email-service";
-import { requireOrganization, requireUser } from "./user-context-service";
+import { sendTeamInvitationEmail } from "../email-service";
+import { requireOrganization, requireUser } from "../user-context-service";
 
 const isValidEmail = (email: string): boolean => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

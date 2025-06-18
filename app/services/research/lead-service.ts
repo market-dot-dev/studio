@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import type { FiltersState } from "@/types/lead";
-import { requireOrganization } from "./user-context-service";
+import { requireOrganization } from "../user-context-service";
 
 // Environment variables and constants
 const radarAPIEndpoint = process.env.RADAR_API_ENDPOINT;

@@ -69,9 +69,10 @@ interface OfferingsFormProps {
   user: User;
   onSubmit: (data: OfferingsData) => void;
   isLoading: boolean;
+  formRef?: React.RefObject<HTMLFormElement | null>;
 }
 
-export default function OfferingsForm({ user, onSubmit, isLoading }: OfferingsFormProps) {
+export default function OfferingsForm({ user, onSubmit, isLoading, formRef }: OfferingsFormProps) {
   const [selectedOfferings, setSelectedOfferings] = useState<Set<string>>(new Set());
 
   const toggleOffering = (id: string) => {
@@ -92,7 +93,7 @@ export default function OfferingsForm({ user, onSubmit, isLoading }: OfferingsFo
   };
 
   return (
-    <form className="w-full" onSubmit={handleSubmit}>
+    <form ref={formRef} className="w-full" onSubmit={handleSubmit}>
       <div className="flex flex-col items-center gap-9">
         <div className="flex flex-col items-center gap-2">
           <div className="flex justify-center">

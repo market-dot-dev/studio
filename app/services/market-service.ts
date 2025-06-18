@@ -2,7 +2,7 @@
 
 import { Channel } from "@/app/generated/prisma";
 import { getRootUrl } from "@/lib/domain";
-import { updateOrganization } from "./organization-service";
+import { updateOrganization } from "./organization/organization-service";
 import { getCurrentSite } from "./site/site-crud-service";
 import { getPublishedTiersForOrganization } from "./tier/tier-service";
 import { requireOrganization, requireUser } from "./user-context-service";

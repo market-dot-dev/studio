@@ -1,5 +1,5 @@
 import { TierVersion } from "@/app/generated/prisma";
-import { getSubscriberCount } from "@/app/services/billing/subscription-service";
+import { getSubscriberCount } from "@/app/services/billing/connect-subscription-service";
 import { TableCell, TableRow } from "@/components/ui/table";
 import React, { useEffect, useState } from "react";
 

@@ -1,12 +1,12 @@
 "use server";
 
 import { Charge } from "@/app/generated/prisma";
+import { getCustomerOrganizationById } from "@/app/services/organization/customer-organization-service";
+import { getVendorOrganizationById } from "@/app/services/organization/vendor-organization-service";
+import { getTierByIdWithOrg } from "@/app/services/tier/tier-service";
+import { requireOrganization } from "@/app/services/user-context-service";
 import prisma from "@/lib/prisma";
-import { getCustomerOrganizationById } from "../customer-organization-service";
 import { confirmCustomerPurchase, notifyOwnerOfNewPurchase } from "../email-service";
-import { getTierByIdWithOrg } from "../tier/tier-service";
-import { requireOrganization } from "../user-context-service";
-import { getVendorOrganizationById } from "../vendor-organization-service";
 
 /**
  * Find a charge by ID with organization and tier data

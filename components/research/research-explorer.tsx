@@ -4,7 +4,7 @@ import {
   getFacets,
   getShortlistedLeadsKeysList,
   lookup
-} from "@/app/services/lead-service";
+} from "@/app/services/research/lead-service";
 import { Spinner } from "@/components/ui/spinner";
 import { extractGitHubRepoInfo } from "@/lib/github";
 import type { FiltersState } from "@/types/lead";
