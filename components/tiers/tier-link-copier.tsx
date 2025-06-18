@@ -2,8 +2,8 @@ import Tier from "@/app/models/Tier";
 import { Button } from "@/components/ui/button";
 import { getRootUrl } from "@/lib/domain";
 import { formatUrlForDisplay } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
 import { Check, LinkIcon } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import React, { useEffect, useState } from "react";
 import { toast } from "sonner";
 

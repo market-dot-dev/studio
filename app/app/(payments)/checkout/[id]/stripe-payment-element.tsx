@@ -10,8 +10,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { AnimatePresence, motion, Variants } from "framer-motion";
 import { AlertTriangle, CreditCard } from "lucide-react";
+import { AnimatePresence, motion, Variants } from "motion/react";
 import { useEffect, useState } from "react";
 
 interface SimplePaymentElementProps {
