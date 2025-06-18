@@ -1,7 +1,7 @@
 "use client";
 
 import { Tier } from "@/app/generated/prisma";
-import { addNewProspectForPackage } from "@/app/services/prospect-service";
+import { addNewProspectForPackage } from "@/app/services/research/prospect-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

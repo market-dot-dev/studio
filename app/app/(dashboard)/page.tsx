@@ -1,8 +1,8 @@
-import { requireOrganization, requireUserSession } from "@/app/services/user-context-service";
 import {
   getCustomersOfVendor,
   getProspectsOfVendor
-} from "@/app/services/vendor-organization-service";
+} from "@/app/services/organization/vendor-organization-service";
+import { requireOrganization, requireUserSession } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import DashboardCharts from "@/components/dashboard/dashboard-charts";
 import DashboardCustomerTable from "./customers/sales/dashboard-customer-table";

@@ -15,10 +15,11 @@ import Uploader, { Attachment } from "@/components/uploader";
 import { BookOpen, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { startTransition, useState } from "react";
+import { startTransition, useRef, useState } from "react";
 import ContractDeleteButton from "./contract-delete-button";
 
 export default function ContractEdit({ contract: contractObj }: { contract: Contract | null }) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [contract, setContract] = useState<ContractWithUploadData>(
     contractObj ||
       ({
@@ -51,8 +52,7 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
     setIsSaving(true);
     setInfo(null);
 
-    const form = document.querySelector("form");
-    if (!form) {
+    if (!formRef.current) {
       throw new Error("Form element not found");
     }
 
@@ -137,7 +137,7 @@ export default function ContractEdit({ contract: contractObj }: { contract: Cont
           ) : null
         ]}
       />
-      <form>
+      <form ref={formRef}>
         {error && <p className="text-sm text-red-500">{error?.message}</p>}
         {info && <p className="text-sm text-stone-500">{info}</p>}
         <div className="flex w-full flex-col items-start space-y-6">

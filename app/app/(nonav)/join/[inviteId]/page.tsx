@@ -1,4 +1,4 @@
-import { getInvitationDetails } from "@/app/services/team-management-service";
+import { getInvitationDetails } from "@/app/services/organization/team-management-service";
 import { requireUser } from "@/app/services/user-context-service";
 import { Button } from "@/components/ui/button";
 import { Card, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";

@@ -1,7 +1,7 @@
 "use client";
 
 import { Organization } from "@/app/generated/prisma";
-import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
+import { updateCurrentOrganizationBusiness } from "@/app/services/organization/organization-service";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

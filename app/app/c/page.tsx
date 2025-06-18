@@ -1,6 +1,6 @@
 import { Charge, Subscription } from "@/app/generated/prisma";
-import { getChargesForCurrentOrganization } from "@/app/services/billing/charge-service";
-import { getSubscriptionsForCurrentOrganization } from "@/app/services/billing/subscription-service";
+import { getChargesForCurrentOrganization } from "@/app/services/billing/connect-charge-service";
+import { getSubscriptionsForCurrentOrganization } from "@/app/services/billing/connect-subscription-service";
 import PageHeader from "@/components/common/page-header";
 import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";

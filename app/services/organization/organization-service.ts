@@ -7,8 +7,8 @@ import {
   includeFullOrg,
   includeMinimalOrg
 } from "@/types/organization";
-import { Prisma } from "../generated/prisma";
-import { requireOrganization, requireUser } from "./user-context-service";
+import { Prisma } from "../../generated/prisma";
+import { requireOrganization, requireUser } from "../user-context-service";
 
 /**
  * Basic Organization CRUD operations
