@@ -111,7 +111,7 @@ export function DirectPaymentCheckout({
                 initial={{ opacity: 0, height: 0, overflow: "hidden" }}
                 animate={{ opacity: 1, height: "auto", overflow: "visible" }}
                 exit={{ opacity: 0, height: 0, overflow: "hidden" }}
-                transition={{ duration: 0.5, ease: "tween" }}
+                transition={{ duration: 0.5, ease: "easeInOut" }}
               >
                 <Card className="min-h-[60px] p-5">
                   <SimplePaymentElement
