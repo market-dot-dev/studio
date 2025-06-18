@@ -1,8 +1,8 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { AnimatePresence, motion } from "framer-motion";
 import { Check, Link as LinkIcon } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 export default function CopyCheckoutLinkButton({ tierId }: { tierId: string }) {
@@ -63,7 +63,7 @@ export default function CopyCheckoutLinkButton({ tierId }: { tierId: string }) {
             initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
-            transition={{ duration: 0.1, type: "easeInOut" }}
+            transition={{ duration: 0.1, type: "tween" }}
           >
             <Check className="size-3.5" strokeWidth={2.25} />
           </motion.div>
@@ -73,7 +73,7 @@ export default function CopyCheckoutLinkButton({ tierId }: { tierId: string }) {
             initial={{ opacity: 0, scale: 0.8, rotate: 10 }}
             animate={{ opacity: 1, scale: 1, rotate: 0 }}
             exit={{ opacity: 0, scale: 0.5, rotate: -10 }}
-            transition={{ duration: 0.1, type: "easeInOut" }}
+            transition={{ duration: 0.1, type: "tween" }}
           >
             <LinkIcon className="size-3.5" strokeWidth={2.25} />
           </motion.div>

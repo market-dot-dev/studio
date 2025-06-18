@@ -45,6 +45,6 @@ export function mapStripeStatusToSubscriptionStatus(
     case "unpaid":
       return SubscriptionStatus.UNPAID;
     default:
-      return SubscriptionStatus.EXPIRED;
+      return SubscriptionStatus.CANCELED;
   }
 }
