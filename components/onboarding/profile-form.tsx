@@ -28,9 +28,10 @@ interface ProfileFormProps {
   user: User;
   onSubmit: (data: ProfileData) => void;
   currentSite?: SiteDetails;
+  formRef?: React.RefObject<HTMLFormElement | null>;
 }
 
-export default function ProfileForm({ user, onSubmit, currentSite }: ProfileFormProps) {
+export default function ProfileForm({ user, onSubmit, currentSite, formRef }: ProfileFormProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [file, setFile] = useState<File | null>(null);
   const [isDraggingOverDropzone, setIsDraggingOverDropzone] = useState(false);
@@ -105,7 +106,7 @@ export default function ProfileForm({ user, onSubmit, currentSite }: ProfileForm
   };
 
   return (
-    <form className="relative w-full" onSubmit={handleSubmit}>
+    <form ref={formRef} className="relative w-full" onSubmit={handleSubmit}>
       <div className="flex flex-col gap-6">
         <div className="flex flex-col gap-2">
           <div className="flex justify-center">
