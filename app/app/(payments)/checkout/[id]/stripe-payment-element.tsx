@@ -418,7 +418,7 @@ function CardSetupFormContent({
             initial={{ opacity: 0, height: 0, marginTop: 0 }}
             animate={{ opacity: 1, height: "auto", marginTop: 16 }}
             exit={{ opacity: 0, height: 0, marginTop: 0 }}
-            transition={{ duration: 0.2, ease: "easeInOut" }}
+            transition={{ duration: 0.2, ease: "tween" }}
             className="flex items-center overflow-hidden rounded border border-rose-200 bg-red-50 px-2.5 py-2 text-sm text-rose-600"
           >
             <AlertTriangle className="mr-3 size-4 -translate-y-px" />
