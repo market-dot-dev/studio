@@ -22,7 +22,7 @@ export function ProgressDonut({ currentStep, totalSteps, className = "" }: Progr
       {isCompleted ? (
         <span
           style={{ height: size, width: size }}
-          className="flex -translate-x-px -translate-y-px items-center justify-center rounded-full bg-foreground"
+          className="flex items-center justify-center rounded-full bg-foreground"
         >
           <Check strokeWidth={3} size={12} className=" text-white" />
         </span>

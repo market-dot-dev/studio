@@ -27,7 +27,7 @@ async function finalizeTiers() {
 
 export default async function OnboardingCompletePage() {
   return (
-    <div className="mx-auto max-w-lg">
+    <div className="mx-auto max-w-[490px]">
       <div className="space-y-8">
         {/* Success Header */}
         <div className="flex flex-col items-center text-center">
@@ -45,7 +45,7 @@ export default async function OnboardingCompletePage() {
           {/* <div className="relative flex gap-4">
             <div className="flex flex-col items-center">
               <PackageCheck className="size-5 shrink-0 text-muted-foreground" />
-              <div className="my-2 h-full w-px border-l border-dashed border-stone-300" />
+              <div className="my-2 h-full w-px border-l" />
             </div>
             <div className="flex-1 space-y-1 pb-8">
               <h3 className="text-sm font-semibold">Finalize your packages</h3>
@@ -67,8 +67,8 @@ export default async function OnboardingCompletePage() {
           </div> */}
           <div className="relative flex gap-4">
             <div className="flex flex-col items-center">
-              <Package className="size-5 shrink-0 text-muted-foreground" />
-              <div className="my-2 h-full w-px border-l border-dashed border-stone-300" />
+              <Package className="size-5 shrink-0" />
+              <div className="my-2 h-full w-px border-l" />
             </div>
             <div className="flex-1 space-y-1 pb-8">
               <h3 className="text-sm font-semibold">Create your service packages</h3>
@@ -82,30 +82,30 @@ export default async function OnboardingCompletePage() {
           {/* Step 2: Set Up Channels */}
           <div className="relative flex gap-4">
             <div className="flex flex-col items-center">
-              <Share2 className="size-5 shrink-0 text-muted-foreground" />
-              <div className="my-2 h-full w-px border-l border-dashed border-stone-300" />
+              <Share2 className="size-5 shrink-0" />
+              <div className="my-2 h-full w-px border-l" />
             </div>
             <div className="flex-1 space-y-1 pb-8">
               <h3 className="text-sm font-semibold">Pick a channel</h3>
               <p className="text-sm text-muted-foreground">
                 Showcase your packages using{" "}
                 <span className="inline-flex items-baseline font-medium text-foreground">
-                  <LinkIcon className="ml-px mr-1 size-4 shrink-0 translate-y-[3px] text-muted-foreground" />
+                  <LinkIcon className="ml-px mr-1 size-4 shrink-0 translate-y-[3px]" />
                   Checkout Links
                 </span>
                 ,{" "}
                 <span className="inline-flex items-baseline font-medium text-foreground">
-                  <AppWindowMac className="ml-px mr-1 size-4 shrink-0 translate-y-[3px] text-muted-foreground" />
+                  <AppWindowMac className="ml-px mr-1 size-4 shrink-0 translate-y-[3px]" />
                   Landing Page
                 </span>
                 ,{" "}
                 <span className="inline-flex items-baseline font-medium text-foreground">
-                  <Code className="ml-px mr-1 size-4 shrink-0 translate-y-[3px] text-muted-foreground" />
+                  <Code className="ml-px mr-1 size-4 shrink-0 translate-y-[3px]" />
                   Embeds
                 </span>{" "}
                 or our{" "}
                 <span className="inline-flex items-baseline font-medium text-foreground">
-                  <Store className="ml-px mr-1 size-4 shrink-0 translate-y-[3px] text-muted-foreground" />
+                  <Store className="ml-px mr-1 size-4 shrink-0 translate-y-[3px]" />
                   Developer Marketplace
                 </span>
               </p>
@@ -114,7 +114,7 @@ export default async function OnboardingCompletePage() {
 
           {/* Step 3: Start Selling */}
           <div className="relative flex gap-4">
-            <DollarSign className="size-5 shrink-0 text-muted-foreground" />
+            <DollarSign className="size-5 shrink-0" />
             <div className="flex-1 space-y-1">
               <h3 className="text-sm font-semibold">Start selling</h3>
               <p className="text-sm text-muted-foreground">
