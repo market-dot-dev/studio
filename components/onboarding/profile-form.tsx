@@ -13,8 +13,8 @@ import { ImageIcon } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import { toast } from "sonner";
-import LocationEntryInput from "./location-entry-input";
 import TeamSelectionRadioGroup, { TeamType } from "../team/team-selection-radio-group";
+import LocationEntryInput from "./location-entry-input";
 
 interface ProfileData {
   businessName: string;

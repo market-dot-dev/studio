@@ -1,7 +1,7 @@
 import { StripeAccountStatus } from "@/app/app/(dashboard)/settings/payment/stripe-account-status";
 import {
   checkVendorStripeStatus,
-  getVendorStripeConnectURL,
+  getVendorStripeConnectURL
 } from "@/app/services/stripe/stripe-vendor-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import { CreditCard, Mail, RefreshCw } from "lucide-react";
@@ -29,7 +29,9 @@ export default async function StripeOnboardingPage() {
           canSell={canSell}
           messageCodes={messageCodes}
           disabledReasons={disabledReasons}
-          isAccountDisconnected={organization.stripeAccountDisabled && !organization.stripeAccountId}
+          isAccountDisconnected={
+            organization.stripeAccountDisabled && !organization.stripeAccountId
+          }
           reconnectUrl={organization.stripeAccountDisabled ? oauthUrl : undefined}
           oauthUrl={oauthUrl}
           hasStripeHistory={hasStripeHistory}
