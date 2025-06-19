@@ -22,13 +22,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL(`${billingPageUrl}?status=error`, request.url));
   }
 
+  let stripe: Stripe;
+  let returnUrl = billingPageUrl;
+
   try {
-    const stripe = await createStripeClient();
+    stripe = await createStripeClient();
 
     // Retrieve the session from Stripe
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ["customer", "subscription"]
     });
+
+    returnUrl = session.metadata?.returnUrl || billingPageUrl;
 
     if (!session.customer || typeof session.customer === "string") {
       throw new Error("Invalid customer data from Stripe.");
@@ -86,9 +91,9 @@ export async function GET(request: NextRequest) {
       subscriptionStatus: mappedStatus
     });
 
-    return NextResponse.redirect(new URL(`${billingPageUrl}?status=success`, request.url));
+    return NextResponse.redirect(new URL(`${returnUrl}?status=success`, request.url));
   } catch (error) {
     console.error("Platform checkout error:", error);
-    return NextResponse.redirect(new URL(`${billingPageUrl}?status=error`, request.url));
+    return NextResponse.redirect(new URL(`${returnUrl}?status=error`, request.url));
   }
 }

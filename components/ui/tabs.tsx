@@ -14,7 +14,7 @@ const tabsListVariants = cva("inline-flex items-center text-muted-foreground", {
     variant: {
       default:
         "scrollbar-hide w-full gap-6 overflow-x-auto overflow-y-visible border-b border-stone-200",
-      background: "w-fit rounded-lg bg-stone-900/5 p-1",
+      background: "h-8 w-fit rounded-md bg-stone-900/5 p-0.5",
       pills: "w-fit gap-1"
     }
   },
@@ -46,9 +46,9 @@ const tabsTriggerVariants = cva(
         default:
           "py-2 hover:text-foreground data-[state=active]:text-foreground data-[state=active]:after:absolute data-[state=active]:after:inset-x-0 data-[state=active]:after:bottom-0 data-[state=active]:after:h-[2px] data-[state=active]:after:rounded-t-[2px] data-[state=active]:after:bg-foreground data-[state=active]:after:content-['']",
         background:
-          "px-3 py-1.5 hover:text-foreground focus:text-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-border-sm",
+          "h-[27px] px-3 hover:text-foreground focus:text-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-border-sm",
         pills:
-          "rounded-full px-3 py-1.5 hover:text-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-border"
+          "h-8 rounded-full px-3 hover:text-foreground data-[state=active]:bg-white data-[state=active]:text-foreground data-[state=active]:shadow-border"
       }
     },
     defaultVariants: {

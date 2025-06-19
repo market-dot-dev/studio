@@ -1,143 +1,80 @@
+import { PlanInformation } from "@/app/app/(dashboard)/settings/billing/plan-information";
+import { StripeCustomerPortal } from "@/app/app/(dashboard)/settings/billing/stripe-customer-portal";
+import {
+  checkoutAction,
+  getCachedPricing,
+  getCurrentBilling,
+  getPlanPricing
+} from "@/app/services/platform";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Check, CreditCard } from "lucide-react";
+import { getPlanDisplayLabel, getSubscriptionInfo } from "@/utils/subscription-utils";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { PricingPageForm } from "./pricing-page-form";
 
-const features = [
-  "Offer subscriptions & one-time sales",
-  "Custom market.dev domain",
-  "Prospect & customer CRM",
-  "Sales analytics dashboard",
-  "Beautiful checkout pages",
-  "Contract library access",
-  "Customizable embeds",
-  "Custom landing page",
-  "Lead capture forms"
-];
-
-async function handlePlanSubmission(formData: FormData) {
+async function updatePlan(prevState: any, formData: FormData) {
   "use server";
 
-  const selectedPlan = formData.get("plan") as string;
-  console.log(`Selected plan: ${selectedPlan}`);
+  const selectedPlan = formData.get("plan") as "free" | "pro";
+  const isAnnual = formData.get("isAnnual") === "true";
 
-  // TODO: Save the selected plan to the organization
+  const billing = await getCurrentBilling();
+  const subscriptionInfo = getSubscriptionInfo(billing);
 
-  // Continue to completion
+  if (selectedPlan === "pro" && subscriptionInfo.isFree) {
+    const planPricing = await getPlanPricing();
+    const checkoutFormData = new FormData();
+    checkoutFormData.append("priceId", isAnnual ? planPricing.pro.yearly : planPricing.pro.monthly);
+    checkoutFormData.append("returnPath", `/onboarding/pricing`);
+    await checkoutAction(checkoutFormData);
+    return { error: "" };
+  }
+
   redirect("/onboarding/complete");
 }
 
-export default async function PricingPage() {
+export default async function PricingPage({ searchParams }: { searchParams: { status?: string } }) {
+  if (searchParams.status === "success") {
+    redirect("/onboarding/complete?status=success");
+  }
+
+  const billing = await getCurrentBilling();
+  const pricingData = await getCachedPricing();
+
+  const subscriptionInfo = getSubscriptionInfo(billing);
+  const hasActiveSubscription = subscriptionInfo.isSubscriptionActive && !subscriptionInfo.isFree;
+  const defaultPlan = hasActiveSubscription ? "pro" : "free";
+
+  // Get plan display name for subscribed users
+  const planDisplayName = billing?.planType ? getPlanDisplayLabel(billing.planType) : "Free plan";
+
   return (
-    <div className="relative space-y-10">
-      <div className="mx-auto flex max-w-md flex-col items-center text-center">
+    <div className="relative space-y-6">
+      <div className="mx-auto flex max-w-[420px] flex-col items-center text-center">
         <h1 className="mb-2 text-2xl font-bold tracking-tight">Finally, Choose Your Plan</h1>
         <p className="text-sm text-muted-foreground">
           Start for free or upgrade to Pro for commission-free sales & priority support.
         </p>
       </div>
 
-      <form action={handlePlanSubmission} className="space-y-6">
-        <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-6 md:flex-nowrap">
-          {/* Free Plan */}
-          <div className="relative w-full max-w-[400px]">
-            <label className="cursor-pointer">
-              <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
-                <div className="px-6 pb-8 pt-5">
-                  <div className="mb-1 flex items-center justify-between">
-                    <h3 className="text-xl font-semibold">Free</h3>
-                    <input
-                      type="radio"
-                      name="plan"
-                      value="free"
-                      defaultChecked
-                      className="border-stone-400 transition-colors  checked:border-swamp checked:text-swamp checked:shadow-sm focus:outline-none focus:ring-0"
-                    />
-                  </div>
-
-                  <p className="mb-5 text-sm text-muted-foreground">
-                    For freelancers just getting started
-                  </p>
-
-                  <div className="mb-6">
-                    <span className="text-4xl font-semibold tracking-tight">$0</span>
-                  </div>
-
-                  <div className="mb-6 flex items-start gap-2">
-                    <CreditCard className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
-                      $0.25 transaction fee + 1% per sale
-                    </p>
-                  </div>
-
-                  <div className="space-y-1">
-                    {features.map((feature, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <Check className="mt-0.5 size-4 shrink-0 text-success" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>
-            </label>
-          </div>
-
-          {/* Pro Plan */}
-          <div className="relative w-full max-w-[400px]">
-            <label className="cursor-pointer">
-              <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
-                <div className="px-6 pb-8 pt-5">
-                  <div className="mb-1 flex items-center justify-between">
-                    <h3 className="text-xl font-semibold">Pro</h3>
-                    <input
-                      type="radio"
-                      name="plan"
-                      value="pro"
-                      className="border-stone-400 transition-colors  checked:border-swamp checked:text-swamp checked:shadow-sm focus:outline-none focus:ring-0"
-                    />
-                  </div>
-
-                  <p className="mb-5 text-sm text-muted-foreground">
-                    For established freelances & dev shops
-                  </p>
-
-                  <div className="mb-6">
-                    <div className="flex items-baseline gap-0.5">
-                      <span className="text-4xl font-semibold tracking-tight">$40</span>
-                      <span className="text-base text-muted-foreground">/mo</span>
-                    </div>
-                  </div>
-
-                  <div className="mb-6 flex items-start gap-2">
-                    <CreditCard className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">
-                      $0.25 transaction fee (no commission fee)
-                    </p>
-                  </div>
-
-                  <div className="space-y-1">
-                    {features.map((feature, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <Check className="mt-0.5 size-4 shrink-0 text-success" />
-                        <span className="text-sm text-muted-foreground">{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </Card>
-            </label>
-          </div>
+      {hasActiveSubscription ? (
+        <div className="mx-auto flex max-w-[420px] flex-col gap-10">
+          <PlanInformation
+            subscriptionInfo={subscriptionInfo}
+            planDisplayName={planDisplayName}
+            customerPortal={<StripeCustomerPortal returnPath="/onboarding/pricing" />}
+          />
+          <Button asChild>
+            <Link href="/onboarding/complete">Continue & Finish</Link>
+          </Button>
         </div>
-
-        <div className="sticky bottom-0 bg-stone-150 py-4 md:static">
-          <div className="mx-auto flex max-w-md flex-col gap-3">
-            <Button type="submit" className="w-full">
-              Continue & Finish
-            </Button>
-          </div>
-        </div>
-      </form>
+      ) : (
+        <PricingPageForm
+          pricingData={pricingData}
+          defaultPlan={defaultPlan}
+          updatePlan={updatePlan}
+        />
+      )}
     </div>
   );
 }
