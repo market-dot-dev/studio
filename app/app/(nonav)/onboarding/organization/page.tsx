@@ -20,7 +20,7 @@ export default async function OrganizationOnboardingPage() {
 
   async function handleSuccess() {
     "use server";
-    redirect("/onboarding/business-description");
+    redirect("/onboarding/team");
   }
 
   return (

@@ -16,7 +16,7 @@ export default function TeamOnboardingPage() {
         <TeamMemberInviteForm />
 
         <Button variant="secondary" className="w-full" asChild>
-          <Link href="/onboarding/pricing">Skip for now</Link>
+          <Link href="/onboarding/stripe">Skip for now</Link>
         </Button>
       </div>
     </div>

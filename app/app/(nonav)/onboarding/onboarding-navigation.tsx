@@ -12,33 +12,23 @@ const ONBOARDING_STEPS = {
     isFirst: true,
     previous: null
   },
-  "/onboarding/business-description": {
+  "/onboarding/team": {
     step: 2,
     isFirst: false,
     previous: "/onboarding/organization"
   },
-  "/onboarding/packages": {
-    step: 3,
-    isFirst: false,
-    previous: "/onboarding/business-description"
-  },
   "/onboarding/stripe": {
-    step: 4,
-    isFirst: false,
-    previous: "/onboarding/packages"
-  },
-  "/onboarding/team": {
-    step: 5,
-    isFirst: false,
-    previous: "/onboarding/stripe"
-  },
-  "/onboarding/pricing": {
-    step: 6,
+    step: 3,
     isFirst: false,
     previous: "/onboarding/team"
   },
+  "/onboarding/pricing": {
+    step: 4,
+    isFirst: false,
+    previous: "/onboarding/stripe"
+  },
   "/onboarding/complete": {
-    step: 7,
+    step: 5,
     isFirst: false,
     previous: "/onboarding/pricing"
   }
@@ -72,7 +62,7 @@ export function OnboardingNavigation() {
 
       <ProgressDonut
         currentStep={currentStep?.step || 1}
-        totalSteps={7}
+        totalSteps={5}
         className="absolute right-0 md:right-1"
       />
     </>

@@ -13,12 +13,12 @@ export function StripeOnboardingActions({ isConnected }: StripeOnboardingActions
   const handleContinue = () => {
     // Store progress in session storage
     sessionStorage.setItem("onboarding-stripe-complete", "true");
-    router.push("/onboarding/team");
+    router.push("/onboarding/pricing");
   };
 
   const handleSkip = () => {
     sessionStorage.setItem("onboarding-stripe-skipped", "true");
-    router.push("/onboarding/team");
+    router.push("/onboarding/pricing");
   };
 
   return (
