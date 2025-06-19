@@ -33,8 +33,13 @@ async function updatePlan(prevState: any, formData: FormData) {
   redirect("/onboarding/complete");
 }
 
-export default async function PricingPage({ searchParams }: { searchParams: { status?: string } }) {
-  if (searchParams.status === "success") {
+export default async function PricingPage({
+  searchParams
+}: {
+  searchParams: Promise<{ status?: string }>;
+}) {
+  const params = await searchParams;
+  if (params.status === "success") {
     redirect("/onboarding/complete?status=success");
   }
 
