@@ -2,6 +2,7 @@
 
 import { Prospect } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
+import { ViewButton } from "@/components/ui/view-button";
 import { formatDate } from "@/lib/utils";
 import { ColumnDef, Row } from "@tanstack/react-table";
 import { Package } from "lucide-react";
@@ -59,6 +60,10 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
         </Link>
       );
     }
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <ViewButton href={`/prospects/${row.original.id}`} />
   }
 ];
 
