@@ -19,6 +19,7 @@ model Subscription {
   id                   String       @id @default(cuid())
   stripeSubscriptionId String       @unique
   tierRevision         Int?
+  platformFeeAmount    Int? // Platform fee applied to first payment (in cents)
   activeUntil          DateTime?
   cancelledAt          DateTime?
   createdAt            DateTime     @default(now())
