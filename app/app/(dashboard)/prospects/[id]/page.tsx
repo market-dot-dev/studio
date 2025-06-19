@@ -3,9 +3,10 @@ import { requireOrganization } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import { TierDescriptionFeatures } from "@/components/tiers/tier-description-features";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate, parseTierDescription } from "@/lib/utils";
-import { Package, User } from "lucide-react";
+import { Package, Send, User } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
@@ -31,6 +32,14 @@ export default async function ProspectDetailPage({ params }: { params: Promise<{
           href: "/prospects",
           title: "Prospects"
         }}
+        actions={[
+          <Button key="contact" variant="outline" asChild>
+            <Link href={`mailto:${prospect.email}`}>
+              <Send />
+              Contact
+            </Link>
+          </Button>
+        ]}
       />
 
       <div className="grid gap-6 md:grid-cols-2">
