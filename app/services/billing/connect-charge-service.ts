@@ -3,6 +3,7 @@
 import { Charge } from "@/app/generated/prisma";
 import { getCustomerOrganizationById } from "@/app/services/organization/customer-organization-service";
 import { getVendorOrganizationById } from "@/app/services/organization/vendor-organization-service";
+import { calculatePlatformFee } from "@/app/services/stripe/stripe-price-service";
 import { getTierByIdWithOrg } from "@/app/services/tier/tier-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import prisma from "@/lib/prisma";
@@ -130,13 +131,20 @@ export async function createLocalCharge(
     throw new Error("Vendor organization not found or Stripe account not connected");
   }
 
+  // Calculate platform fee amount for tracking
+  const platformFeeAmount = calculatePlatformFee(
+    tier.price || 0,
+    vendorOrg.billing?.planType || null
+  );
+
   const charge = await prisma.charge.create({
     data: {
       organizationId: customerOrgId,
       tierId: tierId,
       tierVersionId: tierVersionId,
       stripeChargeId: paymentIntentId,
-      tierRevision: tier.revision
+      tierRevision: tier.revision,
+      platformFeeAmount: platformFeeAmount
     }
   });
 

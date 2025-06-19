@@ -1,15 +1,16 @@
 model Charge {
   id String @id @default(cuid())
 
-  tierRevision   Int?
-  stripeChargeId String       @unique
-  createdAt      DateTime     @default(now())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  tierVersionId  String?
-  tierVersion    TierVersion? @relation(fields: [tierVersionId], references: [id])
-  tierId         String
-  tier           Tier         @relation(fields: [tierId], references: [id])
+  tierRevision      Int?
+  stripeChargeId    String       @unique
+  platformFeeAmount Int? // Platform fee applied (in cents)
+  createdAt         DateTime     @default(now())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id])
+  tierVersionId     String?
+  tierVersion       TierVersion? @relation(fields: [tierVersionId], references: [id])
+  tierId            String
+  tier              Tier         @relation(fields: [tierId], references: [id])
 
   @@index([organizationId, tierId])
 }
