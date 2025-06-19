@@ -42,22 +42,6 @@ export const columns: ColumnDef<Sale>[] = [
       emphasized: true
     },
     cell: ({ row }) => {
-      // For prospects, show the prospect's company name, not the vendor organization
-      if (row.original.type === "prospect" && row.original.prospect) {
-        const companyName = row.original.prospect.companyName;
-        const ownerName = row.original.ownerName || row.original.prospect.name;
-
-        return (
-          <div className="flex flex-col">
-            <span className="font-semibold text-stone-800">{companyName || "—"}</span>
-            {ownerName && (
-              <span className="text-xs font-normal text-muted-foreground">{ownerName}</span>
-            )}
-          </div>
-        );
-      }
-
-      // For customers (subscriptions/charges), show the customer organization name
       const orgName = row.original.organization.name;
       const ownerName = row.original.ownerName || row.original.organization.owner.name;
 

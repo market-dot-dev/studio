@@ -2,7 +2,6 @@ import { getProspects } from "@/app/services/research/prospect-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
 import { TierDescriptionFeatures } from "@/components/tiers/tier-description-features";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDate, parseTierDescription } from "@/lib/utils";
@@ -81,14 +80,13 @@ export default async function ProspectDetailPage({ params }: { params: Promise<{
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Package size={20} />
-              Package Interest
+              Package
             </CardTitle>
           </CardHeader>
           <CardContent>
             {prospect.tier ? (
               <div className="space-y-4">
                 <div>
-                  <p className="mb-1 text-sm font-medium text-stone-700">Package</p>
                   <Link
                     href={`/tiers/${prospect.tier.id}`}
                     className="font-medium transition-colors hover:underline"
@@ -125,17 +123,6 @@ export default async function ProspectDetailPage({ params }: { params: Promise<{
                         />
                       );
                     })}
-                  </div>
-                )}
-                {prospect.tier.price && prospect.tier.price > 0 && (
-                  <div>
-                    <p className="mb-1 text-sm font-medium text-stone-700">Pricing</p>
-                    <Badge variant="secondary">
-                      ${(prospect.tier.price / 100).toFixed(2)}
-                      {prospect.tier.cadence &&
-                        prospect.tier.cadence !== "once" &&
-                        `/${prospect.tier.cadence}`}
-                    </Badge>
                   </div>
                 )}
               </div>

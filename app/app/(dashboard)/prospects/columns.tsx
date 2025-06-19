@@ -39,11 +39,7 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
   },
   {
     accessorKey: "companyName",
-    header: "Organization",
-    cell: ({ row }) => {
-      const companyName = row.original.companyName;
-      return companyName || "—";
-    }
+    header: "Organization"
   },
   {
     accessorKey: "tier",
