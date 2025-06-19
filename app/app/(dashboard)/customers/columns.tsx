@@ -5,7 +5,7 @@ import Tier from "@/app/models/Tier";
 import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
-import { Package } from "lucide-react";
+import { ChevronRight, Package } from "lucide-react";
 import Link from "next/link";
 import { PurchaseStatusBadge } from "./purchase-status-badge";
 import { SubscriptionStatusBadge } from "./subscription-state";
@@ -141,7 +141,10 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
       return (
         <div className="flex flex-row justify-end gap-1">
           <Button variant="outline" size="sm" asChild>
-            <Link href={`/customers/${row.original.userId}`}>View</Link>
+            <Link href={`/customers/${row.original.userId}`}>
+              View
+              <ChevronRight size={14} />
+            </Link>
           </Button>
         </div>
       );

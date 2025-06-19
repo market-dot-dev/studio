@@ -129,13 +129,28 @@ export const columns: ColumnDef<Sale>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => (
-      <Button variant="outline" size="sm" asChild>
-        <Link href={`/customers/${row.original.organizationId}`}>
-          View
-          <ChevronRight size={14} />
-        </Link>
-      </Button>
-    )
+    cell: ({ row }) => {
+      // For prospects, link to the prospect detail page
+      if (row.original.type === "prospect" && row.original.prospect) {
+        return (
+          <Button variant="outline" size="sm" asChild>
+            <Link href={`/prospects/${row.original.prospect.id}`}>
+              View
+              <ChevronRight size={14} />
+            </Link>
+          </Button>
+        );
+      }
+
+      // For customers (charges/subscriptions), link to the customer page
+      return (
+        <Button variant="outline" size="sm" asChild>
+          <Link href={`/customers/${row.original.organizationId}`}>
+            View
+            <ChevronRight size={14} />
+          </Link>
+        </Button>
+      );
+    }
   }
 ];

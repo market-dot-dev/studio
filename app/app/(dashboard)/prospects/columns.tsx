@@ -2,9 +2,10 @@
 
 import { Prospect } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
+import { Button } from "@/components/ui/button";
 import { formatDate } from "@/lib/utils";
 import { ColumnDef, Row } from "@tanstack/react-table";
-import { Package } from "lucide-react";
+import { ChevronRight, Package } from "lucide-react";
 import Link from "next/link";
 
 // Define the shape of our data
@@ -59,6 +60,17 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
         </Link>
       );
     }
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => (
+      <Button variant="outline" size="sm" asChild>
+        <Link href={`/prospects/${row.original.id}`}>
+          View
+          <ChevronRight size={14} />
+        </Link>
+      </Button>
+    )
   }
 ];
 
