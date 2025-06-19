@@ -55,7 +55,7 @@ export type OrganizationForSwitcher = Prisma.OrganizationGetPayload<
 
 /**
  * Prisma validator for organization data needed during checkout and Stripe operations.
- * Includes owner's email, and Stripe JSON fields.
+ * Includes owner's email, Stripe JSON fields, and billing information.
  */
 export const includeOrgForStripeOps = Prisma.validator<Prisma.OrganizationDefaultArgs>()({
   select: {
@@ -71,8 +71,12 @@ export const includeOrgForStripeOps = Prisma.validator<Prisma.OrganizationDefaul
     stripeCustomerIds: true,
     stripePaymentMethodIds: true,
     stripeCSRF: true,
-    // Include other fields if necessary, e.g., stripeAccountId for vendor orgs
-    stripeAccountId: true
+    stripeAccountId: true,
+    billing: {
+      select: {
+        planType: true
+      }
+    }
   }
 });
 

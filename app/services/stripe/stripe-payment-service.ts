@@ -1,9 +1,10 @@
 "use server";
 
+import { PlanType } from "@/app/generated/prisma";
 import { generateId } from "@/lib/utils";
 import Stripe from "stripe";
 import { createStripeClient } from "./create-stripe-client";
-import { calculateApplicationFee } from "./stripe-price-service";
+import { calculatePlatformFee } from "./stripe-price-service";
 
 /**
  * Create a Stripe customer
@@ -153,8 +154,7 @@ export async function createStripeSetupIntent(
  * @param stripePriceId - The price ID to charge
  * @param price - The price amount (in dollars)
  * @param stripePaymentMethodId - The payment method to use
- * @param applicationFeePercent - Optional application fee percentage
- * @param applicationFeePrice - Optional fixed application fee
+ * @param vendorPlanType - The vendor organization's plan type for fee calculation
  * @returns The confirmed payment intent
  */
 export async function createStripeCharge(
@@ -163,8 +163,7 @@ export async function createStripeCharge(
   stripePriceId: string,
   price: number,
   stripePaymentMethodId: string,
-  applicationFeePercent?: number,
-  applicationFeePrice?: number
+  vendorPlanType: PlanType | null
 ): Promise<Stripe.PaymentIntent> {
   const stripe = await createStripeClient(stripeAccountId);
 
@@ -180,11 +179,7 @@ export async function createStripeCharge(
       payment_method: stripePaymentMethodId,
       off_session: true,
       confirm: true,
-      application_fee_amount: await calculateApplicationFee(
-        price,
-        applicationFeePercent,
-        applicationFeePrice
-      ),
+      application_fee_amount: calculatePlatformFee(price, vendorPlanType),
       metadata: {
         price_id: stripePriceId // Store the price ID for reference
       }

@@ -1,5 +1,6 @@
 "use server";
 
+import { PlanType } from "@/app/generated/prisma";
 import { createSubscription } from "@/app/services/billing/connect-subscription-service";
 import {
   getCurrentCustomerOrganization,
@@ -100,8 +101,7 @@ export async function processPayment(
       customerOrg.id,
       tierId,
       tier.price,
-      tier.applicationFeePercent || 0,
-      tier.applicationFeePrice || 0
+      vendor.billing?.planType || null
     );
   }
 
@@ -127,8 +127,7 @@ async function processOneTimeCharge(
   customerOrgId: string,
   tierId: string,
   price: number,
-  feePercent: number,
-  feeAmount: number
+  vendorPlanType: PlanType | null
 ): Promise<{ success: boolean; stripeId: string; type: "charge" }> {
   // Get payment method using customer service
   const paymentMethodId = await getStripePaymentMethodIdForVendor(
@@ -146,8 +145,7 @@ async function processOneTimeCharge(
     stripePriceId,
     price,
     paymentMethodId,
-    feePercent,
-    feeAmount
+    vendorPlanType
   );
 
   if (charge.status !== "succeeded") {
