@@ -66,7 +66,10 @@ export async function deactivateStripePrice(
  * @param planType - The vendor organization's plan type
  * @returns The calculated platform fee amount (in cents for Stripe)
  */
-export function calculatePlatformFee(price: number, planType: PlanType | null): number {
+export async function calculatePlatformFee(
+  price: number,
+  planType: PlanType | null
+): Promise<number> {
   // Only apply platform fee for FREE plan organizations
   if (!planType || planType === PlanType.FREE) {
     const feePercent = parseFloat(

@@ -1,9 +1,11 @@
 "use server";
 
-import { Tier } from "@/app/generated/prisma";
+import { DEFAULT_PLATFORM_FEE_PERCENT } from "@/app/config/checkout";
+import { PlanType, Tier } from "@/app/generated/prisma";
 import { generateId } from "@/lib/utils";
 import Stripe from "stripe";
 import { createStripeClient } from "./create-stripe-client";
+import { calculatePlatformFee } from "./stripe-price-service";
 
 /**
  * Create a subscription in Stripe
@@ -11,32 +13,53 @@ import { createStripeClient } from "./create-stripe-client";
  * @param stripeAccountId - The vendor's Stripe account ID
  * @param stripeCustomerId - The customer ID to subscribe
  * @param stripePriceId - The price ID for the subscription
+ * @param price - The subscription price (in dollars) for fee calculation
  * @param trialDays - Optional number of trial days
- * @returns The created subscription
+ * @param vendorPlanType - The vendor organization's plan type for fee calculation
+ * @returns Object with the created subscription and applied platform fee amount
  */
 export async function createStripeSubscriptionForCustomer(
   stripeAccountId: string,
   stripeCustomerId: string,
   stripePriceId: string,
-  trialDays: number = 0
-): Promise<Stripe.Subscription> {
+  price: number,
+  trialDays: number = 0,
+  vendorPlanType: PlanType | null = null
+): Promise<{ subscription: Stripe.Subscription; platformFeeAmount: number }> {
   const stripe = await createStripeClient(stripeAccountId);
 
   // Generate a unique identifier for idempotency
   const idempotencyKey = `${stripeCustomerId}-${stripePriceId}-${generateId()}`;
 
-  return await stripe.subscriptions.create(
-    {
-      customer: stripeCustomerId,
-      items: [{ price: stripePriceId }],
-      payment_behavior: "error_if_incomplete",
-      trial_period_days: trialDays,
-      expand: ["latest_invoice"]
-    },
-    {
-      idempotencyKey: idempotencyKey
-    }
-  );
+  // Calculate platform fee percentage and amount
+  const platformFeePercent =
+    !vendorPlanType || vendorPlanType === PlanType.FREE
+      ? parseFloat(process.env.PLATFORM_FEE_PERCENT || DEFAULT_PLATFORM_FEE_PERCENT.toString())
+      : 0;
+
+  const platformFeeAmount = await calculatePlatformFee(price, vendorPlanType);
+
+  const subscriptionData: Stripe.SubscriptionCreateParams = {
+    customer: stripeCustomerId,
+    items: [{ price: stripePriceId }],
+    payment_behavior: "error_if_incomplete",
+    trial_period_days: trialDays,
+    expand: ["latest_invoice"]
+  };
+
+  // Apply platform fee for FREE plan vendors
+  if (platformFeePercent > 0) {
+    subscriptionData.application_fee_percent = platformFeePercent;
+  }
+
+  const subscription = await stripe.subscriptions.create(subscriptionData, {
+    idempotencyKey: idempotencyKey
+  });
+
+  return {
+    subscription,
+    platformFeeAmount
+  };
 }
 
 /**

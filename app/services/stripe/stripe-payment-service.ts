@@ -179,7 +179,7 @@ export async function createStripeCharge(
       payment_method: stripePaymentMethodId,
       off_session: true,
       confirm: true,
-      application_fee_amount: calculatePlatformFee(price, vendorPlanType),
+      application_fee_amount: await calculatePlatformFee(price, vendorPlanType),
       metadata: {
         price_id: stripePriceId // Store the price ID for reference
       }

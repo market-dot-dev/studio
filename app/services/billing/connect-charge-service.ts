@@ -132,7 +132,7 @@ export async function createLocalCharge(
   }
 
   // Calculate platform fee amount for tracking
-  const platformFeeAmount = calculatePlatformFee(
+  const platformFeeAmount = await calculatePlatformFee(
     tier.price || 0,
     vendorOrg.billing?.planType || null
   );
