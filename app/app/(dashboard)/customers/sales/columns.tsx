@@ -3,11 +3,11 @@
 import { Charge, Prospect, Subscription } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ViewButton } from "@/components/ui/view-button";
 import { capitalize, formatDate } from "@/lib/utils";
 import type { CustomerOrgWithAll } from "@/types/organization-customer";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronRight, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import Link from "next/link";
 import { PurchaseStatusBadge } from "../purchase-status-badge";
 import { SubscriptionStatusBadge } from "../subscription-state";
@@ -132,25 +132,11 @@ export const columns: ColumnDef<Sale>[] = [
     cell: ({ row }) => {
       // For prospects, link to the prospect detail page
       if (row.original.type === "prospect" && row.original.prospect) {
-        return (
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/prospects/${row.original.prospect.id}`}>
-              View
-              <ChevronRight size={14} />
-            </Link>
-          </Button>
-        );
+        return <ViewButton href={`/prospects/${row.original.prospect.id}`} />;
       }
 
       // For customers (charges/subscriptions), link to the customer page
-      return (
-        <Button variant="outline" size="sm" asChild>
-          <Link href={`/customers/${row.original.organizationId}`}>
-            View
-            <ChevronRight size={14} />
-          </Link>
-        </Button>
-      );
+      return <ViewButton href={`/customers/${row.original.organizationId}`} />;
     }
   }
 ];
