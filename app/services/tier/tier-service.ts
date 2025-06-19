@@ -421,8 +421,6 @@ export async function duplicateTier(tierId: string) {
     stripeProductId: null,
     description: originalTier.description,
     tagline: originalTier.tagline,
-    applicationFeePercent: originalTier.applicationFeePercent,
-    applicationFeePrice: originalTier.applicationFeePrice,
     stripePriceId: null,
     trialDays: originalTier.trialDays,
     priceAnnual: originalTier.priceAnnual,

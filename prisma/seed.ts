@@ -108,8 +108,6 @@ const loadTiers = async (organizations: Organization[]) => {
           createdAt: new Date(),
           updatedAt: new Date(),
           revision: 1,
-          applicationFeePercent: tier.applicationFeePercent || 0,
-          applicationFeePrice: tier.applicationFeePrice || 0,
           trialDays: tier.trialDays || 0,
           cadence: tier.cadence || "month",
           priceAnnual: tier.priceAnnual || null
