@@ -127,12 +127,11 @@ export default async function ProspectDetailPage({ params }: { params: Promise<{
                     })}
                   </div>
                 )}
-
-                {prospect.tier.price && (
+                {prospect.tier.price && prospect.tier.price > 0 && (
                   <div>
                     <p className="mb-1 text-sm font-medium text-stone-700">Pricing</p>
                     <Badge variant="secondary">
-                      ${prospect.tier.price}
+                      ${(prospect.tier.price / 100).toFixed(2)}
                       {prospect.tier.cadence &&
                         prospect.tier.cadence !== "once" &&
                         `/${prospect.tier.cadence}`}
