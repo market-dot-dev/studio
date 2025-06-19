@@ -1,7 +1,7 @@
 "use client";
 
 import { OrganizationRole } from "@/app/generated/prisma";
-import { inviteUsers } from "@/app/services/team-management-service";
+import { inviteUsers } from "@/app/services/organization/team-management-service";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { generateId } from "@/lib/utils";

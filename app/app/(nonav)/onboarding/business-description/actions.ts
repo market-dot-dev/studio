@@ -1,6 +1,6 @@
 "use server";
 
-import { updateOrganization } from "@/app/services/organization-service";
+import { updateOrganization } from "@/app/services/organization/organization-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import { redirect } from "next/navigation";
 

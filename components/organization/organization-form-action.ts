@@ -1,6 +1,6 @@
 "use server";
 
-import { updateCurrentOrganizationBusiness } from "@/app/services/organization-service";
+import { updateCurrentOrganizationBusiness } from "@/app/services/organization/organization-service";
 import {
   createSite,
   getCurrentSite,

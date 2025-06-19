@@ -1,6 +1,6 @@
 "use server";
 
-import { getFullOrganizationById } from "@/app/services/organization-service";
+import { getFullOrganizationById } from "@/app/services/organization/organization-service";
 import { getCurrentSite } from "@/app/services/site/site-crud-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import BusinessSettings from "@/components/organization/business-settings";
