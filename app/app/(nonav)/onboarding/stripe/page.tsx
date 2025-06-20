@@ -44,7 +44,7 @@ export default async function StripeOnboardingPage() {
               <h3 className="text-sm font-medium text-muted-foreground">You'll need Stripe to:</h3>
 
               <div className="flex items-start space-x-3">
-                <CreditCard className="mt-0.5 size-4 text-muted-foreground" />
+                <CreditCard className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                 <div className="text-sm">
                   <p className="font-medium">Accept credit card payments</p>
                   <p className="text-muted-foreground">
@@ -54,7 +54,7 @@ export default async function StripeOnboardingPage() {
               </div>
 
               <div className="flex items-start space-x-3">
-                <RefreshCw className="mt-0.5 size-4 text-muted-foreground" />
+                <RefreshCw className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                 <div className="text-sm">
                   <p className="font-medium">Offer subscription services</p>
                   <p className="text-muted-foreground">
@@ -72,7 +72,7 @@ export default async function StripeOnboardingPage() {
             </h3>
 
             <div className="flex items-start space-x-3">
-              <Mail className="mt-0.5 size-4 text-muted-foreground" />
+              <Mail className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
               <div className="text-sm">
                 <p className="font-medium">Offer service packages with contact forms</p>
                 <p className="text-muted-foreground">

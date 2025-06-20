@@ -46,7 +46,7 @@ export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: Pricin
   }, [pricingData.pro_monthly.amount, pricingData.pro_annually.amount]);
 
   return (
-    <form action={formAction} className="flex flex-col gap-y-6 md:gap-y-8">
+    <form action={formAction} className="flex flex-col gap-y-6 md:gap-y-10">
       <input type="hidden" name="isAnnual" value={isAnnual.toString()} />
 
       {/* Monthly/Yearly Switcher */}
@@ -201,18 +201,20 @@ export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: Pricin
         </div>
       </div>
 
-      <div className="mt-1 flex w-full flex-col gap-y-1 md:hidden">
-        <p className="text-sm font-semibold text-foreground">All plans include:</p>
-        <Separator className="mb-1.5 mt-0.5" />
-        {features.map((feature, index) => (
-          <div key={index} className="flex items-start gap-2">
-            <Check className="mt-0.5 size-4 shrink-0 text-success" />
-            <span className="text-sm text-muted-foreground">{feature}</span>
-          </div>
-        ))}
+      <div className="mt-1 flex w-full flex-col md:hidden">
+        <p className="mb-1.5 text-sm font-semibold text-foreground">All plans include:</p>
+        <Separator className="mb-2.5" />
+        <div className="flex flex-col gap-y-1">
+          {features.map((feature, index) => (
+            <div key={index} className="flex items-start gap-2">
+              <Check className="mt-0.5 size-4 shrink-0 text-success" />
+              <span className="text-sm text-muted-foreground">{feature}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
-      <div className="sticky bottom-0 bg-stone-150 py-4 md:static">
+      <div className="sticky bottom-0 bg-stone-150 py-4 md:static md:py-0">
         <div className="mx-auto flex flex-col gap-3 md:max-w-md">
           <Button type="submit" className="w-full" loading={isPending}>
             Continue

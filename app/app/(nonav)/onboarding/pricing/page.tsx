@@ -63,7 +63,7 @@ export default async function PricingPage({
       </div>
 
       {hasActiveSubscription ? (
-        <div className="mx-auto flex max-w-[420px] flex-col gap-10">
+        <div className="mx-auto flex max-w-md flex-col gap-10 pt-4">
           <PlanInformation
             subscriptionInfo={subscriptionInfo}
             planDisplayName={planDisplayName}

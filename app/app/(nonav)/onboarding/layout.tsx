@@ -3,7 +3,7 @@ import { OnboardingNavigation } from "./onboarding-navigation";
 
 export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-stone-150 px-6 pb-12 pt-4 md:pt-6">
+    <div className="min-h-screen bg-stone-150 px-6 pb-12 pt-6">
       <div className="relative flex w-full flex-col items-center">
         <div className="flex w-full max-w-md items-center justify-center">
           <OnboardingNavigation />

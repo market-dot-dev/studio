@@ -155,18 +155,22 @@ interface OrganizationSubdomainFieldProps extends HTMLAttributes<HTMLDivElement>
 
 const OrganizationSubdomainField = forwardRef<HTMLDivElement, OrganizationSubdomainFieldProps>(
   ({ className, defaultValue, required = true, showDescription = true, ...props }, ref) => {
+    const placeholder = "your-domain";
+    const [domain, setDomain] = useState(defaultValue || placeholder);
     const { errors } = useContext(OrganizationFormContext);
     const error = errors?.subdomain;
 
     return (
       <div ref={ref} className={cn("space-y-2", className)} {...props}>
         <Label htmlFor="subdomain">Domain</Label>
+
         <div className="flex items-center rounded bg-white shadow-border-sm">
           <Input
             id="subdomain"
             name="subdomain"
-            placeholder="your-domain"
-            defaultValue={defaultValue}
+            placeholder={placeholder}
+            value={domain}
+            onChange={(e) => setDomain(e.target.value)}
             className={cn("rounded-r-none border-0 shadow-none", error && "border-destructive")}
             required={required}
             pattern="[a-z0-9-]+"
@@ -176,7 +180,9 @@ const OrganizationSubdomainField = forwardRef<HTMLDivElement, OrganizationSubdom
             .market.dev
           </span>
         </div>
+
         {error && <p className="text-xs text-destructive">{error}</p>}
+
         {showDescription && (
           <p className="text-xs text-muted-foreground">
             Your dashboard,{" "}
@@ -189,7 +195,7 @@ const OrganizationSubdomainField = forwardRef<HTMLDivElement, OrganizationSubdom
               <AppWindowMac strokeWidth={2} className="inline size-3.5 shrink-0 -translate-y-px" />{" "}
               <span className="font-medium tracking-tight">Landing Page</span>
             </span>{" "}
-            will be available at this URL.
+            will be available at {domain || placeholder}.market.dev
           </p>
         )}
       </div>
