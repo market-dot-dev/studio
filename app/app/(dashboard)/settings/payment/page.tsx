@@ -12,12 +12,11 @@ import { StripeAccountStatus } from "./stripe-account-status";
 
 export default async function PaymentSettings() {
   const org = await requireOrganization();
+  const hasStripeHistory = !!org.stripeAccountId || org.stripeAccountDisabled;
+
+  const oauthUrl = await getVendorStripeConnectURL();
 
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
-
-  // Check if account has been connected at some point but might be disconnected now
-  const hasStripeHistory = !!org.stripeAccountId || org.stripeAccountDisabled;
-  const oauthUrl = await getVendorStripeConnectURL();
 
   return (
     <div className="flex max-w-screen-sm flex-col space-y-8">
@@ -42,7 +41,6 @@ export default async function PaymentSettings() {
         messageCodes={messageCodes}
         disabledReasons={disabledReasons}
         isAccountDisconnected={org.stripeAccountDisabled && !org.stripeAccountId}
-        reconnectUrl={org.stripeAccountDisabled ? oauthUrl : undefined}
         oauthUrl={oauthUrl}
         hasStripeHistory={hasStripeHistory}
       />

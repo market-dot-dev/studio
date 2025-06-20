@@ -17,13 +17,10 @@ export default async function StripeOnboardingCallbackHandler({
   }
 
   try {
-    // Process the callback
     await processVendorStripeConnectCallback(code, state);
   } catch (error) {
     console.error("Error processing Stripe callback:", error);
-    // Still redirect back - the existing error handling logic will show appropriate state
   }
 
-  // Always redirect back to let the existing status logic determine the state
   redirect("/onboarding/stripe");
 }

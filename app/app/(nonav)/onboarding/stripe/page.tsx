@@ -4,16 +4,16 @@ import {
   getVendorStripeConnectURL
 } from "@/app/services/stripe/stripe-vendor-service";
 import { requireOrganization } from "@/app/services/user-context-service";
-import { CreditCard, Mail, RefreshCw } from "lucide-react";
+import { CreditCard, Mail, RefreshCw, Settings } from "lucide-react";
 import { StripeOnboardingActions } from "./stripe-onboarding-actions";
 
 export default async function StripeOnboardingPage() {
-  const organization = await requireOrganization();
-  const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
-  // TODO: Need to make the custom callback path work
+  const org = await requireOrganization();
+  const hasStripeHistory = !!org.stripeAccountId || org.stripeAccountDisabled;
+
   const oauthUrl = await getVendorStripeConnectURL("/onboarding/stripe/callback");
 
-  const hasStripeHistory = !!organization.stripeAccountId || organization.stripeAccountDisabled;
+  const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
 
   return (
     <div className="mx-auto max-w-md">
@@ -29,10 +29,7 @@ export default async function StripeOnboardingPage() {
           canSell={canSell}
           messageCodes={messageCodes}
           disabledReasons={disabledReasons}
-          isAccountDisconnected={
-            organization.stripeAccountDisabled && !organization.stripeAccountId
-          }
-          reconnectUrl={organization.stripeAccountDisabled ? oauthUrl : undefined}
+          isAccountDisconnected={org.stripeAccountDisabled && !org.stripeAccountId}
           oauthUrl={oauthUrl}
           hasStripeHistory={hasStripeHistory}
         />
@@ -110,7 +107,12 @@ export default async function StripeOnboardingPage() {
         <div className="space-y-6">
           <StripeOnboardingActions isConnected={canSell} />
           <p className="text-center text-xs text-muted-foreground">
-            You can always connect Stripe later from your settings page.
+            You can always connect Stripe later from your{" "}
+            <span className="font-medium text-stone-700">
+              <Settings className="ml-px mr-1 inline-block size-3.5 -translate-y-px" />
+              Settings
+            </span>{" "}
+            page.
           </p>
         </div>
       </div>

@@ -1,41 +1,28 @@
 import { getVendorStripeErrorMessage } from "@/app/services/stripe/stripe-vendor-service";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ErrorMessageCode } from "@/types/stripe";
-import { AlertTriangle, CircleCheck, CreditCard, ExternalLink } from "lucide-react";
+import { AlertTriangle, CircleCheck, CreditCard } from "lucide-react";
 import Link from "next/link";
 import { ConnectStripeBtn } from "./connect-stripe-btn";
-
-function StripeDashboardButton() {
-  return (
-    <Button asChild variant="outline" className="w-full rounded-t-none shadow-none">
-      <Link href="https://dashboard.stripe.com" target="_blank" className="flex items-center gap-2">
-        Go to Stripe Dashboard
-        <ExternalLink className="size-3.5" />
-      </Link>
-    </Button>
-  );
-}
+import { StripeDashboardButton } from "./stripe-dashboard-button";
 
 interface StripeAccountStatusProps {
   canSell: boolean;
+  oauthUrl: string;
   messageCodes: string[];
+  hasStripeHistory: boolean;
   disabledReasons?: string[];
   isAccountDisconnected?: boolean;
-  reconnectUrl?: string;
-  oauthUrl: string;
-  hasStripeHistory: boolean;
 }
 
 export function StripeAccountStatus({
   canSell,
-  messageCodes,
-  disabledReasons,
-  isAccountDisconnected = false,
-  reconnectUrl,
   oauthUrl,
-  hasStripeHistory
+  messageCodes,
+  hasStripeHistory,
+  disabledReasons,
+  isAccountDisconnected = false
 }: StripeAccountStatusProps) {
   // If no Stripe history (never connected), show connect button
   if (!hasStripeHistory) {
@@ -92,9 +79,7 @@ export function StripeAccountStatus({
           </p>
         </AlertDescription>
         <Separator />
-        {reconnectUrl && (
-          <ConnectStripeBtn oauthUrl={reconnectUrl} className="w-full rounded-t-none shadow-none" />
-        )}
+        <ConnectStripeBtn oauthUrl={oauthUrl} className="w-full rounded-t-none shadow-none" />
       </Alert>
     );
   }
@@ -106,8 +91,8 @@ export function StripeAccountStatus({
         <AlertTriangle size={16} className="-translate-y-px text-destructive" />
         Something's up with your account
       </AlertTitle>
-      <div className="px-4 pb-4 !text-xs/4 text-muted-foreground">
-        <p>
+      <div className="px-4 pb-4 text-muted-foreground">
+        <p className="mb-2">
           It looks like there are some issues with your Stripe account settings. Please visit your{" "}
           <Link
             href="https://dashboard.stripe.com"
@@ -117,20 +102,13 @@ export function StripeAccountStatus({
           >
             Stripe Dashboard
           </Link>{" "}
-          to resolve these issues and ensure your account is fully operational.
+          to resolve these issues.
         </p>
 
-        <ul className="my-2 list-disc space-y-1 pl-5">
-          {messageCodes.map(async (message, index) => (
-            <li key={index}>{await getVendorStripeErrorMessage(message as ErrorMessageCode)}</li>
-          ))}
-        </ul>
-
         {disabledReasons && disabledReasons.length > 0 && (
-          <div className="mt-4">
-            <h6 className="text-xs font-semibold text-foreground">Stripe Error Codes</h6>
-            <p>These codes might hint at what's wrong with your account:</p>
-            <ul className="my-2 list-disc space-y-1 pl-5">
+          <div className="mb-3 space-y-2">
+            <p>These codes might hint at what's wrong:</p>
+            <ul className="list-disc space-y-2 pl-4">
               {disabledReasons.map((message, index) => (
                 <li key={index} className="marker:text-[14px]">
                   <span className="inline-block w-fit rounded-sm border bg-stone-150 px-1 font-mono text-xs/[18px] font-medium">
@@ -142,6 +120,16 @@ export function StripeAccountStatus({
           </div>
         )}
       </div>
+      <ul className="relative flex list-disc flex-col gap-y-2 border-t p-4 text-xs text-muted-foreground">
+        <p className="absolute left-2.5 top-[-7px] bg-white px-1.5 text-xxs font-medium uppercase tracking-wide">
+          Error Messages
+        </p>
+        {messageCodes.map(async (message, index) => (
+          <li key={index} className="ml-3.5 pl-0.5">
+            {await getVendorStripeErrorMessage(message as ErrorMessageCode)}
+          </li>
+        ))}
+      </ul>
       <Separator />
       <StripeDashboardButton />
     </Alert>
