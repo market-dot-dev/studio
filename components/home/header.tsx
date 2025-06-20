@@ -250,7 +250,10 @@ export default function Header({ className }: { className?: string }) {
           className="group flex h-10 items-center justify-center gap-0.5 bg-black px-4 text-sm font-medium tracking-normal !text-white"
         >
           <BookOpenCheck className="mr-2 size-4 opacity-60 transition-opacity group-hover:opacity-100" />
-          <span className="hidden sm:inline">We&apos;re now open source!</span>
+          <span className="sm:hidden">We&apos;re now open source!</span>
+          <span className="hidden sm:inline">
+            We&apos;re now open source! Check out the blog post for more details.
+          </span>
           <ChevronRight className="mt-px size-4 transition-transform group-hover:translate-x-px" />
         </Link>
 
