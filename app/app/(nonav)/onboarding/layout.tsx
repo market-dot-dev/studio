@@ -1,7 +1,13 @@
+import { shouldShowOnboarding } from "@/app/services/onboarding/onboarding-service";
 import Image from "next/image";
+import { redirect } from "next/navigation";
 import { OnboardingNavigation } from "./onboarding-navigation";
 
-export default function OnboardingLayout({ children }: { children: React.ReactNode }) {
+export default async function OnboardingLayout({ children }: { children: React.ReactNode }) {
+  const needsOnboarding = await shouldShowOnboarding();
+  if (!needsOnboarding) {
+    redirect("/");
+  }
   return (
     <div className="min-h-screen bg-stone-150 px-6 pb-12 pt-6">
       <div className="relative flex w-full flex-col items-center">

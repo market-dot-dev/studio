@@ -1,4 +1,5 @@
 import { StripeAccountStatus } from "@/app/app/(dashboard)/settings/payment/stripe-account-status";
+import { ONBOARDING_STEPS, getStepMeta } from "@/app/services/onboarding/onboarding-steps";
 import {
   checkVendorStripeStatus,
   getVendorStripeConnectURL
@@ -14,6 +15,10 @@ export default async function StripeOnboardingPage() {
   const oauthUrl = await getVendorStripeConnectURL("/onboarding/stripe/callback");
 
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
+
+  // Get step metadata
+  const stepMeta = getStepMeta(ONBOARDING_STEPS.STRIPE);
+  const nextPath = stepMeta?.nextPath || "/onboarding/pricing";
 
   return (
     <div className="mx-auto max-w-md">
@@ -105,7 +110,7 @@ export default async function StripeOnboardingPage() {
         </div>
 
         <div className="space-y-6">
-          <StripeOnboardingActions isConnected={canSell} />
+          <StripeOnboardingActions isConnected={canSell} nextPath={nextPath} />
           <p className="text-center text-xs text-muted-foreground">
             You can always connect Stripe later from your{" "}
             <span className="font-medium text-stone-700">

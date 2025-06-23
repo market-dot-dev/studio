@@ -1,4 +1,4 @@
-import { refreshAndGetState } from "@/app/services/onboarding/onboarding-service";
+import { completeOnboarding } from "@/app/services/onboarding/onboarding-service";
 import { Button } from "@/components/ui/button";
 import {
   AppWindowMac,
@@ -14,11 +14,11 @@ import { redirect } from "next/navigation";
 async function finalizeTiers() {
   "use server";
 
-  // Update the onboarding state to mark completion
+  // Mark onboarding as complete
   try {
-    await refreshAndGetState();
+    await completeOnboarding();
   } catch (error) {
-    console.error("Error updating onboarding state:", error);
+    console.error("Error completing onboarding:", error);
   }
 
   // Navigate to tiers creation

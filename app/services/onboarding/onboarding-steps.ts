@@ -1,53 +1,95 @@
-export const defaultOnboardingState: OnboardingState = {
-  setupProject: false,
-  setupPayment: false,
-  setupTiers: false,
-  setupSite: false,
-  setupBusiness: false,
-  isDismissed: false
-};
+// Onboarding step names
+export const ONBOARDING_STEPS = {
+  ORGANIZATION: "organization",
+  TEAM: "team",
+  STRIPE: "stripe",
+  PRICING: "pricing"
+} as const;
 
-export interface OnboardingState extends Exclude<OnboardingStepsType, null> {
-  setupBusiness: boolean;
-  preferredServices?: string[];
-  isDismissed: boolean;
+export type OnboardingStepName = (typeof ONBOARDING_STEPS)[keyof typeof ONBOARDING_STEPS];
+
+// Individual step state
+export interface OnboardingStepState {
+  completed: boolean;
+  completedAt?: string;
 }
 
-export type OnboardingStepsType = {
-  setupProject: boolean;
-  setupPayment: boolean;
-  setupTiers: boolean;
-  setupSite: boolean;
-} | null;
+// Full onboarding state
+export interface OnboardingState {
+  [ONBOARDING_STEPS.ORGANIZATION]: OnboardingStepState;
+  [ONBOARDING_STEPS.TEAM]: OnboardingStepState;
+  [ONBOARDING_STEPS.STRIPE]: OnboardingStepState;
+  [ONBOARDING_STEPS.PRICING]: OnboardingStepState;
+  completed: boolean;
+  completedAt?: string;
+}
 
-type onBoardingStepKeyType = keyof Exclude<OnboardingStepsType, null>;
-
-export type onBoardingStepType = {
-  name: onBoardingStepKeyType;
-  description: string;
-  urls: string[];
-  title: string;
+// Default state for new organizations
+export const defaultOnboardingState: OnboardingState = {
+  [ONBOARDING_STEPS.ORGANIZATION]: { completed: false },
+  [ONBOARDING_STEPS.TEAM]: { completed: false },
+  [ONBOARDING_STEPS.STRIPE]: { completed: false },
+  [ONBOARDING_STEPS.PRICING]: { completed: false },
+  completed: false
 };
 
-// enumerate the steps that the user needs to complete
-export const onboardingSteps: onBoardingStepType[] = [
+// Step metadata
+export interface OnboardingStepMeta {
+  name: OnboardingStepName;
+  title: string;
+  description: string;
+  path: string;
+  nextPath: string | null;
+  previousPath: string | null;
+}
+
+// Define the onboarding flow
+export const onboardingStepsMeta: OnboardingStepMeta[] = [
   {
-    name: "setupPayment",
-    description: "Connect a Stripe account to start receiving payments.",
-    urls: ["/settings/payment"],
-    title: "Connect Stripe"
+    name: ONBOARDING_STEPS.ORGANIZATION,
+    title: "Create Your Organization",
+    description: "Set up your organization details and branding",
+    path: "/onboarding/organization",
+    nextPath: "/onboarding/team",
+    previousPath: null
   },
   {
-    name: "setupTiers",
-    description: "Define your service offerings and create a package to sell.",
-    urls: ["/tiers"],
-    title: "Create a Package"
+    name: ONBOARDING_STEPS.TEAM,
+    title: "Invite Your Team",
+    description: "Add team members to collaborate on your store",
+    path: "/onboarding/team",
+    nextPath: "/onboarding/stripe",
+    previousPath: "/onboarding/organization"
   },
   {
-    name: "setupSite",
-    description:
-      "Your store is your first sales channel. Make it match your brand & start selling.",
-    urls: ["/site/", "/page/"],
-    title: "Customize your landing page"
+    name: ONBOARDING_STEPS.STRIPE,
+    title: "Connect Stripe",
+    description: "Set up payment processing to accept customer payments",
+    path: "/onboarding/stripe",
+    nextPath: "/onboarding/pricing",
+    previousPath: "/onboarding/team"
+  },
+  {
+    name: ONBOARDING_STEPS.PRICING,
+    title: "Choose Your Plan",
+    description: "Select a pricing plan that fits your needs",
+    path: "/onboarding/pricing",
+    nextPath: "/onboarding/complete",
+    previousPath: "/onboarding/stripe"
   }
 ];
+
+// Helper functions
+export function getStepMeta(stepName: OnboardingStepName): OnboardingStepMeta | undefined {
+  return onboardingStepsMeta.find((step) => step.name === stepName);
+}
+
+export function getStepByPath(path: string): OnboardingStepMeta | undefined {
+  return onboardingStepsMeta.find((step) => step.path === path);
+}
+
+export function isOnboardingComplete(state: OnboardingState): boolean {
+  const allStepsCompleted = onboardingStepsMeta.every((step) => state[step.name].completed);
+
+  return state.completed || allStepsCompleted;
+}

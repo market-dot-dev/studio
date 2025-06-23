@@ -30,6 +30,15 @@ export async function updateOrganization(formData: FormData): Promise<Organizati
   const description = formData.get("description") as string;
   const logoFile = formData.get("logo") as File | null;
 
+  // Debug logging
+  console.log("Form data received:", {
+    organizationName,
+    subdomain,
+    country,
+    description,
+    logoFile: logoFile ? { name: logoFile.name, size: logoFile.size, type: logoFile.type } : null
+  });
+
   const errors: Record<string, string> = {};
 
   if (!organizationName?.trim()) {
@@ -59,9 +68,20 @@ export async function updateOrganization(formData: FormData): Promise<Organizati
 
     // Upload logo if provided
     if (logoFile && logoFile.size > 0) {
-      const logoFormData = new FormData();
-      logoFormData.append("file", logoFile);
-      data.logoUrl = await uploadLogo(logoFormData);
+      console.log("Uploading logo file:", {
+        name: logoFile.name,
+        size: logoFile.size,
+        type: logoFile.type
+      });
+      try {
+        const logoFormData = new FormData();
+        logoFormData.append("file", logoFile);
+        data.logoUrl = await uploadLogo(logoFormData);
+        console.log("Logo uploaded successfully:", data.logoUrl);
+      } catch (uploadError) {
+        console.error("Logo upload failed:", uploadError);
+        throw uploadError;
+      }
     }
 
     const updatePayload: Parameters<typeof updateCurrentOrganizationBusiness>[0] = {

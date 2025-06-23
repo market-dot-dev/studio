@@ -1,8 +1,12 @@
+import { ONBOARDING_STEPS, getStepMeta } from "@/app/services/onboarding/onboarding-steps";
 import { TeamMemberInviteForm } from "@/components/team/team-member-invite-form";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { OnboardingActions } from "../onboarding-actions";
 
-export default function TeamOnboardingPage() {
+export default async function TeamOnboardingPage() {
+  // Get step metadata
+  const stepMeta = getStepMeta(ONBOARDING_STEPS.TEAM);
+  const nextPath = stepMeta?.nextPath || "/onboarding/stripe";
+
   return (
     <div className="mx-auto max-w-md space-y-10">
       <div className="flex flex-col items-center">
@@ -12,12 +16,15 @@ export default function TeamOnboardingPage() {
         </p>
       </div>
 
-      <div className="space-y-3">
+      <div className="space-y-6">
         <TeamMemberInviteForm />
 
-        <Button variant="secondary" className="w-full" asChild>
-          <Link href="/onboarding/stripe">Skip for now</Link>
-        </Button>
+        <OnboardingActions
+          currentStep={ONBOARDING_STEPS.TEAM}
+          nextPath={nextPath}
+          continueLabel="Continue"
+          canContinue={true}
+        />
       </div>
     </div>
   );

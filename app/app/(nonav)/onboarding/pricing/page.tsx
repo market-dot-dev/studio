@@ -1,5 +1,7 @@
 import { PlanInformation } from "@/app/app/(dashboard)/settings/billing/plan-information";
 import { StripeCustomerPortal } from "@/app/app/(dashboard)/settings/billing/stripe-customer-portal";
+import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
+import { ONBOARDING_STEPS } from "@/app/services/onboarding/onboarding-steps";
 import {
   checkoutAction,
   getCachedPricing,
@@ -8,7 +10,6 @@ import {
 } from "@/app/services/platform";
 import { Button } from "@/components/ui/button";
 import { getPlanDisplayLabel, getSubscriptionInfo } from "@/utils/subscription-utils";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { PricingPageForm } from "./pricing-page-form";
 
@@ -30,6 +31,13 @@ async function updatePlan(prevState: any, formData: FormData) {
     return { error: "" };
   }
 
+  await completeOnboardingStep(ONBOARDING_STEPS.PRICING);
+  redirect("/onboarding/complete");
+}
+
+async function handleContinue() {
+  "use server";
+  await completeOnboardingStep(ONBOARDING_STEPS.PRICING);
   redirect("/onboarding/complete");
 }
 
@@ -40,6 +48,8 @@ export default async function PricingPage({
 }) {
   const params = await searchParams;
   if (params.status === "success") {
+    // Mark onboarding step as completed when returning from Stripe
+    await completeOnboardingStep(ONBOARDING_STEPS.PRICING);
     redirect("/onboarding/complete?status=success");
   }
 
@@ -69,9 +79,11 @@ export default async function PricingPage({
             planDisplayName={planDisplayName}
             customerPortal={<StripeCustomerPortal returnPath="/onboarding/pricing" />}
           />
-          <Button asChild>
-            <Link href="/onboarding/complete">Continue & Finish</Link>
-          </Button>
+          <form action={handleContinue}>
+            <Button type="submit" className="w-full">
+              Continue & Finish
+            </Button>
+          </form>
         </div>
       ) : (
         <PricingPageForm

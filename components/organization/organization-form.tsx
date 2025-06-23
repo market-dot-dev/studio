@@ -1,6 +1,5 @@
 "use client";
 
-import { FileUploader } from "@/components/form/file-uploader";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Textarea } from "@/components/ui/textarea";
+import Uploader from "@/components/uploader";
 import { cn } from "@/lib/utils";
 import { AppWindowMac, Link } from "lucide-react";
 import {
@@ -57,39 +57,55 @@ interface OrganizationFormContextValue {
 
 const OrganizationFormContext = createContext<OrganizationFormContextValue>({});
 
+// Export standalone form action
+export async function organizationFormAction(formData: FormData): Promise<OrganizationFormResult> {
+  return updateOrganization(formData);
+}
+
 // Root form component
 interface OrganizationFormProps extends Omit<FormHTMLAttributes<HTMLFormElement>, "action"> {
   action?: (formData: FormData) => void | Promise<void>;
   errors?: Record<string, string>;
   onSuccess?: (result: OrganizationFormResult["data"]) => void | Promise<void>;
   onFormError?: (errors: Record<string, string>) => void | Promise<void>;
+  disableAction?: boolean;
 }
 
 const OrganizationForm = forwardRef<HTMLFormElement, OrganizationFormProps>(
   (
-    { className, action, errors: initialErrors, onSuccess, onFormError, children, ...props },
+    {
+      className,
+      action,
+      errors: initialErrors,
+      onSuccess,
+      onFormError,
+      disableAction = false,
+      children,
+      ...props
+    },
     ref
   ) => {
     const [errors, setErrors] = useState<Record<string, string>>(initialErrors || {});
 
-    const formAction =
-      action ||
-      (async (formData: FormData) => {
-        setErrors({});
+    const formAction = disableAction
+      ? undefined
+      : action ||
+        (async (formData: FormData) => {
+          setErrors({});
 
-        const result = await updateOrganization(formData);
+          const result = await updateOrganization(formData);
 
-        if (result.success && result.data) {
-          if (onSuccess) {
-            await onSuccess(result.data);
+          if (result.success && result.data) {
+            if (onSuccess) {
+              await onSuccess(result.data);
+            }
+          } else if (!result.success && result.errors) {
+            setErrors(result.errors);
+            if (onFormError) {
+              await onFormError(result.errors);
+            }
           }
-        } else if (!result.success && result.errors) {
-          setErrors(result.errors);
-          if (onFormError) {
-            await onFormError(result.errors);
-          }
-        }
-      });
+        });
 
     return (
       <OrganizationFormContext.Provider value={{ errors }}>
@@ -249,11 +265,14 @@ const OrganizationLogoField = forwardRef<HTMLDivElement, OrganizationLogoFieldPr
     return (
       <div ref={ref} className={cn("space-y-2", className)} {...props}>
         <Label htmlFor="logo">Logo</Label>
-        <FileUploader
-          fileUrl={currentLogo}
-          accept="image/*"
+        <Uploader
           name="logo"
-          className="sm:w-[120px] md:size-[110px]"
+          allowedTypes={["png", "jpg", "jpeg", "gif", "svg"]}
+          acceptTypes="image/*"
+          attachmentUrl={currentLogo || null}
+          attachmentType={currentLogo ? "image" : null}
+          autoUpload={false}
+          className={cn("sm:w-[120px] md:size-[110px]", uploaderClassName)}
         />
       </div>
     );
