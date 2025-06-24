@@ -2,33 +2,29 @@
 
 import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
 import { OnboardingStepName } from "@/app/services/onboarding/onboarding-steps";
-import { Button } from "@/components/ui/button";
+import { Button, ButtonProps } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { toast } from "sonner";
+import { useTransition } from "react";
 
-interface OnboardingActionsProps {
+interface OnboardingActionProps {
   currentStep: OnboardingStepName;
   nextPath: string | null;
-  canContinue?: boolean;
   continueLabel?: string;
+  variant?: ButtonProps["variant"];
   beforeAction?: () => Promise<void> | void;
 }
 
-export function OnboardingActions({
+export function OnboardingAction({
   currentStep,
   nextPath,
-  canContinue = true,
+  variant = "default",
   continueLabel = "Continue",
   beforeAction
-}: OnboardingActionsProps) {
+}: OnboardingActionProps) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [isLoading, setIsLoading] = useState(false);
 
   const handleContinue = async () => {
-    setIsLoading(true);
-
     try {
       if (beforeAction) {
         await beforeAction();
@@ -43,17 +39,14 @@ export function OnboardingActions({
       }
     } catch (error) {
       console.error("Failed to complete onboarding step:", error);
-      toast.error("Something went wrong. Please try again.");
-      setIsLoading(false);
     }
   };
 
   return (
     <Button
-      size="lg"
+      variant={variant}
       onClick={() => startTransition(() => handleContinue())}
-      disabled={!canContinue || isPending || isLoading}
-      loading={isLoading}
+      loading={isPending}
       className="w-full"
     >
       {continueLabel}

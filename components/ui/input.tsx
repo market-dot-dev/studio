@@ -2,49 +2,38 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "prefix"> {
   icon?: React.ReactNode;
-  iconPosition?: "left" | "right";
-  iconColor?: string;
+  suffix?: string | React.ReactNode;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  (
-    { className, type, icon, iconPosition = "left", iconColor = "text-stone-500", ...props },
-    ref
-  ) => {
+  ({ className, type, icon, suffix, ...props }, ref) => {
     return (
-      <div className="relative flex w-full items-center">
-        {icon && iconPosition === "left" && (
-          <div
-            className={cn(
-              "pointer-events-none absolute left-2.5 flex items-center justify-center [&>svg]:h-4 [&>svg]:w-4",
-              iconColor
-            )}
-          >
+      <div
+        className={cn("relative flex w-full items-center", suffix && "shadow-border-sm rounded")}
+      >
+        {icon && (
+          <span className="absolute left-2.5 top-1/2 inline-flex h-9 -translate-y-1/2 items-center whitespace-nowrap rounded-l bg-white px-3 text-sm text-muted-foreground md:h-8 [&>svg]:size-4">
             {icon}
-          </div>
+          </span>
         )}
         <input
           type={type}
           className={cn(
-            "flex h-9 w-full rounded border-none bg-white px-3 text-base shadow-border-sm transition-[box-shadow,text-color] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-foreground/50 hover:shadow-border focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp disabled:cursor-not-allowed disabled:opacity-50 md:h-8 md:text-sm",
-            icon && iconPosition === "left" && "pl-9",
-            icon && iconPosition === "right" && "pr-9",
+            "relative flex h-9 w-full rounded border-none border-border bg-white px-3 text-base transition-[box-shadow,text-color] file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-foreground/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-swamp disabled:cursor-not-allowed disabled:opacity-50 md:h-8 md:text-sm",
+            suffix
+              ? "rounded-r-none shadow-none hover:shadow-border-sm"
+              : "shadow-border-sm hover:shadow-border",
             className
           )}
           ref={ref}
           {...props}
         />
-        {icon && iconPosition === "right" && (
-          <div
-            className={cn(
-              "pointer-events-none absolute right-2.5 flex items-center justify-center [&>svg]:h-4 [&>svg]:w-4",
-              iconColor
-            )}
-          >
-            {icon}
-          </div>
+        {suffix && (
+          <span className="inline-flex h-9 items-center gap-2 whitespace-nowrap rounded-r bg-white px-3 text-sm text-muted-foreground md:h-8 [&>svg]:size-4">
+            {suffix}
+          </span>
         )}
       </div>
     );
