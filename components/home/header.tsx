@@ -278,12 +278,12 @@ export default function Header({ className }: { className?: string }) {
               />
             </Link>
             <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
-              <Link href="/" className="whitespace-nowrap !text-marketing-primary">
+              {/* <Link href="/" className="whitespace-nowrap !text-marketing-primary">
                 Sell
-              </Link>
-              <Link href="https://explore.market.dev" className="whitespace-nowrap">
+              </Link> */}
+              {/* <Link href="https://explore.market.dev" className="whitespace-nowrap">
                 Explore
-              </Link>
+              </Link> */}
             </div>
             <div className="flex w-fit items-center gap-4">
               {isLoading || !signedIn ? (
