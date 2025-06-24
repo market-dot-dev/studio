@@ -2,44 +2,11 @@ import { PlanInformation } from "@/app/app/(dashboard)/settings/billing/plan-inf
 import { StripeCustomerPortal } from "@/app/app/(dashboard)/settings/billing/stripe-customer-portal";
 import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
 import { ONBOARDING_STEPS } from "@/app/services/onboarding/onboarding-steps";
-import {
-  checkoutAction,
-  getCachedPricing,
-  getCurrentBilling,
-  getPlanPricing
-} from "@/app/services/platform";
-import { Button } from "@/components/ui/button";
+import { getCachedPricing, getCurrentBilling } from "@/app/services/platform";
 import { getPlanDisplayLabel, getSubscriptionInfo } from "@/utils/subscription-utils";
 import { redirect } from "next/navigation";
+import { OnboardingAction } from "../onboarding-action";
 import { PricingPageForm } from "./pricing-page-form";
-
-async function updatePlan(prevState: any, formData: FormData) {
-  "use server";
-
-  const selectedPlan = formData.get("plan") as "free" | "pro";
-  const isAnnual = formData.get("isAnnual") === "true";
-
-  const billing = await getCurrentBilling();
-  const subscriptionInfo = getSubscriptionInfo(billing);
-
-  if (selectedPlan === "pro" && subscriptionInfo.isFree) {
-    const planPricing = await getPlanPricing();
-    const checkoutFormData = new FormData();
-    checkoutFormData.append("priceId", isAnnual ? planPricing.pro.yearly : planPricing.pro.monthly);
-    checkoutFormData.append("returnPath", `/onboarding/pricing`);
-    await checkoutAction(checkoutFormData);
-    return { error: "" };
-  }
-
-  await completeOnboardingStep(ONBOARDING_STEPS.PRICING);
-  redirect("/onboarding/complete");
-}
-
-async function handleContinue() {
-  "use server";
-  await completeOnboardingStep(ONBOARDING_STEPS.PRICING);
-  redirect("/onboarding/complete");
-}
 
 export default async function PricingPage({
   searchParams
@@ -47,10 +14,10 @@ export default async function PricingPage({
   searchParams: Promise<{ status?: string }>;
 }) {
   const params = await searchParams;
+  // Redirect to complete when returned from successful Stripe checkout.
   if (params.status === "success") {
-    // Mark onboarding step as completed when returning from Stripe
     await completeOnboardingStep(ONBOARDING_STEPS.PRICING);
-    redirect("/onboarding/complete?status=success");
+    redirect("/onboarding/complete");
   }
 
   const billing = await getCurrentBilling();
@@ -60,7 +27,6 @@ export default async function PricingPage({
   const hasActiveSubscription = subscriptionInfo.isSubscriptionActive && !subscriptionInfo.isFree;
   const defaultPlan = hasActiveSubscription ? "pro" : "free";
 
-  // Get plan display name for subscribed users
   const planDisplayName = billing?.planType ? getPlanDisplayLabel(billing.planType) : "Free plan";
 
   return (
@@ -79,18 +45,14 @@ export default async function PricingPage({
             planDisplayName={planDisplayName}
             customerPortal={<StripeCustomerPortal returnPath="/onboarding/pricing" />}
           />
-          <form action={handleContinue}>
-            <Button type="submit" className="w-full">
-              Continue & Finish
-            </Button>
-          </form>
+          <OnboardingAction
+            currentStep={ONBOARDING_STEPS.PRICING}
+            nextPath="/onboarding/complete"
+            continueLabel="Continue & Finish"
+          />
         </div>
       ) : (
-        <PricingPageForm
-          pricingData={pricingData}
-          defaultPlan={defaultPlan}
-          updatePlan={updatePlan}
-        />
+        <PricingPageForm pricingData={pricingData} defaultPlan={defaultPlan} />
       )}
     </div>
   );

@@ -6,14 +6,12 @@ import {
 } from "@/app/services/stripe/stripe-vendor-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import { CreditCard, Mail, RefreshCw, Settings } from "lucide-react";
-import { StripeOnboardingActions } from "./stripe-onboarding-actions";
+import { OnboardingAction } from "../onboarding-action";
 
 export default async function StripeOnboardingPage() {
   const org = await requireOrganization();
   const hasStripeHistory = !!org.stripeAccountId || org.stripeAccountDisabled;
-
   const oauthUrl = await getVendorStripeConnectURL("/onboarding/stripe/callback");
-
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
 
   // Get step metadata
@@ -73,16 +71,6 @@ export default async function StripeOnboardingPage() {
               {canSell ? "With Stripe connected, you can:" : "Without Stripe, you can still:"}
             </h3>
 
-            <div className="flex items-start space-x-3">
-              <Mail className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
-              <div className="text-sm">
-                <p className="font-medium">Offer service packages with contact forms</p>
-                <p className="text-muted-foreground">
-                  Share your services and let prospects contact you directly.
-                </p>
-              </div>
-            </div>
-
             {canSell && (
               <>
                 <div className="flex items-start space-x-3">
@@ -106,11 +94,25 @@ export default async function StripeOnboardingPage() {
                 </div>
               </>
             )}
+            <div className="flex items-start space-x-3">
+              <Mail className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+              <div className="text-sm">
+                <p className="font-medium">Offer service packages with contact forms</p>
+                <p className="text-muted-foreground">
+                  Share your services and let prospects contact you directly.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
 
         <div className="space-y-6">
-          <StripeOnboardingActions isConnected={canSell} nextPath={nextPath} />
+          <OnboardingAction
+            currentStep={ONBOARDING_STEPS.STRIPE}
+            nextPath={nextPath}
+            variant={canSell ? "default" : "secondary"}
+            continueLabel={canSell ? "Continue" : "Skip for now"}
+          />
           <p className="text-center text-xs text-muted-foreground">
             You can always connect Stripe later from your{" "}
             <span className="font-medium text-stone-700">

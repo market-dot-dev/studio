@@ -1,15 +1,20 @@
 "use client";
 
+import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
+import { ONBOARDING_STEPS } from "@/app/services/onboarding/onboarding-steps";
+import { checkoutAction, getCurrentBilling, getPlanPricing } from "@/app/services/platform";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PricingData } from "@/types/platform";
+import { getSubscriptionInfo } from "@/utils/subscription-utils";
 import NumberFlow from "@number-flow/react";
 import { Check, CreditCard } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useActionState, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo, useState, useTransition } from "react";
 
 const features = [
   "Offer subscriptions & one-time sales",
@@ -26,16 +31,13 @@ const features = [
 interface PricingPageFormProps {
   pricingData: PricingData;
   defaultPlan: "free" | "pro";
-  updatePlan: (prevState: any, formData: FormData) => Promise<{ error: string }>;
 }
 
-const initialState = {
-  error: ""
-};
-
-export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: PricingPageFormProps) {
-  const [_, formAction, isPending] = useActionState(updatePlan, initialState);
+export function PricingPageForm({ pricingData, defaultPlan }: PricingPageFormProps) {
+  const [selectedPlan, setSelectedPlan] = useState<"free" | "pro">(defaultPlan);
   const [isAnnual, setIsAnnual] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
 
   const discountPercentage = useMemo(() => {
     const monthlyPrice = pricingData.pro_monthly.amount / 100;
@@ -45,10 +47,35 @@ export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: Pricin
     return Math.round(percentage);
   }, [pricingData.pro_monthly.amount, pricingData.pro_annually.amount]);
 
-  return (
-    <form action={formAction} className="flex flex-col gap-y-6 md:gap-y-10">
-      <input type="hidden" name="isAnnual" value={isAnnual.toString()} />
+  const handleContinue = async () => {
+    try {
+      if (selectedPlan === "free") {
+        await completeOnboardingStep(ONBOARDING_STEPS.PRICING);
+        router.push("/onboarding/complete");
+        return;
+      }
 
+      // Redirect to Stripe checkout if user is currently on Free plan and upgrading to Pro.
+      const billing = await getCurrentBilling();
+      const subscriptionInfo = getSubscriptionInfo(billing);
+
+      if (subscriptionInfo.isFree) {
+        const planPricing = await getPlanPricing();
+        const checkoutFormData = new FormData();
+        checkoutFormData.append(
+          "priceId",
+          isAnnual ? planPricing.pro.yearly : planPricing.pro.monthly
+        );
+        checkoutFormData.append("returnPath", `/onboarding/pricing`);
+        await checkoutAction(checkoutFormData);
+      }
+    } catch (error) {
+      console.error("Failed to continue:", error);
+    }
+  };
+
+  return (
+    <div className="flex flex-col gap-y-6 md:gap-y-10">
       {/* Monthly/Yearly Switcher */}
       <div className="flex w-full items-center justify-center">
         <Tabs
@@ -79,7 +106,8 @@ export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: Pricin
                     type="radio"
                     name="plan"
                     value="free"
-                    defaultChecked={defaultPlan === "free"}
+                    checked={selectedPlan === "free"}
+                    onChange={(e) => setSelectedPlan(e.target.value as "free" | "pro")}
                     className="absolute right-6 top-6 border-stone-400 transition-colors checked:border-swamp checked:text-swamp checked:shadow-sm focus:outline-none focus:ring-0"
                   />
                 </div>
@@ -97,6 +125,7 @@ export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: Pricin
                   $0.25 transaction fee + 1% per sale
                 </p>
 
+                {/* Desktop features list */}
                 <div className="hidden flex-col gap-y-1 md:flex">
                   {features.map((feature, index) => (
                     <div key={index} className="flex items-start gap-2">
@@ -121,7 +150,8 @@ export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: Pricin
                     type="radio"
                     name="plan"
                     value="pro"
-                    defaultChecked={defaultPlan === "pro"}
+                    checked={selectedPlan === "pro"}
+                    onChange={(e) => setSelectedPlan(e.target.value as "free" | "pro")}
                     className="absolute right-6 top-6 border-stone-400 transition-colors checked:border-swamp checked:text-swamp checked:shadow-sm focus:outline-none focus:ring-0"
                   />
                 </div>
@@ -187,6 +217,7 @@ export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: Pricin
                   $0.25 transaction fee (no commission fee)
                 </p>
 
+                {/* Desktop features list */}
                 <div className="hidden flex-col gap-y-1 md:flex">
                   {features.map((feature, index) => (
                     <div key={index} className="flex items-start gap-2">
@@ -201,6 +232,7 @@ export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: Pricin
         </div>
       </div>
 
+      {/* Mobile features list */}
       <div className="mt-1 flex w-full flex-col md:hidden">
         <p className="mb-1.5 text-sm font-semibold text-foreground">All plans include:</p>
         <Separator className="mb-2.5" />
@@ -216,11 +248,15 @@ export function PricingPageForm({ pricingData, defaultPlan, updatePlan }: Pricin
 
       <div className="sticky bottom-0 bg-stone-150 py-4 md:static md:py-0">
         <div className="mx-auto flex flex-col gap-3 md:max-w-md">
-          <Button type="submit" className="w-full" loading={isPending}>
-            Continue
+          <Button
+            onClick={() => startTransition(() => handleContinue())}
+            loading={isPending}
+            className="w-full"
+          >
+            {selectedPlan === "pro" ? "Continue with Pro plan" : "Continue & Finish"}
           </Button>
         </div>
       </div>
-    </form>
+    </div>
   );
 }

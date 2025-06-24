@@ -11,17 +11,10 @@ import {
 } from "lucide-react";
 import { redirect } from "next/navigation";
 
-async function finalizeTiers() {
+async function action() {
   "use server";
 
-  // Mark onboarding as complete
-  try {
-    await completeOnboarding();
-  } catch (error) {
-    console.error("Error completing onboarding:", error);
-  }
-
-  // Navigate to tiers creation
+  await completeOnboarding();
   redirect("/tiers");
 }
 
@@ -40,31 +33,6 @@ export default async function OnboardingCompletePage() {
         {/* Timeline Steps */}
         <div>
           {/* Step 1: Finalize Packages */}
-
-          {/* TODO: Replace this when we do tier genreation in onboarding */}
-          {/* <div className="relative flex gap-4">
-            <div className="flex flex-col items-center">
-              <PackageCheck className="size-5 shrink-0 text-muted-foreground" />
-              <div className="my-2 h-full w-px border-l" />
-            </div>
-            <div className="flex-1 space-y-1 pb-8">
-              <h3 className="text-sm font-semibold">Finalize your packages</h3>
-              <p className="text-sm text-muted-foreground">
-                Tweak you starter packages or create new ones. Customize your pricing, messaging &
-                checkout experience using the{" "}
-                <span className="inline-flex items-baseline font-medium text-foreground">
-                  <CreditCard className="ml-px mr-1 size-4 shrink-0 translate-y-[3px] text-muted-foreground" />
-                  Standard Checkout
-                </span>{" "}
-                or{" "}
-                <span className="inline-flex items-baseline font-medium text-foreground">
-                  <Mail className="ml-px mr-1 size-4 shrink-0 translate-y-[3px] text-muted-foreground" />
-                  Contact Form
-                </span>
-                .
-              </p>
-            </div>
-          </div> */}
           <div className="relative flex gap-4">
             <div className="flex flex-col items-center">
               <Package className="size-5 shrink-0 text-muted-foreground" />
@@ -118,7 +86,7 @@ export default async function OnboardingCompletePage() {
             <div className="flex-1 space-y-1">
               <h3 className="text-sm font-semibold">Start selling</h3>
               <p className="text-sm text-muted-foreground">
-                Promote your packages and see the sales roll in.
+                Promote your packages and watch the sales roll in.
               </p>
             </div>
           </div>
@@ -126,7 +94,7 @@ export default async function OnboardingCompletePage() {
 
         {/* Next Step Button */}
         <div className="flex justify-center pt-2">
-          <form action={finalizeTiers} className="w-full">
+          <form action={action} className="w-full">
             <Button type="submit" className="w-full">
               Next: Create my packages
             </Button>

@@ -12,15 +12,15 @@ export function OnboardingNavigation() {
 
   // Find the current step based on pathname
   const currentStepMeta = onboardingStepsMeta.find((step) => step.path === pathname);
-
-  // Also check for the complete page
   const isCompletePage = pathname === "/onboarding/complete";
-  const currentStepNumber = currentStepMeta
-    ? onboardingStepsMeta.indexOf(currentStepMeta) + 1
-    : isCompletePage
-      ? onboardingStepsMeta.length + 1
-      : 1;
 
+  const getCurrentStepNumber = () => {
+    if (currentStepMeta) return onboardingStepsMeta.indexOf(currentStepMeta) + 1;
+    if (isCompletePage) return onboardingStepsMeta.length + 1;
+    return 1;
+  };
+
+  const currentStepNumber = getCurrentStepNumber();
   const totalSteps = onboardingStepsMeta.length + 1; // +1 for complete page
   const showBackButton = currentStepMeta && currentStepMeta.previousPath;
 

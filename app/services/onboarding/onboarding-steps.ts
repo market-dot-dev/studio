@@ -87,9 +87,3 @@ export function getStepMeta(stepName: OnboardingStepName): OnboardingStepMeta | 
 export function getStepByPath(path: string): OnboardingStepMeta | undefined {
   return onboardingStepsMeta.find((step) => step.path === path);
 }
-
-export function isOnboardingComplete(state: OnboardingState): boolean {
-  const allStepsCompleted = onboardingStepsMeta.every((step) => state[step.name].completed);
-
-  return state.completed || allStepsCompleted;
-}

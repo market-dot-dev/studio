@@ -4,7 +4,6 @@ import prisma from "@/lib/prisma";
 import { requireUserSession } from "../user-context-service";
 import {
   defaultOnboardingState,
-  isOnboardingComplete,
   ONBOARDING_STEPS,
   OnboardingState,
   OnboardingStepName
@@ -67,19 +66,11 @@ export async function completeOnboardingStep(
   const org = await getOrganizationWithOnboarding();
   const currentState = parseOnboardingState(org.onboarding);
 
-  // Mark the step as completed
   currentState[stepName] = {
     completed: true,
     completedAt: new Date().toISOString()
   };
 
-  // Check if onboarding is now complete
-  if (isOnboardingComplete(currentState)) {
-    currentState.completed = true;
-    currentState.completedAt = new Date().toISOString();
-  }
-
-  // Save to database
   await prisma.organization.update({
     where: { id: org.id },
     data: { onboarding: JSON.stringify(currentState) }

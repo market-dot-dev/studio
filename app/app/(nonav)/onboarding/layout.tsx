@@ -8,6 +8,7 @@ export default async function OnboardingLayout({ children }: { children: React.R
   if (!needsOnboarding) {
     redirect("/");
   }
+
   return (
     <div className="min-h-screen bg-stone-150 px-6 pb-12 pt-6">
       <div className="relative flex w-full flex-col items-center">

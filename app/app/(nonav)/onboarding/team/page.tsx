@@ -1,6 +1,6 @@
 import { ONBOARDING_STEPS, getStepMeta } from "@/app/services/onboarding/onboarding-steps";
 import { TeamMemberInviteForm } from "@/components/team/team-member-invite-form";
-import { OnboardingActions } from "../onboarding-actions";
+import { OnboardingAction } from "../onboarding-action";
 
 export default async function TeamOnboardingPage() {
   // Get step metadata
@@ -16,14 +16,13 @@ export default async function TeamOnboardingPage() {
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-3">
         <TeamMemberInviteForm />
-
-        <OnboardingActions
+        <OnboardingAction
           currentStep={ONBOARDING_STEPS.TEAM}
           nextPath={nextPath}
-          continueLabel="Continue"
-          canContinue={true}
+          variant="secondary"
+          continueLabel="Skip for now"
         />
       </div>
     </div>
