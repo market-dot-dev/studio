@@ -20,7 +20,6 @@ import { ReactNode } from "react";
 export default async function DashboardLayout(props: { children: ReactNode }) {
   const { children } = props;
 
-  // Check if user needs to complete onboarding
   const needsOnboarding = await shouldShowOnboarding();
   if (needsOnboarding) {
     const nextStep = await getNextOnboardingStep();
