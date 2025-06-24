@@ -43,11 +43,11 @@ export function VendorOrganizationSettingsForm({
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={handleSubmit} className="flex w-full flex-col gap-y-6">
       {/* Hidden field to indicate this is a vendor organization */}
       <input type="hidden" name="organizationType" value="VENDOR" />
 
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="organizationName">Organization Name</Label>
         <Input
           id="organizationName"
@@ -59,7 +59,7 @@ export function VendorOrganizationSettingsForm({
           <div className="text-xs text-destructive">{errors.organizationName}</div>
         )}
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="subdomain">Domain</Label>
         <Input
           id="subdomain"
@@ -72,7 +72,7 @@ export function VendorOrganizationSettingsForm({
         />
         {errors.subdomain && <div className="text-xs text-destructive">{errors.subdomain}</div>}
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="country">Country</Label>
         <CountrySelect
           name="country"
@@ -81,7 +81,7 @@ export function VendorOrganizationSettingsForm({
         />
         {errors.country && <div className="text-xs text-destructive">{errors.country}</div>}
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="description">Organization Description</Label>
         <Textarea
           id="description"

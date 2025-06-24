@@ -1,27 +1,20 @@
 "use server";
 
-import { getFullOrganizationById } from "@/app/services/organization/organization-service";
 import { getCurrentSite } from "@/app/services/site/site-crud-service";
 import { requireOrganization } from "@/app/services/user-context-service";
-import BusinessSettings from "@/components/organization/business-settings";
+import { VendorOrganizationSettingsForm } from "./organization/vendor-organization-settings-form";
 
 export default async function SettingsPage() {
   const org = await requireOrganization();
-  const fullOrg = await getFullOrganizationById(org.id);
-
-  if (!fullOrg) {
-    throw new Error("Organization not found");
-  }
-
   const site = await getCurrentSite();
 
   return (
-    <div className="space-y-6">
-      <BusinessSettings
+    <div className="w-full lg:max-w-screen-sm">
+      <VendorOrganizationSettingsForm
         organization={{
-          name: fullOrg.name,
-          description: fullOrg.description,
-          businessLocation: fullOrg.businessLocation,
+          name: org.name,
+          description: org.description,
+          businessLocation: org.businessLocation,
           subdomain: site?.subdomain || undefined,
           logo: site?.logo || undefined
         }}
