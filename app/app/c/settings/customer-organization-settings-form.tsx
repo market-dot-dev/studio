@@ -39,11 +39,11 @@ export function CustomerOrganizationSettingsForm({
   }
 
   return (
-    <form action={handleSubmit} className="space-y-6">
+    <form action={handleSubmit} className="flex w-full flex-col gap-y-6">
       {/* Hidden field to indicate this is a customer organization */}
       <input type="hidden" name="organizationType" value="CUSTOMER" />
 
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="organizationName">Organization Name</Label>
         <Input
           id="organizationName"
@@ -55,7 +55,7 @@ export function CustomerOrganizationSettingsForm({
           <div className="text-xs text-destructive">{errors.organizationName}</div>
         )}
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="country">Country</Label>
         <CountrySelect
           name="country"
