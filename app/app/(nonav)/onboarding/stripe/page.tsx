@@ -111,7 +111,7 @@ export default async function StripeOnboardingPage() {
             currentStep={ONBOARDING_STEPS.STRIPE}
             nextPath={nextPath}
             variant={canSell ? "default" : "secondary"}
-            continueLabel={canSell ? "Continue" : "Skip for now"}
+            label={canSell ? "Continue" : "Skip for now"}
           />
           <p className="text-center text-xs text-muted-foreground">
             You can always connect Stripe later from your{" "}

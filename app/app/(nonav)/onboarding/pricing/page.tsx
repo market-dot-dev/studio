@@ -48,7 +48,7 @@ export default async function PricingPage({
           <OnboardingAction
             currentStep={ONBOARDING_STEPS.PRICING}
             nextPath="/onboarding/complete"
-            continueLabel="Continue & Finish"
+            label="Continue & Finish"
           />
         </div>
       ) : (

@@ -22,7 +22,7 @@ export default async function TeamOnboardingPage() {
           currentStep={ONBOARDING_STEPS.TEAM}
           nextPath={nextPath}
           variant="secondary"
-          continueLabel="Skip for now"
+          label="Skip for now"
         />
       </div>
     </div>

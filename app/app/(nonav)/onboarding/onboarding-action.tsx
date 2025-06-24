@@ -9,7 +9,7 @@ import { useTransition } from "react";
 interface OnboardingActionProps {
   currentStep: OnboardingStepName;
   nextPath: string | null;
-  continueLabel?: string;
+  label?: string;
   variant?: ButtonProps["variant"];
   beforeAction?: () => Promise<void> | void;
 }
@@ -18,7 +18,7 @@ export function OnboardingAction({
   currentStep,
   nextPath,
   variant = "default",
-  continueLabel = "Continue",
+  label = "Continue",
   beforeAction
 }: OnboardingActionProps) {
   const router = useRouter();
@@ -49,7 +49,7 @@ export function OnboardingAction({
       loading={isPending}
       className="w-full"
     >
-      {continueLabel}
+      {label}
     </Button>
   );
 }
