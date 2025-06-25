@@ -76,9 +76,7 @@ export async function getOnboardingData() {
 /**
  * Marks a specific step as completed in the onboarding flow
  */
-export async function completeOnboardingStep(
-  stepName: OnboardingStepName
-): Promise<OnboardingState> {
+export async function completeOnboardingStep(stepName: OnboardingStepName) {
   const { org, onboarding } = await getOnboardingData();
 
   onboarding[stepName] = {
@@ -97,7 +95,7 @@ export async function completeOnboardingStep(
 /**
  * Checks if the current user needs to see onboarding
  */
-export async function shouldShowOnboarding(): Promise<boolean> {
+export async function shouldShowOnboarding() {
   try {
     const user = await requireUserSession();
 
@@ -121,7 +119,7 @@ export async function shouldShowOnboarding(): Promise<boolean> {
 /**
  * Gets the next incomplete step in the onboarding flow
  */
-export async function getNextOnboardingStep(): Promise<string | null> {
+export async function getNextOnboardingStep() {
   const { onboarding } = await getOnboardingData();
 
   const stepOrder: OnboardingStepName[] = [
@@ -144,7 +142,7 @@ export async function getNextOnboardingStep(): Promise<string | null> {
 /**
  * Completes the onboarding flow manually
  */
-export async function completeOnboarding(): Promise<void> {
+export async function completeOnboarding() {
   const { org, onboarding } = await getOnboardingData();
 
   onboarding.completed = true;
