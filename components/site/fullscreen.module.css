@@ -1,11 +1,11 @@
 .fullscreen {
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 31;
-  background: white;
-  overflow: auto;
-  height: 100vh;
-  max-width: unset;
-  width: 100vw;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 31;
+    background: white;
+    overflow: auto;
+    height: 100vh;
+    max-width: unset;
+    width: 100vw;
 }

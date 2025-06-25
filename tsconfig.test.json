@@ -11,5 +11,9 @@
     "**/*.spec.tsx",
     "vitest.config.mts"
   ],
-  "exclude": ["node_modules", "out", ".next"]
+  "exclude": [
+    "node_modules",
+    "out",
+    ".next"
+  ]
 }

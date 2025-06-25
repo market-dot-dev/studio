@@ -5,11 +5,11 @@ import {
   getShortlistedLeadsKeysList,
   lookup
 } from "@/app/services/research/lead-service";
-import { Spinner } from "@/components/ui/spinner";
 import { extractGitHubRepoInfo } from "@/lib/github";
 import type { FiltersState } from "@/types/lead";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import LoadingSpinner from "../form/loading-spinner";
 import FiltersPanel, { emptyFilters, hashFiltersState } from "./filters-panel";
 import ResearchResults from "./research-results";
 import ResultsHeader from "./results-header";
@@ -381,13 +381,13 @@ export default function ResearchExplorer() {
               setItemsCount={setTotalCount}
             />
           ) : radarId ? (
-            <Spinner />
+            <LoadingSpinner />
           ) : null}
         </div>
         <div className="col-span-3">
           {isSearching ? (
             <div className="sticky top-[200px] z-50 flex items-center justify-center">
-              <Spinner />
+              <LoadingSpinner />
             </div>
           ) : (
             <ResearchResults

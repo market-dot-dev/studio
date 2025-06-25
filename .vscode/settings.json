@@ -1,13 +1,20 @@
 {
   "editor.formatOnSave": true,
   "eslint.useFlatConfig": true,
-  "eslint.validate": ["typescript"],
+  "eslint.validate": [
+    "typescript"
+  ],
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit"
   },
-  "css.customData": [".vscode/tailwind.json"],
+  "css.customData": [
+    ".vscode/tailwind.json"
+  ],
   "typescript.tsdk": "node_modules/typescript/lib",
   "tailwindCSS.experimental.classRegex": [
-    ["tv\\((([^()]*|\\([^()]*\\))*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+    [
+      "tv\\((([^()]*|\\([^()]*\\))*)\\)",
+      "[\"'`]([^\"'`]*).*?[\"'`]"
+    ]
   ]
 }
