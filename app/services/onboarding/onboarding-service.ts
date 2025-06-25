@@ -2,7 +2,6 @@
 
 import prisma from "@/lib/prisma";
 import { JsonValue } from "@prisma/client/runtime/library";
-import { revalidatePath } from "next/cache";
 import { requireUserSession } from "../user-context-service";
 import {
   defaultOnboardingState,
@@ -10,30 +9,6 @@ import {
   OnboardingState,
   OnboardingStepName
 } from "./onboarding-steps";
-
-/**
- * Safely parses onboarding JSON from JsonValue (JSONB field)
- */
-function parseOnboardingState(jsonValue: JsonValue | null): OnboardingState {
-  if (!jsonValue) return defaultOnboardingState;
-
-  try {
-    // Return if an object (Prisma auto-parses JSONB)
-    if (typeof jsonValue === "object" && jsonValue !== null && !Array.isArray(jsonValue)) {
-      return jsonValue as unknown as OnboardingState;
-    }
-
-    // Parse if it's a string (legacy data)
-    if (typeof jsonValue === "string") {
-      return JSON.parse(jsonValue) as OnboardingState;
-    }
-
-    return defaultOnboardingState;
-  } catch (error) {
-    console.error("Failed to parse onboarding JSON:", error);
-    return defaultOnboardingState;
-  }
-}
 
 /**
  * Gets the current organization with onboarding field
@@ -62,11 +37,43 @@ async function getOrganizationWithOnboarding() {
 }
 
 /**
+ * Safely parses onboarding JSON from JsonValue (JSONB field)
+ */
+function parseOnboardingState(jsonValue: JsonValue | null): OnboardingState {
+  if (!jsonValue) return defaultOnboardingState;
+
+  try {
+    // Return if an object (Prisma auto-parses JSONB)
+    if (typeof jsonValue === "object" && jsonValue !== null && !Array.isArray(jsonValue)) {
+      return jsonValue as unknown as OnboardingState;
+    }
+
+    // Parse if it's a string (legacy)
+    if (typeof jsonValue === "string") {
+      return JSON.parse(jsonValue) as OnboardingState;
+    }
+
+    return defaultOnboardingState;
+  } catch (error) {
+    console.error("Failed to parse onboarding JSON:", error);
+    return defaultOnboardingState;
+  }
+}
+
+/**
  * Gets the current onboarding state for the organization
  */
-export async function getCurrentOnboardingState(): Promise<OnboardingState> {
+export async function getOnboardingData(): Promise<{
+  org: { id: string; ownerId: string };
+  onboarding: OnboardingState;
+}> {
   const org = await getOrganizationWithOnboarding();
-  return parseOnboardingState(org.onboarding);
+  const onboarding = parseOnboardingState(org.onboarding);
+
+  return {
+    org: { id: org.id, ownerId: org.ownerId },
+    onboarding
+  };
 }
 
 /**
@@ -75,20 +82,19 @@ export async function getCurrentOnboardingState(): Promise<OnboardingState> {
 export async function completeOnboardingStep(
   stepName: OnboardingStepName
 ): Promise<OnboardingState> {
-  const org = await getOrganizationWithOnboarding();
-  const currentState = parseOnboardingState(org.onboarding);
+  const { org, onboarding } = await getOnboardingData();
 
-  currentState[stepName] = {
+  onboarding[stepName] = {
     completed: true,
     completedAt: new Date().toISOString()
   };
 
   await prisma.organization.update({
     where: { id: org.id },
-    data: { onboarding: JSON.stringify(currentState) }
+    data: { onboarding: JSON.stringify(onboarding) }
   });
 
-  return currentState;
+  return onboarding;
 }
 
 /**
@@ -102,15 +108,14 @@ export async function shouldShowOnboarding(): Promise<boolean> {
       return false;
     }
 
-    const org = await getOrganizationWithOnboarding();
+    const { org, onboarding } = await getOnboardingData();
 
     // Only show onboarding to organization owners
     if (org.ownerId !== user.id) {
       return false;
     }
 
-    const state = parseOnboardingState(org.onboarding);
-    return !state.completed;
+    return !onboarding.completed;
   } catch {
     return false;
   }
@@ -120,9 +125,8 @@ export async function shouldShowOnboarding(): Promise<boolean> {
  * Gets the next incomplete step in the onboarding flow
  */
 export async function getNextOnboardingStep(): Promise<string | null> {
-  const state = await getCurrentOnboardingState();
+  const { onboarding } = await getOnboardingData();
 
-  // Find the first step that hasn't been completed
   const stepOrder: OnboardingStepName[] = [
     ONBOARDING_STEPS.ORGANIZATION,
     ONBOARDING_STEPS.TEAM,
@@ -130,8 +134,9 @@ export async function getNextOnboardingStep(): Promise<string | null> {
     ONBOARDING_STEPS.PRICING
   ];
 
+  // Find the first step that hasn't been completed
   for (const stepName of stepOrder) {
-    if (!state[stepName].completed) {
+    if (!onboarding[stepName].completed) {
       return `/onboarding/${stepName}`;
     }
   }
@@ -143,28 +148,13 @@ export async function getNextOnboardingStep(): Promise<string | null> {
  * Completes the onboarding flow manually
  */
 export async function completeOnboarding(): Promise<void> {
-  const org = await getOrganizationWithOnboarding();
-  const currentState = parseOnboardingState(org.onboarding);
+  const { org, onboarding } = await getOnboardingData();
 
-  currentState.completed = true;
-  currentState.completedAt = new Date().toISOString();
-
-  await prisma.organization.update({
-    where: { id: org.id },
-    data: { onboarding: JSON.stringify(currentState) }
-  });
-}
-
-/**
- * Resets the onboarding state (mainly for testing)
- */
-export async function resetOnboarding(): Promise<void> {
-  const org = await getOrganizationWithOnboarding();
+  onboarding.completed = true;
+  onboarding.completedAt = new Date().toISOString();
 
   await prisma.organization.update({
     where: { id: org.id },
-    data: { onboarding: JSON.stringify(defaultOnboardingState) }
+    data: { onboarding: JSON.stringify(onboarding) }
   });
-
-  revalidatePath("/onboarding", "layout");
 }
