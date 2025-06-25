@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { JsonValue } from "@prisma/client/runtime/library";
+import { revalidatePath } from "next/cache";
 import { requireUserSession } from "../user-context-service";
 import {
   defaultOnboardingState,
@@ -164,4 +165,6 @@ export async function resetOnboarding(): Promise<void> {
     where: { id: org.id },
     data: { onboarding: JSON.stringify(defaultOnboardingState) }
   });
+
+  revalidatePath("/onboarding", "layout");
 }
