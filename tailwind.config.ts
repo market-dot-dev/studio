@@ -287,8 +287,6 @@ export default {
   // ],
   plugins: [typographyPlugin, formsPlugin, animatePlugin],
   corePlugins: {
-    boxShadowColor: false,
-    transform: true,
-    transformOrigin: true
+    boxShadowColor: false
   }
 } satisfies Config;
