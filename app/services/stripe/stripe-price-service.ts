@@ -1,6 +1,7 @@
 "use server";
 
-import { GLOBAL_APPLICATION_FEE_DOLLARS, GLOBAL_APPLICATION_FEE_PCT } from "@/app/config/checkout";
+import { DEFAULT_PLATFORM_FEE_PERCENT } from "@/app/config/checkout";
+import { PlanType } from "@/app/generated/prisma";
 import Stripe from "stripe";
 import { createStripeClient } from "./create-stripe-client";
 
@@ -59,20 +60,24 @@ export async function deactivateStripePrice(
 }
 
 /**
- * Calculates the application fee amount based on price and fee settings
+ * Calculates the platform fee based on vendor organization's plan type
  *
- * @param price - The base price amount
- * @param applicationFeePercent - Optional percentage fee to apply (added to global fee)
- * @param applicationFeePrice - Optional fixed fee amount to apply (added to global fee)
- * @returns The calculated application fee amount
+ * @param price - The base price amount (in dollars)
+ * @param planType - The vendor organization's plan type
+ * @returns The calculated platform fee amount (in cents for Stripe)
  */
-export async function calculateApplicationFee(
+export async function calculatePlatformFee(
   price: number,
-  applicationFeePercent: number = 0,
-  applicationFeePrice: number = 0
+  planType: PlanType | null
 ): Promise<number> {
-  const totalPercent = (applicationFeePercent + (GLOBAL_APPLICATION_FEE_PCT || 0)) / 100;
-  const totalFee = applicationFeePrice + (GLOBAL_APPLICATION_FEE_DOLLARS || 0);
+  // Only apply platform fee for FREE plan organizations
+  if (!planType || planType === PlanType.FREE) {
+    const feePercent = parseFloat(
+      process.env.PLATFORM_FEE_PERCENT || DEFAULT_PLATFORM_FEE_PERCENT.toString()
+    );
+    return Math.round(price * 100 * (feePercent / 100)); // Convert to cents
+  }
 
-  return Math.round(price * totalPercent) + totalFee;
+  // No platform fee for PRO/CUSTOM plans
+  return 0;
 }

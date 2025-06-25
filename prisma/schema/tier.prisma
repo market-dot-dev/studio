@@ -16,10 +16,8 @@ model Tier {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  price                 Int?
-  applicationFeePercent Int?
-  applicationFeePrice   Int?
-  stripePriceId         String?
+  price         Int?
+  stripePriceId String?
   trialDays             Int     @default(0)
   cadence               String  @default("month")
   priceAnnual           Int?
