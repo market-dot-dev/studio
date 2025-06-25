@@ -12,11 +12,10 @@ import { StripeAccountStatus } from "./stripe-account-status";
 
 export default async function PaymentSettings() {
   const org = await requireOrganization();
-  const hasStripeHistory = !!org.stripeAccountId || org.stripeAccountDisabled;
-
-  const oauthUrl = await getVendorStripeConnectURL();
-
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
+
+  const hasStripeHistory = !!org.stripeAccountId || org.stripeAccountDisabled;
+  const oauthUrl = await getVendorStripeConnectURL();
 
   return (
     <div className="flex max-w-screen-sm flex-col space-y-8">
