@@ -9,6 +9,7 @@ import { Button as UIButton } from "@/components/ui/button";
 import type { Color } from "@/lib/home/colors";
 import { colors } from "@/lib/home/colors";
 import { blogURL, discordURL, loginURL, twitterUrl } from "@/lib/home/social-urls";
+import { SiDiscord, SiGithub } from "@icons-pack/react-simple-icons";
 import clsx from "clsx";
 import {
   BookOpenCheck,
@@ -365,12 +366,12 @@ export default function Header({ className }: { className?: string }) {
     {
       title: "Discord",
       href: discordURL,
-      icon: <div className="flex h-5 w-5 items-center justify-center rounded bg-[#5865F2] text-white text-xs font-bold">D</div>
+      icon: <SiDiscord className="size-4" />
     },
     {
       title: "GitHub",
       href: "https://github.com/market-dot-dev/store",
-      icon: <Github className="h-5 w-5" />
+      icon: <SiGithub className="size-4" />
     }
   ];
 
