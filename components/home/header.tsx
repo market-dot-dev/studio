@@ -12,13 +12,15 @@ import { blogURL, discordURL, loginURL, twitterUrl } from "@/lib/home/social-url
 import clsx from "clsx";
 import {
   BookOpenCheck,
+  ChevronDown,
   ChevronRight,
   ListCheck,
   Menu,
   Package,
   Speech,
   Store,
-  X
+  X,
+  Github
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useSession } from "next-auth/react";
@@ -36,7 +38,8 @@ interface AnimatedHambugerButtonProps {
 
 interface DropdownPosition {
   top: number;
-  right: number;
+  left?: number;
+  right?: number;
 }
 
 interface DropdownOffsets {
@@ -50,6 +53,29 @@ interface Product {
   title: string;
   description: string;
   link: FeatureCardLinkProps;
+}
+
+interface SupportLink {
+  title: string;
+  href: string;
+  icon: ReactElement<any>;
+}
+
+interface DropdownMenuProps {
+  id: string;
+  isOpen: boolean;
+  position: DropdownPosition;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  className?: string;
+  children: React.ReactNode;
+}
+
+interface NavItemWithDropdownProps {
+  label: string;
+  menuRef: React.RefObject<HTMLDivElement | null>;
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
 }
 
 const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambugerButtonProps) => (
@@ -68,11 +94,57 @@ const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambu
   </MarketingButton>
 );
 
+const DropdownMenu = ({ id, isOpen, position, onMouseEnter, onMouseLeave, className, children }: DropdownMenuProps) => (
+  <motion.div
+    id={id}
+    key={id}
+    className={clsx(
+      "fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white shadow-border-lg lg:block",
+      className
+    )}
+    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+    animate={{ opacity: 1, scale: 1, y: 0 }}
+    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+    transition={{
+      type: "tween",
+      duration: 0.2,
+      ease: "easeOut"
+    }}
+    style={{
+      top: position.top,
+      left: position.left,
+      right: position.right
+    }}
+    onMouseEnter={onMouseEnter}
+    onMouseLeave={onMouseLeave}
+  >
+    {children}
+  </motion.div>
+);
+
+const NavItemWithDropdown = ({ label, menuRef, onMouseEnter, onMouseLeave }: NavItemWithDropdownProps) => (
+  <div
+    className="relative"
+    ref={menuRef}
+    onMouseEnter={onMouseEnter}
+    onMouseLeave={onMouseLeave}
+  >
+    <button className="flex items-center gap-1 whitespace-nowrap !text-marketing-primary hover:text-marketing-secondary transition-colors">
+      {label}
+      <ChevronDown className="h-4 w-4" />
+    </button>
+  </div>
+);
+
 export default function Header({ className }: { className?: string }) {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = useState(false);
-  const desktopMenuButtonRef = useRef<HTMLDivElement>(null);
+  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+  const [isSupportDropdownOpen, setIsSupportDropdownOpen] = useState(false);
+  const [isMobileDropdownOpen, setIsMobileDropdownOpen] = useState(false);
+  const productMenuButtonRef = useRef<HTMLDivElement>(null);
+  const supportMenuButtonRef = useRef<HTMLDivElement>(null);
+  const mobileMenuButtonRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isSignedIn } = useCurrentSession();
@@ -82,7 +154,17 @@ export default function Header({ className }: { className?: string }) {
   const dashboardURL =
     process.env.NODE_ENV === "production" ? "https://app.market.dev" : "http://app.market.local";
 
-  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({
+  const [productDropdownPosition, setProductDropdownPosition] = useState<DropdownPosition>({
+    top: 60,
+    left: 0
+  });
+
+  const [supportDropdownPosition, setSupportDropdownPosition] = useState<DropdownPosition>({
+    top: 60,
+    left: 0
+  });
+
+  const [mobileDropdownPosition, setMobileDropdownPosition] = useState<DropdownPosition>({
     top: 60,
     right: 16
   });
@@ -92,18 +174,81 @@ export default function Header({ className }: { className?: string }) {
     horizontal: 0
   };
 
+  // Generic dropdown handlers
+  const createDropdownHandlers = (
+    dropdownType: 'product' | 'support',
+    setCurrentOpen: (open: boolean) => void,
+    setOtherOpen: (open: boolean) => void,
+    updatePosition: () => void
+  ) => ({
+    onMouseEnter: () => {
+      setCurrentOpen(true);
+      setOtherOpen(false);
+      setTimeout(updatePosition, 0);
+    },
+    onMouseLeave: () => {
+      setCurrentOpen(false);
+    }
+  });
+
+  // Position update functions
+  const createPositionUpdater = useCallback((
+    buttonRef: React.RefObject<HTMLDivElement | null>,
+    setPosition: (pos: DropdownPosition) => void,
+    offsetLeft: number = -32
+  ) => () => {
+    if (buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPosition({
+        top: rect.bottom + dropdownOffsets.vertical,
+        left: rect.left + offsetLeft
+      });
+    }
+  }, [dropdownOffsets.vertical]);
+
+  const updateProductDropdownPosition = createPositionUpdater(
+    productMenuButtonRef,
+    setProductDropdownPosition
+  );
+
+  const updateSupportDropdownPosition = createPositionUpdater(
+    supportMenuButtonRef,
+    setSupportDropdownPosition
+  );
+
+  const updateMobileDropdownPosition = useCallback(() => {
+    if (mobileMenuButtonRef.current) {
+      const rect = mobileMenuButtonRef.current.getBoundingClientRect();
+      setMobileDropdownPosition({
+        top: rect.bottom + dropdownOffsets.vertical,
+        right: window.innerWidth - rect.right + dropdownOffsets.horizontal
+      });
+    }
+  }, [dropdownOffsets.vertical, dropdownOffsets.horizontal]);
+
+  // Create dropdown handlers
+  const productHandlers = createDropdownHandlers(
+    'product',
+    setIsProductDropdownOpen,
+    setIsSupportDropdownOpen,
+    updateProductDropdownPosition
+  );
+
+  const supportHandlers = createDropdownHandlers(
+    'support',
+    setIsSupportDropdownOpen,
+    setIsProductDropdownOpen,
+    updateSupportDropdownPosition
+  );
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 0);
     };
 
     handleScroll();
-
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   useEffect(() => {
@@ -112,9 +257,7 @@ export default function Header({ className }: { className?: string }) {
     } else {
       document.body.classList.remove("overflow-hidden");
     }
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
+    return () => document.body.classList.remove("overflow-hidden");
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
@@ -127,38 +270,38 @@ export default function Header({ className }: { className?: string }) {
 
     updateHeaderHeight();
     window.addEventListener("resize", updateHeaderHeight);
-
-    return () => {
-      window.removeEventListener("resize", updateHeaderHeight);
-    };
+    return () => window.removeEventListener("resize", updateHeaderHeight);
   }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isDesktopDropdownOpen &&
-        desktopMenuButtonRef.current &&
-        !desktopMenuButtonRef.current.contains(event.target as Node)
-      ) {
-        const dropdown = document.getElementById("desktop-dropdown");
-        if (dropdown && !dropdown.contains(event.target as Node)) {
-          setIsDesktopDropdownOpen(false);
+      const dropdowns = [
+        { isOpen: isProductDropdownOpen, ref: productMenuButtonRef, id: "product-dropdown", setState: setIsProductDropdownOpen },
+        { isOpen: isSupportDropdownOpen, ref: supportMenuButtonRef, id: "support-dropdown", setState: setIsSupportDropdownOpen },
+        { isOpen: isMobileDropdownOpen, ref: mobileMenuButtonRef, id: "mobile-dropdown", setState: setIsMobileDropdownOpen }
+      ];
+
+      dropdowns.forEach(({ isOpen, ref, id, setState }) => {
+        if (isOpen && ref.current && !ref.current.contains(event.target as Node)) {
+          const dropdown = document.getElementById(id);
+          if (dropdown && !dropdown.contains(event.target as Node)) {
+            setState(false);
+          }
         }
-      }
+      });
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isDesktopDropdownOpen]);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isProductDropdownOpen, isSupportDropdownOpen, isMobileDropdownOpen]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-  const toggleDesktopDropdown = () => {
-    const newState = !isDesktopDropdownOpen;
-    setIsDesktopDropdownOpen(newState);
+
+  const toggleMobileDropdown = () => {
+    const newState = !isMobileDropdownOpen;
+    setIsMobileDropdownOpen(newState);
     if (newState) {
-      setTimeout(updateDropdownPosition, 0);
+      setTimeout(updateMobileDropdownPosition, 0);
     }
   };
 
@@ -168,8 +311,12 @@ export default function Header({ className }: { className?: string }) {
     const href = (event.currentTarget as HTMLAnchorElement).getAttribute("href");
     if (!href) return;
 
+    // Close all dropdowns
     setIsMobileMenuOpen(false);
-    setIsDesktopDropdownOpen(false);
+    setIsProductDropdownOpen(false);
+    setIsSupportDropdownOpen(false);
+    setIsMobileDropdownOpen(false);
+
     setTimeout(() => {
       router.push(href);
     }, 150);
@@ -214,26 +361,38 @@ export default function Header({ className }: { className?: string }) {
     }
   ];
 
-  const updateDropdownPosition = useCallback(() => {
-    if (desktopMenuButtonRef.current) {
-      const rect = desktopMenuButtonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + dropdownOffsets.vertical,
-        right: window.innerWidth - rect.right + dropdownOffsets.horizontal
-      });
+  const supportLinks: SupportLink[] = [
+    {
+      title: "Discord",
+      href: discordURL,
+      icon: <div className="flex h-5 w-5 items-center justify-center rounded bg-[#5865F2] text-white text-xs font-bold">D</div>
+    },
+    {
+      title: "GitHub",
+      href: "https://github.com/market-dot-dev/store",
+      icon: <Github className="h-5 w-5" />
     }
-  }, [dropdownOffsets.vertical, dropdownOffsets.horizontal]);
+  ];
 
+  // Generic resize effect hook
   useEffect(() => {
-    if (isDesktopDropdownOpen) {
-      updateDropdownPosition();
-      window.addEventListener("resize", updateDropdownPosition);
+    const dropdownConfigs = [
+      { isOpen: isProductDropdownOpen, updatePosition: updateProductDropdownPosition },
+      { isOpen: isSupportDropdownOpen, updatePosition: updateSupportDropdownPosition },
+      { isOpen: isMobileDropdownOpen, updatePosition: updateMobileDropdownPosition }
+    ];
 
-      return () => {
-        window.removeEventListener("resize", updateDropdownPosition);
+    const activeDropdowns = dropdownConfigs.filter(config => config.isOpen);
+
+    if (activeDropdowns.length > 0) {
+      const handleResize = () => {
+        activeDropdowns.forEach(config => config.updatePosition());
       };
+
+      window.addEventListener("resize", handleResize);
+      return () => window.removeEventListener("resize", handleResize);
     }
-  }, [isDesktopDropdownOpen, updateDropdownPosition]);
+  }, [isProductDropdownOpen, isSupportDropdownOpen, isMobileDropdownOpen, updateProductDropdownPosition, updateSupportDropdownPosition, updateMobileDropdownPosition]);
 
   return (
     <>
@@ -277,14 +436,42 @@ export default function Header({ className }: { className?: string }) {
                 priority
               />
             </Link>
-            <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
-              {/* <Link href="/" className="whitespace-nowrap !text-marketing-primary">
-                Sell
-              </Link> */}
-              {/* <Link href="https://explore.market.dev" className="whitespace-nowrap">
-                Explore
-              </Link> */}
+
+            {/* Desktop Navigation */}
+            <div className="absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 justify-center gap-8 lg:flex">
+              <NavItemWithDropdown
+                label="Product"
+                menuRef={productMenuButtonRef}
+                onMouseEnter={productHandlers.onMouseEnter}
+                onMouseLeave={productHandlers.onMouseLeave}
+              />
+
+              <Link href="#pricing" className="whitespace-nowrap !text-marketing-primary">
+                Pricing
+              </Link>
+
+              <Link href={blogURL} className="whitespace-nowrap !text-marketing-primary">
+                Blog
+              </Link>
+
+              <NavItemWithDropdown
+                label="Support"
+                menuRef={supportMenuButtonRef}
+                onMouseEnter={supportHandlers.onMouseEnter}
+                onMouseLeave={supportHandlers.onMouseLeave}
+              />
             </div>
+
+            {/* Mobile Navigation - simplified centered links */}
+            <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-6 lg:hidden">
+              <Link href="#pricing" className="whitespace-nowrap !text-marketing-primary text-sm">
+                Pricing
+              </Link>
+              <Link href={blogURL} className="whitespace-nowrap !text-marketing-primary text-sm">
+                Blog
+              </Link>
+            </div>
+
             <div className="flex w-fit items-center gap-4">
               {isLoading || !signedIn ? (
                 <Link href={loginURL} variant="primary" className="hidden px-2 sm:block">
@@ -302,22 +489,11 @@ export default function Header({ className }: { className?: string }) {
                   <span className="hidden md:inline">Dashboard</span>
                 </UIButton>
               )}
-              {/* Desktop menu button */}
-              <div
-                className="relative hidden items-center justify-center lg:flex"
-                ref={desktopMenuButtonRef}
-              >
-                <AnimatedHambugerButton
-                  isOpen={isDesktopDropdownOpen}
-                  toggleMenu={toggleDesktopDropdown}
-                  className=""
-                />
-              </div>
               {/* Mobile menu button */}
-              <div className="flex items-center justify-center lg:hidden">
+              <div className="flex items-center justify-center lg:hidden" ref={mobileMenuButtonRef}>
                 <AnimatedHambugerButton
-                  isOpen={isMobileMenuOpen}
-                  toggleMenu={toggleMobileMenu}
+                  isOpen={isMobileDropdownOpen}
+                  toggleMenu={toggleMobileDropdown}
                   className=""
                 />
               </div>
@@ -327,31 +503,19 @@ export default function Header({ className }: { className?: string }) {
       </header>
 
       <AnimatePresence>
-        {/* Desktop dropdown menu */}
-        {isDesktopDropdownOpen && (
-          <motion.div
-            id="desktop-dropdown"
-            key="desktop-dropdown"
-            className="fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white shadow-border-lg lg:block"
-            initial={{ opacity: 0, scale: 0.95, y: -10 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -10 }}
-            transition={{
-              type: "tween",
-              duration: 0.2,
-              ease: "easeOut"
-            }}
-            style={{
-              top: dropdownPosition.top,
-              right: dropdownPosition.right
-            }}
+        {/* Product dropdown menu */}
+        {isProductDropdownOpen && (
+          <DropdownMenu
+            id="product-dropdown"
+            isOpen={isProductDropdownOpen}
+            position={productDropdownPosition}
+            onMouseEnter={productHandlers.onMouseEnter}
+            onMouseLeave={productHandlers.onMouseLeave}
           >
-            {/* Product feature cards */}
             <div className="flex max-w-[550px] flex-row gap-3 p-3">
-              {products.map((product, index) => (
+              {products.map((product) => (
                 <div key={product.title}>
                   <FeatureCard
-                    key={product.title}
                     icon={product.icon}
                     color={product.color}
                     title={product.title}
@@ -364,16 +528,52 @@ export default function Header({ className }: { className?: string }) {
                 </div>
               ))}
             </div>
+          </DropdownMenu>
+        )}
 
-            <div className="border-t border-black/10"></div>
+        {/* Support dropdown menu */}
+        {isSupportDropdownOpen && (
+          <DropdownMenu
+            id="support-dropdown"
+            isOpen={isSupportDropdownOpen}
+            position={supportDropdownPosition}
+            onMouseEnter={supportHandlers.onMouseEnter}
+            onMouseLeave={supportHandlers.onMouseLeave}
+          >
+            <div className="flex min-w-[150px] flex-col py-2 text-marketing-sm">
+              {supportLinks.map((link) => (
+                <Link
+                  key={link.title}
+                  href={link.href}
+                  variant="primary"
+                  className="flex w-full items-center gap-3 px-4 py-2 transition-colors hover:text-marketing-secondary"
+                >
+                  {link.icon}
+                  {link.title}
+                </Link>
+              ))}
+            </div>
+          </DropdownMenu>
+        )}
 
+        {/* Mobile dropdown menu */}
+        {isMobileDropdownOpen && (
+          <DropdownMenu
+            id="mobile-dropdown"
+            isOpen={isMobileDropdownOpen}
+            position={mobileDropdownPosition}
+            onMouseEnter={() => { }}
+            onMouseLeave={() => { }}
+            className="lg:hidden"
+          >
             <div className="flex min-w-[175px] flex-col py-2 text-marketing-sm">
               <Link
-                href={blogURL}
+                href="/"
                 variant="primary"
                 className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
+                onClick={handleLinkClick}
               >
-                Changelog
+                Product
               </Link>
               <Link
                 href={discordURL}
@@ -383,14 +583,14 @@ export default function Header({ className }: { className?: string }) {
                 Discord
               </Link>
               <Link
-                href={twitterUrl}
+                href="https://github.com/market-dot-dev/store"
                 variant="primary"
                 className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
-                Twitter
+                GitHub
               </Link>
             </div>
-          </motion.div>
+          </DropdownMenu>
         )}
 
         {/* Mobile full-screen menu */}
@@ -410,11 +610,11 @@ export default function Header({ className }: { className?: string }) {
             <div className="relative flex h-full flex-col">
               {/* Product feature cards */}
               <div className="p-4">
+                <h3 className="mb-3 text-sm font-medium text-marketing-secondary">Product Features</h3>
                 <div className="flex flex-col gap-4 sm:flex-row sm:gap-4">
                   {products.map((product) => (
                     <div key={product.title} className="flex-1">
                       <FeatureCard
-                        key={product.title}
                         icon={product.icon}
                         color={product.color}
                         title={product.title}
@@ -433,11 +633,19 @@ export default function Header({ className }: { className?: string }) {
 
               <div className="flex grow flex-col p-6 pt-2">
                 <Link
+                  href="#pricing"
+                  variant="primary"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                >
+                  Pricing
+                </Link>
+                <hr className="border-black/15" />
+                <Link
                   href={blogURL}
                   variant="primary"
                   className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
-                  Changelog
+                  Blog
                 </Link>
                 <hr className="border-black/15" />
                 <Link
@@ -449,11 +657,11 @@ export default function Header({ className }: { className?: string }) {
                 </Link>
                 <hr className="border-black/15" />
                 <Link
-                  href={twitterUrl}
+                  href="https://github.com/market-dot-dev/store"
                   variant="primary"
                   className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
-                  Twitter
+                  GitHub
                 </Link>
                 <hr className="border-black/15 sm:hidden" />
                 {isLoading ||
