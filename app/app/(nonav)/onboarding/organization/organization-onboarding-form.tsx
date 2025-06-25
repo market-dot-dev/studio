@@ -5,6 +5,7 @@ import { CountrySelect } from "@/components/form/country-select";
 import { submitOrganizationForm } from "@/components/organization/organization-form-action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AppWindowMac, Link } from "lucide-react";
 import { useRef, useState } from "react";
 import { OnboardingAction } from "../onboarding-action";
 
@@ -75,6 +76,19 @@ export function OrganizationOnboardingForm({
               pattern="[a-z0-9-]+"
               required
             />
+            <p className="text-xs text-muted-foreground">
+              Your{" "}
+              <span className="font-medium text-stone-700">
+                <Link className="ml-px mr-1 inline-block size-3.5 -translate-y-0.5" />
+                Checkout Links
+              </span>{" "}
+              and{" "}
+              <span className="font-medium text-stone-700">
+                <AppWindowMac className="ml-px mr-1 inline-block size-3.5 -translate-y-px" />
+                Landing Page
+              </span>{" "}
+              will live on this url.
+            </p>
             {errors.subdomain && <div className="text-xs text-destructive">{errors.subdomain}</div>}
           </div>
         </div>
@@ -85,6 +99,7 @@ export function OrganizationOnboardingForm({
             defaultValue={organization?.businessLocation ?? undefined}
             required
           />
+          <p className="text-xs text-muted-foreground">Needed for billing & tax purposes.</p>
           {errors.country && <div className="text-xs text-destructive">{errors.country}</div>}
         </div>
       </form>

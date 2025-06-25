@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Textarea } from "@/components/ui/textarea";
+import { AppWindowMac, Link } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -70,6 +71,19 @@ export function VendorOrganizationSettingsForm({
           suffix=".market.dev"
           required
         />
+        <p className="text-xs text-muted-foreground">
+          Your{" "}
+          <span className="font-medium text-stone-700">
+            <Link className="ml-px mr-1 inline-block size-3.5 -translate-y-0.5" />
+            Checkout Links
+          </span>{" "}
+          and{" "}
+          <span className="font-medium text-stone-700">
+            <AppWindowMac className="ml-px mr-1 inline-block size-3.5 -translate-y-px" />
+            Landing Page
+          </span>{" "}
+          will live on this url.
+        </p>
         {errors.subdomain && <div className="text-xs text-destructive">{errors.subdomain}</div>}
       </div>
       <div className="space-y-2">
@@ -79,6 +93,7 @@ export function VendorOrganizationSettingsForm({
           defaultValue={organization.businessLocation ?? undefined}
           required
         />
+        <p className="text-xs text-muted-foreground">Needed for billing & tax purposes.</p>
         {errors.country && <div className="text-xs text-destructive">{errors.country}</div>}
       </div>
       <div className="space-y-2">
