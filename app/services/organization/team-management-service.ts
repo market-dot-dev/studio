@@ -163,7 +163,7 @@ export async function inviteUsersToOrganizationByRole(
 /**
  * Invite batch of team members with different roles.
  */
-export async function inviteUsers(
+export async function inviteTeamMembers(
   invites: { email: string; role: OrganizationRole }[]
 ): Promise<InviteResult> {
   const result: InviteResult = {

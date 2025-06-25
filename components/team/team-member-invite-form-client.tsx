@@ -1,7 +1,7 @@
 "use client";
 
 import { OrganizationRole } from "@/app/generated/prisma";
-import { inviteUsers } from "@/app/services/organization/team-management-service";
+import { inviteTeamMembers } from "@/app/services/organization/team-management-service";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { generateId } from "@/lib/utils";
@@ -50,7 +50,7 @@ export function TeamMemberInviteFormClient({
     setErrors([]);
     startTransition(async () => {
       try {
-        const result = await inviteUsers(validInvites);
+        const result = await inviteTeamMembers(validInvites);
 
         if (result.errors.length > 0) {
           setErrors(result.errors);
@@ -59,7 +59,7 @@ export function TeamMemberInviteFormClient({
         if (result.success.length > 0) {
           toast.success(`Invited ${result.success.join(", ")}`);
 
-          // Remove successful invites from the list
+          // Remove successful invite fields
           const erroredInvites = invites.filter(
             (invite) => !result.newInvites.some((newInvite) => newInvite.email === invite.email)
           );
