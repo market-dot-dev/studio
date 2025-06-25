@@ -63,10 +63,7 @@ function parseOnboardingState(jsonValue: JsonValue | null): OnboardingState {
 /**
  * Gets the current onboarding state for the organization
  */
-export async function getOnboardingData(): Promise<{
-  org: { id: string; ownerId: string };
-  onboarding: OnboardingState;
-}> {
+export async function getOnboardingData() {
   const org = await getOrganizationWithOnboarding();
   const onboarding = parseOnboardingState(org.onboarding);
 
