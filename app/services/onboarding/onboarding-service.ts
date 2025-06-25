@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
+import { JsonValue } from "@prisma/client/runtime/library";
 import { requireUserSession } from "../user-context-service";
 import {
   defaultOnboardingState,
@@ -10,13 +11,23 @@ import {
 } from "./onboarding-steps";
 
 /**
- * Safely parses onboarding JSON from string
+ * Safely parses onboarding JSON from JsonValue (JSONB field)
  */
-function parseOnboardingState(jsonString: string | null): OnboardingState {
-  if (!jsonString) return defaultOnboardingState;
+function parseOnboardingState(jsonValue: JsonValue | null): OnboardingState {
+  if (!jsonValue) return defaultOnboardingState;
 
   try {
-    return JSON.parse(jsonString) as OnboardingState;
+    // Return if an object (Prisma auto-parses JSONB)
+    if (typeof jsonValue === "object" && jsonValue !== null && !Array.isArray(jsonValue)) {
+      return jsonValue as unknown as OnboardingState;
+    }
+
+    // Parse if it's a string (legacy data)
+    if (typeof jsonValue === "string") {
+      return JSON.parse(jsonValue) as OnboardingState;
+    }
+
+    return defaultOnboardingState;
   } catch (error) {
     console.error("Failed to parse onboarding JSON:", error);
     return defaultOnboardingState;
