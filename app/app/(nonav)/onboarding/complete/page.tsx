@@ -41,8 +41,7 @@ export default async function OnboardingCompletePage() {
             <div className="flex-1 space-y-1 pb-8">
               <h3 className="text-sm font-semibold">Create your service packages</h3>
               <p className="text-sm text-muted-foreground">
-                Set up your first packages you want to offer. Pick your pricing, messaging &
-                checkout experience.
+                Set up the first packages you want to offer.
               </p>
             </div>
           </div>
@@ -53,30 +52,29 @@ export default async function OnboardingCompletePage() {
               <Share2 className="size-5 shrink-0 text-muted-foreground" />
               <div className="my-2 h-full w-px border-l" />
             </div>
-            <div className="flex-1 space-y-1 pb-8">
-              <h3 className="text-sm font-semibold">Pick a channel</h3>
-              <p className="text-sm text-muted-foreground">
-                Showcase your packages using{" "}
+            <div className="flex-1 pb-8">
+              <h3 className="mb-1 text-sm font-semibold">Pick a channel</h3>
+              <p className="mb-2 text-sm text-muted-foreground">
+                When your packages are ready, promote them using:
+              </p>
+              <div className="flex flex-col gap-1 text-sm text-muted-foreground">
                 <span className="inline-flex items-baseline font-medium text-stone-700">
-                  <LinkIcon className="ml-px mr-1 size-4 shrink-0 translate-y-[3px]" />
+                  <LinkIcon className="mr-2 size-4 shrink-0 translate-y-[3px]" />
                   Checkout Links
                 </span>
-                ,{" "}
                 <span className="inline-flex items-baseline font-medium text-stone-700">
-                  <AppWindowMac className="ml-px mr-1 size-4 shrink-0 translate-y-[3px]" />
+                  <AppWindowMac className="mr-2 size-4 shrink-0 translate-y-[3px]" />
                   Landing Page
                 </span>
-                ,{" "}
                 <span className="inline-flex items-baseline font-medium text-stone-700">
-                  <Code className="ml-px mr-1 size-4 shrink-0 translate-y-[3px]" />
+                  <Code className="mr-2 size-4 shrink-0 translate-y-[3px]" />
                   Embeds
-                </span>{" "}
-                or our{" "}
+                </span>
                 <span className="inline-flex items-baseline font-medium text-stone-700">
-                  <Store className="ml-px mr-1 size-4 shrink-0 translate-y-[3px]" />
+                  <Store className="mr-2 size-4 shrink-0 translate-y-[3px]" />
                   Developer Marketplace
                 </span>
-              </p>
+              </div>
             </div>
           </div>
 
