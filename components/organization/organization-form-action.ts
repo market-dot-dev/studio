@@ -58,7 +58,7 @@ export async function submitOrganizationForm(formData: FormData): Promise<Organi
 
     await updateCurrentOrganizationBusiness(updatePayload);
 
-    // Handle site creation/update if subdomain is provided
+    // Handle site creation/update
     if (subdomain) {
       const currentSite = await getCurrentSite();
 
