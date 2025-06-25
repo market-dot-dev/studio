@@ -11,23 +11,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PricingData } from "@/types/platform";
 import { getSubscriptionInfo } from "@/utils/subscription-utils";
 import NumberFlow from "@number-flow/react";
-import { Check, CreditCard } from "lucide-react";
+import { CreditCard } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-
-const features = [
-  "Offer subscriptions & one-time sales",
-  "Custom market.dev domain",
-  "Prospect & customer CRM",
-  "Sales analytics dashboard",
-  "Beautiful checkout pages",
-  "Contract library access",
-  "Customizable embeds",
-  "Custom landing page",
-  "Lead capture forms"
-];
-
+import { FeatureList } from "./feature-list";
 interface PricingPageFormProps {
   pricingData: PricingData;
   defaultPlan: "free" | "pro";
@@ -125,15 +113,7 @@ export function PricingPageForm({ pricingData, defaultPlan }: PricingPageFormPro
                   $0.25 transaction fee + 1% per sale
                 </p>
 
-                {/* Desktop features list */}
-                <div className="hidden flex-col gap-y-1 md:flex">
-                  {features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <Check className="mt-0.5 size-4 shrink-0 text-success" />
-                      <span className="text-sm text-muted-foreground">{feature}</span>
-                    </div>
-                  ))}
-                </div>
+                <FeatureList className="hidden md:block" />
               </div>
             </Card>
           </label>
@@ -217,15 +197,7 @@ export function PricingPageForm({ pricingData, defaultPlan }: PricingPageFormPro
                   $0.25 transaction fee (no commission fee)
                 </p>
 
-                {/* Desktop features list */}
-                <div className="hidden flex-col gap-y-1 md:flex">
-                  {features.map((feature, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <Check className="mt-0.5 size-4 shrink-0 text-success" />
-                      <span className="text-sm text-muted-foreground">{feature}</span>
-                    </div>
-                  ))}
-                </div>
+                <FeatureList className="hidden md:block" />
               </div>
             </Card>
           </label>
@@ -236,14 +208,7 @@ export function PricingPageForm({ pricingData, defaultPlan }: PricingPageFormPro
       <div className="mt-1 flex w-full flex-col md:hidden">
         <p className="mb-1.5 text-sm font-semibold text-foreground">All plans include:</p>
         <Separator className="mb-2.5" />
-        <div className="flex flex-col gap-y-1">
-          {features.map((feature, index) => (
-            <div key={index} className="flex items-start gap-2">
-              <Check className="mt-0.5 size-4 shrink-0 text-success" />
-              <span className="text-sm text-muted-foreground">{feature}</span>
-            </div>
-          ))}
-        </div>
+        <FeatureList />
       </div>
 
       <div className="sticky bottom-0 bg-stone-150 py-4 md:static md:py-0">

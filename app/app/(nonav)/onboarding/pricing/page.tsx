@@ -1,25 +1,12 @@
 import { PlanInformation } from "@/app/app/(dashboard)/settings/billing/plan-information";
 import { StripeCustomerPortal } from "@/app/app/(dashboard)/settings/billing/stripe-customer-portal";
-import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
 import { ONBOARDING_STEPS } from "@/app/services/onboarding/onboarding-steps";
 import { getCachedPricing, getCurrentBilling } from "@/app/services/platform";
 import { getPlanDisplayLabel, getSubscriptionInfo } from "@/utils/subscription-utils";
-import { redirect } from "next/navigation";
 import { OnboardingAction } from "../onboarding-action";
 import { PricingPageForm } from "./pricing-page-form";
 
-export default async function PricingPage({
-  searchParams
-}: {
-  searchParams: Promise<{ status?: string }>;
-}) {
-  const params = await searchParams;
-  // Redirect to complete when returned from successful Stripe checkout.
-  if (params.status === "success") {
-    await completeOnboardingStep(ONBOARDING_STEPS.PRICING);
-    redirect("/onboarding/complete");
-  }
-
+export default async function PricingPage() {
   const billing = await getCurrentBilling();
   const pricingData = await getCachedPricing();
 
@@ -27,7 +14,7 @@ export default async function PricingPage({
   const hasActiveSubscription = subscriptionInfo.isSubscriptionActive && !subscriptionInfo.isFree;
   const defaultPlan = hasActiveSubscription ? "pro" : "free";
 
-  const planDisplayName = billing?.planType ? getPlanDisplayLabel(billing.planType) : "Free plan";
+  const planDisplayName = billing?.planType ? getPlanDisplayLabel(billing.planType) : "Your plan";
 
   return (
     <div className="relative space-y-6">
