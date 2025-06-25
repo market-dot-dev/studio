@@ -124,7 +124,8 @@ export async function createSubscription(
   customerOrgId: string,
   tierId: string,
   stripeSubscriptionId: string,
-  tierVersionId?: string
+  tierVersionId?: string,
+  platformFeeAmount?: number
 ): Promise<Subscription> {
   const customerOrg = await getCustomerOrganizationById(customerOrgId);
   if (!customerOrg) throw new Error("Customer organization not found");
@@ -190,6 +191,7 @@ export async function createSubscription(
       cancelledAt: null,
       activeUntil: null,
       tierRevision: tier.revision,
+      platformFeeAmount: platformFeeAmount || null,
       active: true
     }
   });

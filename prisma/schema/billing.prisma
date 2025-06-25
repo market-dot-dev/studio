@@ -1,15 +1,16 @@
 model Charge {
   id String @id @default(cuid())
 
-  tierRevision   Int?
-  stripeChargeId String       @unique
-  createdAt      DateTime     @default(now())
-  organizationId String
-  organization   Organization @relation(fields: [organizationId], references: [id])
-  tierVersionId  String?
-  tierVersion    TierVersion? @relation(fields: [tierVersionId], references: [id])
-  tierId         String
-  tier           Tier         @relation(fields: [tierId], references: [id])
+  tierRevision      Int?
+  stripeChargeId    String       @unique
+  platformFeeAmount Int? // Platform fee applied (in cents)
+  createdAt         DateTime     @default(now())
+  organizationId    String
+  organization      Organization @relation(fields: [organizationId], references: [id])
+  tierVersionId     String?
+  tierVersion       TierVersion? @relation(fields: [tierVersionId], references: [id])
+  tierId            String
+  tier              Tier         @relation(fields: [tierId], references: [id])
 
   @@index([organizationId, tierId])
 }
@@ -18,6 +19,7 @@ model Subscription {
   id                   String       @id @default(cuid())
   stripeSubscriptionId String       @unique
   tierRevision         Int?
+  platformFeeAmount    Int? // Platform fee applied to first payment (in cents)
   activeUntil          DateTime?
   cancelledAt          DateTime?
   createdAt            DateTime     @default(now())

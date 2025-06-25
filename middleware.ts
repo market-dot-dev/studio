@@ -18,10 +18,11 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - error monitoring via Sentry (error-monitoring)
+     * - platform webhooks (api/platform/*)
      * - external webhooks (api/webhook/*)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    "/((?!_next/static|_next/image|api/webhook/|error-monitoring|[\\w-]+\\.\\w+).*)"
+    "/((?!_next/static|_next/image|api/webhook/|api/platform/|error-monitoring|[\\w-]+\\.\\w+).*)"
   ]
 };
 
