@@ -15,6 +15,7 @@ export default async function PaymentSettings() {
 
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
 
+  // Check if account has been connected at some point but might be disconnected now
   const hasStripeHistory = !!org.stripeAccountId || org.stripeAccountDisabled;
   const oauthUrl = await getVendorStripeConnectURL();
 
