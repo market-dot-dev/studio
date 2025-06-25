@@ -3,7 +3,6 @@ import { TeamMemberInviteForm } from "@/components/team/team-member-invite-form"
 import { OnboardingAction } from "../onboarding-action";
 
 export default async function TeamOnboardingPage() {
-  // Get step metadata
   const stepMeta = getStepMeta(ONBOARDING_STEPS.TEAM);
   const nextPath = stepMeta?.nextPath || "/onboarding/stripe";
 

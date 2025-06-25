@@ -14,7 +14,6 @@ export default async function StripeOnboardingPage() {
   const oauthUrl = await getVendorStripeConnectURL("/onboarding/stripe/callback");
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
 
-  // Get step metadata
   const stepMeta = getStepMeta(ONBOARDING_STEPS.STRIPE);
   const nextPath = stepMeta?.nextPath || "/onboarding/pricing";
 
@@ -42,7 +41,6 @@ export default async function StripeOnboardingPage() {
           {!canSell && (
             <div className="space-y-3">
               <h3 className="text-sm font-medium text-muted-foreground">You'll need Stripe to:</h3>
-
               <div className="flex items-start space-x-3">
                 <CreditCard className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                 <div className="text-sm">
@@ -52,7 +50,6 @@ export default async function StripeOnboardingPage() {
                   </p>
                 </div>
               </div>
-
               <div className="flex items-start space-x-3">
                 <RefreshCw className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
                 <div className="text-sm">
@@ -70,7 +67,6 @@ export default async function StripeOnboardingPage() {
             <h3 className="text-sm font-medium text-muted-foreground">
               {canSell ? "With Stripe connected, you can:" : "Without Stripe, you can still:"}
             </h3>
-
             {canSell && (
               <>
                 <div className="flex items-start space-x-3">
@@ -82,7 +78,6 @@ export default async function StripeOnboardingPage() {
                     </p>
                   </div>
                 </div>
-
                 <div className="flex items-start space-x-3">
                   <RefreshCw className="mt-0.5 size-4 text-muted-foreground" />
                   <div className="text-sm">

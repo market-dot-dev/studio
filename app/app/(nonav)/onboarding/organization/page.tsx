@@ -4,11 +4,9 @@ import { getCurrentOrganization } from "@/app/services/user-context-service";
 import { OrganizationOnboardingForm } from "./organization-onboarding-form";
 
 export default async function OrganizationOnboardingPage() {
-  // Fetch current organization and site data for pre-filling
   const organization = await getCurrentOrganization();
   const currentSite = await getCurrentSite();
 
-  // Get step metadata
   const stepMeta = getStepMeta(ONBOARDING_STEPS.ORGANIZATION);
 
   return (

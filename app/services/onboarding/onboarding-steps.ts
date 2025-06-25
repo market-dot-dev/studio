@@ -79,11 +79,6 @@ export const onboardingStepsMeta: OnboardingStepMeta[] = [
   }
 ];
 
-// Helper functions
 export function getStepMeta(stepName: OnboardingStepName): OnboardingStepMeta | undefined {
   return onboardingStepsMeta.find((step) => step.name === stepName);
-}
-
-export function getStepByPath(path: string): OnboardingStepMeta | undefined {
-  return onboardingStepsMeta.find((step) => step.path === path);
 }

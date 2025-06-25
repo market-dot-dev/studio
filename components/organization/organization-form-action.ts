@@ -39,7 +39,6 @@ export async function submitOrganizationForm(formData: FormData): Promise<Organi
     errors.country = "Select your organization's country";
   }
 
-  // Return early if validation errors
   if (Object.keys(errors).length > 0) {
     return { success: false, errors };
   }
