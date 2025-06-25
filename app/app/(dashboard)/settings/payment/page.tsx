@@ -12,6 +12,7 @@ import { StripeAccountStatus } from "./stripe-account-status";
 
 export default async function PaymentSettings() {
   const org = await requireOrganization();
+
   const { canSell, messageCodes, disabledReasons } = await checkVendorStripeStatus(true);
 
   const hasStripeHistory = !!org.stripeAccountId || org.stripeAccountDisabled;
