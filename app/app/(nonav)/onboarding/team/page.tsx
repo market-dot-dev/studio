@@ -1,6 +1,7 @@
 import { getNextStepPath, ONBOARDING_STEPS } from "@/app/services/onboarding/onboarding-steps";
-import { TeamMemberInviteForm } from "@/components/team/team-member-invite-form";
-import { OnboardingAction } from "../onboarding-action";
+import { OnboardingAction } from "@/components/onboarding/onboarding-action";
+import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
+import { TeamMemberInviteFormWrapper } from "@/components/team/team-member-invite-form-wrapper";
 
 export default async function TeamOnboardingPage() {
   const currentStep = ONBOARDING_STEPS["team"];
@@ -8,13 +9,10 @@ export default async function TeamOnboardingPage() {
 
   return (
     <div className="mx-auto max-w-md space-y-10">
-      <div className="flex flex-col items-center">
-        <h1 className="mb-2 text-2xl font-bold tracking-tight">{currentStep.title}</h1>
-        <p className="text-sm text-muted-foreground">{currentStep.description}</p>
-      </div>
+      <OnboardingHeader title={currentStep.title} description={currentStep.description} />
 
       <div className="space-y-3">
-        <TeamMemberInviteForm />
+        <TeamMemberInviteFormWrapper />
         <OnboardingAction
           currentStep={currentStep.name}
           nextPath={nextPath}

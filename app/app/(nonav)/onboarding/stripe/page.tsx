@@ -5,8 +5,9 @@ import {
   getVendorStripeConnectURL
 } from "@/app/services/stripe/stripe-vendor-service";
 import { requireOrganization } from "@/app/services/user-context-service";
+import { OnboardingAction } from "@/components/onboarding/onboarding-action";
+import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { CreditCard, LinkIcon, Mail, RefreshCw, Settings } from "lucide-react";
-import { OnboardingAction } from "../onboarding-action";
 
 export default async function StripeOnboardingPage() {
   const org = await requireOrganization();
@@ -20,10 +21,7 @@ export default async function StripeOnboardingPage() {
   return (
     <div className="mx-auto max-w-md">
       <div className="space-y-10">
-        <div className="flex flex-col items-center text-center">
-          <h1 className="mb-2 text-2xl font-bold tracking-tight">{currentStep.title}</h1>
-          <p className="text-sm text-muted-foreground">{currentStep.description}</p>
-        </div>
+        <OnboardingHeader title={currentStep.title} description={currentStep.description} />
 
         <StripeAccountStatus
           canSell={canSell}

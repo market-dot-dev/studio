@@ -5,6 +5,7 @@ import { OnboardingStepName } from "@/app/services/onboarding/onboarding-steps";
 import { Button, ButtonProps } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { toast } from "sonner";
 
 interface OnboardingActionProps {
   currentStep: OnboardingStepName;
@@ -39,6 +40,7 @@ export function OnboardingAction({
       }
     } catch (error) {
       console.error("Failed to complete onboarding step:", error);
+      toast.error("Something went wrong completing this step. Please try again.");
     }
   };
 
