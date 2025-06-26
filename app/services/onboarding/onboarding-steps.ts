@@ -38,7 +38,6 @@ export const ONBOARDING_STEPS = {
 export type OnboardingStepName = keyof typeof ONBOARDING_STEPS;
 
 export const ONBOARDING_STEP_NAMES = Object.keys(ONBOARDING_STEPS) as OnboardingStepName[];
-export const TOTAL_ONBOARDING_STEPS = ONBOARDING_STEP_NAMES.length;
 
 export type OnboardingState = {
   [K in OnboardingStepName]: {
