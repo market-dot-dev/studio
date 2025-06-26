@@ -9,8 +9,8 @@ import {
   getOrganizationSwitcherContext,
   requireOrganization
 } from "@/app/services/user-context-service";
+import { NoStripeBanner } from "@/components/common/no-stripe-banner";
 import SessionRefresher from "@/components/common/session-refresher";
-import { StripeDisabledBanner } from "@/components/common/stripe-disabled-banner";
 import { DashboardProvider } from "@/components/dashboard/dashboard-context";
 import { Header } from "@/components/header/header";
 import { DashboardSidebar } from "@/components/navigation/dashboard-sidebar";
@@ -43,7 +43,7 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
         <Header />
         <DashboardSidebar orgContext={orgContext} isMarketExpert={isMarketExpert} site={site} />
         <main className="flex min-h-screen w-screen flex-col items-center bg-stone-100 pt-10 md:w-[calc(100vw-var(--sidebar-width))]">
-          {org.stripeAccountDisabled && <StripeDisabledBanner />}
+          <NoStripeBanner />
           <div className="flex w-full max-w-screen-xl flex-col gap-y-8 p-6 sm:p-10 sm:pt-8">
             {children}
           </div>
