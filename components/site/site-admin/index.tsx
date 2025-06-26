@@ -173,8 +173,7 @@ export default function SiteAdmin({ id }: { id: string }) {
                         Logo
                       </Label>
                       <p className="text-xs text-stone-500">
-                        Your logo is used in your site, for favicons and Open Graph
-                        images.
+                        Your logo is used in your site, for favicons and Open Graph images.
                       </p>
                     </div>
                     <Uploader
@@ -236,8 +235,8 @@ export default function SiteAdmin({ id }: { id: string }) {
                 Last Updated:{" "}
                 {homepage?.updatedAt
                   ? formatDistanceToNow(new Date(homepage.updatedAt), {
-                    addSuffix: true
-                  })
+                      addSuffix: true
+                    })
                   : "Unknown"}
               </p>
             </div>
