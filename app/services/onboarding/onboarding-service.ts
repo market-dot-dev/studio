@@ -1,7 +1,6 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { JsonValue } from "@prisma/client/runtime/library";
 import { requireOrganization, requireUserSession } from "../user-context-service";
 import {
   defaultOnboardingState,
@@ -10,22 +9,20 @@ import {
 } from "./onboarding-steps";
 
 /**
- * Safely parses onboarding JSON from JsonValue (JSONB field)
+ * Safely parses onboarding state from Prisma Json field
+ * Prisma automatically parses JSONB, so we just need type checking
  */
-function parseOnboardingState(jsonValue: JsonValue | null): OnboardingState {
+function parseOnboardingState(jsonValue: unknown): OnboardingState {
+  // Handle null/undefined
   if (!jsonValue) return defaultOnboardingState;
 
-  try {
-    // Return if an object (Prisma auto-parses JSONB)
-    if (typeof jsonValue === "object" && jsonValue !== null && !Array.isArray(jsonValue)) {
-      return jsonValue as unknown as OnboardingState;
-    }
-
-    return defaultOnboardingState;
-  } catch (error) {
-    console.error("Failed to parse onboarding JSON:", error);
-    return defaultOnboardingState;
+  // Validate it's an object with the expected structure
+  if (typeof jsonValue === "object" && jsonValue !== null && !Array.isArray(jsonValue)) {
+    return jsonValue as OnboardingState;
   }
+
+  console.error("Invalid onboarding state format:", jsonValue);
+  return defaultOnboardingState;
 }
 
 /**
@@ -48,32 +45,36 @@ export async function completeOnboardingStep(stepName: OnboardingStepName) {
   const { org, onboarding } = await getOnboardingData();
 
   // Update the specific step to completed
-  onboarding[stepName] = {
-    completed: true,
-    completedAt: new Date().toISOString()
+  const updatedOnboarding: OnboardingState = {
+    ...onboarding,
+    [stepName]: {
+      completed: true,
+      completedAt: new Date().toISOString()
+    }
   };
 
+  // Pass the object directly - Prisma handles JSON serialization
   await prisma.organization.update({
     where: { id: org.id },
-    data: { onboarding: JSON.stringify(onboarding) }
+    data: { onboarding: updatedOnboarding }
   });
 
-  return onboarding;
+  return updatedOnboarding;
 }
 
 /**
- * Checks if the current user needs to see onboarding
+ * Checks if org has been onboarded (for owners)
  */
-export async function shouldShowOnboarding() {
+export async function isOrgOnboarded() {
   const { org, onboarding } = await getOnboardingData();
   const user = await requireUserSession();
 
   // Only show onboarding to organization owners
   if (org.ownerId !== user.id) {
-    return false;
+    return true;
   }
 
-  return !onboarding.completed;
+  return onboarding.completed;
 }
 
 /**
@@ -82,11 +83,17 @@ export async function shouldShowOnboarding() {
 export async function completeOnboarding() {
   const { org, onboarding } = await getOnboardingData();
 
-  onboarding.completed = true;
-  onboarding.completedAt = new Date().toISOString();
+  const updatedOnboarding: OnboardingState = {
+    ...onboarding,
+    completed: true,
+    completedAt: new Date().toISOString()
+  };
 
+  // Pass the object directly - no JSON.stringify needed
   await prisma.organization.update({
     where: { id: org.id },
-    data: { onboarding: JSON.stringify(onboarding) }
+    data: { onboarding: updatedOnboarding }
   });
+
+  return updatedOnboarding;
 }

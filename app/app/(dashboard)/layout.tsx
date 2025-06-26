@@ -1,8 +1,5 @@
 import { organizationIsMarketExpert } from "@/app/services/market-service";
-import {
-  getOnboardingData,
-  shouldShowOnboarding
-} from "@/app/services/onboarding/onboarding-service";
+import { getOnboardingData, isOrgOnboarded } from "@/app/services/onboarding/onboarding-service";
 import { getFirstIncompleteStep } from "@/app/services/onboarding/onboarding-steps";
 import { getSiteByOrgId } from "@/app/services/site/site-crud-service";
 import {
@@ -21,9 +18,9 @@ import { ReactNode } from "react";
 export default async function DashboardLayout(props: { children: ReactNode }) {
   const { children } = props;
 
-  const needsOnboarding = await shouldShowOnboarding();
+  const isOnboarded = await isOrgOnboarded();
 
-  if (needsOnboarding) {
+  if (!isOnboarded) {
     const { onboarding } = await getOnboardingData();
     const nextStep = getFirstIncompleteStep(onboarding);
     if (nextStep) {
