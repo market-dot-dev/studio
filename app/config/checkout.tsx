@@ -5,3 +5,5 @@ export const DEFAULT_PLATFORM_FEE_PERCENT = 1.0;
 
 export const CHECKOUT_CURRENCY = "USD";
 export const CHECKOUT_CURRENCY_SYMBOL = "$";
+
+export const STRIPE_DASHBOARD_URL = "https://dashboard.stripe.com";
