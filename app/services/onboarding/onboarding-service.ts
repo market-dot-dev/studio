@@ -1,136 +1,99 @@
 "use server";
 
-import { businessDescription } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
-import { includeOrganizationOnboarding, OrganizationOnboardingData } from "@/types/onboarding";
-import { requireUser, requireUserSession } from "../user-context-service";
-import { defaultOnboardingState, OnboardingState } from "./onboarding-steps";
+import { requireOrganization, requireUserSession } from "../user-context-service";
+import {
+  defaultOnboardingState,
+  type OnboardingState,
+  type OnboardingStepName
+} from "./onboarding-steps";
 
 /**
- * Safely parses onboarding JSON from string
+ * Safely parses onboarding state from Prisma Json field
+ * Prisma automatically parses JSONB, so we just need type checking
  */
-function parseOnboardingState(jsonString: string | null): OnboardingState {
-  if (!jsonString) return defaultOnboardingState;
+function parseOnboardingState(jsonValue: unknown): OnboardingState {
+  // Handle null/undefined
+  if (!jsonValue) return defaultOnboardingState;
 
-  try {
-    return JSON.parse(jsonString) as OnboardingState;
-  } catch (error) {
-    console.error("Failed to parse onboarding JSON:", error);
-    return defaultOnboardingState;
+  // Validate it's an object with the expected structure
+  if (typeof jsonValue === "object" && jsonValue !== null && !Array.isArray(jsonValue)) {
+    return jsonValue as OnboardingState;
   }
+
+  console.error("Invalid onboarding state format:", jsonValue);
+  return defaultOnboardingState;
 }
 
 /**
- * Saves the onboarding state to the user record
+ * Gets the current onboarding state for the organization
  */
-export async function saveState(state: OnboardingState): Promise<void> {
-  const user = await requireUserSession();
-  await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      onboarding: JSON.stringify(state)
+export async function getOnboardingData() {
+  const org = await requireOrganization();
+  const onboarding = parseOnboardingState(org.onboarding);
+
+  return {
+    org: { id: org.id, ownerId: org.owner.id },
+    onboarding
+  };
+}
+
+/**
+ * Marks a specific step as completed in the onboarding flow
+ */
+export async function completeOnboardingStep(stepName: OnboardingStepName) {
+  const { org, onboarding } = await getOnboardingData();
+
+  // Update the specific step to completed
+  const updatedOnboarding: OnboardingState = {
+    ...onboarding,
+    [stepName]: {
+      completed: true,
+      completedAt: new Date().toISOString()
     }
-  });
-}
-
-/**
- * Validates if business setup is complete
- */
-function isBusinessSetupComplete(organization: OrganizationOnboardingData): boolean {
-  return !!(organization.businessLocation && organization.businessType);
-}
-
-/**
- * Validates if project setup is complete
- */
-function isProjectSetupComplete(organization: OrganizationOnboardingData): boolean {
-  return organization.description !== businessDescription;
-}
-
-/**
- * Validates if site setup is complete
- */
-function isSiteSetupComplete(organization: OrganizationOnboardingData): boolean {
-  if (!organization.sites?.length) return false;
-
-  const site = organization.sites[0];
-  if (site.pages.length > 1) return true;
-
-  return (
-    site.pages.length === 1 && new Date(site.pages[0].updatedAt) > new Date(site.pages[0].createdAt)
-  );
-}
-
-/**
- * Refreshes and returns the current onboarding state,
- * checking various organization fields to determine completion status
- */
-export async function refreshAndGetState(preferredServices?: string[]): Promise<OnboardingState> {
-  const user = await requireUserSession();
-
-  // Get user for the onboarding JSON
-  const updated = await prisma.user.findUnique({
-    where: { id: user.id },
-    select: {
-      currentOrganizationId: true,
-      onboarding: true
-    }
-  });
-
-  if (!updated?.currentOrganizationId) {
-    throw new Error("User or organization ID not found");
-  }
-
-  // Get organization data for determining step completion
-  const organization = await prisma.organization.findUnique({
-    where: { id: updated.currentOrganizationId },
-    ...includeOrganizationOnboarding
-  });
-
-  if (!organization) {
-    throw new Error("Organization not found");
-  }
-
-  // Parse current onboarding state
-  const onboardingState = parseOnboardingState(updated.onboarding);
-
-  // Update completion statuses
-  const updatedState = {
-    ...onboardingState,
-    setupBusiness: isBusinessSetupComplete(organization),
-    setupProject: isProjectSetupComplete(organization),
-    setupPayment: !!organization.stripeAccountId,
-    setupTiers: !!(organization.tiers && organization.tiers.length > 0),
-    setupSite: isSiteSetupComplete(organization),
-    ...(preferredServices ? { preferredServices } : {})
   };
 
-  await saveState(updatedState);
-  return updatedState;
-}
-
-/**
- * Resets the onboarding state to default
- */
-export async function resetState(): Promise<void> {
-  await saveState(defaultOnboardingState);
-}
-
-/**
- * Gets the current onboarding state from the user record
- */
-export async function getCurrentState(): Promise<OnboardingState> {
-  const user = await requireUser();
-  return parseOnboardingState(user.onboarding);
-}
-
-/**
- * Dismisses the onboarding
- */
-export async function dismissOnboarding(): Promise<void> {
-  const currentOnboarding = await getCurrentState();
-  await saveState({
-    ...currentOnboarding,
-    isDismissed: true
+  // Pass the object directly - Prisma handles JSON serialization
+  await prisma.organization.update({
+    where: { id: org.id },
+    data: { onboarding: updatedOnboarding }
   });
+
+  return updatedOnboarding;
+}
+
+/**
+ * Checks if org has been onboarded (for owners)
+ */
+export async function isOrgOnboarded() {
+  const { org, onboarding } = await getOnboardingData();
+  const user = await requireUserSession();
+
+  // Only show onboarding to organization owners
+  if (org.ownerId !== user.id) {
+    return true;
+  }
+
+  return onboarding.completed;
+}
+
+/**
+ * Completes the onboarding flow manually
+ */
+export async function completeOnboarding() {
+  const { org, onboarding } = await getOnboardingData();
+
+  const updatedOnboarding: OnboardingState = {
+    ...onboarding,
+    completed: true,
+    completedAt: new Date().toISOString()
+  };
+
+  // Pass the object directly - no JSON.stringify needed
+  await prisma.organization.update({
+    where: { id: org.id },
+    data: { onboarding: updatedOnboarding }
+  });
+
+  return updatedOnboarding;
 }

@@ -159,11 +159,6 @@ export default function PageContainer({
       }
 
       toast.success("The page was successfully saved");
-
-      if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
-        (window as any).refreshOnboarding();
-      }
-
       router.refresh();
     } catch (error) {
       console.error("Error saving page:", error);

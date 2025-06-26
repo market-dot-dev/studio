@@ -36,7 +36,7 @@ export function PricingTableCard({
           <p className="text-muted-foreground">
             {price === "Free"
               ? "No credit card required"
-              : `Billed ${isAnnual ? "annually" : "monthly"}`}
+              : `Billed ${isAnnual ? "yearly" : "monthly"}`}
           </p>
         </div>
 

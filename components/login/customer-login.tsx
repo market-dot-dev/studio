@@ -280,14 +280,14 @@ export function CustomerLoginComponent({
               {isSignUp ? (
                 <>
                   <span>Already have an account?</span>{" "}
-                  <Button variant="link" className="!h-fit p-0" onClick={toggleSignUp}>
+                  <Button variant="link" onClick={toggleSignUp}>
                     Sign in
                   </Button>
                 </>
               ) : (
                 <>
                   <span>Don&apos;t have an account?</span>{" "}
-                  <Button variant="link" className="!h-fit p-0" onClick={toggleSignUp}>
+                  <Button variant="link" onClick={toggleSignUp}>
                     Sign up
                   </Button>
                 </>

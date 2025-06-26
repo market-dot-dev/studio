@@ -1,14 +1,14 @@
 "use server";
 
-import { requireOrganization } from "@/app/services/user-context-service";
-import BusinessSettings from "@/components/organization/business-settings";
+import { getCurrentOrganizationForSettings } from "@/app/services/organization/organization-service";
+import { VendorOrganizationSettingsForm } from "./organization/vendor-organization-settings-form";
 
 export default async function SettingsPage() {
-  const org = await requireOrganization();
+  const org = await getCurrentOrganizationForSettings();
 
   return (
-    <div className="space-y-6">
-      <BusinessSettings organization={org} />
+    <div className="w-full lg:max-w-screen-sm">
+      <VendorOrganizationSettingsForm organization={org} />
     </div>
   );
 }

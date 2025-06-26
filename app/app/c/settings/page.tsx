@@ -1,14 +1,14 @@
-import { requireOrganization, requireUser } from "@/app/services/user-context-service";
+import { getCurrentOrganizationForSettings } from "@/app/services/organization/organization-service";
 import PageHeader from "@/components/common/page-header";
-import CustomerSettings from "@/components/organization/customer-settings";
+import { CustomerOrganizationSettingsForm } from "./customer-organization-settings-form";
 
-export default async function SettingsPage() {
-  const user = await requireUser();
-  const org = await requireOrganization();
+export default async function CustomerSettingsPage() {
+  const org = await getCurrentOrganizationForSettings();
+
   return (
     <div className="space-y-10 p-12 pt-10">
       <PageHeader title="Settings" />
-      <CustomerSettings user={user} organization={org} />
+      <CustomerOrganizationSettingsForm organization={org} />
     </div>
   );
 }

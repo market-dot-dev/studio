@@ -2,6 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import {
+  type CurrentOrganizationForSettings,
   FullOrganization,
   MinimalOrganization,
   includeFullOrg,
@@ -139,13 +140,14 @@ export async function updateCurrentOrganizationBusiness(
  * Get current organization for settings display
  * Returns organization with business fields needed for forms
  */
-export async function getCurrentOrganizationForSettings() {
+export async function getCurrentOrganizationForSettings(): Promise<CurrentOrganizationForSettings> {
   const org = await requireOrganization();
   return {
     id: org.id,
     name: org.name,
     description: org.description,
     businessType: org.businessType,
-    businessLocation: org.businessLocation
+    businessLocation: org.businessLocation,
+    subdomain: org.sites[0]?.subdomain ?? null
   };
 }

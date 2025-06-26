@@ -18,8 +18,18 @@ export const includeMinimalOrg = Prisma.validator<Prisma.OrganizationDefaultArgs
         name: true
       }
     },
+    sites: {
+      select: {
+        subdomain: true
+      },
+      take: 1,
+      orderBy: {
+        createdAt: "asc"
+      }
+    },
     createdAt: true,
     updatedAt: true,
+    onboarding: true,
     marketExpertId: true,
     stripeAccountId: true,
     stripeAccountDisabled: true
@@ -139,4 +149,13 @@ export interface OrganizationSwitcherContext {
     role: string;
     createdAt: Date;
   }>;
+}
+
+export interface CurrentOrganizationForSettings {
+  id: string;
+  name: string;
+  description: string | null;
+  businessType: string | null;
+  businessLocation: string | null;
+  subdomain: string | null;
 }

@@ -13,21 +13,12 @@ import {
   AlertDialogTrigger
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { useEffect } from "react";
 
 interface DisconnectStripeBtnProps {
   stripeAccountId?: string;
 }
 
 export function DisconnectStripeBtn({ stripeAccountId }: DisconnectStripeBtnProps) {
-  // This is to refresh the onboarding guide if it exists
-  useEffect(() => {
-    // Call the refreshOnboarding function if it exists
-    if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
-      (window as any).refreshOnboarding();
-    }
-  }, []);
-
   const handleDisconnect = async () => {
     try {
       await disconnectVendorStripeAccount();
@@ -54,7 +45,9 @@ export function DisconnectStripeBtn({ stripeAccountId }: DisconnectStripeBtnProp
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDisconnect}>Disconnect</AlertDialogAction>
+          <AlertDialogAction variant="destructive" onClick={handleDisconnect}>
+            Disconnect
+          </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

@@ -164,3 +164,13 @@ export const generateId = customAlphabet(
 export function generateUniqueFilename(extension: string): string {
   return `${generateId()}.${extension || "unknown"}`;
 }
+
+/**
+ * Validates an email address
+ * @param email The email address to validate
+ * @returns True if the email is valid, false otherwise
+ */
+export const isValidEmail = (email: string): boolean => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};

@@ -1,4 +1,6 @@
-import { User } from "@/app/generated/prisma";
+"use client";
+
+import { SessionUser } from "@/app/models/Session";
 import { updateCurrentUser } from "@/app/services/UserService";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -6,46 +8,56 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { VisuallyHidden } from "@radix-ui/themes";
 import { UserRound } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 
-// Type for the fields we can update
 type EditableUserFields = {
   name: string | null;
   email: string | null;
 };
 
 interface ProfileSettingsModalProps {
-  user: Partial<User>;
+  user: SessionUser;
 }
 
 export default function ProfileSettingsModal({ user }: ProfileSettingsModalProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const router = useRouter();
+  const { update } = useSession();
 
-  // Extract only the editable fields we care about
   const [userData, setUserData] = useState<EditableUserFields>({
     name: user.name ?? null,
     email: user.email ?? null
   });
 
-  const saveChanges = useCallback(async () => {
-    setIsSaving(true);
-    try {
-      await updateCurrentUser({
-        name: userData.name,
-        email: userData.email
-      });
-      toast.success("Profile updated");
-      setIsOpen(false);
-    } catch (error) {
-      console.error("Error updating user:", error);
-      toast.error("An unknown error occurred");
-    } finally {
-      setIsSaving(false);
-    }
-  }, [userData]);
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent<HTMLFormElement>) => {
+      e.preventDefault();
+      setIsSaving(true);
+      try {
+        await updateCurrentUser({
+          name: userData.name,
+          email: userData.email
+        });
+
+        await update();
+
+        toast.success("Profile updated");
+        setIsOpen(false);
+        router.refresh();
+      } catch (error) {
+        console.error("Error updating user:", error);
+        toast.error("An unknown error occurred");
+      } finally {
+        setIsSaving(false);
+      }
+    },
+    [userData, router, update]
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
@@ -73,7 +85,7 @@ export default function ProfileSettingsModal({ user }: ProfileSettingsModalProps
             </div>
           </div>
 
-          <div className="grid gap-5 py-6">
+          <form onSubmit={handleSubmit} className="grid gap-6 pt-6">
             <div className="flex w-full flex-col gap-2">
               <Label htmlFor="name">Name</Label>
               <Input
@@ -84,6 +96,7 @@ export default function ProfileSettingsModal({ user }: ProfileSettingsModalProps
                 onChange={(e) => {
                   setUserData({ ...userData, name: e.target.value || null });
                 }}
+                required
               />
             </div>
             <div className="flex w-full flex-col gap-2">
@@ -97,18 +110,18 @@ export default function ProfileSettingsModal({ user }: ProfileSettingsModalProps
                 onChange={(e) => {
                   setUserData({ ...userData, email: e.target.value || null });
                 }}
+                required
               />
             </div>
-          </div>
-          <Button
-            loading={isSaving}
-            loadingText="Saving..."
-            disabled={isSaving}
-            onClick={saveChanges}
-            className="w-full"
-          >
-            Save Changes
-          </Button>
+            <Button
+              type="submit"
+              loading={isSaving}
+              loadingText="Saving Changes"
+              className="w-full"
+            >
+              Save Changes
+            </Button>
+          </form>
         </div>
       </DialogContent>
     </Dialog>
