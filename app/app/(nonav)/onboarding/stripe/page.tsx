@@ -42,7 +42,7 @@ export default async function StripeOnboardingPage() {
                 <div className="text-sm">
                   <p className="font-medium">Accept credit card payments</p>
                   <p className="text-muted-foreground">
-                    Let customers pay for your services directly through your store.
+                    Let customers pay for your services directly.
                   </p>
                 </div>
               </div>
@@ -72,7 +72,7 @@ export default async function StripeOnboardingPage() {
                   <div className="text-sm">
                     <p className="font-medium">Accept credit card payments</p>
                     <p className="text-muted-foreground">
-                      Let customers pay for your services directly through your store.
+                      Let customers pay for your services directly.
                     </p>
                   </div>
                 </div>

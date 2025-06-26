@@ -145,7 +145,7 @@ export default function SiteAdmin({ id }: { id: string }) {
                         Subdomain
                       </Label>
                       <p className="text-xs text-stone-500">
-                        Your store will appear at{" "}
+                        Your site will appear at{" "}
                         <Link className="underline" href={siteURL}>
                           {siteURL}.
                         </Link>
@@ -161,7 +161,7 @@ export default function SiteAdmin({ id }: { id: string }) {
                   <div className="flex w-full flex-col items-start gap-2">
                     <Label htmlFor="name">Name</Label>
                     <Input
-                      placeholder="Your store title"
+                      placeholder="Your site title"
                       name="name"
                       id="name"
                       defaultValue={siteData.name ?? ""}
@@ -173,7 +173,7 @@ export default function SiteAdmin({ id }: { id: string }) {
                         Logo
                       </Label>
                       <p className="text-xs text-stone-500">
-                        Your store logo is used in your web storefront, for favicons and Open Graph
+                        Your logo is used in your site, for favicons and Open Graph
                         images.
                       </p>
                     </div>
@@ -236,8 +236,8 @@ export default function SiteAdmin({ id }: { id: string }) {
                 Last Updated:{" "}
                 {homepage?.updatedAt
                   ? formatDistanceToNow(new Date(homepage.updatedAt), {
-                      addSuffix: true
-                    })
+                    addSuffix: true
+                  })
                   : "Unknown"}
               </p>
             </div>

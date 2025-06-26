@@ -23,7 +23,7 @@ export default async function OnboardingCompletePage() {
   return (
     <div className="mx-auto max-w-md">
       <div className="space-y-8">
-        <OnboardingHeader title="All Done!" description="Your store is ready to use" />
+        <OnboardingHeader title="All Done!" description="You're ready to start selling." />
 
         <p className="text-sm font-medium text-muted-foreground">Here's what you should do next:</p>
 
