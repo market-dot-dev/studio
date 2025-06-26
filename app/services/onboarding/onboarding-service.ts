@@ -2,7 +2,7 @@
 
 import prisma from "@/lib/prisma";
 import { JsonValue } from "@prisma/client/runtime/library";
-import { requireUserSession } from "../user-context-service";
+import { requireOrganization, requireUserSession } from "../user-context-service";
 import {
   defaultOnboardingState,
   type OnboardingState,
@@ -21,11 +21,6 @@ function parseOnboardingState(jsonValue: JsonValue | null): OnboardingState {
       return jsonValue as unknown as OnboardingState;
     }
 
-    // Parse if it's a string (legacy)
-    if (typeof jsonValue === "string") {
-      return JSON.parse(jsonValue) as OnboardingState;
-    }
-
     return defaultOnboardingState;
   } catch (error) {
     console.error("Failed to parse onboarding JSON:", error);
@@ -34,40 +29,14 @@ function parseOnboardingState(jsonValue: JsonValue | null): OnboardingState {
 }
 
 /**
- * Gets the current organization with onboarding field
- */
-async function getOrganizationWithOnboarding() {
-  const user = await requireUserSession();
-
-  if (!user.currentOrgId) {
-    throw new Error("No current organization");
-  }
-
-  const org = await prisma.organization.findUnique({
-    where: { id: user.currentOrgId },
-    select: {
-      id: true,
-      onboarding: true,
-      ownerId: true
-    }
-  });
-
-  if (!org) {
-    throw new Error("Organization not found");
-  }
-
-  return org;
-}
-
-/**
  * Gets the current onboarding state for the organization
  */
 export async function getOnboardingData() {
-  const org = await getOrganizationWithOnboarding();
+  const org = await requireOrganization();
   const onboarding = parseOnboardingState(org.onboarding);
 
   return {
-    org: { id: org.id, ownerId: org.ownerId },
+    org: { id: org.id, ownerId: org.owner.id },
     onboarding
   };
 }
@@ -96,24 +65,15 @@ export async function completeOnboardingStep(stepName: OnboardingStepName) {
  * Checks if the current user needs to see onboarding
  */
 export async function shouldShowOnboarding() {
-  try {
-    const user = await requireUserSession();
+  const { org, onboarding } = await getOnboardingData();
+  const user = await requireUserSession();
 
-    if (!user.currentOrgId) {
-      return false;
-    }
-
-    const { org, onboarding } = await getOnboardingData();
-
-    // Only show onboarding to organization owners
-    if (org.ownerId !== user.id) {
-      return false;
-    }
-
-    return !onboarding.completed;
-  } catch {
+  // Only show onboarding to organization owners
+  if (org.ownerId !== user.id) {
     return false;
   }
+
+  return !onboarding.completed;
 }
 
 /**
