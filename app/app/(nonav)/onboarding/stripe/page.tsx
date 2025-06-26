@@ -5,7 +5,7 @@ import {
   getVendorStripeConnectURL
 } from "@/app/services/stripe/stripe-vendor-service";
 import { requireOrganization } from "@/app/services/user-context-service";
-import { CreditCard, Mail, RefreshCw, Settings } from "lucide-react";
+import { CreditCard, LinkIcon, Mail, RefreshCw, Settings } from "lucide-react";
 import { OnboardingAction } from "../onboarding-action";
 
 export default async function StripeOnboardingPage() {
@@ -63,23 +63,48 @@ export default async function StripeOnboardingPage() {
           {/* What you can do */}
           <div className="space-y-3">
             <h3 className="text-sm font-medium text-muted-foreground">
-              {canSell ? "Stripe is connected and ready!" : "What you can do without Stripe:"}
+              {canSell
+                ? "With your Stripe account connected, you can:"
+                : "Without Stripe, you can still:"}
             </h3>
+            {canSell && (
+              <>
+                <div className="flex items-start space-x-3">
+                  <CreditCard className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                  <div className="text-sm">
+                    <p className="font-medium">Accept credit card payments</p>
+                    <p className="text-muted-foreground">
+                      Let customers pay for your services directly through your store.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3">
+                  <RefreshCw className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+                  <div className="text-sm">
+                    <p className="font-medium">Offer subscription services</p>
+                    <p className="text-muted-foreground">
+                      Set up recurring payments for ongoing services.
+                    </p>
+                  </div>
+                </div>
+              </>
+            )}
             <div className="flex items-start space-x-3">
-              <CreditCard className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
+              <LinkIcon className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
               <div className="text-sm">
-                <p className="font-medium">Create checkout pages</p>
+                <p className="font-medium">Create checkout links</p>
                 <p className="text-muted-foreground">
-                  You can set up your packages and checkout pages.
+                  Use our purpose-built checkout pages to offer services.
                 </p>
               </div>
             </div>
             <div className="flex items-start space-x-3">
               <Mail className="mt-0.5 size-4 shrink-0 text-muted-foreground" />
               <div className="text-sm">
-                <p className="font-medium">Collect customer details</p>
+                <p className="font-medium">Use contact forms</p>
                 <p className="text-muted-foreground">
-                  Gather leads and contact information from interested customers.
+                  Collect leads details from your checkout page & get in touch with interested
+                  customers.
                 </p>
               </div>
             </div>
