@@ -1,20 +1,20 @@
 "use client";
 
 import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
-import { checkoutAction, getCurrentBilling, getPlanPricing } from "@/app/services/platform";
+import { checkoutAction, getPlanPricing } from "@/app/services/platform";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PricingData } from "@/types/platform";
-import { getSubscriptionInfo } from "@/utils/subscription-utils";
 import NumberFlow from "@number-flow/react";
 import { CreditCard } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
 import { FeatureList } from "./feature-list";
+
 interface PricingPageFormProps {
   pricingData: PricingData;
   defaultPlan: "free" | "pro";
@@ -39,22 +39,12 @@ export function PricingPageForm({ pricingData, defaultPlan }: PricingPageFormPro
       if (selectedPlan === "free") {
         await completeOnboardingStep("pricing");
         router.push("/onboarding/complete");
-        return;
-      }
-
-      // Redirect to Stripe checkout if user is currently on Free plan and upgrading to Pro.
-      const billing = await getCurrentBilling();
-      const subscriptionInfo = getSubscriptionInfo(billing);
-
-      if (subscriptionInfo.isFree) {
+      } else {
         const planPricing = await getPlanPricing();
-        const checkoutFormData = new FormData();
-        checkoutFormData.append(
-          "priceId",
-          isAnnual ? planPricing.pro.yearly : planPricing.pro.monthly
-        );
-        checkoutFormData.append("returnPath", `/onboarding/pricing`);
-        await checkoutAction(checkoutFormData);
+        const formData = new FormData();
+        formData.append("priceId", isAnnual ? planPricing.pro.yearly : planPricing.pro.monthly);
+        formData.append("returnPath", "/onboarding/pricing");
+        await checkoutAction(formData);
       }
     } catch (error) {
       console.error("Failed to continue:", error);
