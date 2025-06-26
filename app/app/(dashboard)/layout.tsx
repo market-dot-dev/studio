@@ -1,8 +1,9 @@
 import { organizationIsMarketExpert } from "@/app/services/market-service";
 import {
-  getNextOnboardingStep,
+  getOnboardingData,
   shouldShowOnboarding
 } from "@/app/services/onboarding/onboarding-service";
+import { getFirstIncompleteStep } from "@/app/services/onboarding/onboarding-steps";
 import { getSiteByOrgId } from "@/app/services/site/site-crud-service";
 import {
   getOrganizationSwitcherContext,
@@ -21,10 +22,12 @@ export default async function DashboardLayout(props: { children: ReactNode }) {
   const { children } = props;
 
   const needsOnboarding = await shouldShowOnboarding();
+
   if (needsOnboarding) {
-    const nextStep = await getNextOnboardingStep();
+    const { onboarding } = await getOnboardingData();
+    const nextStep = getFirstIncompleteStep(onboarding);
     if (nextStep) {
-      redirect(nextStep);
+      redirect(nextStep.path);
     }
   }
 

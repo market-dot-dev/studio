@@ -1,6 +1,6 @@
 import { PlanInformation } from "@/app/app/(dashboard)/settings/billing/plan-information";
 import { StripeCustomerPortal } from "@/app/app/(dashboard)/settings/billing/stripe-customer-portal";
-import { ONBOARDING_STEPS } from "@/app/services/onboarding/onboarding-steps";
+import { ONBOARDING_STEPS, getNextStepPath } from "@/app/services/onboarding/onboarding-steps";
 import { getCachedPricing, getCurrentBilling } from "@/app/services/platform";
 import { getPlanDisplayLabel, getSubscriptionInfo } from "@/utils/subscription-utils";
 import { OnboardingAction } from "../onboarding-action";
@@ -13,8 +13,10 @@ export default async function PricingPage() {
   const subscriptionInfo = getSubscriptionInfo(billing);
   const hasActiveSubscription = subscriptionInfo.isSubscriptionActive && !subscriptionInfo.isFree;
   const defaultPlan = hasActiveSubscription ? "pro" : "free";
-
   const planDisplayName = billing?.planType ? getPlanDisplayLabel(billing.planType) : "Your plan";
+
+  const currentStep = ONBOARDING_STEPS["pricing"];
+  const nextPath = getNextStepPath(currentStep.name);
 
   return (
     <div className="relative space-y-6">
@@ -33,8 +35,8 @@ export default async function PricingPage() {
             customerPortal={<StripeCustomerPortal returnPath="/onboarding/pricing" />}
           />
           <OnboardingAction
-            currentStep={ONBOARDING_STEPS.PRICING}
-            nextPath="/onboarding/complete"
+            currentStep={currentStep.name}
+            nextPath={nextPath}
             label="Continue & Finish"
           />
         </div>

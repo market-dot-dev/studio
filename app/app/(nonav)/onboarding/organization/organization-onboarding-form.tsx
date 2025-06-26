@@ -1,6 +1,5 @@
 "use client";
 
-import { ONBOARDING_STEPS } from "@/app/services/onboarding/onboarding-steps";
 import { CountrySelect } from "@/components/form/country-select";
 import { submitOrganizationForm } from "@/components/organization/organization-form-action";
 import { Input } from "@/components/ui/input";
@@ -105,7 +104,7 @@ export function OrganizationOnboardingForm({
       </form>
       {errors._form && <div className="text-xs text-destructive">{errors._form}</div>}
       <OnboardingAction
-        currentStep={ONBOARDING_STEPS.ORGANIZATION}
+        currentStep="organization"
         nextPath={nextPath}
         beforeAction={handleBeforeAction}
       />

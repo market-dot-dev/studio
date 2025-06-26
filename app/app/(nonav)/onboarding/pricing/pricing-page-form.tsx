@@ -1,7 +1,6 @@
 "use client";
 
 import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
-import { ONBOARDING_STEPS } from "@/app/services/onboarding/onboarding-steps";
 import { checkoutAction, getCurrentBilling, getPlanPricing } from "@/app/services/platform";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -38,7 +37,7 @@ export function PricingPageForm({ pricingData, defaultPlan }: PricingPageFormPro
   const handleContinue = async () => {
     try {
       if (selectedPlan === "free") {
-        await completeOnboardingStep(ONBOARDING_STEPS.PRICING);
+        await completeOnboardingStep("pricing");
         router.push("/onboarding/complete");
         return;
       }
