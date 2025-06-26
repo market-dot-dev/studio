@@ -92,7 +92,7 @@
     "@types/pretty": "^2.0.3",
     "@types/react": "19.1.8",
     "@types/react-dom": "19.1.6",
-    "@vitejs/plugin-react": "^4.5.2",
+    "@vitejs/plugin-react": "^4.6.0",
     "autoprefixer": "^10.4.21",
     "cross-env": "^7.0.3",
     "eslint": "9.29.0",
