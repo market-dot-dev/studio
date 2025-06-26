@@ -2,7 +2,7 @@
 
 import { OrganizationRole } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
-import { generateId } from "@/lib/utils";
+import { generateId, isValidEmail } from "@/lib/utils";
 import {
   InviteResult,
   InviteWithDetails,
@@ -13,11 +13,6 @@ import {
 import { revalidatePath } from "next/cache";
 import { sendTeamInvitationEmail } from "../email-service";
 import { requireOrganization, requireUser } from "../user-context-service";
-
-const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-};
 
 /**
  * Team management operations for organizations
