@@ -19,7 +19,7 @@ const buttonVariants = cva(
         secondary: "bg-stone-200 text-stone-600 hover:bg-stone-250 hover:text-stone-700",
         ghost: "hover:bg-stone-200 hover:text-accent-foreground",
         nude: "w-fit p-0 text-muted-foreground hover:text-foreground focus:text-foreground",
-        link: "text-primary underline-offset-4 hover:underline"
+        link: "!size-fit !p-0 text-primary underline-offset-2 hover:underline"
       },
       size: {
         default: "h-8 px-3",

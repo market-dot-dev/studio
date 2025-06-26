@@ -2,8 +2,7 @@ import { getVendorStripeErrorMessage } from "@/app/services/stripe/stripe-vendor
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
 import { ErrorMessageCode } from "@/types/stripe";
-import { AlertTriangle, CircleCheck, CreditCard } from "lucide-react";
-import Link from "next/link";
+import { AlertTriangle, CircleCheck, CreditCard, ExternalLink } from "lucide-react";
 import { ConnectStripeBtn } from "./connect-stripe-btn";
 import { StripeDashboardButton } from "./stripe-dashboard-button";
 
@@ -56,7 +55,10 @@ export function StripeAccountStatus({
           You can sell your services and receive payments.
         </AlertDescription>
         <Separator />
-        <StripeDashboardButton />
+        <StripeDashboardButton>
+          Go to Stripe Dashboard
+          <ExternalLink />
+        </StripeDashboardButton>
       </Alert>
     );
   }
@@ -94,15 +96,8 @@ export function StripeAccountStatus({
       <div className="px-4 pb-4 text-muted-foreground">
         <p className="mb-2">
           It looks like there are some issues with your Stripe account settings. Please visit your{" "}
-          <Link
-            href="https://dashboard.stripe.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-foreground underline decoration-muted-foreground underline-offset-2"
-          >
-            Stripe Dashboard
-          </Link>{" "}
-          to resolve these issues.
+          <StripeDashboardButton variant="link">Stripe Dashboard</StripeDashboardButton> to resolve
+          these issues.
         </p>
 
         {disabledReasons && disabledReasons.length > 0 && (
@@ -131,7 +126,10 @@ export function StripeAccountStatus({
         ))}
       </ul>
       <Separator />
-      <StripeDashboardButton />
+      <StripeDashboardButton>
+        Go to Stripe Dashboard
+        <ExternalLink />
+      </StripeDashboardButton>
     </Alert>
   );
 }

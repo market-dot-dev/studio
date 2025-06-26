@@ -1,13 +1,31 @@
-import { Button } from "@/components/ui/button";
-import { ExternalLink } from "lucide-react";
+import { Button, type ButtonProps } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
 
-export function StripeDashboardButton() {
+interface StripeDashboardButtonProps extends Omit<ButtonProps, "asChild"> {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function StripeDashboardButton({
+  variant = "outline",
+  children,
+  className,
+  ...props
+}: StripeDashboardButtonProps) {
   return (
-    <Button asChild variant="outline" className="w-full rounded-t-none shadow-none">
-      <Link href="https://dashboard.stripe.com" target="_blank" className="flex items-center gap-2">
-        Go to Stripe Dashboard
-        <ExternalLink className="size-3.5" />
+    <Button
+      asChild
+      variant={variant}
+      className={cn("w-full rounded-t-none shadow-none", className)}
+      {...props}
+    >
+      <Link
+        href={process.env.STRIPE_DASHBOARD_URL!}
+        target="_blank"
+        className="flex items-center gap-2"
+      >
+        {children}
       </Link>
     </Button>
   );
