@@ -1,30 +1,22 @@
 "use client";
 
-import { Organization } from "@/app/generated/prisma";
 import { CountrySelect } from "@/components/form/country-select";
 import { submitOrganizationForm } from "@/components/organization/organization-form-action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SubmitButton } from "@/components/ui/submit-button";
 import { Textarea } from "@/components/ui/textarea";
+import type { CurrentOrganizationForSettings } from "@/types/organization";
 import { AppWindowMac, Link } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-interface VendorOrganizationSettingsFormProps {
-  organization: {
-    name: Organization["name"];
-    description: Organization["description"];
-    businessLocation: Organization["businessLocation"];
-    subdomain?: string;
-    logo?: string;
-  };
-}
-
 export function VendorOrganizationSettingsForm({
   organization
-}: VendorOrganizationSettingsFormProps) {
+}: {
+  organization: CurrentOrganizationForSettings;
+}) {
   const [isPending, startTransition] = useTransition();
   const [errors, setErrors] = useState<Record<string, string>>({});
   const router = useRouter();
@@ -53,7 +45,7 @@ export function VendorOrganizationSettingsForm({
         <Input
           id="organizationName"
           name="organizationName"
-          defaultValue={organization.name ?? ""}
+          defaultValue={organization.name}
           required
         />
         {errors.organizationName && (

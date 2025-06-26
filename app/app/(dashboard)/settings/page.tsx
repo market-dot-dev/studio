@@ -1,24 +1,14 @@
 "use server";
 
-import { getCurrentSite } from "@/app/services/site/site-crud-service";
-import { requireOrganization } from "@/app/services/user-context-service";
+import { getCurrentOrganizationForSettings } from "@/app/services/organization/organization-service";
 import { VendorOrganizationSettingsForm } from "./organization/vendor-organization-settings-form";
 
 export default async function SettingsPage() {
-  const org = await requireOrganization();
-  const site = await getCurrentSite();
+  const org = await getCurrentOrganizationForSettings();
 
   return (
     <div className="w-full lg:max-w-screen-sm">
-      <VendorOrganizationSettingsForm
-        organization={{
-          name: org.name,
-          description: org.description,
-          businessLocation: org.businessLocation,
-          subdomain: site?.subdomain || undefined,
-          logo: site?.logo || undefined
-        }}
-      />
+      <VendorOrganizationSettingsForm organization={org} />
     </div>
   );
 }

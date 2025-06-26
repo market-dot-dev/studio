@@ -1,28 +1,21 @@
 "use client";
 
 import { CountrySelect } from "@/components/form/country-select";
+import { OnboardingAction } from "@/components/onboarding/onboarding-action";
 import { submitOrganizationForm } from "@/components/organization/organization-form-action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import type { CurrentOrganizationForSettings } from "@/types/organization";
 import { AppWindowMac, Link } from "lucide-react";
 import { useRef, useState } from "react";
-import { OnboardingAction } from "../onboarding-action";
 
 interface OrganizationOnboardingFormProps {
-  organization?: {
-    name?: string | null;
-    businessLocation?: string | null;
-  };
-  currentSite?: {
-    subdomain?: string | null;
-    logo?: string | null;
-  };
+  organization: CurrentOrganizationForSettings;
   nextPath: string;
 }
 
 export function OrganizationOnboardingForm({
   organization,
-  currentSite,
   nextPath
 }: OrganizationOnboardingFormProps) {
   const formRef = useRef<HTMLFormElement>(null);
@@ -56,7 +49,7 @@ export function OrganizationOnboardingForm({
               id="organizationName"
               name="organizationName"
               placeholder="Your Organization Name"
-              defaultValue={organization?.name ?? ""}
+              defaultValue={organization.name}
               required
               autoFocus
             />
@@ -70,7 +63,7 @@ export function OrganizationOnboardingForm({
               id="subdomain"
               name="subdomain"
               placeholder="your-domain"
-              defaultValue={currentSite?.subdomain ?? ""}
+              defaultValue={organization.subdomain ?? ""}
               suffix=".market.dev"
               pattern="[a-z0-9-]+"
               required
@@ -95,7 +88,7 @@ export function OrganizationOnboardingForm({
           <Label htmlFor="country">Country</Label>
           <CountrySelect
             name="country"
-            defaultValue={organization?.businessLocation ?? undefined}
+            defaultValue={organization.businessLocation ?? undefined}
             required
           />
           <p className="text-xs text-muted-foreground">Needed for billing & tax purposes.</p>
