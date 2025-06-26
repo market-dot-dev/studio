@@ -30,7 +30,7 @@ export const ONBOARDING_STEPS = {
   pricing: {
     name: "pricing",
     title: "Choose Your Plan",
-    description: "Select a pricing plan that fits your needs",
+    description: "Start for free or upgrade to Pro for commission-free sales & priority support.",
     path: "/onboarding/pricing"
   }
 } as const satisfies Record<string, OnboardingStep>;
