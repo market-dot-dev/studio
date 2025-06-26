@@ -143,7 +143,6 @@ export const authOptions: NextAuthOptions = {
     }
   },
   events: {
-    // @TODO: Figure out if we need to remove these events
     signIn: async ({ user, account }: any) => {},
     createUser: async ({ user }: { user: any }) => {
       if (!user) {
