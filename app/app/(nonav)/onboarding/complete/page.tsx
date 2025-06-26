@@ -1,4 +1,5 @@
 import { completeOnboarding } from "@/app/services/onboarding/onboarding-service";
+import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { Button } from "@/components/ui/button";
 import {
   AppWindowMac,
@@ -22,11 +23,7 @@ export default async function OnboardingCompletePage() {
   return (
     <div className="mx-auto max-w-md">
       <div className="space-y-8">
-        {/* Success Header */}
-        <div className="flex flex-col items-center text-center">
-          <h1 className="mb-2 text-2xl font-bold tracking-tight">All Done!</h1>
-          <p className="text-sm text-muted-foreground">Your store is ready to use</p>
-        </div>
+        <OnboardingHeader title="All Done!" description="Your store is ready to use" />
 
         <p className="text-sm font-medium text-muted-foreground">Here's what you should do next:</p>
 

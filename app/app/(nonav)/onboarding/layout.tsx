@@ -1,7 +1,7 @@
 import { shouldShowOnboarding } from "@/app/services/onboarding/onboarding-service";
+import { OnboardingNavigation } from "@/components/onboarding/onboarding-navigation";
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { OnboardingNavigation } from "./onboarding-navigation";
 
 export default async function OnboardingLayout({ children }: { children: React.ReactNode }) {
   const needsOnboarding = await shouldShowOnboarding();
