@@ -9,7 +9,6 @@ import { JWT } from "next-auth/jwt";
 import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 import { SessionUser, createSessionUser } from "../models/Session";
 import { sendWelcomeEmailToCustomer, sendWelcomeEmailToMaintainer } from "./email-service";
-import { defaultOnboardingState } from "./onboarding/onboarding-steps";
 import { createSite } from "./site/site-crud-service";
 import { requireUser } from "./user-context-service";
 import UserService from "./UserService";
@@ -106,11 +105,6 @@ class AuthService {
           gh_id: ghId
         });
       }
-    }
-
-    // at this point, the user item in table does not have the onboarding data set. So, we can attach the default one to the first token being generated on signup.
-    if (!user.onboarding) {
-      user.onboarding = JSON.stringify(defaultOnboardingState);
     }
 
     const existingAccount = await prisma.account.findFirst({

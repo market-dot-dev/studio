@@ -7,8 +7,6 @@ export type SessionUser = {
   gh_id?: number;
   email?: string;
   image?: string;
-  onboarding?: string;
-
   // New organization context
   currentOrgId?: string;
   currentOrgType?: OrganizationType;
@@ -31,7 +29,6 @@ export const createSessionUser = (
     username: user.username || user.gh_username || undefined,
     gh_id: user.gh_id || undefined,
     email: user.email || undefined,
-    onboarding: user.onboarding || undefined,
     image: user.image || undefined,
     currentOrgId: user.currentOrganizationId || undefined,
     currentOrgType: currentOrgType,
