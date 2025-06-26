@@ -24,7 +24,7 @@ export const ONBOARDING_STEPS = {
   team: {
     name: "team",
     title: "Invite Your Team",
-    description: "Add team members to collaborate on your store",
+    description: "Add others from your team to collaborate",
     path: "/onboarding/team"
   },
   pricing: {
