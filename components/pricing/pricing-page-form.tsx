@@ -1,7 +1,7 @@
 "use client";
 
 import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
-import { checkoutAction, getPlanPricing } from "@/app/services/platform";
+import { checkoutAction } from "@/app/services/platform";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,222 +16,198 @@ import { useMemo, useState, useTransition } from "react";
 import { SharedFeatureList } from "./shared-feature-list";
 
 interface PricingPageFormProps {
-    pricingData: PricingData;
-    defaultPlan: "free" | "pro";
-    returnPath?: string;
-    onFreeSelected?: () => Promise<void> | void;
-    freeButtonLabel?: string;
-    proButtonLabel?: string;
-    isOnboarding?: boolean;
+  pricingData: PricingData;
+  defaultPlan: "free" | "pro";
+  returnPath?: string;
+  onFreeSelected?: () => Promise<void> | void;
+  freeButtonLabel?: string;
+  proButtonLabel?: string;
+  isOnboarding?: boolean;
 }
 
 export function PricingPageForm({
-    pricingData,
-    defaultPlan,
-    returnPath = "/onboarding/pricing",
-    onFreeSelected,
-    freeButtonLabel = "Continue & Finish",
-    proButtonLabel = "Continue with Pro plan",
-    isOnboarding = true
+  pricingData,
+  defaultPlan,
+  returnPath,
+  onFreeSelected,
+  freeButtonLabel = "Continue with Free",
+  proButtonLabel = "Upgrade to Pro",
+  isOnboarding = true
 }: PricingPageFormProps) {
-    const [selectedPlan, setSelectedPlan] = useState<"free" | "pro">(defaultPlan);
-    const [isAnnual, setIsAnnual] = useState(false);
-    const [isPending, startTransition] = useTransition();
-    const router = useRouter();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const [selectedPlan, setSelectedPlan] = useState<"free" | "pro">(defaultPlan);
+  const [isAnnual, setIsAnnual] = useState(false);
 
-    const discountPercentage = useMemo(() => {
-        const monthlyPrice = pricingData.pro_monthly.amount / 100;
-        const annualPricePerMonth = pricingData.pro_annually.amount / 100 / 12;
-        const savings = monthlyPrice - annualPricePerMonth;
-        const percentage = (savings / monthlyPrice) * 100;
-        return Math.round(percentage);
-    }, [pricingData.pro_monthly.amount, pricingData.pro_annually.amount]);
+  const discountPercentage = useMemo(() => {
+    if (!pricingData?.pro_monthly || !pricingData?.pro_annually) return 0;
+    const monthlyYearly = pricingData.pro_monthly.amount * 12;
+    const annual = pricingData.pro_annually.amount;
+    return Math.round(((monthlyYearly - annual) / monthlyYearly) * 100);
+  }, [pricingData]);
 
-    const handleContinue = async () => {
-        try {
-            if (selectedPlan === "free") {
-                if (onFreeSelected) {
-                    await onFreeSelected();
-                } else if (isOnboarding) {
-                    // Default onboarding behavior
-                    await completeOnboardingStep("pricing");
-                    router.push("/onboarding/complete");
-                }
-            } else {
-                const planPricing = await getPlanPricing();
-                const formData = new FormData();
-                formData.append("priceId", isAnnual ? planPricing.pro.yearly : planPricing.pro.monthly);
-                formData.append("returnPath", returnPath);
-                await checkoutAction(formData);
-            }
-        } catch (error) {
-            console.error("Failed to continue:", error);
-        }
+  const pricing = useMemo(() => {
+    const currentPrice = isAnnual ? pricingData.pro_annually : pricingData.pro_monthly;
+    const pricePerMonth = isAnnual ? currentPrice.amount / 12 : currentPrice.amount;
+
+    return {
+      free: { price: "Free", priceId: null },
+      pro: {
+        price: (
+          <div className="flex items-baseline gap-1">
+            <span className="text-4xl font-semibold">$</span>
+            <NumberFlow
+              value={pricePerMonth / 100}
+              format={{
+                style: "decimal",
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
+              }}
+              className="text-4xl font-semibold"
+            />
+            <span className="text-sm text-muted-foreground">
+              /mo{isAnnual ? " (billed annually)" : ""}
+            </span>
+          </div>
+        ),
+        priceId: currentPrice.id
+      }
     };
+  }, [pricingData, isAnnual]);
 
-    return (
-        <div className="flex flex-col gap-y-6 md:gap-y-10">
-            {/* Monthly/Yearly Switcher */}
-            <div className="flex w-full items-center justify-center">
-                <Tabs
-                    value={isAnnual ? "yearly" : "monthly"}
-                    onValueChange={(value) => setIsAnnual(value === "yearly")}
-                    className="w-full md:w-fit"
+  const handleSubmit = () => {
+    startTransition(async () => {
+      if (selectedPlan === "free") {
+        if (onFreeSelected) {
+          await onFreeSelected();
+        } else if (isOnboarding) {
+          await completeOnboardingStep("pricing");
+          router.push("/setup");
+        } else if (returnPath) {
+          router.push(returnPath);
+        }
+      } else {
+        const formData = new FormData();
+        formData.append("priceId", pricing.pro.priceId!);
+        if (returnPath) {
+          formData.append("returnPath", returnPath);
+        }
+        await checkoutAction(formData);
+      }
+    });
+  };
+
+  return (
+    <div className="mx-auto max-w-5xl">
+      <div className="mb-8 text-center">
+        <h1 className="text-3xl font-bold tracking-tight">Choose your plan</h1>
+        <p className="mt-2 text-muted-foreground">Start free and upgrade anytime</p>
+      </div>
+
+      <div className="mb-8 flex justify-center">
+        <Tabs
+          value={isAnnual ? "annual" : "monthly"}
+          onValueChange={(value) => setIsAnnual(value === "annual")}
+          className="w-fit"
+        >
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="monthly">Monthly</TabsTrigger>
+            <TabsTrigger value="annual" className="relative">
+              Annual
+              {discountPercentage > 0 && (
+                <Badge variant="secondary" className="absolute -right-2 -top-2 text-xs">
+                  -{discountPercentage}%
+                </Badge>
+              )}
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Free Plan */}
+        <label className="cursor-pointer">
+          <input
+            type="radio"
+            name="plan"
+            value="free"
+            checked={selectedPlan === "free"}
+            onChange={() => setSelectedPlan("free")}
+            className="absolute right-6 top-6 size-4"
+          />
+          <Card className="relative h-full p-6 shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
+            <div className="flex flex-col gap-6 md:items-start md:text-left">
+              <div>
+                <h3 className="text-xl font-semibold">Free</h3>
+                <p className="text-sm text-muted-foreground">Perfect for getting started</p>
+              </div>
+
+              <div className="text-4xl font-semibold">Free</div>
+
+              <Separator />
+
+              <SharedFeatureList />
+            </div>
+          </Card>
+        </label>
+
+        {/* Pro Plan */}
+        <label className="cursor-pointer">
+          <input
+            type="radio"
+            name="plan"
+            value="pro"
+            checked={selectedPlan === "pro"}
+            onChange={() => setSelectedPlan("pro")}
+            className="absolute right-6 top-6 size-4"
+          />
+          <Card className="relative h-full p-6 shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
+            <Badge className="absolute right-6 top-6">Most Popular</Badge>
+            <div className="flex flex-col gap-6 md:items-start md:text-left">
+              <div>
+                <h3 className="text-xl font-semibold">Pro</h3>
+                <p className="text-sm text-muted-foreground">For growing businesses</p>
+              </div>
+
+              {pricing.pro.price}
+
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={isAnnual ? "annual" : "monthly"}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="flex items-center gap-2 text-sm text-muted-foreground"
                 >
-                    <TabsList variant="background" className="w-full md:w-fit">
-                        <TabsTrigger value="monthly" variant="background" className="w-full md:w-fit">
-                            Monthly
-                        </TabsTrigger>
-                        <TabsTrigger value="yearly" variant="background" className="w-full md:w-fit">
-                            Yearly
-                        </TabsTrigger>
-                    </TabsList>
-                </Tabs>
+                  <CreditCard className="size-4" />
+                  <span>
+                    2.9% + 30¢ transaction fee
+                    {isAnnual && discountPercentage > 0 && (
+                      <span className="ml-2 text-green-600">
+                        Save {discountPercentage}% with annual billing
+                      </span>
+                    )}
+                  </span>
+                </motion.div>
+              </AnimatePresence>
+
+              <Separator />
+
+              <SharedFeatureList />
             </div>
+          </Card>
+        </label>
+      </div>
 
-            <div className="mx-auto flex w-full max-w-6xl flex-wrap justify-center gap-4 md:flex-nowrap md:gap-6">
-                {/* Free Plan */}
-                <div className="relative w-full md:max-w-[370px]">
-                    <label className="cursor-pointer">
-                        <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
-                            <div className="relative flex flex-col items-center px-6 pb-7 pt-5 text-center md:items-start md:pb-8 md:text-left">
-                                <div className="mb-1 flex items-center justify-between">
-                                    <h3 className="text-xl font-semibold tracking-tightish">Free</h3>
-                                    <input
-                                        type="radio"
-                                        name="plan"
-                                        value="free"
-                                        checked={selectedPlan === "free"}
-                                        onChange={(e) => setSelectedPlan(e.target.value as "free" | "pro")}
-                                        className="absolute right-6 top-6 border-stone-400 transition-colors checked:border-swamp checked:text-swamp checked:shadow-sm focus:outline-none focus:ring-0"
-                                    />
-                                </div>
-
-                                <p className="mb-6 text-pretty text-sm text-muted-foreground">
-                                    For freelancers just getting started
-                                </p>
-
-                                <div className="mb-6 flex h-8 items-center">
-                                    <span className="text-3xl font-semibold tracking-tight">$0</span>
-                                </div>
-
-                                <p className="text-pretty text-sm text-muted-foreground md:mb-6">
-                                    <CreditCard className="mr-2 inline size-4 shrink-0 -translate-y-px text-muted-foreground" />
-                                    $0.25 transaction fee + 1% per sale
-                                </p>
-
-                                <SharedFeatureList className="hidden md:block" />
-                            </div>
-                        </Card>
-                    </label>
-                </div>
-
-                {/* Pro Plan */}
-                <div className="relative w-full md:max-w-[370px]">
-                    <label className="cursor-pointer">
-                        <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
-                            <div className="relative flex flex-col items-center px-6 pb-7 pt-5 text-center md:items-start md:pb-8 md:text-left">
-                                <div className="mb-1 flex items-center justify-between">
-                                    <h3 className="text-xl font-semibold tracking-tightish">Pro</h3>
-                                    <input
-                                        type="radio"
-                                        name="plan"
-                                        value="pro"
-                                        checked={selectedPlan === "pro"}
-                                        onChange={(e) => setSelectedPlan(e.target.value as "free" | "pro")}
-                                        className="absolute right-6 top-6 border-stone-400 transition-colors checked:border-swamp checked:text-swamp checked:shadow-sm focus:outline-none focus:ring-0"
-                                    />
-                                </div>
-
-                                <p className="mb-6 text-pretty text-sm text-muted-foreground">
-                                    For established freelancers & dev shops
-                                </p>
-
-                                <div className="mb-6 w-fit md:relative md:w-full">
-                                    <div className="flex h-8 items-center">
-                                        <NumberFlow
-                                            className="text-3xl font-semibold tracking-tight"
-                                            value={
-                                                (isAnnual
-                                                    ? pricingData.pro_annually.amount
-                                                    : pricingData.pro_monthly.amount) /
-                                                100 /
-                                                (isAnnual ? 12 : 1)
-                                            }
-                                            format={{
-                                                style: "currency",
-                                                currency: isAnnual
-                                                    ? pricingData.pro_annually.currency
-                                                    : pricingData.pro_monthly.currency,
-                                                minimumFractionDigits: 0,
-                                                maximumFractionDigits: 0
-                                            }}
-                                            suffix="/mo"
-                                        />
-                                    </div>
-                                    <AnimatePresence>
-                                        {isAnnual && (
-                                            <motion.div
-                                                initial={{ opacity: 0, x: -4 }}
-                                                animate={{ opacity: 1, x: 0 }}
-                                                exit={{
-                                                    opacity: 0,
-                                                    x: -4,
-                                                    transition: {
-                                                        duration: 0.15,
-                                                        ease: "easeOut"
-                                                    }
-                                                }}
-                                                transition={{
-                                                    duration: 0.2,
-                                                    ease: "easeOut"
-                                                }}
-                                                className="absolute -top-px left-0 md:left-auto md:right-0 md:top-1.5"
-                                            >
-                                                <Badge
-                                                    variant="secondary"
-                                                    className="rounded-bl-none rounded-br-md rounded-tl-md rounded-tr-none py-1 pr-1 md:rounded md:py-0.5"
-                                                >
-                                                    Save {discountPercentage}%
-                                                </Badge>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </div>
-
-                                <p className="text-pretty text-sm text-muted-foreground md:mb-6">
-                                    <CreditCard className="mr-2 inline size-4 shrink-0 -translate-y-px text-muted-foreground" />
-                                    $0.25 transaction fee (no commission fee)
-                                </p>
-
-                                <SharedFeatureList className="hidden md:block" />
-                            </div>
-                        </Card>
-                    </label>
-                </div>
-            </div>
-
-            {/* Mobile features list */}
-            <div className="mt-1 flex w-full flex-col md:hidden">
-                <p className="mb-1.5 text-sm font-semibold text-foreground">All plans include:</p>
-                <Separator className="mb-2.5" />
-                <SharedFeatureList />
-            </div>
-
-            <div className="sticky bottom-0 bg-stone-150 py-4 md:static md:py-0">
-                <div className="mx-auto flex flex-col gap-3 md:max-w-md">
-                    <Button
-                        onClick={() => startTransition(() => handleContinue())}
-                        loading={isPending}
-                        className="w-full"
-                        disabled={!isOnboarding && selectedPlan === "free"}
-                    >
-                        {selectedPlan === "pro" ? proButtonLabel : (
-                            !isOnboarding && selectedPlan === "free" ? "Select a plan to upgrade" : freeButtonLabel
-                        )}
-                    </Button>
-                </div>
-            </div>
-        </div>
-    );
-} 
+      <div className="mt-8 flex justify-center">
+        <Button onClick={handleSubmit} disabled={isPending} size="lg">
+          {selectedPlan === "pro"
+            ? proButtonLabel
+            : !isOnboarding && selectedPlan === "free"
+              ? "Select a plan to upgrade"
+              : freeButtonLabel}
+        </Button>
+      </div>
+    </div>
+  );
+}
