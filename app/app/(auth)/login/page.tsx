@@ -3,7 +3,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { EmailSignIn } from "./email-signin";
-import { GithubSignIn } from "./github-login-button";
+import { GithubSignIn } from "./github-signin";
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
