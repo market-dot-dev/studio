@@ -49,7 +49,7 @@ export default async function BillingSettingsPage() {
 
   return (
     <div className="flex w-full flex-col gap-8">
-      <h2 className="text-xl/6 font-bold">Your Plan</h2>
+      <h2 className="text-xl font-bold">Your Plan</h2>
       <div>
         <PlanInformation
           subscriptionInfo={subscriptionInfo}
@@ -64,7 +64,7 @@ export default async function BillingSettingsPage() {
       <Separator />
 
       <div id="pricing-plans" className="flex scroll-mt-20 flex-col gap-8">
-        <h2 className="text-xl/6 font-bold">Change plans</h2>
+        <h2 className="text-xl font-bold">Change plans</h2>
         <PricingPlanForm
           pricingData={pricingData}
           currentSubscriptionInfo={subscriptionInfo}
