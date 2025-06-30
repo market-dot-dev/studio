@@ -273,13 +273,7 @@ export async function syncGitHubIntegration(organizationId?: string): Promise<bo
     }
 
     // Extract account info from installation
-    const accountInfo: GitHubAccountInfo = {
-      login: info.installation.account?.login || null,
-      id: info.installation.account?.id || null,
-      type: info.installation.account?.type || null,
-      avatarUrl: info.installation.account?.avatar_url || null,
-      htmlUrl: info.installation.account?.html_url || null
-    };
+    const accountInfo = extractAccountInfo(info.installation.account);
 
     // Update stored integration data including account info
     await prisma.integration.update({
@@ -318,13 +312,7 @@ export async function getGitHubAccountInfo(
       return null;
     }
 
-    return {
-      login: account.login || null,
-      id: account.id || null,
-      type: account.type || null,
-      avatarUrl: account.avatar_url || null,
-      htmlUrl: account.html_url || null
-    };
+    return extractAccountInfo(account);
   } catch (error) {
     console.error("Error getting GitHub account info:", error);
     return null;
@@ -404,13 +392,7 @@ export async function processGitHubInstallationCallback(
     });
 
     // Extract account info from installation
-    const accountInfo: GitHubAccountInfo = {
-      login: installation.account?.login || null,
-      id: installation.account?.id || null,
-      type: installation.account?.type || null,
-      avatarUrl: installation.account?.avatar_url || null,
-      htmlUrl: installation.account?.html_url || null
-    };
+    const accountInfo = extractAccountInfo(installation.account);
 
     // Store the integration with full details including account info
     await addGitHubIntegration(
@@ -475,16 +457,7 @@ export async function handleGitHubWebhook(
       case "created":
         try {
           // Extract account info if available from webhook data
-          let accountInfo: GitHubAccountInfo | undefined;
-          if (installation.account) {
-            accountInfo = {
-              login: installation.account.login || null,
-              id: installation.account.id || null,
-              type: installation.account.type || null,
-              avatarUrl: installation.account.avatar_url || null,
-              htmlUrl: installation.account.html_url || null
-            };
-          }
+          const accountInfo = extractAccountInfo(installation.account);
 
           await addGitHubIntegration(
             installation.id.toString(),
@@ -612,6 +585,37 @@ export async function getGitHubAppConfigStatus() {
     hasClientId: !!CLIENT_ID,
     hasClientSecret: !!CLIENT_SECRET,
     isFullyConfigured: isGitHubAppConfigured()
+  };
+}
+
+/**
+ * Helper function to safely extract account info from GitHub installation data
+ * Handles both user and organization account types
+ */
+function extractAccountInfo(account: any): GitHubAccountInfo {
+  if (!account) {
+    return {
+      login: null,
+      id: null,
+      type: null,
+      avatarUrl: null,
+      htmlUrl: null
+    };
+  }
+
+  // For organizations, GitHub uses 'name' instead of 'login'
+  // For users, GitHub uses 'login'
+  const login = account.login || account.name || null;
+
+  // Determine account type - GitHub returns 'User' or 'Organization'
+  const type = account.type || (account.slug ? "Organization" : "User");
+
+  return {
+    login,
+    id: account.id || null,
+    type,
+    avatarUrl: account.avatar_url || null,
+    htmlUrl: account.html_url || null
   };
 }
 

@@ -7,7 +7,6 @@ import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { SiGithub } from "@icons-pack/react-simple-icons";
 import { Building, Mail, Send, Users } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -70,27 +69,6 @@ export default async function CustomerDetailPage(props: { params: Promise<{ id: 
             </span>
             <div className="flex items-center">
               <span className="font-medium">{customerOrg.name || "—"}</span>
-            </div>
-          </div>
-
-          {/* GitHub (Now from owner) */}
-          <div className="flex flex-col gap-1">
-            <span className="flex items-center gap-1.5 whitespace-nowrap text-xxs/4 font-semibold uppercase tracking-wide text-stone-500">
-              <SiGithub size={12} strokeWidth={2.5} />
-              Github
-            </span>
-            <div className="flex items-center">
-              {owner.gh_username ? (
-                <Link
-                  href={`https://www.github.com/${owner.gh_username}`}
-                  className="font-medium hover:underline"
-                  target="_blank"
-                >
-                  {owner.gh_username}
-                </Link>
-              ) : (
-                <span>—</span>
-              )}
             </div>
           </div>
 
