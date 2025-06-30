@@ -26,7 +26,7 @@ export async function getPlanPricing(): Promise<PlanPricing> {
 /**
  * Create a Stripe checkout session for platform subscription
  */
-export async function createCheckoutSession(priceId: string): Promise<void> {
+export async function createCheckoutSession(priceId: string, returnPath?: string): Promise<void> {
   const org = await requireOrganization();
   const user = await requireUser();
   const stripe = await createStripeClient(); // Platform uses main Stripe account, not Connect
@@ -53,7 +53,7 @@ export async function createCheckoutSession(priceId: string): Promise<void> {
     billing.stripeCustomerId = customer.id; // Update locally for session creation
   }
 
-  const billingPageUrl = getRootUrl("app", "/settings/billing");
+  const returnUrl = getRootUrl("app", returnPath || "/settings/billing");
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
@@ -65,7 +65,7 @@ export async function createCheckoutSession(priceId: string): Promise<void> {
     ],
     mode: "subscription",
     success_url: `${getRootUrl("app")}/api/platform/stripe/checkout?session_id={CHECKOUT_SESSION_ID}`,
-    cancel_url: `${billingPageUrl}?status=cancelled`,
+    cancel_url: `${returnUrl}?status=cancelled`,
     customer: billing.stripeCustomerId,
     client_reference_id: `${user.id}-${org.id}`, // creates a unique session for this user and org
     allow_promotion_codes: true,
@@ -73,7 +73,8 @@ export async function createCheckoutSession(priceId: string): Promise<void> {
       organizationId: org.id,
       organizationName: org.name,
       userEmail: user.email!,
-      type: "platform_subscription"
+      type: "platform_subscription",
+      returnUrl
     },
     subscription_data: {
       description: `Platform subscription for: ${org.name}`
@@ -86,7 +87,7 @@ export async function createCheckoutSession(priceId: string): Promise<void> {
 /**
  * Create a Stripe customer portal session for platform billing
  */
-export async function createCustomerPortalSession(): Promise<{ url: string }> {
+export async function createCustomerPortalSession(returnPath?: string): Promise<{ url: string }> {
   const billing = await getOrCreateBilling();
   const stripe = await createStripeClient();
 
@@ -146,7 +147,7 @@ export async function createCustomerPortalSession(): Promise<{ url: string }> {
 
   const session = await stripe.billingPortal.sessions.create({
     customer: billing.stripeCustomerId,
-    return_url: getRootUrl("app", "/settings/billing"),
+    return_url: getRootUrl("app", returnPath || "/settings/billing"),
     configuration: configuration.id
   });
 

@@ -116,9 +116,11 @@ export async function updateCurrentSite(formData: FormData) {
           throw new Error("Invalid file object");
         }
 
-        // Ensure there's a file to process
-        const url = await uploadLogoFile(fileObj);
-        updateData.logo = url;
+        // Only upload if file has content
+        if (fileObj.size > 0) {
+          const url = await uploadLogoFile(fileObj);
+          updateData.logo = url;
+        }
       } else if (key === "logoURL") {
         updateData.logo = value.toString();
       } else if (key === "name") {

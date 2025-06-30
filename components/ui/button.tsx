@@ -16,12 +16,13 @@ const buttonVariants = cva(
         destructive:
           "bg-gradient-to-b from-destructive/90 to-destructive text-white shadow-border hover:bg-destructive/90 active:shadow-border-sm",
         outline: "bg-white text-foreground shadow-border hover:bg-stone-50 active:shadow-border-sm",
-        secondary: "bg-stone-200/80 text-stone-600 hover:bg-stone-200",
+        secondary: "bg-stone-200 text-stone-600 hover:bg-stone-250 hover:text-stone-700",
         ghost: "hover:bg-stone-200 hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline"
+        nude: "w-fit p-0 text-muted-foreground hover:text-foreground focus:text-foreground",
+        link: "!size-fit !p-0 text-primary underline-offset-2 hover:underline"
       },
       size: {
-        default: "h-8 px-3 ",
+        default: "h-8 px-3",
         sm: "h-6 gap-1.5 px-2 text-xs [&_svg]:size-3.5 [&_svg]:stroke-[2.25]",
         lg: "h-10 px-6",
         icon: "size-8 [&_svg]:size-4",

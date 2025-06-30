@@ -18,8 +18,18 @@ export const includeMinimalOrg = Prisma.validator<Prisma.OrganizationDefaultArgs
         name: true
       }
     },
+    sites: {
+      select: {
+        subdomain: true
+      },
+      take: 1,
+      orderBy: {
+        createdAt: "asc"
+      }
+    },
     createdAt: true,
     updatedAt: true,
+    onboarding: true,
     stripeAccountId: true,
     stripeAccountDisabled: true
   }
@@ -54,7 +64,7 @@ export type OrganizationForSwitcher = Prisma.OrganizationGetPayload<
 
 /**
  * Prisma validator for organization data needed during checkout and Stripe operations.
- * Includes owner's email, and Stripe JSON fields.
+ * Includes owner's email, Stripe JSON fields, and billing information.
  */
 export const includeOrgForStripeOps = Prisma.validator<Prisma.OrganizationDefaultArgs>()({
   select: {
@@ -70,8 +80,12 @@ export const includeOrgForStripeOps = Prisma.validator<Prisma.OrganizationDefaul
     stripeCustomerIds: true,
     stripePaymentMethodIds: true,
     stripeCSRF: true,
-    // Include other fields if necessary, e.g., stripeAccountId for vendor orgs
-    stripeAccountId: true
+    stripeAccountId: true,
+    billing: {
+      select: {
+        planType: true
+      }
+    }
   }
 });
 
@@ -134,4 +148,13 @@ export interface OrganizationSwitcherContext {
     role: string;
     createdAt: Date;
   }>;
+}
+
+export interface CurrentOrganizationForSettings {
+  id: string;
+  name: string;
+  description: string | null;
+  businessType: string | null;
+  businessLocation: string | null;
+  subdomain: string | null;
 }

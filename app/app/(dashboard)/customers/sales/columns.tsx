@@ -3,11 +3,11 @@
 import { Charge, Prospect, Subscription } from "@/app/generated/prisma";
 import Tier from "@/app/models/Tier";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { ViewButton } from "@/components/ui/view-button";
 import { capitalize, formatDate } from "@/lib/utils";
 import type { CustomerOrgWithAll } from "@/types/organization-customer";
 import { ColumnDef } from "@tanstack/react-table";
-import { ChevronRight, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import Link from "next/link";
 import { PurchaseStatusBadge } from "../purchase-status-badge";
 import { SubscriptionStatusBadge } from "../subscription-state";
@@ -42,6 +42,22 @@ export const columns: ColumnDef<Sale>[] = [
       emphasized: true
     },
     cell: ({ row }) => {
+      // For prospects, show the prospect's company name, not the vendor organization
+      if (row.original.type === "prospect" && row.original.prospect) {
+        const companyName = row.original.prospect.companyName;
+        const ownerName = row.original.ownerName || row.original.prospect.name;
+
+        return (
+          <div className="flex flex-col">
+            <span className="font-semibold text-stone-800">{companyName || "—"}</span>
+            {ownerName && (
+              <span className="text-xs font-normal text-muted-foreground">{ownerName}</span>
+            )}
+          </div>
+        );
+      }
+
+      // For customers (subscriptions/charges), show the customer organization name
       const orgName = row.original.organization.name;
       const ownerName = row.original.ownerName || row.original.organization.owner.name;
 
@@ -129,13 +145,14 @@ export const columns: ColumnDef<Sale>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => (
-      <Button variant="outline" size="sm" asChild>
-        <Link href={`/customers/${row.original.organizationId}`}>
-          View
-          <ChevronRight size={14} />
-        </Link>
-      </Button>
-    )
+    cell: ({ row }) => {
+      // For prospects, link to the prospect detail page
+      if (row.original.type === "prospect" && row.original.prospect) {
+        return <ViewButton href={`/prospects/${row.original.prospect.id}`} />;
+      }
+
+      // For customers (charges/subscriptions), link to the customer page
+      return <ViewButton href={`/customers/${row.original.organizationId}`} />;
+    }
   }
 ];

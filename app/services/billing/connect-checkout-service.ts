@@ -1,5 +1,6 @@
 "use server";
 
+import { PlanType } from "@/app/generated/prisma";
 import { createSubscription } from "@/app/services/billing/connect-subscription-service";
 import {
   getCurrentCustomerOrganization,
@@ -100,8 +101,7 @@ export async function processPayment(
       customerOrg.id,
       tierId,
       tier.price,
-      tier.applicationFeePercent || 0,
-      tier.applicationFeePrice || 0
+      vendor.billing?.planType || null
     );
   }
 
@@ -112,7 +112,9 @@ export async function processPayment(
     stripePriceId,
     customerOrg.id,
     tierId,
-    tier
+    tier,
+    vendor.billing?.planType || null,
+    annual
   );
 }
 
@@ -127,8 +129,7 @@ async function processOneTimeCharge(
   customerOrgId: string,
   tierId: string,
   price: number,
-  feePercent: number,
-  feeAmount: number
+  vendorPlanType: PlanType | null
 ): Promise<{ success: boolean; stripeId: string; type: "charge" }> {
   // Get payment method using customer service
   const paymentMethodId = await getStripePaymentMethodIdForVendor(
@@ -146,8 +147,7 @@ async function processOneTimeCharge(
     stripePriceId,
     price,
     paymentMethodId,
-    feePercent,
-    feeAmount
+    vendorPlanType
   );
 
   if (charge.status !== "succeeded") {
@@ -174,7 +174,9 @@ async function processSubscription(
   stripePriceId: string,
   customerOrgId: string,
   tierId: string,
-  tier: any
+  tier: any,
+  vendorPlanType: PlanType | null,
+  annual: boolean
 ): Promise<{ success: boolean; stripeId: string; type: "subscription" }> {
   // Check if already subscribed
   const isSubscribed = await isSubscribedToStripeTier(
@@ -190,12 +192,16 @@ async function processSubscription(
   }
 
   // Create subscription in Stripe
-  const stripeSubscription = await createStripeSubscriptionForCustomer(
-    vendorStripeAccountId,
-    stripeCustomerId,
-    stripePriceId,
-    tier.trialDays
-  );
+  const tierPrice = annual && tier.priceAnnual ? tier.priceAnnual : tier.price || 0;
+  const { subscription: stripeSubscription, platformFeeAmount } =
+    await createStripeSubscriptionForCustomer(
+      vendorStripeAccountId,
+      stripeCustomerId,
+      stripePriceId,
+      tierPrice,
+      tier.trialDays,
+      vendorPlanType
+    );
 
   if (!stripeSubscription) {
     throw new Error("Failed to create subscription on Stripe");
@@ -207,13 +213,25 @@ async function processSubscription(
   switch (invoice.status) {
     case "paid": {
       // Create local subscription record using organization ID
-      await createSubscription(customerOrgId, tierId, stripeSubscription.id);
+      await createSubscription(
+        customerOrgId,
+        tierId,
+        stripeSubscription.id,
+        undefined,
+        platformFeeAmount
+      );
       break;
     }
     case "open":
       // For subscriptions with trials, "open" status is expected
       if (tier.trialDays && tier.trialDays > 0) {
-        await createSubscription(customerOrgId, tierId, stripeSubscription.id);
+        await createSubscription(
+          customerOrgId,
+          tierId,
+          stripeSubscription.id,
+          undefined,
+          platformFeeAmount
+        );
       } else {
         throw new Error("Subscription requires payment. Please check payment details.");
       }

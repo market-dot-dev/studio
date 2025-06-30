@@ -1,21 +1,21 @@
+import type { ButtonProps } from "@/components/ui/button";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import Link from "next/link";
 
-interface Props {
+interface Props extends Omit<ButtonProps, "asChild" | "children"> {
   oauthUrl: string;
-  className?: string;
 }
 
-export function ConnectStripeBtn({ oauthUrl, className }: Props) {
+export function ConnectStripeBtn({ oauthUrl, ...buttonProps }: Props) {
   return (
-    <Button asChild variant="outline" className={className}>
+    <Button asChild variant="outline" {...buttonProps}>
       <Link href={oauthUrl}>
         <Image
           src="/stripe-icon-square.svg"
           alt="stripe logo"
-          height={18}
-          width={18}
+          height={16}
+          width={16}
           className="rounded-[3px]"
         />
         Connect your Stripe account

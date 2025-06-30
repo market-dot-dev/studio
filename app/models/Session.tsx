@@ -6,8 +6,6 @@ export type SessionUser = {
   username?: string;
   email?: string;
   image?: string;
-  onboarding?: string;
-
   // New organization context
   currentOrgId?: string;
   currentOrgType?: OrganizationType;
@@ -29,7 +27,6 @@ export const createSessionUser = (
     name: user.name || undefined,
     username: user.username || undefined,
     email: user.email || undefined,
-    onboarding: user.onboarding || undefined,
     image: user.image || undefined,
     currentOrgId: user.currentOrganizationId || undefined,
     currentOrgType: currentOrgType,

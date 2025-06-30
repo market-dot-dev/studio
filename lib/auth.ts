@@ -1,7 +1,6 @@
 import Session from "@/app/models/Session";
 import AuthService from "@/app/services/auth-service";
 import { sendVerificationEmail } from "@/app/services/email-service";
-import { defaultOnboardingState } from "@/app/services/onboarding/onboarding-steps";
 import prisma from "@/lib/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { getServerSession, type NextAuthOptions } from "next-auth";
@@ -104,14 +103,6 @@ export const authOptions: NextAuthOptions = {
       if (!user) {
         return;
       }
-
-      // Add onboarding status to a new user
-      await prisma.user.update({
-        where: { id: user.id },
-        data: {
-          onboarding: JSON.stringify(defaultOnboardingState)
-        }
-      });
     }
   }
 };

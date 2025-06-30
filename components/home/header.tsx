@@ -246,13 +246,13 @@ export default function Header({ className }: { className?: string }) {
         )}
       >
         <Link
-          href="https://explore.market.dev/"
+          href="https://blog.market.dev/"
           className="group flex h-10 items-center justify-center gap-0.5 bg-black px-4 text-sm font-medium tracking-normal !text-white"
         >
           <BookOpenCheck className="mr-2 size-4 opacity-60 transition-opacity group-hover:opacity-100" />
-          <span className="sm:hidden">Get listed on our developer marketplace</span>
+          <span className="sm:hidden">We&apos;re now open source!</span>
           <span className="hidden sm:inline">
-            List your products & services on our developer marketplace
+            We&apos;re now open source! Check out the blog post for more details.
           </span>
           <ChevronRight className="mt-px size-4 transition-transform group-hover:translate-x-px" />
         </Link>
@@ -278,12 +278,12 @@ export default function Header({ className }: { className?: string }) {
               />
             </Link>
             <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
-              <Link href="/" className="whitespace-nowrap !text-marketing-primary">
+              {/* <Link href="/" className="whitespace-nowrap !text-marketing-primary">
                 Sell
-              </Link>
-              <Link href="https://explore.market.dev" className="whitespace-nowrap">
+              </Link> */}
+              {/* <Link href="https://explore.market.dev" className="whitespace-nowrap">
                 Explore
-              </Link>
+              </Link> */}
             </div>
             <div className="flex w-fit items-center gap-4">
               {isLoading || !signedIn ? (

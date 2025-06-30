@@ -1,53 +1,110 @@
-export const defaultOnboardingState: OnboardingState = {
-  setupProject: false,
-  setupPayment: false,
-  setupTiers: false,
-  setupSite: false,
-  setupBusiness: false,
-  isDismissed: false
-};
-
-export interface OnboardingState extends Exclude<OnboardingStepsType, null> {
-  setupBusiness: boolean;
-  preferredServices?: string[];
-  isDismissed: boolean;
+export interface OnboardingStep {
+  readonly name: string;
+  readonly title: string;
+  readonly description: string;
+  readonly path: string;
 }
 
-export type OnboardingStepsType = {
-  setupProject: boolean;
-  setupPayment: boolean;
-  setupTiers: boolean;
-  setupSite: boolean;
-} | null;
+export const ONBOARDING_COMPLETE_PATH = "/onboarding/complete";
 
-type onBoardingStepKeyType = keyof Exclude<OnboardingStepsType, null>;
+// Reorder these steps to change their order in the onboarding flow
+export const ONBOARDING_STEPS = {
+  organization: {
+    name: "organization",
+    title: "Create Your Organization",
+    description: "Set up your organization details and branding",
+    path: "/onboarding/organization"
+  },
+  stripe: {
+    name: "stripe",
+    title: "Connect Stripe",
+    description: "Set up payment processing to accept customer payments",
+    path: "/onboarding/stripe"
+  },
+  team: {
+    name: "team",
+    title: "Invite Your Team",
+    description: "Add others from your team to collaborate",
+    path: "/onboarding/team"
+  },
+  pricing: {
+    name: "pricing",
+    title: "Choose Your Plan",
+    description: "Start for free or upgrade to Pro for commission-free sales & priority support.",
+    path: "/onboarding/pricing"
+  }
+} as const satisfies Record<string, OnboardingStep>;
 
-export type onBoardingStepType = {
-  name: onBoardingStepKeyType;
-  description: string;
-  urls: string[];
-  title: string;
+export type OnboardingStepName = keyof typeof ONBOARDING_STEPS;
+
+export const ONBOARDING_STEP_NAMES = Object.keys(ONBOARDING_STEPS) as OnboardingStepName[];
+
+export type OnboardingState = {
+  [K in OnboardingStepName]: {
+    completed: boolean;
+    completedAt?: string;
+  };
+} & {
+  completed: boolean;
+  completedAt?: string;
 };
 
-// enumerate the steps that the user needs to complete
-export const onboardingSteps: onBoardingStepType[] = [
-  {
-    name: "setupPayment",
-    description: "Connect a Stripe account to start receiving payments.",
-    urls: ["/settings/payment"],
-    title: "Connect Stripe"
-  },
-  {
-    name: "setupTiers",
-    description: "Define your service offerings and create a package to sell.",
-    urls: ["/tiers"],
-    title: "Create a Package"
-  },
-  {
-    name: "setupSite",
-    description:
-      "Your store is your first sales channel. Make it match your brand & start selling.",
-    urls: ["/site/", "/page/"],
-    title: "Customize your landing page"
+/**
+ * Creates a default onboarding state with all steps set to incomplete
+ */
+function createDefaultOnboardingState(): OnboardingState {
+  const state: any = {
+    completed: false
+  };
+
+  // Dynamically add each ONBOARDING_STEPS as incomplete
+  for (const stepName of Object.keys(ONBOARDING_STEPS) as OnboardingStepName[]) {
+    state[stepName] = { completed: false };
   }
-];
+
+  return state as OnboardingState;
+}
+
+export const defaultOnboardingState = createDefaultOnboardingState();
+
+/**
+ * Gets the path for the next step in the onboarding flow
+ * Returns the complete path if there's no next step
+ */
+export function getNextStepPath(currentStepName: OnboardingStepName) {
+  const currentIndex = ONBOARDING_STEP_NAMES.indexOf(currentStepName);
+  const nextStepName = ONBOARDING_STEP_NAMES[currentIndex + 1];
+
+  if (!nextStepName) {
+    return ONBOARDING_COMPLETE_PATH;
+  }
+
+  return ONBOARDING_STEPS[nextStepName].path;
+}
+
+/**
+ * Gets the path for the previous step in the onboarding flow
+ * Returns /onboarding if there's no previous step
+ */
+export function getPreviousStepPath(currentStepName: OnboardingStepName) {
+  const currentIndex = ONBOARDING_STEP_NAMES.indexOf(currentStepName);
+  const previousStepName = ONBOARDING_STEP_NAMES[currentIndex - 1];
+
+  if (!previousStepName) {
+    return null;
+  }
+
+  return ONBOARDING_STEPS[previousStepName].path;
+}
+
+/**
+ * Gets the first incomplete step in the onboarding flow
+ */
+export function getFirstIncompleteStep(state: OnboardingState): OnboardingStep | null {
+  const firstIncompleteStepName = ONBOARDING_STEP_NAMES.find((stepName) => {
+    const stepState = state[stepName];
+    return stepState && !stepState.completed;
+  });
+
+  return firstIncompleteStepName ? ONBOARDING_STEPS[firstIncompleteStepName] : null;
+}

@@ -39,7 +39,7 @@ export function PricingTable({ priceIds, pricingData, className }: PricingTableP
           </span>
         </div>
         <div className="mt-4 text-center text-sm font-bold text-primary sm:hidden">
-          Save 20% annually
+          Save 20% yearly
         </div>
       </div>
 

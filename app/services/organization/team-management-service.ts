@@ -2,7 +2,7 @@
 
 import { OrganizationRole } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
-import { generateId } from "@/lib/utils";
+import { generateId, isValidEmail } from "@/lib/utils";
 import {
   InviteResult,
   InviteWithDetails,
@@ -10,6 +10,7 @@ import {
   includeInviteDetails,
   includeTeamMember
 } from "@/types/team";
+import { revalidatePath } from "next/cache";
 import { sendTeamInvitationEmail } from "../email-service";
 import { requireOrganization, requireUser } from "../user-context-service";
 
@@ -67,7 +68,7 @@ export async function getPendingInvites(): Promise<TeamMemberDisplay[]> {
 /**
  * Invite users to the organization
  */
-export async function inviteUsersToOrganization(
+export async function inviteUsersToOrganizationByRole(
   emails: string[],
   role: OrganizationRole = OrganizationRole.MEMBER
 ): Promise<InviteResult> {
@@ -90,8 +91,11 @@ export async function inviteUsersToOrganization(
     }
   }
 
-  const success: string[] = [];
-  const errors: string[] = [];
+  const result: InviteResult = {
+    success: [],
+    errors: [],
+    newInvites: []
+  };
 
   for (const email of emails) {
     try {
@@ -104,7 +108,7 @@ export async function inviteUsersToOrganization(
       });
 
       if (existingMember) {
-        errors.push(`${email} is already a member`);
+        result.errors.push(`${email} is already a member`);
         continue;
       }
 
@@ -118,7 +122,7 @@ export async function inviteUsersToOrganization(
       });
 
       if (existingInvite) {
-        errors.push(`${email} already has a pending invitation`);
+        result.errors.push(`${email} already has a pending invitation`);
         continue;
       }
 
@@ -137,14 +141,70 @@ export async function inviteUsersToOrganization(
       // Send invitation email
       await sendTeamInvitationEmail(email, org.name, user.name || user.email!, invite.id);
 
-      success.push(email);
+      result.success.push(email);
+      result.newInvites.push(invite);
     } catch (error) {
       console.error(`Error inviting ${email}:`, error);
-      errors.push(`Failed to invite ${email}`);
+      result.errors.push(`Failed to invite ${email}`);
     }
   }
 
-  return { success, errors };
+  revalidatePath("/team", "layout");
+  revalidatePath("/onboarding/team", "layout");
+
+  return result;
+}
+
+/**
+ * Invite batch of team members with different roles.
+ */
+export async function inviteTeamMembers(
+  invites: { email: string; role: OrganizationRole }[]
+): Promise<InviteResult> {
+  const result: InviteResult = {
+    success: [],
+    errors: [],
+    newInvites: []
+  };
+
+  const validInvites: typeof invites = [];
+  for (const invite of invites) {
+    if (!isValidEmail(invite.email)) {
+      result.errors.push(`Invalid email address: ${invite.email}`);
+    } else {
+      validInvites.push(invite);
+    }
+  }
+
+  if (validInvites.length === 0) {
+    return result;
+  }
+
+  const memberEmails = validInvites
+    .filter((i) => i.role === OrganizationRole.MEMBER)
+    .map((i) => i.email);
+  const adminEmails = validInvites
+    .filter((i) => i.role === OrganizationRole.ADMIN)
+    .map((i) => i.email);
+
+  if (memberEmails.length > 0) {
+    const memberResult = await inviteUsersToOrganizationByRole(
+      memberEmails,
+      OrganizationRole.MEMBER
+    );
+    result.success.push(...memberResult.success);
+    result.errors.push(...memberResult.errors);
+    result.newInvites.push(...memberResult.newInvites);
+  }
+
+  if (adminEmails.length > 0) {
+    const adminResult = await inviteUsersToOrganizationByRole(adminEmails, OrganizationRole.ADMIN);
+    result.success.push(...adminResult.success);
+    result.errors.push(...adminResult.errors);
+    result.newInvites.push(...adminResult.newInvites);
+  }
+
+  return result;
 }
 
 /**

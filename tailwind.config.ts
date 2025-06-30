@@ -16,7 +16,8 @@ export default {
       colors: {
         stone: {
           "150": "#F3F2F2",
-          "500": "#786F6B"
+          "250": "#E3E0DF",
+          "500": "#746D69"
         },
         swamp: {
           "50": "#CDCEB6",

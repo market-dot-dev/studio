@@ -116,12 +116,6 @@ export default function TierForm({ tier: tierObj, contracts, org }: TierFormProp
   const [canPublishLoading, setCanPublishLoading] = useState(true);
 
   useEffect(() => {
-    if (tierObj) {
-      if (window && Object.prototype.hasOwnProperty.call(window, "refreshOnboarding")) {
-        (window as any).refreshOnboarding();
-      }
-    }
-
     if (tier.checkoutType === "gitwallet") {
       hasVendorStripeAccount().then((value: boolean) => {
         setCanPublish(value);
