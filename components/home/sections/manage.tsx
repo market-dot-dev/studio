@@ -17,11 +17,11 @@ export default function Manage() {
       isFullBleed
       className="lg:max-w-[1150px]"
     >
-      <div className="mx-auto grid w-full grid-cols-1 gap-4 md:grid-cols-2 lg:gap-6">
+      <div className="mx-auto grid w-full grid-cols-1 gap-4 md:grid-cols-3 lg:gap-6">
         <FeatureCard
           icon={<UsersRound />}
-          title="CRM & Client Portals"
-          description="A CRM with only the features you need, with built-in client portals."
+          title="CRM & Lead Generation"
+          description="A simple, no-nonsense CRM with built-in lead-generation tools"
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
@@ -29,8 +29,8 @@ export default function Manage() {
         />
         <FeatureCard
           icon={<ChartLine />}
-          title="Analytics"
-          description="Track sales and see how your services are performing."
+          title="Client Portals"
+          description="Create client portals to help you manageyour services with your clients."
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
@@ -38,7 +38,7 @@ export default function Manage() {
         />
         <FeatureCard
           icon={<ScrollText />}
-          title="Templated contracts"
+          title="Contract Library"
           description="Create & send service agreements in minutes using our ready-made, open source contracts."
           color={colors.orange}
           orientation="vertical"
