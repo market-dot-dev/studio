@@ -1,13 +1,13 @@
 "use client";
 
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
+import { Badge, BadgeProps } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { SubscriptionInfo } from "@/types/platform";
-import { CheckCircle } from "lucide-react";
+import { hasActiveProSubscription } from "@/utils/subscription-utils";
+import { RotateCcw } from "lucide-react";
 import { ReactNode } from "react";
-import { ActiveBanner, ExpiredBanner } from "./subscription-banners";
+import { ActiveBanner, ExpiredBanner, UpgradeBanner } from "./subscription-banners";
 
 interface PlanInformationProps {
   subscriptionInfo: SubscriptionInfo;
@@ -15,9 +15,25 @@ interface PlanInformationProps {
   customerPortal?: ReactNode;
 }
 
-function StatusBadge({ statusText, statusType }: { statusText: string; statusType: string }) {
-  const variant =
-    statusType === "active" ? "default" : statusType === "trial" ? "secondary" : "destructive";
+function StatusBadge({
+  statusText,
+  statusType
+}: {
+  statusText: string;
+  statusType: SubscriptionInfo["statusType"];
+}) {
+  let variant: BadgeProps["variant"] | undefined;
+  switch (statusType) {
+    case "active":
+      variant = "success";
+      break;
+    case "inactive":
+      variant = "destructive";
+      break;
+    default:
+      variant = "secondary";
+      break;
+  }
 
   return <Badge variant={variant}>{statusText}</Badge>;
 }
@@ -35,49 +51,46 @@ export function PlanInformation({
   customerPortal
 }: PlanInformationProps) {
   const { isSubscriptionActive, isFree, statusText, statusType } = subscriptionInfo;
+  const hasActivePro = hasActiveProSubscription(subscriptionInfo);
+  const hasInactiveProSubscription = !isSubscriptionActive && !isFree;
 
   const scrollToPricing = () => scrollToElement("pricing-plans");
 
   return (
     <Card>
-      <CardHeader className="flex flex-col items-start gap-1">
+      <CardHeader className="flex flex-col items-start gap-1 py-5">
         <div className="flex w-full items-center justify-between">
-          <h3 className="text-xl font-bold">{planDisplayName}</h3>
-          <StatusBadge statusText={statusText} statusType={statusType} />
+          <h3 className="text-xl/6 font-bold">{planDisplayName}</h3>
+          {statusType !== "free" && <StatusBadge statusText={statusText} statusType={statusType} />}
         </div>
       </CardHeader>
 
       <CardContent>
-        <div className="space-y-4">
+        <div className="space-y-6">
           {/* FREE plan - show upgrade option */}
           {isFree && (
             <>
-              <Alert variant="default">
-                <CheckCircle className="size-4" />
-                <AlertTitle>Free plan - Active</AlertTitle>
-                <AlertDescription>
-                  You're currently on the free plan. Upgrade to PRO for advanced features.
-                </AlertDescription>
-              </Alert>
-              <Button className="w-full" onClick={scrollToPricing}>
-                Upgrade to PRO
+              <UpgradeBanner />
+              <Button variant="outline" className="w-full" onClick={scrollToPricing}>
+                Upgrade to Pro
               </Button>
             </>
           )}
 
-          {/* PRO plan active - show customer portal */}
-          {isSubscriptionActive && !isFree && (
+          {/* Pro plan active - show customer portal */}
+          {hasActivePro && (
             <>
-              <ActiveBanner planDisplayName={planDisplayName} />
+              <ActiveBanner />
               {customerPortal}
             </>
           )}
 
-          {/* PRO plan but subscription inactive */}
-          {!isSubscriptionActive && !isFree && (
+          {/* Pro plan but subscription inactive */}
+          {hasInactiveProSubscription && (
             <>
               <ExpiredBanner />
-              <Button className="w-full" onClick={scrollToPricing}>
+              <Button variant="outline" className="w-full" onClick={scrollToPricing}>
+                <RotateCcw />
                 Reactivate subscription
               </Button>
             </>
