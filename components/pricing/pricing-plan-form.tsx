@@ -39,53 +39,27 @@ export function PricingPlanForm({
     return Math.round(((monthlyYearly - annual) / monthlyYearly) * 100);
   }, [pricingData]);
 
-  const pricing = useMemo(() => {
-    const currentPrice = isAnnual ? pricingData.pro_annually : pricingData.pro_monthly;
-    const pricePerMonth = isAnnual ? currentPrice.amount / 12 : currentPrice.amount;
-
-    return {
-      free: { price: "Free", priceId: null },
-      pro: {
-        price: (
-          <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-semibold">$</span>
-            <NumberFlow
-              value={pricePerMonth / 100}
-              format={{
-                style: "decimal",
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 2
-              }}
-              className="text-4xl font-semibold"
-            />
-            <span className="text-sm text-muted-foreground">
-              /mo{isAnnual ? " (billed annually)" : ""}
-            </span>
-          </div>
-        ),
-        priceId: currentPrice.id
-      }
-    };
-  }, [pricingData, isAnnual]);
-
-  const handleSubmit = () => {
-    startTransition(async () => {
-      if (selectedPlan === "free") {
-        await onSelectFree();
-      } else {
-        await onSelectPro(pricing.pro.priceId!);
-      }
-    });
+  const handleSubmit = async () => {
+    if (selectedPlan === "free") {
+      await onSelectFree();
+    } else {
+      const currentPrice = isAnnual ? pricingData.pro_annually : pricingData.pro_monthly;
+      await onSelectPro(currentPrice.id);
+    }
   };
 
   const getButtonState = () => {
     if (!currentSubscriptionInfo) {
       // Default labels when no subscription info available
       return {
-        freeButtonLabel: "Continue with Free",
-        proButtonLabel: "Upgrade to Pro",
-        isFreeDisabled: false,
-        isProDisabled: false
+        free: {
+          label: "Continue with Free",
+          disabled: false
+        },
+        pro: {
+          label: "Upgrade to Pro",
+          disabled: false
+        }
       };
     }
 
@@ -93,26 +67,30 @@ export function PricingPlanForm({
 
     if (isFree) {
       return {
-        freeButtonLabel: "Current Plan",
-        proButtonLabel: "Upgrade to Pro",
-        isFreeDisabled: true,
-        isProDisabled: false
+        free: {
+          label: "Current Plan",
+          disabled: true
+        },
+        pro: {
+          label: "Upgrade to Pro",
+          disabled: false
+        }
       };
     } else {
       return {
-        freeButtonLabel: "Downgrade to Free",
-        proButtonLabel: isSubscriptionActive ? "Current Plan" : "Reactivate Pro",
-        isFreeDisabled: false,
-        isProDisabled: isSubscriptionActive
+        free: {
+          label: "Downgrade to Free",
+          disabled: false
+        },
+        pro: {
+          label: isSubscriptionActive ? "Current Plan" : "Reactivate Pro",
+          disabled: isSubscriptionActive
+        }
       };
     }
   };
 
   const buttonState = getButtonState();
-  const isCurrentPlanSelected = currentSubscriptionInfo
-    ? (selectedPlan === "free" && currentSubscriptionInfo.isFree) ||
-      (selectedPlan === "pro" && hasActiveProSubscription(currentSubscriptionInfo))
-    : false;
 
   return (
     <div className="flex flex-col gap-y-6 @container @2xl:gap-y-10">
@@ -277,12 +255,12 @@ export function PricingPlanForm({
       <div className="sticky bottom-0 bg-stone-150 py-4 @2xl:static @2xl:py-0">
         <div className="mx-auto flex flex-col gap-3 @2xl:max-w-md">
           <Button
-            onClick={() => startTransition(() => handleSubmit())}
+            onClick={() => startTransition(async () => await handleSubmit())}
             loading={isPending}
             className="w-full"
-            disabled={isCurrentPlanSelected}
+            disabled={selectedPlan === "pro" ? buttonState.pro.disabled : buttonState.free.disabled}
           >
-            {selectedPlan === "pro" ? buttonState.proButtonLabel : buttonState.freeButtonLabel}
+            {selectedPlan === "pro" ? buttonState.pro.label : buttonState.free.label}
           </Button>
         </div>
       </div>
