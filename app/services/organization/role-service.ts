@@ -25,7 +25,8 @@ const publicPaths = [
   /^\/privacy/,
   /^\/home$/,
   /^\/design/,
-  /^\/alpha\/login$/,
+  /^\/login\/email$/,
+  /^\/login\/pending$/,
   /^\/login$/,
   /^\/legal/,
   /^\/customer-login$/,
@@ -47,6 +48,8 @@ const publicPaths = [
   // Auth flows
   /^\/app\/customer-login$/,
   /^\/app\/login$/,
+  /^\/app\/login\/email$/,
+  /^\/app\/login\/pending$/,
   /^\/app\/login\/error$/,
   /^\/app\/login\/local-auth$/
 ];

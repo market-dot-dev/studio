@@ -1,13 +1,12 @@
 "use client";
 
+import { LoginButton } from "@/components/common/login-button";
 import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import { LoginButton } from "@/components/common/login-button";
-
-const GithubLoginButton = ({ callbackUrl }: { callbackUrl?: string }) => {
+export const GithubSignIn = ({ callbackUrl }: { callbackUrl?: string }) => {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");
@@ -34,5 +33,3 @@ const GithubLoginButton = ({ callbackUrl }: { callbackUrl?: string }) => {
     </LoginButton>
   );
 };
-
-export default GithubLoginButton;

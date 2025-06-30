@@ -23,22 +23,25 @@ const cookieDomain = isPreview
 export const authOptions: NextAuthOptions = {
   providers: [
     EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.SENDGRID_API_KEY
-        }
-      },
+      // @NOTE: "server"/"from" are unused, but required here as sendgrid takes care of email
+      server: process.env.EMAIL_SERVER,
       from: process.env.SENDGRID_FROM_EMAIL,
-      // the following configuration of EmailProvider makes it use a 6 digit token number instead of a magic link
-      maxAge: 5 * 60,
+      maxAge: 5 * 60, // 5 minutes
       generateVerificationToken: async () => {
         return Math.floor(100000 + Math.random() * 900000).toString();
       },
-      sendVerificationRequest: ({ identifier: email, token }) => {
-        return sendVerificationEmail(email, token, domainCopy());
+      sendVerificationRequest: async ({ identifier: email, token, url }) => {
+        // Create custom URL that goes to our verification page instead of direct callback
+        const urlParams = new URL(url);
+        const verificationUrl = new URL(`/login/email`, urlParams.origin);
+
+        // Copy all the original params to our custom page
+        urlParams.searchParams.forEach((value, key) => {
+          verificationUrl.searchParams.set(key, value);
+        });
+
+        // Send email with link to our custom verification page
+        return sendVerificationEmail(email, token, domainCopy(), verificationUrl.toString());
       }
     }),
     GitHubProvider({
@@ -57,8 +60,8 @@ export const authOptions: NextAuthOptions = {
   ].filter(Boolean) as Provider[],
   pages: {
     signIn: `/login`,
-    verifyRequest: `/api/authresponse`,
-    error: "/api/authresponse" // Error code passed in query string as ?error=
+    verifyRequest: `/login/pending`,
+    error: "/login" // Error code passed in query string as ?error=
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
