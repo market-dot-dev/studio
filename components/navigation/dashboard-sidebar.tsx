@@ -20,7 +20,6 @@ import {
   Home,
   MessageCircle,
   Package,
-  ScanSearch,
   Scroll,
   Settings,
   UserRoundSearch,
@@ -122,13 +121,6 @@ export function DashboardSidebar({ orgContext, site }: DashboardSidebarProps) {
           url: "/prospects",
           icon: <UserRoundSearch />,
           isActive: urlSegments[0] === "prospects"
-        },
-        {
-          title: "Research",
-          url: "/research",
-          icon: <ScanSearch />,
-          isBeta: true,
-          isActive: urlSegments[0] === "research"
         }
       ]
     },
@@ -137,13 +129,13 @@ export function DashboardSidebar({ orgContext, site }: DashboardSidebarProps) {
       items: [
         ...(site
           ? [
-              {
-                title: "Landing Page",
-                url: `/site/${site.id}`,
-                icon: <AppWindowMac />,
-                isActive: urlSegments[0] === "site" || urlSegments[0] === "page"
-              }
-            ]
+            {
+              title: "Landing Page",
+              url: `/site/${site.id}`,
+              icon: <AppWindowMac />,
+              isActive: urlSegments[0] === "site" || urlSegments[0] === "page"
+            }
+          ]
           : []),
         // {
         //   title: "Marketplace",

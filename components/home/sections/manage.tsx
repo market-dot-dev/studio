@@ -1,7 +1,7 @@
 import FeatureCard from "@/components/home/feature-card";
 import Section from "@/components/home/section";
 import { colors } from "@/lib/home/colors";
-import { ChartLine, ListCheck, ScanSearch, ScrollText, UsersRound } from "lucide-react";
+import { ChartLine, ListCheck, ScrollText, UsersRound } from "lucide-react";
 
 export default function Manage() {
   return (
@@ -40,15 +40,6 @@ export default function Manage() {
           icon={<ScrollText />}
           title="Templated contracts"
           description="Create & send service agreements in minutes using our ready-made, open source contracts."
-          color={colors.orange}
-          orientation="vertical"
-          imageMaxWidth={null}
-          className="ring-0 md:ring-1"
-        />
-        <FeatureCard
-          icon={<ScanSearch />}
-          title="Market research"
-          description="Find potential customers using dependency data."
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
