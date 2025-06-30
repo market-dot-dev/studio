@@ -37,7 +37,6 @@ model Organization {
   contracts     Contract[]
   charges       Charge[]
   subscriptions Subscription[]
-  leads         Lead[]
   prospects     Prospect[]           @relation(name: "prospects")
   sites         Site[]
   invites       OrganizationInvite[]

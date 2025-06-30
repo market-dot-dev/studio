@@ -276,7 +276,6 @@ export async function getVendorStats(organizationId?: string) {
           tiers: true,
           charges: true,
           subscriptions: true,
-          leads: true,
           prospects: true
         }
       }
@@ -304,7 +303,6 @@ export async function getVendorStats(organizationId?: string) {
     totalTiers: stats._count.tiers,
     totalCharges: stats._count.charges,
     totalSubscriptions: stats._count.subscriptions,
-    totalLeads: stats._count.leads,
     totalProspects: stats._count.prospects,
     totalCustomers: customers.length,
     totalRevenue: totalRevenue / 100, // Convert from cents to dollars

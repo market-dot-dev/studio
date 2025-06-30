@@ -31,7 +31,6 @@ market.dev is the open-source platform with everything developers need to sell, 
 - **Contract Library**: Access a curated library of proven developer service agreements.
 - **Prospect & Customer CRM**: Manage your entire sales pipeline, from leads and opportunities to existing customer interactions, all in one place.
 - **Sales Analytics**: Get actionable insights into sales performance, customer behavior, and key revenue metrics.
-- **Developer-Focused Lead Research**: Discover potential customers by analyzing open-source project dependency data.
 - **Easily sell on explore.market.dev**: Optionally list and sell your services on the explore.market.dev marketplace.
 
 ## Roadmap
