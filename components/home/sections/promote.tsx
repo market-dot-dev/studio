@@ -4,7 +4,7 @@ import FeatureCard from "@/components/home/feature-card";
 import Section from "@/components/home/section";
 import { colors } from "@/lib/home/colors";
 import { cn } from "@/lib/utils";
-import { BookOpenCheck, CodeSquare, ShoppingCart, Speech, StoreIcon } from "lucide-react";
+import { CodeSquare, ShoppingCart, Speech, StoreIcon } from "lucide-react";
 import React, { useState } from "react";
 
 const featureCards = [
