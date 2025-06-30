@@ -24,6 +24,28 @@ export default async function PricingPage() {
   const currentStep = ONBOARDING_STEPS["pricing"];
   const nextPath = getNextStepPath(currentStep.name);
 
+  // Button configurations for PricingPlanForm
+  const getButtonConfigs = () => {
+    const { isFree, isSubscriptionActive } = subscriptionInfo;
+
+    if (!subscriptionInfo || isFree) {
+      return {
+        freeButtonConfig: { label: "Continue with Free" },
+        proButtonConfig: { label: "Upgrade to Pro" }
+      };
+    } else {
+      return {
+        freeButtonConfig: { label: "Continue with Free" },
+        proButtonConfig: {
+          label: isSubscriptionActive ? "Current Plan" : "Reactivate Pro",
+          disabled: isSubscriptionActive
+        }
+      };
+    }
+  };
+
+  const { freeButtonConfig, proButtonConfig } = getButtonConfigs();
+
   async function handleSelectFreeOnboarding() {
     "use server";
     await completeOnboardingStep("pricing");
@@ -60,6 +82,9 @@ export default async function PricingPage() {
           currentSubscriptionInfo={subscriptionInfo}
           onSelectFree={handleSelectFreeOnboarding}
           onSelectPro={handleSelectProOnboarding}
+          freeButtonConfig={freeButtonConfig}
+          proButtonConfig={proButtonConfig}
+          returnPath={"/onboarding/pricing"}
         />
       )}
     </div>

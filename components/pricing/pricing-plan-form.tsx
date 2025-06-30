@@ -18,13 +18,25 @@ interface PricingPlanFormProps {
   currentSubscriptionInfo?: SubscriptionInfo;
   onSelectFree: () => Promise<void> | void;
   onSelectPro: (priceId: string) => Promise<void> | void;
+  freeButtonConfig: {
+    label: string;
+    disabled?: boolean;
+  };
+  proButtonConfig: {
+    label: string;
+    disabled?: boolean;
+  };
+  returnPath?: string;
 }
 
 export function PricingPlanForm({
   pricingData,
   currentSubscriptionInfo,
   onSelectFree,
-  onSelectPro
+  onSelectPro,
+  freeButtonConfig,
+  proButtonConfig,
+  returnPath
 }: PricingPlanFormProps) {
   const currentPlan = hasActiveProSubscription(currentSubscriptionInfo) ? "pro" : "free";
 
@@ -48,52 +60,9 @@ export function PricingPlanForm({
     }
   };
 
-  const getButtonState = () => {
-    if (!currentSubscriptionInfo) {
-      // Default labels when no subscription info available
-      return {
-        free: {
-          label: "Continue with Free",
-          disabled: false
-        },
-        pro: {
-          label: "Upgrade to Pro",
-          disabled: false
-        }
-      };
-    }
-
-    const { isFree, isSubscriptionActive } = currentSubscriptionInfo;
-
-    if (isFree) {
-      return {
-        free: {
-          label: "Current Plan",
-          disabled: true
-        },
-        pro: {
-          label: "Upgrade to Pro",
-          disabled: false
-        }
-      };
-    } else {
-      return {
-        free: {
-          label: "Downgrade to Free",
-          disabled: false
-        },
-        pro: {
-          label: isSubscriptionActive ? "Current Plan" : "Reactivate Pro",
-          disabled: isSubscriptionActive
-        }
-      };
-    }
-  };
-
-  const buttonState = getButtonState();
-
   return (
-    <div className="flex flex-col gap-y-6 @container @2xl:gap-y-10">
+    <div className="flex flex-col gap-y-8 @container @2xl:gap-y-10">
+      {returnPath && <input type="hidden" name="returnPath" value={returnPath} />}
       {/* Monthly/Yearly Switcher */}
       <div className="flex w-full items-center justify-center">
         <Tabs
@@ -119,7 +88,7 @@ export function PricingPlanForm({
             <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
               <div className="relative flex flex-col  px-6 pb-7 pt-5 @2xl:pb-8 ">
                 <div className="mb-1 flex items-center justify-between">
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-3">
                     <h3 className="text-xl font-semibold tracking-tightish">Free</h3>
                     {currentPlan === "free" && (
                       <Badge size="sm" variant="secondary" className="h-fit translate-y-px">
@@ -138,7 +107,7 @@ export function PricingPlanForm({
                 </div>
 
                 <p className="mb-6 text-pretty text-sm text-muted-foreground">
-                  For freelancers just getting started
+                  Only pay when you get paid
                 </p>
 
                 <div className="mb-6 flex h-8 items-center">
@@ -258,9 +227,9 @@ export function PricingPlanForm({
             onClick={() => startTransition(async () => await handleSubmit())}
             loading={isPending}
             className="w-full"
-            disabled={selectedPlan === "pro" ? buttonState.pro.disabled : buttonState.free.disabled}
+            disabled={selectedPlan === "pro" ? proButtonConfig.disabled : freeButtonConfig.disabled}
           >
-            {selectedPlan === "pro" ? buttonState.pro.label : buttonState.free.label}
+            {selectedPlan === "pro" ? proButtonConfig.label : freeButtonConfig.label}
           </Button>
         </div>
       </div>
