@@ -129,7 +129,6 @@ export const includeFullOrg = Prisma.validator<Prisma.OrganizationDefaultArgs>()
         tiers: true,
         charges: true,
         subscriptions: true,
-        leads: true,
         prospects: true
       }
     }
