@@ -81,7 +81,8 @@
     "sharp": "^0.34.2",
     "sonner": "^2.0.5",
     "stripe": "^18.2.1",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "zod": "^3.25.67"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
