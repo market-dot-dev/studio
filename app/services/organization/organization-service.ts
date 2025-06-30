@@ -151,3 +151,31 @@ export async function getCurrentOrganizationForSettings(): Promise<CurrentOrgani
     subdomain: org.sites[0]?.subdomain ?? null
   };
 }
+
+/**
+ * Get organization with integration status
+ */
+export async function getOrganizationWithIntegrations(id?: string) {
+  const org = id ? { id } : await requireOrganization();
+
+  return prisma.organization.findUnique({
+    where: { id: org.id },
+    include: {
+      ...includeFullOrg.include,
+      integrations: {
+        include: {
+          installedByUser: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        },
+        orderBy: {
+          installedAt: "desc"
+        }
+      }
+    }
+  });
+}

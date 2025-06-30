@@ -30,7 +30,6 @@ export const includeMinimalOrg = Prisma.validator<Prisma.OrganizationDefaultArgs
     createdAt: true,
     updatedAt: true,
     onboarding: true,
-    marketExpertId: true,
     stripeAccountId: true,
     stripeAccountDisabled: true
   }

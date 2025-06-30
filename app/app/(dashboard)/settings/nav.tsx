@@ -30,6 +30,11 @@ export default function SettingsNav() {
       href: `/settings/billing`,
       isActive: activeSegment === "billing"
     }
+    // {
+    //   name: "Integrations",
+    //   href: `/settings/integrations`,
+    //   isActive: activeSegment === "integrations"
+    // }
   ];
 
   return <LinkTabs items={navItems} />;

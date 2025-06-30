@@ -1,5 +1,4 @@
 import CustomerLogin from "@/components/login/customer-login";
-import LocalAuthSection from "@/components/login/local-auth-section";
 import { Metadata } from "next";
 import Image from "next/image";
 import { Suspense } from "react";
@@ -28,8 +27,6 @@ export default async function LoginPage() {
         >
           <CustomerLogin />
         </Suspense>
-
-        <LocalAuthSection />
       </div>
     </div>
   );
