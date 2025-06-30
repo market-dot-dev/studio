@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getSession } from "@/lib/auth";
+import { getSession } from "@/lib/session-helper";
 import { redirect } from "next/navigation";
 
 type EmailLoginPageProps = {

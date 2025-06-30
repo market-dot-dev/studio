@@ -1,8 +1,8 @@
 "use server";
 
 import { User } from "@/app/generated/prisma";
-import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { getSession } from "@/lib/session-helper";
 import {
   MinimalOrganization,
   OrganizationSwitcherContext,

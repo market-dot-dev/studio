@@ -1,9 +1,8 @@
-import Session from "@/app/models/Session";
 import AuthService from "@/app/services/auth-service";
 import { sendVerificationEmail } from "@/app/services/email-service";
 import prisma from "@/lib/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { getServerSession, type NextAuthOptions } from "next-auth";
+import { type NextAuthOptions } from "next-auth";
 import { Provider } from "next-auth/providers";
 import EmailProvider from "next-auth/providers/email";
 import GitHubProvider from "next-auth/providers/github";
@@ -109,7 +108,3 @@ export const authOptions: NextAuthOptions = {
     }
   }
 };
-
-export async function getSession() {
-  return getServerSession(authOptions) as Promise<Session>;
-}
