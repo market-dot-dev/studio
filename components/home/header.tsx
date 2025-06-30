@@ -153,6 +153,16 @@ export default function Header({ className }: { className?: string }) {
     };
   }, [isDesktopDropdownOpen]);
 
+  const updateDropdownPosition = useCallback(() => {
+    if (desktopMenuButtonRef.current) {
+      const rect = desktopMenuButtonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + dropdownOffsets.vertical,
+        right: window.innerWidth - rect.right + dropdownOffsets.horizontal
+      });
+    }
+  }, [dropdownOffsets.vertical, dropdownOffsets.horizontal]);
+
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const toggleDesktopDropdown = () => {
     const newState = !isDesktopDropdownOpen;
@@ -213,16 +223,6 @@ export default function Header({ className }: { className?: string }) {
       }
     }
   ];
-
-  const updateDropdownPosition = useCallback(() => {
-    if (desktopMenuButtonRef.current) {
-      const rect = desktopMenuButtonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + dropdownOffsets.vertical,
-        right: window.innerWidth - rect.right + dropdownOffsets.horizontal
-      });
-    }
-  }, [dropdownOffsets.vertical, dropdownOffsets.horizontal]);
 
   useEffect(() => {
     if (isDesktopDropdownOpen) {
