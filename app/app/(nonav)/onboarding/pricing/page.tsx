@@ -1,23 +1,41 @@
 import { PlanInformation } from "@/app/app/(dashboard)/settings/billing/plan-information";
 import { StripeCustomerPortal } from "@/app/app/(dashboard)/settings/billing/stripe-customer-portal";
+import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
 import { ONBOARDING_STEPS, getNextStepPath } from "@/app/services/onboarding/onboarding-steps";
-import { getCachedPricing, getCurrentBilling } from "@/app/services/platform";
+import { checkoutAction, getCachedPricing, getCurrentBilling } from "@/app/services/platform";
 import { OnboardingAction } from "@/components/onboarding/onboarding-action";
 import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
-import { getPlanDisplayLabel, getSubscriptionInfo } from "@/utils/subscription-utils";
-import { PricingPageForm } from "./pricing-page-form";
+import { PricingPlanForm } from "@/components/pricing/pricing-plan-form";
+import {
+  getPlanDisplayLabel,
+  getSubscriptionInfo,
+  hasActiveProSubscription
+} from "@/utils/subscription-utils";
+import { redirect } from "next/navigation";
 
 export default async function PricingPage() {
   const billing = await getCurrentBilling();
   const pricingData = await getCachedPricing();
 
   const subscriptionInfo = getSubscriptionInfo(billing);
-  const hasActiveSubscription = subscriptionInfo.isSubscriptionActive && !subscriptionInfo.isFree;
-  const defaultPlan = hasActiveSubscription ? "pro" : "free";
+  const hasActiveSubscription = hasActiveProSubscription(subscriptionInfo);
   const planDisplayName = billing?.planType ? getPlanDisplayLabel(billing.planType) : "Your plan";
 
   const currentStep = ONBOARDING_STEPS["pricing"];
   const nextPath = getNextStepPath(currentStep.name);
+
+  async function handleSelectFreeOnboarding() {
+    "use server";
+    await completeOnboardingStep("pricing");
+    redirect(nextPath);
+  }
+
+  async function handleSelectProOnboarding(priceId: string) {
+    "use server";
+    const formData = new FormData();
+    formData.append("priceId", priceId);
+    await checkoutAction(formData);
+  }
 
   return (
     <div className="relative space-y-6">
@@ -37,7 +55,12 @@ export default async function PricingPage() {
           />
         </div>
       ) : (
-        <PricingPageForm pricingData={pricingData} defaultPlan={defaultPlan} />
+        <PricingPlanForm
+          pricingData={pricingData}
+          currentSubscriptionInfo={subscriptionInfo}
+          onSelectFree={handleSelectFreeOnboarding}
+          onSelectPro={handleSelectProOnboarding}
+        />
       )}
     </div>
   );
