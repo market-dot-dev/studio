@@ -23,7 +23,6 @@ import {
   ScanSearch,
   Scroll,
   Settings,
-  ShoppingBag,
   UserRoundSearch,
   UsersRound
 } from "lucide-react";
@@ -146,12 +145,12 @@ export function DashboardSidebar({ orgContext, site }: DashboardSidebarProps) {
               }
             ]
           : []),
-        {
-          title: "Marketplace",
-          url: "/channels/market",
-          icon: <ShoppingBag />,
-          isActive: urlSegments[1] === "market"
-        },
+        // {
+        //   title: "Marketplace",
+        //   url: "/channels/market",
+        //   icon: <ShoppingBag />,
+        //   isActive: urlSegments[1] === "market"
+        // },
         {
           title: "Embeds",
           url: "/channels/embeds",
