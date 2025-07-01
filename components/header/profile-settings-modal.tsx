@@ -16,7 +16,6 @@ import { toast } from "sonner";
 
 type EditableUserFields = {
   name: string | null;
-  email: string | null;
 };
 
 interface ProfileSettingsModalProps {
@@ -30,8 +29,7 @@ export default function ProfileSettingsModal({ user }: ProfileSettingsModalProps
   const { update } = useSession();
 
   const [userData, setUserData] = useState<EditableUserFields>({
-    name: user.name ?? null,
-    email: user.email ?? null
+    name: user.name ?? null
   });
 
   const handleSubmit = useCallback(
@@ -40,8 +38,7 @@ export default function ProfileSettingsModal({ user }: ProfileSettingsModalProps
       setIsSaving(true);
       try {
         await updateCurrentUser({
-          name: userData.name,
-          email: userData.email
+          name: userData.name
         });
 
         await update();
@@ -95,20 +92,6 @@ export default function ProfileSettingsModal({ user }: ProfileSettingsModalProps
                 value={userData.name ?? ""}
                 onChange={(e) => {
                   setUserData({ ...userData, name: e.target.value || null });
-                }}
-                required
-              />
-            </div>
-            <div className="flex w-full flex-col gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                type="email"
-                placeholder="Enter your email"
-                value={userData.email ?? ""}
-                onChange={(e) => {
-                  setUserData({ ...userData, email: e.target.value || null });
                 }}
                 required
               />
