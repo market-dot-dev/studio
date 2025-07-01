@@ -5,7 +5,7 @@ import { CHECKOUT_CURRENCY } from "@/app/config/checkout";
 import { Contract, Tier } from "@/app/generated/prisma";
 import { processPayment } from "@/app/services/billing/connect-checkout-service";
 import { ContractLink } from "@/components/contracts/contract-link";
-import { CustomerLoginComponent } from "@/components/login/customer-login";
+import { CustomerLogin } from "@/components/login/customer-login";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -75,7 +75,7 @@ export function DirectPaymentCheckout({
 
   return (
     <div className="mx-auto flex w-full flex-col gap-12 md:max-w-xl lg:max-w-md xl:max-w-lg">
-      <section className="relative ">
+      <section className="relative">
         <div className="absolute -bottom-10 left-0 top-0 hidden flex-col items-center gap-2 md:left-[-60px] md:flex">
           <StepNumber number={1} />
           <span className="h-full border-l" />
@@ -85,7 +85,7 @@ export function DirectPaymentCheckout({
             <StepNumber number={1} className="md:hidden" />
             Account
           </h2>
-          <CustomerLoginComponent signup={true} />
+          <CustomerLogin />
         </div>
       </section>
 

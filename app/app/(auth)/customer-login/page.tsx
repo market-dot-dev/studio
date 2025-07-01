@@ -1,4 +1,4 @@
-import CustomerLogin from "@/components/login/customer-login";
+import { CustomerLogin } from "@/components/login/customer-login";
 import { Metadata } from "next";
 import Image from "next/image";
 import { Suspense } from "react";
