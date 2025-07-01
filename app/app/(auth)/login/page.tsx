@@ -1,4 +1,5 @@
 import { getSession } from "@/lib/auth";
+import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -17,10 +18,12 @@ export default async function LoginPage(props: {
 
   // Get parameters from query
   const callbackUrl = (searchParams.callbackUrl as string) || "/";
-  const context = (searchParams.context as string) || null;
-  const isCheckout = context === "checkout";
 
-  console.log("Callback url", callbackUrl);
+  // Check for checkout context from cookie (set by API route)
+  const signupContext = ((await cookies()) as unknown as UnsafeUnwrappedCookies).get(
+    "signup_context"
+  );
+  const isCheckout = signupContext?.value === "checkout";
 
   return (
     <>

@@ -31,14 +31,8 @@ export const authOptions: NextAuthOptions = {
         return Math.floor(100000 + Math.random() * 900000).toString();
       },
       sendVerificationRequest: async ({ identifier: email, token, url }) => {
-        console.log("EMAIL VERIFICATION DEBUG - Original Next-Auth URL:", url);
-
         // Parse the original Next-Auth generated URL
         const originalUrl = new URL(url);
-        console.log(
-          "EMAIL VERIFICATION DEBUG - Original search params:",
-          Object.fromEntries(originalUrl.searchParams.entries())
-        );
 
         // Create custom URL that goes to our verification page
         const verificationUrl = new URL(`/login/email`, originalUrl.origin);
@@ -47,11 +41,6 @@ export const authOptions: NextAuthOptions = {
         originalUrl.searchParams.forEach((value, key) => {
           verificationUrl.searchParams.set(key, value);
         });
-
-        console.log(
-          "EMAIL VERIFICATION DEBUG - Final verification URL:",
-          verificationUrl.toString()
-        );
 
         // Send email with link to our custom verification page
         return sendVerificationEmail(email, token, domainCopy(), verificationUrl.toString());
@@ -94,13 +83,9 @@ export const authOptions: NextAuthOptions = {
     jwt: jwtCallback,
     session: sessionCallback,
     redirect({ url, baseUrl }: { url: string; baseUrl: string }): string {
-      console.log("REDIRECT CALLBACK DEBUG", { url, baseUrl });
-
       // Handle relative URLs (like "/dashboard", "/checkout")
       if (url.startsWith("/")) {
-        const result = `${baseUrl}${url}`;
-        console.log("REDIRECT CALLBACK - Relative URL result:", result);
-        return result;
+        return `${baseUrl}${url}`;
       }
 
       // Handle absolute URLs
@@ -113,7 +98,6 @@ export const authOptions: NextAuthOptions = {
         if (rootHost) {
           // Allow URLs on subdomains of your root host (this is key for cross-subdomain redirects)
           if (urlObj.hostname.endsWith(rootHost)) {
-            console.log("REDIRECT CALLBACK - Allowing subdomain URL:", url);
             return url;
           }
 
@@ -124,7 +108,6 @@ export const authOptions: NextAuthOptions = {
             baseUrlObj.hostname.includes("localhost") &&
             urlObj.port === baseUrlObj.port
           ) {
-            console.log("REDIRECT CALLBACK - Allowing localhost URL:", url);
             return url;
           }
 
@@ -134,21 +117,14 @@ export const authOptions: NextAuthOptions = {
             urlObj.hostname.endsWith(".local") &&
             baseUrlObj.hostname.endsWith(".local")
           ) {
-            console.log("REDIRECT CALLBACK - Allowing .local URL:", url);
             return url;
           }
         }
 
         // Allow URLs on the same origin as baseUrl
         if (urlObj.origin === baseUrlObj.origin) {
-          console.log("REDIRECT CALLBACK - Allowing same origin URL:", url);
           return url;
         }
-
-        console.log("REDIRECT CALLBACK - Rejecting URL, falling back to baseUrl:", {
-          url,
-          baseUrl
-        });
       } catch (error) {
         console.error("REDIRECT CALLBACK - Error parsing URL:", error);
       }

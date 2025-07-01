@@ -124,28 +124,14 @@ async function onSignIn(account: any, naUser: NaUser) {
 }
 
 async function onCreateUser(account: any, user: NaUser) {
-  //@NOTE: This cookie may be deprecated
-  const signupName = (cookies() as unknown as UnsafeUnwrappedCookies).get("signup_name") ?? null;
-  const name = (signupName?.value ?? null) as string | null;
+  // Get context from cookie
+  const signupContext =
+    (cookies() as unknown as UnsafeUnwrappedCookies).get("signup_context") ?? null;
+  const context = (signupContext?.value ?? null) as string | null;
 
-  // Determine organization type based on context from URL
-  let organizationType: OrganizationType = OrganizationType.VENDOR; // Default to vendor
-
-  try {
-    // Try to get context from headers (referrer URL)
-    const headersList = await import("next/headers").then((h) => h.headers());
-    const referer = headersList.get("referer");
-
-    if (referer) {
-      const refererUrl = new URL(referer);
-      const context = refererUrl.searchParams.get("context");
-      if (context === "checkout") {
-        organizationType = OrganizationType.CUSTOMER;
-      }
-    }
-  } catch (error) {
-    console.log("Could not determine context from headers, defaulting to vendor");
-  }
+  // Determine organization type based on context
+  const organizationType =
+    context === "checkout" ? OrganizationType.CUSTOMER : OrganizationType.VENDOR;
 
   if (account && user) {
     await prisma.account.upsert({
@@ -179,7 +165,7 @@ async function onCreateUser(account: any, user: NaUser) {
   // Create organization for the new user
   const organization = await prisma.organization.create({
     data: {
-      name: name ? `${name}'s Organization` : `${user.name || user.email || "User"}'s Organization`,
+      name: `${user.name || user.email || "User"}'s Organization`,
       type: organizationType,
       ownerId: user.id,
       description: businessDescription,
@@ -204,8 +190,7 @@ async function onCreateUser(account: any, user: NaUser) {
   const updatedUser = await prisma.user.update({
     where: { id: user.id },
     data: {
-      currentOrganizationId: organization.id,
-      ...(name ? { name } : {})
+      currentOrganizationId: organization.id
     }
   });
 
@@ -221,9 +206,9 @@ async function onCreateUser(account: any, user: NaUser) {
     await sendWelcomeEmailToCustomer({ ...updatedUser });
   }
 
-  //@NOTE: This cookie may be deprecated
-  if (signupName) {
-    (cookies() as unknown as UnsafeUnwrappedCookies).delete("signup_name");
+  // Clean up context cookie
+  if (signupContext) {
+    (cookies() as unknown as UnsafeUnwrappedCookies).delete("signup_context");
   }
 
   return updatedUser;
