@@ -15,8 +15,12 @@ export default async function LoginPage(props: {
     redirect("/");
   }
 
-  // Get callbackUrl from query parameters
-  const callbackUrl = (searchParams.callbackUrl as string) || undefined;
+  // Get parameters from query
+  const callbackUrl = (searchParams.callbackUrl as string) || "/";
+  const context = (searchParams.context as string) || null;
+  const isCheckout = context === "checkout";
+
+  console.log("Callback url", callbackUrl);
 
   return (
     <>
@@ -28,10 +32,12 @@ export default async function LoginPage(props: {
         src="/gw-logo-nav.png"
       />
       <h1 className="mt-4 text-center text-2xl font-bold tracking-tightish dark:text-white">
-        Login to market.dev
+        {isCheckout ? "Login to complete purchase" : "Login to market.dev"}
       </h1>
       <p className="mt-3 text-center text-sm text-stone-500 dark:text-stone-400">
-        All-in-one business tools, built for developers.
+        {isCheckout
+          ? "Please sign in or create an account to continue"
+          : "All-in-one business tools, built for developers."}
       </p>
 
       <div className="mx-auto mt-6 flex w-full max-w-xs flex-col gap-2">
@@ -40,18 +46,14 @@ export default async function LoginPage(props: {
             <div className="h-12 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
           }
         >
-          <EmailSignIn />
+          <EmailSignIn callbackUrl={callbackUrl} />
         </Suspense>
         <Suspense
           fallback={
             <div className="h-12 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
           }
         >
-          <GithubSignIn
-            callbackUrl={
-              callbackUrl || (searchParams.source ? `/?source=${searchParams.source}` : undefined)
-            }
-          />
+          <GithubSignIn callbackUrl={callbackUrl} />
         </Suspense>
       </div>
     </>

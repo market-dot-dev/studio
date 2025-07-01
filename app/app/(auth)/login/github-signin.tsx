@@ -6,7 +6,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export const GithubSignIn = ({ callbackUrl }: { callbackUrl?: string }) => {
+export const GithubSignIn = ({ callbackUrl }: { callbackUrl: string }) => {
   const [loading, setLoading] = useState(false);
   const searchParams = useSearchParams();
   const error = searchParams?.get("error");

@@ -112,15 +112,17 @@ async function customMiddleware(req: NextRequest) {
     return rewrite(`/maintainer-site/${ghUsername}${path}`, req.url);
   }
 
+  // @TODO: Remove this if no problems
   // Handle login redirects
-  const loginPaths = ["/login", "/customer-login", "/login/local-auth"];
-  if (sessionUser && loginPaths.includes(url.pathname)) {
-    const redirectUrl = new URL("/", req.url);
-    if (searchParams) {
-      redirectUrl.search = searchParams;
-    }
-    return NextResponse.redirect(redirectUrl);
-  }
+  // const loginPaths = ["/login", "/login/pending", "/login/email"];
+  // if (sessionUser && loginPaths.includes(url.pathname)) {
+  //   const redirectUrl = new URL("/", req.url);
+  //   if (searchParams) {
+  //     redirectUrl.search = searchParams;
+  //   }
+  //   console.log("DEBUG: Redirected a login path to", redirectUrl);
+  //   return NextResponse.redirect(redirectUrl);
+  // }
 
   // Handle app subdomain (app.market.dev)
   if (reservedSubdomain === "app" || (await isVercelPreview(req))) {
