@@ -1,5 +1,5 @@
 import { getUserById } from "@/app/services/user-service";
-import { createSessionUser, SessionUser } from "@/lib/session-helper";
+import { createSessionUser, SessionUser } from "@/types/session";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 

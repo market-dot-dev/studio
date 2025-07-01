@@ -1,13 +1,14 @@
 "use server";
 
 import { Prisma, User } from "@/app/generated/prisma";
+import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { getSession, SessionUser } from "@/lib/session-helper";
 import {
   includeOrgSwitcherContext,
   MinimalOrganization,
   OrganizationSwitcherContext
 } from "@/types/organization";
+import { SessionUser } from "@/types/session";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { getOrganizationById } from "./organization/organization-service";

@@ -1,6 +1,4 @@
 import { OrganizationRole, OrganizationType, User } from "@/app/generated/prisma";
-import { getServerSession } from "next-auth";
-import { authOptions } from "./auth";
 
 export type SessionUser = {
   id: string;
@@ -35,7 +33,3 @@ export const createSessionUser = (
     currentUserRole: currentUserRole
   };
 };
-
-export async function getSession(): Promise<Session | null> {
-  return getServerSession(authOptions) as Promise<Session | null>;
-}

@@ -2,7 +2,7 @@
 
 import { Contract } from "@/app/generated/prisma";
 import { DataTable } from "@/components/ui/data-table";
-import { SessionUser } from "@/lib/session-helper";
+import { SessionUser } from "@/types/session";
 import { createColumns } from "./columns";
 
 interface Props {

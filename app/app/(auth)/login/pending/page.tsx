@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getSession } from "@/lib/session-helper";
+import { getSession } from "@/lib/auth";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 

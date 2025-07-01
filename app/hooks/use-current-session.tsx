@@ -1,4 +1,4 @@
-import { SessionUser } from "@/lib/session-helper";
+import { SessionUser } from "@/types/session";
 import { useSession as naUseSession } from "next-auth/react";
 import { OrganizationRole } from "../generated/prisma";
 

@@ -9,7 +9,7 @@ import {
   getSubdomainFromRequest,
   isVercelPreview
 } from "./app/services/site/domain-request-service";
-import { SessionUser } from "./lib/session-helper";
+import { SessionUser } from "./types/session";
 
 export const config = {
   matcher: [

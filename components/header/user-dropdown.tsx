@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { SessionUser } from "@/lib/session-helper";
+import { SessionUser } from "@/types/session";
 import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";

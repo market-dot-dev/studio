@@ -1,8 +1,9 @@
-import AuthService from "@/app/services/auth-service";
+import { jwtCallback, sessionCallback } from "@/app/services/auth-service";
 import { sendVerificationEmail } from "@/app/services/email-service";
 import prisma from "@/lib/prisma";
+import { Session } from "@/types/session";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { type NextAuthOptions } from "next-auth";
+import { getServerSession, type NextAuthOptions } from "next-auth";
 import { Provider } from "next-auth/providers";
 import EmailProvider from "next-auth/providers/email";
 import GitHubProvider from "next-auth/providers/github";
@@ -77,8 +78,8 @@ export const authOptions: NextAuthOptions = {
     }
   },
   callbacks: {
-    jwt: AuthService.jwtCallback,
-    session: AuthService.sessionCallback,
+    jwt: jwtCallback,
+    session: sessionCallback,
     redirect({ url, baseUrl }: { url: string; baseUrl: string }): string {
       // custom redirect logic
       if (!/^https?:\/\//.test(url)) {
@@ -108,3 +109,7 @@ export const authOptions: NextAuthOptions = {
     }
   }
 };
+
+export async function getSession(): Promise<Session | null> {
+  return getServerSession(authOptions) as Promise<Session | null>;
+}

@@ -1,4 +1,4 @@
-import { getSession } from "@/lib/session-helper";
+import { getSession } from "@/lib/auth";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";

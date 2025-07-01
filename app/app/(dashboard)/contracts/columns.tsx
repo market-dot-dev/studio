@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import { SessionUser } from "@/lib/session-helper";
+import { SessionUser } from "@/types/session";
 import { ColumnDef } from "@tanstack/react-table";
 import { BookOpen, Edit, MoreVertical, ShieldCheck } from "lucide-react";
 import Link from "next/link";
