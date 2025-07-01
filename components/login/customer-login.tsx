@@ -28,24 +28,12 @@ export function CustomerLogin() {
     // Get current page URL as callback URL
     const currentUrl = window.location.href;
 
-    // Check if we're already on the app subdomain
-    const currentHost = window.location.host;
-    const appHost = new URL(getRootUrl("app")).host;
-
-    if (currentHost === appHost) {
-      // Already on app subdomain, just navigate to login with context
-      const url = new URL("/login", window.location.origin);
-      url.searchParams.set("context", "checkout");
-      url.searchParams.set("callbackUrl", currentUrl);
-      window.location.href = url.toString();
-    } else {
-      // On vendor subdomain, redirect to app subdomain login
-      const loginUrl = getRootUrl("app", "/login");
-      const url = new URL(loginUrl);
-      url.searchParams.set("context", "checkout");
-      url.searchParams.set("callbackUrl", currentUrl);
-      window.location.href = url.toString();
-    }
+    // Call the API to set context cookie
+    const apiUrl = getRootUrl("app", "/api/auth/set-signup-context");
+    const url = new URL(apiUrl);
+    url.searchParams.set("context", "checkout");
+    url.searchParams.set("callbackUrl", currentUrl);
+    window.location.href = url.toString();
   };
 
   // If user is already logged in, show their info
