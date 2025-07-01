@@ -1,6 +1,5 @@
 "use client";
 
-import { OrganizationType } from "@/app/generated/prisma";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -59,8 +58,7 @@ export default function UserDropdown({ user }: { user: SessionUser }) {
           <DropdownMenuItem
             onClick={() =>
               signOut({
-                callbackUrl:
-                  user.currentOrgType === OrganizationType.VENDOR ? "/login" : "/customer-login"
+                callbackUrl: "/login"
               })
             }
           >

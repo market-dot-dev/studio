@@ -19,7 +19,6 @@ describe("RoleService", () => {
         "/home",
         "/login",
         "/app/login",
-        "/app/customer-login",
         "/maintainer-site/johndoe",
         "/maintainer-site/johndoe/about",
         "/checkout/abc123",
@@ -52,13 +51,7 @@ describe("RoleService", () => {
     describe("unauthenticated users", () => {
       it("should allow access to public paths", async () => {
         const unauthenticatedContext = await createAuthContext(false);
-        const publicPaths = [
-          "/terms",
-          "/login",
-          "/customer-login",
-          "/maintainer-site/johndoe",
-          "/checkout/abc123"
-        ];
+        const publicPaths = ["/terms", "/login", "/maintainer-site/johndoe", "/checkout/abc123"];
 
         for (const path of publicPaths) {
           expect(await canViewPath(path, unauthenticatedContext)).toBe(true);

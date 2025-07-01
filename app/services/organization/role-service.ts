@@ -29,7 +29,6 @@ const publicPaths = [
   /^\/login\/pending$/,
   /^\/login$/,
   /^\/legal/,
-  /^\/customer-login$/,
   /^\/login\/local-auth$/,
   /\/checkout\/[A-Za-z0-9]+/,
   /\/c\/contracts\/[A-Za-z0-9]+/, // Public contract views
@@ -46,7 +45,6 @@ const publicPaths = [
   /^\/maintainer-site\//,
 
   // Auth flows
-  /^\/app\/customer-login$/,
   /^\/app\/login$/,
   /^\/app\/login\/email$/,
   /^\/app\/login\/pending$/,
