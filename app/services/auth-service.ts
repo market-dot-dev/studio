@@ -11,7 +11,7 @@ import { SessionUser, createSessionUser } from "../models/Session";
 import { sendWelcomeEmailToCustomer, sendWelcomeEmailToMaintainer } from "./email-service";
 import { createSite } from "./site/site-crud-service";
 import { requireUser } from "./user-context-service";
-import UserService from "./UserService";
+import { getUserById } from "./user-service";
 
 type JwtCallbackParams = {
   token: JWT;
@@ -91,7 +91,7 @@ class AuthService {
   }
 
   static async onSignIn(account: any, naUser: NaUser) {
-    const user = await UserService.findUser(naUser.id);
+    const user = await getUserById(naUser.id);
 
     if (!user) {
       return null;

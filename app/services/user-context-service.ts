@@ -1,6 +1,6 @@
 "use server";
 
-import { User } from "@/app/generated/prisma";
+import { Prisma, User } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { getSession } from "@/lib/session-helper";
 import {
@@ -87,6 +87,15 @@ export const requireUser = cache(async (): Promise<User> => {
 
   return user;
 });
+
+export const updateCurrentUser = async (userData: Prisma.UserUpdateInput) => {
+  const userId = await requireUserId();
+  const result = await prisma.user.update({
+    where: { id: userId },
+    data: userData
+  });
+  return result;
+};
 
 // Organization functions
 

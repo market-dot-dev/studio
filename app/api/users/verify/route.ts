@@ -1,5 +1,5 @@
 import { createSessionUser, SessionUser } from "@/app/models/Session";
-import UserService from "@/app/services/UserService";
+import { getUserById } from "@/app/services/user-service";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
     const userId = userObj.id;
 
     // Fetch the full user data
-    const user = await UserService.findUser(userId);
+    const user = await getUserById(userId);
 
     if (!user) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
