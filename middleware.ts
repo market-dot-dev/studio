@@ -2,7 +2,6 @@ import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { OrganizationType } from "./app/generated/prisma";
-import { SessionUser } from "./app/models/Session";
 import { canViewPath, createAuthContext } from "./app/services/organization/role-service";
 import {
   getGhUsernameFromRequest,
@@ -10,6 +9,7 @@ import {
   getSubdomainFromRequest,
   isVercelPreview
 } from "./app/services/site/domain-request-service";
+import { SessionUser } from "./lib/session-helper";
 
 export const config = {
   matcher: [
