@@ -2,15 +2,14 @@
 
 import { Prisma, User } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
-import { getSession } from "@/lib/session-helper";
+import { getSession, SessionUser } from "@/lib/session-helper";
 import {
+  includeOrgSwitcherContext,
   MinimalOrganization,
-  OrganizationSwitcherContext,
-  includeOrgSwitcherContext
+  OrganizationSwitcherContext
 } from "@/types/organization";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { SessionUser } from "../models/Session";
 import { getOrganizationById } from "./organization/organization-service";
 
 // Session-only functions (no DB queries)
@@ -181,3 +180,31 @@ export const getOrganizationSwitcherContext = cache(
     };
   }
 );
+
+/**
+ * Set an organization as the current one for a user
+ */
+export async function setCurrentOrganization(organizationId: string): Promise<void> {
+  const user = await requireUser();
+
+  // Check if user is a member of the organization
+  const membership = await prisma.organizationMember.findUnique({
+    where: {
+      organizationId_userId: {
+        organizationId,
+        userId: user.id
+      }
+    }
+  });
+
+  if (!membership) {
+    throw new Error("You are not a member of this organization");
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      currentOrganizationId: organizationId
+    }
+  });
+}

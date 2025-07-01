@@ -1,7 +1,6 @@
 "use client";
 
 import { Contract } from "@/app/generated/prisma";
-import { SessionUser } from "@/app/models/Session";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,6 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { SessionUser } from "@/lib/session-helper";
 import { ColumnDef } from "@tanstack/react-table";
 import { BookOpen, Edit, MoreVertical, ShieldCheck } from "lucide-react";
 import Link from "next/link";

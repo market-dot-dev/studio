@@ -3,14 +3,13 @@
 import { OrganizationRole, OrganizationType, PlanType, User } from "@/app/generated/prisma";
 import { businessDescription } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
+import { SessionUser, createSessionUser } from "@/lib/session-helper";
 import { Account, User as NaUser } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import { JWT } from "next-auth/jwt";
 import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
-import { SessionUser, createSessionUser } from "../models/Session";
 import { sendWelcomeEmailToCustomer, sendWelcomeEmailToMaintainer } from "./email-service";
 import { createSite } from "./site/site-crud-service";
-import { requireUser } from "./user-context-service";
 import { getUserById } from "./user-service";
 
 type JwtCallbackParams = {
@@ -221,42 +220,6 @@ class AuthService {
 
     return updatedUser;
   }
-}
-
-export async function userExists(email: string) {
-  const user = await prisma.user.findUnique({
-    where: { email }
-  });
-
-  return !!user;
-}
-
-/**
- * Set an organization as the current one for a user
- */
-export async function setCurrentOrganization(organizationId: string): Promise<void> {
-  const user = await requireUser();
-
-  // Check if user is a member of the organization
-  const membership = await prisma.organizationMember.findUnique({
-    where: {
-      organizationId_userId: {
-        organizationId,
-        userId: user.id
-      }
-    }
-  });
-
-  if (!membership) {
-    throw new Error("You are not a member of this organization");
-  }
-
-  await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      currentOrganizationId: organizationId
-    }
-  });
 }
 
 export default AuthService;

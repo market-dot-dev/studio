@@ -1,6 +1,6 @@
+import { SessionUser } from "@/lib/session-helper";
 import { useSession as naUseSession } from "next-auth/react";
 import { OrganizationRole } from "../generated/prisma";
-import { SessionUser } from "../models/Session";
 
 const useCurrentSession = () => {
   const { data, status, update } = naUseSession();

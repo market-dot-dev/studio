@@ -10,3 +10,11 @@ export async function getUserById(id: string): Promise<User | undefined | null> 
     }
   });
 }
+
+export async function userExists(email: string) {
+  const user = await prisma.user.findUnique({
+    where: { email }
+  });
+
+  return !!user;
+}
