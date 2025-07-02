@@ -6,11 +6,7 @@ import { checkoutAction, getCachedPricing, getCurrentBilling } from "@/app/servi
 import { OnboardingAction } from "@/components/onboarding/onboarding-action";
 import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { PricingPlanForm } from "@/components/pricing/pricing-plan-form";
-import {
-  getPlanDisplayLabel,
-  getSubscriptionInfo,
-  hasActiveProSubscription
-} from "@/utils/subscription-utils";
+import { getPlanDisplayLabel, getSubscriptionInfo } from "@/utils/subscription-utils";
 import { redirect } from "next/navigation";
 
 export default async function PricingPage() {
@@ -18,33 +14,10 @@ export default async function PricingPage() {
   const pricingData = await getCachedPricing();
 
   const subscriptionInfo = getSubscriptionInfo(billing);
-  const hasActiveSubscription = hasActiveProSubscription(subscriptionInfo);
   const planDisplayName = billing?.planType ? getPlanDisplayLabel(billing.planType) : "Your plan";
 
   const currentStep = ONBOARDING_STEPS["pricing"];
   const nextPath = getNextStepPath(currentStep.name);
-
-  // Button configurations for PricingPlanForm
-  const getButtonConfigs = () => {
-    const { isFree, isSubscriptionActive } = subscriptionInfo;
-
-    if (!subscriptionInfo || isFree) {
-      return {
-        freeButtonConfig: { label: "Continue with Free" },
-        proButtonConfig: { label: "Upgrade to Pro" }
-      };
-    } else {
-      return {
-        freeButtonConfig: { label: "Continue with Free" },
-        proButtonConfig: {
-          label: isSubscriptionActive ? "Current Plan" : "Reactivate Pro",
-          disabled: isSubscriptionActive
-        }
-      };
-    }
-  };
-
-  const { freeButtonConfig, proButtonConfig } = getButtonConfigs();
 
   async function handleSelectFreeOnboarding() {
     "use server";
@@ -56,14 +29,49 @@ export default async function PricingPage() {
     "use server";
     const formData = new FormData();
     formData.append("priceId", priceId);
+    formData.append("returnPath", "/onboarding/pricing");
     await checkoutAction(formData);
   }
+
+  // Button configurations for PricingPlanForm
+  const getButtonConfig = () => {
+    // No custom plan in onboarding
+    const defaultConfig = {
+      freeButton: { label: "Continue with Free" },
+      proButton: { label: "Upgrade to Pro" }
+    };
+
+    const { isFree, isSubscriptionActive } = subscriptionInfo;
+
+    if (!subscriptionInfo || isFree) {
+      return defaultConfig;
+    }
+
+    if (isSubscriptionActive) {
+      return {
+        ...defaultConfig,
+        proButton: {
+          label: "Current Plan",
+          disabled: true
+        }
+      };
+    } else {
+      return {
+        ...defaultConfig,
+        proButton: {
+          label: "Reactivate Pro"
+        }
+      };
+    }
+  };
+
+  const buttonConfig = getButtonConfig();
 
   return (
     <div className="relative space-y-6">
       <OnboardingHeader title={currentStep.title} description={currentStep.description} />
 
-      {hasActiveSubscription ? (
+      {subscriptionInfo.isSubscriptionActive || subscriptionInfo.isCustom ? (
         <div className="mx-auto flex max-w-md flex-col gap-10 pt-4">
           <PlanInformation
             subscriptionInfo={subscriptionInfo}
@@ -82,9 +90,8 @@ export default async function PricingPage() {
           currentSubscriptionInfo={subscriptionInfo}
           onSelectFree={handleSelectFreeOnboarding}
           onSelectPro={handleSelectProOnboarding}
-          freeButtonConfig={freeButtonConfig}
-          proButtonConfig={proButtonConfig}
-          returnPath={"/onboarding/pricing"}
+          buttonConfig={buttonConfig}
+          showCustomPlan={false}
         />
       )}
     </div>

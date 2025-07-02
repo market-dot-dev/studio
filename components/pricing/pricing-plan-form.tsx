@@ -1,5 +1,7 @@
 "use client";
 
+import { CUSTOM_PLAN_CONTACT_URL } from "@/app/config/checkout";
+import { OrganizationBilling } from "@/app/generated/prisma";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -10,38 +12,55 @@ import { hasActiveProSubscription } from "@/utils/subscription-utils";
 import NumberFlow from "@number-flow/react";
 import { CreditCard } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
+import { useRouter } from "next/navigation";
 import { useMemo, useState, useTransition } from "react";
-import { SharedFeatureList } from "./shared-feature-list";
+import { FeatureItem, SharedFeatureList } from "./shared-feature-list";
+
+interface ButtonConfig {
+  freeButton: {
+    label: string;
+    disabled?: boolean;
+  };
+  proButton: {
+    label: string;
+    disabled?: boolean;
+  };
+  customButton?: {
+    label: string;
+    disabled?: boolean;
+  };
+}
 
 interface PricingPlanFormProps {
   pricingData: PricingData;
   currentSubscriptionInfo?: SubscriptionInfo;
+  billing?: OrganizationBilling | null;
   onSelectFree: () => Promise<void> | void;
   onSelectPro: (priceId: string) => Promise<void> | void;
-  freeButtonConfig: {
-    label: string;
-    disabled?: boolean;
-  };
-  proButtonConfig: {
-    label: string;
-    disabled?: boolean;
-  };
-  returnPath?: string;
+  buttonConfig: ButtonConfig;
+  showCustomPlan?: boolean;
 }
+
+type Plan = "free" | "pro" | "custom";
 
 export function PricingPlanForm({
   pricingData,
   currentSubscriptionInfo,
   onSelectFree,
   onSelectPro,
-  freeButtonConfig,
-  proButtonConfig,
-  returnPath
+  showCustomPlan = true,
+  buttonConfig
 }: PricingPlanFormProps) {
-  const currentPlan = hasActiveProSubscription(currentSubscriptionInfo) ? "pro" : "free";
+  const router = useRouter();
+
+  const currentPlan: Plan = hasActiveProSubscription(currentSubscriptionInfo)
+    ? "pro"
+    : currentSubscriptionInfo?.isCustom
+      ? "custom"
+      : "free";
 
   const [isPending, startTransition] = useTransition();
-  const [selectedPlan, setSelectedPlan] = useState<"free" | "pro">(currentPlan);
+  const [selectedPlan, setSelectedPlan] = useState<Plan>(currentPlan);
   const [isAnnual, setIsAnnual] = useState(false);
 
   const discountPercentage = useMemo(() => {
@@ -54,6 +73,8 @@ export function PricingPlanForm({
   const handleSubmit = async () => {
     if (selectedPlan === "free") {
       await onSelectFree();
+    } else if (selectedPlan === "custom") {
+      router.push(CUSTOM_PLAN_CONTACT_URL);
     } else {
       const currentPrice = isAnnual ? pricingData.pro_annually : pricingData.pro_monthly;
       await onSelectPro(currentPrice.id);
@@ -61,8 +82,7 @@ export function PricingPlanForm({
   };
 
   return (
-    <div className="flex flex-col gap-y-8 @container @2xl:gap-y-10">
-      {returnPath && <input type="hidden" name="returnPath" value={returnPath} />}
+    <div className="flex flex-col gap-y-6 @container @2xl:gap-y-10">
       {/* Monthly/Yearly Switcher */}
       <div className="flex w-full items-center justify-center">
         <Tabs
@@ -81,17 +101,21 @@ export function PricingPlanForm({
         </Tabs>
       </div>
 
-      <div className="mx-auto flex w-full max-w-6xl flex-wrap justify-center gap-4 @2xl:flex-nowrap @2xl:gap-6">
+      <div
+        className={`mx-auto flex w-full max-w-7xl flex-col gap-6 @2xl:flex-row @2xl:flex-wrap @2xl:justify-center @2xl:gap-6 ${
+          showCustomPlan ? "@2xl:grid-cols-3" : "@2xl:grid-cols-2"
+        }`}
+      >
         {/* Free Plan */}
-        <div className="relative w-full @2xl:max-w-[370px]">
+        <div className="relative size-full @2xl:max-w-[370px] @2xl:shrink-0">
           <label className="cursor-pointer">
             <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
-              <div className="relative flex flex-col  px-6 pb-7 pt-5 @2xl:pb-8 ">
-                <div className="mb-1 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-semibold tracking-tightish">Free</h3>
+              <div className="relative flex flex-col  px-6 pb-6 pt-5 @2xl:pb-8 ">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold tracking-tightish">Free</h3>
                     {currentPlan === "free" && (
-                      <Badge size="sm" variant="secondary" className="h-fit translate-y-px">
+                      <Badge size="sm" variant="outline" className="h-fit translate-y-px">
                         Current Plan
                       </Badge>
                     )}
@@ -101,7 +125,7 @@ export function PricingPlanForm({
                     name="plan"
                     value="free"
                     checked={selectedPlan === "free"}
-                    onChange={(e) => setSelectedPlan(e.target.value as "free" | "pro")}
+                    onChange={(e) => setSelectedPlan(e.target.value as Plan)}
                     className="absolute right-6 top-6 border-stone-400 transition-colors checked:border-swamp checked:text-swamp checked:shadow-sm focus:outline-none focus:ring-0"
                   />
                 </div>
@@ -114,10 +138,12 @@ export function PricingPlanForm({
                   <span className="text-3xl font-semibold tracking-tight">$0</span>
                 </div>
 
-                <p className="text-pretty text-sm text-muted-foreground @2xl:mb-6">
-                  <CreditCard className="mr-2 inline size-4 shrink-0 -translate-y-px text-muted-foreground" />
-                  $0.25 transaction fee + 1% per sale
-                </p>
+                <div className="flex items-start gap-2 @2xl:mb-5">
+                  <CreditCard className="size-4 shrink-0 translate-y-0.5 text-muted-foreground" />
+                  <span className="text-pretty text-sm text-muted-foreground">
+                    $0.25 transaction fee + 1% per sale
+                  </span>
+                </div>
 
                 <SharedFeatureList className="hidden @2xl:block" />
               </div>
@@ -126,15 +152,15 @@ export function PricingPlanForm({
         </div>
 
         {/* Pro Plan */}
-        <div className="relative w-full @2xl:max-w-[370px]">
+        <div className="relative size-full @2xl:max-w-[370px] @2xl:shrink-0">
           <label className="cursor-pointer">
             <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
-              <div className="relative flex flex-col px-6 pb-7 pt-5  @2xl:pb-8">
-                <div className="mb-1 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <h3 className="text-xl font-semibold tracking-tightish">Pro</h3>
+              <div className="relative flex flex-col px-6 pb-6 pt-5  @2xl:pb-8">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold tracking-tightish">Pro</h3>
                     {currentPlan === "pro" && (
-                      <Badge size="sm" variant="secondary" className="h-fit translate-y-px">
+                      <Badge size="sm" variant="outline" className="h-fit translate-y-px">
                         Current Plan
                       </Badge>
                     )}
@@ -144,13 +170,13 @@ export function PricingPlanForm({
                     name="plan"
                     value="pro"
                     checked={selectedPlan === "pro"}
-                    onChange={(e) => setSelectedPlan(e.target.value as "free" | "pro")}
+                    onChange={(e) => setSelectedPlan(e.target.value as Plan)}
                     className="absolute right-6 top-6 border-stone-400 transition-colors checked:border-swamp checked:text-swamp checked:shadow-sm focus:outline-none focus:ring-0"
                   />
                 </div>
 
                 <p className="mb-6 text-pretty text-sm text-muted-foreground">
-                  For established freelancers & dev shops
+                  Reliable pricing for growing businesses
                 </p>
 
                 <div className="relative mb-6 @2xl:w-full">
@@ -202,20 +228,76 @@ export function PricingPlanForm({
                   </AnimatePresence>
                 </div>
 
-                <p className="text-pretty text-sm text-muted-foreground @2xl:mb-6">
-                  <CreditCard className="mr-2 inline size-4 shrink-0 -translate-y-px text-muted-foreground" />
-                  $0.25 transaction fee (no commission fee)
-                </p>
+                <div className="flex items-start gap-2 @2xl:mb-5">
+                  <CreditCard className="size-4 shrink-0 translate-y-0.5 text-muted-foreground" />
+                  <span className="text-pretty text-sm text-muted-foreground">
+                    $0.25 transaction fee (no commission fee)
+                  </span>
+                </div>
 
                 <SharedFeatureList className="hidden @2xl:block" />
               </div>
             </Card>
           </label>
         </div>
+
+        {/* Custom Plan */}
+        {showCustomPlan && (
+          <div className="relative size-full @2xl:max-w-[370px] @2xl:shrink-0">
+            <label className="cursor-pointer">
+              <Card className="shadow-border transition-shadow hover:shadow-border-md [&:has(input:checked)]:shadow-border-md [&:has(input:checked)]:ring-4 [&:has(input:checked)]:ring-swamp">
+                <div className="relative flex flex-col  px-6 pb-6 pt-5 @2xl:pb-8 ">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-base font-bold tracking-tightish">Custom</h3>
+                      {currentPlan === "custom" && (
+                        <Badge size="sm" variant="outline" className="h-fit translate-y-px">
+                          Current Plan
+                        </Badge>
+                      )}
+                    </div>
+                    <input
+                      type="radio"
+                      name="plan"
+                      value="custom"
+                      checked={selectedPlan === "custom"}
+                      onChange={(e) => setSelectedPlan(e.target.value as Plan)}
+                      className="absolute right-6 top-6 border-stone-400 transition-colors checked:border-swamp checked:text-swamp checked:shadow-sm focus:outline-none focus:ring-0"
+                    />
+                  </div>
+
+                  <p className="mb-6 text-pretty text-sm text-muted-foreground">
+                    For businesses at any scale
+                  </p>
+
+                  <div className="mb-6 flex h-8 items-center">
+                    <span className="text-3xl font-semibold tracking-tight">Contact us</span>
+                  </div>
+
+                  <div className="mb-5 flex items-start gap-2">
+                    <CreditCard className="size-4 shrink-0 translate-y-0.5 text-muted-foreground" />
+                    <span className="text-pretty text-sm text-muted-foreground">
+                      Custom pricing for your business
+                    </span>
+                  </div>
+
+                  <div className="hidden @2xl:block">
+                    <SharedFeatureList />
+                  </div>
+                  <div className="space-y-1">
+                    <FeatureItem feature="Dedicated customer success manager" />
+                    <FeatureItem feature="Premium support" />
+                    <FeatureItem feature="SLA" />
+                  </div>
+                </div>
+              </Card>
+            </label>
+          </div>
+        )}
       </div>
 
       {/* Mobile features list */}
-      <div className="mt-1 flex w-full flex-col @2xl:hidden">
+      <div className="mt-2 flex w-full flex-col @2xl:hidden">
         <p className="mb-1.5 text-sm font-semibold text-foreground">All plans include:</p>
         <Separator className="mb-2.5" />
         <SharedFeatureList />
@@ -227,9 +309,18 @@ export function PricingPlanForm({
             onClick={() => startTransition(async () => await handleSubmit())}
             loading={isPending}
             className="w-full"
-            disabled={selectedPlan === "pro" ? proButtonConfig.disabled : freeButtonConfig.disabled}
+            disabled={
+              (selectedPlan === "pro" && buttonConfig.proButton.disabled) ||
+              (selectedPlan === "free" && buttonConfig.freeButton.disabled) ||
+              (selectedPlan === "custom" &&
+                (buttonConfig.customButton?.disabled || !showCustomPlan))
+            }
           >
-            {selectedPlan === "pro" ? proButtonConfig.label : freeButtonConfig.label}
+            {selectedPlan === "pro"
+              ? buttonConfig.proButton.label
+              : selectedPlan === "free"
+                ? buttonConfig.freeButton.label
+                : buttonConfig.customButton?.label || "Get in touch"}
           </Button>
         </div>
       </div>

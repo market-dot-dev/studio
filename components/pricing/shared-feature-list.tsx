@@ -13,14 +13,20 @@ export const pricingFeatures = [
   "Lead capture forms"
 ];
 
+export function FeatureItem({ feature }: { feature: string }) {
+  return (
+    <div className="flex items-start gap-2">
+      <Check className="mt-0.5 size-4 shrink-0 text-success" />
+      <span className="text-sm text-muted-foreground">{feature}</span>
+    </div>
+  );
+}
+
 export function SharedFeatureList({ className }: { className?: string }) {
   return (
     <div className={cn("space-y-1", className)}>
-      {pricingFeatures.map((feature, index) => (
-        <div key={index} className="flex items-start gap-2">
-          <Check className="mt-0.5 size-4 shrink-0 text-success" />
-          <span className="text-sm text-muted-foreground">{feature}</span>
-        </div>
+      {pricingFeatures.map((feature) => (
+        <FeatureItem key={feature} feature={feature} />
       ))}
     </div>
   );

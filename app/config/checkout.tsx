@@ -7,3 +7,4 @@ export const CHECKOUT_CURRENCY = "USD";
 export const CHECKOUT_CURRENCY_SYMBOL = "$";
 
 export const STRIPE_DASHBOARD_URL = "https://dashboard.stripe.com";
+export const CUSTOM_PLAN_CONTACT_URL = "https://dashboard.stripe.com";

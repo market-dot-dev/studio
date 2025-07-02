@@ -12,6 +12,9 @@ export function getSubscriptionInfo(billing: OrganizationBilling | null): Subscr
   // Determine if on free plan
   const isFree: boolean = planType === PlanType.FREE;
 
+  // Determine if on custom plan
+  const isCustom: boolean = planType === PlanType.CUSTOM;
+
   // Convert plan type to display name
   const currentPlanName = getPlanDisplayName(planType);
 
@@ -23,7 +26,7 @@ export function getSubscriptionInfo(billing: OrganizationBilling | null): Subscr
     statusText = "Free";
     statusType = "free";
   } else if (planType === PlanType.CUSTOM) {
-    statusText = "Custom";
+    statusText = "Active";
     statusType = "active"; // Custom plans are considered active
   } else if (isSubscriptionActive) {
     statusText = "Active";
@@ -37,6 +40,7 @@ export function getSubscriptionInfo(billing: OrganizationBilling | null): Subscr
   return {
     isSubscriptionActive,
     isFree,
+    isCustom,
     currentPlanName,
     statusText,
     statusType

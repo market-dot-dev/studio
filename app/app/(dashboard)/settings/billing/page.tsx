@@ -24,38 +24,6 @@ export default async function BillingSettingsPage() {
   const subscriptionInfo = getSubscriptionInfo(billing);
   const planDisplayName = billing?.planType ? getPlanDisplayLabel(billing.planType) : "Free";
 
-  // Button configurations for PricingPlanForm
-  const getButtonConfigs = () => {
-    if (!subscriptionInfo) {
-      return {
-        freeButtonConfig: { label: "Continue with Free" },
-        proButtonConfig: { label: "Upgrade to Pro" }
-      };
-    }
-
-    const { isFree, isSubscriptionActive } = subscriptionInfo;
-
-    if (isFree) {
-      return {
-        freeButtonConfig: {
-          label: "Current Plan",
-          disabled: true
-        },
-        proButtonConfig: { label: "Upgrade to Pro" }
-      };
-    } else {
-      return {
-        freeButtonConfig: { label: "Downgrade to Free" },
-        proButtonConfig: {
-          label: isSubscriptionActive ? "Current Plan" : "Reactivate Pro",
-          disabled: isSubscriptionActive
-        }
-      };
-    }
-  };
-
-  const { freeButtonConfig, proButtonConfig } = getButtonConfigs();
-
   async function handleSelectFree() {
     "use server";
 
@@ -79,6 +47,67 @@ export default async function BillingSettingsPage() {
     await checkoutAction(formData);
   }
 
+  // Button configurations for PricingPlanForm
+  const getButtonConfig = () => {
+    const defaultConfig = {
+      freeButton: { label: "Downgrade to Free" },
+      proButton: { label: "Upgrade to Pro" },
+      customButton: { label: "Get in touch" }
+    };
+
+    if (!subscriptionInfo) {
+      return defaultConfig;
+    }
+
+    const { isFree, isCustom, isSubscriptionActive } = subscriptionInfo;
+
+    if (isFree) {
+      return {
+        ...defaultConfig,
+        freeButton: {
+          label: "Current Plan",
+          disabled: true
+        }
+      };
+    }
+
+    if (isCustom) {
+      return {
+        freeButton: {
+          label: "Contact support to change plan",
+          disabled: true
+        },
+        proButton: {
+          label: "Contact support to change plan",
+          disabled: true
+        },
+        customButton: {
+          label: "Current Plan",
+          disabled: true
+        }
+      };
+    }
+
+    if (isSubscriptionActive) {
+      return {
+        ...defaultConfig,
+        proButton: {
+          label: "Current Plan",
+          disabled: true
+        }
+      };
+    } else {
+      return {
+        ...defaultConfig,
+        proButton: {
+          label: "Reactivate Pro"
+        }
+      };
+    }
+  };
+
+  const buttonConfig = getButtonConfig();
+
   return (
     <div className="flex w-full flex-col gap-8">
       <h2 className="text-xl font-bold">Your Plan</h2>
@@ -96,14 +125,13 @@ export default async function BillingSettingsPage() {
       <Separator />
 
       <div id="pricing-plans" className="flex scroll-mt-20 flex-col gap-8">
-        <h2 className="text-xl font-bold">Change Plans</h2>
+        <h2 className="text-xl font-bold">All Plans</h2>
         <PricingPlanForm
           pricingData={pricingData}
           currentSubscriptionInfo={subscriptionInfo}
           onSelectFree={handleSelectFree}
           onSelectPro={handleSelectPro}
-          freeButtonConfig={freeButtonConfig}
-          proButtonConfig={proButtonConfig}
+          buttonConfig={buttonConfig}
         />
       </div>
     </div>
