@@ -34,7 +34,7 @@ export function PlanInformation({
   const badgeVariant: BadgeProps["variant"] =
     statusType === "active" ? "success" : statusType === "inactive" ? "destructive" : "secondary";
 
-  const scrollToPricing = () => scrollToElement("pricing-plans");
+  const scrollToPricing = () => scrollToElement("pricing-table");
 
   return (
     <Card>

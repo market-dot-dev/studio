@@ -6,7 +6,7 @@ import {
   getCachedPricing,
   getCurrentBilling
 } from "@/app/services/platform";
-import { PricingPlanForm } from "@/components/pricing/pricing-plan-form";
+import { PricingTable } from "@/components/pricing/pricing-table";
 import { Separator } from "@/components/ui/separator";
 import {
   getPlanDisplayLabel,
@@ -47,67 +47,6 @@ export default async function BillingSettingsPage() {
     await checkoutAction(formData);
   }
 
-  // Button configurations for PricingPlanForm
-  const getButtonConfig = () => {
-    const defaultConfig = {
-      freeButton: { label: "Downgrade to Free" },
-      proButton: { label: "Upgrade to Pro" },
-      customButton: { label: "Get in touch" }
-    };
-
-    if (!subscriptionInfo) {
-      return defaultConfig;
-    }
-
-    const { isFree, isCustom, isSubscriptionActive } = subscriptionInfo;
-
-    if (isFree) {
-      return {
-        ...defaultConfig,
-        freeButton: {
-          label: "Current Plan",
-          disabled: true
-        }
-      };
-    }
-
-    if (isCustom) {
-      return {
-        freeButton: {
-          label: "Contact support to change plan",
-          disabled: true
-        },
-        proButton: {
-          label: "Contact support to change plan",
-          disabled: true
-        },
-        customButton: {
-          label: "Current Plan",
-          disabled: true
-        }
-      };
-    }
-
-    if (isSubscriptionActive) {
-      return {
-        ...defaultConfig,
-        proButton: {
-          label: "Current Plan",
-          disabled: true
-        }
-      };
-    } else {
-      return {
-        ...defaultConfig,
-        proButton: {
-          label: "Reactivate Pro"
-        }
-      };
-    }
-  };
-
-  const buttonConfig = getButtonConfig();
-
   return (
     <div className="flex w-full flex-col gap-8">
       <h2 className="text-xl font-bold">Your Plan</h2>
@@ -124,14 +63,32 @@ export default async function BillingSettingsPage() {
 
       <Separator />
 
-      <div id="pricing-plans" className="flex scroll-mt-20 flex-col gap-8">
+      <div id="pricing-table" className="flex scroll-mt-20 flex-col gap-8">
         <h2 className="text-xl font-bold">All Plans</h2>
-        <PricingPlanForm
+        <PricingTable
           pricingData={pricingData}
           currentSubscriptionInfo={subscriptionInfo}
-          onSelectFree={handleSelectFree}
-          onSelectPro={handleSelectPro}
-          buttonConfig={buttonConfig}
+          plans={{
+            free: {
+              onSelect: handleSelectFree,
+              buttonLabel: subscriptionInfo?.isCustom
+                ? "Contact support to change plan"
+                : subscriptionInfo?.isFree
+                  ? "Current Plan"
+                  : "Downgrade to Free"
+            },
+            pro: {
+              onSelect: handleSelectPro,
+              buttonLabel: subscriptionInfo?.isCustom
+                ? "Contact support to change plan"
+                : !subscriptionInfo || subscriptionInfo.isFree
+                  ? "Upgrade to Pro"
+                  : "Current Plan"
+            },
+            custom: {
+              buttonLabel: subscriptionInfo?.isCustom ? "Current Plan" : "Get in touch"
+            }
+          }}
         />
       </div>
     </div>
