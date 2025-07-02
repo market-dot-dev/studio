@@ -1,12 +1,10 @@
 import Session from "@/app/models/Session";
 import AuthService from "@/app/services/auth-service";
 import { sendVerificationEmail } from "@/app/services/email-service";
-import { upsertUser } from "@/app/services/onboarding/registration-service";
 import prisma from "@/lib/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import { Provider } from "next-auth/providers";
-import CredentialsProvider from "next-auth/providers/credentials";
 import EmailProvider from "next-auth/providers/email";
 import GitHubProvider from "next-auth/providers/github";
 import { domainCopy } from "./domain";
@@ -51,54 +49,11 @@ export const authOptions: NextAuthOptions = {
         return {
           id: profile.id.toString(),
           name: profile.name || profile.login,
-          gh_id: profile.id,
-          gh_username: profile.login,
           email: profile.email,
           image: profile.avatar_url
         };
       }
-    }),
-    isDevelopment &&
-      CredentialsProvider({
-        name: "Credentials",
-        credentials: {
-          gh_username: {
-            label: "GitHub Username",
-            type: "text",
-            placeholder: "Enter your GitHub username"
-          },
-          password: {
-            label: "Password",
-            type: "password",
-            placeholder: "Enter the override password"
-          }
-        },
-        async authorize(credentials, req) {
-          if (
-            credentials &&
-            credentials.gh_username &&
-            credentials.password &&
-            process.env.DEV_OVERRIDE_PASSWORD &&
-            credentials.password === process.env.DEV_OVERRIDE_PASSWORD
-          ) {
-            // Prepare minimal user details for upserting
-            const userDetails = {
-              id: `dev-${credentials.gh_username}`, // Unique ID constructed using the GitHub username
-              gh_username: credentials.gh_username, // GitHub username from the provided credentials
-              name: "", // No default name, it will be set based on existing data or remain empty
-              email: `${credentials.gh_username}@gh.${domainCopy()}`, // No default email, it will be set based on existing data or remain empty
-              image: "" // No default image, it will be set based on existing data or remain empty
-            };
-
-            const user = await upsertUser(userDetails);
-
-            return user;
-          }
-
-          // If verification fails or credentials are missing, return null
-          return null;
-        }
-      })
+    })
   ].filter(Boolean) as Provider[],
   pages: {
     signIn: `/login`,

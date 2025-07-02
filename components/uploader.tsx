@@ -81,28 +81,6 @@ export default function Uploader({
   const [dragActive, setDragActive] = useState(false);
   const [uploadedFilePath, setUploadedFilePath] = useState<string | null>(attachmentUrl || null);
 
-  const onChangePicture = useCallback(
-    (event: ChangeEvent<HTMLInputElement>) => {
-      const file = event.currentTarget.files && event.currentTarget.files[0];
-      if (file) {
-        if (file.size / 1024 / 1024 > 50) {
-          toast.error("File size too big (max 50MB)");
-        } else {
-          setFile(file);
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            setUploadData((prev) => e.target?.result as string);
-          };
-          reader.readAsDataURL(file);
-          if (autoUpload) {
-            onSubmit(file); // Automatically start the upload process if autoUpload is true
-          }
-        }
-      }
-    },
-    [setUploadData, autoUpload]
-  );
-
   const toastUploadSuccess = (url: string) => {
     toast(
       <div className="relative">
@@ -125,33 +103,6 @@ export default function Uploader({
         closeButton: true
       }
     );
-  };
-
-  const onDropEvent = (e: any) => {
-    const file = e?.dataTransfer?.files && e.dataTransfer.files[0];
-
-    if (file) {
-      if (file.size / 1024 / 1024 > 50) {
-        toast.error("File size too big (max 50MB)");
-      } else {
-        setFile(file);
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          setUploadData((prev) => e.target?.result as string);
-        };
-        reader.readAsDataURL(file);
-        if (autoUpload) {
-          onSubmit(file); // Automatically start the upload process if autoUpload is true
-        }
-      }
-    }
-  };
-
-  const onRemove = () => {
-    setFile(null);
-    setUploadData(null);
-    setUploadedFilePath(null);
-    onChange?.({ attachmentUrl: "", attachmentType: "" });
   };
 
   const onSubmit = async (file: File) => {
@@ -189,6 +140,55 @@ export default function Uploader({
     };
 
     xhr.send(file);
+  };
+
+  const onChangePicture = useCallback(
+    (event: ChangeEvent<HTMLInputElement>) => {
+      const file = event.currentTarget.files && event.currentTarget.files[0];
+      if (file) {
+        if (file.size / 1024 / 1024 > 50) {
+          toast.error("File size too big (max 50MB)");
+        } else {
+          setFile(file);
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            setUploadData((prev) => e.target?.result as string);
+          };
+          reader.readAsDataURL(file);
+          if (autoUpload) {
+            onSubmit(file); // Automatically start the upload process if autoUpload is true
+          }
+        }
+      }
+    },
+    [setUploadData, autoUpload]
+  );
+
+  const onDropEvent = (e: any) => {
+    const file = e?.dataTransfer?.files && e.dataTransfer.files[0];
+
+    if (file) {
+      if (file.size / 1024 / 1024 > 50) {
+        toast.error("File size too big (max 50MB)");
+      } else {
+        setFile(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          setUploadData((prev) => e.target?.result as string);
+        };
+        reader.readAsDataURL(file);
+        if (autoUpload) {
+          onSubmit(file); // Automatically start the upload process if autoUpload is true
+        }
+      }
+    }
+  };
+
+  const onRemove = () => {
+    setFile(null);
+    setUploadData(null);
+    setUploadedFilePath(null);
+    onChange?.({ attachmentUrl: "", attachmentType: "" });
   };
 
   const saveDisabled = useMemo(() => {

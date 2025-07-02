@@ -22,7 +22,6 @@ model Organization {
   businessLocation String?
   businessType     String?
   description      String?
-  marketExpertId   String?
   onboarding       Json?
 
   // Stripe fields
@@ -38,28 +37,28 @@ model Organization {
   contracts     Contract[]
   charges       Charge[]
   subscriptions Subscription[]
-  leads         Lead[]
   prospects     Prospect[]           @relation(name: "prospects")
   sites         Site[]
   invites       OrganizationInvite[]
   billing       OrganizationBilling?
+  integrations  Integration[]
 
   @@index([ownerId])
 }
 
 enum PlanType {
-  FREE   /// Default plan with basic features
-  PRO    /// Paid plan with advanced features
+  FREE /// Default plan with basic features
+  PRO /// Paid plan with advanced features
   CUSTOM /// Special plans (invoice, custom features)
 }
 
 enum SubscriptionStatus {
-  ACTIVE             /// Stripe: subscription is active
-  CANCELED           /// Stripe: subscription was canceled
-  INCOMPLETE         /// Stripe: payment failed
+  ACTIVE /// Stripe: subscription is active
+  CANCELED /// Stripe: subscription was canceled
+  INCOMPLETE /// Stripe: payment failed
   INCOMPLETE_EXPIRED /// Stripe: payment failed and expired
-  PAST_DUE           /// Stripe: payment overdue
-  UNPAID             /// Stripe: payment failed multiple times
+  PAST_DUE /// Stripe: payment overdue
+  UNPAID /// Stripe: payment failed multiple times
 }
 
 model OrganizationBilling {
@@ -67,11 +66,11 @@ model OrganizationBilling {
   organizationId String       @unique
   organization   Organization @relation(fields: [organizationId], references: [id])
 
-  planType             PlanType           @default(FREE)
-  
+  planType PlanType @default(FREE)
+
   // Stripe fields - only populated for PRO plans
-  stripeCustomerId     String?            @unique
-  stripeSubscriptionId String?            @unique
+  stripeCustomerId     String?             @unique
+  stripeSubscriptionId String?             @unique
   stripeProductId      String?
   subscriptionStatus   SubscriptionStatus? // Null for FREE/CUSTOM plans
 

@@ -4,24 +4,10 @@ import FeatureCard from "@/components/home/feature-card";
 import Section from "@/components/home/section";
 import { colors } from "@/lib/home/colors";
 import { cn } from "@/lib/utils";
-import { BookOpenCheck, CodeSquare, ShoppingCart, Speech, StoreIcon } from "lucide-react";
+import { CodeSquare, ShoppingCart, Speech, StoreIcon } from "lucide-react";
 import React, { useState } from "react";
 
 const featureCards = [
-  {
-    icon: <BookOpenCheck />,
-    title: "Get listed on market.dev",
-    description:
-      "market.dev is a marketplace of services & resources from top open source developers in any ecosystem.",
-    image: {
-      src: "/market-dot-dev.png",
-      alt: "market.dev screenshot"
-    },
-    link: {
-      text: "Explore market.dev",
-      href: "https://market.dev"
-    }
-  },
   {
     icon: <StoreIcon />,
     title: "Custom landing pages",
@@ -84,7 +70,6 @@ export default function Promote() {
             color={colors.purple}
             orientation="vertical"
             imageMaxWidth={null}
-            link={feature.link}
             className={cn(
               "sm:aspect-[4/3]",
               index === 0 && "col-span-full max-h-[500px] lg:aspect-[3/2]"
@@ -100,7 +85,7 @@ export default function Promote() {
               <button
                 onClick={() => setActiveTab(index)}
                 className={cn(
-                  "border-b-none group h-1/4 w-full px-9 py-6 text-left transition-colors hover:bg-[#fafafa]",
+                  "border-b-none group h-1/3 w-full px-9 py-6 text-left transition-colors hover:bg-[#fafafa]",
                   activeTab === index ? "bg-[#fafafa]" : "bg-transparent"
                 )}
               >
@@ -139,7 +124,6 @@ export default function Promote() {
             color={colors.purple}
             orientation="vertical"
             imageMaxWidth="max-w-[750px]"
-            link={featureCards[activeTab].link}
             className="h-full ring-0"
           />
         </div>

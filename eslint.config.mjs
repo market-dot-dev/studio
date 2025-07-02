@@ -1,6 +1,7 @@
 // @ts-check
 import js from "@eslint/js";
 import nextPlugin from "@next/eslint-plugin-next";
+import importPlugin from "eslint-plugin-import";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import prettier from "eslint-plugin-prettier/recommended";
 import tailwind from "eslint-plugin-tailwindcss";
@@ -9,8 +10,6 @@ import globals from "globals";
 import ts from "typescript-eslint";
 
 const config = ts.config(
-  // ...compat.extends("next", "next/core-web-vitals"),
-
   globalIgnores([
     "**/node_modules",
     "**/out",
@@ -33,7 +32,8 @@ const config = ts.config(
   prettier,
   {
     plugins: {
-      "@next/next": nextPlugin
+      "@next/next": nextPlugin,
+      import: importPlugin
     },
     languageOptions: {
       globals: {
@@ -55,6 +55,12 @@ const config = ts.config(
       tailwindcss: {
         config: "./tailwind.config.ts",
         plugins: ["tailwindcss-animate"]
+      },
+      "import/resolver": {
+        typescript: {
+          alwaysTryTypes: true, // Always try to resolve types for TS imports
+          project: ["./tsconfig.json", "./tsconfig.test.json"] // Point to your tsconfig files
+        }
       }
     },
 
@@ -99,6 +105,23 @@ const config = ts.config(
       "@typescript-eslint/explicit-module-boundary-types": "off",
       "@typescript-eslint/no-var-requires": "off",
       "@typescript-eslint/ban-ts-comment": "off",
+
+      // This will catch A imports B, B imports A. 'maxDepth: "∞"' checks all depths.
+      "import/no-cycle": ["error", { maxDepth: "∞" }],
+
+      // This helps with Temporal Dead Zone issues for 'let'/'const' and function/class expressions.
+      "no-use-before-define": "off", // Turn off the base ESLint rule
+      "@typescript-eslint/no-use-before-define": [
+        "error",
+        {
+          variables: true, // Flag variables used before definition
+          functions: false, // Function declarations are hoisted (usually safe)
+          classes: false, // Class declarations are not hoisted, but 'false' is common for React components. Set to 'true' for stricter enforcement.
+          enums: true, // Flag enums used before definition
+          typedefs: false, // Type aliases/interfaces are safe to use before definition
+          allowNamedExports: false // Crucial: Flag if a named export uses a variable/function defined later in the same file.
+        }
+      ],
 
       "tailwindcss/no-custom-classname": [
         "off", // @DEBUG

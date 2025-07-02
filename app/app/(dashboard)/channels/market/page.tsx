@@ -1,21 +1,29 @@
-import { requireOrganization, requireUser } from "@/app/services/user-context-service";
-import ConnectionRequired from "@/components/channels/market/connection-required";
+import {
+  getCachedGitHubAccountInfo,
+  hasGitHubIntegration
+} from "@/app/services/integrations/github-integration-service";
 import MarketPreview from "@/components/channels/market/market-preview";
 import PageHeader from "@/components/common/page-header";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 
-export default async function MarketChannel() {
-  const currentUser = await requireUser();
-  const org = await requireOrganization();
-  const isConnectedToMarket = org.marketExpertId != null;
+export default async function MarketChannelPage() {
+  const isConnectedToMarket = await hasGitHubIntegration(); // per default, all connections are linked
+  const accountInfo = await getCachedGitHubAccountInfo();
 
   return (
     <div className="flex w-full flex-col items-start gap-6">
       <PageHeader title="explore.market.dev" />
 
       {!isConnectedToMarket ? (
-        <ConnectionRequired user={currentUser} />
+        <>
+          <p className="text-sm">
+            A GitHub connection is required to connect to explore.market.dev.
+          </p>
+          <Link href="/settings/integrations" className={buttonVariants({ variant: "default" })}>
+            Set it up
+          </Link>
+        </>
       ) : (
         <div className="flex w-full flex-col gap-4">
           <div className="flex w-full items-center justify-between">
@@ -24,7 +32,7 @@ export default async function MarketChannel() {
               and services to sell.{" "}
               <Link
                 className="underline"
-                href={`${process.env.NEXT_PUBLIC_MARKET_DEV_BASE_URL}/experts/${currentUser.gh_username}`}
+                href={`${process.env.NEXT_PUBLIC_MARKET_DEV_BASE_URL}/experts/${accountInfo?.login}`}
                 target="_blank"
               >
                 Check it out
@@ -35,10 +43,12 @@ export default async function MarketChannel() {
               Manage packages
             </Link>
           </div>
-          <MarketPreview
-            username={currentUser.gh_username!}
-            baseUrl={process.env.NEXT_PUBLIC_MARKET_DEV_BASE_URL!}
-          />
+          {accountInfo?.login && (
+            <MarketPreview
+              username={accountInfo.login}
+              baseUrl={process.env.NEXT_PUBLIC_MARKET_DEV_BASE_URL!}
+            />
+          )}
         </div>
       )}
     </div>

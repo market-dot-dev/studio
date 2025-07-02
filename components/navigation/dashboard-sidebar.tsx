@@ -20,10 +20,8 @@ import {
   Home,
   MessageCircle,
   Package,
-  ScanSearch,
   Scroll,
   Settings,
-  ShoppingBag,
   UserRoundSearch,
   UsersRound
 } from "lucide-react";
@@ -32,7 +30,6 @@ import { useSelectedLayoutSegments } from "next/navigation";
 
 interface DashboardSidebarProps {
   orgContext: OrganizationSwitcherContext;
-  isMarketExpert: boolean;
   site: SiteDetails | null;
 }
 
@@ -61,7 +58,7 @@ function SupportDropdown() {
   );
 }
 
-export function DashboardSidebar({ orgContext, isMarketExpert, site }: DashboardSidebarProps) {
+export function DashboardSidebar({ orgContext, site }: DashboardSidebarProps) {
   const urlSegments = useSelectedLayoutSegments();
 
   const headerItems: SidebarItemGroup[] = [
@@ -124,13 +121,6 @@ export function DashboardSidebar({ orgContext, isMarketExpert, site }: Dashboard
           url: "/prospects",
           icon: <UserRoundSearch />,
           isActive: urlSegments[0] === "prospects"
-        },
-        {
-          title: "Research",
-          url: "/research",
-          icon: <ScanSearch />,
-          isBeta: true,
-          isActive: urlSegments[0] === "research"
         }
       ]
     },
@@ -147,16 +137,12 @@ export function DashboardSidebar({ orgContext, isMarketExpert, site }: Dashboard
               }
             ]
           : []),
-        ...(isMarketExpert
-          ? [
-              {
-                title: "Marketplace",
-                url: "/channels/market",
-                icon: <ShoppingBag />,
-                isActive: urlSegments[1] === "market"
-              }
-            ]
-          : []),
+        // {
+        //   title: "Marketplace",
+        //   url: "/channels/market",
+        //   icon: <ShoppingBag />,
+        //   isActive: urlSegments[1] === "market"
+        // },
         {
           title: "Embeds",
           url: "/channels/embeds",
