@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Check, CircleArrowUp, CircleSlash } from "lucide-react";
+import { Check, CircleArrowUp, CircleSlash, Sparkle } from "lucide-react";
 
 export function UpgradeBanner() {
   return (
@@ -7,6 +7,16 @@ export function UpgradeBanner() {
       <CircleArrowUp className="size-4" />
       <AlertTitle>Upgrade to Pro</AlertTitle>
       <AlertDescription>Switch to Pro for commission-free sales.</AlertDescription>
+    </Alert>
+  );
+}
+
+export function CustomBanner() {
+  return (
+    <Alert variant="default">
+      <Sparkle className="size-4" />
+      <AlertTitle>You're on a custom plan</AlertTitle>
+      <AlertDescription>To change or update your plan, please contact support.</AlertDescription>
     </Alert>
   );
 }
