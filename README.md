@@ -106,76 +106,20 @@ pnpm install
 
 #### 4. Load the Schema
 
-Overwite your local dev database with the contents of `prisma.schema`.
+Run Migrations
+```bash
+pnpm prisma migrate dev
+```
 
+Overwite your local dev database with the contents of `prisma.schema`.
 ```bash
 pnpm prisma db push
 ```
 
-#### 5. Populate db tables (required)
+#### 5. Seed tables with sample data
 
 ```bash
-pnpm sync:services
-```
-
-#### 6. Setup Nginx
-
-We use a reverse proxy in production, which sends traffic from [market.dev](https://market.dev) to our [NextJS app](https://github.com/market-dot-dev/store), and for [explore.market.dev](https://explore.market.dev) to this app. We use a similar reverse proxy in development, pointing to [market.local](http://market.local) and [explore.market.local](http://explore.market.local). This is only required if you're running both apps locally (required for shared login). If not, you can skip and just run it on `localhost:4000`. The easiest way to get Nginx running (assuming you're on a Mac) is with Brew:
-
-i. Install Nginx via Homebrew
-
-```
-brew install nginx
-brew services start nginx
-```
-
-ii. Create a server config file at `/opt/homebrew/etc/nginx/servers/market.conf`, and add the following:
-
-```
-server {
-    listen 80;
-    server_name market.local YOUR_GITHUB_USERNAME.market.local app.market.local;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-}
-
-server {
-    listen 80;
-    server_name explore.market.local;
-
-    location / {
-        proxy_pass http://localhost:4000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-    }
-}
-```
-
-iii. Verify things are running:
-
-```
-nginx -t
-brew services list
-sudo nginx -s reload
-```
-
-#### 7. Set up hosts
-
-`/etc/hosts` on a mac.
-
-```
-127.0.0.1       market.local
-127.0.0.1       app.market.local
-127.0.0.1       YOUR_GITHUB_USERNAME_OR_SUBDOMAIN.market.local
-127.0.0.1       explore.market.local
-255.255.255.255 broadcasthost
-::1             localhost
+pnpm db:seed
 ```
 
 #### 8. Run the server
@@ -183,34 +127,5 @@ sudo nginx -s reload
 ```bash
 pnpm dev
 ```
-
-### Migrations
-
-to run:
-
-`$ pnpm prisma migrate deploy`
-
-to make a new one:
-
-1. edit your schema.prisma
-1. `$ pnpm prisma migrate dev`
-1. edit the affected file as needed
-
-to skip a destructive migration
-
-`$ pnpm prisma migrate resolve --applied 20240220203418_sync_migrations_with_schema`
-
-### Testing Stripe Webhooks
-
-To test Stripe webhook functionality locally:
-
-1. Install the [Stripe CLI](https://stripe.com/docs/stripe-cli) (and login)
-2. Forward webhook events to your local server:
-   ```
-   stripe listen --forward-to localhost:3000/api/webhook/stripe
-   ```
-3. Set up two Stripe sandbox accounts for testing:
-   - Main account: For platform-level operations
-   - Vendor account: For testing Stripe Connect functionality & webhook events
 
 This setup allows you to simulate the complete payment flow including Connect account events, subscription updates, and payment processing.
