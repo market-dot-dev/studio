@@ -13,13 +13,12 @@
     <a href="#roadmap">Roadmap</a> ·
     <a href="#hosted-service">Hosted Service</a> ·
     <a href="#contributing">Contribute</a> ·
-    <a href="#why-a-monorepo">Why a monorepo?</a> ·
     <a href="#setup">Setup</a>
 </p>
 
 ## Introduction
 
-market.dev is the open-source platform with everything developers need to sell, manage & grow their business.
+market.dev is the open-source platform with everything developers need to sell and manage a professional services business. Perfect for open source maintainers, freelancers and consultants.
 
 ## Features
 
@@ -48,10 +47,6 @@ Want to contribute?
 [Read our guidelines](CONTRIBUTING.md) for submitting issues, making requests, and opening Pull Requests.
 
 [Read the setup guide](#setup) to get started.
-
-## Why a monorepo?
-
----
 
 # Setup
 
