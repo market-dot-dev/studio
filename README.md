@@ -6,9 +6,6 @@
 <p align="center" dir="auto">
     The all-in-one open-source business toolkit for developers.
     <br>
-    <a href="https://market.dev/" rel="nofollow">Learn more</a>
-    <br>
-    <br>
     <a href="#features">Features</a> ·
     <a href="#roadmap">Roadmap</a> ·
     <a href="#hosted-service">Hosted Service</a> ·
@@ -30,7 +27,6 @@ market.dev is the open-source platform with everything developers need to sell a
 - **Contract Library**: Access a curated library of proven developer service agreements.
 - **Prospect & Customer CRM**: Manage your entire sales pipeline, from leads and opportunities to existing customer interactions, all in one place.
 - **Sales Analytics**: Get actionable insights into sales performance, customer behavior, and key revenue metrics.
-- **Easily sell on explore.market.dev**: Optionally list and sell your services on the explore.market.dev marketplace.
 
 ## Roadmap
 
