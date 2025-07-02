@@ -13,7 +13,7 @@ import NumberFlow from "@number-flow/react";
 import { CreditCard } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, useTransition } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { FeatureItem, SharedFeatureList } from "./shared-feature-list";
 
 interface ButtonConfig {
@@ -60,8 +60,12 @@ export function PricingPlanForm({
       : "free";
 
   const [isPending, startTransition] = useTransition();
-  const [selectedPlan, setSelectedPlan] = useState<Plan>(currentPlan);
+  const [selectedPlan, setSelectedPlan] = useState<Plan | undefined>();
   const [isAnnual, setIsAnnual] = useState(false);
+
+  useEffect(() => {
+    setSelectedPlan(currentPlan);
+  }, [currentPlan]);
 
   const discountPercentage = useMemo(() => {
     if (!pricingData?.pro_monthly || !pricingData?.pro_annually) return 0;
