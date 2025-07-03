@@ -251,6 +251,9 @@ export default {
         xxs: "375px",
         xs: "410px"
       },
+      containers: {
+        "3xl": "60rem"
+      },
       letterSpacing: {
         tightish: "-0.0125em"
       }

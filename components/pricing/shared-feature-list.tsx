@@ -15,7 +15,7 @@ export const pricingFeatures = [
 
 export function FeatureItem({ feature }: { feature: string }) {
   return (
-    <div className="flex items-start gap-2">
+    <div className="flex items-start gap-2 font-normal tracking-normal">
       <Check className="mt-0.5 size-4 shrink-0 text-success" />
       <span className="text-sm text-muted-foreground">{feature}</span>
     </div>
