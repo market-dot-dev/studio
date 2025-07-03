@@ -1,6 +1,7 @@
 import Footer from "@/components/home/sections/footer";
 import Hero from "@/components/home/sections/hero";
 import Manage from "@/components/home/sections/manage";
+import Pricing from "@/components/home/sections/pricing";
 import Promote from "@/components/home/sections/promote";
 import Sell from "@/components/home/sections/sell";
 import Testimonial from "@/components/home/testimonial";
@@ -36,6 +37,7 @@ export default function HomePage() {
       />
       <Promote />
       <Manage />
+      <Pricing />
       <Footer />
     </>
   );

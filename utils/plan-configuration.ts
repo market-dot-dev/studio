@@ -12,7 +12,7 @@ export interface PlanConfig {
   showCustomFeatures?: boolean;
 }
 
-export type PlanConfigurationContext = "billing" | "onboarding";
+export type PlanConfigurationContext = "billing" | "onboarding" | "marketing";
 
 interface PlanConfigurationOptions {
   subscriptionInfo?: SubscriptionInfo;
@@ -77,6 +77,10 @@ function getFreePlanButtonLabel(
     return "Continue with Free";
   }
 
+  if (context === "marketing") {
+    return "Get started with Free";
+  }
+
   if (subscriptionInfo?.isCustom) return "Contact support to change plan";
   if (subscriptionInfo?.isFree) return "Current Plan";
   return "Downgrade to Free";
@@ -86,8 +90,8 @@ function getFreePlanButtonDisabled(
   subscriptionInfo?: SubscriptionInfo,
   context?: PlanConfigurationContext
 ): boolean {
-  // In onboarding, always allow users to continue with free
-  if (context === "onboarding") {
+  // In onboarding and marketing, always allow users to continue with free
+  if (context === "onboarding" || context === "marketing") {
     return false;
   }
 
@@ -107,6 +111,10 @@ function getProPlanButtonLabel(
         : "Reactivate Pro";
   }
 
+  if (context === "marketing") {
+    return "Get started with Pro";
+  }
+
   if (subscriptionInfo?.isCustom) return "Contact support to change plan";
   if (!subscriptionInfo || subscriptionInfo.isFree) return "Upgrade to Pro";
   return "Current Plan";
@@ -116,6 +124,7 @@ function getProPlanButtonDisabled(
   subscriptionInfo?: SubscriptionInfo,
   context?: PlanConfigurationContext
 ): boolean {
+  if (context === "marketing") return false;
   if (subscriptionInfo?.isCustom) return true;
   if (hasActiveProSubscription(subscriptionInfo)) return true;
   return false;
@@ -125,6 +134,7 @@ function getCustomPlanButtonLabel(
   subscriptionInfo?: SubscriptionInfo,
   context?: PlanConfigurationContext
 ): string {
+  if (context === "marketing") return "Get in touch";
   if (subscriptionInfo?.isCustom) return "Current Plan";
   return "Get in touch";
 }
@@ -133,5 +143,6 @@ function getCustomPlanButtonDisabled(
   subscriptionInfo?: SubscriptionInfo,
   context?: PlanConfigurationContext
 ): boolean {
+  if (context === "marketing") return false;
   return subscriptionInfo?.isCustom === true;
 }

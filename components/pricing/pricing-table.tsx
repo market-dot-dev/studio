@@ -2,6 +2,7 @@
 
 import { CUSTOM_PLAN_CONTACT_URL } from "@/app/config/checkout";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { PricingData } from "@/types/platform";
 import { PlanConfig } from "@/utils/plan-configuration";
 import NumberFlow from "@number-flow/react";
@@ -104,7 +105,7 @@ export function PricingTable({ pricingData, plans, onSelectFree, onSelectPro }: 
 
     const features = plan.showCustomFeatures ? (
       <>
-        <div className="hidden @2xl:block">
+        <div className="hidden @3xl:block">
           <SharedFeatureList />
         </div>
         <div className="space-y-1">
@@ -114,7 +115,7 @@ export function PricingTable({ pricingData, plans, onSelectFree, onSelectPro }: 
         </div>
       </>
     ) : (
-      <SharedFeatureList className="hidden @2xl:block" />
+      <SharedFeatureList className="hidden @3xl:block" />
     );
 
     return (
@@ -135,21 +136,23 @@ export function PricingTable({ pricingData, plans, onSelectFree, onSelectPro }: 
   };
 
   return (
-    <div className="flex flex-col gap-y-6 @container @2xl:gap-y-10">
-      {/* Monthly/Yearly Switcher */}
-      <BillingCycleSwitcher isAnnual={isAnnual} onToggle={setIsAnnual} />
+    <div className="@container ">
+      <div className="mx-auto flex max-w-xl flex-col gap-y-6 @3xl:max-w-6xl @3xl:gap-y-10">
+        <BillingCycleSwitcher isAnnual={isAnnual} onToggle={setIsAnnual} />
 
-      {/* Plan Cards */}
-      <div
-        className={`mx-auto flex w-full max-w-7xl flex-col gap-6 @2xl:flex-row @2xl:flex-wrap @2xl:justify-center @2xl:gap-6 ${
-          plans.length === 3 ? "@2xl:grid-cols-3" : "@2xl:grid-cols-2"
-        }`}
-      >
-        {plans.map(renderPlanCard)}
+        {/* Plan Cards */}
+        <div
+          className={cn(
+            "mx-auto grid w-full grid-cols-1 gap-6",
+            "[&>*]:@3xl:max-w-[370px]",
+            plans.length === 3 ? "@3xl:grid-cols-3" : "@3xl:grid-cols-2 @3xl:justify-items-center"
+          )}
+        >
+          {plans.map(renderPlanCard)}
+        </div>
+
+        <MobileFeaturesList />
       </div>
-
-      {/* Mobile features list */}
-      <MobileFeaturesList />
     </div>
   );
 }

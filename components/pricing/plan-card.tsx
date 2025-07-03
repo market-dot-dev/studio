@@ -37,9 +37,9 @@ export function PlanCard({
   const isDisabled = disabled !== undefined ? disabled : isCurrentPlan;
 
   return (
-    <form action={action} className="relative size-full @2xl:max-w-[370px] @2xl:shrink-0">
-      <Card className="flex h-full flex-col shadow-border">
-        <div className="flex flex-1 flex-col px-6 pb-6 pt-5 @2xl:pb-8">
+    <form action={action} className="relative size-full font-normal tracking-normal">
+      <Card className="flex h-full flex-col justify-between shadow-border">
+        <div className="flex flex-col px-6 pb-6 pt-5 @3xl:pb-8">
           <div className="flex items-center gap-2">
             <h3 className="text-base font-bold tracking-tightish">{title}</h3>
             {isCurrentPlan && (
@@ -58,7 +58,7 @@ export function PlanCard({
             {priceSubtext}
           </div>
 
-          <div className="mb-auto flex items-start gap-2 @2xl:mb-5">
+          <div className="mb-auto flex items-start gap-2 @3xl:mb-5">
             <CreditCard className="size-4 shrink-0 translate-y-0.5 text-muted-foreground" />
             <span className="text-pretty text-sm text-muted-foreground">{transactionFee}</span>
           </div>

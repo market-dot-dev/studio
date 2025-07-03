@@ -1,4 +1,5 @@
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { cn } from "@/lib/utils";
 
 interface BillingCycleSwitcherProps {
   isAnnual: boolean;
@@ -12,13 +13,13 @@ export function BillingCycleSwitcher({ isAnnual, onToggle, className }: BillingC
       <Tabs
         value={isAnnual ? "yearly" : "monthly"}
         onValueChange={(value) => onToggle(value === "yearly")}
-        className={`w-full @2xl:w-fit ${className || ""}`}
+        className={cn("w-full @3xl:w-fit tracking-normal", className)}
       >
-        <TabsList variant="background" className="w-full @2xl:w-fit">
-          <TabsTrigger value="monthly" variant="background" className="w-full @2xl:w-fit">
+        <TabsList variant="background" className="w-full @3xl:w-fit">
+          <TabsTrigger value="monthly" variant="background" className="w-full @3xl:w-fit">
             Monthly
           </TabsTrigger>
-          <TabsTrigger value="yearly" variant="background" className="w-full @2xl:w-fit">
+          <TabsTrigger value="yearly" variant="background" className="w-full @3xl:w-fit">
             Yearly
           </TabsTrigger>
         </TabsList>
