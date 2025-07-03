@@ -1,5 +1,6 @@
 "use server";
 
+import { createPlanConfiguration } from "@/app/services/plan-configuration";
 import {
   checkoutAction,
   customerPortalAction,
@@ -47,6 +48,13 @@ export default async function BillingSettingsPage() {
     await checkoutAction(formData);
   }
 
+  // Create plan configuration for billing context
+  const plans = createPlanConfiguration({
+    subscriptionInfo,
+    includeCustomPlan: true,
+    context: "billing" // Explicit billing context for proper button states
+  });
+
   return (
     <div className="flex w-full flex-col gap-8">
       <h2 className="text-xl font-bold">Your Plan</h2>
@@ -67,28 +75,9 @@ export default async function BillingSettingsPage() {
         <h2 className="text-xl font-bold">All Plans</h2>
         <PricingTable
           pricingData={pricingData}
-          currentSubscriptionInfo={subscriptionInfo}
-          plans={{
-            free: {
-              onSelect: handleSelectFree,
-              buttonLabel: subscriptionInfo?.isCustom
-                ? "Contact support to change plan"
-                : subscriptionInfo?.isFree
-                  ? "Current Plan"
-                  : "Downgrade to Free"
-            },
-            pro: {
-              onSelect: handleSelectPro,
-              buttonLabel: subscriptionInfo?.isCustom
-                ? "Contact support to change plan"
-                : !subscriptionInfo || subscriptionInfo.isFree
-                  ? "Upgrade to Pro"
-                  : "Current Plan"
-            },
-            custom: {
-              buttonLabel: subscriptionInfo?.isCustom ? "Current Plan" : "Get in touch"
-            }
-          }}
+          plans={plans}
+          onSelectFree={handleSelectFree}
+          onSelectPro={handleSelectPro}
         />
       </div>
     </div>

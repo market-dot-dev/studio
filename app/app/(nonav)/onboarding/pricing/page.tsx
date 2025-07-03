@@ -2,6 +2,7 @@ import { PlanInformation } from "@/app/app/(dashboard)/settings/billing/plan-inf
 import { StripeCustomerPortal } from "@/app/app/(dashboard)/settings/billing/stripe-customer-portal";
 import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
 import { ONBOARDING_STEPS, getNextStepPath } from "@/app/services/onboarding/onboarding-steps";
+import { createPlanConfiguration } from "@/app/services/plan-configuration";
 import { checkoutAction, getCachedPricing, getCurrentBilling } from "@/app/services/platform";
 import { OnboardingAction } from "@/components/onboarding/onboarding-action";
 import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
@@ -35,6 +36,13 @@ export default async function PricingPage() {
     await checkoutAction(formData);
   }
 
+  // Create plan configuration for onboarding context
+  const plans = createPlanConfiguration({
+    subscriptionInfo,
+    includeCustomPlan: false, // Don't show custom plan during onboarding
+    context: "onboarding" // This ensures proper button labels and states
+  });
+
   return (
     <div className="relative space-y-6">
       <OnboardingHeader title={currentStep.title} description={currentStep.description} />
@@ -55,24 +63,9 @@ export default async function PricingPage() {
       ) : (
         <PricingTable
           pricingData={pricingData}
-          currentSubscriptionInfo={subscriptionInfo}
-          plans={{
-            free: {
-              onSelect: handleSelectFree,
-              buttonLabel: "Continue with Free",
-              disabled: false
-            },
-            pro: {
-              onSelect: handleSelectPro,
-              buttonLabel:
-                !subscriptionInfo || subscriptionInfo.isFree
-                  ? "Upgrade to Pro"
-                  : subscriptionInfo.isSubscriptionActive
-                    ? "Current Plan"
-                    : "Reactivate Pro"
-            },
-            custom: false
-          }}
+          plans={plans}
+          onSelectFree={handleSelectFree}
+          onSelectPro={handleSelectPro}
         />
       )}
     </div>
