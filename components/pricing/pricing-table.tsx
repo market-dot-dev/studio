@@ -1,9 +1,9 @@
 "use client";
 
 import { CUSTOM_PLAN_CONTACT_URL } from "@/app/config/checkout";
-import { PlanConfig } from "@/app/services/plan-configuration";
 import { Badge } from "@/components/ui/badge";
 import { PricingData } from "@/types/platform";
+import { PlanConfig } from "@/utils/plan-configuration";
 import NumberFlow from "@number-flow/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";

@@ -1,6 +1,5 @@
 "use server";
 
-import { createPlanConfiguration } from "@/app/services/plan-configuration";
 import {
   checkoutAction,
   customerPortalAction,
@@ -9,6 +8,7 @@ import {
 } from "@/app/services/platform";
 import { PricingTable } from "@/components/pricing/pricing-table";
 import { Separator } from "@/components/ui/separator";
+import { createPlanConfiguration } from "@/utils/plan-configuration";
 import {
   getPlanDisplayLabel,
   getSubscriptionInfo,

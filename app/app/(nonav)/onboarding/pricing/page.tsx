@@ -2,11 +2,11 @@ import { PlanInformation } from "@/app/app/(dashboard)/settings/billing/plan-inf
 import { StripeCustomerPortal } from "@/app/app/(dashboard)/settings/billing/stripe-customer-portal";
 import { completeOnboardingStep } from "@/app/services/onboarding/onboarding-service";
 import { ONBOARDING_STEPS, getNextStepPath } from "@/app/services/onboarding/onboarding-steps";
-import { createPlanConfiguration } from "@/app/services/plan-configuration";
 import { checkoutAction, getCachedPricing, getCurrentBilling } from "@/app/services/platform";
 import { OnboardingAction } from "@/components/onboarding/onboarding-action";
 import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { PricingTable } from "@/components/pricing/pricing-table";
+import { createPlanConfiguration } from "@/utils/plan-configuration";
 import { getPlanDisplayLabel, getSubscriptionInfo } from "@/utils/subscription-utils";
 import { redirect } from "next/navigation";
 
