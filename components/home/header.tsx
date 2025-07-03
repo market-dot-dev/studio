@@ -76,7 +76,11 @@ interface HeaderProps {
 // COMPONENTS
 // ========================================
 
-const AnimatedHamburgerButton = ({ isOpen, toggleMenu, className }: AnimatedHamburgerButtonProps) => (
+const AnimatedHamburgerButton = ({
+  isOpen,
+  toggleMenu,
+  className
+}: AnimatedHamburgerButtonProps) => (
   <MarketingButton
     variant="ghost"
     onClick={toggleMenu}
