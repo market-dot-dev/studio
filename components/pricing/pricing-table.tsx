@@ -2,6 +2,7 @@
 
 import { CUSTOM_PLAN_CONTACT_URL } from "@/app/config/checkout";
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 import { PricingData } from "@/types/platform";
 import { PlanConfig } from "@/utils/plan-configuration";
 import NumberFlow from "@number-flow/react";
@@ -141,9 +142,11 @@ export function PricingTable({ pricingData, plans, onSelectFree, onSelectPro }: 
 
         {/* Plan Cards */}
         <div
-          className={`mx-auto grid w-full grid-cols-1 gap-6 ${
+          className={cn(
+            "mx-auto grid w-full grid-cols-1 gap-6",
+            "[&>*]:@3xl:max-w-[370px]",
             plans.length === 3 ? "@3xl:grid-cols-3" : "@3xl:grid-cols-2 @3xl:justify-items-center"
-          } [&>*]:@3xl:max-w-[370px]`}
+          )}
         >
           {plans.map(renderPlanCard)}
         </div>
