@@ -104,7 +104,7 @@ export function PricingTable({ pricingData, plans, onSelectFree, onSelectPro }: 
 
     const features = plan.showCustomFeatures ? (
       <>
-        <div className="@2xl:block hidden">
+        <div className="hidden @2xl:block">
           <SharedFeatureList />
         </div>
         <div className="space-y-1">
@@ -114,7 +114,7 @@ export function PricingTable({ pricingData, plans, onSelectFree, onSelectPro }: 
         </div>
       </>
     ) : (
-      <SharedFeatureList className="@2xl:block hidden" />
+      <SharedFeatureList className="hidden @2xl:block" />
     );
 
     return (
@@ -135,14 +135,15 @@ export function PricingTable({ pricingData, plans, onSelectFree, onSelectPro }: 
   };
 
   return (
-    <div className="@container @2xl:gap-y-10 flex flex-col gap-y-6">
+    <div className="flex flex-col gap-y-6 @container @2xl:gap-y-10">
       {/* Monthly/Yearly Switcher */}
       <BillingCycleSwitcher isAnnual={isAnnual} onToggle={setIsAnnual} />
 
       {/* Plan Cards */}
       <div
-        className={`@2xl:flex-row @2xl:flex-wrap @2xl:justify-center @2xl:gap-6 mx-auto flex w-full max-w-7xl flex-col gap-6 ${plans.length === 3 ? "@2xl:grid-cols-3" : "@2xl:grid-cols-2"
-          }`}
+        className={`mx-auto flex w-full max-w-7xl flex-col gap-6 @2xl:flex-row @2xl:flex-wrap @2xl:justify-center @2xl:gap-6 ${
+          plans.length === 3 ? "@2xl:grid-cols-3" : "@2xl:grid-cols-2"
+        }`}
       >
         {plans.map(renderPlanCard)}
       </div>
