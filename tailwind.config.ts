@@ -1,3 +1,4 @@
+import containerQueriesPlugin from "@tailwindcss/container-queries";
 import formsPlugin from "@tailwindcss/forms";
 import typographyPlugin from "@tailwindcss/typography";
 import type { Config } from "tailwindcss";
@@ -285,7 +286,7 @@ export default {
   //       /^(fill-(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(?:50|100|200|300|400|500|600|700|800|900|950))$/
   //   }
   // ],
-  plugins: [typographyPlugin, formsPlugin, animatePlugin],
+  plugins: [typographyPlugin, formsPlugin, animatePlugin, containerQueriesPlugin],
   corePlugins: {
     boxShadowColor: false
   }

@@ -103,7 +103,7 @@ function LinkTab({
   item,
   variant
 }: {
-  item: { name: string; href: string; isActive: boolean };
+  item: { name: string; href: string; isActive: boolean; icon?: React.ReactNode };
   variant: "default" | "background" | "pills";
 }) {
   const [mounted, setMounted] = React.useState(false);
@@ -118,6 +118,7 @@ function LinkTab({
       key={item.name}
       href={item.href}
       className={cn(
+        "flex items-center gap-2 [&>svg]:shrink-0",
         tabsTriggerVariants({ variant }),
         // Apply basic styling for initial render to avoid hydration mismatch
         !mounted && item.isActive ? "text-stone-800" : "",
@@ -126,6 +127,7 @@ function LinkTab({
       // Only set data-state after client-side hydration
       {...(mounted ? { "data-state": item.isActive ? "active" : "inactive" } : {})}
     >
+      {item.icon}
       {item.name}
     </Link>
   );

@@ -23,6 +23,7 @@ export interface PricingData {
 export interface SubscriptionInfo {
   isSubscriptionActive: boolean;
   isFree: boolean;
+  isCustom: boolean;
   currentPlanName: string | null;
   statusText: string;
   statusType: "free" | "active" | "expired" | "inactive";

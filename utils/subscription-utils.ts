@@ -12,6 +12,9 @@ export function getSubscriptionInfo(billing: OrganizationBilling | null): Subscr
   // Determine if on free plan
   const isFree: boolean = planType === PlanType.FREE;
 
+  // Determine if on custom plan
+  const isCustom: boolean = planType === PlanType.CUSTOM;
+
   // Convert plan type to display name
   const currentPlanName = getPlanDisplayName(planType);
 
@@ -23,7 +26,7 @@ export function getSubscriptionInfo(billing: OrganizationBilling | null): Subscr
     statusText = "Free";
     statusType = "free";
   } else if (planType === PlanType.CUSTOM) {
-    statusText = "Custom";
+    statusText = "Active";
     statusType = "active"; // Custom plans are considered active
   } else if (isSubscriptionActive) {
     statusText = "Active";
@@ -37,6 +40,7 @@ export function getSubscriptionInfo(billing: OrganizationBilling | null): Subscr
   return {
     isSubscriptionActive,
     isFree,
+    isCustom,
     currentPlanName,
     statusText,
     statusType
@@ -62,9 +66,9 @@ export function getPlanDisplayName(planType: PlanType): string {
 // Helper to get plan display label for UI
 export function getPlanDisplayLabel(planType: PlanType): string {
   const displayLabels: Record<PlanType, string> = {
-    [PlanType.FREE]: "Free plan",
-    [PlanType.PRO]: "Pro plan",
-    [PlanType.CUSTOM]: "Custom plan"
+    [PlanType.FREE]: "Free",
+    [PlanType.PRO]: "Pro",
+    [PlanType.CUSTOM]: "Custom"
   };
 
   return displayLabels[planType];
@@ -78,4 +82,15 @@ export function hasStripeIntegration(planType: PlanType): boolean {
 // Helper to check if plan is paid
 export function isPaidPlan(planType: PlanType): boolean {
   return planType === PlanType.PRO || planType === PlanType.CUSTOM;
+}
+
+/**
+ * Helper to check if user has an active pro subscription
+ * @param subscriptionInfo - The subscription info object (can be null/undefined)
+ * @returns true if user has an active, non-free subscription
+ */
+export function hasActiveProSubscription(subscriptionInfo?: SubscriptionInfo | null): boolean {
+  return Boolean(
+    subscriptionInfo && !subscriptionInfo.isFree && subscriptionInfo.isSubscriptionActive
+  );
 }

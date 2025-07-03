@@ -7,7 +7,8 @@ export default async function SettingsPage() {
   const org = await getCurrentOrganizationForSettings();
 
   return (
-    <div className="w-full lg:max-w-screen-sm">
+    <div className="flex w-full flex-col gap-8">
+      <h2 className="text-xl font-bold">Organization Info</h2>
       <VendorOrganizationSettingsForm organization={org} />
     </div>
   );
