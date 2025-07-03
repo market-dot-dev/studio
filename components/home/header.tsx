@@ -5,10 +5,9 @@ import { MarketingButton } from "@/components/home/button";
 import FeatureCard from "@/components/home/feature-card";
 import Link from "@/components/home/link";
 import Logo from "@/components/home/logo";
-import { Button as UIButton } from "@/components/ui/button";
 import type { Color } from "@/lib/home/colors";
 import { colors } from "@/lib/home/colors";
-import { blogURL, discordURL, loginURL, twitterUrl } from "@/lib/home/social-urls";
+import { discordURL, loginURL } from "@/lib/home/social-urls";
 import clsx from "clsx";
 import {
   BookOpenCheck,
@@ -36,7 +35,7 @@ interface AnimatedHambugerButtonProps {
 
 interface DropdownPosition {
   top: number;
-  right: number;
+  left: number;
 }
 
 interface DropdownOffsets {
@@ -57,7 +56,7 @@ const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambu
     variant="ghost"
     onClick={toggleMenu}
     className={clsx(
-      "-m-1.5 flex items-center justify-center !p-1.5 text-marketing-primary",
+      "text-marketing-primary -m-1.5 flex items-center justify-center !p-1.5",
       className
     )}
     aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -71,8 +70,10 @@ const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambu
 export default function Header({ className }: { className?: string }) {
   const router = useRouter();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = useState(false);
-  const desktopMenuButtonRef = useRef<HTMLDivElement>(null);
+  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+  const [isSupportDropdownOpen, setIsSupportDropdownOpen] = useState(false);
+  const productMenuRef = useRef<HTMLDivElement>(null);
+  const supportMenuRef = useRef<HTMLDivElement>(null);
   const headerRef = useRef<HTMLElement>(null);
   const [isScrolled, setIsScrolled] = useState(false);
   const { isSignedIn } = useCurrentSession();
@@ -82,9 +83,14 @@ export default function Header({ className }: { className?: string }) {
   const dashboardURL =
     process.env.NODE_ENV === "production" ? "https://app.market.dev" : "http://app.market.local";
 
-  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({
+  const [productDropdownPosition, setProductDropdownPosition] = useState<DropdownPosition>({
     top: 60,
-    right: 16
+    left: 16
+  });
+
+  const [supportDropdownPosition, setSupportDropdownPosition] = useState<DropdownPosition>({
+    top: 60,
+    left: 16
   });
 
   const dropdownOffsets: DropdownOffsets = {
@@ -136,13 +142,24 @@ export default function Header({ className }: { className?: string }) {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
-        isDesktopDropdownOpen &&
-        desktopMenuButtonRef.current &&
-        !desktopMenuButtonRef.current.contains(event.target as Node)
+        isProductDropdownOpen &&
+        productMenuRef.current &&
+        !productMenuRef.current.contains(event.target as Node)
       ) {
-        const dropdown = document.getElementById("desktop-dropdown");
+        const dropdown = document.getElementById("product-dropdown");
         if (dropdown && !dropdown.contains(event.target as Node)) {
-          setIsDesktopDropdownOpen(false);
+          setIsProductDropdownOpen(false);
+        }
+      }
+
+      if (
+        isSupportDropdownOpen &&
+        supportMenuRef.current &&
+        !supportMenuRef.current.contains(event.target as Node)
+      ) {
+        const dropdown = document.getElementById("support-dropdown");
+        if (dropdown && !dropdown.contains(event.target as Node)) {
+          setIsSupportDropdownOpen(false);
         }
       }
     };
@@ -151,26 +168,29 @@ export default function Header({ className }: { className?: string }) {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [isDesktopDropdownOpen]);
+  }, [isProductDropdownOpen, isSupportDropdownOpen]);
 
-  const updateDropdownPosition = useCallback(() => {
-    if (desktopMenuButtonRef.current) {
-      const rect = desktopMenuButtonRef.current.getBoundingClientRect();
-      setDropdownPosition({
+  const updateProductDropdownPosition = useCallback(() => {
+    if (productMenuRef.current) {
+      const rect = productMenuRef.current.getBoundingClientRect();
+      setProductDropdownPosition({
         top: rect.bottom + dropdownOffsets.vertical,
-        right: window.innerWidth - rect.right + dropdownOffsets.horizontal
+        left: rect.left + rect.width / 2 - 275 + dropdownOffsets.horizontal // Center the dropdown (275 is ~half width of product dropdown)
+      });
+    }
+  }, [dropdownOffsets.vertical, dropdownOffsets.horizontal]);
+
+  const updateSupportDropdownPosition = useCallback(() => {
+    if (supportMenuRef.current) {
+      const rect = supportMenuRef.current.getBoundingClientRect();
+      setSupportDropdownPosition({
+        top: rect.bottom + dropdownOffsets.vertical,
+        left: rect.left + rect.width / 2 - 87.5 + dropdownOffsets.horizontal // Center the dropdown (87.5 is ~half width of support dropdown)
       });
     }
   }, [dropdownOffsets.vertical, dropdownOffsets.horizontal]);
 
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-  const toggleDesktopDropdown = () => {
-    const newState = !isDesktopDropdownOpen;
-    setIsDesktopDropdownOpen(newState);
-    if (newState) {
-      setTimeout(updateDropdownPosition, 0);
-    }
-  };
 
   const handleLinkClick: React.MouseEventHandler<HTMLElement> = (event) => {
     event.preventDefault();
@@ -179,7 +199,8 @@ export default function Header({ className }: { className?: string }) {
     if (!href) return;
 
     setIsMobileMenuOpen(false);
-    setIsDesktopDropdownOpen(false);
+    setIsProductDropdownOpen(false);
+    setIsSupportDropdownOpen(false);
     setTimeout(() => {
       router.push(href);
     }, 150);
@@ -225,22 +246,33 @@ export default function Header({ className }: { className?: string }) {
   ];
 
   useEffect(() => {
-    if (isDesktopDropdownOpen) {
-      updateDropdownPosition();
-      window.addEventListener("resize", updateDropdownPosition);
+    if (isProductDropdownOpen) {
+      updateProductDropdownPosition();
+      window.addEventListener("resize", updateProductDropdownPosition);
 
       return () => {
-        window.removeEventListener("resize", updateDropdownPosition);
+        window.removeEventListener("resize", updateProductDropdownPosition);
       };
     }
-  }, [isDesktopDropdownOpen, updateDropdownPosition]);
+  }, [isProductDropdownOpen, updateProductDropdownPosition]);
+
+  useEffect(() => {
+    if (isSupportDropdownOpen) {
+      updateSupportDropdownPosition();
+      window.addEventListener("resize", updateSupportDropdownPosition);
+
+      return () => {
+        window.removeEventListener("resize", updateSupportDropdownPosition);
+      };
+    }
+  }, [isSupportDropdownOpen, updateSupportDropdownPosition]);
 
   return (
     <>
       <header
         ref={headerRef}
         className={clsx(
-          "fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col bg-marketing-background text-marketing-sm tracking-tight transition-all ease-in-out md:text-marketing-base",
+          "bg-marketing-background text-marketing-sm md:text-marketing-base fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col tracking-tight transition-all ease-in-out",
           isMobileMenuOpen && "duration-150",
           className
         )}
@@ -278,12 +310,49 @@ export default function Header({ className }: { className?: string }) {
               />
             </Link>
             <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
-              {/* <Link href="/" className="whitespace-nowrap !text-marketing-primary">
-                Sell
-              </Link> */}
-              {/* <Link href="https://explore.market.dev" className="whitespace-nowrap">
-                Explore
-              </Link> */}
+              {/* Product Link with Hover Dropdown */}
+              <div
+                className="relative"
+                ref={productMenuRef}
+                onMouseEnter={() => {
+                  setIsProductDropdownOpen(true);
+                  setTimeout(updateProductDropdownPosition, 0);
+                }}
+                onMouseLeave={() => setIsProductDropdownOpen(false)}
+              >
+                <Link
+                  href="/#sell"
+                  className="hover:!text-marketing-primary whitespace-nowrap transition-colors"
+                >
+                  Product
+                </Link>
+              </div>
+
+              <Link href="/#pricing" className="whitespace-nowrap">
+                Pricing
+              </Link>
+              <Link href="https://blog.market.dev" target="_blank" className="whitespace-nowrap">
+                Blog
+              </Link>
+
+              {/* Support Link with Hover Dropdown */}
+              <div
+                className="relative"
+                ref={supportMenuRef}
+                onMouseEnter={() => {
+                  setIsSupportDropdownOpen(true);
+                  setTimeout(updateSupportDropdownPosition, 0);
+                }}
+                onMouseLeave={() => setIsSupportDropdownOpen(false)}
+              >
+                <Link
+                  href="https://deepwiki.com/market-dot-dev/store"
+                  target="_blank"
+                  className="whitespace-nowrap"
+                >
+                  Support
+                </Link>
+              </div>
             </div>
             <div className="flex w-fit items-center gap-4">
               {isLoading || !signedIn ? (
@@ -291,28 +360,17 @@ export default function Header({ className }: { className?: string }) {
                   Log in
                 </Link>
               ) : (
-                <UIButton
+                <MarketingButton
                   onClick={() => {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="size-9 rounded-full bg-marketing-accent !text-sm font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active sm:px-3 md:w-auto"
+                  className="bg-marketing-accent hover:bg-marketing-accent-active focus:bg-marketing-accent-active size-9 rounded-full !text-sm font-bold tracking-tight text-black transition-colors sm:px-3 md:w-auto"
                 >
                   <Store className="!size-5" />
                   <span className="hidden md:inline">Dashboard</span>
-                </UIButton>
+                </MarketingButton>
               )}
-              {/* Desktop menu button */}
-              <div
-                className="relative hidden items-center justify-center lg:flex"
-                ref={desktopMenuButtonRef}
-              >
-                <AnimatedHambugerButton
-                  isOpen={isDesktopDropdownOpen}
-                  toggleMenu={toggleDesktopDropdown}
-                  className=""
-                />
-              </div>
               {/* Mobile menu button */}
               <div className="flex items-center justify-center lg:hidden">
                 <AnimatedHambugerButton
@@ -327,12 +385,12 @@ export default function Header({ className }: { className?: string }) {
       </header>
 
       <AnimatePresence>
-        {/* Desktop dropdown menu */}
-        {isDesktopDropdownOpen && (
+        {/* Product dropdown menu */}
+        {isProductDropdownOpen && (
           <motion.div
-            id="desktop-dropdown"
-            key="desktop-dropdown"
-            className="fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white shadow-border-lg lg:block"
+            id="product-dropdown"
+            key="product-dropdown"
+            className="shadow-border-lg fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white lg:block"
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
@@ -342,9 +400,11 @@ export default function Header({ className }: { className?: string }) {
               ease: "easeOut"
             }}
             style={{
-              top: dropdownPosition.top,
-              right: dropdownPosition.right
+              top: productDropdownPosition.top,
+              left: productDropdownPosition.left
             }}
+            onMouseEnter={() => setIsProductDropdownOpen(true)}
+            onMouseLeave={() => setIsProductDropdownOpen(false)}
           >
             {/* Product feature cards */}
             <div className="flex max-w-[550px] flex-row gap-3 p-3">
@@ -358,36 +418,59 @@ export default function Header({ className }: { className?: string }) {
                     description={product.description}
                     link={product.link}
                     borderRadius="rounded-lg"
-                    className="!leading-tighter h-full text-marketing-xs"
+                    className="!leading-tighter text-marketing-xs h-full"
                     size="small"
                   />
                 </div>
               ))}
             </div>
+          </motion.div>
+        )}
 
-            <div className="border-t border-black/10"></div>
-
-            <div className="flex min-w-[175px] flex-col py-2 text-marketing-sm">
-              <Link
-                href={blogURL}
-                variant="primary"
-                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
-              >
-                Changelog
-              </Link>
+        {/* Support dropdown menu */}
+        {isSupportDropdownOpen && (
+          <motion.div
+            id="support-dropdown"
+            key="support-dropdown"
+            className="shadow-border-lg fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white lg:block"
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+            transition={{
+              type: "tween",
+              duration: 0.2,
+              ease: "easeOut"
+            }}
+            style={{
+              top: supportDropdownPosition.top,
+              left: supportDropdownPosition.left
+            }}
+            onMouseEnter={() => setIsSupportDropdownOpen(true)}
+            onMouseLeave={() => setIsSupportDropdownOpen(false)}
+          >
+            <div className="text-marketing-sm flex min-w-[175px] flex-col py-2">
               <Link
                 href={discordURL}
                 variant="primary"
-                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
+                className="hover:text-marketing-secondary flex w-full items-center px-5 py-1.5 transition-colors"
               >
                 Discord
               </Link>
               <Link
-                href={twitterUrl}
+                href="https://github.com/market-dot-dev/store"
+                target="_blank"
                 variant="primary"
-                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
+                className="hover:text-marketing-secondary flex w-full items-center px-5 py-1.5 transition-colors"
               >
-                Twitter
+                Github
+              </Link>
+              <Link
+                href="https://deepwiki.com/market-dot-dev/store"
+                target="_blank"
+                variant="primary"
+                className="hover:text-marketing-secondary flex w-full items-center px-5 py-1.5 transition-colors"
+              >
+                Docs
               </Link>
             </div>
           </motion.div>
@@ -397,7 +480,7 @@ export default function Header({ className }: { className?: string }) {
         {isMobileMenuOpen && (
           <motion.div
             key="mobile-menu"
-            className="shadow-t fixed inset-x-0 bottom-0 z-40 overflow-y-auto bg-marketing-background text-left text-marketing-md lg:hidden"
+            className="shadow-t bg-marketing-background text-marketing-md fixed inset-x-0 bottom-0 z-40 overflow-y-auto text-left lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -433,27 +516,46 @@ export default function Header({ className }: { className?: string }) {
 
               <div className="flex grow flex-col p-6 pt-2">
                 <Link
-                  href={blogURL}
+                  href="/#pricing"
                   variant="primary"
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
-                  Changelog
+                  Pricing
+                </Link>
+                <hr className="border-black/15" />
+                <Link
+                  href="https://blog.market.dev"
+                  target="_blank"
+                  variant="primary"
+                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                >
+                  Blog
                 </Link>
                 <hr className="border-black/15" />
                 <Link
                   href={discordURL}
                   variant="primary"
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
                   Discord
                 </Link>
                 <hr className="border-black/15" />
                 <Link
-                  href={twitterUrl}
+                  href="https://github.com/market-dot-dev/store"
+                  target="_blank"
                   variant="primary"
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
                 >
-                  Twitter
+                  Github
+                </Link>
+                <hr className="border-black/15" />
+                <Link
+                  href="https://deepwiki.com/market-dot-dev/store"
+                  target="_blank"
+                  variant="primary"
+                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                >
+                  Docs
                 </Link>
                 <hr className="border-black/15 sm:hidden" />
                 {isLoading ||
@@ -463,7 +565,7 @@ export default function Header({ className }: { className?: string }) {
                     </Link>
                   ))}
               </div>
-              <div className="sticky inset-x-0 bottom-0 border-t border-black/10 bg-marketing-background p-6">
+              <div className="bg-marketing-background sticky inset-x-0 bottom-0 border-t border-black/10 p-6">
                 {isLoading || !signedIn ? (
                   <MarketingButton className="w-full">
                     <Image
@@ -471,7 +573,7 @@ export default function Header({ className }: { className?: string }) {
                       alt="github logo"
                       height={24}
                       width={24}
-                      className="col-span-2 col-start-1 h-[22px] w-auto xs:h-4.5 md:h-6"
+                      className="xs:h-4.5 col-span-2 col-start-1 h-[22px] w-auto md:h-6"
                     />
                     Sign up with Github
                   </MarketingButton>
@@ -480,7 +582,7 @@ export default function Header({ className }: { className?: string }) {
                     onClick={() => {
                       router.push(dashboardURL);
                     }}
-                    className="w-full text-sm font-bold tracking-tightish"
+                    className="tracking-tightish w-full text-sm font-bold"
                   >
                     <Store className="!size-5" />
                     Go to Dashboard
