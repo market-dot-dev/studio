@@ -11,6 +11,28 @@ import {
   isVercelPreview
 } from "./app/services/site/domain-request-service";
 
+// Domain configuration
+const isDevelopment = process.env.NODE_ENV === "development";
+
+const HOSTS = {
+  app: isDevelopment ? "app.market.local:3000" : "app.market.dev",
+  explore: isDevelopment ? "localhost:4000" : "explore.market.dev"
+} as const;
+
+// Helper functions
+const buildUrl = (host: string, path: string): string => {
+  const protocol = isDevelopment ? "http" : "https";
+  return `${protocol}://${host}${path}`;
+};
+
+const createRedirect = (host: string, path: string, status = 301): NextResponse => {
+  return NextResponse.redirect(buildUrl(host, path), { status });
+};
+
+const rewrite = (path: string, url: string) => {
+  return NextResponse.rewrite(new URL(path, url));
+};
+
 export const config = {
   matcher: [
     /*
@@ -61,10 +83,6 @@ export default withAuth(
   }
 );
 
-const rewrite = (path: string, url: string) => {
-  return NextResponse.rewrite(new URL(path, url));
-};
-
 async function customMiddleware(req: NextRequest) {
   const url = req.nextUrl;
 
@@ -95,13 +113,13 @@ async function customMiddleware(req: NextRequest) {
       return rewrite(`/home${path}`, req.url);
     }
 
+    // Redirect login paths to app.market.dev
+    if (url.pathname === "/login" || url.pathname.startsWith("/login/")) {
+      return createRedirect(HOSTS.app, path);
+    }
+
     // Redirect to explore.market.dev
-    const targetHost =
-      process.env.NODE_ENV === "development" ? "localhost:4000" : "explore.market.dev";
-    return NextResponse.redirect(
-      `http${process.env.NODE_ENV === "development" ? "" : "s"}://${targetHost}${path}`,
-      { status: 301 }
-    );
+    return createRedirect(HOSTS.explore, path);
   }
 
   // Handle GitHub username subdomains (johndoe.market.dev)
