@@ -11,7 +11,6 @@ import { blogURL, discordURL, loginURL } from "@/lib/home/social-urls";
 import clsx from "clsx";
 import {
   BookOpen,
-  BookOpenCheck,
   ChevronDown,
   ChevronRight,
   ListCheck,
@@ -45,7 +44,7 @@ const URLS = {
 // TYPES & INTERFACES
 // ========================================
 
-interface AnimatedHambugerButtonProps {
+interface AnimatedHamburgerButtonProps {
   isOpen: boolean;
   toggleMenu: () => void;
   className?: string;
@@ -77,12 +76,12 @@ interface HeaderProps {
 // COMPONENTS
 // ========================================
 
-const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambugerButtonProps) => (
+const AnimatedHamburgerButton = ({ isOpen, toggleMenu, className }: AnimatedHamburgerButtonProps) => (
   <MarketingButton
     variant="ghost"
     onClick={toggleMenu}
     className={clsx(
-      "text-marketing-primary -m-1.5 flex items-center justify-center !p-1.5",
+      "-m-1.5 flex items-center justify-center !p-1.5 text-marketing-primary",
       className
     )}
     aria-label={isOpen ? "Close menu" : "Open menu"}
@@ -339,7 +338,7 @@ export default function Header({ className }: HeaderProps) {
       <header
         ref={headerRef}
         className={clsx(
-          "bg-marketing-background text-marketing-sm md:text-marketing-base fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col tracking-tight transition-all ease-in-out",
+          "fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col bg-marketing-background text-marketing-sm tracking-tight transition-all ease-in-out md:text-marketing-base",
           isMobileMenuOpen && "duration-150",
           className
         )}
@@ -367,9 +366,7 @@ export default function Header({ className }: HeaderProps) {
           >
             {/* Logo */}
             <Link href="/" className="flex">
-              <Logo
-                className={clsx("h-[26px] w-auto self-center justify-self-start")}
-              />
+              <Logo className={clsx("h-[26px] w-auto self-center justify-self-start")} />
             </Link>
 
             {/* Center Navigation Links - Hidden on xs screens */}
@@ -386,10 +383,13 @@ export default function Header({ className }: HeaderProps) {
               >
                 <Link
                   href="/#sell"
-                  className="inline-flex items-center gap-1 hover:!text-marketing-primary whitespace-nowrap transition-colors"
+                  className="inline-flex items-center gap-1 whitespace-nowrap transition-colors hover:!text-marketing-primary"
                 >
                   Product
-                  <ChevronDown className="size-3.5 shrink-0 translate-y-px opacity-70 -mr-1" strokeWidth={3.5} />
+                  <ChevronDown
+                    className="-mr-1 size-3.5 shrink-0 translate-y-px opacity-70"
+                    strokeWidth={3.5}
+                  />
                 </Link>
               </div>
 
@@ -412,7 +412,10 @@ export default function Header({ className }: HeaderProps) {
               >
                 <Link href="/" className="inline-flex items-center gap-1 whitespace-nowrap">
                   Support
-                  <ChevronDown className="size-3.5 shrink-0 translate-y-px opacity-70 -mr-1" strokeWidth={3.5} />
+                  <ChevronDown
+                    className="-mr-1 size-3.5 shrink-0 translate-y-px opacity-70"
+                    strokeWidth={3.5}
+                  />
                 </Link>
               </div>
             </div>
@@ -430,16 +433,16 @@ export default function Header({ className }: HeaderProps) {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="inline-flex justify-center items-center gap-2 bg-marketing-accent hover:bg-marketing-accent-active focus:bg-marketing-accent-active h-9 w-9 rounded-full font-bold tracking-tight text-black transition-colors px-0 xs:px-3 xs:w-auto "
+                  className="inline-flex h-9 w-9 items-center justify-center gap-2 rounded-full bg-marketing-accent px-0 font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active xs:w-auto xs:px-3"
                 >
                   <Store className="!size-5" strokeWidth={2.25} />
-                  <span className="hidden xs:block text-marketing-sm">Dashboard</span>
+                  <span className="hidden text-marketing-sm xs:block">Dashboard</span>
                 </MarketingButton>
               )}
 
               {/* Mobile Menu Button */}
               <div className="flex items-center justify-center md:hidden">
-                <AnimatedHambugerButton
+                <AnimatedHamburgerButton
                   isOpen={isMobileMenuOpen}
                   toggleMenu={toggleMobileMenu}
                   className=""
@@ -457,7 +460,7 @@ export default function Header({ className }: HeaderProps) {
           <motion.div
             id="product-dropdown"
             key="product-dropdown"
-            className="shadow-border-lg fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white lg:block"
+            className="fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white shadow-border-lg lg:block"
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
@@ -483,7 +486,7 @@ export default function Header({ className }: HeaderProps) {
                     description={product.description}
                     link={product.link}
                     borderRadius="rounded-lg"
-                    className="!leading-tighter text-marketing-xs h-full"
+                    className="!leading-tighter h-full text-marketing-xs"
                     size="small"
                   />
                 </div>
@@ -497,7 +500,7 @@ export default function Header({ className }: HeaderProps) {
           <motion.div
             id="support-dropdown"
             key="support-dropdown"
-            className="shadow-border-lg fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white lg:block"
+            className="fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white shadow-border-lg lg:block"
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
@@ -513,11 +516,11 @@ export default function Header({ className }: HeaderProps) {
             onMouseEnter={() => setIsSupportDropdownOpen(true)}
             onMouseLeave={() => setIsSupportDropdownOpen(false)}
           >
-            <div className="text-marketing-sm flex min-w-[175px] flex-col py-2">
+            <div className="flex min-w-[175px] flex-col py-2 text-marketing-sm">
               <Link
                 href={URLS.discord}
                 variant="primary"
-                className="hover:text-marketing-secondary flex w-full items-center px-5 py-1.5 transition-colors"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Discord
               </Link>
@@ -525,7 +528,7 @@ export default function Header({ className }: HeaderProps) {
                 href={URLS.github}
                 target="_blank"
                 variant="primary"
-                className="hover:text-marketing-secondary flex w-full items-center px-5 py-1.5 transition-colors"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Github
               </Link>
@@ -533,7 +536,7 @@ export default function Header({ className }: HeaderProps) {
                 href={URLS.docs}
                 target="_blank"
                 variant="primary"
-                className="hover:text-marketing-secondary flex w-full items-center px-5 py-1.5 transition-colors"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Docs
               </Link>
@@ -545,7 +548,7 @@ export default function Header({ className }: HeaderProps) {
         {isMobileMenuOpen && (
           <motion.div
             key="mobile-menu"
-            className="shadow-t bg-marketing-background text-marketing-md fixed inset-x-0 bottom-0 z-40 overflow-y-auto text-left lg:hidden"
+            className="shadow-t fixed inset-x-0 bottom-0 z-40 overflow-y-auto bg-marketing-background text-left text-marketing-md lg:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -584,7 +587,7 @@ export default function Header({ className }: HeaderProps) {
                 <Link
                   href="/#pricing"
                   variant="primary"
-                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Pricing
                 </Link>
@@ -593,14 +596,14 @@ export default function Header({ className }: HeaderProps) {
                   href={URLS.blog}
                   target="_blank"
                   variant="primary"
-                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Blog
                 </Link>
                 <hr className="border-black/15" />
 
                 {/* Support Section */}
-                <div className="pt-8 pb-2">
+                <div className="pb-2 pt-8">
                   <h3 className="text-marketing-sm uppercase tracking-wide text-marketing-secondary">
                     Get Support
                   </h3>
@@ -609,7 +612,7 @@ export default function Header({ className }: HeaderProps) {
                 <Link
                   href={URLS.discord}
                   variant="primary"
-                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Discord
                 </Link>
@@ -618,7 +621,7 @@ export default function Header({ className }: HeaderProps) {
                   href={URLS.github}
                   target="_blank"
                   variant="primary"
-                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Github
                 </Link>
@@ -627,22 +630,23 @@ export default function Header({ className }: HeaderProps) {
                   href={URLS.docs}
                   target="_blank"
                   variant="primary"
-                  className="bg-marketing-background flex h-[60px] w-full items-center leading-5"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
                   Docs
                 </Link>
-                {isLoading || (!signedIn && (
-                  <>
-                    <hr className="border-black/15" />
-                    <Link href={URLS.login} variant="primary" className="hidden px-2 sm:block">
-                      Log in
-                    </Link>
-                  </>
-                ))}
+                {isLoading ||
+                  (!signedIn && (
+                    <>
+                      <hr className="border-black/15" />
+                      <Link href={URLS.login} variant="primary" className="hidden px-2 sm:block">
+                        Log in
+                      </Link>
+                    </>
+                  ))}
               </div>
 
               {/* Bottom Action Button */}
-              <div className="bg-marketing-background sticky inset-x-0 bottom-0 p-6 border-t border-black/15">
+              <div className="sticky inset-x-0 bottom-0 border-t border-black/15 bg-marketing-background p-6">
                 {isLoading || !signedIn ? (
                   <MarketingButton className="w-full">
                     <Image
@@ -650,7 +654,7 @@ export default function Header({ className }: HeaderProps) {
                       alt="github logo"
                       height={24}
                       width={24}
-                      className="xs:h-4.5 col-span-2 col-start-1 h-[22px] w-auto md:h-6"
+                      className="col-span-2 col-start-1 h-[22px] w-auto xs:h-4.5 md:h-6"
                     />
                     Sign up with Github
                   </MarketingButton>
@@ -659,7 +663,7 @@ export default function Header({ className }: HeaderProps) {
                     onClick={() => {
                       router.push(dashboardURL);
                     }}
-                    className="tracking-tightish w-full text-marketing-sm font-bold"
+                    className="w-full text-marketing-sm font-bold tracking-tightish"
                   >
                     <Store className="!size-5" strokeWidth={2.25} />
                     Go to Dashboard
