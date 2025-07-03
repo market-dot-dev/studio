@@ -10,7 +10,9 @@ import { colors } from "@/lib/home/colors";
 import { blogURL, discordURL, loginURL } from "@/lib/home/social-urls";
 import clsx from "clsx";
 import {
+  BookOpen,
   BookOpenCheck,
+  ChevronDown,
   ChevronRight,
   ListCheck,
   Menu,
@@ -347,10 +349,10 @@ export default function Header({ className }: HeaderProps) {
           href={URLS.blog}
           className="group flex h-10 items-center justify-center gap-0.5 bg-black px-4 text-sm font-medium tracking-normal !text-white"
         >
-          <BookOpenCheck className="mr-2 size-4 opacity-60 transition-opacity group-hover:opacity-100" />
-          <span className="sm:hidden">We&apos;re now open source!</span>
+          <BookOpen className="mr-2 size-4 opacity-60 transition-opacity group-hover:opacity-100" />
+          <span className="sm:hidden">We&apos;re now open source! Learn more</span>
           <span className="hidden sm:inline">
-            We&apos;re now open source! Check out the blog post for more details.
+            We&apos;re now open source! Read the blog post to learn more
           </span>
           <ChevronRight className="mt-px size-4 transition-transform group-hover:translate-x-px" />
         </Link>
@@ -366,20 +368,12 @@ export default function Header({ className }: HeaderProps) {
             {/* Logo */}
             <Link href="/" className="flex">
               <Logo
-                className={clsx("hidden h-[26px] w-auto self-center justify-self-start md:block")}
-              />
-              <Image
-                src="/logo.svg"
-                alt="market.dev logo"
-                width={22}
-                height={22}
-                className="self-center justify-self-start md:hidden"
-                priority
+                className={clsx("h-[26px] w-auto self-center justify-self-start")}
               />
             </Link>
 
             {/* Center Navigation Links - Hidden on xs screens */}
-            <div className="absolute left-1/2 top-1/2 hidden max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7 sm:flex">
+            <div className="absolute left-1/2 top-1/2 hidden max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7 md:flex">
               {/* Product Link with Hover Dropdown */}
               <div
                 className="relative"
@@ -392,9 +386,10 @@ export default function Header({ className }: HeaderProps) {
               >
                 <Link
                   href="/#sell"
-                  className="hover:!text-marketing-primary whitespace-nowrap transition-colors"
+                  className="inline-flex items-center gap-1 hover:!text-marketing-primary whitespace-nowrap transition-colors"
                 >
                   Product
+                  <ChevronDown className="size-3.5 shrink-0 translate-y-px opacity-70 -mr-1" strokeWidth={3.5} />
                 </Link>
               </div>
 
@@ -415,17 +410,18 @@ export default function Header({ className }: HeaderProps) {
                 }}
                 onMouseLeave={() => setIsSupportDropdownOpen(false)}
               >
-                <Link href="/" className="whitespace-nowrap">
+                <Link href="/" className="inline-flex items-center gap-1 whitespace-nowrap">
                   Support
+                  <ChevronDown className="size-3.5 shrink-0 translate-y-px opacity-70 -mr-1" strokeWidth={3.5} />
                 </Link>
               </div>
             </div>
 
             {/* Right Side Actions */}
-            <div className="flex w-fit items-center gap-4">
+            <div className="flex w-fit items-center gap-6">
               {/* Login/Dashboard Button */}
               {isLoading || !signedIn ? (
-                <Link href={URLS.login} variant="primary" className="hidden px-2 sm:block">
+                <Link href={URLS.login} variant="primary" className="hidden sm:block">
                   Log in
                 </Link>
               ) : (
@@ -434,15 +430,15 @@ export default function Header({ className }: HeaderProps) {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="bg-marketing-accent hover:bg-marketing-accent-active focus:bg-marketing-accent-active size-9 rounded-full !text-sm font-bold tracking-tight text-black transition-colors sm:px-3 md:w-auto"
+                  className="inline-flex justify-center items-center gap-2 bg-marketing-accent hover:bg-marketing-accent-active focus:bg-marketing-accent-active h-9 w-9 rounded-full font-bold tracking-tight text-black transition-colors px-0 xs:px-3 xs:w-auto "
                 >
-                  <Store className="!size-5" />
-                  <span className="hidden md:inline">Dashboard</span>
+                  <Store className="!size-5" strokeWidth={2.25} />
+                  <span className="hidden xs:block text-marketing-sm">Dashboard</span>
                 </MarketingButton>
               )}
 
               {/* Mobile Menu Button */}
-              <div className="flex items-center justify-center lg:hidden">
+              <div className="flex items-center justify-center md:hidden">
                 <AnimatedHambugerButton
                   isOpen={isMobileMenuOpen}
                   toggleMenu={toggleMobileMenu}
@@ -601,13 +597,15 @@ export default function Header({ className }: HeaderProps) {
                 >
                   Blog
                 </Link>
+                <hr className="border-black/15" />
 
                 {/* Support Section */}
-                <div className="pt-4">
-                  <h3 className="text-sm font-medium uppercase tracking-wide text-gray-500">
+                <div className="pt-8 pb-2">
+                  <h3 className="text-marketing-sm uppercase tracking-wide text-marketing-secondary">
                     Get Support
                   </h3>
                 </div>
+                <hr className="border-black/15" />
                 <Link
                   href={URLS.discord}
                   variant="primary"
@@ -633,17 +631,18 @@ export default function Header({ className }: HeaderProps) {
                 >
                   Docs
                 </Link>
-                <hr className="border-black/15 sm:hidden" />
-                {isLoading ||
-                  (!signedIn && (
+                {isLoading || (!signedIn && (
+                  <>
+                    <hr className="border-black/15" />
                     <Link href={URLS.login} variant="primary" className="hidden px-2 sm:block">
                       Log in
                     </Link>
-                  ))}
+                  </>
+                ))}
               </div>
 
               {/* Bottom Action Button */}
-              <div className="bg-marketing-background sticky inset-x-0 bottom-0 border-t border-black/10 p-6">
+              <div className="bg-marketing-background sticky inset-x-0 bottom-0 p-6 border-t border-black/15">
                 {isLoading || !signedIn ? (
                   <MarketingButton className="w-full">
                     <Image
@@ -660,9 +659,9 @@ export default function Header({ className }: HeaderProps) {
                     onClick={() => {
                       router.push(dashboardURL);
                     }}
-                    className="tracking-tightish w-full text-sm font-bold"
+                    className="tracking-tightish w-full text-marketing-sm font-bold"
                   >
-                    <Store className="!size-5" />
+                    <Store className="!size-5" strokeWidth={2.25} />
                     Go to Dashboard
                   </MarketingButton>
                 )}
