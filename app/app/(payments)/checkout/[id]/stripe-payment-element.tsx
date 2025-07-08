@@ -5,7 +5,7 @@ import {
   createPaymentMethodSetupIntent,
   detachPaymentMethodForVendor,
   getPaymentMethodDetailsForVendor
-} from "@/app/services/organization/customer-organization-service";
+} from "@/app/services/customer-profile-service";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js";
@@ -379,7 +379,7 @@ function CardSetupFormContent({
       }
 
       if (setupIntent?.status === "succeeded" && setupIntent.payment_method) {
-        // Attach the payment method to the organization
+        // Attach the payment method to the customer profile
         await attachPaymentMethodForVendor(
           vendorStripeAccountId,
           setupIntent.payment_method as string

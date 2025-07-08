@@ -1,5 +1,4 @@
 import { Prisma, Subscription } from "@/app/generated/prisma";
-import { includeMinimalOrg } from "./organization";
 
 // Subscription states used throughout the application
 export const SubscriptionStates = {
@@ -66,18 +65,28 @@ export function isCancelled(subscription: Subscription): boolean {
 }
 
 /**
- * Prisma validator for vendor profile with minimal fields
+ * Prisma validator for subscription with customer profile and tier data
  */
-export const includeTierAndOrg = Prisma.validator<Prisma.SubscriptionDefaultArgs>()({
+export const includeTierAndCustomer = Prisma.validator<Prisma.SubscriptionDefaultArgs>()({
   include: {
-    organization: {
-      ...includeMinimalOrg
+    customerProfile: {
+      include: {
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true
+          }
+        }
+      }
     },
     tier: true
   }
 });
 
 /**
- * Vendor profile data type
+ * Subscription with customer profile and tier data
  */
-export type SubscriptionWithTierAndOrg = Prisma.SubscriptionGetPayload<typeof includeTierAndOrg>;
+export type SubscriptionWithTierAndCustomer = Prisma.SubscriptionGetPayload<
+  typeof includeTierAndCustomer
+>;

@@ -14,7 +14,6 @@ export type CustomerTableItem = {
   id: string;
   userId: string;
   userName: string | null;
-  userOrganization: string | null;
   userEmail: string | null;
   tierName: string;
   statusType: "subscription" | "charge";
@@ -33,7 +32,7 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
   },
   {
     accessorKey: "userName",
-    header: "Name",
+    header: "Customer",
     meta: {
       emphasized: true
     },
@@ -59,25 +58,6 @@ export const columns: ColumnDef<CustomerTableItem>[] = [
           {email && <span className="text-xs font-normal text-muted-foreground">{email}</span>}
         </div>
       );
-    }
-  },
-  {
-    accessorKey: "userOrganization",
-    header: "Organization",
-    cell: ({ row, table }) => {
-      // Check if this is the first row for this customer
-      const currentUserId = row.original.userId;
-      const rowIndex = table.getRowModel().rows.findIndex((r) => r.id === row.id);
-
-      // Hide company if this is not the first row for this customer
-      if (rowIndex > 0) {
-        const prevRow = table.getRowModel().rows[rowIndex - 1];
-        if (prevRow.original.userId === currentUserId) {
-          return null;
-        }
-      }
-
-      return row.original.userOrganization || "-";
     }
   },
   {

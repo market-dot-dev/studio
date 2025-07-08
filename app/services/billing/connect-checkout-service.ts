@@ -3,10 +3,10 @@
 import { PlanType } from "@/app/generated/prisma";
 import { createSubscription } from "@/app/services/billing/connect-subscription-service";
 import {
-  getCurrentCustomerOrganization,
+  getCurrentCustomerProfile,
   getOrCreateStripeCustomerIdForVendor,
   getStripePaymentMethodIdForVendor
-} from "@/app/services/organization/customer-organization-service";
+} from "@/app/services/customer-profile-service";
 import { getVendorOrganizationById } from "@/app/services/organization/vendor-organization-service";
 import { createStripeCharge } from "@/app/services/stripe/stripe-payment-service";
 import {
@@ -14,13 +14,12 @@ import {
   isSubscribedToStripeTier
 } from "@/app/services/stripe/stripe-subscription-service";
 import { getTierById, getTierByIdForCheckout } from "@/app/services/tier/tier-service";
-import { getCurrentUserSession, requireOrganization } from "@/app/services/user-context-service";
-import { OrganizationForStripeOps } from "@/types/organization";
+import { getCurrentUserSession, requireUser } from "@/app/services/user-context-service";
 import { createLocalCharge } from "./connect-charge-service";
 
 interface CheckoutData {
   tier: Awaited<ReturnType<typeof getTierByIdForCheckout>>;
-  customerOrg: OrganizationForStripeOps | null;
+  customerProfile: Awaited<ReturnType<typeof getCurrentCustomerProfile>> | null;
   isAnnual: boolean;
 }
 
@@ -33,15 +32,15 @@ export async function getCheckoutData(
 ): Promise<CheckoutData> {
   const user = await getCurrentUserSession();
 
-  // Get customer organization if user is logged in
-  const customerOrg = user ? await getCurrentCustomerOrganization() : null;
+  // Get customer profile if user is logged in
+  const customerProfile = user ? await getCurrentCustomerProfile() : null;
 
   // Get tier with vendor details included
   const tier = await getTierByIdForCheckout(tierId);
 
   return {
     tier,
-    customerOrg,
+    customerProfile,
     isAnnual
   };
 }
@@ -67,7 +66,7 @@ export async function processPayment(
   stripeId: string;
   type: "charge" | "subscription";
 }> {
-  const customerOrg = await requireOrganization();
+  const user = await requireUser();
 
   // Get and validate tier
   const tier = await getTierById(tierId);
@@ -84,7 +83,7 @@ export async function processPayment(
   // Get Stripe customer ID using customer service
   const stripeCustomerId = await getOrCreateStripeCustomerIdForVendor(
     vendor.stripeAccountId,
-    customerOrg.id
+    user.id
   );
 
   const stripePriceId = annual ? tier.stripePriceIdAnnual : tier.stripePriceId;
@@ -98,7 +97,7 @@ export async function processPayment(
       vendor.stripeAccountId,
       stripeCustomerId,
       stripePriceId,
-      customerOrg.id,
+      user.id,
       tierId,
       tier.price,
       vendor.billing?.planType || null
@@ -110,7 +109,7 @@ export async function processPayment(
     vendor.stripeAccountId,
     stripeCustomerId,
     stripePriceId,
-    customerOrg.id,
+    user.id,
     tierId,
     tier,
     vendor.billing?.planType || null,
@@ -126,16 +125,13 @@ async function processOneTimeCharge(
   vendorStripeAccountId: string,
   stripeCustomerId: string,
   stripePriceId: string,
-  customerOrgId: string,
+  userId: string,
   tierId: string,
   price: number,
   vendorPlanType: PlanType | null
 ): Promise<{ success: boolean; stripeId: string; type: "charge" }> {
   // Get payment method using customer service
-  const paymentMethodId = await getStripePaymentMethodIdForVendor(
-    vendorStripeAccountId,
-    customerOrgId
-  );
+  const paymentMethodId = await getStripePaymentMethodIdForVendor(vendorStripeAccountId, userId);
 
   if (!paymentMethodId) {
     throw new Error("No payment method found for this vendor");
@@ -154,8 +150,8 @@ async function processOneTimeCharge(
     throw new Error(`Error creating charge on Stripe: ${charge.status}`);
   }
 
-  // Create local charge record using organization ID
-  await createLocalCharge(customerOrgId, tierId, charge.id);
+  // Create local charge record using user ID
+  await createLocalCharge(userId, tierId, charge.id);
 
   return {
     success: true,
@@ -172,7 +168,7 @@ async function processSubscription(
   vendorStripeAccountId: string,
   stripeCustomerId: string,
   stripePriceId: string,
-  customerOrgId: string,
+  userId: string,
   tierId: string,
   tier: any,
   vendorPlanType: PlanType | null,
@@ -212,21 +208,15 @@ async function processSubscription(
 
   switch (invoice.status) {
     case "paid": {
-      // Create local subscription record using organization ID
-      await createSubscription(
-        customerOrgId,
-        tierId,
-        stripeSubscription.id,
-        undefined,
-        platformFeeAmount
-      );
+      // Create local subscription record using user ID
+      await createSubscription(userId, tierId, stripeSubscription.id, undefined, platformFeeAmount);
       break;
     }
     case "open":
       // For subscriptions with trials, "open" status is expected
       if (tier.trialDays && tier.trialDays > 0) {
         await createSubscription(
-          customerOrgId,
+          userId,
           tierId,
           stripeSubscription.id,
           undefined,

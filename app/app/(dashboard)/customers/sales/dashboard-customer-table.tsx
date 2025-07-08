@@ -1,45 +1,45 @@
+import { getCustomersOfVendor } from "@/app/services/organization/vendor-organization-service";
 import { CustomersEmptyState } from "@/components/customer/empty-state";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/ui/data-table";
-import type { CustomerOrgWithChargesAndSubs } from "@/types/organization-customer";
 import { isActive } from "@/types/subscription";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { Sale, columns } from "./columns";
 
+type VendorCustomers = Awaited<ReturnType<typeof getCustomersOfVendor>>;
+
 const DashboardCustomerTable = ({
   customers,
   maxInitialRows
 }: {
-  customers: CustomerOrgWithChargesAndSubs[];
+  customers: VendorCustomers;
   maxInitialRows?: number;
 }) => {
   const showAll = false;
 
-  // Transform data to sales array for use with our columns definition
-  const sales: Sale[] = customers.flatMap((organization) => [
-    ...organization.subscriptions
+  // Transform CustomerProfile data to sales array
+  const sales: Sale[] = customers.flatMap((customerProfile) => [
+    ...customerProfile.subscriptions
       .filter((sub) => isActive(sub))
       .map((subscription, index) => ({
-        id: `subscription-${organization.id}-${index}`,
+        id: `subscription-${customerProfile.id}-${index}`,
         type: "subscription" as const,
-        organization: { ...organization, prospects: [] } as any,
-        ownerName: organization.owner.name || "",
-        ownerEmail: organization.owner.email || "",
+        userId: customerProfile.userId,
+        userName: customerProfile.user.name,
+        userEmail: customerProfile.user.email,
         tierName: subscription.tier.name,
         createdAt: subscription.createdAt,
-        organizationId: organization.id,
         subscription: subscription
       })),
-    ...organization.charges.map((charge, index) => ({
-      id: `charge-${organization.id}-${index}`,
+    ...customerProfile.charges.map((charge, index) => ({
+      id: `charge-${customerProfile.id}-${index}`,
       type: "charge" as const,
-      organization: { ...organization, prospects: [] } as any,
-      ownerName: organization.owner.name || "",
-      ownerEmail: organization.owner.email || "",
+      userId: customerProfile.userId,
+      userName: customerProfile.user.name,
+      userEmail: customerProfile.user.email,
       tierName: charge.tier.name,
       createdAt: charge.createdAt,
-      organizationId: organization.id,
       charge: charge
     }))
   ]);

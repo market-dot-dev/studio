@@ -1,13 +1,11 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { OrganizationForStripeOps, includeOrgForStripeOps } from "@/types/organization";
 import {
-  CustomerOrgWithAll,
-  CustomerOrgWithChargesAndSubs,
-  includeCustomerOrgWithAll,
-  includeCustomerOrgWithChargesAndSubs
-} from "@/types/organization-customer";
+  CustomerProfileWithChargesAndSubs,
+  includeCustomerProfileWithChargesAndSubs
+} from "@/types/customer-profile";
+import { OrganizationForStripeOps, includeOrgForStripeOps } from "@/types/organization";
 import { ErrorMessageCode, HealthCheckResult } from "@/types/stripe";
 import { checkVendorStripeStatusByOrgId } from "../stripe/stripe-vendor-service";
 import { requireOrganization } from "../user-context-service";
@@ -115,12 +113,12 @@ export async function canOrganizationSell(organizationId?: string): Promise<bool
 // ===== CUSTOMER RELATIONSHIP MANAGEMENT =====
 
 /**
- * Get a specific customer organization by vendor organization ID and customer organization ID
+ * Get a specific customer profile by user ID for a vendor organization
  */
 export async function getCustomerOfVendor(
-  customerOrgId: string,
+  userId: string,
   vendorOrgId?: string
-): Promise<CustomerOrgWithChargesAndSubs | null> {
+): Promise<CustomerProfileWithChargesAndSubs | null> {
   const vendorOrg = vendorOrgId
     ? await getVendorOrganizationById(vendorOrgId)
     : await getCurrentVendorOrganization();
@@ -129,9 +127,9 @@ export async function getCustomerOfVendor(
     throw new Error("Vendor organization not found");
   }
 
-  return prisma.organization.findFirst({
+  return prisma.customerProfile.findFirst({
     where: {
-      id: customerOrgId,
+      userId,
       OR: [
         {
           charges: {
@@ -153,16 +151,16 @@ export async function getCustomerOfVendor(
         }
       ]
     },
-    ...includeCustomerOrgWithChargesAndSubs
+    ...includeCustomerProfileWithChargesAndSubs
   });
 }
 
 /**
- * Get all customer organizations for a vendor organization
+ * Get all customer profiles for a vendor organization
  */
 export async function getCustomersOfVendor(
   vendorOrgId?: string
-): Promise<CustomerOrgWithChargesAndSubs[]> {
+): Promise<CustomerProfileWithChargesAndSubs[]> {
   const vendorOrg = vendorOrgId
     ? await getVendorOrganizationById(vendorOrgId)
     : await getCurrentVendorOrganization();
@@ -171,7 +169,7 @@ export async function getCustomersOfVendor(
     throw new Error("Vendor organization not found");
   }
 
-  return prisma.organization.findMany({
+  return prisma.customerProfile.findMany({
     where: {
       OR: [
         {
@@ -194,65 +192,40 @@ export async function getCustomersOfVendor(
         }
       ]
     },
-    ...includeCustomerOrgWithChargesAndSubs
-  });
-}
-
-/**
- * Get only prospects (organizations with prospects but no purchases) for a vendor organization
- */
-export async function getProspectsOfVendor(vendorOrgId?: string): Promise<CustomerOrgWithAll[]> {
-  const vendorOrg = vendorOrgId
-    ? await getVendorOrganizationById(vendorOrgId)
-    : await getCurrentVendorOrganization();
-
-  if (!vendorOrg) {
-    throw new Error("Vendor organization not found");
-  }
-
-  return prisma.organization.findMany({
-    where: {
-      AND: [
-        {
-          prospects: {
-            some: {
-              tiers: {
-                some: {
-                  organizationId: vendorOrg.id
-                }
-              }
-            }
-          }
-        },
-        {
-          charges: {
-            none: {
-              tier: {
-                organizationId: vendorOrg.id
-              }
-            }
-          }
-        },
-        {
-          subscriptions: {
-            none: {
-              tier: {
-                organizationId: vendorOrg.id
-              }
-            }
-          }
-        }
-      ]
-    },
-    ...includeCustomerOrgWithAll
+    ...includeCustomerProfileWithChargesAndSubs
   });
 }
 
 /**
  * Get all customers for the current vendor organization
  */
-export async function getCurrentVendorCustomers(): Promise<CustomerOrgWithChargesAndSubs[]> {
+export async function getCurrentVendorCustomers(): Promise<CustomerProfileWithChargesAndSubs[]> {
   return getCustomersOfVendor();
+}
+
+/**
+ * Get prospects for a vendor organization
+ */
+export async function getProspectsOfVendor(vendorOrgId?: string) {
+  const vendorOrg = vendorOrgId
+    ? await getVendorOrganizationById(vendorOrgId)
+    : await getCurrentVendorOrganization();
+
+  if (!vendorOrg) {
+    throw new Error("Vendor organization not found");
+  }
+
+  return prisma.prospect.findMany({
+    where: {
+      organizationId: vendorOrg.id
+    },
+    include: {
+      tiers: true
+    },
+    orderBy: {
+      createdAt: "desc"
+    }
+  });
 }
 
 /**
@@ -274,8 +247,6 @@ export async function getVendorStats(organizationId?: string) {
       _count: {
         select: {
           tiers: true,
-          charges: true,
-          subscriptions: true,
           prospects: true
         }
       }
@@ -286,23 +257,50 @@ export async function getVendorStats(organizationId?: string) {
     throw new Error("Organization not found");
   }
 
-  // Calculate revenue (this is a simplified version)
+  // Get charges and subscriptions through customer profiles
   const charges = await prisma.charge.findMany({
-    where: { organizationId: org.id },
-    include: { tier: true }
+    where: {
+      tier: {
+        organizationId: org.id
+      }
+    },
+    include: {
+      tier: true,
+      customerProfile: {
+        include: {
+          user: true
+        }
+      }
+    }
+  });
+
+  const subscriptions = await prisma.subscription.findMany({
+    where: {
+      tier: {
+        organizationId: org.id
+      }
+    },
+    include: {
+      tier: true,
+      customerProfile: {
+        include: {
+          user: true
+        }
+      }
+    }
   });
 
   const totalRevenue = charges.reduce((sum, charge) => {
     return sum + (charge.tier.price || 0);
   }, 0);
 
-  // Get customer count
+  // Get unique customer count based on customer profiles
   const customers = await getCustomersOfVendor(org.id);
 
   return {
     totalTiers: stats._count.tiers,
-    totalCharges: stats._count.charges,
-    totalSubscriptions: stats._count.subscriptions,
+    totalCharges: charges.length,
+    totalSubscriptions: subscriptions.length,
     totalProspects: stats._count.prospects,
     totalCustomers: customers.length,
     totalRevenue: totalRevenue / 100, // Convert from cents to dollars

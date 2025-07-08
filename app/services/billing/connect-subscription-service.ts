@@ -7,24 +7,24 @@ import {
   notifyOwnerOfNewSubscription,
   notifyOwnerOfSubscriptionCancellation
 } from "@/app/services/email-service";
-import { getCustomerOrganizationById } from "@/app/services/organization/customer-organization-service";
 import { getVendorOrganizationById } from "@/app/services/organization/vendor-organization-service";
 import {
   cancelStripeSubscription,
   reactivateStripeSubscription
 } from "@/app/services/stripe/stripe-subscription-service";
 import { getTierById } from "@/app/services/tier/tier-service";
-import { requireOrganization } from "@/app/services/user-context-service";
+import { requireUser } from "@/app/services/user-context-service";
 import prisma from "@/lib/prisma";
 import {
-  includeTierAndOrg,
+  includeTierAndCustomer,
   SubscriptionStates,
   SubscriptionStatus,
-  type SubscriptionWithTierAndOrg
+  type SubscriptionWithTierAndCustomer
 } from "@/types/subscription";
+import { getCustomerProfileById } from "../customer-profile-service";
 
 /**
- * Get a subscription by its ID with related organization and tier data
+ * Get a subscription by its ID with related customer profile and tier data
  *
  * @param subscriptionId - The ID of the subscription to get
  * @param includeInactive - Whether to include inactive subscriptions
@@ -33,13 +33,13 @@ import {
 export async function getSubscriptionById(
   subscriptionId: string,
   includeInactive: boolean = false
-): Promise<SubscriptionWithTierAndOrg | null> {
+): Promise<SubscriptionWithTierAndCustomer | null> {
   return await prisma.subscription.findFirst({
     where: {
       id: subscriptionId,
       ...(includeInactive ? {} : { active: true })
     },
-    ...includeTierAndOrg,
+    ...includeTierAndCustomer,
     orderBy: {
       createdAt: "desc" // Get the most recent one first
     }
@@ -86,16 +86,17 @@ export async function checkTierHasSubscribers(
 }
 
 /**
- * Get all subscriptions for the current organization
+ * Get all subscriptions for the current user
  *
  * @returns Array of subscriptions
  */
-export async function getSubscriptionsForCurrentOrganization() {
-  const org = await requireOrganization();
+export async function getSubscriptionsForCurrentUser() {
+  const user = await requireUser();
+  const customerProfile = await getCustomerProfileById(user.id);
 
   return await prisma.subscription.findMany({
     where: {
-      organizationId: org.id
+      customerProfileId: customerProfile.id
     },
     orderBy: {
       createdAt: "desc"
@@ -104,12 +105,14 @@ export async function getSubscriptionsForCurrentOrganization() {
 }
 
 /**
- * Get all subscriptions for a specific organization
+ * Get all subscriptions for a specific customer profile
  */
-export async function getOrganizationSubscriptions(organizationId: string) {
+export async function getCustomerProfileSubscriptions(userId: string) {
+  const customerProfile = await getCustomerProfileById(userId);
+
   return await prisma.subscription.findMany({
     where: {
-      organizationId
+      customerProfileId: customerProfile.id
     },
     orderBy: {
       createdAt: "desc"
@@ -118,17 +121,17 @@ export async function getOrganizationSubscriptions(organizationId: string) {
 }
 
 /**
- * Create a subscription for an organization
+ * Create a subscription for a user
  */
 export async function createSubscription(
-  customerOrgId: string,
+  userId: string,
   tierId: string,
   stripeSubscriptionId: string,
   tierVersionId?: string,
   platformFeeAmount?: number
 ): Promise<Subscription> {
-  const customerOrg = await getCustomerOrganizationById(customerOrgId);
-  if (!customerOrg) throw new Error("Customer organization not found");
+  const customerProfile = await getCustomerProfileById(userId);
+  if (!customerProfile) throw new Error("Customer profile not found");
 
   const tier = await getTierById(tierId);
   if (!tier) throw new Error("Tier not found");
@@ -142,7 +145,7 @@ export async function createSubscription(
   // Check for existing active subscription
   const existingActiveSubscription = await prisma.subscription.findFirst({
     where: {
-      organizationId: customerOrgId,
+      customerProfileId: customerProfile.id,
       tierId,
       active: true
     }
@@ -165,10 +168,10 @@ export async function createSubscription(
     existingActiveSubscription &&
     existingActiveSubscription.state === SubscriptionStates.renewing
   ) {
-    throw new Error("Organization already has an active subscription to this tier");
+    throw new Error("User already has an active subscription to this tier");
   }
 
-  // Deactivate any previous subscriptions for this organization-tier combination
+  // Deactivate any previous subscriptions for this customer-tier combination
   if (existingActiveSubscription) {
     await prisma.subscription.update({
       where: {
@@ -184,7 +187,7 @@ export async function createSubscription(
   const newSubscription = await prisma.subscription.create({
     data: {
       state: SubscriptionStates.renewing,
-      organizationId: customerOrgId,
+      customerProfileId: customerProfile.id,
       tierId,
       tierVersionId,
       stripeSubscriptionId,
@@ -198,8 +201,8 @@ export async function createSubscription(
 
   // Send notification emails
   await Promise.all([
-    notifyOwnerOfNewSubscription(vendorOrg.owner.id, customerOrg.owner, tier.name),
-    confirmCustomerSubscription(customerOrg.owner, tier.name)
+    notifyOwnerOfNewSubscription(vendorOrg.owner.id, customerProfile.user, tier.name),
+    confirmCustomerSubscription(customerProfile.user, tier.name)
   ]);
 
   return newSubscription;
@@ -209,13 +212,13 @@ export async function createSubscription(
  * Cancel a subscription
  */
 export async function cancelSubscription(subscriptionId: string): Promise<Subscription> {
-  const currentOrg = await requireOrganization();
+  const currentUser = await requireUser();
   const subscription = await prisma.subscription.findUnique({
     where: { id: subscriptionId },
     include: {
-      organization: {
+      customerProfile: {
         include: {
-          owner: true
+          user: true
         }
       },
       tier: {
@@ -234,9 +237,9 @@ export async function cancelSubscription(subscriptionId: string): Promise<Subscr
     throw new Error("Subscription not found");
   }
 
-  // Check authorization - either the customer organization or the vendor organization
-  const isCustomer = subscription.organizationId === currentOrg.id;
-  const isVendor = subscription.tier.organizationId === currentOrg.id;
+  // Check authorization - either the customer or the vendor organization
+  const isCustomer = subscription.customerProfile?.userId === currentUser.id;
+  const isVendor = subscription.tier.organizationId === currentUser.currentOrganizationId;
 
   if (!isCustomer && !isVendor) {
     throw new Error("Not authorized to cancel subscription");
@@ -267,11 +270,11 @@ export async function cancelSubscription(subscriptionId: string): Promise<Subscr
   await Promise.all([
     notifyOwnerOfSubscriptionCancellation(
       vendorOrg.owner,
-      subscription.organization!.owner,
+      subscription.customerProfile!.user,
       subscription.tier.name
     ),
     confirmCustomerSubscriptionCancellation(
-      subscription.organization!.owner,
+      subscription.customerProfile!.user,
       subscription.tier.name
     )
   ]);
@@ -280,13 +283,13 @@ export async function cancelSubscription(subscriptionId: string): Promise<Subscr
 }
 
 /**
- * Get detailed subscription status for an organization and tier
+ * Get detailed subscription status for a user and tier
  */
 export async function getSubscriptionStatus(
-  customerOrgId: string,
+  userId: string,
   tierId: string
 ): Promise<SubscriptionStatus> {
-  if (!customerOrgId) {
+  if (!userId) {
     return {
       statusType: "not_subscribed",
       subscription: null,
@@ -294,9 +297,11 @@ export async function getSubscriptionStatus(
     };
   }
 
+  const customerProfile = await getCustomerProfileById(userId);
+
   const subscription = await prisma.subscription.findFirst({
     where: {
-      organizationId: customerOrgId,
+      customerProfileId: customerProfile.id,
       tierId,
       active: true
     },
@@ -349,14 +354,14 @@ export async function getSubscriptionStatus(
  * Reactivate a cancelled subscription
  */
 export async function reactivateSubscription(subscriptionId: string): Promise<Subscription> {
-  const currentOrg = await requireOrganization();
+  const currentUser = await requireUser();
 
   const subscription = await prisma.subscription.findUnique({
     where: { id: subscriptionId },
     include: {
-      organization: {
+      customerProfile: {
         include: {
-          owner: true
+          user: true
         }
       },
       tier: {
@@ -375,8 +380,8 @@ export async function reactivateSubscription(subscriptionId: string): Promise<Su
     throw new Error("Subscription not found");
   }
 
-  // Verify the organization is authorized
-  if (subscription.organizationId !== currentOrg.id) {
+  // Verify the user is authorized
+  if (subscription.customerProfile?.userId !== currentUser.id) {
     throw new Error("Not authorized to modify this subscription");
   }
 
@@ -404,10 +409,10 @@ export async function reactivateSubscription(subscriptionId: string): Promise<Su
   });
 
   await Promise.all([
-    confirmCustomerSubscription(subscription.organization!.owner, subscription.tier.name),
+    confirmCustomerSubscription(subscription.customerProfile!.user, subscription.tier.name),
     notifyOwnerOfNewSubscription(
       vendorOrg.owner.id,
-      subscription.organization!.owner,
+      subscription.customerProfile!.user,
       subscription.tier.name
     )
   ]);
@@ -438,13 +443,15 @@ export async function deactivateExpiredSubscriptions(): Promise<number> {
 }
 
 /**
- * Get subscription history for the current organization and a specific tier
+ * Get subscription history for the current user and a specific tier
  */
 export async function getSubscriptionHistory(tierId: string) {
-  const org = await requireOrganization();
+  const user = await requireUser();
+  const customerProfile = await getCustomerProfileById(user.id);
+
   return await prisma.subscription.findMany({
     where: {
-      organizationId: org.id,
+      customerProfileId: customerProfile.id,
       tierId
     },
     orderBy: {
