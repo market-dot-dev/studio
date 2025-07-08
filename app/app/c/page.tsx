@@ -1,6 +1,5 @@
-import { Charge, Subscription } from "@/app/generated/prisma";
-import { getChargesForCurrentOrganization } from "@/app/services/billing/connect-charge-service";
-import { getSubscriptionsForCurrentOrganization } from "@/app/services/billing/connect-subscription-service";
+import { getChargesForCurrentUser } from "@/app/services/billing/connect-charge-service";
+import { getSubscriptionsForCurrentUser } from "@/app/services/billing/connect-subscription-service";
 import PageHeader from "@/components/common/page-header";
 import ChargeCard from "@/components/customer/charge-card";
 import SubscriptionCard from "@/components/customer/subscription-card";
@@ -10,8 +9,8 @@ import { pluralize } from "@/lib/utils";
 import { isActive } from "@/types/subscription";
 
 export default async function SubscriptionsAndChargesList() {
-  const charges: Charge[] = await getChargesForCurrentOrganization();
-  const subscriptions: Subscription[] = await getSubscriptionsForCurrentOrganization();
+  const charges = await getChargesForCurrentUser();
+  const subscriptions = await getSubscriptionsForCurrentUser();
 
   const activeSubscriptions = subscriptions.filter((sub) => isActive(sub));
   const pastSubscriptions = subscriptions.filter((sub) => !isActive(sub));

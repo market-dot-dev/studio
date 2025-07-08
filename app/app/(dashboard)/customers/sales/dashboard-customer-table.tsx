@@ -26,8 +26,8 @@ const DashboardCustomerTable = ({
         id: `subscription-${customerProfile.id}-${index}`,
         type: "subscription" as const,
         userId: customerProfile.userId,
-        userName: customerProfile.user.name,
-        userEmail: customerProfile.user.email,
+        userName: customerProfile.user.name ?? undefined,
+        userEmail: customerProfile.user.email ?? undefined,
         tierName: subscription.tier.name,
         createdAt: subscription.createdAt,
         subscription: subscription
@@ -36,8 +36,8 @@ const DashboardCustomerTable = ({
       id: `charge-${customerProfile.id}-${index}`,
       type: "charge" as const,
       userId: customerProfile.userId,
-      userName: customerProfile.user.name,
-      userEmail: customerProfile.user.email,
+      userName: customerProfile.user.name ?? undefined,
+      userEmail: customerProfile.user.email ?? undefined,
       tierName: charge.tier.name,
       createdAt: charge.createdAt,
       charge: charge

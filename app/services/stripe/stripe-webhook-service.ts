@@ -84,10 +84,9 @@ export async function handleChargeEvent(event: Stripe.Event) {
     const localCharge = await prisma.charge.findUnique({
       where: { stripeChargeId: charge.id },
       include: {
-        organization: {
-          select: {
-            id: true,
-            name: true
+        customerProfile: {
+          include: {
+            user: true
           }
         }
       }
@@ -97,7 +96,7 @@ export async function handleChargeEvent(event: Stripe.Event) {
       console.log(
         `REFUND ALERT: Charge ${charge.id} was refunded for $${charge.amount_refunded / 100} ` +
           `by vendor (account ${accountId}). ` +
-          `Customer organization: ${localCharge.organization?.name} (${localCharge.organization?.id}). ` +
+          `Customer organization: ${localCharge.customerProfile.user.name} (${localCharge.customerProfile.user.id}). ` +
           `Our internal charge ID: ${localCharge.id}`
       );
 

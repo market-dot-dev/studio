@@ -17,6 +17,7 @@ export function CustomerSidebar() {
           icon: <Banknote />,
           isActive: urlSegments.length === 0
         },
+        // @DEPRECATED:
         {
           title: "Settings",
           url: "/c/settings",

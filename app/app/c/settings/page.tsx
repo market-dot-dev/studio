@@ -2,6 +2,7 @@ import { getCurrentOrganizationForSettings } from "@/app/services/organization/o
 import PageHeader from "@/components/common/page-header";
 import { CustomerOrganizationSettingsForm } from "./customer-organization-settings-form";
 
+// @TODO: Page deprecated
 export default async function CustomerSettingsPage() {
   const org = await getCurrentOrganizationForSettings();
 
