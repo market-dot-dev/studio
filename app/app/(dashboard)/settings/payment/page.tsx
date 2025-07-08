@@ -20,7 +20,7 @@ export default async function PaymentSettings() {
   const oauthUrl = await getVendorStripeConnectURL();
 
   return (
-    <div className="flex max-w-screen-sm flex-col space-y-8">
+    <div className="flex w-full flex-col gap-8">
       {hasStripeHistory && (
         <div className="flex w-full items-center justify-between gap-2">
           <h2 className="text-xl font-bold">Stripe Account</h2>
@@ -48,7 +48,7 @@ export default async function PaymentSettings() {
 
       {hasStripeHistory && org.stripeAccountId && (
         <>
-          <Separator className="my-6" />
+          <Separator />
           <div className="flex w-full flex-wrap items-center justify-between gap-x-6 gap-y-4">
             <h2 className="text-xl font-bold">Danger Zone</h2>
             <DisconnectStripeBtn stripeAccountId={org.stripeAccountId} />

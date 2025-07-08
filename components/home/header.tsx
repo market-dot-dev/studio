@@ -5,13 +5,13 @@ import { MarketingButton } from "@/components/home/button";
 import FeatureCard from "@/components/home/feature-card";
 import Link from "@/components/home/link";
 import Logo from "@/components/home/logo";
-import { Button as UIButton } from "@/components/ui/button";
 import type { Color } from "@/lib/home/colors";
 import { colors } from "@/lib/home/colors";
-import { blogURL, discordURL, loginURL, twitterUrl } from "@/lib/home/social-urls";
+import { blogURL, discordURL, loginURL } from "@/lib/home/social-urls";
 import clsx from "clsx";
 import {
-  BookOpenCheck,
+  BookOpen,
+  ChevronDown,
   ChevronRight,
   ListCheck,
   Menu,
@@ -28,7 +28,23 @@ import type { ReactElement } from "react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import type { FeatureCardLinkProps } from "./feature-card";
 
-interface AnimatedHambugerButtonProps {
+// ========================================
+// CONSTANTS
+// ========================================
+
+const URLS = {
+  blog: blogURL,
+  github: "https://github.com/market-dot-dev/store",
+  docs: "https://deepwiki.com/market-dot-dev/store",
+  discord: discordURL,
+  login: loginURL
+} as const;
+
+// ========================================
+// TYPES & INTERFACES
+// ========================================
+
+interface AnimatedHamburgerButtonProps {
   isOpen: boolean;
   toggleMenu: () => void;
   className?: string;
@@ -36,7 +52,7 @@ interface AnimatedHambugerButtonProps {
 
 interface DropdownPosition {
   top: number;
-  right: number;
+  left: number;
 }
 
 interface DropdownOffsets {
@@ -52,7 +68,19 @@ interface Product {
   link: FeatureCardLinkProps;
 }
 
-const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambugerButtonProps) => (
+interface HeaderProps {
+  className?: string;
+}
+
+// ========================================
+// COMPONENTS
+// ========================================
+
+const AnimatedHamburgerButton = ({
+  isOpen,
+  toggleMenu,
+  className
+}: AnimatedHamburgerButtonProps) => (
   <MarketingButton
     variant="ghost"
     onClick={toggleMenu}
@@ -68,109 +96,59 @@ const AnimatedHambugerButton = ({ isOpen, toggleMenu, className }: AnimatedHambu
   </MarketingButton>
 );
 
-export default function Header({ className }: { className?: string }) {
+// ========================================
+// MAIN COMPONENT
+// ========================================
+
+export default function Header({ className }: HeaderProps) {
   const router = useRouter();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isDesktopDropdownOpen, setIsDesktopDropdownOpen] = useState(false);
-  const desktopMenuButtonRef = useRef<HTMLDivElement>(null);
-  const headerRef = useRef<HTMLElement>(null);
-  const [isScrolled, setIsScrolled] = useState(false);
   const { isSignedIn } = useCurrentSession();
   const { status } = useSession();
+
+  // ========================================
+  // CONSTANTS
+  // ========================================
+
   const signedIn = isSignedIn();
   const isLoading = status === "loading";
   const dashboardURL =
     process.env.NODE_ENV === "production" ? "https://app.market.dev" : "http://app.market.local";
-
-  const [dropdownPosition, setDropdownPosition] = useState<DropdownPosition>({
-    top: 60,
-    right: 16
-  });
 
   const dropdownOffsets: DropdownOffsets = {
     vertical: 14,
     horizontal: 0
   };
 
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 0);
-    };
+  // ========================================
+  // STATE
+  // ========================================
 
-    handleScroll();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isProductDropdownOpen, setIsProductDropdownOpen] = useState(false);
+  const [isSupportDropdownOpen, setIsSupportDropdownOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
 
-    window.addEventListener("scroll", handleScroll);
+  const [productDropdownPosition, setProductDropdownPosition] = useState<DropdownPosition>({
+    top: 60,
+    left: 16
+  });
 
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  const [supportDropdownPosition, setSupportDropdownPosition] = useState<DropdownPosition>({
+    top: 60,
+    left: 16
+  });
 
-  useEffect(() => {
-    if (isMobileMenuOpen) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
-  }, [isMobileMenuOpen]);
+  // ========================================
+  // REFS
+  // ========================================
 
-  useEffect(() => {
-    const updateHeaderHeight = () => {
-      if (headerRef.current) {
-        const headerHeight = headerRef.current.offsetHeight;
-        document.documentElement.style.setProperty("--header-height", `${headerHeight}px`);
-      }
-    };
+  const productMenuRef = useRef<HTMLDivElement>(null);
+  const supportMenuRef = useRef<HTMLDivElement>(null);
+  const headerRef = useRef<HTMLElement>(null);
 
-    updateHeaderHeight();
-    window.addEventListener("resize", updateHeaderHeight);
-
-    return () => {
-      window.removeEventListener("resize", updateHeaderHeight);
-    };
-  }, []);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        isDesktopDropdownOpen &&
-        desktopMenuButtonRef.current &&
-        !desktopMenuButtonRef.current.contains(event.target as Node)
-      ) {
-        const dropdown = document.getElementById("desktop-dropdown");
-        if (dropdown && !dropdown.contains(event.target as Node)) {
-          setIsDesktopDropdownOpen(false);
-        }
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [isDesktopDropdownOpen]);
-
-  const updateDropdownPosition = useCallback(() => {
-    if (desktopMenuButtonRef.current) {
-      const rect = desktopMenuButtonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + dropdownOffsets.vertical,
-        right: window.innerWidth - rect.right + dropdownOffsets.horizontal
-      });
-    }
-  }, [dropdownOffsets.vertical, dropdownOffsets.horizontal]);
-
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-  const toggleDesktopDropdown = () => {
-    const newState = !isDesktopDropdownOpen;
-    setIsDesktopDropdownOpen(newState);
-    if (newState) {
-      setTimeout(updateDropdownPosition, 0);
-    }
-  };
+  // ========================================
+  // HANDLERS
+  // ========================================
 
   const handleLinkClick: React.MouseEventHandler<HTMLElement> = (event) => {
     event.preventDefault();
@@ -179,11 +157,14 @@ export default function Header({ className }: { className?: string }) {
     if (!href) return;
 
     setIsMobileMenuOpen(false);
-    setIsDesktopDropdownOpen(false);
+    setIsProductDropdownOpen(false);
+    setIsSupportDropdownOpen(false);
     setTimeout(() => {
       router.push(href);
     }, 150);
   };
+
+  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   const products: Product[] = [
     {
@@ -224,19 +205,140 @@ export default function Header({ className }: { className?: string }) {
     }
   ];
 
+  // ========================================
+  // DROPDOWN POSITION HANDLERS
+  // ========================================
+
+  const updateProductDropdownPosition = useCallback(() => {
+    if (productMenuRef.current) {
+      const rect = productMenuRef.current.getBoundingClientRect();
+      setProductDropdownPosition({
+        top: rect.bottom + dropdownOffsets.vertical,
+        left: rect.left + rect.width / 2 - 275 + dropdownOffsets.horizontal // Center the dropdown (275 is ~half width of product dropdown)
+      });
+    }
+  }, [dropdownOffsets.vertical, dropdownOffsets.horizontal]);
+
+  const updateSupportDropdownPosition = useCallback(() => {
+    if (supportMenuRef.current) {
+      const rect = supportMenuRef.current.getBoundingClientRect();
+      setSupportDropdownPosition({
+        top: rect.bottom + dropdownOffsets.vertical,
+        left: rect.left + rect.width / 2 - 87.5 + dropdownOffsets.horizontal // Center the dropdown (87.5 is ~half width of support dropdown)
+      });
+    }
+  }, [dropdownOffsets.vertical, dropdownOffsets.horizontal]);
+
+  // ========================================
+  // EFFECTS
+  // ========================================
+
+  // Handle scroll detection
   useEffect(() => {
-    if (isDesktopDropdownOpen) {
-      updateDropdownPosition();
-      window.addEventListener("resize", updateDropdownPosition);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 0);
+    };
+
+    handleScroll();
+    window.addEventListener("scroll", handleScroll);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
+  // Handle mobile menu overflow
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isMobileMenuOpen]);
+
+  // Handle header height CSS variable
+  useEffect(() => {
+    const updateHeaderHeight = () => {
+      if (headerRef.current) {
+        const headerHeight = headerRef.current.offsetHeight;
+        document.documentElement.style.setProperty("--header-height", `${headerHeight}px`);
+      }
+    };
+
+    updateHeaderHeight();
+    window.addEventListener("resize", updateHeaderHeight);
+
+    return () => {
+      window.removeEventListener("resize", updateHeaderHeight);
+    };
+  }, []);
+
+  // Handle click outside dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        isProductDropdownOpen &&
+        productMenuRef.current &&
+        !productMenuRef.current.contains(event.target as Node)
+      ) {
+        const dropdown = document.getElementById("product-dropdown");
+        if (dropdown && !dropdown.contains(event.target as Node)) {
+          setIsProductDropdownOpen(false);
+        }
+      }
+
+      if (
+        isSupportDropdownOpen &&
+        supportMenuRef.current &&
+        !supportMenuRef.current.contains(event.target as Node)
+      ) {
+        const dropdown = document.getElementById("support-dropdown");
+        if (dropdown && !dropdown.contains(event.target as Node)) {
+          setIsSupportDropdownOpen(false);
+        }
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isProductDropdownOpen, isSupportDropdownOpen]);
+
+  // Handle product dropdown position updates
+  useEffect(() => {
+    if (isProductDropdownOpen) {
+      updateProductDropdownPosition();
+      window.addEventListener("resize", updateProductDropdownPosition);
 
       return () => {
-        window.removeEventListener("resize", updateDropdownPosition);
+        window.removeEventListener("resize", updateProductDropdownPosition);
       };
     }
-  }, [isDesktopDropdownOpen, updateDropdownPosition]);
+  }, [isProductDropdownOpen, updateProductDropdownPosition]);
+
+  // Handle support dropdown position updates
+  useEffect(() => {
+    if (isSupportDropdownOpen) {
+      updateSupportDropdownPosition();
+      window.addEventListener("resize", updateSupportDropdownPosition);
+
+      return () => {
+        window.removeEventListener("resize", updateSupportDropdownPosition);
+      };
+    }
+  }, [isSupportDropdownOpen, updateSupportDropdownPosition]);
+
+  // ========================================
+  // RENDER
+  // ========================================
 
   return (
     <>
+      {/* Header */}
       <header
         ref={headerRef}
         className={clsx(
@@ -245,18 +347,20 @@ export default function Header({ className }: { className?: string }) {
           className
         )}
       >
+        {/* Announcement Bar */}
         <Link
-          href="https://blog.market.dev/"
+          href={URLS.blog}
           className="group flex h-10 items-center justify-center gap-0.5 bg-black px-4 text-sm font-medium tracking-normal !text-white"
         >
-          <BookOpenCheck className="mr-2 size-4 opacity-60 transition-opacity group-hover:opacity-100" />
-          <span className="sm:hidden">We&apos;re now open source!</span>
+          <BookOpen className="mr-2 size-4 opacity-60 transition-opacity group-hover:opacity-100" />
+          <span className="sm:hidden">We&apos;re now open source! Learn more</span>
           <span className="hidden sm:inline">
-            We&apos;re now open source! Check out the blog post for more details.
+            We&apos;re now open source! Read the blog post to learn more
           </span>
           <ChevronRight className="mt-px size-4 transition-transform group-hover:translate-x-px" />
         </Link>
 
+        {/* Main Navigation */}
         <div className="mx-auto w-full px-4 lg:max-w-[var(--marketing-max-width)] xl:px-16">
           <div
             className={clsx(
@@ -264,58 +368,85 @@ export default function Header({ className }: { className?: string }) {
               isScrolled && "shadow-border-b"
             )}
           >
+            {/* Logo */}
             <Link href="/" className="flex">
-              <Logo
-                className={clsx("hidden h-[26px] w-auto self-center justify-self-start md:block")}
-              />
-              <Image
-                src="/logo.svg"
-                alt="market.dev logo"
-                width={22}
-                height={22}
-                className="self-center justify-self-start md:hidden"
-                priority
-              />
+              <Logo className={clsx("h-[26px] w-auto self-center justify-self-start")} />
             </Link>
-            <div className="absolute left-1/2 top-1/2 flex max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7">
-              {/* <Link href="/" className="whitespace-nowrap !text-marketing-primary">
-                Sell
-              </Link> */}
-              {/* <Link href="https://explore.market.dev" className="whitespace-nowrap">
-                Explore
-              </Link> */}
+
+            {/* Center Navigation Links - Hidden on xs screens */}
+            <div className="absolute left-1/2 top-1/2 hidden max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7 md:flex">
+              {/* Product Link with Hover Dropdown */}
+              <div
+                className="relative"
+                ref={productMenuRef}
+                onMouseEnter={() => {
+                  setIsProductDropdownOpen(true);
+                  setTimeout(updateProductDropdownPosition, 0);
+                }}
+                onMouseLeave={() => setIsProductDropdownOpen(false)}
+              >
+                <Link
+                  href="/#sell"
+                  className="inline-flex items-center gap-1 whitespace-nowrap transition-colors hover:!text-marketing-primary"
+                >
+                  Product
+                  <ChevronDown
+                    className="-mr-1 size-3.5 shrink-0 translate-y-px opacity-70"
+                    strokeWidth={3.5}
+                  />
+                </Link>
+              </div>
+
+              <Link href="/#pricing" className="whitespace-nowrap">
+                Pricing
+              </Link>
+              <Link href={URLS.blog} target="_blank" className="whitespace-nowrap">
+                Blog
+              </Link>
+
+              {/* Support Link with Hover Dropdown */}
+              <div
+                className="relative"
+                ref={supportMenuRef}
+                onMouseEnter={() => {
+                  setIsSupportDropdownOpen(true);
+                  setTimeout(updateSupportDropdownPosition, 0);
+                }}
+                onMouseLeave={() => setIsSupportDropdownOpen(false)}
+              >
+                <Link href="/" className="inline-flex items-center gap-1 whitespace-nowrap">
+                  Support
+                  <ChevronDown
+                    className="-mr-1 size-3.5 shrink-0 translate-y-px opacity-70"
+                    strokeWidth={3.5}
+                  />
+                </Link>
+              </div>
             </div>
-            <div className="flex w-fit items-center gap-4">
+
+            {/* Right Side Actions */}
+            <div className="flex w-fit items-center gap-6">
+              {/* Login/Dashboard Button */}
               {isLoading || !signedIn ? (
-                <Link href={loginURL} variant="primary" className="hidden px-2 sm:block">
+                <Link href={URLS.login} variant="primary" className="hidden sm:block">
                   Log in
                 </Link>
               ) : (
-                <UIButton
+                <MarketingButton
                   onClick={() => {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="size-9 rounded-full bg-marketing-accent !text-sm font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active sm:px-3 md:w-auto"
+                  className="inline-flex h-9 w-9 items-center justify-center gap-2 rounded-full bg-marketing-accent px-0 font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active xs:w-auto xs:px-3"
                 >
-                  <Store className="!size-5" />
-                  <span className="hidden md:inline">Dashboard</span>
-                </UIButton>
+                  <Store className="!size-5" strokeWidth={2.25} />
+                  <span className="hidden text-marketing-sm xs:block">Dashboard</span>
+                </MarketingButton>
               )}
-              {/* Desktop menu button */}
-              <div
-                className="relative hidden items-center justify-center lg:flex"
-                ref={desktopMenuButtonRef}
-              >
-                <AnimatedHambugerButton
-                  isOpen={isDesktopDropdownOpen}
-                  toggleMenu={toggleDesktopDropdown}
-                  className=""
-                />
-              </div>
-              {/* Mobile menu button */}
-              <div className="flex items-center justify-center lg:hidden">
-                <AnimatedHambugerButton
+
+              {/* Mobile Menu Button */}
+              <div className="flex items-center justify-center md:hidden">
+                <AnimatedHamburgerButton
                   isOpen={isMobileMenuOpen}
                   toggleMenu={toggleMobileMenu}
                   className=""
@@ -326,12 +457,13 @@ export default function Header({ className }: { className?: string }) {
         </div>
       </header>
 
+      {/* Dropdown Menus */}
       <AnimatePresence>
-        {/* Desktop dropdown menu */}
-        {isDesktopDropdownOpen && (
+        {/* Product Dropdown Menu */}
+        {isProductDropdownOpen && (
           <motion.div
-            id="desktop-dropdown"
-            key="desktop-dropdown"
+            id="product-dropdown"
+            key="product-dropdown"
             className="fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white shadow-border-lg lg:block"
             initial={{ opacity: 0, scale: 0.95, y: -10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -342,16 +474,16 @@ export default function Header({ className }: { className?: string }) {
               ease: "easeOut"
             }}
             style={{
-              top: dropdownPosition.top,
-              right: dropdownPosition.right
+              top: productDropdownPosition.top,
+              left: productDropdownPosition.left
             }}
+            onMouseEnter={() => setIsProductDropdownOpen(true)}
+            onMouseLeave={() => setIsProductDropdownOpen(false)}
           >
-            {/* Product feature cards */}
             <div className="flex max-w-[550px] flex-row gap-3 p-3">
-              {products.map((product, index) => (
+              {products.map((product) => (
                 <div key={product.title}>
                   <FeatureCard
-                    key={product.title}
                     icon={product.icon}
                     color={product.color}
                     title={product.title}
@@ -364,36 +496,59 @@ export default function Header({ className }: { className?: string }) {
                 </div>
               ))}
             </div>
+          </motion.div>
+        )}
 
-            <div className="border-t border-black/10"></div>
-
+        {/* Support Dropdown Menu */}
+        {isSupportDropdownOpen && (
+          <motion.div
+            id="support-dropdown"
+            key="support-dropdown"
+            className="fixed z-[60] hidden overflow-y-auto rounded-[17px] bg-white shadow-border-lg lg:block"
+            initial={{ opacity: 0, scale: 0.95, y: -10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -10 }}
+            transition={{
+              type: "tween",
+              duration: 0.2,
+              ease: "easeOut"
+            }}
+            style={{
+              top: supportDropdownPosition.top,
+              left: supportDropdownPosition.left
+            }}
+            onMouseEnter={() => setIsSupportDropdownOpen(true)}
+            onMouseLeave={() => setIsSupportDropdownOpen(false)}
+          >
             <div className="flex min-w-[175px] flex-col py-2 text-marketing-sm">
               <Link
-                href={blogURL}
-                variant="primary"
-                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
-              >
-                Changelog
-              </Link>
-              <Link
-                href={discordURL}
+                href={URLS.discord}
                 variant="primary"
                 className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
                 Discord
               </Link>
               <Link
-                href={twitterUrl}
+                href={URLS.github}
+                target="_blank"
                 variant="primary"
                 className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
               >
-                Twitter
+                Github
+              </Link>
+              <Link
+                href={URLS.docs}
+                target="_blank"
+                variant="primary"
+                className="flex w-full items-center px-5 py-1.5 transition-colors hover:text-marketing-secondary"
+              >
+                Docs
               </Link>
             </div>
           </motion.div>
         )}
 
-        {/* Mobile full-screen menu */}
+        {/* Mobile Full-Screen Menu */}
         {isMobileMenuOpen && (
           <motion.div
             key="mobile-menu"
@@ -408,13 +563,12 @@ export default function Header({ className }: { className?: string }) {
             }}
           >
             <div className="relative flex h-full flex-col">
-              {/* Product feature cards */}
+              {/* Product Feature Cards */}
               <div className="p-4">
                 <div className="flex flex-col gap-4 sm:flex-row sm:gap-4">
                   {products.map((product) => (
                     <div key={product.title} className="flex-1">
                       <FeatureCard
-                        key={product.title}
                         icon={product.icon}
                         color={product.color}
                         title={product.title}
@@ -431,17 +585,36 @@ export default function Header({ className }: { className?: string }) {
 
               <div className="mt-2 border-t border-black/10"></div>
 
+              {/* Navigation Links */}
               <div className="flex grow flex-col p-6 pt-2">
+                {/* Main Navigation Links */}
                 <Link
-                  href={blogURL}
+                  href="/#pricing"
                   variant="primary"
                   className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
-                  Changelog
+                  Pricing
                 </Link>
                 <hr className="border-black/15" />
                 <Link
-                  href={discordURL}
+                  href={URLS.blog}
+                  target="_blank"
+                  variant="primary"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                >
+                  Blog
+                </Link>
+                <hr className="border-black/15" />
+
+                {/* Support Section */}
+                <div className="pb-2 pt-8">
+                  <h3 className="text-marketing-sm uppercase tracking-wide text-marketing-secondary">
+                    Get Support
+                  </h3>
+                </div>
+                <hr className="border-black/15" />
+                <Link
+                  href={URLS.discord}
                   variant="primary"
                   className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
@@ -449,21 +622,35 @@ export default function Header({ className }: { className?: string }) {
                 </Link>
                 <hr className="border-black/15" />
                 <Link
-                  href={twitterUrl}
+                  href={URLS.github}
+                  target="_blank"
                   variant="primary"
                   className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
                 >
-                  Twitter
+                  Github
                 </Link>
-                <hr className="border-black/15 sm:hidden" />
+                <hr className="border-black/15" />
+                <Link
+                  href={URLS.docs}
+                  target="_blank"
+                  variant="primary"
+                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                >
+                  Docs
+                </Link>
                 {isLoading ||
                   (!signedIn && (
-                    <Link href={loginURL} variant="primary" className="hidden px-2 sm:block">
-                      Log in
-                    </Link>
+                    <>
+                      <hr className="border-black/15" />
+                      <Link href={URLS.login} variant="primary" className="hidden px-2 sm:block">
+                        Log in
+                      </Link>
+                    </>
                   ))}
               </div>
-              <div className="sticky inset-x-0 bottom-0 border-t border-black/10 bg-marketing-background p-6">
+
+              {/* Bottom Action Button */}
+              <div className="sticky inset-x-0 bottom-0 border-t border-black/15 bg-marketing-background p-6">
                 {isLoading || !signedIn ? (
                   <MarketingButton className="w-full">
                     <Image
@@ -480,9 +667,9 @@ export default function Header({ className }: { className?: string }) {
                     onClick={() => {
                       router.push(dashboardURL);
                     }}
-                    className="w-full text-sm font-bold tracking-tightish"
+                    className="w-full text-marketing-sm font-bold tracking-tightish"
                   >
-                    <Store className="!size-5" />
+                    <Store className="!size-5" strokeWidth={2.25} />
                     Go to Dashboard
                   </MarketingButton>
                 )}
