@@ -123,6 +123,7 @@ const config = ts.config(
         }
       ],
 
+      "tailwindcss/classnames-order": 0,
       "tailwindcss/no-custom-classname": [
         "off", // @DEBUG
         {
