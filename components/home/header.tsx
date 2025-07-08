@@ -437,7 +437,7 @@ export default function Header({ className }: HeaderProps) {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="inline-flex h-9 w-9 items-center justify-center gap-2 rounded-full bg-marketing-accent px-0 font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active xs:w-auto xs:px-3"
+                  className="inline-flex size-9 items-center justify-center gap-2 rounded-full bg-marketing-accent px-0 font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active xs:w-auto xs:px-3"
                 >
                   <Store className="!size-5" strokeWidth={2.25} />
                   <span className="hidden text-marketing-sm xs:block">Dashboard</span>
