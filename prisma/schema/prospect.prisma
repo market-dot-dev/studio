@@ -9,7 +9,7 @@ model Prospect {
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   organizationId String
-  organization   Organization @relation(name: "prospects", fields: [organizationId], references: [id])
+  organization   Organization @relation(name: "prospects", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([email, organizationId])
 }

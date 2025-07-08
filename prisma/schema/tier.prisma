@@ -16,12 +16,12 @@ model Tier {
   organizationId String
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-  price         Int?
-  stripePriceId String?
-  trialDays             Int     @default(0)
-  cadence               String  @default("month")
-  priceAnnual           Int?
-  stripePriceIdAnnual   String?
+  price               Int?
+  stripePriceId       String?
+  trialDays           Int     @default(0)
+  cadence             String  @default("month")
+  priceAnnual         Int?
+  stripePriceIdAnnual String?
 
   revision      Int
   versions      TierVersion[]
@@ -67,7 +67,7 @@ model Contract {
   attachmentUrl  String?
   attachmentType String?
   organizationId String?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   Tier           Tier[]
   createdAt      DateTime      @default(now())
   updatedAt      DateTime      @default(now()) @updatedAt

@@ -1,6 +1,7 @@
+// @DEPRECATED, pending removal after migration.
 enum OrganizationType {
   VENDOR // Can sell products AND make purchases
-  CUSTOMER // Can only make purchases
+  CUSTOMER // Can only make purchases 
 }
 
 model Organization {
@@ -8,7 +9,7 @@ model Organization {
   name      String
   createdAt DateTime         @default(now())
   updatedAt DateTime         @updatedAt
-  type      OrganizationType @default(CUSTOMER)
+  type      OrganizationType @default(CUSTOMER) // @DEPRECATED, pending removal after migration.
 
   // Owner relationship
   ownerId String
@@ -25,8 +26,8 @@ model Organization {
   onboarding       Json?
 
   // Stripe fields
-  stripePaymentMethodIds      Json    @default("{}")
-  stripeCustomerIds           Json    @default("{}")
+  stripePaymentMethodIds      Json    @default("{}") // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
+  stripeCustomerIds           Json    @default("{}") // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
   stripeAccountId             String? @unique
   stripeCSRF                  String? @unique
   stripeAccountDisabled       Boolean @default(false)
@@ -35,8 +36,8 @@ model Organization {
   // Entity relationships
   tiers         Tier[]
   contracts     Contract[]
-  charges       Charge[]
-  subscriptions Subscription[]
+  charges       Charge[] // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
+  subscriptions Subscription[] // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
   prospects     Prospect[]           @relation(name: "prospects")
   sites         Site[]
   invites       OrganizationInvite[]
@@ -64,7 +65,7 @@ enum SubscriptionStatus {
 model OrganizationBilling {
   id             String       @id @default(cuid())
   organizationId String       @unique
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   planType PlanType @default(FREE)
 
