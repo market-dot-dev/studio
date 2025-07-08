@@ -65,7 +65,7 @@ enum SubscriptionStatus {
 model OrganizationBilling {
   id             String       @id @default(cuid())
   organizationId String       @unique
-  organization   Organization @relation(fields: [organizationId], references: [id])
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   planType PlanType @default(FREE)
 
