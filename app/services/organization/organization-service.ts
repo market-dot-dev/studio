@@ -1,5 +1,6 @@
 "use server";
 
+import { businessDescription } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import {
   type CurrentOrganizationForSettings,
@@ -8,7 +9,9 @@ import {
   includeFullOrg,
   includeMinimalOrg
 } from "@/types/organization";
-import { Prisma } from "../../generated/prisma";
+import { OrganizationType, PlanType, Prisma } from "app/generated/prisma";
+import { sendWelcomeEmailToMaintainer } from "../email-service";
+import { createSite } from "../site/site-crud-service";
 import { requireOrganization, requireUser } from "../user-context-service";
 
 /**
@@ -178,4 +181,53 @@ export async function getOrganizationWithIntegrations(id?: string) {
       }
     }
   });
+}
+
+/**
+ * Creates a new VENDOR organization for a user, sets it as their current org,
+ * and performs all related setup tasks like creating a site and sending a welcome email.
+ * @param userId - The ID of the user who will own the new organization.
+ * @param orgName - The desired name for the new organization.
+ * @returns The newly created organization.
+ */
+export async function createVendorOrganizationForUser(userId: string, orgName: string) {
+  // @TODO: Could potentially use session here instead
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  const organization = await prisma.organization.create({
+    data: {
+      name: orgName,
+      type: OrganizationType.VENDOR, // @DEPRECATED
+      ownerId: user.id,
+      description: businessDescription,
+      members: {
+        create: {
+          userId: user.id,
+          role: "OWNER"
+        }
+      },
+      billing: {
+        create: {
+          planType: PlanType.FREE
+        }
+      }
+    }
+  });
+
+  // Update the user to make this their current organization
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      currentOrganizationId: organization.id
+    }
+  });
+
+  // Perform post-creation setup
+  await createSite(organization.id);
+  await sendWelcomeEmailToMaintainer({ ...user });
+
+  return organization;
 }

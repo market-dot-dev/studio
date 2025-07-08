@@ -1,15 +1,12 @@
 "use server";
 
-import { OrganizationRole, OrganizationType, PlanType, User } from "@/app/generated/prisma";
-import { businessDescription } from "@/lib/constants/site-template";
+import { OrganizationRole, OrganizationType, User } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { SessionUser, createSessionUser } from "@/types/session";
 import { Account, User as NaUser } from "next-auth";
 import { AdapterUser } from "next-auth/adapters";
 import { JWT } from "next-auth/jwt";
-import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
-import { sendWelcomeEmailToCustomer, sendWelcomeEmailToMaintainer } from "./email-service";
-import { createSite } from "./site/site-crud-service";
+import { sendWelcomeEmailToCustomer } from "./email-service";
 import { getUserById } from "./user-service";
 
 type JwtCallbackParams = {
@@ -43,7 +40,7 @@ export async function jwtCallback(callbackParams: JwtCallbackParams) {
 
   // If we have fresh user data, fetch org context
   if (userData) {
-    let currentOrgType: OrganizationType | undefined = undefined;
+    let currentOrgType: OrganizationType | undefined = undefined; // @DEPRECATED, orgType
     let currentUserRole: OrganizationRole | undefined = undefined;
 
     if (userData.currentOrganizationId) {
@@ -54,6 +51,7 @@ export async function jwtCallback(callbackParams: JwtCallbackParams) {
             userId: userData.id
           }
         },
+        // @DEPRECATED, orgType
         include: {
           organization: {
             select: { type: true }
@@ -62,7 +60,7 @@ export async function jwtCallback(callbackParams: JwtCallbackParams) {
       });
 
       if (orgMembership) {
-        currentOrgType = orgMembership.organization.type;
+        currentOrgType = orgMembership.organization.type; // @DEPRECATED, orgType
         currentUserRole = orgMembership.role;
       } else {
         // Organization membership not found - clear the currentOrganizationId
@@ -74,7 +72,7 @@ export async function jwtCallback(callbackParams: JwtCallbackParams) {
       }
     }
 
-    newToken.user = createSessionUser(userData, currentOrgType, currentUserRole);
+    newToken.user = createSessionUser(userData, currentOrgType, currentUserRole); // @DEPRECATED, orgType
   } else {
     // No fresh user data, keep existing token user data
     newToken.user = token.user;
@@ -124,18 +122,9 @@ async function onSignIn(account: any, naUser: NaUser) {
 }
 
 async function onCreateUser(account: any, user: NaUser) {
-  // @TODO: Don't auto-create an Organization here. For Customers, they should only get an Organization if they choose so.
+  console.log(`New user signing up: ${user.email}`);
 
-  // @TODO: This cookie is no longer being set.
-  // Get context from cookie
-  const signupContext =
-    (cookies() as unknown as UnsafeUnwrappedCookies).get("signup_context") ?? null;
-  const context = (signupContext?.value ?? null) as string | null;
-
-  // Determine organization type based on context
-  const organizationType =
-    context === "checkout" ? OrganizationType.CUSTOMER : OrganizationType.VENDOR;
-
+  // The only responsibility of onCreateUser is to ensure the Account record is correct and to perform any initial, user-only setup.
   if (account && user) {
     await prisma.account.upsert({
       where: {
@@ -144,14 +133,11 @@ async function onCreateUser(account: any, user: NaUser) {
           providerAccountId: account.providerAccountId
         }
       },
-      // this create might not even be required, assuming that the nextauth has already created the account, but just in case
       create: {
         userId: user.id,
         provider: account.provider,
         providerAccountId: account.providerAccountId,
         type: "oauth",
-
-        // just ensuring that the account object has the following values
         expires_at: account.expires_at,
         refresh_token: account.refresh_token,
         refresh_token_expires_in: account.refresh_token_expires_in
@@ -165,55 +151,17 @@ async function onCreateUser(account: any, user: NaUser) {
     });
   }
 
-  // Create organization for the new user
-  const organization = await prisma.organization.create({
-    data: {
-      name: `${user.name || user.email || "User"}'s Organization`,
-      type: organizationType,
-      ownerId: user.id,
-      description: businessDescription,
-      stripeCustomerIds: {},
-      stripePaymentMethodIds: {},
-      members: {
-        create: {
-          userId: user.id,
-          role: "OWNER"
-        }
-      },
-      // Create billing record with FREE plan by default
-      billing: {
-        create: {
-          planType: PlanType.FREE
-        }
-      }
-    }
-  });
-
-  // Update the user with organization reference
-  const updatedUser = await prisma.user.update({
-    where: { id: user.id },
-    data: {
-      currentOrganizationId: organization.id
-    }
-  });
-
-  // Create a site for vendor organizations
-  if (organizationType === OrganizationType.VENDOR) {
-    await createSite(organization.id);
+  // Fetch the full user object created by the adapter
+  const newUser = await prisma.user.findUnique({ where: { id: user.id } });
+  if (!newUser) {
+    // This should theoretically never happen
+    console.error("Could not find newly created user in onCreateUser hook.");
+    return null;
   }
 
-  // Send welcome emails based on organization type
-  if (organizationType === OrganizationType.VENDOR) {
-    await sendWelcomeEmailToMaintainer({ ...updatedUser });
-  } else {
-    await sendWelcomeEmailToCustomer({ ...updatedUser });
-  }
+  // Send a generic welcome email.
+  // We assume every new user is a potential customer until they create a vendor org.
+  await sendWelcomeEmailToCustomer({ ...newUser });
 
-  // @TODO: This cookie is no longer being set.
-  // Clean up context cookie
-  if (signupContext) {
-    (cookies() as unknown as UnsafeUnwrappedCookies).delete("signup_context");
-  }
-
-  return updatedUser;
+  return newUser;
 }
