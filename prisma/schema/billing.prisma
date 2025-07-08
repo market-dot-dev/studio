@@ -2,45 +2,37 @@ model Charge {
   id String @id @default(cuid())
 
   tierRevision      Int?
-  stripeChargeId    String   @unique
+  stripeChargeId    String          @unique
   platformFeeAmount Int? // Platform fee applied (in cents)
-  createdAt         DateTime @default(now())
+  createdAt         DateTime        @default(now())
+  customerProfileId String
+  customerProfile   CustomerProfile @relation(fields: [customerProfileId], references: [id])
+  tierVersionId     String?
+  tierVersion       TierVersion?    @relation(fields: [tierVersionId], references: [id])
+  tierId            String
+  tier              Tier            @relation(fields: [tierId], references: [id])
 
-  organizationId    String // @DEPRECATED, pending removal after migration
-  organization      Organization     @relation(fields: [organizationId], references: [id]) // @DEPRECATED, pending removal after migration
-  customerProfileId String?
-  customerProfile   CustomerProfile? @relation(fields: [customerProfileId], references: [id])
-
-  tierVersionId String?
-  tierVersion   TierVersion? @relation(fields: [tierVersionId], references: [id])
-  tierId        String
-  tier          Tier         @relation(fields: [tierId], references: [id])
-
-  @@index([organizationId, tierId])
+  @@index([customerProfileId, tierId])
 }
 
 model Subscription {
-  id                   String    @id @default(cuid())
-  stripeSubscriptionId String    @unique
+  id                   String          @id @default(cuid())
+  stripeSubscriptionId String          @unique
   tierRevision         Int?
   platformFeeAmount    Int? // Platform fee applied to first payment (in cents)
   activeUntil          DateTime?
   cancelledAt          DateTime?
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @default(now()) @updatedAt
-  state                String    @default("renewing")
-  priceAnnual          Boolean   @default(false)
-  active               Boolean   @default(true)
+  createdAt            DateTime        @default(now())
+  updatedAt            DateTime        @default(now()) @updatedAt
+  state                String          @default("renewing")
+  priceAnnual          Boolean         @default(false)
+  active               Boolean         @default(true)
+  customerProfileId    String
+  customerProfile      CustomerProfile @relation(fields: [customerProfileId], references: [id])
+  tierVersionId        String?
+  tierVersion          TierVersion?    @relation(fields: [tierVersionId], references: [id])
+  tierId               String
+  tier                 Tier            @relation(fields: [tierId], references: [id])
 
-  organizationId    String // @DEPRECATED, pending removal after migration
-  organization      Organization     @relation(fields: [organizationId], references: [id]) // @DEPRECATED, pending removal after migration
-  customerProfileId String?
-  customerProfile   CustomerProfile? @relation(fields: [customerProfileId], references: [id])
-
-  tierVersionId String?
-  tierVersion   TierVersion? @relation(fields: [tierVersionId], references: [id])
-  tierId        String
-  tier          Tier         @relation(fields: [tierId], references: [id])
-
-  @@index([organizationId, tierId, active])
+  @@index([customerProfileId, tierId, active])
 }

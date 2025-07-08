@@ -34,15 +34,13 @@ model Organization {
   stripeAccountDisabledReason String?
 
   // Entity relationships
-  tiers         Tier[]
-  contracts     Contract[]
-  charges       Charge[] // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
-  subscriptions Subscription[] // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
-  prospects     Prospect[]           @relation(name: "prospects")
-  sites         Site[]
-  invites       OrganizationInvite[]
-  billing       OrganizationBilling?
-  integrations  Integration[]
+  tiers        Tier[]
+  contracts    Contract[]
+  prospects    Prospect[]           @relation(name: "prospects")
+  sites        Site[]
+  invites      OrganizationInvite[]
+  billing      OrganizationBilling?
+  integrations Integration[]
 
   @@index([ownerId])
 }
