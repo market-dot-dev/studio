@@ -13,7 +13,7 @@ export async function createStripeClient(stripeAccountId?: string): Promise<Stri
   }
 
   const options: Stripe.StripeConfig = {
-    apiVersion: "2025-05-28.basil"
+    apiVersion: "2025-06-30.basil"
   };
 
   if (stripeAccountId) {
