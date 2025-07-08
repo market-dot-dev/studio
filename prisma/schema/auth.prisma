@@ -10,6 +10,8 @@ model User {
   accounts      Account[]
   sessions      Session[]
 
+  customerProfile CustomerProfile?
+
   // Organization relationships
   organizations         OrganizationMember[]
   ownedOrganizations    Organization[]       @relation("OwnedOrganizations")
