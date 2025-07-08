@@ -1,26 +1,26 @@
 import { OrganizationType, PrismaClient } from "@/app/generated/prisma";
-import { JsonValue } from "@/app/generated/prisma/runtime/library";
-import { InputJsonValue } from "@prisma/client/runtime/library";
+import { InputJsonValue } from "@/app/generated/prisma/runtime/library";
+import { JsonValue } from "@prisma/client/runtime/library";
 
 const prisma = new PrismaClient();
 
 // Interface for tracking migration changes
 interface MigrationStats {
-  orgsToProcess: number;
-  customerProfilesCreated: number;
+  customerOrgsFound: number;
+  profilesCreated: number;
   chargesUpdated: number;
   subscriptionsUpdated: number;
-  orgsMarkedAsMigrated: number;
+  orgsMarkedForCleanup: number;
   errors: Array<{ orgId: string; error: string }>;
 }
 
 // Global statistics tracking
 const stats: MigrationStats = {
-  orgsToProcess: 0,
-  customerProfilesCreated: 0,
+  customerOrgsFound: 0,
+  profilesCreated: 0,
   chargesUpdated: 0,
   subscriptionsUpdated: 0,
-  orgsMarkedAsMigrated: 0,
+  orgsMarkedForCleanup: 0,
   errors: []
 };
 
@@ -32,13 +32,13 @@ async function main() {
     where: { type: OrganizationType.CUSTOMER }
   });
 
-  stats.orgsToProcess = customerOrgs.length;
-  if (stats.orgsToProcess === 0) {
+  stats.customerOrgsFound = customerOrgs.length;
+  if (stats.customerOrgsFound === 0) {
     console.log("No CUSTOMER organizations found to migrate. Exiting. ✅");
     return;
   }
 
-  console.log(`Found ${stats.orgsToProcess} CUSTOMER organizations to process.`);
+  console.log(`Found ${stats.customerOrgsFound} CUSTOMER organizations to process.`);
 
   // Process each customer organization
   for (const org of customerOrgs) {
@@ -56,11 +56,11 @@ async function main() {
 
   // Print final statistics
   console.log("\n==== Migration Summary ====");
-  console.log(`Organizations processed: ${stats.orgsToProcess}`);
-  console.log(`Customer Profiles created: ${stats.customerProfilesCreated}`);
+  console.log(`Organizations processed: ${stats.customerOrgsFound}`);
+  console.log(`Customer Profiles created: ${stats.profilesCreated}`);
   console.log(`Charges updated: ${stats.chargesUpdated}`);
   console.log(`Subscriptions updated: ${stats.subscriptionsUpdated}`);
-  console.log(`Organizations marked as migrated: ${stats.orgsMarkedAsMigrated}`);
+  console.log(`Organizations marked for cleanup: ${stats.orgsMarkedForCleanup}`);
   console.log(`Errors encountered: ${stats.errors.length}`);
 
   if (stats.errors.length > 0) {
@@ -81,22 +81,27 @@ async function processCustomerOrg(org: {
 }) {
   console.log(`\nProcessing organization ${org.id} (Owner: ${org.ownerId})...`);
 
-  // Use a transaction to ensure all or nothing for this org's migration
   await prisma.$transaction(async (tx) => {
-    // 1. Check if a CustomerProfile already exists for the owner.
+    // Since we've proven a user can't own multiple CUSTOMER orgs, we can safely check for an existing profile.
+    // This makes the script re-runnable without creating duplicate profiles.
     const existingProfile = await tx.customerProfile.findUnique({
       where: { userId: org.ownerId }
     });
 
     if (existingProfile) {
-      console.warn(
-        `  - WARNING: User ${org.ownerId} already has a CustomerProfile. Skipping profile creation.`
+      console.log(
+        `  - User ${org.ownerId} already has a CustomerProfile. Skipping profile creation.`
       );
-      // If you decide to merge data, the logic would go here. For now, we skip.
+      // In a simple 1-to-1 scenario, we assume if the profile exists, the data is already migrated.
+      // We'll just mark the org for cleanup and exit this transaction.
+      await tx.organization.update({
+        where: { id: org.id },
+        data: { name: `[MIGRATED-DUPE] ${org.name}` }
+      });
       return;
     }
 
-    // 2. Create a new CustomerProfile for the organization's owner.
+    // 1. Create a new CustomerProfile for the organization's owner.
     const newProfile = await tx.customerProfile.create({
       data: {
         userId: org.ownerId,
@@ -104,10 +109,10 @@ async function processCustomerOrg(org: {
         stripePaymentMethodIds: org.stripePaymentMethodIds as InputJsonValue
       }
     });
-    stats.customerProfilesCreated++;
+    stats.profilesCreated++;
     console.log(`  - Created CustomerProfile ${newProfile.id} for User ${org.ownerId}.`);
 
-    // 3. Update all Charges related to this org to point to the new CustomerProfile.
+    // 2. Update all Charges related to this org to point to the new CustomerProfile.
     const chargesUpdate = await tx.charge.updateMany({
       where: { organizationId: org.id },
       data: { customerProfileId: newProfile.id }
@@ -117,7 +122,7 @@ async function processCustomerOrg(org: {
       console.log(`  - Re-linked ${chargesUpdate.count} charges.`);
     }
 
-    // 4. Update all Subscriptions related to this org to point to the new CustomerProfile.
+    // 3. Update all Subscriptions related to this org to point to the new CustomerProfile.
     const subscriptionsUpdate = await tx.subscription.updateMany({
       where: { organizationId: org.id },
       data: { customerProfileId: newProfile.id }
@@ -127,16 +132,15 @@ async function processCustomerOrg(org: {
       console.log(`  - Re-linked ${subscriptionsUpdate.count} subscriptions.`);
     }
 
-    // 5. Mark the old organization as migrated to prevent re-processing and to identify it for later cleanup.
-    // A name change is a simple, visible way to do this without schema changes.
+    // 4. Mark the old organization for cleanup.
     await tx.organization.update({
       where: { id: org.id },
       data: {
         name: `[MIGRATED] ${org.name}`
       }
     });
-    stats.orgsMarkedAsMigrated++;
-    console.log(`  - Marked organization ${org.id} as migrated.`);
+    stats.orgsMarkedForCleanup++;
+    console.log(`  - Marked organization ${org.id} for cleanup.`);
   });
 }
 
