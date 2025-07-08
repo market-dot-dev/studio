@@ -19,6 +19,7 @@ export default async function LoginPage(props: {
   // Get parameters from query
   const callbackUrl = (searchParams.callbackUrl as string) || "/";
 
+  // @TODO: This cookie is no longer being set
   // Check for checkout context from cookie (set by API route)
   const signupContext = ((await cookies()) as unknown as UnsafeUnwrappedCookies).get(
     "signup_context"

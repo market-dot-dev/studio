@@ -124,6 +124,9 @@ async function onSignIn(account: any, naUser: NaUser) {
 }
 
 async function onCreateUser(account: any, user: NaUser) {
+  // @TODO: Don't auto-create an Organization here. For Customers, they should only get an Organization if they choose so.
+
+  // @TODO: This cookie is no longer being set.
   // Get context from cookie
   const signupContext =
     (cookies() as unknown as UnsafeUnwrappedCookies).get("signup_context") ?? null;
@@ -206,6 +209,7 @@ async function onCreateUser(account: any, user: NaUser) {
     await sendWelcomeEmailToCustomer({ ...updatedUser });
   }
 
+  // @TODO: This cookie is no longer being set.
   // Clean up context cookie
   if (signupContext) {
     (cookies() as unknown as UnsafeUnwrappedCookies).delete("signup_context");
