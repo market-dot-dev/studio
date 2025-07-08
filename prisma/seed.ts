@@ -21,42 +21,6 @@ const loadYaml = <T>(type: string) => {
   return parsedFile.objects;
 };
 
-async function main() {
-  if (process.env.VERCEL_ENV === "production") {
-    console.log("This script cannot be run on a Vercel production instance.");
-    process.exit(1);
-  }
-
-  console.log("[seed] Loading users, organizations, sites, tiers and contracts...");
-  console.log("[seed] * users");
-  const users = await loadUsers();
-  console.log("[seed] * organizations");
-  const organizations = await createOrganizations(users);
-  console.log("[seed] * tiers");
-  await loadTiers(organizations);
-  console.log("[seed] * contracts");
-  await loadContracts(organizations);
-  console.log("[seed] done");
-}
-
-const loadUsers = async () => {
-  const users = loadYaml<User>("users");
-  const createdUsers: User[] = [];
-
-  for (const user of users) {
-    const createdUser = await prisma.user.create({
-      data: {
-        ...user,
-        id: user.id,
-        emailVerified: new Date().toISOString()
-      }
-    });
-    createdUsers.push(createdUser);
-  }
-
-  return createdUsers;
-};
-
 const createOrganizations = async (users: User[]) => {
   const createdOrganizations: Organization[] = [];
 
@@ -131,6 +95,42 @@ const loadContracts = async (organizations: Organization[]) => {
     }
   }
 };
+
+const loadUsers = async () => {
+  const users = loadYaml<User>("users");
+  const createdUsers: User[] = [];
+
+  for (const user of users) {
+    const createdUser = await prisma.user.create({
+      data: {
+        ...user,
+        id: user.id,
+        emailVerified: new Date().toISOString()
+      }
+    });
+    createdUsers.push(createdUser);
+  }
+
+  return createdUsers;
+};
+
+async function main() {
+  if (process.env.VERCEL_ENV === "production") {
+    console.log("This script cannot be run on a Vercel production instance.");
+    process.exit(1);
+  }
+
+  console.log("[seed] Loading users, organizations, sites, tiers and contracts...");
+  console.log("[seed] * users");
+  const users = await loadUsers();
+  console.log("[seed] * organizations");
+  const organizations = await createOrganizations(users);
+  console.log("[seed] * tiers");
+  await loadTiers(organizations);
+  console.log("[seed] * contracts");
+  await loadContracts(organizations);
+  console.log("[seed] done");
+}
 
 main()
   .catch((e) => {

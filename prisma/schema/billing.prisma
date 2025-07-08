@@ -7,9 +7,9 @@ model Charge {
   createdAt         DateTime @default(now())
 
   organizationId    String // @DEPRECATED, pending removal after migration
-  organization      Organization    @relation(fields: [organizationId], references: [id]) // @DEPRECATED, pending removal after migration
-  customerProfileId String
-  customerProfile   CustomerProfile @relation(fields: [customerProfileId], references: [id])
+  organization      Organization     @relation(fields: [organizationId], references: [id]) // @DEPRECATED, pending removal after migration
+  customerProfileId String?
+  customerProfile   CustomerProfile? @relation(fields: [customerProfileId], references: [id])
 
   tierVersionId String?
   tierVersion   TierVersion? @relation(fields: [tierVersionId], references: [id])
