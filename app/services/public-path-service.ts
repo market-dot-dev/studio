@@ -12,7 +12,7 @@ const publicPaths = [
   /^\/$/,
   /^\/home$/, // Public landing page
 
-  // Static/metadata pages
+  // Static/metadata pages (part of landing page)
   /^\/terms/,
   /^\/privacy/,
 
