@@ -50,7 +50,7 @@ export default withAuth(
       // Apply authorization rules for authenticated users.
       if (sessionUser) {
         const hasNoOrg = !sessionUser.currentOrgId;
-        const isCustomerPortal = path.startsWith("/c/");
+        const isCustomerPortal = path === "/c" || path.startsWith("/c/");
         const isOrgCreationPage = path === "/organizations";
         const isAccessingVendorArea = !isCustomerPortal && !isOrgCreationPage;
 
