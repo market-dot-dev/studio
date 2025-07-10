@@ -51,6 +51,7 @@ const createOrganizations = async (users: User[]) => {
             planType: PlanType.FREE
           }
         }
+        // @TODO: Seed them a site with a page too
       }
     });
     createdOrganizations.push(organization);
