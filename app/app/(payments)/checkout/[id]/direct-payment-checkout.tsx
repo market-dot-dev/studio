@@ -20,7 +20,7 @@ interface DirectPaymentCheckoutProps {
   vendor: VendorProfile;
   contract?: Contract | null;
   annual?: boolean;
-  customerOrgId?: string;
+  userId?: string;
 }
 
 type PaymentState =
@@ -34,7 +34,7 @@ export function DirectPaymentCheckout({
   vendor,
   contract,
   annual = false,
-  customerOrgId
+  userId
 }: DirectPaymentCheckoutProps) {
   const router = useRouter();
   const tierId = tier.id;
@@ -69,8 +69,7 @@ export function DirectPaymentCheckout({
   };
 
   const isProcessing = paymentState.status === "processing";
-  const isDisabled =
-    isProcessing || !customerOrgId || !paymentReady || paymentState.status === "success";
+  const isDisabled = isProcessing || !userId || !paymentReady || paymentState.status === "success";
   const errorMessage = paymentState.status === "error" ? paymentState.message : null;
 
   return (
@@ -91,21 +90,21 @@ export function DirectPaymentCheckout({
 
       <section className="relative">
         <div className="absolute -bottom-10 left-0 top-0 hidden flex-col items-center gap-2 md:left-[-60px] md:flex">
-          <StepNumber number={2} disabled={!customerOrgId} />
+          <StepNumber number={2} disabled={!userId} />
           <span
             className={cn(
               "h-full w-px bg-gradient-to-b from-stone-200 from-80% via-stone-200 via-80% to-transparent to-100% transition-opacity",
-              !customerOrgId && "opacity-0"
+              !userId && "opacity-0"
             )}
           />
         </div>
         <div>
           <h2 className="mb-6 flex items-center gap-4 text-2xl/6 font-bold tracking-tightish text-stone-800 transition-opacity duration-500 ease-in-out">
-            <StepNumber number={2} disabled={!customerOrgId} className="md:hidden" />
-            <span className={cn(!customerOrgId && "opacity-40")}>Payment</span>
+            <StepNumber number={2} disabled={!userId} className="md:hidden" />
+            <span className={cn(!userId && "opacity-40")}>Payment</span>
           </h2>
           <AnimatePresence>
-            {customerOrgId && vendor?.stripeAccountId && (
+            {userId && vendor?.stripeAccountId && (
               <motion.div
                 key="payment-card"
                 initial={{ opacity: 0, height: 0, overflow: "hidden" }}

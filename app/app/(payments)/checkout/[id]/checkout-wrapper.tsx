@@ -10,7 +10,7 @@ interface CheckoutWrapperProps {
   vendor: VendorProfile;
   contract?: Contract | null;
   annual: boolean;
-  customerOrgId?: string | undefined;
+  userId?: string | undefined;
 }
 
 export async function CheckoutWrapper({
@@ -18,27 +18,27 @@ export async function CheckoutWrapper({
   vendor,
   contract,
   annual,
-  customerOrgId
+  userId
 }: CheckoutWrapperProps) {
   if (tier.checkoutType === "contact-form") {
     return <ContactFormCheckout tier={tier} />;
   }
 
   // Skip status check if no customer is logged in
-  if (!customerOrgId) {
+  if (!userId) {
     return (
       <DirectPaymentCheckout
         tier={tier}
         vendor={vendor}
         contract={contract}
         annual={annual}
-        customerOrgId={customerOrgId}
+        userId={userId}
       />
     );
   }
 
   // Get detailed subscription status
-  const subStatus = await getSubscriptionStatus(customerOrgId, tier.id);
+  const subStatus = await getSubscriptionStatus(userId, tier.id);
 
   // For actively renewing subscriptions, just show the status view
   if (
@@ -60,7 +60,7 @@ export async function CheckoutWrapper({
       vendor={vendor}
       contract={contract}
       annual={annual}
-      customerOrgId={customerOrgId}
+      userId={userId}
     />
   );
 }
