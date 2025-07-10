@@ -7,7 +7,7 @@ import {
   hasOrgAdminAccess,
   hasVendorAccess,
   isPublicPath
-} from "./role-service";
+} from "./public-path-service";
 
 describe("RoleService", () => {
   describe("isPublicPath", () => {
