@@ -16,7 +16,7 @@ const publicPaths = [
   /^\/terms/,
   /^\/privacy/,
 
-  // Core authentication flow
+  // Core authentication flow (bare domain)
   /^\/login$/,
   /^\/login\/email$/,
   /^\/login\/pending$/,
@@ -24,7 +24,6 @@ const publicPaths = [
 
   // Public-facing API routes
   /^\/api\/og\//, // Open Graph image generation
-  /^\/api\/users\/verify/, // User verification endpoints
   /^\/api\/tiers\//, // Public tier information
 
   // Public purchasing and content views
@@ -59,4 +58,18 @@ const publicPaths = [
  */
 export async function isPublicPath(path: string): Promise<boolean> {
   return publicPaths.some((regex) => regex.test(path));
+}
+
+/**
+ * Paths that should be rewritten to the /home directory on the bare domain
+ */
+const homePagePaths = ["/", "/terms", "/privacy"];
+
+/**
+ * Checks if a path should be handled by the home directory
+ * @param path - The URL path to check
+ * @returns True if the path should be rewritten to /home
+ */
+export async function isHomePagePath(path: string): Promise<boolean> {
+  return homePagePaths.includes(path);
 }
