@@ -1,8 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { withAuth } from "next-auth/middleware";
 import { NextRequest, NextResponse } from "next/server";
-import { OrganizationType } from "./app/generated/prisma";
-import { canViewPath, createAuthContext } from "./app/services/organization/role-service";
+import { isPublicPath } from "./app/services/public-path-service";
 import {
   getGhUsernameFromRequest,
   getReservedSubdomainFromRequest,
