@@ -1,15 +1,8 @@
-// @DEPRECATED, pending removal after migration.
-enum OrganizationType {
-  VENDOR // Can sell products AND make purchases
-  CUSTOMER // Can only make purchases 
-}
-
 model Organization {
-  id        String           @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  type      OrganizationType @default(CUSTOMER) // @DEPRECATED, pending removal after migration.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Owner relationship
   ownerId String

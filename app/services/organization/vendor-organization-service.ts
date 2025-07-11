@@ -12,7 +12,7 @@ import { requireOrganization } from "../user-context-service";
 
 /**
  * Vendor-specific organization operations
- * Used when the organization is acting as a VENDOR (selling products/services)
+ * Used when the organization is acting as a vendor (selling products/services)
  * Includes Stripe account management, customer analytics, customer relationship management
  */
 

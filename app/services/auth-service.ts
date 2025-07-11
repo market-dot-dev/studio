@@ -1,6 +1,6 @@
 "use server";
 
-import { OrganizationRole, OrganizationType, User } from "@/app/generated/prisma";
+import { OrganizationRole, User } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import { SessionUser, createSessionUser } from "@/types/session";
 import { Account, User as NaUser } from "next-auth";
@@ -40,7 +40,6 @@ export async function jwtCallback(callbackParams: JwtCallbackParams) {
 
   // If we have fresh user data, fetch org context
   if (userData) {
-    let currentOrgType: OrganizationType | undefined = undefined; // @DEPRECATED, orgType
     let currentUserRole: OrganizationRole | undefined = undefined;
 
     if (userData.currentOrganizationId) {
@@ -50,17 +49,10 @@ export async function jwtCallback(callbackParams: JwtCallbackParams) {
             organizationId: userData.currentOrganizationId,
             userId: userData.id
           }
-        },
-        // @DEPRECATED, orgType
-        include: {
-          organization: {
-            select: { type: true }
-          }
         }
       });
 
       if (orgMembership) {
-        currentOrgType = orgMembership.organization.type; // @DEPRECATED, orgType
         currentUserRole = orgMembership.role;
       } else {
         // Organization membership not found - clear the currentOrganizationId
@@ -72,7 +64,7 @@ export async function jwtCallback(callbackParams: JwtCallbackParams) {
       }
     }
 
-    newToken.user = createSessionUser(userData, currentOrgType, currentUserRole); // @DEPRECATED, orgType
+    newToken.user = createSessionUser(userData, currentUserRole);
   } else {
     // No fresh user data, keep existing token user data
     newToken.user = token.user;

@@ -40,8 +40,6 @@ export function OrganizationOnboardingForm({
   return (
     <div className="space-y-10">
       <form ref={formRef} className="space-y-6">
-        <input type="hidden" name="organizationType" value="VENDOR" />
-
         <div className="flex-1 space-y-6">
           <div className="space-y-2">
             <Label htmlFor="organizationName">Organization Name</Label>

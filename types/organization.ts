@@ -7,7 +7,6 @@ export const includeMinimalOrg = Prisma.validator<Prisma.OrganizationDefaultArgs
   select: {
     id: true,
     name: true,
-    type: true,
     description: true,
     businessLocation: true,
     businessType: true,
@@ -44,7 +43,6 @@ export const includeOrgSwitcherContext = Prisma.validator<Prisma.OrganizationDef
   select: {
     id: true,
     name: true,
-    type: true,
     sites: {
       select: {
         subdomain: true

@@ -37,9 +37,6 @@ export function VendorOrganizationSettingsForm({
 
   return (
     <form action={handleSubmit} className="flex w-full flex-col gap-y-6">
-      {/* Hidden field to indicate this is a vendor organization */}
-      <input type="hidden" name="organizationType" value="VENDOR" />
-
       <div className="space-y-2">
         <Label htmlFor="organizationName">Organization Name</Label>
         <Input

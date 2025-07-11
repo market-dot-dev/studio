@@ -9,7 +9,7 @@ import {
   includeFullOrg,
   includeMinimalOrg
 } from "@/types/organization";
-import { OrganizationType, PlanType, Prisma } from "app/generated/prisma";
+import { PlanType, Prisma } from "app/generated/prisma";
 import { sendWelcomeEmailToMaintainer } from "../email-service";
 import { createSite } from "../site/site-crud-service";
 import { requireOrganization, requireUser } from "../user-context-service";
@@ -184,7 +184,7 @@ export async function getOrganizationWithIntegrations(id?: string) {
 }
 
 /**
- * Creates a new VENDOR organization for a user, sets it as their current org,
+ * Creates a new organization for a user, sets it as their current org,
  * and performs all related setup tasks like creating a site and sending a welcome email.
  * @param userId - The ID of the user who will own the new organization.
  * @param orgName - The desired name for the new organization.
@@ -200,7 +200,6 @@ export async function createVendorOrganizationForUser(userId: string, orgName: s
   const organization = await prisma.organization.create({
     data: {
       name: orgName,
-      type: OrganizationType.VENDOR, // @DEPRECATED
       ownerId: user.id,
       description: businessDescription,
       members: {
