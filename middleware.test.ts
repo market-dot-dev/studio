@@ -1,34 +1,21 @@
-import { getToken } from "next-auth/jwt";
 import { NextRequestWithAuth } from "next-auth/middleware";
 import { NextFetchEvent, NextResponse } from "next/server";
-import { beforeEach, describe, expect, it, vi } from "vitest";
-import { OrganizationRole, OrganizationType } from "./app/generated/prisma";
-import { canViewPath, createAuthContext } from "./app/services/organization/role-service";
-import {
-  getGhUsernameFromRequest,
-  getReservedSubdomainFromRequest,
-  getSubdomainFromRequest
-} from "./app/services/site/domain-request-service";
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { SessionUser } from "./types/session";
 
-// Mock only the dependencies
-vi.mock("next-auth/jwt", () => ({
-  getToken: vi.fn()
+// Mock withAuth to just return the middleware function
+vi.mock("next-auth/middleware", () => ({
+  withAuth: vi.fn((middlewareFn, config) => {
+    // Just return the middleware function, ignore the auth wrapper
+    return middlewareFn;
+  })
 }));
 
-vi.mock("./app/services/domain-request-service", () => ({
-  getSubdomainFromRequest: vi.fn(),
-  getReservedSubdomainFromRequest: vi.fn(),
+// Mock the services used by middleware
+vi.mock("./app/services/site/domain-request-service", () => ({
   getGhUsernameFromRequest: vi.fn(),
-  isVercelPreview: vi.fn().mockResolvedValue(false)
-}));
-
-vi.mock("./app/services/role-service", () => ({
-  canViewPath: vi.fn(),
-  createAuthContext: vi.fn()
-}));
-
-vi.mock("./lib/domain", () => ({
-  getRootUrl: vi.fn().mockReturnValue("https://app.market.dev")
+  getReservedSubdomainFromRequest: vi.fn(),
+  isVercelPreview: vi.fn()
 }));
 
 vi.mock("next/server", () => {
@@ -37,13 +24,24 @@ vi.mock("next/server", () => {
     ...originalModule,
     NextResponse: {
       next: vi.fn(() => ({ type: "next" })),
-      redirect: vi.fn((url, options) => ({ type: "redirect", url, options })),
-      rewrite: vi.fn((url) => ({ type: "rewrite", url }))
+      redirect: vi.fn((url) => ({ type: "redirect", url: url.toString() })),
+      rewrite: vi.fn((url) => ({ type: "rewrite", url: url.toString() }))
     }
   };
 });
 
-function createMockRequest(path: string, host: string = "app.market.dev") {
+// Import the mocked functions (after declaring)
+import {
+  getGhUsernameFromRequest,
+  getReservedSubdomainFromRequest,
+  isVercelPreview
+} from "./app/services/site/domain-request-service";
+
+function createMockRequest(
+  path: string,
+  host: string = "app.market.dev",
+  sessionUser?: SessionUser
+): NextRequestWithAuth {
   const url = new URL(`https://${host}${path}`);
   const headers = new Headers({ host });
 
@@ -51,165 +49,238 @@ function createMockRequest(path: string, host: string = "app.market.dev") {
     nextUrl: url,
     url: url.toString(),
     headers,
-    cookies: {}
+    cookies: {},
+    nextauth: {
+      token: sessionUser ? { user: sessionUser } : null
+    }
   } as NextRequestWithAuth;
 }
 
-const customerOrgOwner = {
-  id: "user1",
-  currentOrgId: "org1",
-  currentOrgType: OrganizationType.CUSTOMER,
-  currentUserRole: OrganizationRole.OWNER
-};
-
-const vendorOrgOwner = {
-  ...customerOrgOwner,
-  currentOrgType: OrganizationType.VENDOR
-};
-
-function createMockEvent() {
-  return { waitUntil: vi.fn() } as unknown as NextFetchEvent;
+function createSessionUser(overrides: Partial<SessionUser> = {}): SessionUser {
+  return {
+    id: "user1",
+    currentOrgId: "org1",
+    ...overrides
+  } as SessionUser;
 }
 
 describe("Middleware", () => {
+  beforeAll(() => {
+    vi.stubEnv("NEXTAUTH_SECRET", "test-secret");
+  });
+
   beforeEach(() => {
     vi.resetAllMocks();
 
-    // Default mocks
-    vi.mocked(getSubdomainFromRequest).mockResolvedValue(null);
+    // Default mocks - most requests are to app domain, not GitHub subdomains
     vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue("app");
     vi.mocked(getGhUsernameFromRequest).mockResolvedValue(null);
-    vi.mocked(getToken).mockResolvedValue(null);
-    vi.mocked(canViewPath).mockResolvedValue(true);
-    vi.mocked(createAuthContext).mockResolvedValue({
-      isAuthenticated: false
-    });
+    vi.mocked(isVercelPreview).mockResolvedValue(false);
   });
 
-  describe("Customer routing", () => {
-    it("should route customer org to /app/c/ paths", async () => {
-      // Setup mocks for customer
-      vi.mocked(getToken).mockResolvedValue({
-        user: customerOrgOwner
-      });
-
-      // Import and call middleware directly
+  describe("Decision 1: App domain routing", () => {
+    it("should rewrite authenticated users with orgs to app directory", async () => {
       const { default: middleware } = await import("./middleware");
+      const req = createMockRequest(
+        "/dashboard",
+        "app.market.dev",
+        createSessionUser({ currentOrgId: "org1" })
+      );
 
-      const req = createMockRequest("/dashboard");
-      const event = createMockEvent();
+      await middleware(req, {} as NextFetchEvent);
 
-      await middleware(req, event);
-
-      // Should rewrite to /app/c/dashboard
       expect(NextResponse.rewrite).toHaveBeenCalled();
       const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
       const rewriteUrl = rewriteCall[0] as URL;
-      expect(rewriteUrl.pathname).toBe("/app/c/dashboard");
+      expect(rewriteUrl.pathname).toBe("/app/dashboard");
     });
 
-    it("should route customer checkout to /app/ directly", async () => {
-      vi.mocked(getToken).mockResolvedValue({
-        user: customerOrgOwner
-      });
-
+    it("should redirect users with no org when accessing vendor areas", async () => {
       const { default: middleware } = await import("./middleware");
+      const req = createMockRequest(
+        "/dashboard",
+        "app.market.dev",
+        createSessionUser({ currentOrgId: undefined })
+      );
 
-      const req = createMockRequest("/checkout/tier123");
-      const event = createMockEvent();
-
-      await middleware(req, event);
-
-      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
-      const rewriteUrl = rewriteCall[0] as URL;
-      expect(rewriteUrl.pathname).toBe("/app/checkout/tier123");
-    });
-  });
-
-  describe("Vendor routing", () => {
-    it("should route vendor org to /app/ paths directly", async () => {
-      vi.mocked(getToken).mockResolvedValue({
-        user: vendorOrgOwner
-      });
-
-      const { default: middleware } = await import("./middleware");
-
-      const req = createMockRequest("/tiers");
-      const event = createMockEvent();
-
-      await middleware(req, event);
-
-      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
-      const rewriteUrl = rewriteCall[0] as URL;
-      expect(rewriteUrl.pathname).toBe("/app/tiers");
-    });
-
-    it("should allow vendor access to customer area", async () => {
-      vi.mocked(getToken).mockResolvedValue({
-        user: vendorOrgOwner
-      });
-
-      const { default: middleware } = await import("./middleware");
-
-      const req = createMockRequest("/c/charges");
-      const event = createMockEvent();
-
-      await middleware(req, event);
-
-      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
-      const rewriteUrl = rewriteCall[0] as URL;
-      expect(rewriteUrl.pathname).toBe("/app/c/charges");
-    });
-  });
-
-  describe("GitHub subdomain routing", () => {
-    it("should route to maintainer-site for GitHub usernames", async () => {
-      vi.mocked(getGhUsernameFromRequest).mockResolvedValue("johndoe");
-      vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue(null);
-
-      const { default: middleware } = await import("./middleware");
-
-      const req = createMockRequest("/about", "johndoe.market.dev");
-      const event = createMockEvent();
-
-      await middleware(req, event);
-
-      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
-      const rewriteUrl = rewriteCall[0] as URL;
-      expect(rewriteUrl.pathname).toBe("/maintainer-site/johndoe/about");
-    });
-  });
-
-  describe("Login redirects", () => {
-    it("should redirect authenticated users from login pages", async () => {
-      vi.mocked(getToken).mockResolvedValue({
-        user: vendorOrgOwner
-      });
-
-      const { default: middleware } = await import("./middleware");
-
-      const req = createMockRequest("/login");
-      const event = createMockEvent();
-
-      await middleware(req, event);
+      await middleware(req, {} as NextFetchEvent);
 
       expect(NextResponse.redirect).toHaveBeenCalled();
       const redirectCall = vi.mocked(NextResponse.redirect).mock.calls[0];
       const redirectUrl = redirectCall[0] as URL;
-      expect(redirectUrl.pathname).toBe("/");
+      expect(redirectUrl.pathname).toBe("/organizations");
+      expect(NextResponse.rewrite).not.toHaveBeenCalled();
+    });
+
+    it("should allow users with no org to access customer portal", async () => {
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest(
+        "/c/dashboard",
+        "app.market.dev",
+        createSessionUser({ currentOrgId: undefined })
+      );
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
+      const rewriteUrl = rewriteCall[0] as URL;
+      expect(rewriteUrl.pathname).toBe("/app/c/dashboard");
+      expect(NextResponse.redirect).not.toHaveBeenCalled();
+    });
+
+    it("should allow users with no org to access organizations page", async () => {
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest(
+        "/organizations",
+        "app.market.dev",
+        createSessionUser({ currentOrgId: undefined })
+      );
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
+      const rewriteUrl = rewriteCall[0] as URL;
+      expect(rewriteUrl.pathname).toBe("/app/organizations");
+      expect(NextResponse.redirect).not.toHaveBeenCalled();
+    });
+
+    it("should allow API routes to pass through on app domain", async () => {
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest(
+        "/api/tiers",
+        "app.market.dev",
+        createSessionUser({ currentOrgId: "org1" })
+      );
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.next).toHaveBeenCalled();
+      expect(NextResponse.rewrite).not.toHaveBeenCalled();
+      expect(NextResponse.redirect).not.toHaveBeenCalled();
+    });
+
+    it("should handle Vercel preview environments as app domain", async () => {
+      vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue(null);
+      vi.mocked(isVercelPreview).mockResolvedValue(true);
+
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest(
+        "/dashboard",
+        "store-git-main-marketdotdev.vercel.app",
+        createSessionUser({ currentOrgId: "org1" })
+      );
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
+      const rewriteUrl = rewriteCall[0] as URL;
+      expect(rewriteUrl.pathname).toBe("/app/dashboard");
     });
   });
 
-  describe("API routes", () => {
-    it("should pass through API routes", async () => {
+  describe("Decision 2: GitHub subdomain routing", () => {
+    beforeEach(() => {
+      // Not app domain for these tests
+      vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue(null);
+      vi.mocked(isVercelPreview).mockResolvedValue(false);
+    });
+
+    it("should route GitHub usernames to maintainer-site directory", async () => {
+      vi.mocked(getGhUsernameFromRequest).mockResolvedValue("johndoe");
+
       const { default: middleware } = await import("./middleware");
+      const req = createMockRequest("/about", "johndoe.market.dev", undefined); // No auth needed for public maintainer sites
 
-      const req = createMockRequest("/api/tiers/123");
-      const event = createMockEvent();
+      await middleware(req, {} as NextFetchEvent);
 
-      await middleware(req, event);
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
+      const rewriteUrl = rewriteCall[0] as URL;
+      expect(rewriteUrl.pathname).toBe("/maintainer-site/johndoe/about");
+    });
+
+    it("should allow API routes on GitHub subdomains to pass through", async () => {
+      vi.mocked(getGhUsernameFromRequest).mockResolvedValue("johndoe");
+
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest("/api/profile", "johndoe.market.dev", undefined);
+
+      await middleware(req, {} as NextFetchEvent);
 
       expect(NextResponse.next).toHaveBeenCalled();
+      expect(NextResponse.rewrite).not.toHaveBeenCalled();
+      expect(NextResponse.redirect).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Decision 3: Bare domain routing", () => {
+    beforeEach(() => {
+      // Not app domain or GitHub subdomain for these tests
+      vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue(null);
+      vi.mocked(getGhUsernameFromRequest).mockResolvedValue(null);
+      vi.mocked(isVercelPreview).mockResolvedValue(false);
+    });
+
+    it("should rewrite home page to /home directory", async () => {
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest("/", "market.dev", undefined); // No auth needed for public home page
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
+      const rewriteUrl = rewriteCall[0] as URL;
+      expect(rewriteUrl.pathname).toBe("/home");
+    });
+
+    it("should redirect login paths to app subdomain", async () => {
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest("/login", "market.dev", undefined); // No auth needed for login redirect
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.redirect).toHaveBeenCalled();
+      const redirectCall = vi.mocked(NextResponse.redirect).mock.calls[0];
+      const redirectUrl = redirectCall[0] as string;
+      expect(redirectUrl).toBe("https://app.market.dev/login");
+    });
+
+    it("should rewrite terms page to /home/terms", async () => {
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest("/terms", "market.dev", undefined);
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
+      const rewriteUrl = rewriteCall[0] as URL;
+      expect(rewriteUrl.pathname).toBe("/home/terms");
+    });
+
+    it("should rewrite privacy page to /home/privacy", async () => {
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest("/privacy", "market.dev", undefined);
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
+      const rewriteUrl = rewriteCall[0] as URL;
+      expect(rewriteUrl.pathname).toBe("/home/privacy");
+    });
+
+    it("should allow non-home paths to fall through", async () => {
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest("/some-other-path", "market.dev", undefined);
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.next).toHaveBeenCalled();
+      expect(NextResponse.rewrite).not.toHaveBeenCalled();
+      expect(NextResponse.redirect).not.toHaveBeenCalled();
     });
   });
 });
