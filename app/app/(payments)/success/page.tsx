@@ -3,8 +3,8 @@
 import { getRootUrl } from "@/lib/domain";
 import { redirect } from "next/navigation";
 
-const SubscriptionSuccess = () => {
-  redirect(getRootUrl("app", "/"));
+const CheckoutSuccessPage = () => {
+  redirect(getRootUrl("app", "/c"));
 };
 
-export default SubscriptionSuccess;
+export default CheckoutSuccessPage;

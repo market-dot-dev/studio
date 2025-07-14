@@ -1,10 +1,3 @@
-"use server";
+import CheckoutSuccessPage from "@/app/app/(payments)/success/page";
 
-import { getRootUrl } from "@/lib/domain";
-import { redirect } from "next/navigation";
-
-const SubscriptionSuccess = () => {
-  redirect(getRootUrl("app", "/"));
-};
-
-export default SubscriptionSuccess;
+export default CheckoutSuccessPage;
