@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { requireUserSession } from "../user-context-service";
+import { requireOrganization, requireUserSession } from "../user-context-service";
 import {
   defaultOnboardingState,
   type OnboardingState,
@@ -29,13 +29,7 @@ function parseOnboardingState(jsonValue: unknown): OnboardingState {
  * Gets the current onboarding state for the organization
  */
 export async function getOnboardingData() {
-  const { getCurrentOrganization } = await import("../user-context-service");
-  const org = await getCurrentOrganization();
-
-  if (!org) {
-    return null;
-  }
-
+  const org = await requireOrganization();
   const onboarding = parseOnboardingState(org.onboarding);
 
   return {

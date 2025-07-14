@@ -10,7 +10,7 @@ import { AppWindowMac, Link } from "lucide-react";
 import { useRef, useState } from "react";
 
 interface Props {
-  organization: CurrentOrganizationForSettings | null;
+  organization: CurrentOrganizationForSettings;
   onSubmit: (formData: FormData) => Promise<OrganizationFormResult>;
   nextPath: string;
 }
@@ -47,7 +47,7 @@ export function OrganizationSetupForm({ organization, onSubmit, nextPath }: Prop
               id="organizationName"
               name="organizationName"
               placeholder="Your Organization Name"
-              defaultValue={organization?.name || ""}
+              defaultValue={organization.name || ""}
               required
               autoFocus
             />
@@ -61,7 +61,7 @@ export function OrganizationSetupForm({ organization, onSubmit, nextPath }: Prop
               id="subdomain"
               name="subdomain"
               placeholder="your-domain"
-              defaultValue={organization?.subdomain ?? ""}
+              defaultValue={organization.subdomain ?? ""}
               suffix=".market.dev"
               pattern="[a-z0-9-]+"
               required
@@ -82,13 +82,13 @@ export function OrganizationSetupForm({ organization, onSubmit, nextPath }: Prop
             {errors.subdomain && <div className="text-xs text-destructive">{errors.subdomain}</div>}
           </div>
         </div>
-        {/* Add hidden description field for organization creation */}
-        <input type="hidden" name="description" value={organization?.description ?? ""} />
+        {/* Hidden description field */}
+        <input type="hidden" name="description" value={organization.description ?? ""} />
         <div className="space-y-2">
           <Label htmlFor="country">Country</Label>
           <CountrySelect
             name="country"
-            defaultValue={organization?.businessLocation ?? undefined}
+            defaultValue={organization.businessLocation ?? undefined}
             required
           />
           <p className="text-xs text-muted-foreground">Needed for billing & tax purposes.</p>
@@ -96,11 +96,7 @@ export function OrganizationSetupForm({ organization, onSubmit, nextPath }: Prop
         </div>
       </form>
       {errors._form && <div className="text-xs text-destructive">{errors._form}</div>}
-      <OnboardingAction
-        currentStep="organization"
-        nextPath={nextPath}
-        beforeAction={handleBeforeAction}
-      />
+      <OnboardingAction currentStep="setup" nextPath={nextPath} beforeAction={handleBeforeAction} />
     </div>
   );
 }

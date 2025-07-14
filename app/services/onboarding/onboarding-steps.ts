@@ -9,8 +9,8 @@ export const ONBOARDING_COMPLETE_PATH = "/onboarding/complete";
 
 // Reorder these steps to change their order in the onboarding flow
 export const ONBOARDING_STEPS = {
-  organization: {
-    name: "organization",
+  setup: {
+    name: "setup",
     title: "Create Your Organization",
     description: "Set up your organization details and branding",
     path: "/onboarding/setup"

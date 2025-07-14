@@ -1,23 +1,13 @@
-import { getCurrentOrganization } from "@/app/services/user-context-service";
+import { isOrgOnboarded } from "@/app/services/onboarding/onboarding-service";
 import { OnboardingNavigation } from "@/components/onboarding/onboarding-navigation";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 
 export default async function OnboardingLayout({ children }: { children: React.ReactNode }) {
-  // Check if we have an organization and if it's onboarded
-  const currentOrg = await getCurrentOrganization();
-
-  // If we have an organization, check if it's onboarded
-  // We'll import the function locally to avoid circular dependency issues
-  if (currentOrg) {
-    // Dynamic import to avoid circular dependency
-    const { isOrgOnboarded } = await import("@/app/services/onboarding/onboarding-service");
-    const isOnboarded = await isOrgOnboarded();
-    if (isOnboarded) {
-      redirect("/");
-    }
+  const isOnboarded = await isOrgOnboarded();
+  if (isOnboarded) {
+    redirect("/");
   }
-  // If no organization, allow access to onboarding
 
   return (
     <div className="min-h-screen bg-stone-150 px-6 pb-12 pt-6">

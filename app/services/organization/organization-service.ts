@@ -148,19 +148,8 @@ export async function updateCurrentOrganizationBusiness(
  * Returns organization with business fields needed for forms
  * Returns null if no current organization exists
  */
-export async function getCurrentOrganizationForSettings(): Promise<CurrentOrganizationForSettings | null> {
-  const user = await requireUser();
-
-  if (!user.currentOrganizationId) {
-    return null;
-  }
-
-  const org = await getOrganizationById(user.currentOrganizationId);
-
-  if (!org) {
-    return null;
-  }
-
+export async function getCurrentOrganizationForSettings(): Promise<CurrentOrganizationForSettings> {
+  const org = await requireOrganization();
   return {
     id: org.id,
     name: org.name,
@@ -199,6 +188,7 @@ export async function getOrganizationWithIntegrations(id?: string) {
   });
 }
 
+// @TODO: Convert this into a minimal function only creating the orgId
 /**
  * Creates a new organization during onboarding flow.
  * This function creates a minimal organization and then uses the existing
@@ -254,7 +244,7 @@ export async function createOrganizationFromOnboarding(
 
     if (result.success) {
       // Mark the onboarding step as completed
-      await completeOnboardingStep("organization");
+      await completeOnboardingStep("setup");
     }
 
     return result;

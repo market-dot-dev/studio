@@ -1,14 +1,8 @@
 import { ONBOARDING_STEPS, getNextStepPath } from "@/app/services/onboarding/onboarding-steps";
-import {
-  createOrganizationFromOnboarding,
-  getCurrentOrganizationForSettings
-} from "@/app/services/organization/organization-service";
+import { getCurrentOrganizationForSettings } from "@/app/services/organization/organization-service";
 import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { submitOrganizationForm } from "@/components/organization/organization-form-action";
-import { Button } from "@/components/ui/button";
 import { CurrentOrganizationForSettings } from "@/types/organization";
-import Link from "next/link";
-import { redirect } from "next/navigation";
 import { OrganizationSetupForm } from "./organization-setup-form";
 
 /**
@@ -36,30 +30,10 @@ export function getOnboardingPageConfig(
   };
 }
 
-interface SetupOnboardingPageProps {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}
-
-export default async function OrganizationSetupPage({ searchParams }: SetupOnboardingPageProps) {
-  const params = await searchParams;
-  const mode = params.mode as string;
-
-  // Get organization
+export default async function OrganizationSetupPage() {
   const org = await getCurrentOrganizationForSettings();
 
-  // Use config to determine behavior
-  const config = getOnboardingPageConfig(mode, org);
-
-  // Handle redirects
-  if (config.shouldRedirect) {
-    redirect(config.redirectTo!);
-  }
-
-  // Map action type to actual functions
-  const isCreationMode = config.actionType === "create";
-  const submitAction = isCreationMode ? createOrganizationFromOnboarding : submitOrganizationForm;
-
-  const currentStep = ONBOARDING_STEPS["organization"];
+  const currentStep = ONBOARDING_STEPS["setup"];
   const nextPath = getNextStepPath(currentStep.name);
 
   return (
@@ -67,18 +41,11 @@ export default async function OrganizationSetupPage({ searchParams }: SetupOnboa
       <div className="space-y-10">
         <OnboardingHeader title={currentStep.title} description={currentStep.description} />
         <OrganizationSetupForm
-          organization={isCreationMode ? null : org}
-          onSubmit={submitAction}
+          organization={org}
+          onSubmit={submitOrganizationForm}
           nextPath={nextPath}
         />
       </div>
-      {isCreationMode && (
-        <div className="mt-2">
-          <Button asChild className="w-full gap-2" variant="outline">
-            <Link href="/organizations">Cancel</Link>
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
