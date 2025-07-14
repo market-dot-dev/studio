@@ -1,5 +1,6 @@
 "use client";
 
+import { ONBOARDING_BASE_URL } from "@/app/services/onboarding/onboarding-steps";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -42,7 +43,7 @@ export function CreateOrganizationModal() {
 
         // Update session to include new organization context, then redirect
         updateSession().then(() => {
-          router.push("/onboarding");
+          router.push(ONBOARDING_BASE_URL);
         });
       } else if (state.message) {
         toast.error(state.message);
