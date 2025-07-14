@@ -75,8 +75,6 @@ export const includeOrgForStripeOps = Prisma.validator<Prisma.OrganizationDefaul
         name: true
       }
     },
-    stripeCustomerIds: true,
-    stripePaymentMethodIds: true,
     stripeCSRF: true,
     stripeAccountId: true,
     billing: {

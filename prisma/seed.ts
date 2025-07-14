@@ -34,8 +34,6 @@ const createOrganizations = async (users: User[]) => {
             id: user.id
           }
         },
-        stripeCustomerIds: {},
-        stripePaymentMethodIds: {},
         // Create billing record with FREE plan by default
         billing: {
           create: {

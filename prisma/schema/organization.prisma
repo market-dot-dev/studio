@@ -19,8 +19,6 @@ model Organization {
   onboarding       Json?
 
   // Stripe fields
-  stripePaymentMethodIds      Json    @default("{}") // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
-  stripeCustomerIds           Json    @default("{}") // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
   stripeAccountId             String? @unique
   stripeCSRF                  String? @unique
   stripeAccountDisabled       Boolean @default(false)
