@@ -272,14 +272,14 @@ describe("Middleware", () => {
       expect(rewriteUrl.pathname).toBe("/home/privacy");
     });
 
-    it("should allow non-home paths to fall through", async () => {
+    it("should rewrite non-home paths to app as a final fallback", async () => {
       const { default: middleware } = await import("./middleware");
       const req = createMockRequest("/some-other-path", "market.dev", undefined);
 
       await middleware(req, {} as NextFetchEvent);
 
-      expect(NextResponse.next).toHaveBeenCalled();
-      expect(NextResponse.rewrite).not.toHaveBeenCalled();
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      expect(NextResponse.next).not.toHaveBeenCalled();
       expect(NextResponse.redirect).not.toHaveBeenCalled();
     });
   });

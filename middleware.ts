@@ -95,9 +95,9 @@ export default withAuth(
     }
 
     // For any other path on the bare domain, you might want to redirect
-    // to an explore page or the main app. This is a placeholder for that.
-    // For now, we let it fall through to be handled by Next.js (which may 404).
-    return NextResponse.next();
+    // to an explore page or the main app.
+    const rewriteUrl = `/app${path}${req.nextUrl.search}`;
+    return NextResponse.rewrite(new URL(rewriteUrl, req.url));
   },
   {
     callbacks: {
