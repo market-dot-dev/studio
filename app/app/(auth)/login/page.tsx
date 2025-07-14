@@ -1,5 +1,4 @@
 import { getSession } from "@/lib/auth";
-import { cookies, type UnsafeUnwrappedCookies } from "next/headers";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -19,13 +18,6 @@ export default async function LoginPage(props: {
   // Get parameters from query
   const callbackUrl = (searchParams.callbackUrl as string) || "/";
 
-  // @TODO: This cookie is no longer being set
-  // Check for checkout context from cookie (set by API route)
-  const signupContext = ((await cookies()) as unknown as UnsafeUnwrappedCookies).get(
-    "signup_context"
-  );
-  const isCheckout = signupContext?.value === "checkout";
-
   return (
     <>
       <Image
@@ -36,12 +28,10 @@ export default async function LoginPage(props: {
         src="/gw-logo-nav.png"
       />
       <h1 className="mt-4 text-center text-2xl font-bold tracking-tightish dark:text-white">
-        {isCheckout ? "Login to complete purchase" : "Login to market.dev"}
+        Login to market.dev
       </h1>
       <p className="mt-3 text-center text-sm text-stone-500 dark:text-stone-400">
-        {isCheckout
-          ? "Please sign in or create an account to continue"
-          : "All-in-one business tools, built for developers."}
+        All-in-one business tools, built for developers.
       </p>
 
       <div className="mx-auto mt-6 flex w-full max-w-xs flex-col gap-2">
