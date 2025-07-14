@@ -54,8 +54,8 @@ export default async function SetupOnboardingPage({ searchParams }: SetupOnboard
   }
 
   // Map action type to actual functions
-  const submitAction =
-    config.actionType === "create" ? createOrganizationFromOnboarding : submitOrganizationForm;
+  const isCreationMode = config.actionType === "create";
+  const submitAction = isCreationMode ? createOrganizationFromOnboarding : submitOrganizationForm;
 
   const currentStep = ONBOARDING_STEPS["organization"];
   const nextPath = getNextStepPath(currentStep.name);
@@ -63,7 +63,11 @@ export default async function SetupOnboardingPage({ searchParams }: SetupOnboard
   return (
     <div className="mx-auto max-w-md space-y-10">
       <OnboardingHeader title={currentStep.title} description={currentStep.description} />
-      <SetupOnboardingForm organization={org} onSubmit={submitAction} nextPath={nextPath} />
+      <SetupOnboardingForm
+        organization={isCreationMode ? null : org}
+        onSubmit={submitAction}
+        nextPath={nextPath}
+      />
     </div>
   );
 }
