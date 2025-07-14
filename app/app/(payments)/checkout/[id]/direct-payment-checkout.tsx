@@ -4,8 +4,8 @@ import { SimplePaymentElement } from "@/app/app/(payments)/checkout/[id]/stripe-
 import { CHECKOUT_CURRENCY } from "@/app/config/checkout";
 import { Contract, Tier } from "@/app/generated/prisma";
 import { processPayment } from "@/app/services/billing/connect-checkout-service";
+import { CheckoutLogin } from "@/components/checkout";
 import { ContractLink } from "@/components/contracts/contract-link";
-import { CustomerLogin } from "@/components/login/customer-login";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
@@ -84,7 +84,7 @@ export function DirectPaymentCheckout({
             <StepNumber number={1} className="md:hidden" />
             Account
           </h2>
-          <CustomerLogin />
+          <CheckoutLogin />
         </div>
       </section>
 

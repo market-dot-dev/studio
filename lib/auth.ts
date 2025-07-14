@@ -26,24 +26,13 @@ export const authOptions: NextAuthOptions = {
       // @NOTE: "server"/"from" are unused, but required here as sendgrid takes care of email
       server: process.env.EMAIL_SERVER,
       from: process.env.SENDGRID_FROM_EMAIL,
+      // the following configuration of EmailProvider makes it use a 6 digit token number instead of a magic link
       maxAge: 5 * 60, // 5 minutes
       generateVerificationToken: async () => {
         return Math.floor(100000 + Math.random() * 900000).toString();
       },
-      sendVerificationRequest: async ({ identifier: email, token, url }) => {
-        // Parse the original Next-Auth generated URL
-        const originalUrl = new URL(url);
-
-        // Create custom URL that goes to our verification page
-        const verificationUrl = new URL(`/login/email`, originalUrl.origin);
-
-        // Copy all the original params to our custom page
-        originalUrl.searchParams.forEach((value, key) => {
-          verificationUrl.searchParams.set(key, value);
-        });
-
-        // Send email with link to our custom verification page
-        return sendVerificationEmail(email, token, domainCopy(), verificationUrl.toString());
+      sendVerificationRequest: ({ identifier: email, token }) => {
+        return sendVerificationEmail(email, token, domainCopy());
       }
     }),
     GitHubProvider({
@@ -62,8 +51,8 @@ export const authOptions: NextAuthOptions = {
   ].filter(Boolean) as Provider[],
   pages: {
     signIn: `/login`,
-    verifyRequest: `/login/pending`,
-    error: "/login" // Error code passed in query string as ?error=
+    verifyRequest: `/api/authresponse`,
+    error: "/api/authresponse" // Error code passed in query string as ?error=
   },
   adapter: PrismaAdapter(prisma),
   session: { strategy: "jwt" },
@@ -83,54 +72,23 @@ export const authOptions: NextAuthOptions = {
     jwt: jwtCallback,
     session: sessionCallback,
     redirect({ url, baseUrl }: { url: string; baseUrl: string }): string {
-      // Handle relative URLs (like "/dashboard", "/checkout")
-      if (url.startsWith("/")) {
-        return `${baseUrl}${url}`;
+      // custom redirect logic
+      if (!/^https?:\/\//.test(url)) {
+        return url.startsWith(baseUrl) ? url : baseUrl;
       }
 
-      // Handle absolute URLs
-      try {
-        const urlObj = new URL(url);
-        const baseUrlObj = new URL(baseUrl);
-
-        const rootHost = process.env.NEXT_PUBLIC_ROOT_HOST;
-
-        if (rootHost) {
-          // Allow URLs on subdomains of your root host (this is key for cross-subdomain redirects)
-          if (urlObj.hostname.endsWith(rootHost)) {
+      const rootHost = process.env.NEXT_PUBLIC_ROOT_HOST;
+      if (rootHost) {
+        try {
+          const { host } = new URL(url);
+          if (host.endsWith(rootHost)) {
             return url;
           }
-
-          // Also allow URLs on localhost with the same port for development
-          if (
-            isDevelopment &&
-            urlObj.hostname.includes("localhost") &&
-            baseUrlObj.hostname.includes("localhost") &&
-            urlObj.port === baseUrlObj.port
-          ) {
-            return url;
-          }
-
-          // Allow URLs with .local domain for development
-          if (
-            isDevelopment &&
-            urlObj.hostname.endsWith(".local") &&
-            baseUrlObj.hostname.endsWith(".local")
-          ) {
-            return url;
-          }
+        } catch (error) {
+          console.error("Error parsing redirect URL:", error);
         }
-
-        // Allow URLs on the same origin as baseUrl
-        if (urlObj.origin === baseUrlObj.origin) {
-          return url;
-        }
-      } catch (error) {
-        console.error("REDIRECT CALLBACK - Error parsing URL:", error);
       }
-
-      // Default fallback
-      return baseUrl;
+      return url.startsWith(baseUrl) ? url : baseUrl;
     }
   },
   events: {
