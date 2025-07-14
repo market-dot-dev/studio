@@ -1,9 +1,7 @@
 import { getOrganizationSwitcherContext } from "@/app/services/user-context-service";
-import { Button } from "@/components/ui/button";
-import { Building } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
-import { OrganizationItem } from "./OrganizationItem";
+import { CreateOrganizationModal } from "./create-organization-modal";
+import { OrganizationItem } from "./organization-item";
 
 export default async function OrganizationsPage() {
   const { availableOrganizations: orgs } = await getOrganizationSwitcherContext();
@@ -54,12 +52,7 @@ export default async function OrganizationsPage() {
               <hr className="flex-1 border-t border-dashed border-stone-300" />
             </div>
             <div className="px-4 pb-4 md:px-5 md:pb-5">
-              <Button asChild className="w-full gap-2" variant="outline">
-                <Link href="/onboarding/setup?mode=create">
-                  <Building className="size-4" />
-                  Create a new organization
-                </Link>
-              </Button>
+              <CreateOrganizationModal />
             </div>
           </div>
         </div>

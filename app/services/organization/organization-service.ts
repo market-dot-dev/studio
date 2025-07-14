@@ -1,10 +1,5 @@
 "use server";
 
-import {
-  OrganizationFormResult,
-  submitOrganizationForm
-} from "@/components/organization/organization-form-action";
-import { businessDescription } from "@/lib/constants/site-template";
 import prisma from "@/lib/prisma";
 import {
   type CurrentOrganizationForSettings,
@@ -13,9 +8,7 @@ import {
   includeFullOrg,
   includeMinimalOrg
 } from "@/types/organization";
-import { PlanType, Prisma } from "app/generated/prisma";
-import { sendWelcomeEmailToMaintainer } from "../email-service";
-import { completeOnboardingStep } from "../onboarding/onboarding-service";
+import { Prisma } from "app/generated/prisma";
 import { requireOrganization, requireUser } from "../user-context-service";
 
 /**
@@ -186,73 +179,4 @@ export async function getOrganizationWithIntegrations(id?: string) {
       }
     }
   });
-}
-
-// @TODO: Convert this into a minimal function only creating the orgId
-/**
- * Creates a new organization during onboarding flow.
- * This function creates a minimal organization and then uses the existing
- * form logic to handle validation, site creation, and other setup.
- * @param formData - Form data containing organization details
- * @returns Organization creation result with success/error status
- */
-export async function createOrganizationFromOnboarding(
-  formData: FormData
-): Promise<OrganizationFormResult> {
-  const organizationName = formData.get("organizationName") as string;
-
-  if (!organizationName?.trim()) {
-    return { success: false, errors: { organizationName: "Organization name is required" } };
-  }
-
-  try {
-    const user = await requireUser();
-
-    // Phase 1: Create minimal organization and set as current
-    const organization = await prisma.organization.create({
-      data: {
-        name: organizationName.trim(),
-        ownerId: user.id,
-        description: businessDescription,
-        members: {
-          create: {
-            userId: user.id,
-            role: "OWNER"
-          }
-        },
-        billing: {
-          create: {
-            planType: PlanType.FREE
-          }
-        }
-      }
-    });
-
-    // Update the user to make this their current organization
-    await prisma.user.update({
-      where: { id: user.id },
-      data: {
-        currentOrganizationId: organization.id
-      }
-    });
-
-    // Send welcome email after organization creation
-    await sendWelcomeEmailToMaintainer({ ...user });
-
-    // Phase 2: Run existing form logic for subdomain/site/validation
-    const result = await submitOrganizationForm(formData);
-
-    if (result.success) {
-      // Mark the onboarding step as completed
-      await completeOnboardingStep("setup");
-    }
-
-    return result;
-  } catch (error) {
-    console.error("Error creating organization:", error);
-    return {
-      success: false,
-      errors: { _form: "Failed to create organization. Please try again." }
-    };
-  }
 }

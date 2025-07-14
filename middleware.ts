@@ -51,7 +51,7 @@ export default withAuth(
       if (sessionUser) {
         const hasNoOrg = !sessionUser.currentOrgId;
         const isCustomerPortal = path === "/c" || path.startsWith("/c/");
-        const isOrgCreationPage = path === "/organizations" || path.startsWith("/onboarding/setup");
+        const isOrgCreationPage = path === "/organizations";
         const isAccessingVendorArea = !isCustomerPortal && !isOrgCreationPage;
 
         if (hasNoOrg && isAccessingVendorArea) {
