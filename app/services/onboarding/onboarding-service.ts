@@ -1,7 +1,7 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { requireOrganization, requireUserSession } from "../user-context-service";
+import { requireUserSession } from "../user-context-service";
 import {
   defaultOnboardingState,
   type OnboardingState,
@@ -29,7 +29,13 @@ function parseOnboardingState(jsonValue: unknown): OnboardingState {
  * Gets the current onboarding state for the organization
  */
 export async function getOnboardingData() {
-  const org = await requireOrganization();
+  const { getCurrentOrganization } = await import("../user-context-service");
+  const org = await getCurrentOrganization();
+
+  if (!org) {
+    return null;
+  }
+
   const onboarding = parseOnboardingState(org.onboarding);
 
   return {
@@ -42,7 +48,13 @@ export async function getOnboardingData() {
  * Marks a specific step as completed in the onboarding flow
  */
 export async function completeOnboardingStep(stepName: OnboardingStepName) {
-  const { org, onboarding } = await getOnboardingData();
+  const data = await getOnboardingData();
+
+  if (!data) {
+    throw new Error("Cannot complete onboarding step: No organization found");
+  }
+
+  const { org, onboarding } = data;
 
   // Update the specific step to completed
   const updatedOnboarding: OnboardingState = {
@@ -64,9 +76,17 @@ export async function completeOnboardingStep(stepName: OnboardingStepName) {
 
 /**
  * Checks if org has been onboarded (for owners)
+ * Returns false if no organization exists
  */
 export async function isOrgOnboarded() {
-  const { org, onboarding } = await getOnboardingData();
+  const data = await getOnboardingData();
+
+  if (!data) {
+    // No organization exists
+    return false;
+  }
+
+  const { org, onboarding } = data;
   const user = await requireUserSession();
 
   // Only show onboarding to organization owners
@@ -81,7 +101,13 @@ export async function isOrgOnboarded() {
  * Completes the onboarding flow manually
  */
 export async function completeOnboarding() {
-  const { org, onboarding } = await getOnboardingData();
+  const data = await getOnboardingData();
+
+  if (!data) {
+    throw new Error("Cannot complete onboarding: No organization found");
+  }
+
+  const { org, onboarding } = data;
 
   const updatedOnboarding: OnboardingState = {
     ...onboarding,

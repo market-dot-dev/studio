@@ -13,7 +13,7 @@ export const ONBOARDING_STEPS = {
     name: "organization",
     title: "Create Your Organization",
     description: "Set up your organization details and branding",
-    path: "/onboarding/organization"
+    path: "/onboarding/setup"
   },
   stripe: {
     name: "stripe",
