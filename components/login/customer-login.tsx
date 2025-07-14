@@ -28,10 +28,9 @@ export function CustomerLogin() {
     // Get current page URL as callback URL
     const currentUrl = window.location.href;
 
-    // Call the API to set context cookie
-    const apiUrl = getRootUrl("app", "/api/auth/set-signup-context");
+    // Go to login page with callback url
+    const apiUrl = getRootUrl("app", "/login");
     const url = new URL(apiUrl);
-    url.searchParams.set("context", "checkout");
     url.searchParams.set("callbackUrl", currentUrl);
     window.location.href = url.toString();
   };
