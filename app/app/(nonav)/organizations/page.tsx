@@ -1,5 +1,8 @@
 import { getOrganizationSwitcherContext } from "@/app/services/user-context-service";
+import { Button } from "@/components/ui/button";
+import { Building } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { OrganizationItem } from "./OrganizationItem";
 
 export default async function OrganizationsPage() {
@@ -42,9 +45,7 @@ export default async function OrganizationsPage() {
               ))
             )}
           </div>
-
-          {/* @TODO: Org-Creation */}
-          {/* <div className="z-0 -mt-5 flex flex-col gap-4 rounded-b-lg border bg-stone-150 pt-9">
+          <div className="z-0 -mt-5 flex flex-col gap-4 rounded-b-lg border bg-stone-150 pt-9">
             <div className="flex items-center gap-2">
               <hr className="flex-1 border-t border-dashed border-stone-300" />
               <p className="flex-none text-center text-xs font-medium text-muted-foreground xs:whitespace-nowrap">
@@ -54,13 +55,13 @@ export default async function OrganizationsPage() {
             </div>
             <div className="px-4 pb-4 md:px-5 md:pb-5">
               <Button asChild className="w-full gap-2" variant="outline">
-                <Link href="/organizations/new">
+                <Link href="/onboarding/setup?mode=create">
                   <Building className="size-4" />
                   Create a new organization
                 </Link>
               </Button>
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>
