@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { CurrentOrganizationForSettings } from "@/types/organization";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { SetupOnboardingForm } from "./organization-onboarding-form";
+import { OrganizationSetupForm } from "./organization-setup-form";
 
 /**
  * Pure function to determine onboarding page behavior
@@ -40,7 +40,7 @@ interface SetupOnboardingPageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function SetupOnboardingPage({ searchParams }: SetupOnboardingPageProps) {
+export default async function OrganizationSetupPage({ searchParams }: SetupOnboardingPageProps) {
   const params = await searchParams;
   const mode = params.mode as string;
 
@@ -66,7 +66,7 @@ export default async function SetupOnboardingPage({ searchParams }: SetupOnboard
     <div className="mx-auto max-w-md">
       <div className="space-y-10">
         <OnboardingHeader title={currentStep.title} description={currentStep.description} />
-        <SetupOnboardingForm
+        <OrganizationSetupForm
           organization={isCreationMode ? null : org}
           onSubmit={submitAction}
           nextPath={nextPath}

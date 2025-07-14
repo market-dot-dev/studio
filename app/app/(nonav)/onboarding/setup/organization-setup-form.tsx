@@ -15,7 +15,7 @@ interface Props {
   nextPath: string;
 }
 
-export function SetupOnboardingForm({ organization, onSubmit, nextPath }: Props) {
+export function OrganizationSetupForm({ organization, onSubmit, nextPath }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
