@@ -51,7 +51,7 @@ export default withAuth(
       if (sessionUser) {
         const hasNoOrg = !sessionUser.currentOrgId;
         const isCustomerPortal = path === "/c" || path.startsWith("/c/");
-        const isOrgCreationPage = path === "/organizations";
+        const isOrgCreationPage = path === "/organizations" || path.startsWith("/onboarding/setup");
         const isAccessingVendorArea = !isCustomerPortal && !isOrgCreationPage;
 
         if (hasNoOrg && isAccessingVendorArea) {
@@ -61,7 +61,7 @@ export default withAuth(
       }
 
       // If authorized, rewrite to the internal /app directory.
-      return NextResponse.rewrite(new URL(`/app${path}`, req.url));
+      return NextResponse.rewrite(new URL(`/app${path}${req.nextUrl.search}`, req.url));
     }
 
     // --- Decision 2: Is this a GitHub username subdomain? ---
@@ -73,7 +73,9 @@ export default withAuth(
         return NextResponse.next();
       }
       // Rewrite to the maintainer site directory.
-      return NextResponse.rewrite(new URL(`/maintainer-site/${ghUsername}${path}`, req.url));
+      return NextResponse.rewrite(
+        new URL(`/maintainer-site/${ghUsername}${path}${req.nextUrl.search}`, req.url)
+      );
     }
 
     // --- Decision 3: This is the bare domain (e.g., market.dev) ---
@@ -81,13 +83,15 @@ export default withAuth(
     // Redirect /login paths on the bare domain to the app subdomain.
     if (path.startsWith("/login")) {
       const protocol = isDevelopment ? "http" : "https";
-      return NextResponse.redirect(`${protocol}://${APP_HOST}${path}`);
+      return NextResponse.redirect(`${protocol}://${APP_HOST}${path}${req.nextUrl.search}`);
     }
 
     // Rewrite root, /terms, /privacy to the /home directory.
     // This assumes your marketing pages live in a route group like `(home)`.
     if (await isHomePagePath(path)) {
-      return NextResponse.rewrite(new URL(`/home${path === "/" ? "" : path}`, req.url));
+      return NextResponse.rewrite(
+        new URL(`/home${path === "/" ? "" : path}${req.nextUrl.search}`, req.url)
+      );
     }
 
     // For any other path on the bare domain, you might want to redirect
