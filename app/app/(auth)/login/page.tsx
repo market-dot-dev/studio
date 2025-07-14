@@ -2,7 +2,6 @@ import { getSession } from "@/lib/auth";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import { EmailSignIn } from "./email-signin";
 import { GithubSignIn } from "./github-signin";
 
 export default async function LoginPage(props: {
@@ -35,13 +34,6 @@ export default async function LoginPage(props: {
       </p>
 
       <div className="mx-auto mt-6 flex w-full max-w-xs flex-col gap-2">
-        <Suspense
-          fallback={
-            <div className="h-12 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
-          }
-        >
-          <EmailSignIn callbackUrl={callbackUrl} />
-        </Suspense>
         <Suspense
           fallback={
             <div className="h-12 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />

@@ -257,42 +257,17 @@ export async function sendWelcomeEmailToCustomer(user: RequiredUserProps): Promi
  * @param email - Recipient email
  * @param token - Verification token
  * @param domain - Domain for the verification
- * @param verificationUrl - Optional custom verification URL (if not provided, uses token-based template)
  */
 export async function sendVerificationEmail(
   email: string,
   token: string,
-  domain: string,
-  verificationUrl?: string
+  domain: string
 ): Promise<void> {
-  const subject = `Sign in to ${domain}`;
+  const subject = `Verification code`;
+  const html = EmailTemplates.createVerificationEmail(token, domain);
+  const text = `Your verification code for signing in to ${domain} is ${token}`;
 
-  if (verificationUrl) {
-    // Use custom verification URL (for magic link style)
-    const html = `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2>Sign in to ${domain}</h2>
-        <p>Click the button below to sign in to your account:</p>
-        <div style="text-align: center; margin: 30px 0;">
-          <a href="${verificationUrl}" style="background-color: #000; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">
-            Sign in to ${domain}
-          </a>
-        </div>
-        <p>Or copy and paste this link into your browser:</p>
-        <p style="word-break: break-all; color: #666;">${verificationUrl}</p>
-        <p style="margin-top: 30px; color: #666; font-size: 14px;">
-          This link will expire in 5 minutes. If you didn't request this, you can safely ignore this email.
-        </p>
-      </div>
-    `;
-    const text = `Sign in to ${domain} by visiting: ${verificationUrl}`;
-    await sendEmail(email, subject, text, html);
-  } else {
-    // Use original token-based template
-    const html = EmailTemplates.createVerificationEmail(token, domain);
-    const text = `Your verification code for signing in to ${domain} is ${token}`;
-    await sendEmail(email, subject, text, html);
-  }
+  await sendEmail(email, subject, text, html);
 }
 
 /**
