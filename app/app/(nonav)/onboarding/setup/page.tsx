@@ -40,15 +40,7 @@ interface SetupOnboardingPageProps {
 
 export default async function SetupOnboardingPage({ searchParams }: SetupOnboardingPageProps) {
   const params = await searchParams;
-  console.log("Params", params);
   const mode = params.mode as string;
-
-  // Add more detailed logging
-  console.log("Raw searchParams:", searchParams);
-  console.log("Awaited params:", params);
-  console.log("Params type:", typeof params);
-  console.log("Params keys:", Object.keys(params || {}));
-  console.log("Mode specifically:", params?.mode);
 
   // Get organization
   const org = await getCurrentOrganizationForSettings();
