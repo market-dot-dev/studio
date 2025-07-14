@@ -34,7 +34,6 @@ describe("RoleService", () => {
       ];
 
       for (const path of privatePaths) {
-        console.log("PATH", path);
         expect(await isPublicPath(path)).toBe(false);
       }
     });
