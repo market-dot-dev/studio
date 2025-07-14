@@ -5,7 +5,9 @@ import {
 } from "@/app/services/organization/organization-service";
 import { OnboardingHeader } from "@/components/onboarding/onboarding-header";
 import { submitOrganizationForm } from "@/components/organization/organization-form-action";
+import { Button } from "@/components/ui/button";
 import { CurrentOrganizationForSettings } from "@/types/organization";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { SetupOnboardingForm } from "./organization-onboarding-form";
 
@@ -61,13 +63,22 @@ export default async function SetupOnboardingPage({ searchParams }: SetupOnboard
   const nextPath = getNextStepPath(currentStep.name);
 
   return (
-    <div className="mx-auto max-w-md space-y-10">
-      <OnboardingHeader title={currentStep.title} description={currentStep.description} />
-      <SetupOnboardingForm
-        organization={isCreationMode ? null : org}
-        onSubmit={submitAction}
-        nextPath={nextPath}
-      />
+    <div className="mx-auto max-w-md">
+      <div className="space-y-10">
+        <OnboardingHeader title={currentStep.title} description={currentStep.description} />
+        <SetupOnboardingForm
+          organization={isCreationMode ? null : org}
+          onSubmit={submitAction}
+          nextPath={nextPath}
+        />
+      </div>
+      {isCreationMode && (
+        <div className="mt-2">
+          <Button asChild className="w-full gap-2" variant="outline">
+            <Link href="/organizations">Cancel</Link>
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
