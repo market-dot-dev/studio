@@ -1,6 +1,6 @@
 "use client";
 
-import { setCurrentOrganization } from "@/app/services/auth-service";
+import { setCurrentOrganization } from "@/app/services/user-context-service";
 import { OrganizationForSwitcher } from "@/types/organization";
 import { ChevronRight } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -47,7 +47,7 @@ export function OrganizationItem({ organization }: OrganizationItemProps) {
     <button
       onClick={handleSwitchOrganization}
       disabled={isPending}
-      className="group flex w-full items-center justify-between p-4 disabled:opacity-50 md:p-5 "
+      className="group flex w-full items-center justify-between p-4 disabled:opacity-50 md:p-5"
     >
       <div className="flex items-center gap-3">
         <div className="text-md flex size-9 shrink-0 items-center justify-center rounded bg-swamp font-bold text-white md:size-11 md:rounded-md md:text-lg">

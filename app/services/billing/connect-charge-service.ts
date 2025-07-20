@@ -1,16 +1,16 @@
 "use server";
 
 import { Charge } from "@/app/generated/prisma";
-import { getCustomerOrganizationById } from "@/app/services/organization/customer-organization-service";
 import { getVendorOrganizationById } from "@/app/services/organization/vendor-organization-service";
 import { calculatePlatformFee } from "@/app/services/stripe/stripe-price-service";
 import { getTierByIdWithOrg } from "@/app/services/tier/tier-service";
-import { requireOrganization } from "@/app/services/user-context-service";
+import { requireUser } from "@/app/services/user-context-service";
 import prisma from "@/lib/prisma";
+import { getCustomerProfileById } from "../customer-profile-service";
 import { confirmCustomerPurchase, notifyOwnerOfNewPurchase } from "../email-service";
 
 /**
- * Find a charge by ID with organization and tier data
+ * Find a charge by ID with customer profile and tier data
  */
 export async function findCharge(chargeId: string): Promise<Charge | null> {
   return prisma.charge.findUnique({
@@ -18,9 +18,9 @@ export async function findCharge(chargeId: string): Promise<Charge | null> {
       id: chargeId
     },
     include: {
-      organization: {
+      customerProfile: {
         include: {
-          owner: true
+          user: true
         }
       },
       tier: true
@@ -63,42 +63,48 @@ export async function anyChargesByTierId(tierId: string): Promise<boolean> {
 }
 
 /**
- * Find charges by tier ID for the current organization
+ * Find charges by tier ID for the current user
  */
 export async function findChargesByTierId(tierId: string): Promise<Charge[]> {
-  const org = await requireOrganization();
+  const user = await requireUser();
+  const customerProfile = await getCustomerProfileById(user.id);
+
   return prisma.charge.findMany({
     where: {
       tierId,
-      organizationId: org.id
+      customerProfileId: customerProfile.id
     }
   });
 }
 
 /**
- * Find all charges for the current organization
+ * Find all charges for the current user
  */
-export async function getChargesForCurrentOrganization(): Promise<Charge[]> {
-  const org = await requireOrganization();
+export async function getChargesForCurrentUser(): Promise<Charge[]> {
+  const user = await requireUser();
+  const customerProfile = await getCustomerProfileById(user.id);
+
   return prisma.charge.findMany({
     where: {
-      organizationId: org.id
+      customerProfileId: customerProfile.id
     }
   });
 }
 
 /**
- * Get charges for a specific organization
+ * Get charges for a specific customer profile
  */
-export async function findChargesForOrganization(organizationId: string): Promise<Charge[]> {
+export async function findChargesForCustomerProfile(userId: string): Promise<Charge[]> {
+  const customerProfile = await getCustomerProfileById(userId);
+
   return prisma.charge.findMany({
     where: {
-      organizationId: organizationId
+      customerProfileId: customerProfile.id
     },
     include: {
-      organization: {
+      customerProfile: {
         include: {
-          owner: true
+          user: true
         }
       },
       tier: true
@@ -107,16 +113,16 @@ export async function findChargesForOrganization(organizationId: string): Promis
 }
 
 /**
- * Create a local charge record for an organization
+ * Create a local charge record for a user
  */
 export async function createLocalCharge(
-  customerOrgId: string,
+  userId: string,
   tierId: string,
   paymentIntentId: string,
   tierVersionId?: string
 ): Promise<Charge> {
-  const customerOrg = await getCustomerOrganizationById(customerOrgId);
-  if (!customerOrg) throw new Error("Customer organization not found");
+  const customerProfile = await getCustomerProfileById(userId);
+  if (!customerProfile) throw new Error("Customer profile not found");
 
   const tier = await getTierByIdWithOrg(tierId);
   if (!tier || !tier.organization || !tier.organization.stripeAccountId) {
@@ -139,7 +145,7 @@ export async function createLocalCharge(
 
   const charge = await prisma.charge.create({
     data: {
-      organizationId: customerOrgId,
+      customerProfileId: customerProfile.id,
       tierId: tierId,
       tierVersionId: tierVersionId,
       stripeChargeId: paymentIntentId,
@@ -149,8 +155,8 @@ export async function createLocalCharge(
   });
 
   await Promise.all([
-    notifyOwnerOfNewPurchase(vendorOrg.owner.id, customerOrg.owner, tier.name),
-    confirmCustomerPurchase(customerOrg.owner, tier.name)
+    notifyOwnerOfNewPurchase(vendorOrg.owner.id, customerProfile.user, tier.name),
+    confirmCustomerPurchase(customerProfile.user, tier.name)
   ]);
 
   return charge;

@@ -5,7 +5,6 @@ import Tier from "@/app/models/Tier";
 import { Badge } from "@/components/ui/badge";
 import { ViewButton } from "@/components/ui/view-button";
 import { capitalize, formatDate } from "@/lib/utils";
-import type { CustomerOrgWithAll } from "@/types/organization-customer";
 import { ColumnDef } from "@tanstack/react-table";
 import { Package } from "lucide-react";
 import Link from "next/link";
@@ -15,13 +14,18 @@ import { SubscriptionStatusBadge } from "../subscription-state";
 export type Sale = {
   id: string;
   type: "subscription" | "charge" | "prospect";
-  organization: CustomerOrgWithAll;
-  ownerName?: string;
-  ownerEmail?: string;
+  // For customers (subscriptions/charges)
+  userId?: string;
+  userName?: string;
+  userEmail?: string;
+  // For prospects
+  prospectName?: string;
+  prospectEmail?: string;
+  prospectCompany?: string;
+  // Common fields
   tierName?: string;
   tierNames?: string[];
   createdAt: Date;
-  organizationId: string;
   subscription?: Subscription & { tier: Tier };
   charge?: Charge & { tier: Tier };
   prospect?: Prospect & { tiers: Tier[] };
@@ -36,36 +40,36 @@ export const columns: ColumnDef<Sale>[] = [
     }
   },
   {
-    accessorKey: "organization.name",
-    header: "Organization",
+    id: "customer",
+    header: "Customer",
     meta: {
       emphasized: true
     },
     cell: ({ row }) => {
-      // For prospects, show the prospect's company name, not the vendor organization
-      if (row.original.type === "prospect" && row.original.prospect) {
-        const companyName = row.original.prospect.companyName;
-        const ownerName = row.original.ownerName || row.original.prospect.name;
+      // For prospects, show the prospect's info
+      if (row.original.type === "prospect") {
+        const companyName = row.original.prospectCompany;
+        const name = row.original.prospectName;
 
         return (
           <div className="flex flex-col">
-            <span className="font-semibold text-stone-800">{companyName || "—"}</span>
-            {ownerName && (
-              <span className="text-xs font-normal text-muted-foreground">{ownerName}</span>
+            <span className="font-semibold text-stone-800">{companyName || name || "—"}</span>
+            {name && companyName && (
+              <span className="text-xs font-normal text-muted-foreground">{name}</span>
             )}
           </div>
         );
       }
 
-      // For customers (subscriptions/charges), show the customer organization name
-      const orgName = row.original.organization.name;
-      const ownerName = row.original.ownerName || row.original.organization.owner.name;
+      // For customers (subscriptions/charges), show user info
+      const userName = row.original.userName;
+      const userEmail = row.original.userEmail;
 
       return (
         <div className="flex flex-col">
-          <span className="font-semibold text-stone-800">{orgName}</span>
-          {ownerName && (
-            <span className="text-xs font-normal text-muted-foreground">{ownerName}</span>
+          <span className="font-semibold text-stone-800">{userName || "—"}</span>
+          {userEmail && (
+            <span className="text-xs font-normal text-muted-foreground">{userEmail}</span>
           )}
         </div>
       );
@@ -151,8 +155,12 @@ export const columns: ColumnDef<Sale>[] = [
         return <ViewButton href={`/prospects/${row.original.prospect.id}`} />;
       }
 
-      // For customers (charges/subscriptions), link to the customer page
-      return <ViewButton href={`/customers/${row.original.organizationId}`} />;
+      // For customers (charges/subscriptions), link to the customer page using userId
+      if (row.original.userId) {
+        return <ViewButton href={`/customers/${row.original.userId}`} />;
+      }
+
+      return null;
     }
   }
 ];

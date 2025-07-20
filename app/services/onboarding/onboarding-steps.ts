@@ -5,33 +5,34 @@ export interface OnboardingStep {
   readonly path: string;
 }
 
-export const ONBOARDING_COMPLETE_PATH = "/onboarding/complete";
+export const ONBOARDING_BASE_URL = "/onboarding";
+export const ONBOARDING_COMPLETE_URL = ONBOARDING_BASE_URL + "/complete";
 
 // Reorder these steps to change their order in the onboarding flow
 export const ONBOARDING_STEPS = {
-  organization: {
-    name: "organization",
+  setup: {
+    name: "setup",
     title: "Create Your Organization",
     description: "Set up your organization details and branding",
-    path: "/onboarding/organization"
+    path: ONBOARDING_BASE_URL + "/setup"
   },
   stripe: {
     name: "stripe",
     title: "Connect Stripe",
     description: "Set up payment processing to accept customer payments",
-    path: "/onboarding/stripe"
+    path: ONBOARDING_BASE_URL + "/stripe"
   },
   team: {
     name: "team",
     title: "Invite Your Team",
     description: "Add others from your team to collaborate",
-    path: "/onboarding/team"
+    path: ONBOARDING_BASE_URL + "/team"
   },
   pricing: {
     name: "pricing",
     title: "Choose Your Plan",
     description: "Start for free or upgrade to Pro for commission-free sales & priority support.",
-    path: "/onboarding/pricing"
+    path: ONBOARDING_BASE_URL + "/pricing"
   }
 } as const satisfies Record<string, OnboardingStep>;
 
@@ -76,7 +77,7 @@ export function getNextStepPath(currentStepName: OnboardingStepName) {
   const nextStepName = ONBOARDING_STEP_NAMES[currentIndex + 1];
 
   if (!nextStepName) {
-    return ONBOARDING_COMPLETE_PATH;
+    return ONBOARDING_COMPLETE_URL;
   }
 
   return ONBOARDING_STEPS[nextStepName].path;

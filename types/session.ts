@@ -1,4 +1,4 @@
-import { OrganizationRole, OrganizationType, User } from "@/app/generated/prisma";
+import { OrganizationRole, User } from "@/app/generated/prisma";
 
 export type SessionUser = {
   id: string;
@@ -8,7 +8,6 @@ export type SessionUser = {
   image?: string;
   // New organization context
   currentOrgId?: string;
-  currentOrgType?: OrganizationType;
   currentUserRole?: OrganizationRole;
 };
 
@@ -17,11 +16,7 @@ export type Session = {
   expires: string;
 } | null;
 
-export const createSessionUser = (
-  user: User,
-  currentOrgType?: OrganizationType,
-  currentUserRole?: OrganizationRole
-): SessionUser => {
+export const createSessionUser = (user: User, currentUserRole?: OrganizationRole): SessionUser => {
   return {
     id: user.id,
     name: user.name || undefined,
@@ -29,9 +24,6 @@ export const createSessionUser = (
     email: user.email || undefined,
     image: user.image || undefined,
     currentOrgId: user.currentOrganizationId || undefined,
-    currentOrgType: currentOrgType,
     currentUserRole: currentUserRole
   };
 };
-
-export default Session;

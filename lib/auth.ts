@@ -1,7 +1,7 @@
-import Session from "@/app/models/Session";
-import AuthService from "@/app/services/auth-service";
+import { jwtCallback, sessionCallback } from "@/app/services/auth-service";
 import { sendVerificationEmail } from "@/app/services/email-service";
 import prisma from "@/lib/prisma";
+import { Session } from "@/types/session";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import { getServerSession, type NextAuthOptions } from "next-auth";
 import { Provider } from "next-auth/providers";
@@ -23,17 +23,11 @@ const cookieDomain = isPreview
 export const authOptions: NextAuthOptions = {
   providers: [
     EmailProvider({
-      server: {
-        host: process.env.EMAIL_SERVER_HOST,
-        port: process.env.EMAIL_SERVER_PORT,
-        auth: {
-          user: process.env.EMAIL_SERVER_USER,
-          pass: process.env.SENDGRID_API_KEY
-        }
-      },
+      // @NOTE: "server"/"from" are unused, but required here as sendgrid takes care of email
+      server: process.env.EMAIL_SERVER,
       from: process.env.SENDGRID_FROM_EMAIL,
       // the following configuration of EmailProvider makes it use a 6 digit token number instead of a magic link
-      maxAge: 5 * 60,
+      maxAge: 5 * 60, // 5 minutes
       generateVerificationToken: async () => {
         return Math.floor(100000 + Math.random() * 900000).toString();
       },
@@ -75,8 +69,8 @@ export const authOptions: NextAuthOptions = {
     }
   },
   callbacks: {
-    jwt: AuthService.jwtCallback,
-    session: AuthService.sessionCallback,
+    jwt: jwtCallback,
+    session: sessionCallback,
     redirect({ url, baseUrl }: { url: string; baseUrl: string }): string {
       // custom redirect logic
       if (!/^https?:\/\//.test(url)) {
@@ -107,6 +101,6 @@ export const authOptions: NextAuthOptions = {
   }
 };
 
-export async function getSession() {
-  return getServerSession(authOptions) as Promise<Session>;
+export async function getSession(): Promise<Session | null> {
+  return getServerSession(authOptions) as Promise<Session | null>;
 }

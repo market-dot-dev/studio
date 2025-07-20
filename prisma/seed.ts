@@ -1,12 +1,4 @@
-import {
-  Contract,
-  Organization,
-  OrganizationType,
-  PlanType,
-  PrismaClient,
-  Tier,
-  User
-} from "@/app/generated/prisma";
+import { Contract, Organization, PlanType, PrismaClient, Tier, User } from "@/app/generated/prisma";
 import fs from "fs";
 import yaml from "js-yaml";
 import path from "path";
@@ -29,7 +21,6 @@ const createOrganizations = async (users: User[]) => {
     const organization = await prisma.organization.create({
       data: {
         name: `${user.name}'s Organization`,
-        type: OrganizationType.VENDOR,
         ownerId: user.id,
         members: {
           create: {
@@ -43,14 +34,13 @@ const createOrganizations = async (users: User[]) => {
             id: user.id
           }
         },
-        stripeCustomerIds: {},
-        stripePaymentMethodIds: {},
         // Create billing record with FREE plan by default
         billing: {
           create: {
             planType: PlanType.FREE
           }
         }
+        // @TODO: Seed them a site with a page too
       }
     });
     createdOrganizations.push(organization);

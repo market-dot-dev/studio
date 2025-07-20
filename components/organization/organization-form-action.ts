@@ -20,18 +20,13 @@ export async function submitOrganizationForm(formData: FormData): Promise<Organi
   const subdomain = (formData.get("subdomain") as string)?.toLowerCase();
   const country = formData.get("country") as string;
   const description = formData.get("description") as string;
-  const organizationType = formData.get("organizationType") as string;
-
-  // Customer organizations don't require subdomains
-  const requireSubdomain = organizationType !== "CUSTOMER";
-
   const errors: Record<string, string> = {};
 
   if (!organizationName?.trim()) {
     errors.organizationName = "Organization name is required";
   }
 
-  if (requireSubdomain && !subdomain?.trim()) {
+  if (!subdomain?.trim()) {
     errors.subdomain = "Pick a domain";
   }
 

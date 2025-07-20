@@ -1,6 +1,7 @@
 import { getOrganizationSwitcherContext } from "@/app/services/user-context-service";
 import Image from "next/image";
-import { OrganizationItem } from "./OrganizationItem";
+import { CreateOrganizationModal } from "./create-organization-modal";
+import { OrganizationItem } from "./organization-item";
 
 export default async function OrganizationsPage() {
   const { availableOrganizations: orgs } = await getOrganizationSwitcherContext();
@@ -42,9 +43,7 @@ export default async function OrganizationsPage() {
               ))
             )}
           </div>
-
-          {/* @TODO: Org-Creation */}
-          {/* <div className="z-0 -mt-5 flex flex-col gap-4 rounded-b-lg border bg-stone-150 pt-9">
+          <div className="z-0 -mt-5 flex flex-col gap-4 rounded-b-lg border bg-stone-150 pt-9">
             <div className="flex items-center gap-2">
               <hr className="flex-1 border-t border-dashed border-stone-300" />
               <p className="flex-none text-center text-xs font-medium text-muted-foreground xs:whitespace-nowrap">
@@ -53,14 +52,9 @@ export default async function OrganizationsPage() {
               <hr className="flex-1 border-t border-dashed border-stone-300" />
             </div>
             <div className="px-4 pb-4 md:px-5 md:pb-5">
-              <Button asChild className="w-full gap-2" variant="outline">
-                <Link href="/organizations/new">
-                  <Building className="size-4" />
-                  Create a new organization
-                </Link>
-              </Button>
+              <CreateOrganizationModal autoOpen={orgs.length === 0} />
             </div>
-          </div> */}
+          </div>
         </div>
       </div>
     </div>

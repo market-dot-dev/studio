@@ -1,7 +1,5 @@
 "use client";
 
-import { OrganizationType } from "@/app/generated/prisma";
-import { SessionUser } from "@/app/models/Session";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -11,6 +9,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
+import { SessionUser } from "@/types/session";
 import { LogOut } from "lucide-react";
 import { signOut } from "next-auth/react";
 import Image from "next/image";
@@ -59,8 +58,7 @@ export default function UserDropdown({ user }: { user: SessionUser }) {
           <DropdownMenuItem
             onClick={() =>
               signOut({
-                callbackUrl:
-                  user.currentOrgType === OrganizationType.VENDOR ? "/login" : "/customer-login"
+                callbackUrl: "/login"
               })
             }
           >

@@ -2,7 +2,7 @@
 
 import { ProgressDonut } from "@/app/components/onboarding/progress-donut";
 import {
-  ONBOARDING_COMPLETE_PATH,
+  ONBOARDING_COMPLETE_URL,
   ONBOARDING_STEP_NAMES,
   getPreviousStepPath,
   type OnboardingStepName
@@ -18,7 +18,7 @@ export function OnboardingNavigation() {
   const totalSteps = ONBOARDING_STEP_NAMES.length + 1; // +1 for complete page
 
   const currentStepName = pathname.split("/").pop() as OnboardingStepName | "complete";
-  const isCompletePage = pathname === ONBOARDING_COMPLETE_PATH;
+  const isCompletePage = pathname === ONBOARDING_COMPLETE_URL;
 
   const stepIndex = ONBOARDING_STEP_NAMES.indexOf(currentStepName as OnboardingStepName);
 

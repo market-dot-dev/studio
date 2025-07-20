@@ -7,7 +7,6 @@ export const includeMinimalOrg = Prisma.validator<Prisma.OrganizationDefaultArgs
   select: {
     id: true,
     name: true,
-    type: true,
     description: true,
     businessLocation: true,
     businessType: true,
@@ -44,7 +43,6 @@ export const includeOrgSwitcherContext = Prisma.validator<Prisma.OrganizationDef
   select: {
     id: true,
     name: true,
-    type: true,
     sites: {
       select: {
         subdomain: true
@@ -77,8 +75,6 @@ export const includeOrgForStripeOps = Prisma.validator<Prisma.OrganizationDefaul
         name: true
       }
     },
-    stripeCustomerIds: true,
-    stripePaymentMethodIds: true,
     stripeCSRF: true,
     stripeAccountId: true,
     billing: {
@@ -127,8 +123,6 @@ export const includeFullOrg = Prisma.validator<Prisma.OrganizationDefaultArgs>()
     _count: {
       select: {
         tiers: true,
-        charges: true,
-        subscriptions: true,
         prospects: true
       }
     }

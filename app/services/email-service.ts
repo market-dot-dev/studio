@@ -4,7 +4,7 @@ import * as EmailTemplates from "@/app/components/email/templates";
 import { Prospect, User } from "@/app/generated/prisma";
 import { getRootUrl } from "@/lib/domain";
 import sgMail from "@sendgrid/mail";
-import { findUser } from "./UserService";
+import { getUserById } from "./user-service";
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY || "");
 
@@ -72,7 +72,7 @@ export async function notifyOwnerOfNewSubscription(
   const subject = `You have a new customer for ${tierName}!`;
   const html = EmailTemplates.createNewSubscriptionEmail(customer.name || "", tierName);
   const text = `Congratulations! ${customer.name} has purchased your ${tierName} tier.`;
-  const user = await findUser(userId);
+  const user = await getUserById(userId);
 
   if (!user) {
     console.error(`User not found with id: ${userId}`);
@@ -102,7 +102,7 @@ export async function notifyOwnerOfNewPurchase(
   const subject = `You have a new customer for ${tierName}!`;
   const html = EmailTemplates.createNewPurchaseEmail(customer.name || "", tierName);
   const text = `Congratulations! ${customer.name} has purchased your ${tierName} package.`;
-  const user = await findUser(userId);
+  const user = await getUserById(userId);
 
   if (!user) {
     console.error(`User not found with id: ${userId}`);

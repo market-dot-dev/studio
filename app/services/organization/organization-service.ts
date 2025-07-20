@@ -8,7 +8,7 @@ import {
   includeFullOrg,
   includeMinimalOrg
 } from "@/types/organization";
-import { Prisma } from "../../generated/prisma";
+import { Prisma } from "app/generated/prisma";
 import { requireOrganization, requireUser } from "../user-context-service";
 
 /**
@@ -139,6 +139,7 @@ export async function updateCurrentOrganizationBusiness(
 /**
  * Get current organization for settings display
  * Returns organization with business fields needed for forms
+ * Returns null if no current organization exists
  */
 export async function getCurrentOrganizationForSettings(): Promise<CurrentOrganizationForSettings> {
   const org = await requireOrganization();

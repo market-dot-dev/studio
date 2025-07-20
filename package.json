@@ -16,8 +16,6 @@
     "sync": "tsx prisma/sync.ts",
     "sync:services": "tsx prisma/sync.ts",
     "db:backup": "tsx scripts/backup-db.ts",
-    "db:migrate": "tsx scripts/customer-migration.ts",
-    "db:migrate:cleanup": "tsx scripts/customer-migration-cleanup.ts",
     "db:reset": "tsx scripts/reset-db.ts",
     "db:seed": "tsx scripts/reset-db.ts && prisma generate && tsx prisma/seed.ts",
     "db:restore-prod": "tsx scripts/restore-prod-db.ts",
@@ -84,7 +82,8 @@
     "sharp": "^0.34.3",
     "sonner": "^2.0.6",
     "stripe": "^18.3.0",
-    "tailwind-merge": "^2.6.0"
+    "tailwind-merge": "^2.6.0",
+    "zod": "^3.25.75"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -93,6 +92,7 @@
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/forms": "^0.5.10",
     "@tailwindcss/typography": "^0.5.16",
+    "@testing-library/react": "^16.3.0",
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^24.0.15",
     "@types/pretty": "^2.0.3",

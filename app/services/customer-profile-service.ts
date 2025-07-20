@@ -2,7 +2,7 @@
 
 import { Prisma } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
-import { OrganizationForStripeOps, includeOrgForStripeOps } from "@/types/organization";
+import { includeCustomerProfileForCheckout } from "@/types/customer-profile";
 import { StripeCard } from "@/types/stripe";
 import {
   attachStripePaymentMethod,
@@ -10,58 +10,73 @@ import {
   createStripeSetupIntent,
   detachStripePaymentMethod,
   retrieveStripePaymentMethod
-} from "../stripe/stripe-payment-service";
-import { requireOrganization } from "../user-context-service";
+} from "./stripe/stripe-payment-service";
+import { requireUser } from "./user-context-service";
 
 /**
- * Customer-specific organization operations
- * Used when the organization is acting as a CUSTOMER (buying products/services)
- * Manages payment methods, subscriptions, purchase history for different vendors
+ * Customer profile operations
+ * Manages user purchasing behavior, payment methods, and purchase history
  */
 
 /**
- * Get the current organization as a customer (includes Stripe details)
+ * Get the current user's customer profile
  */
-export async function getCurrentCustomerOrganization(): Promise<OrganizationForStripeOps> {
-  const org = await requireOrganization();
+export async function getCurrentCustomerProfile() {
+  const user = await requireUser();
 
-  const customerOrg = await prisma.organization.findUnique({
-    where: { id: org.id },
-    ...includeOrgForStripeOps
+  let customerProfile = await prisma.customerProfile.findUnique({
+    where: { userId: user.id },
+    ...includeCustomerProfileForCheckout
   });
 
-  if (!customerOrg) {
-    throw new Error("Organization not found");
+  if (!customerProfile) {
+    customerProfile = await prisma.customerProfile.create({
+      data: {
+        userId: user.id,
+        stripeCustomerIds: {},
+        stripePaymentMethodIds: {}
+      },
+      ...includeCustomerProfileForCheckout
+    });
   }
 
-  return customerOrg as OrganizationForStripeOps;
+  return customerProfile;
 }
 
 /**
- * Get customer organization by ID (includes Stripe details)
+ * Get customer profile by user ID
  */
-export async function getCustomerOrganizationById(
-  id: string
-): Promise<OrganizationForStripeOps | null> {
-  const customerOrg = await prisma.organization.findUnique({
-    where: { id },
-    ...includeOrgForStripeOps
+export async function getCustomerProfileById(userId: string) {
+  let customerProfile = await prisma.customerProfile.findUnique({
+    where: { userId },
+    ...includeCustomerProfileForCheckout
   });
 
-  return customerOrg as OrganizationForStripeOps | null;
+  if (!customerProfile) {
+    customerProfile = await prisma.customerProfile.create({
+      data: {
+        userId,
+        stripeCustomerIds: {},
+        stripePaymentMethodIds: {}
+      },
+      ...includeCustomerProfileForCheckout
+    });
+  }
+
+  return customerProfile;
 }
 
 /**
- * Update organization's Stripe customer/payment data
+ * Update customer profile's Stripe data
  */
-async function updateCustomerStripeData(
-  organizationId: string,
+async function updateCustomerProfileStripeData(
+  userId: string,
   data: {
     stripeCustomerIds?: Record<string, string>;
     stripePaymentMethodIds?: Record<string, string>;
   }
 ): Promise<void> {
-  const updateData: Prisma.OrganizationUpdateInput = {};
+  const updateData: Prisma.CustomerProfileUpdateInput = {};
 
   if (data.stripeCustomerIds) {
     updateData.stripeCustomerIds = data.stripeCustomerIds as Prisma.InputJsonValue;
@@ -71,9 +86,14 @@ async function updateCustomerStripeData(
     updateData.stripePaymentMethodIds = data.stripePaymentMethodIds as Prisma.InputJsonValue;
   }
 
-  await prisma.organization.update({
-    where: { id: organizationId },
-    data: updateData
+  await prisma.customerProfile.upsert({
+    where: { userId },
+    update: updateData,
+    create: {
+      userId,
+      stripeCustomerIds: data.stripeCustomerIds || {},
+      stripePaymentMethodIds: data.stripePaymentMethodIds || {}
+    }
   });
 }
 
@@ -82,15 +102,15 @@ async function updateCustomerStripeData(
  */
 export async function getStripeCustomerIdForVendor(
   vendorStripeAccountId: string,
-  customerOrgId?: string
+  userId?: string
 ): Promise<string | null> {
-  const customerOrg = customerOrgId
-    ? await getCustomerOrganizationById(customerOrgId)
-    : await getCurrentCustomerOrganization();
+  const customerProfile = userId
+    ? await getCustomerProfileById(userId)
+    : await getCurrentCustomerProfile();
 
-  if (!customerOrg) return null;
+  if (!customerProfile) return null;
 
-  const customerIds = (customerOrg.stripeCustomerIds as Record<string, string>) || {};
+  const customerIds = (customerProfile.stripeCustomerIds as Record<string, string>) || {};
   return customerIds[vendorStripeAccountId] || null;
 }
 
@@ -99,45 +119,48 @@ export async function getStripeCustomerIdForVendor(
  */
 export async function getOrCreateStripeCustomerIdForVendor(
   vendorStripeAccountId: string,
-  customerOrgId?: string
+  userId?: string
 ): Promise<string> {
-  const customerOrg = customerOrgId
-    ? await getCustomerOrganizationById(customerOrgId)
-    : await getCurrentCustomerOrganization();
+  const customerProfile = userId
+    ? await getCustomerProfileById(userId)
+    : await getCurrentCustomerProfile();
 
-  if (!customerOrg) {
-    throw new Error("Customer organization not found");
+  if (!customerProfile) {
+    throw new Error("Customer profile not found");
   }
 
-  let stripeCustomerId = await getStripeCustomerIdForVendor(vendorStripeAccountId, customerOrg.id);
+  let stripeCustomerId = await getStripeCustomerIdForVendor(
+    vendorStripeAccountId,
+    customerProfile.userId
+  );
 
   if (stripeCustomerId) {
     return stripeCustomerId;
   }
 
-  if (!customerOrg.owner?.email) {
-    throw new Error(
-      `Organization owner does not have an email address, required for Stripe customer creation.`
-    );
+  if (!customerProfile.user?.email) {
+    throw new Error(`User does not have an email address, required for Stripe customer creation.`);
   }
 
   // Create customer using the stripe service
   const stripeCustomer = await createStripeCustomer(
     vendorStripeAccountId,
-    customerOrg.owner.email,
-    customerOrg.name || customerOrg.owner.name || `Organization ${customerOrg.id}`
+    customerProfile.user.email,
+    customerProfile.user.name || `User ${customerProfile.userId}`
   );
 
   stripeCustomerId = stripeCustomer.id;
 
-  // Update organization record with new customer ID
-  const existingCustomerIds = (customerOrg.stripeCustomerIds as Record<string, string>) || {};
+  // Update customer profile with new customer ID
+  const existingCustomerIds = (customerProfile.stripeCustomerIds as Record<string, string>) || {};
   const updatedCustomerIds = {
     ...existingCustomerIds,
     [vendorStripeAccountId]: stripeCustomerId
   };
 
-  await updateCustomerStripeData(customerOrg.id, { stripeCustomerIds: updatedCustomerIds });
+  await updateCustomerProfileStripeData(customerProfile.userId, {
+    stripeCustomerIds: updatedCustomerIds
+  });
 
   return stripeCustomerId;
 }
@@ -147,15 +170,15 @@ export async function getOrCreateStripeCustomerIdForVendor(
  */
 export async function getStripePaymentMethodIdForVendor(
   vendorStripeAccountId: string,
-  customerOrgId?: string
+  userId?: string
 ): Promise<string | null> {
-  const customerOrg = customerOrgId
-    ? await getCustomerOrganizationById(customerOrgId)
-    : await getCurrentCustomerOrganization();
+  const customerProfile = userId
+    ? await getCustomerProfileById(userId)
+    : await getCurrentCustomerProfile();
 
-  if (!customerOrg) return null;
+  if (!customerProfile) return null;
 
-  const paymentMethodIds = (customerOrg.stripePaymentMethodIds as Record<string, string>) || {};
+  const paymentMethodIds = (customerProfile.stripePaymentMethodIds as Record<string, string>) || {};
   return paymentMethodIds[vendorStripeAccountId] || null;
 }
 
@@ -164,12 +187,12 @@ export async function getStripePaymentMethodIdForVendor(
  */
 export async function createPaymentMethodSetupIntent(
   vendorStripeAccountId: string,
-  customerOrgId?: string
+  userId?: string
 ): Promise<{ clientSecret: string | null; error: string | null }> {
   try {
     const stripeCustomerId = await getOrCreateStripeCustomerIdForVendor(
       vendorStripeAccountId,
-      customerOrgId
+      userId
     );
 
     const setupIntent = await createStripeSetupIntent(vendorStripeAccountId, stripeCustomerId);
@@ -185,64 +208,64 @@ export async function createPaymentMethodSetupIntent(
 }
 
 /**
- * Attach payment method to organization for a specific vendor
+ * Attach payment method to customer profile for a specific vendor
  */
 export async function attachPaymentMethodForVendor(
   vendorStripeAccountId: string,
   paymentMethodId: string,
-  customerOrgId?: string
+  userId?: string
 ): Promise<void> {
-  const customerOrg = customerOrgId
-    ? await getCustomerOrganizationById(customerOrgId)
-    : await getCurrentCustomerOrganization();
+  const customerProfile = userId
+    ? await getCustomerProfileById(userId)
+    : await getCurrentCustomerProfile();
 
-  if (!customerOrg) {
-    throw new Error("Customer organization not found");
+  if (!customerProfile) {
+    throw new Error("Customer profile not found");
   }
 
   const stripeCustomerId = await getOrCreateStripeCustomerIdForVendor(
     vendorStripeAccountId,
-    customerOrg.id
+    customerProfile.userId
   );
 
   // Use stripe service to attach payment method
   await attachStripePaymentMethod(vendorStripeAccountId, paymentMethodId, stripeCustomerId);
 
-  // Update organization record
+  // Update customer profile
   const existingPaymentMethodIds =
-    (customerOrg.stripePaymentMethodIds as Record<string, string>) || {};
+    (customerProfile.stripePaymentMethodIds as Record<string, string>) || {};
   const updatedPaymentMethodIds = {
     ...existingPaymentMethodIds,
     [vendorStripeAccountId]: paymentMethodId
   };
 
-  await updateCustomerStripeData(customerOrg.id, {
+  await updateCustomerProfileStripeData(customerProfile.userId, {
     stripePaymentMethodIds: updatedPaymentMethodIds
   });
 }
 
 /**
- * Detach payment method from organization for a specific vendor
+ * Detach payment method from customer profile for a specific vendor
  */
 export async function detachPaymentMethodForVendor(
   vendorStripeAccountId: string,
-  customerOrgId?: string
+  userId?: string
 ): Promise<void> {
-  const customerOrg = customerOrgId
-    ? await getCustomerOrganizationById(customerOrgId)
-    : await getCurrentCustomerOrganization();
+  const customerProfile = userId
+    ? await getCustomerProfileById(userId)
+    : await getCurrentCustomerProfile();
 
-  if (!customerOrg) {
-    throw new Error("Customer organization not found");
+  if (!customerProfile) {
+    throw new Error("Customer profile not found");
   }
 
   const paymentMethodId = await getStripePaymentMethodIdForVendor(
     vendorStripeAccountId,
-    customerOrg.id
+    customerProfile.userId
   );
   const stripeCustomerId = await getStripeCustomerIdForVendor(
     vendorStripeAccountId,
-    customerOrg.id
+    customerProfile.userId
   );
 
   if (paymentMethodId && stripeCustomerId) {
@@ -258,12 +281,12 @@ export async function detachPaymentMethodForVendor(
     }
   }
 
-  // Clear from organization record
+  // Clear from customer profile
   const existingPaymentMethodIds =
-    (customerOrg.stripePaymentMethodIds as Record<string, string>) || {};
+    (customerProfile.stripePaymentMethodIds as Record<string, string>) || {};
   delete existingPaymentMethodIds[vendorStripeAccountId];
 
-  await updateCustomerStripeData(customerOrg.id, {
+  await updateCustomerProfileStripeData(customerProfile.userId, {
     stripePaymentMethodIds: existingPaymentMethodIds
   });
 }
@@ -273,12 +296,9 @@ export async function detachPaymentMethodForVendor(
  */
 export async function getPaymentMethodDetailsForVendor(
   vendorStripeAccountId: string,
-  customerOrgId?: string
+  userId?: string
 ): Promise<StripeCard | null> {
-  const paymentMethodId = await getStripePaymentMethodIdForVendor(
-    vendorStripeAccountId,
-    customerOrgId
-  );
+  const paymentMethodId = await getStripePaymentMethodIdForVendor(vendorStripeAccountId, userId);
 
   if (!paymentMethodId) return null;
 
@@ -300,41 +320,38 @@ export async function getPaymentMethodDetailsForVendor(
 }
 
 /**
- * Check if organization can make payment to a specific vendor
+ * Check if user can make payment to a specific vendor
  */
 export async function canMakePaymentToVendor(
   vendorStripeAccountId: string,
-  customerOrgId?: string
+  userId?: string
 ): Promise<boolean> {
-  const stripeCustomerId = await getStripeCustomerIdForVendor(vendorStripeAccountId, customerOrgId);
-  const paymentMethodId = await getStripePaymentMethodIdForVendor(
-    vendorStripeAccountId,
-    customerOrgId
-  );
+  const stripeCustomerId = await getStripeCustomerIdForVendor(vendorStripeAccountId, userId);
+  const paymentMethodId = await getStripePaymentMethodIdForVendor(vendorStripeAccountId, userId);
   return !!stripeCustomerId && !!paymentMethodId;
 }
 
 /**
- * Get purchase history for organization
+ * Get purchase history for user
  */
-export async function getPurchaseHistory(customerOrgId?: string) {
-  const customerOrg = customerOrgId
-    ? await getCustomerOrganizationById(customerOrgId)
-    : await getCurrentCustomerOrganization();
+export async function getPurchaseHistory(userId?: string) {
+  const customerProfile = userId
+    ? await getCustomerProfileById(userId)
+    : await getCurrentCustomerProfile();
 
-  if (!customerOrg) {
-    throw new Error("Customer organization not found");
+  if (!customerProfile) {
+    throw new Error("Customer profile not found");
   }
 
   const [charges, subscriptions] = await Promise.all([
     prisma.charge.findMany({
-      where: { organizationId: customerOrg.id },
+      where: { customerProfileId: customerProfile.id },
       include: { tier: true },
       orderBy: { createdAt: "desc" },
       take: 10
     }),
     prisma.subscription.findMany({
-      where: { organizationId: customerOrg.id },
+      where: { customerProfileId: customerProfile.id },
       include: { tier: true },
       orderBy: { createdAt: "desc" },
       take: 10

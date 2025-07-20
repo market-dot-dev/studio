@@ -2,7 +2,7 @@ import { getSession } from "@/lib/auth";
 import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
-import GithubLoginButton from "./github-login-button";
+import { GithubSignIn } from "./github-signin";
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -14,8 +14,8 @@ export default async function LoginPage(props: {
     redirect("/");
   }
 
-  // Get callbackUrl from query parameters
-  const callbackUrl = (searchParams.callbackUrl as string) || undefined;
+  // Get parameters from query
+  const callbackUrl = (searchParams.callbackUrl as string) || "/";
 
   return (
     <>
@@ -39,11 +39,7 @@ export default async function LoginPage(props: {
             <div className="h-12 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
           }
         >
-          <GithubLoginButton
-            callbackUrl={
-              callbackUrl || (searchParams.source ? `/?source=${searchParams.source}` : undefined)
-            }
-          />
+          <GithubSignIn callbackUrl={callbackUrl} />
         </Suspense>
       </div>
     </>

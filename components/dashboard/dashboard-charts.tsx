@@ -1,18 +1,16 @@
+import { getCurrentVendorCustomers } from "@/app/services/organization/vendor-organization-service";
 import { Badge } from "@/components/ui/badge";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { CustomerOrgWithChargesAndSubs } from "@/types/organization-customer";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { CustomerBarChart } from "./customer-bar-chart";
 import { RevenueLineChart } from "./revenue-line-chart";
 
-export default function DashboardCharts({
-  customers
-}: {
-  customers: CustomerOrgWithChargesAndSubs[];
-}) {
+type Customers = Awaited<ReturnType<typeof getCurrentVendorCustomers>>;
+
+export default function DashboardCharts({ customers }: { customers: Customers }) {
   const getLastSixMonths = () => {
     const today = new Date();
     const months = [];
@@ -36,7 +34,7 @@ export default function DashboardCharts({
     return renewalDate;
   };
 
-  const processCustomers = (customers: CustomerOrgWithChargesAndSubs[]) => {
+  const processCustomers = (customers: Customers) => {
     const lastSixMonths = getLastSixMonths();
     const subscriptionCounts = {} as any;
 
@@ -111,7 +109,7 @@ export default function DashboardCharts({
     return Object.values(subscriptionCounts);
   };
 
-  const processRevenueData = (customers: CustomerOrgWithChargesAndSubs[]) => {
+  const processRevenueData = (customers: Customers) => {
     const lastSixMonths = getLastSixMonths();
     const revenueData = {} as any;
 

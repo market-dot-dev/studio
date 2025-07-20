@@ -1,6 +1,6 @@
 "use client";
 
-import { setCurrentOrganization } from "@/app/services/auth-service";
+import { setCurrentOrganization } from "@/app/services/user-context-service";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,

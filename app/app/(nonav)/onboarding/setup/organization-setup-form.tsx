@@ -2,22 +2,20 @@
 
 import { CountrySelect } from "@/components/form/country-select";
 import { OnboardingAction } from "@/components/onboarding/onboarding-action";
-import { submitOrganizationForm } from "@/components/organization/organization-form-action";
+import { OrganizationFormResult } from "@/components/organization/organization-form-action";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import type { CurrentOrganizationForSettings } from "@/types/organization";
 import { AppWindowMac, Link } from "lucide-react";
 import { useRef, useState } from "react";
 
-interface OrganizationOnboardingFormProps {
+interface Props {
   organization: CurrentOrganizationForSettings;
+  onSubmit: (formData: FormData) => Promise<OrganizationFormResult>;
   nextPath: string;
 }
 
-export function OrganizationOnboardingForm({
-  organization,
-  nextPath
-}: OrganizationOnboardingFormProps) {
+export function OrganizationSetupForm({ organization, onSubmit, nextPath }: Props) {
   const formRef = useRef<HTMLFormElement>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -29,19 +27,19 @@ export function OrganizationOnboardingForm({
     setErrors({});
 
     const formData = new FormData(formRef.current);
-    const { success, errors: errorMessages } = await submitOrganizationForm(formData);
+
+    // Use the provided submit handler
+    const { success, errors: errorMessages } = await onSubmit(formData);
 
     if (!success) {
       setErrors(errorMessages || {});
-      throw new Error("Organization validation failed");
+      throw new Error("Form submission failed");
     }
   };
 
   return (
     <div className="space-y-10">
       <form ref={formRef} className="space-y-6">
-        <input type="hidden" name="organizationType" value="VENDOR" />
-
         <div className="flex-1 space-y-6">
           <div className="space-y-2">
             <Label htmlFor="organizationName">Organization Name</Label>
@@ -49,7 +47,7 @@ export function OrganizationOnboardingForm({
               id="organizationName"
               name="organizationName"
               placeholder="Your Organization Name"
-              defaultValue={organization.name}
+              defaultValue={organization.name || ""}
               required
               autoFocus
             />
@@ -84,6 +82,8 @@ export function OrganizationOnboardingForm({
             {errors.subdomain && <div className="text-xs text-destructive">{errors.subdomain}</div>}
           </div>
         </div>
+        {/* Hidden description field */}
+        <input type="hidden" name="description" value={organization.description ?? ""} />
         <div className="space-y-2">
           <Label htmlFor="country">Country</Label>
           <CountrySelect
@@ -96,11 +96,7 @@ export function OrganizationOnboardingForm({
         </div>
       </form>
       {errors._form && <div className="text-xs text-destructive">{errors._form}</div>}
-      <OnboardingAction
-        currentStep="organization"
-        nextPath={nextPath}
-        beforeAction={handleBeforeAction}
-      />
+      <OnboardingAction currentStep="setup" nextPath={nextPath} beforeAction={handleBeforeAction} />
     </div>
   );
 }

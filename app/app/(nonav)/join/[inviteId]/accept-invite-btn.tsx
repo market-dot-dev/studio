@@ -1,7 +1,7 @@
 "use client";
 
-import { setCurrentOrganization } from "@/app/services/auth-service";
 import { acceptInvitation } from "@/app/services/organization/team-management-service";
+import { setCurrentOrganization } from "@/app/services/user-context-service";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";

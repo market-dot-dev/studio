@@ -48,7 +48,7 @@ function Slot(props: SlotProps & { index: number }) {
         "transition-[border-color]",
         "ring-stone-800",
         {
-          "ring-2 outline-accent-foreground z-[2] !border-transparent rounded": props.isActive
+          "z-[2] rounded !border-transparent outline-accent-foreground ring-2": props.isActive
         }
       )}
     >
@@ -71,20 +71,3 @@ function FakeCaret() {
 function FakeDash() {
   return <div className="h-1 w-3 rounded border border-stone-200 bg-white" />;
 }
-
-// tailwind.config.ts for the blinking caret animation.
-const config = {
-  theme: {
-    extend: {
-      keyframes: {
-        "caret-blink": {
-          "0%,70%,100%": { opacity: "1" },
-          "20%,50%": { opacity: "0" }
-        }
-      },
-      animation: {
-        "caret-blink": "caret-blink 1.2s ease-out infinite"
-      }
-    }
-  }
-};

@@ -1,11 +1,11 @@
 "use client";
 
-import { SessionUser } from "@/app/models/Session";
-import { updateCurrentUser } from "@/app/services/UserService";
+import { updateCurrentUser } from "@/app/services/user-context-service";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { SessionUser } from "@/types/session";
 import { VisuallyHidden } from "@radix-ui/themes";
 import { UserRound } from "lucide-react";
 import { useSession } from "next-auth/react";

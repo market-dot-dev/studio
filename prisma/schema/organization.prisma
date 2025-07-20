@@ -1,15 +1,8 @@
-// @DEPRECATED, pending removal after migration.
-enum OrganizationType {
-  VENDOR // Can sell products AND make purchases
-  CUSTOMER // Can only make purchases 
-}
-
 model Organization {
-  id        String           @id @default(cuid())
+  id        String   @id @default(cuid())
   name      String
-  createdAt DateTime         @default(now())
-  updatedAt DateTime         @updatedAt
-  type      OrganizationType @default(CUSTOMER) // @DEPRECATED, pending removal after migration.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Owner relationship
   ownerId String
@@ -26,23 +19,19 @@ model Organization {
   onboarding       Json?
 
   // Stripe fields
-  stripePaymentMethodIds      Json    @default("{}") // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
-  stripeCustomerIds           Json    @default("{}") // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
   stripeAccountId             String? @unique
   stripeCSRF                  String? @unique
   stripeAccountDisabled       Boolean @default(false)
   stripeAccountDisabledReason String?
 
   // Entity relationships
-  tiers         Tier[]
-  contracts     Contract[]
-  charges       Charge[] // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
-  subscriptions Subscription[] // @DEPRECATED, pending removal after migration. (moved to CustomerProfile)
-  prospects     Prospect[]           @relation(name: "prospects")
-  sites         Site[]
-  invites       OrganizationInvite[]
-  billing       OrganizationBilling?
-  integrations  Integration[]
+  tiers        Tier[]
+  contracts    Contract[]
+  prospects    Prospect[]           @relation(name: "prospects")
+  sites        Site[]
+  invites      OrganizationInvite[]
+  billing      OrganizationBilling?
+  integrations Integration[]
 
   @@index([ownerId])
 }

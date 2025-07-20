@@ -8,6 +8,7 @@ import { requireOrganization } from "./user-context-service";
 
 export type ContractWithUploadData = Contract & { uploadData?: File };
 
+// @TODO: Refactor to server-actions
 class ContractService {
   static async delete(id: string): Promise<Contract> {
     const organization = await requireOrganization();

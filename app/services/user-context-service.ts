@@ -1,16 +1,16 @@
 "use server";
 
-import { User } from "@/app/generated/prisma";
+import { Prisma, User } from "@/app/generated/prisma";
 import { getSession } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import {
+  includeOrgSwitcherContext,
   MinimalOrganization,
-  OrganizationSwitcherContext,
-  includeOrgSwitcherContext
+  OrganizationSwitcherContext
 } from "@/types/organization";
+import { SessionUser } from "@/types/session";
 import { redirect } from "next/navigation";
 import { cache } from "react";
-import { SessionUser } from "../models/Session";
 import { getOrganizationById } from "./organization/organization-service";
 
 // Session-only functions (no DB queries)
@@ -87,6 +87,15 @@ export const requireUser = cache(async (): Promise<User> => {
 
   return user;
 });
+
+export const updateCurrentUser = async (userData: Prisma.UserUpdateInput) => {
+  const userId = await requireUserId();
+  const result = await prisma.user.update({
+    where: { id: userId },
+    data: userData
+  });
+  return result;
+};
 
 // Organization functions
 
@@ -172,3 +181,31 @@ export const getOrganizationSwitcherContext = cache(
     };
   }
 );
+
+/**
+ * Set an organization as the current one for a user
+ */
+export async function setCurrentOrganization(organizationId: string): Promise<void> {
+  const user = await requireUser();
+
+  // Check if user is a member of the organization
+  const membership = await prisma.organizationMember.findUnique({
+    where: {
+      organizationId_userId: {
+        organizationId,
+        userId: user.id
+      }
+    }
+  });
+
+  if (!membership) {
+    throw new Error("You are not a member of this organization");
+  }
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: {
+      currentOrganizationId: organizationId
+    }
+  });
+}
