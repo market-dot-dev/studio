@@ -6,10 +6,10 @@ model Charge {
   platformFeeAmount Int? // Platform fee applied (in cents)
   createdAt         DateTime @default(now())
 
-  organizationId    String // @DEPRECATED, pending removal after migration
-  organization      Organization     @relation(fields: [organizationId], references: [id]) // @DEPRECATED, pending removal after migration
-  customerProfileId String?
-  customerProfile   CustomerProfile? @relation(fields: [customerProfileId], references: [id])
+  organizationId    String? // @DEPRECATED, pending removal after migration
+  organization      Organization?   @relation(fields: [organizationId], references: [id]) // @DEPRECATED, pending removal after migration
+  customerProfileId String
+  customerProfile   CustomerProfile @relation(fields: [customerProfileId], references: [id])
 
   tierVersionId String?
   tierVersion   TierVersion? @relation(fields: [tierVersionId], references: [id])
@@ -32,10 +32,10 @@ model Subscription {
   priceAnnual          Boolean   @default(false)
   active               Boolean   @default(true)
 
-  organizationId    String // @DEPRECATED, pending removal after migration
-  organization      Organization     @relation(fields: [organizationId], references: [id]) // @DEPRECATED, pending removal after migration
-  customerProfileId String?
-  customerProfile   CustomerProfile? @relation(fields: [customerProfileId], references: [id])
+  organizationId    String? // @DEPRECATED, pending removal after migration
+  organization      Organization?   @relation(fields: [organizationId], references: [id]) // @DEPRECATED, pending removal after migration
+  customerProfileId String
+  customerProfile   CustomerProfile @relation(fields: [customerProfileId], references: [id])
 
   tierVersionId String?
   tierVersion   TierVersion? @relation(fields: [tierVersionId], references: [id])
