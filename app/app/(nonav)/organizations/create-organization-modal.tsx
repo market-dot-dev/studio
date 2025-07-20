@@ -39,12 +39,13 @@ export function CreateOrganizationModal() {
     if (state !== prevStateRef.current) {
       if (state.success) {
         toast.success("Organization created! Setting up your workspace...");
-        setOpen(false);
 
         // Update session to include new organization context, then redirect
         updateSession().then(() => {
           router.push(ONBOARDING_BASE_URL);
         });
+
+        // @NOTE: We don't close the modal here
       } else if (state.message) {
         toast.error(state.message);
       }
