@@ -10,7 +10,6 @@ function executeCommand(command: string): void {
   try {
     console.log(`Executing: ${command}`);
     execSync(command, { stdio: "inherit" });
-    execSync(command, { stdio: "inherit" });
   } catch (error) {
     console.error(`Failed to execute command: ${command}`);
     console.error(error);
@@ -28,10 +27,7 @@ function resetDatabase(): void {
   console.log("[db:reset] Resetting dev database...");
 
   console.log("[db:reset] * resetting schema");
-  executeCommand("pnpm prisma migrate reset --force --preview-feature");
-
-  console.log("[db:reset] * triggering migrations");
-  executeCommand("pnpm prisma migrate deploy --preview-feature");
+  executeCommand("pnpm prisma migrate reset --force");
 
   console.log("[db:reset] * loading services");
   executeCommand("pnpm sync:services");
