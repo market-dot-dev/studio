@@ -58,6 +58,12 @@ const nextConfig: NextConfig = {
         ],
         destination: "https://:subdomain.market.dev/:path*",
         permanent: true
+      },
+      // @NOTE: Old customer login page
+      {
+        source: "/customer-login",
+        destination: "https://app.market.dev/login",
+        permanent: true
       }
     ];
   }
