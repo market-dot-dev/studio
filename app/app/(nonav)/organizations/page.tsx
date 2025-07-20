@@ -1,5 +1,6 @@
 import { getOrganizationSwitcherContext } from "@/app/services/user-context-service";
 import Image from "next/image";
+import Link from "next/link";
 import { CreateOrganizationModal } from "./create-organization-modal";
 import { OrganizationItem } from "./organization-item";
 
@@ -55,6 +56,11 @@ export default async function OrganizationsPage() {
               <CreateOrganizationModal autoOpen={orgs.length === 0} />
             </div>
           </div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            <Link href="/c" className="transition-colors hover:text-foreground">
+              Go to Customer Portal →
+            </Link>
+          </p>
         </div>
       </div>
     </div>
