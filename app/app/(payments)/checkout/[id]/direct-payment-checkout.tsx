@@ -84,7 +84,7 @@ export function DirectPaymentCheckout({
             <StepNumber number={1} className="md:hidden" />
             Account
           </h2>
-          <CheckoutLogin />
+          <CheckoutLogin signup={true} />
         </div>
       </section>
 
