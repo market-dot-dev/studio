@@ -1,0 +1,16 @@
+model CustomerProfile {
+  id     String @id @default(cuid())
+  userId String @unique // Enforces 1-to-1 relationship with User
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Customer-specific Stripe data
+  stripeCustomerIds      Json @default("{}") /// A customer has an id for each vendor they interact with
+  stripePaymentMethodIds Json @default("{}") /// A customer has an id for each vendor they interact with
+
+  // Relationships to purchases
+  charges       Charge[]
+  subscriptions Subscription[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

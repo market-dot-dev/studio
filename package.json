@@ -16,6 +16,8 @@
     "sync": "tsx prisma/sync.ts",
     "sync:services": "tsx prisma/sync.ts",
     "db:backup": "tsx scripts/backup-db.ts",
+    "db:migrate": "tsx scripts/customer-migration.ts",
+    "db:migrate:cleanup": "tsx scripts/customer-migration-cleanup.ts",
     "db:reset": "tsx scripts/reset-db.ts",
     "db:seed": "tsx scripts/reset-db.ts && prisma generate && tsx prisma/seed.ts",
     "db:restore-prod": "tsx scripts/restore-prod-db.ts",
