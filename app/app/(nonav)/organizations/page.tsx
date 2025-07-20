@@ -52,7 +52,7 @@ export default async function OrganizationsPage() {
               <hr className="flex-1 border-t border-dashed border-stone-300" />
             </div>
             <div className="px-4 pb-4 md:px-5 md:pb-5">
-              <CreateOrganizationModal />
+              <CreateOrganizationModal autoOpen={orgs.length === 0} />
             </div>
           </div>
         </div>

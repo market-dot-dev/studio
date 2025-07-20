@@ -24,8 +24,12 @@ const initialState: CreateOrganizationFormState = {
   success: false
 };
 
-export function CreateOrganizationModal() {
-  const [open, setOpen] = useState(false);
+interface CreateOrganizationModalProps {
+  autoOpen?: boolean;
+}
+
+export function CreateOrganizationModal({ autoOpen = false }: CreateOrganizationModalProps) {
+  const [open, setOpen] = useState(autoOpen);
   const router = useRouter();
   const { update: updateSession } = useSession();
   const formRef = useRef<HTMLFormElement>(null);
@@ -38,7 +42,7 @@ export function CreateOrganizationModal() {
   useEffect(() => {
     if (state !== prevStateRef.current) {
       if (state.success) {
-        toast.success("Organization created! Setting up your workspace...");
+        toast.success("Organization created, redirecting...");
 
         // Update session to include new organization context, then redirect
         updateSession().then(() => {
