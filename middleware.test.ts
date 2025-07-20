@@ -146,6 +146,23 @@ describe("Middleware", () => {
       expect(NextResponse.redirect).not.toHaveBeenCalled();
     });
 
+    it("should allow users with no org to access checkout pages", async () => {
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest(
+        "/checkout/cmdbv08xx000bue5wvhwgimt9",
+        "app.market.dev",
+        createSessionUser({ currentOrgId: undefined })
+      );
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
+      const rewriteUrl = rewriteCall[0] as URL;
+      expect(rewriteUrl.pathname).toBe("/app/checkout/cmdbv08xx000bue5wvhwgimt9");
+      expect(NextResponse.redirect).not.toHaveBeenCalled();
+    });
+
     it("should allow API routes to pass through on app domain", async () => {
       const { default: middleware } = await import("./middleware");
       const req = createMockRequest(
