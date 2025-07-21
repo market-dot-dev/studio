@@ -1,4 +1,4 @@
-import { CheckoutLogin } from "@/components/checkout";
+import { EmailOTPLogin } from "@/components/auth";
 import { getSession } from "@/lib/auth";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,7 +34,7 @@ export default async function OTPLoginPage(props: {
       </p>
 
       <div className="mx-auto mt-6 flex w-full max-w-xs flex-col gap-4">
-        <CheckoutLogin redirect={callbackUrl} signup={true} />
+        <EmailOTPLogin redirect={callbackUrl} signup={true} />
 
         <div className="mt-2 text-center">
           <Link

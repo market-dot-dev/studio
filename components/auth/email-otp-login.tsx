@@ -1,28 +1,25 @@
 "use client";
 
-import useCurrentSession from "@/app/hooks/use-current-session";
 import { userExists } from "@/app/services/user-service";
-import { EmailInput } from "@/components/auth/email-input";
-import { OTPVerification } from "@/components/auth/otp-verification";
 import { AnimatePresence, motion, Variants } from "motion/react";
-import { signIn, signOut } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
-import { UserDisplay } from "./user-display";
+import { EmailInput } from "./email-input";
+import { OTPVerification } from "./otp-verification";
 
 // Email validation schema
 const emailSchema = z.string().email("Please enter a valid email address");
 
-interface CheckoutLoginProps {
+interface EmailOTPLoginProps {
   redirect?: string;
   signup?: boolean;
 }
 
-export function CheckoutLogin({ redirect, signup = false }: CheckoutLoginProps) {
+export function EmailOTPLogin({ redirect, signup = false }: EmailOTPLoginProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const { currentUser } = useCurrentSession();
 
   // State management
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -128,19 +125,6 @@ export function CheckoutLogin({ redirect, signup = false }: CheckoutLoginProps) 
     }
   };
 
-  // Handle logout
-  const handleLogout = async () => {
-    setIsLoading(true);
-    try {
-      await signOut({ redirect: false });
-      window.location.reload();
-    } catch (err) {
-      console.error("Error logging out:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Handle signup/signin toggle
   const handleToggleSignUp = () => {
     setError(null);
@@ -171,17 +155,7 @@ export function CheckoutLogin({ redirect, signup = false }: CheckoutLoginProps) 
   return (
     <>
       <AnimatePresence mode="wait" initial={false}>
-        {currentUser ? (
-          <motion.div
-            key="user-display"
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            variants={containerVariants}
-          >
-            <UserDisplay user={currentUser} onLogout={handleLogout} isLoading={isLoading} />
-          </motion.div>
-        ) : !isSubmitted ? (
+        {!isSubmitted ? (
           <motion.div
             key="email-input"
             initial="hidden"
