@@ -12,6 +12,10 @@ import { domainCopy } from "./domain";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
+const isDevelopment =
+  process.env.NODE_ENV === "development" ||
+  process.env.NEXT_PUBLIC_VERCEL_ENV === "development" ||
+  process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
 
 const cookieDomain = isPreview
   ? process.env.VERCEL_BRANCH_URL
@@ -24,7 +28,11 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "openid email profile" // These are the default values
+          scope: "openid email profile",
+          // Force Google to redirect to localhost in development
+          ...(isDevelopment && {
+            redirect_uri: "http://localhost:3000/api/auth/callback/google"
+          })
         }
       },
       allowDangerousEmailAccountLinking: true // Allows you to sign in with different providers

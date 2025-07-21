@@ -1,6 +1,6 @@
 import { NextRequestWithAuth } from "next-auth/middleware";
 import { NextFetchEvent, NextResponse } from "next/server";
-import { beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { SessionUser } from "./types/session";
 
 // Mock withAuth to just return the middleware function
@@ -18,6 +18,8 @@ vi.mock("./app/services/site/domain-request-service", () => ({
   isVercelPreview: vi.fn()
 }));
 
+// This top-level mock will be used by most tests.
+// The one test that needs a different environment will re-mock this.
 vi.mock("next/server", () => {
   const originalModule = vi.importActual("next/server");
   return {
@@ -40,9 +42,10 @@ import {
 function createMockRequest(
   path: string,
   host: string = "app.market.dev",
-  sessionUser?: SessionUser
+  sessionUser?: SessionUser,
+  protocol: "http" | "https" = "https" // Added protocol for realism
 ): NextRequestWithAuth {
-  const url = new URL(`https://${host}${path}`);
+  const url = new URL(`${protocol}://${host}${path}`);
   const headers = new Headers({ host });
 
   return {
@@ -76,6 +79,11 @@ describe("Middleware", () => {
     vi.mocked(getReservedSubdomainFromRequest).mockResolvedValue("app");
     vi.mocked(getGhUsernameFromRequest).mockResolvedValue(null);
     vi.mocked(isVercelPreview).mockResolvedValue(false);
+  });
+
+  // This ensures that any stubs/mocks scoped to a single test are cleaned up.
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   describe("Decision 1: App domain routing", () => {
