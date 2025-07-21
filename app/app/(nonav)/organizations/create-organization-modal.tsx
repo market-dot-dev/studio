@@ -26,9 +26,13 @@ const initialState: CreateOrganizationFormState = {
 
 interface CreateOrganizationModalProps {
   autoOpen?: boolean;
+  trigger?: React.ReactElement;
 }
 
-export function CreateOrganizationModal({ autoOpen = false }: CreateOrganizationModalProps) {
+export function CreateOrganizationModal({
+  autoOpen = false,
+  trigger
+}: CreateOrganizationModalProps) {
   const [open, setOpen] = useState(autoOpen);
   const router = useRouter();
   const { update: updateSession } = useSession();
@@ -73,10 +77,14 @@ export function CreateOrganizationModal({ autoOpen = false }: CreateOrganization
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button className="w-full gap-2" variant="outline">
-          <Building className="size-4" />
-          Create a new organization
-        </Button>
+        {trigger ? (
+          trigger
+        ) : (
+          <Button className="w-full gap-2" variant="outline">
+            <Building className="size-4" />
+            Create a new organization
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>

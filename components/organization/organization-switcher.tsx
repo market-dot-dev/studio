@@ -1,10 +1,12 @@
 "use client";
 
+import { CreateOrganizationModal } from "@/app/app/(nonav)/organizations/create-organization-modal";
 import { setCurrentOrganization } from "@/app/services/user-context-service";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuSub,
@@ -13,11 +15,12 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { OrganizationForSwitcher, OrganizationSwitcherContext } from "@/types/organization";
-import { ArrowLeftRight, ChevronsUpDown } from "lucide-react";
+import { ArrowLeftRight, ChevronsUpDown, SquarePlus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
+import { Button } from "../ui/button";
 
 function getInitials(name: string): string {
   return name
@@ -136,13 +139,16 @@ export function OrganizationSwitcher({ context }: Props) {
           </DropdownMenuPortal>
         </DropdownMenuSub>
 
-        {/* @TODO: Org-creation */}
-        {/* <DropdownMenuItem asChild className="gap-2 p-1">
-          <Link href="/organizations/new">
-            <SquarePlus className="!h-4.5 !w-4.5 shrink-0" />
-            Create an Organization
-          </Link>
-        </DropdownMenuItem> */}
+        <DropdownMenuItem onClick={(e) => e.preventDefault()} asChild>
+          <CreateOrganizationModal
+            trigger={
+              <Button variant="ghost" className="w-full justify-start gap-2 p-1">
+                <SquarePlus className="!h-4.5 !w-4.5 shrink-0" />
+                Create an Organization
+              </Button>
+            }
+          />
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
