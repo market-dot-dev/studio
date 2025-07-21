@@ -35,7 +35,7 @@ export const LoginButton: FC<LoginButtonProps> = ({ children, onClick, href, ...
   };
 
   return (
-    <Button variant="outline" onClick={handleClick} {...props}>
+    <Button variant="outline" onClick={handleClick} className="w-full" {...props}>
       {children}
     </Button>
   );

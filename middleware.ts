@@ -23,10 +23,6 @@ export const config = {
   ]
 };
 
-// Helper constants for domain names, makes it easy to change later
-const isDevelopment = process.env.NODE_ENV === "development";
-const APP_HOST = isDevelopment ? "app.market.local:3000" : "app.market.dev";
-
 /**
  * This is the main middleware entry point. It follows a simple "decision tree" logic:
  * it checks for the most specific domain case first, handles it, and returns.
@@ -36,6 +32,10 @@ export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
     const path = req.nextUrl.pathname;
     const sessionUser = req.nextauth.token?.user as SessionUser | undefined;
+
+    // Helper constants for domain names, makes it easy to change later
+    const isDevelopment = process.env.NODE_ENV === "development";
+    const APP_HOST = isDevelopment ? "app.market.local:3000" : "app.market.dev";
 
     // --- Decision 1: Is this the main "app" subdomain? ---
     const reservedSubdomain = await getReservedSubdomainFromRequest(req);

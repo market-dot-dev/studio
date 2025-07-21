@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import OTPInputElement from "./otp-input-element";
+import { OTPInputElement } from "./otp-input-element";
 
 interface OTPVerificationProps {
   onVerify: (code: string) => Promise<void>;

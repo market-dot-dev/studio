@@ -18,6 +18,7 @@ const publicPaths = [
 
   // Core authentication flow (bare domain)
   /^\/login$/,
+  /^\/login\/otp$/,
   /^\/login\/error$/,
 
   // Public-facing API routes
@@ -44,6 +45,7 @@ const publicPaths = [
 
   // Auth flows that happen within the /app directory structure but are public
   /^\/app\/login$/,
+  /^\/app\/login\/otp$/,
   /^\/app\/login\/error$/
 ];
 
