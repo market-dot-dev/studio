@@ -11,6 +11,7 @@ describe("RoleService", () => {
         "/home",
         "/login",
         "/app/login",
+        "/login/otp",
         "/maintainer-site/johndoe",
         "/maintainer-site/johndoe/about",
         "/checkout/abc123",
