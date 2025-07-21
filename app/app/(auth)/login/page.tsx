@@ -3,6 +3,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 import { GithubSignIn } from "./github-signin";
+import { GoogleSignIn } from "./google-signin";
 
 export default async function LoginPage(props: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -40,6 +41,13 @@ export default async function LoginPage(props: {
           }
         >
           <GithubSignIn callbackUrl={callbackUrl} />
+        </Suspense>
+        <Suspense
+          fallback={
+            <div className="h-12 w-full rounded-md border border-stone-200 bg-stone-100 dark:border-stone-700 dark:bg-stone-800" />
+          }
+        >
+          <GoogleSignIn callbackUrl={callbackUrl} />
         </Suspense>
       </div>
     </>

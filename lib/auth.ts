@@ -7,14 +7,11 @@ import { getServerSession, type NextAuthOptions } from "next-auth";
 import { Provider } from "next-auth/providers";
 import EmailProvider from "next-auth/providers/email";
 import GitHubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 import { domainCopy } from "./domain";
 
 const VERCEL_DEPLOYMENT = !!process.env.VERCEL_URL;
 const isPreview = process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
-const isDevelopment =
-  process.env.NODE_ENV === "development" ||
-  process.env.NEXT_PUBLIC_VERCEL_ENV === "development" ||
-  process.env.NEXT_PUBLIC_VERCEL_ENV === "preview";
 
 const cookieDomain = isPreview
   ? process.env.VERCEL_BRANCH_URL
@@ -22,6 +19,16 @@ const cookieDomain = isPreview
 
 export const authOptions: NextAuthOptions = {
   providers: [
+    GoogleProvider({
+      clientId: process.env.AUTH_GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          scope: "openid email profile" // These are the default values
+        }
+      },
+      allowDangerousEmailAccountLinking: true // Allows you to sign in with different providers
+    }),
     EmailProvider({
       // @NOTE: "server"/"from" are unused, but required here as sendgrid takes care of email
       server: process.env.EMAIL_SERVER,
@@ -38,7 +45,7 @@ export const authOptions: NextAuthOptions = {
     GitHubProvider({
       clientId: process.env.AUTH_GITHUB_ID as string,
       clientSecret: process.env.AUTH_GITHUB_SECRET as string,
-      allowDangerousEmailAccountLinking: isDevelopment,
+      allowDangerousEmailAccountLinking: true, // Allows you to sign in with different providers
       profile(profile) {
         return {
           id: profile.id.toString(),
