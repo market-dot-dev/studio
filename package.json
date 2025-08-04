@@ -82,7 +82,7 @@
     "sonner": "^2.0.6",
     "stripe": "^18.3.0",
     "tailwind-merge": "^2.6.0",
-    "zod": "^3.25.75"
+    "zod": "^4.0.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
