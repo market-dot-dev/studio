@@ -1,0 +1,67 @@
+# Product Requirements Document (PRD)
+
+## 1. Purpose
+Market.dev Store is a multi-tenant SaaS platform that enables open-source maintainers and product teams to monetise their work through tiered subscriptions, one-off payments, and contract-based services.  It provides an end-to-end workflow—from onboarding and storefront creation to checkout, billing, analytics, and integrations—so that creators can focus on building while customers enjoy a friction-less purchasing experience.
+
+## 2. Personas
+1. **Maintainer / Seller**
+   - Wants to create a branded store, define pricing tiers, and get paid.
+   - Needs analytics, customer management, and simple onboarding (Stripe, GitHub).
+2. **Customer / Buyer**
+   - Wants to purchase a subscription or one-off service quickly & securely.
+   - Expects clear pricing, modern checkout, and immediate access.
+3. **Platform Admin**
+   - Oversees organisations, billing health, webhooks, and compliance.
+
+## 3. Core Functionality
+1. **Authentication & Accounts**
+   - Email OTP + GitHub login via **NextAuth** with Prisma adapter.
+   - Session management & role-based access.
+
+2. **Onboarding Wizard**
+   - Step-by-step flow to set store name, connect GitHub, and link Stripe account.
+   - Validates business information (country, tax IDs) with Zod.
+
+3. **Organisation & Team Management**
+   - Create organisations, invite team members, and switch contexts.
+   - Role granularity for owners, members, and viewers.
+
+4. **Tier & Pricing Management**
+   - CRUD for tiers (monthly / annual cadence, checkout type, channel selection).
+   - Syncs to Stripe Products & Prices via `stripe-*` services.
+
+5. **Checkout & Payments**
+   - Stripe-powered payment pages (cards, Apple/Google Pay).
+   - Handles payment intents, webhooks, coupons, and subscription lifecycle.
+   - Generates secure checkout links & embeddable widgets.
+
+6. **Contracts & Invoicing**
+   - Create contracts with customers, track status, and allow e-signature (placeholder).
+   - Calculate application fees & split payments.
+
+7. **Customer Dashboard**
+   - Buyers can view subscriptions, update payment methods, or cancel.
+
+8. **Maintainer Dashboard**
+   - Revenue charts, customer lists, churn stats (Recharts).
+   - Export data (CSV / JSON).
+
+9. **Content & Site Builder**
+   - Components library to embed code snippets, package badges, etc.
+   - Manage pages, metadata, and SEO via RSC.
+
+10. **Integrations**
+    - GitHub App installations, Webhooks, SendGrid emails, Vercel Blob for file uploads.
+
+## 4. Non-Functional Requirements
+- **Performance**: Server-first rendering, edge-ready APIs, image optimisation (WebP, lazy load).
+- **Security**: CSRF protection, Stripe webhooks signature checking, Prisma Z-level access.
+- **Scalability**: Stateless Next.js deployment on Vercel, Postgres via Prisma migrations.
+- **Observability**: Sentry for tracing & error monitoring, Vercel Analytics.
+- **Accessibility**: Radix UI components with a11y baked in.
+
+## 5. Success Metrics
+- Time-to-first-payment < 10 min during onboarding.
+- Checkout conversion rate > 90 %.
+- < 1 % payment failures (handled & retried).
+- P95 API response < 200 ms for public endpoints. 

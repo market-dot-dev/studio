@@ -1,0 +1,77 @@
+# Architecture Overview
+
+## 1. High-Level Diagram
+```
+Browser ─┬─▶ Next.js App Router (Edge + Node)
+        │      ├─ React Server Components (RSC)
+        │      ├─ API & Route Handlers (/app/api/*)
+        │      └─ Static Assets (OG Images, Fonts, Images)
+        │
+        ├─▶ Vercel Functions (Stripe Webhooks, OG Image Generation)
+        │
+        └─▶ Vercel Blob Storage (User uploads)
+
+Next.js  ─▶ Prisma ORM ─▶ PostgreSQL (wSupabase / Neon)
+             │
+             └─ Stripe API  ◄── Webhooks
+
+Ancillary: Sentry, SendGrid, GitHub App, Vercel Analytics
+```
+
+## 2. Technology Stack
+- **Runtime**: Next.js 15 (App Router) on Vercel, TurboPack for build.
+- **Language**: TypeScript 5 + React 19.
+- **UI**: TailwindCSS 3, Shadcn-UI (CVA + Radix Primitives), Lucide Icons, Recharts.
+- **Data**: PostgreSQL accessed via Prisma ORM with declarative migrations.
+- **Auth**: NextAuth (Email OTP & GitHub) backed by Prisma adapter.
+- **Payments**: Stripe (Products, Prices, Payment Intents, Subscriptions).
+- **Messaging**: SendGrid for outbound email.
+- **Observability**: Sentry Tracing, Vercel Speed Insights & Analytics.
+- **Testing**: Vitest, React Testing Library, Cypress (e2e placeholder).
+
+## 3. Folder & Layer Structure
+```
+/app            – Next.js routes (RSC, layouts, pages, API handlers)
+└─ services/    – Domain logic (single-responsibility service modules)
+   ├─ auth/     – AuthService, session helpers
+   ├─ stripe/   – Stripe abstractions (price, payment, webhook)
+   ├─ onboarding/
+   ├─ organization/
+   ├─ platform/ – Multi-tenant utilities (subdomain, public path)
+   └─ site/     – Static site generator utilities
+/components     – Shared UI & feature-level components (client or server)
+/lib            – Pure helpers & constants
+/prisma         – Schema + deterministic migrations + seed scripts
+/scripts        – One-off operational scripts (db backup, route generation)
+```
+
+### Design Rationale
+1. **App Router + RSC** – Leverages server components for fast initial paint and minimal client JS; reduces need for `useEffect` heavy code.
+2. **Service Layer** – Encapsulates domain knowledge; keeps route handlers thin and testable.
+3. **Prisma-First** – Type-safe DB access, migrations and generated TS types.
+4. **Stripe Abstraction** – Centralised stripe-* services decouple business logic from vendor SDK.
+5. **Multi-Tenant Isolation** – `platform/` helpers compute public paths & subdomains; database rows include `organizationId` for scoping.
+6. **Tailwind + CVA** – Utility classes with variant system for consistent theming; minimal runtime CSS.
+
+## 4. Build & Deployment Flow
+1. **Local Dev**: `pnpm dev` runs `prisma generate` then `next dev` with TurboPack.
+2. **CI / Vercel**: `vercel-build` script generates client, runs migrations in deploy, seeds preview DB, and synchronises Prisma types.
+3. **Migrations**: Prisma migration files live under `prisma/migrations` and are applied on deploy.  Lock file prevents drift.
+4. **Edge Functions**: Select API routes (OG image generation, Stripe webhooks) use the `export const runtime = "edge"` pattern for low latency.
+
+## 5. Security Considerations
+- CSRF & session protection handled by NextAuth.
+- All Stripe webhook endpoints verify signatures.
+- Server components gate reads via `getServerSession` utilities.
+- Zod validation ensures type-safe user input.
+- Rate-limiting left to Vercel Edge or WAF (future work).
+
+## 6. Extensibility Points
+- **Integrations** live under `app/services/integrations` and follow a provider interface.
+- **Feature Flags** can be introduced via DB table + edge config.
+- **Additional Payment Providers**: replicate `stripe-*` pattern behind a common `PaymentGateway` interface.
+
+## 7. Known Trade-offs / Future Work
+- Client-side state is minimal; introducing TanStack Query or Zustand for complex interactions may be required.
+- Current webhooks run in a single function; splitting by concern could improve isolation.
+- Multi-region deployment may require DB proxy or read replicas. 

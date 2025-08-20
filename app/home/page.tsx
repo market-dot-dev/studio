@@ -24,7 +24,7 @@ export default function HomePage() {
           </>
         }
         quotee={{
-          name: "Bethany",
+          name: "Cameron",
           title: "GM",
           image: {
             src: "/bc-avatar.jpg"
