@@ -5,7 +5,7 @@ export default function Testimonials() {
     const testimonial = {
         quote: (
             <>
-                Using market.dev, our maintainer collective set up and{" "}
+                Using market.dev, our maintainer collective set up and{' '}
                 <span className="text-marketing-primary">
                     started selling our first commercial se
                     <span className="tracking-[-0.005em]">r</span>vice tiers within a day
@@ -14,14 +14,14 @@ export default function Testimonials() {
             </>
         ) as ReactElement,
         quotee: {
-            name: "Cameron",
-            title: "GM",
+            name: 'Cameron',
+            title: 'GM',
             image: {
-                src: "/bc-avatar.jpg",
+                src: '/bc-avatar.jpg',
             },
             company: {
-                name: "Shipyard",
-                url: "https://ipshipyard.market.dev/",
+                name: 'Shipyard',
+                url: 'https://ipshipyard.market.dev/',
             },
         },
     };
