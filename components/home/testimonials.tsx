@@ -5,7 +5,7 @@ export default function Testimonials() {
     const testimonial = {
         quote: (
             <>
-                Using market.dev, our maintainer collective set up and {" "}
+                Using market.dev, our maintainer collective set up and{" "}
                 <span className="text-marketing-primary">
                     started selling our first commercial se
                     <span className="tracking-[-0.005em]">r</span>vice tiers within a day
