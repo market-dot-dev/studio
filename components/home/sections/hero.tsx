@@ -12,7 +12,8 @@ export default function Hero() {
             for developer experts.
           </GradientHeading>
           <p className="mb-4 max-w-[44ch] text-pretty text-center text-marketing-sm !leading-tight xs:mb-5 xs:text-balance sm:mb-6 sm:text-[clamp(16px,12vw,20px)] lg:text-marketing-md">
-            The AI-native marketing, CRM and payment toolkit for freelancers. <br className="xs:hidden" /> Let's grow your business, today.
+            The AI-native marketing, CRM and payment toolkit for freelancers.{" "}
+            <br className="xs:hidden" /> Let's grow your business, today.
           </p>
           <div>
             <ClaimStoreForm id="hero" />
