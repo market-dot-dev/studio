@@ -53,7 +53,7 @@ export default function Sell() {
       <div className="group relative mx-auto w-full max-w-[var(--marketing-max-width)]">
         <div className="flex flex-col gap-6 lg:flex-row">
           {featureCards.map((card, index) => (
-            <div key={index} className="w-full ">
+            <div key={index} className="w-full">
               <FeatureCard
                 icon={card.icon}
                 title={card.title}

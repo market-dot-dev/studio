@@ -455,7 +455,7 @@ export default function Header({ className }: HeaderProps) {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="inline-flex size-9 items-center justify-center gap-2 rounded-full bg-marketing-accent font-semibold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active xs:w-auto px-2 xs:px-3"
+                  className="inline-flex size-9 items-center justify-center gap-2 rounded-full bg-marketing-accent px-2 font-semibold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active xs:w-auto xs:px-3"
                 >
                   <Store className="!size-5" strokeWidth={2} />
                   <span className="hidden text-marketing-sm xs:block">Dashboard</span>
@@ -604,14 +604,12 @@ export default function Header({ className }: HeaderProps) {
               {/* <div className="mt-2 border-t border-black/10"></div> */}
 
               {/* Navigation Links */}
-              <div className="flex grow flex-col sm:flex-row items-start gap-x-6 gap-y-9 justify-between p-6 pt-3">
+              <div className="flex grow flex-col items-start justify-between gap-x-6 gap-y-9 p-6 pt-3 sm:flex-row">
                 {/* Product Section */}
                 <div className="w-full">
-                  <h3 className="text-marketing-secondary/80 pb-4">
-                    Product
-                  </h3>
+                  <h3 className="pb-4 text-marketing-secondary/80">Product</h3>
                   <hr className="border-black/15" />
-                  <Link 
+                  <Link
                     href="https://data.market.dev"
                     variant="primary"
                     className="flex h-[60px] w-full items-center"
@@ -641,9 +639,7 @@ export default function Header({ className }: HeaderProps) {
 
                 {/* Support Section */}
                 <div className="w-full">
-                  <h3 className="text-marketing-secondary/80 pb-4">
-                    Support
-                  </h3>
+                  <h3 className="pb-4 text-marketing-secondary/80">Support</h3>
                   <hr className="border-black/15" />
                   <Link
                     href={URLS.discord}
@@ -675,7 +671,7 @@ export default function Header({ className }: HeaderProps) {
               </div>
 
               {/* Bottom Action Button */}
-              <div className="sticky inset-x-0 bottom-0 pt-3 px-6 pb-9 bg-marketing-background">
+              <div className="sticky inset-x-0 bottom-0 bg-marketing-background px-6 pb-9 pt-3">
                 {isLoading || !signedIn ? (
                   <MarketingButton className="w-full">
                     <Image

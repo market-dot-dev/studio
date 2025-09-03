@@ -5,9 +5,9 @@ import Image from "next/image";
 export default function Hero() {
   return (
     <>
-      <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-6 md:pt-10 lg:pt-11 tracking-tight md:gap-y-16 lg:max-w-[var(--marketing-max-width)] lg:px-16 ">
+      <div className="mx-auto flex w-full max-w-[800px] flex-col items-center gap-12 px-6 pt-6 tracking-tight md:gap-y-16 md:pt-10 lg:max-w-[var(--marketing-max-width)] lg:px-16 lg:pt-11">
         <div className="flex size-full flex-col items-center">
-          <GradientHeading className="mb-3 xs:mb-4 whitespace-nowrap text-center text-[clamp(24px,8vw,37px)] font-bold !leading-[0.9] tracking-[-0.0525em] text-marketing-primary sm:mb-5 sm:text-marketing-2xl md:text-marketing-3xl md:tracking-[-0.045em] lg:mb-6 lg:text-marketing-4xl">
+          <GradientHeading className="mb-3 whitespace-nowrap text-center text-[clamp(24px,8vw,37px)] font-bold !leading-[0.9] tracking-[-0.0525em] text-marketing-primary xs:mb-4 sm:mb-5 sm:text-marketing-2xl md:text-marketing-3xl md:tracking-[-0.045em] lg:mb-6 lg:text-marketing-4xl">
             Sales and marketing tools <br />
             for developer experts.
           </GradientHeading>
