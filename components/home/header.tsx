@@ -259,6 +259,21 @@ export default function Header({ className }: HeaderProps) {
     };
   }, [isMobileMenuOpen]);
 
+  // Close mobile menu when resizing to large breakpoint
+  useEffect(() => {
+    const handleResize = () => {
+      // lg breakpoint in Tailwind is typically 1024px
+      if (window.innerWidth >= 1024 && isMobileMenuOpen) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [isMobileMenuOpen]);
+
   // Handle header height CSS variable
   useEffect(() => {
     const updateHeaderHeight = () => {
@@ -342,7 +357,7 @@ export default function Header({ className }: HeaderProps) {
       <header
         ref={headerRef}
         className={clsx(
-          "fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col bg-marketing-background text-marketing-sm tracking-tight transition-all ease-in-out md:text-marketing-base",
+          "fixed inset-x-0 top-0 z-50 mx-auto flex w-full flex-col bg-marketing-background text-marketing-sm tracking-tight transition-all ease-in-out lg:text-marketing-base",
           isMobileMenuOpen && "duration-150",
           className
         )}
@@ -369,12 +384,12 @@ export default function Header({ className }: HeaderProps) {
             )}
           >
             {/* Logo */}
-            <Link href="/" className="flex">
+            <Link href="/" className="flex translate-y-0.5 lg:translate-y-0">
               <Logo className={clsx("h-[26px] w-auto self-center justify-self-start")} />
             </Link>
 
             {/* Center Navigation Links - Hidden on xs screens */}
-            <div className="absolute left-1/2 top-1/2 hidden max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7 md:flex">
+            <div className="absolute left-1/2 top-1/2 hidden max-w-0 -translate-x-1/2 -translate-y-1/2 justify-center gap-7 lg:flex">
               {/* Product Link with Hover Dropdown */}
               <div
                 className="relative"
@@ -431,7 +446,7 @@ export default function Header({ className }: HeaderProps) {
             <div className="flex w-fit items-center gap-6">
               {/* Login/Dashboard Button */}
               {isLoading || !signedIn ? (
-                <Link href={URLS.login} variant="primary" className="hidden sm:block">
+                <Link href={URLS.login} variant="primary">
                   Log in
                 </Link>
               ) : (
@@ -440,15 +455,15 @@ export default function Header({ className }: HeaderProps) {
                     router.push(dashboardURL);
                   }}
                   variant="ghost"
-                  className="inline-flex size-9 items-center justify-center gap-2 rounded-full bg-marketing-accent px-0 font-bold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active xs:w-auto xs:px-3"
+                  className="inline-flex size-9 items-center justify-center gap-2 rounded-full bg-marketing-accent font-semibold tracking-tight text-black transition-colors hover:bg-marketing-accent-active focus:bg-marketing-accent-active xs:w-auto px-2 xs:px-3"
                 >
-                  <Store className="!size-5" strokeWidth={2.25} />
+                  <Store className="!size-5" strokeWidth={2} />
                   <span className="hidden text-marketing-sm xs:block">Dashboard</span>
                 </MarketingButton>
               )}
 
               {/* Mobile Menu Button */}
-              <div className="flex items-center justify-center md:hidden">
+              <div className="flex items-center justify-center lg:hidden">
                 <AnimatedHamburgerButton
                   isOpen={isMobileMenuOpen}
                   toggleMenu={toggleMobileMenu}
@@ -586,74 +601,81 @@ export default function Header({ className }: HeaderProps) {
                 </div>
               </div>
 
-              <div className="mt-2 border-t border-black/10"></div>
+              {/* <div className="mt-2 border-t border-black/10"></div> */}
 
               {/* Navigation Links */}
-              <div className="flex grow flex-col p-6 pt-2">
-                {/* Main Navigation Links */}
-                <Link
-                  href="/#pricing"
-                  variant="primary"
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
-                >
-                  Pricing
-                </Link>
-                <hr className="border-black/15" />
-                <Link
-                  href={URLS.blog}
-                  target="_blank"
-                  variant="primary"
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
-                >
-                  Blog
-                </Link>
-                <hr className="border-black/15" />
+              <div className="flex grow flex-col sm:flex-row items-start gap-x-6 gap-y-9 justify-between p-6 pt-3">
+                {/* Product Section */}
+                <div className="w-full">
+                  <h3 className="text-marketing-secondary/80 pb-4">
+                    Product
+                  </h3>
+                  <hr className="border-black/15" />
+                  <Link 
+                    href="https://data.market.dev"
+                    variant="primary"
+                    className="flex h-[60px] w-full items-center"
+                  >
+                    Data Products
+                  </Link>
+                  <hr className="border-black/15" />
+                  {/* Main Navigation Links */}
+                  <Link
+                    href="/#pricing"
+                    variant="primary"
+                    className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                  >
+                    Pricing
+                  </Link>
+                  <hr className="border-black/15" />
+                  <Link
+                    href={URLS.blog}
+                    target="_blank"
+                    variant="primary"
+                    className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                  >
+                    Blog
+                  </Link>
+                  <hr className="border-black/15" />
+                </div>
 
                 {/* Support Section */}
-                <div className="pb-2 pt-8">
-                  <h3 className="text-marketing-sm uppercase tracking-wide text-marketing-secondary">
-                    Get Support
+                <div className="w-full">
+                  <h3 className="text-marketing-secondary/80 pb-4">
+                    Support
                   </h3>
+                  <hr className="border-black/15" />
+                  <Link
+                    href={URLS.discord}
+                    variant="primary"
+                    className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                  >
+                    Discord
+                  </Link>
+                  <hr className="border-black/15" />
+                  <Link
+                    href={URLS.github}
+                    target="_blank"
+                    variant="primary"
+                    className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                  >
+                    Github
+                  </Link>
+                  <hr className="border-black/15" />
+                  <Link
+                    href={URLS.docs}
+                    target="_blank"
+                    variant="primary"
+                    className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
+                  >
+                    Docs
+                  </Link>
+                  <hr className="border-black/15" />
                 </div>
-                <hr className="border-black/15" />
-                <Link
-                  href={URLS.discord}
-                  variant="primary"
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
-                >
-                  Discord
-                </Link>
-                <hr className="border-black/15" />
-                <Link
-                  href={URLS.github}
-                  target="_blank"
-                  variant="primary"
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
-                >
-                  Github
-                </Link>
-                <hr className="border-black/15" />
-                <Link
-                  href={URLS.docs}
-                  target="_blank"
-                  variant="primary"
-                  className="flex h-[60px] w-full items-center bg-marketing-background leading-5"
-                >
-                  Docs
-                </Link>
-                {isLoading ||
-                  (!signedIn && (
-                    <>
-                      <hr className="border-black/15" />
-                      <Link href={URLS.login} variant="primary" className="hidden px-2 sm:block">
-                        Log in
-                      </Link>
-                    </>
-                  ))}
               </div>
 
               {/* Bottom Action Button */}
-              <div className="sticky inset-x-0 bottom-0 border-t border-black/15 bg-marketing-background p-6">
+              <div className="sticky inset-x-0 bottom-0 pt-3 px-6 pb-9 bg-marketing-background">
                 {isLoading || !signedIn ? (
                   <MarketingButton className="w-full">
                     <Image
@@ -661,7 +683,7 @@ export default function Header({ className }: HeaderProps) {
                       alt="github logo"
                       height={24}
                       width={24}
-                      className="col-span-2 col-start-1 h-[22px] w-auto xs:h-4.5 md:h-6"
+                      className="col-span-2 col-start-1 h-[22px] w-auto xs:h-4.5 lg:h-6"
                     />
                     Sign up with Github
                   </MarketingButton>
