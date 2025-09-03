@@ -396,6 +396,9 @@ export default function Header({ className }: HeaderProps) {
                   />
                 </Link>
               </div>
+              <Link href="https://data.market.dev" className="whitespace-nowrap">
+                Data Products
+              </Link>
 
               <Link href="/#pricing" className="whitespace-nowrap">
                 Pricing
