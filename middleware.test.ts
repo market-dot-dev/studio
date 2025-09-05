@@ -239,6 +239,21 @@ describe("Middleware", () => {
       expect(NextResponse.rewrite).not.toHaveBeenCalled();
       expect(NextResponse.redirect).not.toHaveBeenCalled();
     });
+
+    it("should allow logged-out users to access GitHub subdomain subpages", async () => {
+      vi.mocked(getGhUsernameFromRequest).mockResolvedValue("johndoe");
+
+      const { default: middleware } = await import("./middleware");
+      const req = createMockRequest("/page1", "johndoe.market.dev", undefined); // No session user
+
+      await middleware(req, {} as NextFetchEvent);
+
+      expect(NextResponse.rewrite).toHaveBeenCalled();
+      const rewriteCall = vi.mocked(NextResponse.rewrite).mock.calls[0];
+      const rewriteUrl = rewriteCall[0] as URL;
+      expect(rewriteUrl.pathname).toBe("/maintainer-site/johndoe/page1");
+      expect(NextResponse.redirect).not.toHaveBeenCalled();
+    });
   });
 
   describe("Decision 3: Bare domain routing", () => {

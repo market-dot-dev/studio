@@ -106,9 +106,18 @@ export default withAuth(
   {
     callbacks: {
       authorized: async ({ req, token }) => {
+        // Check if this is a GitHub username subdomain - these are always public
+        const ghUsername = await getGhUsernameFromRequest(req);
+        if (ghUsername) {
+          return true;
+        }
+
+        // Check if the path is in the public paths list
         if (await isPublicPath(req.nextUrl.pathname)) {
           return true;
         }
+
+        // Otherwise, require authentication
         return !!token;
       }
     }
