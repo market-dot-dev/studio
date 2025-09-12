@@ -122,14 +122,14 @@ export function PackageEmbeddings({
                   data-domain="${domain}"
                   data-widget="tiers"
                   data-settings='${JSON.stringify(
-                    {
-                      darkMode: darkmode,
-                      tiers: selectedTiers.map((tier) => tier.id)
-                    },
-                    null,
-                    2
-                  )}'
-                  src="//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js"
+                  {
+                    darkMode: darkmode,
+                    tiers: selectedTiers.map((tier) => tier.id)
+                  },
+                  null,
+                  2
+                )}'
+                  src="${process.env.NODE_ENV === "production" ? "https://app." : "http://app."}${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js"
                 ></script>`}
               />
             )}

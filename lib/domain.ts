@@ -20,7 +20,8 @@ export const RESERVED_SUBDOMAINS = [
   "help",
   "docs",
   "store",
-  "explore"
+  "explore",
+  "studio"
 ];
 
 /**
