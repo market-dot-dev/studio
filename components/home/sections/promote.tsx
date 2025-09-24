@@ -56,7 +56,7 @@ export default function Promote() {
           Market Eve<span className="tracking-normal">ry</span>where
         </>
       }
-      description="It doesn't have to be hard. Promote on your landing pages, in repos & across marketplaces — all from a single source of truth."
+      description="Marketing doesn't have to be hard. Promote on your landing pages, in repos & across marketplaces — all from a single source of truth."
       isFullBleed
     >
       <div className="relative grid w-full grid-cols-1 flex-col gap-6 lg:hidden">

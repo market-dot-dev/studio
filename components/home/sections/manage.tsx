@@ -18,10 +18,10 @@ export default function Manage() {
       className="lg:max-w-[1150px]"
     >
       <div className="mx-auto grid w-full grid-cols-1 gap-4 md:grid-cols-3 lg:gap-6">
-        <FeatureCard
-          icon={<UsersRound />}
-          title="CRM & Lead Generation"
-          description="A simple, no-nonsense CRM with built-in lead-generation tools"
+      <FeatureCard
+          icon={<ScrollText />}
+          title="Contract Library"
+          description="Create & send service agreements in minutes using our ready-made, open source contracts."
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
@@ -30,16 +30,16 @@ export default function Manage() {
         <FeatureCard
           icon={<ChartLine />}
           title="Client Portals"
-          description="Create client portals to help you manageyour services with your clients."
+          description="Create client portals to help you manage your services with your clients."
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
           className="ring-0 md:ring-1"
         />
         <FeatureCard
-          icon={<ScrollText />}
-          title="Contract Library"
-          description="Create & send service agreements in minutes using our ready-made, open source contracts."
+          icon={<UsersRound />}
+          title="CRM & Lead Generation"
+          description="A simple, no-nonsense CRM with built-in lead-generation tools"
           color={colors.orange}
           orientation="vertical"
           imageMaxWidth={null}
