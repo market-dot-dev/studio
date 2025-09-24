@@ -411,9 +411,6 @@ export default function Header({ className }: HeaderProps) {
                   />
                 </Link>
               </div>
-              <Link href="https://data.market.dev" className="whitespace-nowrap">
-                Data Products
-              </Link>
 
               <Link href="/#pricing" className="whitespace-nowrap">
                 Pricing
@@ -604,18 +601,10 @@ export default function Header({ className }: HeaderProps) {
               {/* <div className="mt-2 border-t border-black/10"></div> */}
 
               {/* Navigation Links */}
-              <div className="flex grow flex-col items-start justify-between gap-x-6 gap-y-9 p-6 pt-3 sm:flex-row">
+              <div className="flex grow flex-col items-start justify-between gap-x-6 gap-y-9 pt-3 px-6 pb-12 sm:flex-row">
                 {/* Product Section */}
                 <div className="w-full">
                   <h3 className="pb-4 text-marketing-secondary/80">Product</h3>
-                  <hr className="border-black/15" />
-                  <Link
-                    href="https://data.market.dev"
-                    variant="primary"
-                    className="flex h-[60px] w-full items-center"
-                  >
-                    Data Products
-                  </Link>
                   <hr className="border-black/15" />
                   {/* Main Navigation Links */}
                   <Link
