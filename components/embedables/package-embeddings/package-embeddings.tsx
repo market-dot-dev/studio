@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { getRootUrl } from "@/lib/domain";
 import { TierWithCount } from "@/app/services/tier/tier-service";
 import DashedCard from "@/components/common/dashed-card";
 import CodeSnippet from "@/components/embedables/code-snippet";
@@ -7,8 +9,6 @@ import embeddables from "@/components/site/embedables/index";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SiteDetails } from "@/types/site";
-import { useEffect, useState } from "react";
-import { getRootUrl } from "@/lib/domain";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 
 export function PackageEmbeddings({
@@ -27,17 +27,13 @@ export function PackageEmbeddings({
   const [darkmode, setDarkmode] = useState(initialDarkmode);
   const handleDarkMode = () => setDarkmode(!darkmode);
 
-  const finalRootUrl =
-    rootUrl ?? `https://${site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const finalRootUrl = rootUrl ?? `https://${site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
-  const tiers = selectedTiers.length
-    ? "tiers=" + selectedTiers.map((tier) => tier.id).join(",")
-    : null;
+  const tiers = selectedTiers.length ? "tiers=" + selectedTiers.map((tier) => tier.id).join(",") : null;
 
   const queryParams = [tiers, `darkmode=${darkmode}`].filter(Boolean).join("&");
 
   useEffect(() => {
-    // image prefetching ... although this does not explicitly set the image src, it does prefetch the image so subsequent requests are cached and network calls arent made
     const img = new Image();
     img.src = `/api/tiers/${site?.organization.id}${queryParams ? "?" + queryParams : ""}`;
   }, [queryParams]);
@@ -120,8 +116,8 @@ export function PackageEmbeddings({
             ) : (
               <CodeSnippet
                 code={`<script
-                  data-domain="${domain}"
                   data-widget="tiers"
+                  data-domain="${domain}"
                   data-settings='${JSON.stringify(
                   {
                     darkMode: darkmode,
@@ -130,7 +126,7 @@ export function PackageEmbeddings({
                   null,
                   2
                 )}'
-                  src="${getRootUrl("app", "/embed.js")}"
+                  src="${getRootUrl("app", "/embed.js")}" 
                 ></script>`}
               />
             )}
