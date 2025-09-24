@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SiteDetails } from "@/types/site";
 import { useEffect, useState } from "react";
+import { getRootUrl } from "@/lib/domain";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 
 export function PackageEmbeddings({
@@ -129,7 +130,7 @@ export function PackageEmbeddings({
                   null,
                   2
                 )}'
-                  src="${process.env.NODE_ENV === "production" ? "https://app." : "http://app."}${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js"
+                  src="${getRootUrl("app", "/embed.js")}"
                 ></script>`}
               />
             )}
