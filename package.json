@@ -76,6 +76,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-dropzone": "^14.3.8",
+    "react-resizable-panels": "^3.0.6",
     "recharts": "^2.15.3",
     "require-in-the-middle": "^7.5.2",
     "sharp": "^0.34.3",

@@ -1,6 +1,6 @@
 "use client";
 
-import Editor from "@monaco-editor/react";
+import Editor, { type Monaco } from "@monaco-editor/react";
 import clsx from "clsx";
 import {
   Code,
@@ -17,6 +17,7 @@ import renderElement from "./page-renderer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { cn } from "@/lib/utils";
 import type { PageContent, SiteDetails } from "@/types/site";
 import Link from "next/link";
@@ -24,6 +25,134 @@ import { useFullscreen } from "../dashboard/dashboard-context";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 import PageEditorSidebar from "./page-editor-sidebar";
 import { PreviewFrame } from "./preview-frame";
+import { useIsMobile } from "@/hooks/use-mobile";
+
+// Custom Monaco theme using Tailwind colors
+const stoneSwampTheme = {
+  base: 'vs' as const,
+  inherit: true,
+  rules: [
+    // Comments - stone-500 (muted)
+    { token: 'comment', foreground: '746D69', fontStyle: 'italic' },
+    { token: 'comment.doc', foreground: '746D69', fontStyle: 'italic' },
+    
+    // Keywords - swamp default
+    { token: 'keyword', foreground: '808054', fontStyle: 'bold' },
+    { token: 'keyword.control', foreground: '808054', fontStyle: 'bold' },
+    { token: 'keyword.operator', foreground: '808054' },
+    
+    // Strings - marketing green
+    { token: 'string', foreground: '#56599C' },
+    { token: 'string.escape', foreground: '878E6B', fontStyle: 'bold' },
+    
+    // Numbers - marketing orange
+    { token: 'number', foreground: 'B28634' },
+    { token: 'number.float', foreground: 'B28634' },
+    { token: 'number.hex', foreground: 'B28634' },
+    
+    // Functions/Methods - marketing purple
+    { token: 'function', foreground: '76789E', fontStyle: 'bold' },
+    { token: 'function.call', foreground: '76789E' },
+    { token: 'method', foreground: '76789E' },
+    
+    // Tags (HTML/XML) - swamp-400
+    { token: 'tag', foreground: '808054', fontStyle: 'bold' },
+    { token: 'delimiter.html', foreground: '808054' },
+    { token: 'delimiter.xml', foreground: '808054' },
+    
+    // Attributes - swamp-300
+    { token: 'attribute.name', foreground: '70704D' },
+    { token: 'attribute.value', foreground: '56599C' },
+    
+    // Variables/Identifiers - darker stone/default text
+    { token: 'variable', foreground: '4F4F36' },
+    { token: 'identifier', foreground: '4F4F36' },
+    { token: 'constant', foreground: 'B28634', fontStyle: 'bold' },
+    
+    // Types/Classes - marketing purple
+    { token: 'type', foreground: '76789E' },
+    { token: 'class', foreground: '76789E', fontStyle: 'bold' },
+    { token: 'interface', foreground: '76789E' },
+    
+    // Operators - swamp-500
+    { token: 'operator', foreground: '70704D' },
+    { token: 'delimiter', foreground: '70704D' },
+    
+    // Regular expressions - marketing orange accent
+    { token: 'regexp', foreground: 'B28634', fontStyle: 'underline' },
+    
+    // Invalid/Error - using a reddish tone
+    { token: 'invalid', foreground: 'EF4444', fontStyle: 'underline' }
+  ],
+  colors: {
+    // Editor background and text - stone colors
+    'editor.background': '#FFFFFF', // Pure white background
+    'editor.foreground': '#2E2D1F', // swamp-700 (darker for text)
+    
+    // Cursor and selection - swamp colors
+    'editorCursor.foreground': '#808054',
+    'editor.selectionBackground': '#C5C5AA66', // swamp-100 with transparency
+    'editor.inactiveSelectionBackground': '#C5C5AA33',
+    'editor.selectionHighlightBackground': '#CDCEB644',
+    
+    // Line highlights - stone with subtle tint
+    'editor.lineHighlightBackground': '#F3F2F208',
+    'editor.lineHighlightBorder': '#E3E0DF',
+    
+    // Find matches - marketing orange tints
+    'editor.findMatchBackground': '#b28634',
+    'editor.findMatchHighlightBackground': '#b28634',
+    
+    // Line numbers - stone-400 color
+    'editorLineNumber.foreground': '#A8A29E', // stone-400
+    'editorLineNumber.activeForeground': '#808054',
+    
+    // Indentation guides - stone colors
+    'editorIndentGuide.background': '#E3E0DF',
+    'editorIndentGuide.activeBackground': '#C5C5AA',
+    
+    // Bracket matching - swamp
+    'editorBracketMatch.background': '#C5C5AA44',
+    'editorBracketMatch.border': '#808054',
+    
+    // Gutter and rulers
+    'editorGutter.background': '#FFFFFF',
+    'editorRuler.foreground': '#E3E0DF',
+    
+    // Whitespace
+    'editorWhitespace.foreground': '#E3E0DF',
+    
+    // Error/Warning/Info decorations
+    'editorError.foreground': '#EF4444',
+    'editorWarning.foreground': '#F59E0B',
+    'editorInfo.foreground': '#76789E',
+    'editorHint.foreground': '#7D8861',
+    
+    // Widget backgrounds (autocomplete, hover, etc.)
+    'editorWidget.background': '#FFFFFF',
+    'editorWidget.border': '#E3E0DF',
+    'editorHoverWidget.background': '#FFFFFF',
+    'editorHoverWidget.border': '#E3E0DF',
+    
+    // Suggest widget (autocomplete dropdown)
+    'editorSuggestWidget.background': '#FFFFFF',
+    'editorSuggestWidget.border': '#E3E0DF',
+    'editorSuggestWidget.foreground': '#2E2D1F',
+    'editorSuggestWidget.highlightForeground': '#808054',
+    'editorSuggestWidget.selectedBackground': '#C5C5AA44',
+    
+    // Scrollbar
+    'scrollbarSlider.background': '#E3E0DF66',
+    'scrollbarSlider.hoverBackground': '#C5C5AA66',
+    'scrollbarSlider.activeBackground': '#80805488',
+    
+    // Overview ruler (minimap border)
+    'editorOverviewRuler.border': '#E3E0DF',
+    
+    // Active link
+    'editorLink.activeForeground': '#76789E'
+  }
+};
 
 interface PageEditorProps {
   site: SiteDetails;
@@ -65,6 +194,12 @@ export default function PageEditor({
   const [previewElement, setPreviewElement] = useState<any>(null);
 
   const { fullscreen, setFullscreen } = useFullscreen();
+  const isMobile = useIsMobile();
+
+  // Define custom theme before mounting editor
+  const handleBeforeMount = (monaco: Monaco) => {
+    monaco.editor.defineTheme('stoneSwamp', stoneSwampTheme);
+  };
 
   function handleEditorDidMount(editor: any, monaco: any) {
     setMonacoRef(monaco);
@@ -101,6 +236,14 @@ export default function PageEditor({
     }
   }, [page?.content, generatePreview]);
 
+  // Handle automatic view mode switching when screen size changes
+  useEffect(() => {
+    // If on mobile and in split view
+    if (isMobile && viewMode === 2) {
+      setViewMode(1); // Switch to code view
+    }
+  }, [isMobile, viewMode]);
+
   const linkWithSlug = siteUrl ? siteUrl + (isHome ? "" : page.slug || "") : "";
 
   const preview = (
@@ -132,11 +275,12 @@ export default function PageEditor({
             height="max(100%, 90vh)" // By default, it does not have a size
             defaultLanguage="html"
             defaultValue=""
-            theme="night-dark"
+            theme="stoneSwamp"
             value={page.content ?? ""}
             onChange={(value) => {
               onContentChange(value || "");
             }}
+            beforeMount={handleBeforeMount}
             onMount={useWithRefs ? handleEditorDidMount : () => {}}
             options={{
               minimap: {
@@ -209,8 +353,12 @@ export default function PageEditor({
       ) : null}
       <div>
         <Tabs
-          defaultValue={viewMode === 0 ? "preview" : viewMode === 1 ? "code" : "split"}
+          value={viewMode === 0 ? "preview" : viewMode === 1 ? "code" : "split"}
           onValueChange={(value) => {
+            // Prevent switching to split view on mobile
+            if (value === "split" && isMobile) {
+              return;
+            }
             setViewMode(value === "preview" ? 0 : value === "code" ? 1 : 2);
           }}
           className="rounded-lg border border-stone-200 bg-white"
@@ -249,14 +397,16 @@ export default function PageEditor({
                   <Code />
                   Code
                 </TabsTrigger>
-                <TabsTrigger
-                  variant="background"
-                  value="split"
-                  className="flex items-center gap-1.5"
-                >
-                  <SquareSplitHorizontal />
-                  Split
-                </TabsTrigger>
+                {!isMobile && (
+                  <TabsTrigger
+                    variant="background"
+                    value="split"
+                    className="flex items-center gap-1.5"
+                  >
+                    <SquareSplitHorizontal />
+                    Split
+                  </TabsTrigger>
+                )}
               </TabsList>
 
               {fullscreen && (
@@ -304,29 +454,38 @@ export default function PageEditor({
             className={cn(
               "mt-0",
               !fullscreen &&
-                "h-[calc(100vh-48px-var(--header-height))] overflow-y-auto md:h-[calc(100vh-80px-var(--header-height))]"
+                "h-[calc(100vh-48px-var(--header-height))] md:h-[calc(100vh-80px-var(--header-height))]"
             )}
           >
-            <div className="grid grid-cols-2 gap-4">
-              <div className="col-span-1">{preview}</div>
-              <div className="col-span-1">
+            <ResizablePanelGroup 
+              direction="horizontal"
+              className="h-full"
+            >
+              <ResizablePanel defaultSize={50} minSize={20}>
+                <div className="h-full overflow-hidden">
+                  {preview}
+                </div>
+              </ResizablePanel>
+              <ResizableHandle withHandle />
+              <ResizablePanel defaultSize={50} minSize={20}>
                 <Editor
-                  height="max(100vh, 90vh)"
+                  height="100%"
                   defaultLanguage="html"
                   defaultValue=""
-                  theme="night-dark"
+                  theme="stoneSwamp"
                   value={page.content ?? ""}
                   onChange={(value) => {
                     onContentChange(value || "");
                   }}
+                  beforeMount={handleBeforeMount}
                   options={{
                     minimap: {
                       enabled: false
                     }
                   }}
                 />
-              </div>
-            </div>
+              </ResizablePanel>
+            </ResizablePanelGroup>
           </TabsContent>
         </Tabs>
       </div>

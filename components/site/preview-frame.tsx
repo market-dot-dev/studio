@@ -1,60 +1,33 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode } from "react";
 
-export function PreviewFrame({ children }: { children: React.ReactNode }) {
-  const wrappingDiv = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState<number>(1);
-  const observerRef = useRef<ResizeObserver | null>(null);
+const PREVIEW_SCALE = 0.7;
 
-  useEffect(() => {
-    if (!wrappingDiv.current) return;
-
-    const updateScale = () => {
-      if (wrappingDiv.current) {
-        const frame = wrappingDiv.current;
-        const width = frame.clientWidth;
-        setScale(width / 1600);
-      }
-    };
-
-    // Initialize ResizeObserver
-    observerRef.current = new ResizeObserver((entries) => {
-      // We only have one element being observed
-      if (entries.length > 0) {
-        updateScale();
-      }
-    });
-
-    // Start observing the wrapping div
-    observerRef.current.observe(wrappingDiv.current);
-
-    // Initial scale update
-    updateScale();
-
-    // Cleanup
-    return () => {
-      if (observerRef.current) {
-        observerRef.current.disconnect();
-      }
-    };
-  }, []);
-
-  // Also update scale when children change (content updates)
-  useEffect(() => {
-    if (wrappingDiv.current) {
-      const width = wrappingDiv.current.clientWidth;
-      setScale(width / 1600);
-    }
-  }, [children]);
-
+export function PreviewFrame({ children }: { children: ReactNode }) {
   return (
-    <div className="w-full overflow-x-hidden" ref={wrappingDiv}>
-      <div
-        className="w-[1600px]"
-        style={{ transform: `scale(${scale})`, transformOrigin: "top left" }}
+    <div className="w-full h-full overflow-hidden relative">
+      <div 
+        className="w-full h-full bg-white relative overflow-x-hidden"
+        style={{ 
+          // Transform creates a new containing block for fixed positioned elements
+          // This makes position:fixed elements behave like position:absolute within this container
+          transform: "translate3d(0, 0, 0)",
+          contain: "layout paint",
+          willChange: "transform"
+        }}
       >
-        {children}
+        <div 
+          className="relative min-h-full isolate "
+          style={{ 
+            // Apply scale to see more content while maintaining responsive behavior
+            width: `${100 / PREVIEW_SCALE}%`,
+            transform: `scale(${PREVIEW_SCALE})`,
+            transformOrigin: "top left"
+          }}
+        >
+          {children}
+        </div>
       </div>
     </div>
   );
