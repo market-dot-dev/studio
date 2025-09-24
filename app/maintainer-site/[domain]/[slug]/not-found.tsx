@@ -1,6 +1,5 @@
 import { getHomepage } from "@/app/services/site/page-service";
 import { headers } from "next/headers";
-import Image from "next/image";
 
 export default async function NotFound() {
   const headersList = await headers();
