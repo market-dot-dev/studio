@@ -601,7 +601,7 @@ export default function Header({ className }: HeaderProps) {
               {/* <div className="mt-2 border-t border-black/10"></div> */}
 
               {/* Navigation Links */}
-              <div className="flex grow flex-col items-start justify-between gap-x-6 gap-y-9 pt-3 px-6 pb-12 sm:flex-row">
+              <div className="flex grow flex-col items-start justify-between gap-x-6 gap-y-9 px-6 pb-12 pt-3 sm:flex-row">
                 {/* Product Section */}
                 <div className="w-full">
                   <h3 className="pb-4 text-marketing-secondary/80">Product</h3>

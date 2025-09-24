@@ -18,7 +18,7 @@ export default function Manage() {
       className="lg:max-w-[1150px]"
     >
       <div className="mx-auto grid w-full grid-cols-1 gap-4 md:grid-cols-3 lg:gap-6">
-      <FeatureCard
+        <FeatureCard
           icon={<ScrollText />}
           title="Contract Library"
           description="Create & send service agreements in minutes using our ready-made, open source contracts."
