@@ -37,7 +37,6 @@ export default withAuth(
     const isDevelopment = process.env.NODE_ENV === "development";
     const APP_HOST = isDevelopment ? "app.market.local:3000" : "app.market.dev";
     const HOMEPAGE_HOST = isDevelopment ? "studio.market.local:3000" : "studio.market.dev";
-    const protocol = isDevelopment ? "http" : "https";
 
     // --- Decision 1: Is this the main "app" subdomain? ---
     const reservedSubdomain = await getReservedSubdomainFromRequest(req);
@@ -99,19 +98,27 @@ export default withAuth(
       }
 
       // Redirect everything else to the app host to avoid duplicate app surface
-      return NextResponse.redirect(`${protocol}://${APP_HOST}${path}${req.nextUrl.search}`);
+      {
+        const redirectUrl = new URL(req.url);
+        redirectUrl.host = APP_HOST;
+        return NextResponse.redirect(redirectUrl);
+      }
     }
 
     // --- Decision 4: This is the bare domain or another reserved subdomain ---
 
     // Redirect /login paths on non-app hosts to the app subdomain.
     if (path.startsWith("/login")) {
-      return NextResponse.redirect(`${protocol}://${APP_HOST}${path}${req.nextUrl.search}`);
+      const redirectUrl = new URL(req.url);
+      redirectUrl.host = APP_HOST;
+      return NextResponse.redirect(redirectUrl);
     }
 
     // Home, terms, privacy should live on studio; redirect there from non-studio hosts
     if (await isHomePagePath(path)) {
-      return NextResponse.redirect(`${protocol}://${HOMEPAGE_HOST}${path}${req.nextUrl.search}`);
+      const redirectUrl = new URL(req.url);
+      redirectUrl.host = HOMEPAGE_HOST;
+      return NextResponse.redirect(redirectUrl);
     }
 
     // For any other path on the bare domain, you might want to redirect
