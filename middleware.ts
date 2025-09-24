@@ -37,6 +37,7 @@ export default withAuth(
     const isDevelopment = process.env.NODE_ENV === "development";
     const APP_HOST = isDevelopment ? "app.market.local:3000" : "app.market.dev";
     const HOMEPAGE_HOST = isDevelopment ? "studio.market.local:3000" : "studio.market.dev";
+    const protocol = isDevelopment ? "http" : "https";
 
     // --- Decision 1: Is this the main "app" subdomain? ---
     const reservedSubdomain = await getReservedSubdomainFromRequest(req);
@@ -90,8 +91,6 @@ export default withAuth(
         return NextResponse.next();
       }
 
-      const protocol = isDevelopment ? "http" : "https";
-
       // Keep home pages on studio
       if (await isHomePagePath(path)) {
         return NextResponse.rewrite(
@@ -107,13 +106,11 @@ export default withAuth(
 
     // Redirect /login paths on non-app hosts to the app subdomain.
     if (path.startsWith("/login")) {
-      const protocol = isDevelopment ? "http" : "https";
       return NextResponse.redirect(`${protocol}://${APP_HOST}${path}${req.nextUrl.search}`);
     }
 
     // Home, terms, privacy should live on studio; redirect there from non-studio hosts
     if (await isHomePagePath(path)) {
-      const protocol = isDevelopment ? "http" : "https";
       return NextResponse.redirect(`${protocol}://${HOMEPAGE_HOST}${path}${req.nextUrl.search}`);
     }
 
