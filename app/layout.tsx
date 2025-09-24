@@ -4,30 +4,38 @@ import "@radix-ui/themes/styles.css";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Metadata } from "next";
+import { headers } from "next/headers";
 import { Providers } from "./providers";
 
 const title = "market.dev";
 const description = "Business tools for developers.";
 const image = "/thumbnail.png";
 
-export const metadata: Metadata = {
-  title,
-  description,
-  icons: ["/favicon.ico"],
-  openGraph: {
+export async function generateMetadata(): Promise<Metadata> {
+  const hdrs = await headers();
+  const host = hdrs.get("host");
+  const proto = process.env.NODE_ENV === "development" ? "http" : "https";
+  const base = host ? `${proto}://${host}` : getRootUrl();
+
+  return {
     title,
     description,
-    images: [image]
-  },
-  twitter: {
-    card: "summary_large_image",
-    title,
-    description,
-    images: [image],
-    creator: "@marketdotdev"
-  },
-  metadataBase: new URL(getRootUrl())
-};
+    icons: ["/favicon.ico"],
+    openGraph: {
+      title,
+      description,
+      images: [image]
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image],
+      creator: "@marketdotdev"
+    },
+    metadataBase: new URL(base)
+  };
+}
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

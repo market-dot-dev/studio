@@ -36,6 +36,7 @@ export default withAuth(
     // Helper constants for domain names, makes it easy to change later
     const isDevelopment = process.env.NODE_ENV === "development";
     const APP_HOST = isDevelopment ? "app.market.local:3000" : "app.market.dev";
+    const HOMEPAGE_HOST = isDevelopment ? "studio.market.local:3000" : "studio.market.dev";
 
     // --- Decision 1: Is this the main "app" subdomain? ---
     const reservedSubdomain = await getReservedSubdomainFromRequest(req);
@@ -82,20 +83,42 @@ export default withAuth(
       );
     }
 
-    // --- Decision 3: This is the bare domain (e.g., market.dev) ---
+    // --- Decision 3: Is this the "studio" subdomain? ---
+    if (reservedSubdomain === "studio") {
+      // Always allow API routes on studio to pass through.
+      if (path.startsWith("/api")) {
+        return NextResponse.next();
+      }
 
-    // Redirect /login paths on the bare domain to the app subdomain.
-    if (path.startsWith("/login")) {
-      const protocol = isDevelopment ? "http" : "https";
-      return NextResponse.redirect(`${protocol}://${APP_HOST}${path}${req.nextUrl.search}`);
+      // Keep home pages on studio
+      if (await isHomePagePath(path)) {
+        return NextResponse.rewrite(
+          new URL(`/home${path === "/" ? "" : path}${req.nextUrl.search}`, req.url)
+        );
+      }
+
+      // Redirect everything else to the app host to avoid duplicate app surface
+      {
+        const redirectUrl = new URL(req.url);
+        redirectUrl.host = APP_HOST;
+        return NextResponse.redirect(redirectUrl);
+      }
     }
 
-    // Rewrite root, /terms, /privacy to the /home directory.
-    // This assumes your marketing pages live in a route group like `(home)`.
+    // --- Decision 4: This is the bare domain or another reserved subdomain ---
+
+    // Redirect /login paths on non-app hosts to the app subdomain.
+    if (path.startsWith("/login")) {
+      const redirectUrl = new URL(req.url);
+      redirectUrl.host = APP_HOST;
+      return NextResponse.redirect(redirectUrl);
+    }
+
+    // Home, terms, privacy should live on studio; redirect there from non-studio hosts
     if (await isHomePagePath(path)) {
-      return NextResponse.rewrite(
-        new URL(`/home${path === "/" ? "" : path}${req.nextUrl.search}`, req.url)
-      );
+      const redirectUrl = new URL(req.url);
+      redirectUrl.host = HOMEPAGE_HOST;
+      return NextResponse.redirect(redirectUrl);
     }
 
     // For any other path on the bare domain, you might want to redirect

@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import type { SiteDetails } from "@/types/site";
 import { useEffect, useState } from "react";
+import { getRootUrl } from "@/lib/domain";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 
 export function PackageEmbeddings({
@@ -122,14 +123,14 @@ export function PackageEmbeddings({
                   data-domain="${domain}"
                   data-widget="tiers"
                   data-settings='${JSON.stringify(
-                    {
-                      darkMode: darkmode,
-                      tiers: selectedTiers.map((tier) => tier.id)
-                    },
-                    null,
-                    2
-                  )}'
-                  src="//${process.env.NEXT_PUBLIC_ROOT_DOMAIN}/embed.js"
+                  {
+                    darkMode: darkmode,
+                    tiers: selectedTiers.map((tier) => tier.id)
+                  },
+                  null,
+                  2
+                )}'
+                  src="${getRootUrl("app", "/embed.js")}"
                 ></script>`}
               />
             )}

@@ -11,15 +11,9 @@ export default async function NotFound() {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <h1 className="text-4xl">{`${site?.name + " "} ?? ""`}404</h1>
-      <Image
-        alt="missing store"
-        src="https://illustrations.popsy.co/gray/timed-out-error.svg"
-        width={400}
-        height={400}
-      />
+      <h1 className="text-4xl">{`${site?.name + " "} ?? ""`}Site Not Found</h1>
       <p className="text-lg text-stone-500">
-        {site ? site.message404 : "Blimey! You've found a page that doesn't exist."}
+        {site ? site.message404 : "You've found a page that doesn't exist. Sorry!"}
       </p>
     </div>
   );
