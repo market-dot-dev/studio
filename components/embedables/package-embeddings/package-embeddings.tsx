@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getRootUrl } from "@/lib/domain";
 import { TierWithCount } from "@/app/services/tier/tier-service";
 import DashedCard from "@/components/common/dashed-card";
 import CodeSnippet from "@/components/embedables/code-snippet";
 import embeddables from "@/components/site/embedables/index";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { getRootUrl } from "@/lib/domain";
 import type { SiteDetails } from "@/types/site";
+import { useEffect, useState } from "react";
 import EmbeddingsSettingsDropdown from "./embeddings-settings-dropdown";
 
 export function PackageEmbeddings({
@@ -27,9 +27,12 @@ export function PackageEmbeddings({
   const [darkmode, setDarkmode] = useState(initialDarkmode);
   const handleDarkMode = () => setDarkmode(!darkmode);
 
-  const finalRootUrl = rootUrl ?? `https://${site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
+  const finalRootUrl =
+    rootUrl ?? `https://${site?.subdomain}.${process.env.NEXT_PUBLIC_ROOT_DOMAIN}`;
 
-  const tiers = selectedTiers.length ? "tiers=" + selectedTiers.map((tier) => tier.id).join(",") : null;
+  const tiers = selectedTiers.length
+    ? "tiers=" + selectedTiers.map((tier) => tier.id).join(",")
+    : null;
 
   const queryParams = [tiers, `darkmode=${darkmode}`].filter(Boolean).join("&");
 
@@ -119,13 +122,13 @@ export function PackageEmbeddings({
                   data-widget="tiers"
                   data-domain="${domain}"
                   data-settings='${JSON.stringify(
-                  {
-                    darkMode: darkmode,
-                    tiers: selectedTiers.map((tier) => tier.id)
-                  },
-                  null,
-                  2
-                )}'
+                    {
+                      darkMode: darkmode,
+                      tiers: selectedTiers.map((tier) => tier.id)
+                    },
+                    null,
+                    2
+                  )}'
                   src="${getRootUrl("app", "/embed.js")}" 
                 ></script>`}
               />
