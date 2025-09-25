@@ -1,9 +1,5 @@
 <p align="center" dir="auto">
-    <img 
-    src="public/thumbnail.png" 
-    alt="Studio cover image" 
-    style="border-radius: 8px;"
-    >
+    <img src="public/thumbnail.png" alt="Studio cover image" style="border-radius: 8px;">
 </p>
 
 <h3 align="center" dir="auto">Studio</h3>
