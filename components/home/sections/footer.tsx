@@ -1,12 +1,12 @@
+import Logo from "@/components/common/logo";
 import ClaimStoreForm from "@/components/home/claim-store-form";
 import GradientHeading from "@/components/home/gradient-heading";
-import Logo from "@/components/home/logo";
 import { loginURL } from "@/lib/home/social-urls";
 import Link from "../link";
 
 export default function Footer() {
   return (
-    <footer className="relative w-full overflow-hidden bg-gradient-to-t from-marketing-camo/[25%] pb-7 pt-20">
+    <footer className="relative w-full overflow-hidden bg-gradient-to-t from-marketing-camo/[25%] pb-8 pt-20">
       <div className="mx-auto w-full max-w-[800px] px-6 lg:max-w-[var(--marketing-max-width)] lg:px-16">
         <div className="flex w-full flex-col items-center">
           <GradientHeading
@@ -22,56 +22,82 @@ export default function Footer() {
           <div className="md:mx-6 md:pt-1">
             <ClaimStoreForm id="footer" />
           </div>
+        </div>
 
-          <div className="mt-44 w-full border-t border-black/10 pt-5">
-            <div className="grid grid-cols-1 gap-6 divide-y divide-black/[7%] text-marketing-primary xs:grid-cols-3 xs:divide-y-0 lg:grid-cols-5">
-              <div className="col-span-full flex flex-col gap-3 lg:col-span-2">
-                <Logo color="black" className="h-[25px] w-fit" />
-                <p className="text-xs text-marketing-secondary">
-                  © {new Date().getFullYear()} market.dev. All rights reserved.
-                </p>
-              </div>
-
-              <div className="flex flex-row gap-4 pt-2 xs:flex-col xs:pt-0">
-                <h3 className="h-fit w-full text-sm text-marketing-secondary">Navigation</h3>
-                <div className="flex h-fit w-full flex-col gap-2">
-                  <Link href={loginURL} className="text-sm">
-                    Log in
-                  </Link>
-                  <Link href="https://explore.market.dev" className="text-sm">
-                    Explore
-                  </Link>
-                </div>
-              </div>
-
-              <div className="flex flex-row gap-4 pt-2 xs:flex-col xs:pt-0">
-                <h3 className="h-fit w-full text-sm text-marketing-secondary">Legal</h3>
-                <div className="flex h-fit w-full flex-col gap-2">
-                  <Link href="/terms" className="text-sm">
-                    Terms of Service
-                  </Link>
-                  <Link href="/privacy" className="text-sm">
-                    Privacy Policy
-                  </Link>
-                </div>
-              </div>
-
-              <div className="flex flex-row gap-4 pt-2 xs:flex-col xs:pt-0">
-                <h3 className="h-fit w-full text-sm text-marketing-secondary">Follow</h3>
-                <div className="flex h-fit w-full flex-col gap-2">
-                  <Link href="https://discord.gg/ZdSpS4BuGd" target="_blank" className="text-sm">
-                    Discord
-                  </Link>
-                  <Link
-                    href="https://twitter.com/marketdotdev"
-                    target="_blank"
-                    className="flex items-center gap-1 text-sm"
-                  >
-                    Twitter
-                  </Link>
-                </div>
-              </div>
+        <div className="mt-44 grid w-full grid-cols-1 gap-6 divide-y divide-black/[7%] border-t border-black/10 pt-5 text-marketing-primary xs:grid-cols-3 xs:divide-y-0 lg:grid-cols-5">
+          <div className="col-span-full flex flex-col justify-between gap-4 lg:col-span-2 lg:flex-col">
+            <Logo color="black" className="h-[26px] w-fit" />
+            <div className="hidden h-fit lg:block">
+              <p className="text-xs tracking-tight text-marketing-secondary">
+                Studio is a{" "}
+                <Link
+                  href="https://market.dev"
+                  className="!text-marketing-primary underline-offset-[3px] hover:underline"
+                >
+                  market.dev
+                </Link>{" "}
+                company
+              </p>
+              <p className="text-xs tracking-tight text-marketing-secondary">
+                © {new Date().getFullYear()} market.dev. All rights reserved.
+              </p>
             </div>
+          </div>
+
+          <div className="flex flex-row gap-2 pt-2 xs:flex-col xs:pt-0">
+            <h3 className="h-fit w-full text-sm text-marketing-primary">Navigation</h3>
+            <div className="flex h-fit w-full flex-col gap-2">
+              <Link href={loginURL} className="text-sm">
+                Log in
+              </Link>
+              <Link href="https://explore.market.dev" className="text-sm">
+                Explore
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex flex-row gap-2 pt-2 xs:flex-col xs:pt-0">
+            <h3 className="h-fit w-full text-sm text-marketing-primary">Legal</h3>
+            <div className="flex h-fit w-full flex-col gap-2">
+              <Link href="/terms" className="text-sm">
+                Terms of Service
+              </Link>
+              <Link href="/privacy" className="text-sm">
+                Privacy Policy
+              </Link>
+            </div>
+          </div>
+
+          <div className="flex flex-row gap-2 pt-2 xs:flex-col xs:pt-0">
+            <h3 className="h-fit w-full text-sm text-marketing-primary">Follow</h3>
+            <div className="flex h-fit w-full flex-col gap-2">
+              <Link href="https://discord.gg/ZdSpS4BuGd" target="_blank" className="text-sm">
+                Discord
+              </Link>
+              <Link
+                href="https://twitter.com/marketdotdev"
+                target="_blank"
+                className="flex items-center gap-1 text-sm"
+              >
+                Twitter
+              </Link>
+            </div>
+          </div>
+
+          <div className="col-span-full flex h-fit w-full flex-col justify-between gap-x-4 pt-2 xs:flex-row lg:hidden">
+            <p className="text-xs tracking-tight text-marketing-secondary">
+              Studio is a{" "}
+              <Link
+                href="https://market.dev"
+                className="!text-marketing-primary underline-offset-[3px] hover:underline"
+              >
+                market.dev
+              </Link>{" "}
+              company
+            </p>
+            <p className="text-xs tracking-tight text-marketing-secondary">
+              © {new Date().getFullYear()} market.dev. All rights reserved.
+            </p>
           </div>
         </div>
       </div>

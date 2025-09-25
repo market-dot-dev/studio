@@ -11,7 +11,7 @@ export default function Logo({
 }) {
   return (
     <Image
-      src={color === "white" ? "/market-dot-dev-logo-white.svg" : "/market-dot-dev-logo.svg"}
+      src={color === "white" ? "/studio-logo-white.svg" : "/studio-logo-black.svg"}
       alt={domainCopy() + " logo"}
       height={32}
       width={164}

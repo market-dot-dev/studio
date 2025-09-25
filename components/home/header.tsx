@@ -1,10 +1,10 @@
 "use client";
 
 import useCurrentSession from "@/app/hooks/use-current-session";
+import Logo from "@/components/common/logo";
 import { MarketingButton } from "@/components/home/button";
 import FeatureCard from "@/components/home/feature-card";
 import Link from "@/components/home/link";
-import Logo from "@/components/home/logo";
 import type { Color } from "@/lib/home/colors";
 import { colors } from "@/lib/home/colors";
 import { blogURL, discordURL, loginURL } from "@/lib/home/social-urls";
@@ -384,8 +384,8 @@ export default function Header({ className }: HeaderProps) {
             )}
           >
             {/* Logo */}
-            <Link href="/" className="flex translate-y-0.5 lg:translate-y-0">
-              <Logo className={clsx("h-[26px] w-auto self-center justify-self-start")} />
+            <Link href="/" className="flex">
+              <Logo className={clsx("h-[30px] w-auto self-center justify-self-start")} />
             </Link>
 
             {/* Center Navigation Links - Hidden on xs screens */}

@@ -11,13 +11,13 @@ export function BrandBadge({ className }: { className?: string }) {
       )}
     >
       Powered by
-      <Link href="https://market.dev" target="_blank">
+      <Link href="https://studio.market.dev" target="_blank">
         <Image
-          alt="market.dev logo"
+          alt="Studio logo"
           width={72}
           height={16}
-          className="inline h-5 w-auto -translate-y-px sm:h-[19px]"
-          src="/market-dot-dev-logo.svg"
+          className="inline h-[21px] w-auto -translate-y-px"
+          src="/studio-logo-black.svg"
           priority
         />
       </Link>

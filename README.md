@@ -1,10 +1,10 @@
 <p align="center" dir="auto">
-    <img src="public/thumbnail.png" alt="market.dev logo" style="border-radius: 8px;">
+    <img src="public/thumbnail.png" alt="Studio cover image" style="border-radius: 8px;">
 </p>
 
-<h3 align="center" dir="auto">market.dev</h3>
+<h3 align="center" dir="auto">Studio</h3>
 <p align="center" dir="auto">
-    The all-in-one open-source business toolkit for developers.
+    Sales & marketing tools for developer experts.
     <br>
     <a href="#features">Features</a> ·
     <a href="#roadmap">Roadmap</a> ·
@@ -15,7 +15,7 @@
 
 ## Introduction
 
-market.dev is the open-source platform with everything developers need to sell and manage a professional services business. Perfect for open source maintainers, freelancers and consultants.
+Studio is the open-source platform with everything developers need to sell and manage a professional services business. Perfect for open source maintainers, freelancers and consultants.
 
 ## Features
 
@@ -34,7 +34,7 @@ market.dev is the open-source platform with everything developers need to sell a
 
 ## Hosted Service
 
-[Use our hosted service](https://market.dev/) to get a custom `market.dev` domain and use our tools without the maintenance.
+[Use our hosted service](https://studio.market.dev/) to get a custom `market.dev` domain and use our tools without the maintenance.
 
 ## Contributing
 
@@ -47,7 +47,6 @@ Want to contribute?
 ## Security
 
 If you believe you have found a security vulnerability, we encourage responsibly disclosure using [GitHub Security Advisory](https://github.com/market-dot-dev/store/security/advisories/new), to ensure confidentiality and security. All security issues will be addressed as high priority.
-
 
 # Setup
 
@@ -103,11 +102,13 @@ pnpm install
 #### 4. Load the Schema
 
 Run Migrations
+
 ```bash
 pnpm prisma migrate dev
 ```
 
 Overwite your local dev database with the contents of `prisma.schema`.
+
 ```bash
 pnpm prisma db push
 ```
