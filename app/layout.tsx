@@ -7,8 +7,8 @@ import { Metadata } from "next";
 import { headers } from "next/headers";
 import { Providers } from "./providers";
 
-const title = "market.dev";
-const description = "Business tools for developers.";
+const title = "Studio by market.dev";
+const description = "Sales & marketing tools for developer experts.";
 const image = "/thumbnail.png";
 
 export async function generateMetadata(): Promise<Metadata> {
