@@ -21,10 +21,10 @@ export default function ClaimStoreForm({
   };
 
   return (
-    <div className="flex w-[272px] flex-col items-center rounded-lg bg-black/[4%] ring-1 ring-black/[15%] xs:w-[320px] sm:w-[420px] sm:flex-row md:w-[500px]">
+    <div className="flex w-[272px] flex-col items-center rounded-lg bg-black/[4%] ring-1 ring-black/[15%] xs:w-[320px] sm:w-[400px] sm:flex-row md:w-[494px]">
       <div className="relative flex w-full items-center justify-between pl-3.5 pr-4 md:pl-[18px] md:pr-5">
         <div className="flex items-center gap-3 md:gap-3.5">
-          <StoreIcon className="size-5 text-marketing-green md:size-7" />
+          <StoreIcon className="size-5 shrink-0 text-marketing-green md:size-6" />
           <input
             id={`${id}-store-name`}
             type="text"
