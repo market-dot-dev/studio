@@ -16,7 +16,7 @@ export function BrandBadge({ className }: { className?: string }) {
           alt="Studio logo"
           width={72}
           height={16}
-          className="inline w-auto -translate-y-px sm:h-[22px]"
+          className="inline w-auto -translate-y-px h-[21px]"
           src="/studio-logo-black.svg"
           priority
         />

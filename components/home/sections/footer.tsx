@@ -26,7 +26,7 @@ export default function Footer() {
 
         <div className="mt-44 grid w-full grid-cols-1 gap-6 divide-y divide-black/[7%] border-t border-black/10 pt-5 text-marketing-primary xs:grid-cols-3 xs:divide-y-0 lg:grid-cols-5">
           <div className="col-span-full flex flex-col justify-between gap-4 lg:col-span-2 lg:flex-col">
-            <Logo color="black" className="h-[30px] w-fit" />
+            <Logo color="black" className="h-[26px] w-fit" />
             <div className="hidden h-fit lg:block">
               <p className="text-xs tracking-tight text-marketing-secondary">
                 Studio is a{" "}
