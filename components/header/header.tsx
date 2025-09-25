@@ -10,7 +10,7 @@ export async function Header() {
   return (
     <header className="fixed inset-x-0 top-0 z-30 flex h-[var(--header-height)] items-center justify-between bg-black px-4 shadow-border-b">
       <Link href="/">
-        <Logo color="white" className="h-[24px] w-auto" />
+        <Logo color="white" className="h-6 w-auto" />
       </Link>
       <div className="flex items-center gap-3">
         <UserDropdown user={user} />
