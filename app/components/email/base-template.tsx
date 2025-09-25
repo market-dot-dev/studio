@@ -67,10 +67,10 @@ export const BaseEmailTemplate = ({
                               <td>
                                 <img
                                   alt="Studio by market.dev"
-                                  height="27"
+                                  height="21"
                                   src="https://studio.market.dev/studio-logo-black.png"
                                   style="display:block;outline:none;border:none;text-decoration:none"
-                                  width="140"
+                                  width="68"
                                 />
                                 <hr
                                   style="width:100%;border:none;border-top:1px solid #eaeaea;border-color:#e6ebf1;margin:20px 0"
