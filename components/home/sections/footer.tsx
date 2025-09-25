@@ -1,10 +1,8 @@
+import Logo from "@/components/common/logo";
 import ClaimStoreForm from "@/components/home/claim-store-form";
 import GradientHeading from "@/components/home/gradient-heading";
-import Logo from "@/components/common/logo";
 import { loginURL } from "@/lib/home/social-urls";
 import Link from "../link";
-import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
 
 export default function Footer() {
   return (
@@ -26,19 +24,21 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-6 w-full border-t border-black/10 pt-5 divide-y divide-black/[7%] text-marketing-primary xs:grid-cols-3 xs:divide-y-0 lg:grid-cols-5 mt-44">
-          <div className="col-span-full flex-col flex lg:flex-col justify-between gap-4 lg:col-span-2">
+        <div className="mt-44 grid w-full grid-cols-1 gap-6 divide-y divide-black/[7%] border-t border-black/10 pt-5 text-marketing-primary xs:grid-cols-3 xs:divide-y-0 lg:grid-cols-5">
+          <div className="col-span-full flex flex-col justify-between gap-4 lg:col-span-2 lg:flex-col">
             <Logo color="black" className="h-[30px] w-fit" />
-            <div className="h-fit hidden lg:block">
-              <p className="text-xs text-marketing-secondary tracking-tight">
+            <div className="hidden h-fit lg:block">
+              <p className="text-xs tracking-tight text-marketing-secondary">
                 Studio is a{" "}
-                <Link href="https://market.dev" className="!text-marketing-primary hover:underline underline-offset-[3px]">
+                <Link
+                  href="https://market.dev"
+                  className="!text-marketing-primary underline-offset-[3px] hover:underline"
+                >
                   market.dev
-                </Link>
-                {" "}
+                </Link>{" "}
                 company
               </p>
-              <p className="text-xs text-marketing-secondary tracking-tight">
+              <p className="text-xs tracking-tight text-marketing-secondary">
                 © {new Date().getFullYear()} market.dev. All rights reserved.
               </p>
             </div>
@@ -84,21 +84,22 @@ export default function Footer() {
             </div>
           </div>
 
-          <div className="h-fit flex flex-col xs:flex-row gap-x-4 justify-between lg:hidden pt-2 w-full col-span-full">
-            <p className="text-xs text-marketing-secondary tracking-tight">
+          <div className="col-span-full flex h-fit w-full flex-col justify-between gap-x-4 pt-2 xs:flex-row lg:hidden">
+            <p className="text-xs tracking-tight text-marketing-secondary">
               Studio is a{" "}
-              <Link href="https://market.dev" className="!text-marketing-primary hover:underline underline-offset-[3px]">
+              <Link
+                href="https://market.dev"
+                className="!text-marketing-primary underline-offset-[3px] hover:underline"
+              >
                 market.dev
-              </Link>
-              {" "}
+              </Link>{" "}
               company
             </p>
-            <p className="text-xs text-marketing-secondary tracking-tight">
+            <p className="text-xs tracking-tight text-marketing-secondary">
               © {new Date().getFullYear()} market.dev. All rights reserved.
             </p>
           </div>
         </div>
-        
       </div>
     </footer>
   );

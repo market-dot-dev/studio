@@ -1,6 +1,6 @@
 import { requireUserSession } from "@/app/services/user-context-service";
-import UserDropdown from "@/components/header/user-dropdown";
 import Logo from "@/components/common/logo";
+import UserDropdown from "@/components/header/user-dropdown";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import Link from "next/link";
 
