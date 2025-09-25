@@ -21,6 +21,11 @@ export const RESERVED_SUBDOMAINS = [
   "docs",
   "store",
   "explore",
+  "data",
+  "dashboard",
+  "settings",
+  "legal",
+  "admin",
   "studio"
 ];
 
