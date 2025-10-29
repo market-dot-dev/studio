@@ -68,7 +68,13 @@ export function RevenueLineChart({
           />
           <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
           <ChartLegend
-            content={<ChartLegendContent className="justify-end" />}
+            content={(props: any) => (
+              <ChartLegendContent
+                payload={props.payload}
+                verticalAlign="top"
+                className="justify-end"
+              />
+            )}
             verticalAlign="top"
           />
           <Line

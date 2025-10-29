@@ -94,7 +94,13 @@ export function LineChartCard({
             <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
             {categories.length > 0 && (
               <ChartLegend
-                content={<ChartLegendContent className="justify-end" />}
+                content={(props: any) => (
+                  <ChartLegendContent
+                    payload={props.payload}
+                    verticalAlign="top"
+                    className="justify-end"
+                  />
+                )}
                 verticalAlign="top"
               />
             )}
