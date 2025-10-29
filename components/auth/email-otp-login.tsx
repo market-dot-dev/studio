@@ -40,7 +40,7 @@ export function EmailOTPLogin({ redirect, signup = false }: EmailOTPLoginProps) 
     // Validate email with Zod
     const emailValidation = emailSchema.safeParse(email);
     if (!emailValidation.success) {
-      setError(emailValidation.error.errors[0].message);
+      setError(emailValidation.error.issues[0].message);
       return;
     }
 

@@ -31,7 +31,7 @@ export async function createOrganizationAction(
   });
 
   if (!parseResult.success) {
-    return { message: parseResult.error.errors[0].message, success: false };
+    return { message: parseResult.error.issues[0].message, success: false };
   }
 
   const { organizationName } = parseResult.data;
