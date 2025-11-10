@@ -1,3 +1,5 @@
+import { ProspectState } from "@/app/generated/prisma";
+import { ArchiveProspectButton } from "@/components/prospects/archive-prospect-button";
 import { getProspects } from "@/app/services/prospects/prospect-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
@@ -14,7 +16,9 @@ export default async function ProspectDetailPage({ params }: { params: Promise<{
   const org = await requireOrganization();
 
   // Get all prospects and find the one with the matching ID
-  const prospects = await getProspects(org.id);
+  const prospects = await getProspects(org.id, {
+    states: [ProspectState.ACTIVE, ProspectState.ARCHIVED]
+  });
   const prospect = prospects.find((p) => p.id === id);
 
   if (!prospect) {
@@ -22,6 +26,25 @@ export default async function ProspectDetailPage({ params }: { params: Promise<{
   }
 
   const pageTitle = prospect.companyName || prospect.name || "Prospect Details";
+  const isArchived = prospect.state === ProspectState.ARCHIVED;
+
+  const headerActions = [
+    !isArchived ? (
+      <ArchiveProspectButton
+        key="archive"
+        prospectId={prospect.id}
+        variant="outline"
+        label="Archive"
+        redirectTo="/prospects"
+      />
+    ) : null,
+    <Button key="contact" variant="outline" asChild>
+      <Link href={`mailto:${prospect.email}`}>
+        <Send />
+        Contact
+      </Link>
+    </Button>
+  ].filter(Boolean);
 
   return (
     <div className="flex max-w-screen-xl flex-col space-y-10">
@@ -31,14 +54,11 @@ export default async function ProspectDetailPage({ params }: { params: Promise<{
           href: "/prospects",
           title: "Prospects"
         }}
-        actions={[
-          <Button key="contact" variant="outline" asChild>
-            <Link href={`mailto:${prospect.email}`}>
-              <Send />
-              Contact
-            </Link>
-          </Button>
-        ]}
+        actions={headerActions}
+        status={{
+          title: isArchived ? "Archived" : "Active",
+          variant: isArchived ? "secondary" : "success"
+        }}
       />
 
       <div className="grid gap-6 md:grid-cols-2">

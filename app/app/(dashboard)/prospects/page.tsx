@@ -21,6 +21,11 @@ export default async function ProspectsPage() {
       <PageHeader
         title="Prospects"
         description="View all prospects who have submitted an interest on one of your packages."
+        actions={[
+          <Button key="archived-prospects" variant="outline" size="sm" asChild>
+            <Link href="/prospects/archive">View Archived Prospects</Link>
+          </Button>
+        ]}
       />
 
       {prospects.length === 0 ? (

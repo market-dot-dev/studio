@@ -3,6 +3,7 @@ model Prospect {
 
   name           String
   email          String
+  state          ProspectState @default(ACTIVE)
   companyName    String?
   context        String?
   tiers          Tier[]
@@ -12,4 +13,9 @@ model Prospect {
   organization   Organization @relation(name: "prospects", fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@unique([email, organizationId])
+}
+
+enum ProspectState {
+  ACTIVE
+  ARCHIVED
 }

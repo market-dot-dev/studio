@@ -1,7 +1,8 @@
 "use client";
 
-import { Prospect } from "@/app/generated/prisma";
-import Tier from "@/app/models/Tier";
+import { ProspectState } from "@/app/generated/prisma";
+import type { ProspectWithTier } from "@/app/services/prospects/prospect-service";
+import { ArchiveProspectButton } from "@/components/prospects/archive-prospect-button";
 import { ViewButton } from "@/components/ui/view-button";
 import { formatDate } from "@/lib/utils";
 import { ColumnDef, Row } from "@tanstack/react-table";
@@ -9,7 +10,7 @@ import { Package } from "lucide-react";
 import Link from "next/link";
 
 // Define the shape of our data
-export type ProspectWithTier = Prospect & { tier: Tier };
+export type { ProspectWithTier };
 
 export const columns: ColumnDef<ProspectWithTier>[] = [
   {
@@ -63,7 +64,16 @@ export const columns: ColumnDef<ProspectWithTier>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => <ViewButton href={`/prospects/${row.original.id}`} />
+    cell: ({ row }) => {
+      const { id, state } = row.original;
+
+      return (
+        <div className="flex justify-end gap-2">
+          <ViewButton href={`/prospects/${id}`} />
+          {state !== ProspectState.ARCHIVED && <ArchiveProspectButton prospectId={id} />}
+        </div>
+      );
+    }
   }
 ];
 
