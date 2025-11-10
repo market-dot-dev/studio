@@ -8,7 +8,7 @@ import { columns, renderProspectContextSubRowComponent } from "../columns";
 export default async function ArchivedProspectsPage() {
   const organization = await requireOrganization();
   const prospects = await getProspects(organization.id, {
-    state: ProspectState.ARCHIVED
+    states: [ProspectState.ARCHIVED]
   });
 
   return (

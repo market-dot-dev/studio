@@ -9,19 +9,14 @@ import { getOrganizationById } from "../organization/organization-service";
 /**
  * Get all prospects for an Organization
  */
-type ProspectQueryOptions = {
+export type ProspectQueryOptions = {
   /**
-   * Convenience property to filter by a single state.
-   * Ignored when `states` is provided.
-   */
-  state?: ProspectState;
-  /**
-   * Filter prospects by multiple states.
+   * Filter prospects by one or more states.
    */
   states?: ProspectState[];
 };
 
-type ProspectWithTier = Prospect & { tier: Tier | null };
+export type ProspectWithTier = Prospect & { tier: Tier | null };
 
 const DEFAULT_PROSPECT_STATES = [ProspectState.ACTIVE];
 
@@ -35,11 +30,7 @@ export async function getProspects(
   }
 
   const resolvedStates =
-    options.states && options.states.length > 0
-      ? options.states
-      : options.state
-        ? [options.state]
-        : DEFAULT_PROSPECT_STATES;
+    options.states && options.states.length > 0 ? options.states : DEFAULT_PROSPECT_STATES;
 
   const prospects = await prisma.prospect.findMany({
     where: {
@@ -159,4 +150,3 @@ export async function archiveProspect(orgId: string, prospectId: string): Promis
   });
 }
 
-export type { ProspectQueryOptions, ProspectWithTier };
