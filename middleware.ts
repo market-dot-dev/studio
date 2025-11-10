@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { isHomePagePath, isPublicPath } from "./app/services/public-path-service";
 import {
   getGhUsernameFromRequest,
+  getHostnameFromRequest,
   getReservedSubdomainFromRequest,
   isVercelPreview
 } from "./app/services/site/domain-request-service";
@@ -31,12 +32,35 @@ export const config = {
 export default withAuth(
   async function middleware(req: NextRequestWithAuth) {
     const path = req.nextUrl.pathname;
+    const host = (await getHostnameFromRequest(req))?.toLowerCase();
     const sessionUser = req.nextauth.token?.user as SessionUser | undefined;
 
     // Helper constants for domain names, makes it easy to change later
     const isDevelopment = process.env.NODE_ENV === "development";
     const APP_HOST = isDevelopment ? "app.market.local:3000" : "app.market.dev";
     const HOMEPAGE_HOST = isDevelopment ? "studio.market.local:3000" : "studio.market.dev";
+    const SITES_HOST = isDevelopment ? "sites.market.local:3000" : "sites.market.dev";
+
+    if (host === SITES_HOST) {
+      if (path.startsWith("/api")) {
+        return NextResponse.next();
+      }
+
+      const segments = path.split("/").filter(Boolean);
+      const [handle, ...rest] = segments;
+
+      if (!handle) {
+        const redirectUrl = new URL(req.url);
+        redirectUrl.host = HOMEPAGE_HOST;
+        redirectUrl.pathname = "/";
+        return NextResponse.redirect(redirectUrl);
+      }
+
+      const remainingPath = rest.length > 0 ? `/${rest.join("/")}` : "";
+      const rewritePath = `/maintainer-site/${handle}${remainingPath}${req.nextUrl.search}`;
+
+      return NextResponse.rewrite(new URL(rewritePath, req.url));
+    }
 
     // --- Decision 1: Is this the main "app" subdomain? ---
     const reservedSubdomain = await getReservedSubdomainFromRequest(req);
@@ -132,6 +156,13 @@ export default withAuth(
         // Check if this is a GitHub username subdomain - these are always public
         const ghUsername = await getGhUsernameFromRequest(req);
         if (ghUsername) {
+          return true;
+        }
+
+        const currentHost = (await getHostnameFromRequest(req))?.toLowerCase();
+        const isDevelopment = process.env.NODE_ENV === "development";
+        const sitesHost = isDevelopment ? "sites.market.local:3000" : "sites.market.dev";
+        if (currentHost === sitesHost) {
           return true;
         }
 

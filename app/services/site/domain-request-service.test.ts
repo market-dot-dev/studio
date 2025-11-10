@@ -4,7 +4,7 @@ import * as domainRequestService from "./domain-request-service";
 
 // Mock the domain import
 vi.mock("@/lib/domain", () => ({
-  RESERVED_SUBDOMAINS: ["app", "www", "blog", "api"]
+  RESERVED_SUBDOMAINS: ["app", "www", "blog", "api", "sites"]
 }));
 
 describe("DomainRequestService", () => {

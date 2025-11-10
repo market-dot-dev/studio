@@ -26,7 +26,8 @@ export const RESERVED_SUBDOMAINS = [
   "settings",
   "legal",
   "admin",
-  "studio"
+  "studio",
+  "sites"
 ];
 
 /**
