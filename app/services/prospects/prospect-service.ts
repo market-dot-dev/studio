@@ -149,4 +149,3 @@ export async function archiveProspect(orgId: string, prospectId: string): Promis
     state: ProspectState.ARCHIVED
   });
 }
-

@@ -1,8 +1,8 @@
 import { ProspectState } from "@/app/generated/prisma";
-import { ArchiveProspectButton } from "@/components/prospects/archive-prospect-button";
 import { getProspects } from "@/app/services/prospects/prospect-service";
 import { requireOrganization } from "@/app/services/user-context-service";
 import PageHeader from "@/components/common/page-header";
+import { ArchiveProspectButton } from "@/components/prospects/archive-prospect-button";
 import { TierDescriptionFeatures } from "@/components/tiers/tier-description-features";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

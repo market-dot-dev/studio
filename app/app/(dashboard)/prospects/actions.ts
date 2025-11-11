@@ -25,4 +25,3 @@ export async function archiveProspectAction({ prospectId }: ArchiveProspectActio
 
   return { success: true };
 }
-
