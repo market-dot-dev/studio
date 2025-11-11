@@ -34,6 +34,7 @@ export default async function ProspectDetailPage({ params }: { params: Promise<{
         key="archive"
         prospectId={prospect.id}
         variant="outline"
+        size="default"
         label="Archive"
         redirectTo="/prospects"
       />
