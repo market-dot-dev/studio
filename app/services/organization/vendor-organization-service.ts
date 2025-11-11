@@ -1,5 +1,6 @@
 "use server";
 
+import { ProspectState } from "@/app/generated/prisma";
 import prisma from "@/lib/prisma";
 import {
   CustomerProfileWithChargesAndSubs,
@@ -217,7 +218,8 @@ export async function getProspectsOfVendor(vendorOrgId?: string) {
 
   return prisma.prospect.findMany({
     where: {
-      organizationId: vendorOrg.id
+      organizationId: vendorOrg.id,
+      state: ProspectState.ACTIVE
     },
     include: {
       tiers: true
