@@ -63,7 +63,7 @@
     "date-fns": "^4.1.0",
     "import-in-the-middle": "^1.14.2",
     "input-otp": "1.4.2",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "lucide-react": "^0.525.0",
     "motion": "^12.23.12",
     "nanoid": "^5.1.5",
