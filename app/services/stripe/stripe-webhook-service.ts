@@ -59,7 +59,13 @@ export async function handleSubscriptionEvent(event: Stripe.Event) {
     ? new Date(subItem.current_period_end * 1000)
     : null;
 
-  if (event.type === "customer.subscription.deleted" || subscription.status === "canceled") {
+  // Check if subscription is cancelled (either deleted, status is canceled, or scheduled to cancel at period end)
+  const isCancelled =
+    event.type === "customer.subscription.deleted" ||
+    subscription.status === "canceled" ||
+    subscription.cancel_at_period_end === true;
+
+  if (isCancelled) {
     await handleCancelledSubscriptionFromWebhook(subscription.id, activeUntil);
   } else if (
     event.type === "customer.subscription.updated" ||
