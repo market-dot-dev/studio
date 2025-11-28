@@ -135,21 +135,26 @@ export default function DashboardCharts({ customers }: { customers: Customers })
           revenueData[monthKey.getTime()]["New Subscriptions"] += subscription.tier.price;
         }
 
-        if (!subscription.cancelledAt) {
-          let renewalDate = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
+        // Calculate renewals, but stop at cancellation/expiry date if subscription is cancelled
+        const cutoffDate = subscription.activeUntil || subscription.cancelledAt || null;
+        let renewalDate = getRenewalMonth(subscription.createdAt, subscription.tier.cadence);
 
-          while (renewalDate && renewalDate <= new Date()) {
-            const renewalMonthKey = lastSixMonths.find(
-              (date) =>
-                date.getMonth() === renewalDate!.getMonth() &&
-                date.getFullYear() === renewalDate!.getFullYear()
-            );
-
-            if (renewalMonthKey) {
-              revenueData[renewalMonthKey.getTime()]["Renewals"] += subscription.tier.price;
-            }
-            renewalDate = getRenewalMonth(renewalDate, subscription.tier.cadence);
+        while (renewalDate && renewalDate <= new Date()) {
+          // Stop counting renewals after the cutoff date (if subscription was cancelled)
+          if (cutoffDate && renewalDate > cutoffDate) {
+            break;
           }
+
+          const renewalMonthKey = lastSixMonths.find(
+            (date) =>
+              date.getMonth() === renewalDate!.getMonth() &&
+              date.getFullYear() === renewalDate!.getFullYear()
+          );
+
+          if (renewalMonthKey) {
+            revenueData[renewalMonthKey.getTime()]["Renewals"] += subscription.tier.price;
+          }
+          renewalDate = getRenewalMonth(renewalDate, subscription.tier.cadence);
         }
       });
 

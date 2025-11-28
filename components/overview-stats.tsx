@@ -99,6 +99,7 @@ export function DashboardCharts({
           data.activeSubscriptions[createdMonthIndex][labels["activeSubscriptions"]]++;
         }
 
+        // Track cancellation date if subscription was cancelled
         if (subscription.cancelledAt) {
           const cancelledDate = new Date(subscription.cancelledAt);
           const cancelledMonthIndex = lastSixMonths.findIndex(
@@ -110,26 +111,33 @@ export function DashboardCharts({
           if (cancelledMonthIndex !== -1) {
             data.cancellations[cancelledMonthIndex][labels["cancellations"]]++;
           }
-        } else {
-          let renewalDate = getRenewalDate(subscription.createdAt, subscription.tier.cadence);
+        }
 
-          while (renewalDate && renewalDate <= new Date()) {
-            const renewalMonthIndex = lastSixMonths.findIndex(
-              (date) =>
-                date.getMonth() === renewalDate!.getMonth() &&
-                date.getFullYear() === renewalDate!.getFullYear()
-            );
+        // Calculate renewals, but stop at cancellation/expiry date if subscription is cancelled
+        const cutoffDate = subscription.activeUntil || subscription.cancelledAt || null;
+        let renewalDate = getRenewalDate(subscription.createdAt, subscription.tier.cadence);
 
-            if (renewalMonthIndex !== -1) {
-              data.renewals[renewalMonthIndex][labels["renewals"]]++;
-              data.renewedSubscriptionsRevenue[renewalMonthIndex][
-                labels["renewedSubscriptionsRevenue"]
-              ] += price;
-              data.monthlyRecurringRevenue[renewalMonthIndex][labels["monthlyRecurringRevenue"]] +=
-                price;
-            }
-            renewalDate = getRenewalDate(renewalDate, subscription.tier.cadence);
+        while (renewalDate && renewalDate <= new Date()) {
+          // Stop counting renewals after the cutoff date (if subscription was cancelled)
+          if (cutoffDate && renewalDate > cutoffDate) {
+            break;
           }
+
+          const renewalMonthIndex = lastSixMonths.findIndex(
+            (date) =>
+              date.getMonth() === renewalDate!.getMonth() &&
+              date.getFullYear() === renewalDate!.getFullYear()
+          );
+
+          if (renewalMonthIndex !== -1) {
+            data.renewals[renewalMonthIndex][labels["renewals"]]++;
+            data.renewedSubscriptionsRevenue[renewalMonthIndex][
+              labels["renewedSubscriptionsRevenue"]
+            ] += price;
+            data.monthlyRecurringRevenue[renewalMonthIndex][labels["monthlyRecurringRevenue"]] +=
+              price;
+          }
+          renewalDate = getRenewalDate(renewalDate, subscription.tier.cadence);
         }
       });
 
