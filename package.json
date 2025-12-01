@@ -81,7 +81,7 @@
     "sharp": "^0.34.3",
     "sonner": "^2.0.7",
     "stripe": "^18.4.0",
-    "tailwind-merge": "^2.6.0",
+    "tailwind-merge": "^3.4.0",
     "zod": "^4.1.12"
   },
   "devDependencies": {
