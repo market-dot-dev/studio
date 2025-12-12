@@ -18,8 +18,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(@prisma/client@6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3))(next-auth@4.24.12(next@15.4.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(nodemailer@7.0.11)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
       '@next/bundle-analyzer':
-        specifier: ^16.0.3
-        version: 16.0.3
+        specifier: ^16.0.7
+        version: 16.0.7
       '@number-flow/react':
         specifier: ^0.5.10
         version: 0.5.10(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -991,8 +991,8 @@ packages:
       '@prisma/client': '>=2.26.0 || >=3'
       next-auth: ^4
 
-  '@next/bundle-analyzer@16.0.3':
-    resolution: {integrity: sha512-6Xo8f8/ZXtASfTPa6TH1aUn+xDg9Pkyl1YHVxu+89cVdLH7MnYjxv3rPOfEJ9BwCZCU2q4Flyw5MwltfD2pGbA==}
+  '@next/bundle-analyzer@16.0.7':
+    resolution: {integrity: sha512-Um2YA3TSQND+DpqlMDuPZsdjdpcgLzo1wF3zx4zcBCLecS7ucP7O9YFqvHhg000HXTgt++KIjZ9FUwyJSKk1Kw==}
 
   '@next/env@15.4.8':
     resolution: {integrity: sha512-LydLa2MDI1NMrOFSkO54mTc8iIHSttj6R6dthITky9ylXV2gCGi0bHQjVCtLGRshdRPjyh2kXbxJukDtBWQZtQ==}
@@ -6694,7 +6694,7 @@ snapshots:
       '@prisma/client': 6.13.0(prisma@6.13.0(typescript@5.8.3))(typescript@5.8.3)
       next-auth: 4.24.12(next@15.4.8(@babel/core@7.28.5)(@opentelemetry/api@1.9.0)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(nodemailer@7.0.11)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
 
-  '@next/bundle-analyzer@16.0.3':
+  '@next/bundle-analyzer@16.0.7':
     dependencies:
       webpack-bundle-analyzer: 4.10.1
     transitivePeerDependencies:
